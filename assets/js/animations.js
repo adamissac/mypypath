@@ -29,12 +29,19 @@
         return;
       }
       
-      // Only intercept if clicking directly on a link (not a child element)
+      // Don't intercept if clicking on code blocks or interactive elements
+      if (e.target.closest('pre, code, .code-example, .interactive-editor, .practice-box')) {
+        return;
+      }
+      
+      // Only intercept if clicking directly on a link element itself
+      // Check if the target IS the link, not just inside it
       const a = e.target.closest('a.route');
       if (!a) return;
       
-      // Only proceed if the click target IS the link itself (not a child)
-      if (e.target !== a && !a.contains(e.target)) {
+      // Only proceed if clicking directly on the link or its direct text content
+      // Not if clicking on child elements (like spans, divs, etc.)
+      if (e.target !== a && e.target.parentElement !== a && !(e.target.nodeType === 3 && e.target.parentElement === a)) {
         return;
       }
       
@@ -44,20 +51,8 @@
       }
       
       // Don't intercept if the link contains interactive elements
-      if (a.querySelector('button, input, textarea, select')) {
+      if (a.querySelector('button, input, textarea, select, .btn')) {
         return;
-      }
-      
-      // Don't intercept on mobile if clicking outside the link area
-      // Check if click is actually on the link element
-      const rect = a.getBoundingClientRect();
-      const clickX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-      const clickY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
-      
-      if (clickX && clickY) {
-        if (clickX < rect.left || clickX > rect.right || clickY < rect.top || clickY > rect.bottom) {
-          return;
-        }
       }
       
       e.preventDefault();
