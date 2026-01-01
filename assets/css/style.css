@@ -1946,6 +1946,9 @@ body.route-leaving { filter: saturate(0.96) blur(2px); opacity: 0.85; transition
   transition: background-color 150ms ease, color 150ms ease;
   flex: 1;
   position: relative;
+  /* Prevent invisible clickable areas */
+  min-width: 0;
+  max-width: 100%;
 }
 .course-sidebar nav a::before {
   content: "";
@@ -1998,10 +2001,22 @@ body.route-leaving { filter: saturate(0.96) blur(2px); opacity: 0.85; transition
     top: 76px; 
     z-index: 60; 
     transform: translateY(-120%); 
-    transition: transform 250ms ease; 
+    transition: transform 250ms ease;
+    /* Prevent clicks when hidden */
+    pointer-events: none;
   }
-  .sidebar-open .course-sidebar { transform: none; }
+  .sidebar-open .course-sidebar { 
+    transform: none;
+    pointer-events: auto;
+  }
   .sidebar-toggle { display: block; margin-bottom: 12px; }
+  
+  /* Ensure sidebar links don't create invisible clickable areas */
+  .course-sidebar nav a {
+    flex: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
 }
 
 /* Lesson overview box */
