@@ -122,8 +122,13 @@
   // --- Button motion accents (ripple) ---
   function setupButtonRipples() {
     document.addEventListener('click', (e) => {
-      const btn = e.target.closest('.btn');
-      if (!btn) return;
+      // Only handle actual button elements, not links styled as buttons
+      const btn = e.target.closest('button.btn, button[class*="btn"]');
+      if (!btn || btn.tagName !== 'BUTTON') return;
+      
+      // Stop propagation to prevent accidental redirects
+      e.stopPropagation();
+      
       const rect = btn.getBoundingClientRect();
       const span = document.createElement('span');
       span.className = 'ripple';
