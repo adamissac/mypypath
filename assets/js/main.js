@@ -68,7 +68,7 @@
     });
   }
   
-  // Prevent accidental link clicks on mobile
+  // Prevent accidental link clicks on mobile - AGGRESSIVE VERSION
   function preventInvisibleLinkClicks() {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
                      ('ontouchstart' in window) || 
@@ -80,27 +80,42 @@
     let touchStartX = 0;
     let touchStartY = 0;
     let touchStartTime = 0;
+    let touchMoved = false;
     
     document.addEventListener('touchstart', (e) => {
       if (e.touches && e.touches[0]) {
         touchStartX = e.touches[0].clientX;
         touchStartY = e.touches[0].clientY;
         touchStartTime = Date.now();
+        touchMoved = false;
       }
     }, { passive: true });
     
+    document.addEventListener('touchmove', () => {
+      touchMoved = true;
+    }, { passive: true });
+    
+    // Intercept ALL clicks on mobile and validate them aggressively
     document.addEventListener('click', (e) => {
-      const a = e.target.closest('a');
-      if (!a) return;
-      
-      // Don't interfere with buttons inside links
-      if (e.target.closest('button') || e.target.tagName === 'BUTTON') {
+      // Always allow buttons and form elements
+      if (e.target.closest('button') || 
+          e.target.tagName === 'BUTTON' ||
+          e.target.closest('input, textarea, select')) {
         return;
       }
       
-      // Don't interfere with form elements
-      if (e.target.closest('input, textarea, select')) {
+      // Check if clicking on a link
+      const a = e.target.closest('a');
+      if (!a) {
+        // Not a link, allow it
         return;
+      }
+      
+      // If user was scrolling, block the click
+      if (touchMoved) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
       }
       
       // Check if link is actually visible and clickable
@@ -128,40 +143,60 @@
       const clickX = e.clientX || touchStartX;
       const clickY = e.clientY || touchStartY;
       
-      // If user moved finger more than 10px, it's probably a scroll, not a click
+      // If user moved finger more than 5px, it's probably a scroll, not a click
       const moveDistance = Math.sqrt(
         Math.pow(clickX - touchStartX, 2) + Math.pow(clickY - touchStartY, 2)
       );
       
-      if (moveDistance > 10 || touchDuration > 300) {
+      if (moveDistance > 5 || touchDuration > 200) {
         e.preventDefault();
         e.stopPropagation();
         return false;
       }
       
-      // Verify click is actually on the link element
+      // Verify click is actually on the link element (strict bounds)
       if (clickX && clickY) {
-        if (clickX < rect.left - 5 || clickX > rect.right + 5 || 
-            clickY < rect.top - 5 || clickY > rect.bottom + 5) {
+        if (clickX < rect.left || clickX > rect.right || 
+            clickY < rect.top || clickY > rect.bottom) {
           e.preventDefault();
           e.stopPropagation();
           return false;
         }
       }
       
-      // For sidebar and breadcrumb links, require direct click on text
-      if (a.closest('.course-sidebar') || a.closest('nav[aria-label="Breadcrumb"]')) {
-        // Only allow if clicking directly on the link or its text node
-        if (e.target !== a && e.target.parentElement !== a && 
-            !(e.target.nodeType === 3 && e.target.parentElement === a)) {
-          // Check if click is on a child element that's not text
-          const clickedElement = e.target;
-          if (clickedElement.tagName && clickedElement.tagName !== 'SPAN' && 
-              clickedElement.tagName !== 'TEXT' && clickedElement !== a) {
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-          }
+      // For ALL links, require clicking directly on the link text/content
+      // Block clicks on padding or empty space
+      const linkText = a.textContent.trim();
+      if (!linkText || linkText.length === 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+      
+      // Only allow if clicking directly on the link element itself or its direct text
+      const clickedElement = e.target;
+      if (clickedElement !== a && 
+          clickedElement.parentElement !== a && 
+          !(clickedElement.nodeType === 3 && clickedElement.parentElement === a)) {
+        // Check if it's a valid child (like span with text)
+        const isTextChild = clickedElement.tagName === 'SPAN' || 
+                           clickedElement.tagName === 'STRONG' ||
+                           clickedElement.tagName === 'EM' ||
+                           clickedElement.nodeType === 3;
+        if (!isTextChild) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+      }
+      
+      // Additional check: link must have reasonable size (not a tiny invisible link)
+      if (rect.width < 20 || rect.height < 20) {
+        // Allow small links only if they're buttons or explicitly styled
+        if (!a.classList.contains('btn') && !a.closest('.btn')) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
         }
       }
     }, true); // Use capture phase to catch early
