@@ -24,15 +24,44 @@
         return;
       }
       
-      const a = e.target.closest('a.route');
-      if (!a || a.target === '_blank' || a.hasAttribute('download') || a.href.indexOf('#') !== -1) return;
-      
-      // Don't intercept if the link contains a button
-      if (a.querySelector('button')) {
+      // Don't intercept if clicking on inputs, textareas, or other form elements
+      if (e.target.closest('input, textarea, select, label')) {
         return;
       }
       
+      // Only intercept if clicking directly on a link (not a child element)
+      const a = e.target.closest('a.route');
+      if (!a) return;
+      
+      // Only proceed if the click target IS the link itself (not a child)
+      if (e.target !== a && !a.contains(e.target)) {
+        return;
+      }
+      
+      // Don't intercept if link has special attributes
+      if (a.target === '_blank' || a.hasAttribute('download') || a.href.indexOf('#') !== -1) {
+        return;
+      }
+      
+      // Don't intercept if the link contains interactive elements
+      if (a.querySelector('button, input, textarea, select')) {
+        return;
+      }
+      
+      // Don't intercept on mobile if clicking outside the link area
+      // Check if click is actually on the link element
+      const rect = a.getBoundingClientRect();
+      const clickX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+      const clickY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+      
+      if (clickX && clickY) {
+        if (clickX < rect.left || clickX > rect.right || clickY < rect.top || clickY > rect.bottom) {
+          return;
+        }
+      }
+      
       e.preventDefault();
+      e.stopPropagation();
       document.body.classList.add('route-leaving');
       setTimeout(() => { window.location.href = a.href; }, 180);
     });
