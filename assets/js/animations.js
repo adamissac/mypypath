@@ -17,7 +17,17 @@
   }
 
   function pageTransitions() {
-    // Subtle fade/blur without overlay
+    // Detect if mobile/touch device
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
+                     ('ontouchstart' in window) || 
+                     (navigator.maxTouchPoints > 0);
+    
+    // Disable page transitions on mobile to prevent accidental redirects
+    if (isMobile) {
+      return;
+    }
+    
+    // Subtle fade/blur without overlay (desktop only)
     document.addEventListener('click', (e) => {
       // Don't intercept if clicking on a button or inside a button
       if (e.target.closest('button') || e.target.tagName === 'BUTTON') {
@@ -35,12 +45,10 @@
       }
       
       // Only intercept if clicking directly on a link element itself
-      // Check if the target IS the link, not just inside it
       const a = e.target.closest('a.route');
       if (!a) return;
       
       // Only proceed if clicking directly on the link or its direct text content
-      // Not if clicking on child elements (like spans, divs, etc.)
       if (e.target !== a && e.target.parentElement !== a && !(e.target.nodeType === 3 && e.target.parentElement === a)) {
         return;
       }
