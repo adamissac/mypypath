@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 5 • The __name__ == "__main__" Pattern - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 5 • The __name__ == "__main__" Pattern • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 5 • Modules & Packages</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-5/what-are-modules.html">1. What Are Modules?</a></li>
+                <li><a href="/units/unit-5/importing-builtin-modules.html">2. Importing Built-in Modules</a></li>
+                <li><a href="/units/unit-5/creating-your-own-modules.html">3. Creating Your Own Modules</a></li>
+                <li><a class="active" href="/units/unit-5/name-main-pattern.html">4. The __name__ == "__main__" Pattern</a></li>
+                <li><a href="/units/unit-5/working-with-packages.html">5. Working with Packages</a></li>
+                <li><a href="/units/unit-5/python-standard-library.html">6. The Python Standard Library</a></li>
+                <li><a href="/units/unit-5/installing-external-packages.html">7. Installing External Packages with pip</a></li>
+                <li><a href="/units/unit-5/virtual-environments.html">8. Virtual Environments and Dependency Management</a></li>
+                <li><a href="/units/unit-5/module-aliases-selective-imports.html">9. Module Aliases and Selective Imports</a></li>
+                <li><a href="/units/unit-5/project-organization-best-practices.html">10. Project Organization Best Practices</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-5.html">Unit 5</a>
+              <span class="separator">/</span>
+              <span class="current">The __name__ == "__main__" Pattern</span>
+            </nav>
+            <div class="eyebrow">Unit 5 • Lesson 4</div>
+            <h1 class="lesson-title">The __name__ == "__main__" Pattern</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>This special line of code helps control whether a file runs as the main program or as an imported module. You'll understand how it prevents unintended execution and allows your code to behave differently depending on how it's used, making your modules more flexible and professional.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">15–20 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-5/creating-your-own-modules.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-5/working-with-packages.html">Next: Working with Packages</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What __name__ is:</strong> Understand Python's special <code>__name__</code> variable.</li>
+                  <li><strong>The pattern:</strong> Learn how <code>if __name__ == "__main__":</code> works.</li>
+                  <li><strong>Why it matters:</strong> Understand when and why to use this pattern.</li>
+                  <li><strong>Practical use:</strong> See how it prevents code from running when imported.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>When you create a module with functions, you might also want to include test code or example usage. But you don't want that test code to run when someone imports your module! The <code>__name__ == "__main__"</code> pattern lets you write code that only runs when the file is executed directly, not when it's imported. This is a professional Python practice!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: Understanding __name__</h2>
+                <p>Python automatically sets a special variable called <code>__name__</code> for every file:</p>
+
+                <div class="code-example">
+                  <div class="code-header">The __name__ Variable</div>
+                  <pre class="code"><code># When you run a file directly:
+# __name__ = "__main__"
+
+# When you import a file as a module:
+# __name__ = "module_name" (the filename)</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Running Directly</h4>
+                      <p>When you run a Python file directly (like <code>python myfile.py</code>), Python sets <code>__name__</code> to <code>"__main__"</code>.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Importing as Module</h4>
+                      <p>When you import a file as a module (like <code>import myfile</code>), Python sets <code>__name__</code> to the module's name (the filename without <code>.py</code>).</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Check the Value</h4>
+                      <p>You can check <code>__name__</code> to determine how the file is being used and run code conditionally!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> The <code>__name__</code> variable tells you how Python is using your file. If it's <code>"__main__"</code>, the file is being run directly. Otherwise, it's being imported as a module!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Checking __name__</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>See what __name__ is set to:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Check the value of __name__\nprint(f\"__name__ is: {__name__}\")\n\nif __name__ == \"__main__\":\n    print(\"This file is being run directly!\")\nelse:\n    print(\"This file is being imported as a module!\")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Check the value of __name__
+print(f"__name__ is: {__name__}")
+
+if __name__ == "__main__":
+    print("This file is being run directly!")
+else:
+    print("This file is being imported as a module!")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> When you run this code directly, <code>__name__</code> is set to <code>"__main__"</code>, so the condition is true and it prints "This file is being run directly!". If this file were imported as a module, <code>__name__</code> would be the module name instead!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: The __name__ == "__main__" Pattern</h2>
+                <p>The pattern uses an <code>if</code> statement to check if the file is being run directly:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Using the Pattern</div>
+                  <pre class="code"><code># File: calculator.py
+
+def add(a, b):
+    """Add two numbers."""
+    return a + b
+
+def multiply(a, b):
+    """Multiply two numbers."""
+    return a * b
+
+# This code only runs when file is executed directly
+if __name__ == "__main__":
+    print("Running calculator tests...")
+    print(f"5 + 3 = {add(5, 3)}")
+    print(f"5 * 3 = {multiply(5, 3)}")</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Define Functions</h4>
+                      <p>Define your functions normally. These are always available when the module is imported.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Add the Pattern</h4>
+                      <p>Put test code or example usage inside <code>if __name__ == "__main__":</code> block.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Conditional Execution</h4>
+                      <p>Code in the block only runs when the file is executed directly, not when imported!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>What Happens When Imported?</h4>
+                  <p>If someone writes <code>import calculator</code>, Python will:</p>
+                  <ol>
+                    <li>Load the functions (<code>add</code> and <code>multiply</code>)</li>
+                    <li>Skip the code inside <code>if __name__ == "__main__":</code> because <code>__name__</code> is <code>"calculator"</code>, not <code>"__main__"</code></li>
+                  </ol>
+                  <p>This prevents test code from running when the module is imported!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Why Use This Pattern?</h2>
+                <p>This pattern solves a common problem:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Without the Pattern (Problem)</div>
+                  <pre class="code"><code># File: utils.py
+def greet(name):
+    return f"Hello, {name}!"
+
+# This runs even when imported!
+print("Testing greet function...")
+print(greet("Alice"))</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">With the Pattern (Solution)</div>
+                  <pre class="code"><code># File: utils.py
+def greet(name):
+    return f"Hello, {name}!"
+
+# This only runs when executed directly
+if __name__ == "__main__":
+    print("Testing greet function...")
+    print(greet("Alice"))</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> Without the pattern, test code runs every time someone imports your module. This can be annoying and slow down programs. With the pattern, test code only runs when you explicitly run the file yourself!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Using the Pattern</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Create a module with the pattern:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'def square(n):\n    return n ** 2\n\ndef cube(n):\n    return n ** 3\n\n# Test code only runs when executed directly\nif __name__ == \"__main__\":\n    print(\"Running tests...\")\n    print(f\"square(5) = {square(5)}\")\n    print(f\"cube(3) = {cube(3)}\")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">def square(n):
+    return n ** 2
+
+def cube(n):
+    return n ** 3
+
+# Test code only runs when executed directly
+if __name__ == "__main__":
+    print("Running tests...")
+    print(f"square(5) = {square(5)}")
+    print(f"cube(3) = {cube(3)}")</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> When you run this code directly, the test code inside <code>if __name__ == "__main__":</code> executes. If this file were imported as a module (like <code>import mymodule</code>), only the functions would be available, and the test code wouldn't run!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Common Use Cases</h2>
+                <p>Use this pattern for:</p>
+
+                <div class="uses-grid">
+                  <div class="feature-grid">
+                    <div class="feature">
+                      <h4>Test Code</h4>
+                      <p>Put test code in the block so it doesn't run when imported.</p>
+                    </div>
+                    <div class="feature">
+                      <h4>Example Usage</h4>
+                      <p>Show how to use your functions without running examples when imported.</p>
+                    </div>
+                    <div class="feature">
+                      <h4>Main Program Logic</h4>
+                      <p>If a file can be both a module and a standalone program, put the main logic in the block.</p>
+                    </div>
+                    <div class="feature">
+                      <h4>CLI Scripts</h4>
+                      <p>Command-line scripts that can also be imported use this pattern.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Use the Pattern</h4>
+                  <p>Create a function <code>double(n)</code> that returns n * 2. Then use the <code>if __name__ == "__main__":</code> pattern to test it with the value 7. Print the result.</p>
+                  <p class="hint-text">Define the function, then add if __name__ == "__main__": with test code.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Check __name__</h4>
+                  <p>Print the value of <code>__name__</code>, then use an if statement to print "Running directly" if <code>__name__ == "__main__"</code>, otherwise print "Imported as module".</p>
+                  <p class="hint-text">Print __name__, then use if __name__ == "__main__":</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-5/creating-your-own-modules.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-5/working-with-packages.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'def double(n):\n    return n * 2\n\nif __name__ == "__main__":\n    result = double(7)\n    print(f"double(7) = {result}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('def double')) {
+              return {
+                correct: false,
+                message: 'You need to create a double() function.',
+                hints: ['Define: def double(n):', 'Return: n * 2']
+              };
+            }
+            
+            if (!trimmed.includes('if __name__ == "__main__":') && !trimmed.includes("if __name__ == '__main__':")) {
+              return {
+                correct: false,
+                message: 'You need to use the if __name__ == "__main__": pattern.',
+                hints: ['Add: if __name__ == "__main__":', 'Put test code inside this block']
+              };
+            }
+            
+            if (!trimmed.includes('double(7)') && !trimmed.includes('double(7)')) {
+              return {
+                correct: false,
+                message: 'You need to test double() with the value 7.',
+                hints: ['Call: double(7)', 'Print the result']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure indentation is correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('14')) {
+              return {
+                correct: false,
+                message: 'The output should show that double(7) = 14.',
+                hints: ['Check your calculation', 'Make sure you print the result']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used the __name__ == "__main__" pattern.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'print(f"__name__ is: {__name__}")\n\nif __name__ == "__main__":\n    print("Running directly")\nelse:\n    print("Imported as module")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('print') || !trimmed.includes('__name__')) {
+              return {
+                correct: false,
+                message: 'You need to print the value of __name__.',
+                hints: ['Use: print(f"__name__ is: {__name__}")']
+              };
+            }
+            
+            if (!trimmed.includes('if __name__ == "__main__":') && !trimmed.includes("if __name__ == '__main__':")) {
+              return {
+                correct: false,
+                message: 'You need to use if __name__ == "__main__":',
+                hints: ['Add: if __name__ == "__main__":', 'Print "Running directly" inside']
+              };
+            }
+            
+            if (!trimmed.includes('Running directly') && !trimmed.includes('Running directly')) {
+              return {
+                correct: false,
+                message: 'You need to print "Running directly" when __name__ == "__main__".',
+                hints: ['Print: "Running directly"', 'Add else: print("Imported as module")']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure indentation is correct']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully checked __name__ and used conditional logic.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

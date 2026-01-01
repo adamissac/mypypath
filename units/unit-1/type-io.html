@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 1 • Type Conversion & I/O - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 1 • Type Conversion & I/O • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 1 • Foundations</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-1/what-is-python.html">1. What Is Python</a></li>
+                <li><a href="/units/unit-1/installing-python-ide.html">2. Installing Python & IDE</a></li>
+                <li><a href="/units/unit-1/first-program.html">3. First Program</a></li>
+                <li><a href="/units/unit-1/syntax-indentation.html">4. Syntax & Indentation</a></li>
+                <li><a href="/units/unit-1/variables-types.html">5. Variables & Types</a></li>
+                <li><a class="active" href="/units/unit-1/type-io.html">6. Type Conversion & I/O</a></li>
+                <li><a href="/units/unit-1/comments-docs.html">7. Comments & Docs</a></li>
+                <li><a href="/units/unit-1/arithmetic-expressions.html">8. Arithmetic & Expressions</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-1.html">Unit 1</a>
+              <span class="separator">/</span>
+              <span class="current">Type Conversion & I/O</span>
+            </nav>
+            <div class="eyebrow">Unit 1 • Lesson 6</div>
+            <h1 class="lesson-title">Type Conversion and Input/Output</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Learn how to convert data between different types and make your programs interactive by getting input from users and displaying formatted output.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">15–20 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-1/variables-types.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-1/comments-docs.html">Next: Comments & Docs</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Why type conversion is needed:</strong> Understand when and why you need to convert between data types.</li>
+                  <li><strong>How to convert types:</strong> Master functions like <code>int()</code>, <code>float()</code>, and <code>str()</code>.</li>
+                  <li><strong>How to get user input:</strong> Use the <code>input()</code> function to make your programs interactive.</li>
+                  <li><strong>How to format output:</strong> Combine strings and variables to create user-friendly messages.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Real programs need to interact with users. They get input, process it, and show results. Type conversion ensures your data is in the right format for calculations and operations.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: Why Convert Types?</h2>
+                <p>Sometimes you have data in one format but need it in another. For example, you might get a number as text from a user, but you need it as an actual number to do math. Type conversion solves this problem.</p>
+                
+                <div class="code-example">
+                  <div class="code-header">❌ Problem: Can't Add String and Number</div>
+                  <pre class="code"><code>age = "25"  # This is a string (text)
+next_year = age + 1  # Error! Can't add string and number</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">✅ Solution: Convert String to Integer</div>
+                  <pre class="code"><code>age = "25"  # String
+age_number = int(age)  # Convert to integer
+next_year = age_number + 1  # Now it works!</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> Python is strict about types. You can't automatically mix strings and numbers. You must explicitly convert them when needed. This prevents errors and makes your code clearer.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Type Conversion Functions</h2>
+                <p>Python provides built-in functions to convert between types. These functions take a value and return it in the new type.</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4><code>int()</code> - Convert to Integer</h4>
+                    <p>Converts a value to a whole number. Works with strings that contain numbers and floats (rounds down).</p>
+                    <pre class="code" style="margin-top: 12px;"><code>int("42")      # Returns 42
+int(3.14)      # Returns 3
+int("25")      # Returns 25</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4><code>float()</code> - Convert to Float</h4>
+                    <p>Converts a value to a decimal number. Works with strings and integers.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>float("3.14")  # Returns 3.14
+float(5)       # Returns 5.0
+float("10")    # Returns 10.0</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4><code>str()</code> - Convert to String</h4>
+                    <p>Converts any value to text. Useful for combining numbers with text.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>str(42)        # Returns "42"
+str(3.14)      # Returns "3.14"
+str(True)      # Returns "True"</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4><code>bool()</code> - Convert to Boolean</h4>
+                    <p>Converts a value to True or False. Empty values become False, non-empty become True.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>bool(1)        # Returns True
+bool(0)        # Returns False
+bool("")       # Returns False</code></pre>
+                  </div>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Type Conversion</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try converting between different types. Notice how each conversion works:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'text_number = &quot;42&quot;\nnumber = int(text_number)\nresult = number + 8\nprint(result)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">text_number = "42"
+number = int(text_number)
+result = number + 8
+print(result)</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You converted the string "42" to an integer 42, then added 8 to it. Without conversion, Python would give an error because you can't add a string and a number.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Getting User Input with <code>input()</code></h2>
+                <p>The <code>input()</code> function lets your program get information from the user. When Python reaches an <code>input()</code> statement, it waits for the user to type something and press Enter.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Basic Input</div>
+                  <pre class="code"><code>name = input("What's your name? ")
+print("Hello,", name)</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Display a Prompt</h4>
+                      <p>The text inside <code>input()</code> is shown to the user. This tells them what to type.</p>
+                      <pre class="code" style="margin-top: 8px;"><code>input("Enter your age: ")</code></pre>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Wait for Input</h4>
+                      <p>Python pauses and waits for the user to type something and press Enter.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Store the Result</h4>
+                      <p>Whatever the user types is stored as a string. You can assign it to a variable.</p>
+                      <pre class="code" style="margin-top: 8px;"><code>age = input("Enter your age: ")
+# age is now a string, like "25"</code></pre>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Important:</strong> <code>input()</code> always returns a string, even if the user types a number. If you need a number, you must convert it using <code>int()</code> or <code>float()</code>.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Getting Input</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try getting input from the user. Note: In this online editor, you'll need to provide input in a special way. In a real Python program, it would wait for you to type.</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'name = &quot;Alice&quot;\nprint(&quot;Hello,&quot;, name)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">name = "Alice"
+print("Hello,", name)</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>Note:</strong> In a real Python program, you would use <code>name = input("What's your name? ")</code> and the program would wait for you to type. Here we're simulating it with a variable.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Converting Input to Numbers</h2>
+                <p>Since <code>input()</code> always returns a string, you need to convert it if you want to do math. This is one of the most common uses of type conversion.</p>
+
+                <div class="code-example">
+                  <div class="code-header">❌ Wrong: Trying to Calculate with String</div>
+                  <pre class="code"><code>age = input("How old are you? ")
+next_year = age + 1  # Error! age is a string</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">✅ Correct: Convert First</div>
+                  <pre class="code"><code>age = input("How old are you? ")
+age_number = int(age)  # Convert string to integer
+next_year = age_number + 1  # Now it works!
+print("Next year you'll be", next_year)</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Common Pattern</h4>
+                  <p>This pattern is very common: get input, convert it, then use it. You'll use this often when building interactive programs.</p>
+                  <pre class="code" style="margin-top: 12px;"><code># Get input (always a string)
+user_input = input("Enter a number: ")
+
+# Convert to number
+number = int(user_input)
+
+# Use in calculation
+result = number * 2
+print(result)</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 5: Formatting Output</h2>
+                <p>When displaying results, you often want to combine text and variables. Python provides several ways to do this.</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Method 1: Using Commas</h4>
+                    <p>Separate values with commas. Python adds spaces automatically.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>name = "Alice"
+age = 25
+print("Hello,", name, "you are", age)</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Output: Hello, Alice you are 25</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Method 2: String Concatenation</h4>
+                    <p>Use <code>+</code> to join strings. Must convert numbers to strings first.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>name = "Alice"
+age = 25
+print("Hello, " + name + " you are " + str(age))</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Output: Hello, Alice you are 25</p>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Tip:</strong> Using commas is easier because Python handles the spacing and type conversion automatically. String concatenation gives you more control but requires converting numbers to strings first.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #3: Formatting Output</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try combining text and variables to create formatted output:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice3">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice3')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice3', 'product = &quot;Python&quot;\nprice = 29.99\nprint(&quot;The&quot;, product, &quot;course costs $&quot;, price)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice3')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice3">product = "Python"
+price = 29.99
+print("The", product, "course costs $", price)</textarea>
+                  <div class="editor-output" id="output-practice3">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>Notice:</strong> Python automatically adds spaces between the values when you use commas. This makes formatting output easy.</p>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Convert and Calculate</h4>
+                  <p>Create a variable <code>text_number</code> with the value <code>"10"</code> (as a string). Convert it to an integer, multiply it by 5, and print the result.</p>
+                  <p class="hint-text">Use <code>int()</code> to convert the string to a number.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Format a Message</h4>
+                  <p>Create variables: <code>name</code> = "Alice", <code>age</code> = 25 (as an integer). Print a message that says "Hello, Alice! You are 25 years old."</p>
+                  <p class="hint-text">Use commas in print() to combine text and variables.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-1/variables-types.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-1/comments-docs.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'text_number = "10"\nnumber = int(text_number)\nresult = number * 5\nprint(result)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for text_number variable with string "10"
+            if (!trimmed.includes('text_number') || !trimmed.includes('"10"')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable text_number with the value "10" (as a string).',
+                hints: ['Write: text_number = "10"', 'Make sure "10" is in quotes (it\'s a string)']
+              };
+            }
+            
+            // Check for int() conversion
+            if (!trimmed.includes('int(')) {
+              return {
+                correct: false,
+                message: 'You need to convert the string to an integer using int().',
+                hints: ['Use int(text_number) to convert', 'Store the result in a variable']
+              };
+            }
+            
+            // Check for multiplication by 5
+            if (!trimmed.includes('* 5') && !trimmed.includes('*5')) {
+              return {
+                correct: false,
+                message: 'You need to multiply the converted number by 5.',
+                hints: ['Multiply the integer by 5', 'Use the * operator']
+              };
+            }
+            
+            // Check for print
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print the result.',
+                hints: ['Add a print statement', 'Print the result of your calculation']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you converted the string to int before multiplying']
+              };
+            }
+            
+            // Check output contains 50
+            const outputText = output.stdout || '';
+            if (!outputText.includes('50')) {
+              return {
+                correct: false,
+                message: 'The result should be 50 (10 multiplied by 5).',
+                hints: ['Check your calculation', 'Make sure you multiplied by 5', 'The answer should be 50']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully converted a string to an integer and performed a calculation.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'name = "Alice"\nage = 25\nprint("Hello,", name + "!", "You are", age, "years old.")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for name variable
+            if (!trimmed.includes('name') || !trimmed.includes('"Alice"') && !trimmed.includes("'Alice'")) {
+              return {
+                correct: false,
+                message: 'You need to create a variable name with the value "Alice".',
+                hints: ['Write: name = "Alice"', 'Make sure Alice is in quotes']
+              };
+            }
+            
+            // Check for age variable
+            if (!trimmed.includes('age') || !trimmed.includes('25')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable age with the value 25 (as an integer).',
+                hints: ['Write: age = 25', 'Don\'t put quotes around 25 (it\'s a number)']
+              };
+            }
+            
+            // Check for print statement
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print the message.',
+                hints: ['Add a print statement', 'Use print() to display the message']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure all quotes match', 'Check your print statement']
+              };
+            }
+            
+            // Check output contains required elements
+            const outputText = output.stdout || '';
+            const hasHello = outputText.includes('Hello');
+            const hasAlice = outputText.includes('Alice');
+            const has25 = outputText.includes('25');
+            const hasYears = outputText.includes('years') || outputText.includes('year');
+            
+            if (!hasHello || !hasAlice || !has25 || !hasYears) {
+              return {
+                correct: false,
+                message: 'Your message should say "Hello, Alice! You are 25 years old."',
+                hints: ['Make sure you include "Hello"', 'Include "Alice"', 'Include "25"', 'Include "years old"']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully formatted a message combining text and variables.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 5 • The Python Standard Library - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 5 • The Python Standard Library • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 5 • Modules & Packages</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-5/what-are-modules.html">1. What Are Modules?</a></li>
+                <li><a href="/units/unit-5/importing-builtin-modules.html">2. Importing Built-in Modules</a></li>
+                <li><a href="/units/unit-5/creating-your-own-modules.html">3. Creating Your Own Modules</a></li>
+                <li><a href="/units/unit-5/name-main-pattern.html">4. The __name__ == "__main__" Pattern</a></li>
+                <li><a href="/units/unit-5/working-with-packages.html">5. Working with Packages</a></li>
+                <li><a class="active" href="/units/unit-5/python-standard-library.html">6. The Python Standard Library</a></li>
+                <li><a href="/units/unit-5/installing-external-packages.html">7. Installing External Packages with pip</a></li>
+                <li><a href="/units/unit-5/virtual-environments.html">8. Virtual Environments and Dependency Management</a></li>
+                <li><a href="/units/unit-5/module-aliases-selective-imports.html">9. Module Aliases and Selective Imports</a></li>
+                <li><a href="/units/unit-5/project-organization-best-practices.html">10. Project Organization Best Practices</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-5.html">Unit 5</a>
+              <span class="separator">/</span>
+              <span class="current">The Python Standard Library</span>
+            </nav>
+            <div class="eyebrow">Unit 5 • Lesson 6</div>
+            <h1 class="lesson-title">The Python Standard Library</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Python's standard library includes built-in modules for everything from data compression to web requests. You'll explore how to discover available modules, read official documentation, and apply them to practical problems, unlocking powerful tools that come with Python.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">25–30 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-5/working-with-packages.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-5/installing-external-packages.html">Next: Installing External Packages with pip</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What the standard library is:</strong> Understand Python's extensive built-in module collection.</li>
+                  <li><strong>Exploring modules:</strong> Learn how to discover and explore available modules.</li>
+                  <li><strong>Reading documentation:</strong> Understand how to use help() and official docs.</li>
+                  <li><strong>Popular modules:</strong> Discover commonly used modules like datetime, json, csv, and os.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Python comes with hundreds of modules already installed - you don't need to write code for common tasks! Whether you need to work with dates, parse JSON, read CSV files, or interact with the operating system, Python's standard library has you covered. Learning about the standard library saves you time and helps you write more powerful programs!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What Is the Standard Library?</h2>
+                <p>The Python standard library is a collection of modules that come with every Python installation. These modules are written in Python or C and provide ready-to-use functionality for common tasks:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Standard Library Modules</div>
+                  <pre class="code"><code># All these modules come with Python - no installation needed!
+import math          # Mathematical functions
+import random        # Random number generation
+import datetime      # Date and time handling
+import json          # JSON data parsing
+import csv           # CSV file handling
+import os            # Operating system interface
+import sys           # System-specific parameters</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Pre-installed</h4>
+                      <p>Standard library modules come with Python - you don't need to install them separately. They're always available!</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Well Documented</h4>
+                      <p>Every module has official documentation explaining what it does and how to use it. You can access it with <code>help()</code>.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Reliable</h4>
+                      <p>These modules are maintained by Python's core developers and are thoroughly tested. They're production-ready!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> The standard library is like a toolbox that comes with Python. Instead of building your own tools for common tasks, you can use the ones that are already included. This saves time and ensures your code is reliable!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Exploring Standard Library</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>See what's available in the standard library:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'import sys\n\n# See some standard library modules\nprint(\"Some standard library modules:\")\nprint(\"math, random, datetime, json, csv, os, sys\")\n\n# Check Python version\nprint(f\"\\nPython version: {sys.version}\")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">import sys
+
+# See some standard library modules
+print("Some standard library modules:")
+print("math, random, datetime, json, csv, os, sys")
+
+# Check Python version
+print(f"\nPython version: {sys.version}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Python's standard library includes hundreds of modules for tasks like math, random numbers, dates, file handling, and more. The <code>sys</code> module provides system-specific information like the Python version. All these modules are available without any installation!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Popular Standard Library Modules</h2>
+                <p>Here are some commonly used modules from the standard library:</p>
+
+                <div class="uses-grid">
+                  <div class="feature-grid">
+                    <div class="feature">
+                      <h4>datetime</h4>
+                      <p>Work with dates and times.</p>
+                      <pre class="code"><code>from datetime import datetime
+now = datetime.now()</code></pre>
+                    </div>
+                    <div class="feature">
+                      <h4>json</h4>
+                      <p>Parse and create JSON data.</p>
+                      <pre class="code"><code>import json
+data = json.loads('{"key": "value"}')</code></pre>
+                    </div>
+                    <div class="feature">
+                      <h4>csv</h4>
+                      <p>Read and write CSV files.</p>
+                      <pre class="code"><code>import csv
+# Read CSV files easily</code></pre>
+                    </div>
+                    <div class="feature">
+                      <h4>os</h4>
+                      <p>Interact with operating system.</p>
+                      <pre class="code"><code>import os
+current_dir = os.getcwd()</code></pre>
+                    </div>
+                    <div class="feature">
+                      <h4>collections</h4>
+                      <p>Specialized data structures.</p>
+                      <pre class="code"><code>from collections import Counter
+counts = Counter([1, 2, 2, 3])</code></pre>
+                    </div>
+                    <div class="feature">
+                      <h4>itertools</h4>
+                      <p>Functions for creating iterators.</p>
+                      <pre class="code"><code>import itertools
+# Advanced iteration tools</code></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Discovering Modules</h2>
+                <p>You can explore what modules are available using Python's built-in tools:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Finding Available Modules</div>
+                  <pre class="code"><code># List all available modules
+import sys
+print(sys.modules.keys())
+
+# Get help on a module
+import math
+help(math)
+
+# See what's in a module
+import random
+print(dir(random))</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Online Documentation</h4>
+                  <p>The official Python documentation (docs.python.org) has complete reference for all standard library modules. Each module has:</p>
+                  <ul>
+                    <li>Purpose and introduction</li>
+                    <li>Complete API reference</li>
+                    <li>Usage examples</li>
+                    <li>Best practices</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Using datetime Module</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try using the datetime module:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'from datetime import datetime\n\n# Get current date and time\nnow = datetime.now()\nprint(f\"Current date/time: {now}\")\n\n# Format it nicely\nformatted = now.strftime(\"%Y-%m-%d %H:%M:%S\")\nprint(f\"Formatted: {formatted}\")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">from datetime import datetime
+
+# Get current date and time
+now = datetime.now()
+print(f"Current date/time: {now}")
+
+# Format it nicely
+formatted = now.strftime("%Y-%m-%d %H:%M:%S")
+print(f"Formatted: {formatted}")</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The <code>datetime</code> module provides powerful tools for working with dates and times. You can get the current time, format dates, calculate differences, and much more. This is all part of Python's standard library - no installation needed!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Reading Documentation</h2>
+                <p>You can access documentation right in Python:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Getting Help</div>
+                  <pre class="code"><code># Get help on a module
+import math
+help(math)
+
+# Get help on a specific function
+help(math.sqrt)
+
+# See module contents
+print(dir(math))</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> The <code>help()</code> function shows documentation for modules, functions, and classes. If you're not sure how to use something, try <code>help()</code> first! For more detailed documentation, visit docs.python.org.</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Use datetime Module</h4>
+                  <p>Import the <code>datetime</code> module and get the current date and time. Print it in a formatted string like "Current time: [date and time]".</p>
+                  <p class="hint-text">Use from datetime import datetime, then datetime.now().</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Explore Module Contents</h4>
+                  <p>Import the <code>random</code> module and use <code>dir()</code> to see what functions it contains. Then use <code>help()</code> to get information about the <code>randint</code> function. Print both results.</p>
+                  <p class="hint-text">Use import random, then dir(random) and help(random.randint).</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-5/working-with-packages.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-5/installing-external-packages.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'from datetime import datetime\n\nnow = datetime.now()\nprint(f"Current time: {now}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('from datetime import datetime') && !trimmed.includes('import datetime')) {
+              return {
+                correct: false,
+                message: 'You need to import the datetime module.',
+                hints: ['Use: from datetime import datetime', 'Or: import datetime']
+              };
+            }
+            
+            if (!trimmed.includes('datetime.now()') && !trimmed.includes('datetime.datetime.now()')) {
+              return {
+                correct: false,
+                message: 'You need to get the current date and time using datetime.now().',
+                hints: ['Use: datetime.now()', 'Or: datetime.datetime.now() if using import datetime']
+              };
+            }
+            
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print the current date and time.',
+                hints: ['Use print() to display the result']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you imported datetime']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used the datetime module from the standard library.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'import random\n\nprint("Functions in random module:")\nprint(dir(random))\n\nprint("\\nHelp for randint:")\nprint(help(random.randint))',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('import random')) {
+              return {
+                correct: false,
+                message: 'You need to import the random module.',
+                hints: ['Use: import random']
+              };
+            }
+            
+            if (!trimmed.includes('dir(random)')) {
+              return {
+                correct: false,
+                message: 'You need to use dir() to see module contents.',
+                hints: ['Use: dir(random)', 'This shows all names in the module']
+              };
+            }
+            
+            if (!trimmed.includes('help(random.randint)') && !trimmed.includes('help(random')) {
+              return {
+                correct: false,
+                message: 'You need to use help() to get information about randint().',
+                hints: ['Use: help(random.randint)', 'This shows documentation for the function']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you imported random']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully explored the random module using dir() and help().'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

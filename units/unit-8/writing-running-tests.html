@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 8 • Writing and Running Tests • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 8 • Testing & Debugging</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-8/what-is-debugging.html">1. What Is Debugging and Why It Matters</a></li>
+                <li><a class="" href="/units/unit-8/common-types-errors.html">2. Common Types of Errors</a></li>
+                <li><a class="" href="/units/unit-8/print-statements-debugging.html">3. Using Print Statements for Debugging</a></li>
+                <li><a class="" href="/units/unit-8/breakpoints-debuggers.html">4. Using Breakpoints and Debuggers</a></li>
+                <li><a class="" href="/units/unit-8/understanding-tracebacks.html">5. Understanding Tracebacks and Error Messages</a></li>
+                <li><a class="active" href="/units/unit-8/writing-running-tests.html">6. Writing and Running Tests</a></li>
+                <li><a class="" href="/units/unit-8/introduction-unittest.html">7. Introduction to the unittest Module</a></li>
+                <li><a class="" href="/units/unit-8/test-driven-development.html">8. Test-Driven Development (TDD)</a></li>
+                <li><a class="" href="/units/unit-8/debugging-logical-runtime-errors.html">9. Debugging Logical and Runtime Errors</a></li>
+                <li><a class="" href="/units/unit-8/maintaining-code-quality.html">10. Maintaining Code Quality Through Continuous Testing</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-8.html">Unit 8</a>
+              <span class="separator">/</span>
+              <span class="current">Writing and Running Tests</span>
+            </nav>
+            <div class="eyebrow">Unit 8 • Lesson 6</div>
+            <h1 class="lesson-title">Writing and Running Tests</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Testing ensures that your code works correctly before it's deployed. You'll learn to write simple test functions, use assertions, and understand how automated testing prevents future bugs, establishing a foundation for reliable software development.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-8/introduction-unittest.html">Next: Introduction to the unittest Module</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What testing is:</strong> Verifying code works correctly.</li>
+                  <li><strong>Writing test functions:</strong> Creating functions that test your code.</li>
+                  <li><strong>Using assertions:</strong> Checking that results match expectations.</li>
+                  <li><strong>Running tests:</strong> Executing tests and interpreting results.</li>
+                  <li><strong>Test organization:</strong> Structuring tests effectively.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>What Is Testing?</h2>
+                <p><strong>Testing</strong> is the process of verifying that your code works correctly. Instead of manually checking your program every time you change it, you write automated tests that do the checking for you.</p>
+
+                <div class="info-card">
+                  <h4>Why Write Tests?</h4>
+                  <ul>
+                    <li>Catch bugs before users do</li>
+                    <li>Verify code works after changes</li>
+                    <li>Document how code should behave</li>
+                    <li>Save time in the long run</li>
+                    <li>Build confidence in your code</li>
+                  </ul>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Example: Simple Test</div>
+                  <pre class="code"><code># Function to test
+def add_numbers(a, b):
+    return a + b
+
+# Test function
+def test_add_numbers():
+    assert add_numbers(2, 3) == 5
+    assert add_numbers(0, 0) == 0
+    assert add_numbers(-1, 1) == 0
+    print("All tests passed!")
+
+# Run the test
+test_add_numbers()</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Using Assertions</h2>
+                <p>The <code>assert</code> statement checks if a condition is true. If it's false, Python raises an AssertionError.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Assert Statement</div>
+                  <pre class="code"><code># Basic assertion
+assert 2 + 2 == 4  # Passes silently
+
+# Assertion with message
+assert 2 + 2 == 5, "Math is broken!"  # Raises AssertionError
+
+# In tests
+def test_calculation():
+    result = calculate(10, 5)
+    assert result == 15, f"Expected 15, got {result}"</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>Assert Best Practices</h4>
+                  <p>Use descriptive messages in assertions. Instead of <code>assert x == y</code>, use <code>assert x == y, f"Expected {y}, got {x}"</code> to make failures easier to understand.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Writing Test Functions</h2>
+                <p>Test functions follow a simple pattern:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Name Your Test</h4>
+                      <p>Start with <code>test_</code> so it's clear it's a test</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Call Your Function</h4>
+                      <p>Run the function with test inputs</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Check the Result</h4>
+                      <p>Use <code>assert</code> to verify the output</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Complete Test Example</div>
+                  <pre class="code"><code>def find_max(numbers):
+    if not numbers:
+        return None
+    return max(numbers)
+
+def test_find_max():
+    # Test normal case
+    assert find_max([1, 5, 3]) == 5
+    
+    # Test with negative numbers
+    assert find_max([-1, -5, -3]) == -1
+    
+    # Test with single element
+    assert find_max([42]) == 42
+    
+    # Test empty list
+    assert find_max([]) == None
+    
+    print("All tests passed!")
+
+test_find_max()</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>Testing:</strong> Verifying code works correctly</li>
+                  <li><strong>Test functions:</strong> Functions that test your code</li>
+                  <li><strong>Assertions:</strong> Checking results match expectations</li>
+                  <li><strong>Running tests:</strong> Execute tests to verify code</li>
+                  <li><strong>Benefits:</strong> Catch bugs early, save time</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>Writing tests might seem like extra work, but it saves time in the long run. Tests catch bugs before they reach users and give you confidence when making changes!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: Testing</h3>
+                  <p>What is testing and why is it important? How do assertions help with testing?</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Writing Tests</h3>
+                  <p>What are the steps to writing a test function? Give an example.</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-8/understanding-tracebacks.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-8/introduction-unittest.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 4 • Nested Lists and 2D Structures - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 4 • Nested Lists and 2D Structures • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 4 • Data Structures</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-4/introduction-data-structures.html">1. Introduction to Data Structures</a></li>
+                <li><a href="/units/unit-4/lists-operations.html">2. Lists and List Operations</a></li>
+                <li><a href="/units/unit-4/indexing-slicing-lists.html">3. Indexing and Slicing Lists</a></li>
+                <li><a class="active" href="/units/unit-4/nested-lists-2d.html">4. Nested Lists and 2D Structures</a></li>
+                <li><a href="/units/unit-4/tuples-immutable.html">5. Tuples and Immutable Data</a></li>
+                <li><a href="/units/unit-4/dictionaries-key-value.html">6. Dictionaries and Key-Value Pairs</a></li>
+                <li><a href="/units/unit-4/dictionary-methods-iteration.html">7. Dictionary Methods and Iteration</a></li>
+                <li><a href="/units/unit-4/sets-unique-collections.html">8. Sets and Unique Collections</a></li>
+                <li><a href="/units/unit-4/copying-comparing-structures.html">9. Copying and Comparing Data Structures</a></li>
+                <li><a href="/units/unit-4/choosing-right-structure.html">10. Choosing the Right Data Structure</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-4.html">Unit 4</a>
+              <span class="separator">/</span>
+              <span class="current">Nested Lists and 2D Structures</span>
+            </nav>
+            <div class="eyebrow">Unit 4 • Lesson 4</div>
+            <h1 class="lesson-title">Nested Lists and 2D Structures</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Explore lists within lists to represent grids or tables. You'll learn how to access elements in multi-dimensional structures and loop through them efficiently, enabling you to work with complex data arrangements like matrices and nested datasets.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-4/indexing-slicing-lists.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-4/tuples-immutable.html">Next: Tuples and Immutable Data</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Nested lists:</strong> Understand how to create lists that contain other lists.</li>
+                  <li><strong>2D structures:</strong> Learn how nested lists represent grids and tables.</li>
+                  <li><strong>Accessing elements:</strong> Discover how to access items in nested lists using multiple indices.</li>
+                  <li><strong>Looping through nested lists:</strong> Learn how to iterate through 2D structures efficiently.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Nested lists let you represent complex data structures like grids, tables, matrices, or game boards. Instead of having one flat list, you can organize data into rows and columns. This is essential for working with tabular data, game boards, or any situation where you need to organize information in multiple dimensions!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What Are Nested Lists?</h2>
+                <p>A nested list is a list that contains other lists as its elements. This creates a two-dimensional (2D) structure, like a grid or table.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Creating Nested Lists</div>
+                  <pre class="code"><code># A nested list representing a 2x3 grid
+matrix = [
+    [1, 2, 3],
+    [4, 5, 6]
+]
+
+print(matrix)  # Output: [[1, 2, 3], [4, 5, 6]]</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Lists Inside Lists</h4>
+                      <p>Each element of the outer list is itself a list. This creates a structure where you have rows (the outer list) and columns (the inner lists).</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>2D Structure</h4>
+                      <p>Think of it like a table: the outer list represents rows, and each inner list represents the cells in that row. This gives you a two-dimensional structure.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Any Size</h4>
+                      <p>Nested lists can have any number of rows and columns. Each row can even have a different number of columns, though it's more common to keep them the same size.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> A nested list is like a table or grid. The outer list contains rows, and each row (inner list) contains columns. This lets you organize data in two dimensions - rows and columns - just like a spreadsheet!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Creating Nested Lists</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try creating a nested list:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Create a 3x3 grid\ngrid = [\n    [1, 2, 3],\n    [4, 5, 6],\n    [7, 8, 9]\n]\n\nprint(f&quot;Grid: {grid}&quot;)\nprint(f&quot;First row: {grid[0]}&quot;)\nprint(f&quot;Second row: {grid[1]}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Create a 3x3 grid
+grid = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+]
+
+print(f"Grid: {grid}")
+print(f"First row: {grid[0]}")
+print(f"Second row: {grid[1]}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You created a nested list where the outer list has 3 elements (rows), and each inner list has 3 elements (columns). When you access <code>grid[0]</code>, you get the first row (which is itself a list: [1, 2, 3]). This creates a 3x3 grid structure!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Accessing Elements in Nested Lists</h2>
+                <p>To access an element in a nested list, you need two indices: one for the row and one for the column.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Accessing Elements</div>
+                  <pre class="code"><code>matrix = [
+    [1, 2, 3],
+    [4, 5, 6]
+]
+
+print(matrix[0][0])  # Output: 1 (first row, first column)
+print(matrix[0][1])  # Output: 2 (first row, second column)
+print(matrix[1][2])  # Output: 6 (second row, third column)</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How It Works</h4>
+                  <p>The first index <code>[0]</code> selects the row (the outer list element). The second index <code>[0]</code> selects the column (the element within that row). So <code>matrix[0][1]</code> means "get row 0, column 1" - the second element in the first row!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Looping Through Nested Lists</h2>
+                <p>You can loop through nested lists using nested loops - one loop for rows and another for columns:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Nested Loops</div>
+                  <pre class="code"><code>matrix = [
+    [1, 2, 3],
+    [4, 5, 6]
+]
+
+# Loop through each row
+for row in matrix:
+    # Loop through each element in the row
+    for element in row:
+        print(element, end=" ")
+    print()  # New line after each row</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Outer Loop</h4>
+                      <p>The outer loop (<code>for row in matrix</code>) iterates through each row. Each iteration gives you one inner list.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Inner Loop</h4>
+                      <p>The inner loop (<code>for element in row</code>) iterates through each element in the current row. This lets you access every element in the nested list.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Processing</h4>
+                      <p>You can process each element individually. The <code>print()</code> after the inner loop creates a new line after each row, making the output look like a grid.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Looping Through Nested Lists</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try looping through a nested list:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'scores = [\n    [85, 90, 88],\n    [92, 87, 91],\n    [78, 85, 90]\n]\n\n# Print each student\'s scores\nfor i, student_scores in enumerate(scores):\n    print(f&quot;Student {i+1}: {student_scores}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">scores = [
+    [85, 90, 88],
+    [92, 87, 91],
+    [78, 85, 90]
+]
+
+# Print each student's scores
+for i, student_scores in enumerate(scores):
+    print(f"Student {i+1}: {student_scores}")</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You used a loop to go through each row in the nested list. Each row represents one student's scores. The <code>enumerate()</code> function gives you both the index and the value, making it easy to number the students. Nested lists are perfect for organizing data like this - multiple items for multiple entities!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Modifying Nested Lists</h2>
+                <p>You can modify elements in nested lists just like regular lists:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Modifying Elements</div>
+                  <pre class="code"><code>matrix = [
+    [1, 2, 3],
+    [4, 5, 6]
+]
+
+matrix[0][1] = 99  # Change element at row 0, column 1
+print(matrix)  # Output: [[1, 99, 3], [4, 5, 6]]</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> Use two indices to modify an element: <code>matrix[row][column] = new_value</code>. This changes the element at that specific position in the nested list!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Create and Access a Nested List</h4>
+                  <p>Create a nested list called <code>grid</code> with 2 rows and 3 columns: [[1, 2, 3], [4, 5, 6]]. Print the element at row 0, column 1, and the element at row 1, column 2.</p>
+                  <p class="hint-text">Use double indexing: grid[row][column] to access elements.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Loop Through a Nested List</h4>
+                  <p>Create a nested list called <code>table</code> with 3 rows: [[10, 20], [30, 40], [50, 60]]. Use nested loops to print each element on a separate line.</p>
+                  <p class="hint-text">Use a nested for loop: for row in table, then for element in row.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-4/indexing-slicing-lists.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-4/tuples-immutable.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'grid = [[1, 2, 3], [4, 5, 6]]\nprint(f"Element at [0][1]: {grid[0][1]}")\nprint(f"Element at [1][2]: {grid[1][2]}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('grid = [[1, 2, 3], [4, 5, 6]]')) {
+              return {
+                correct: false,
+                message: 'You need to create a nested list named grid with [[1, 2, 3], [4, 5, 6]].',
+                hints: ['Create: grid = [[1, 2, 3], [4, 5, 6]]', 'Use nested square brackets']
+              };
+            }
+            
+            if (!trimmed.includes('grid[0][1]')) {
+              return {
+                correct: false,
+                message: 'You need to access the element at row 0, column 1 using grid[0][1].',
+                hints: ['Use: grid[0][1]', 'This accesses row 0, column 1 (value 2)']
+              };
+            }
+            
+            if (!trimmed.includes('grid[1][2]')) {
+              return {
+                correct: false,
+                message: 'You need to access the element at row 1, column 2 using grid[1][2].',
+                hints: ['Use: grid[1][2]', 'This accesses row 1, column 2 (value 6)']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure brackets are correct', 'Check indexing']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created and accessed elements in a nested list.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'table = [[10, 20], [30, 40], [50, 60]]\nfor row in table:\n    for element in row:\n        print(element)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('table = [[10, 20], [30, 40], [50, 60]]')) {
+              return {
+                correct: false,
+                message: 'You need to create a nested list named table with [[10, 20], [30, 40], [50, 60]].',
+                hints: ['Create: table = [[10, 20], [30, 40], [50, 60]]', 'Use nested square brackets']
+              };
+            }
+            
+            if (!trimmed.includes('for row in table') || !trimmed.includes('for')) {
+              return {
+                correct: false,
+                message: 'You need to use nested loops to iterate through the nested list.',
+                hints: ['Use: for row in table:', 'Then: for element in row:', 'Print each element']
+              };
+            }
+            
+            if (!trimmed.includes('for element in row') && !trimmed.match(/for\s+\w+\s+in\s+row/)) {
+              return {
+                correct: false,
+                message: 'You need an inner loop to iterate through each row.',
+                hints: ['Use: for element in row:', 'This loops through elements in each row']
+              };
+            }
+            
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print each element.',
+                hints: ['Use: print(element)', 'Print inside the inner loop']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure loops are properly indented', 'Check brackets']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('10') || !outputText.includes('20') || !outputText.includes('30') || !outputText.includes('40') || !outputText.includes('50') || !outputText.includes('60')) {
+              return {
+                correct: false,
+                message: 'Your output should include all elements: 10, 20, 30, 40, 50, 60.',
+                hints: ['Make sure you loop through all rows', 'Make sure you loop through all elements in each row']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used nested loops to iterate through a nested list.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

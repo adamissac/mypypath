@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 9 • Applying Advanced Concepts Together • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 9 • Advanced Topics</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-9/recursion-problem-decomposition.html">1. Recursion and Problem Decomposition</a></li>
+                <li><a class="" href="/units/unit-9/working-with-external-libraries.html">2. Working with External Libraries</a></li>
+                <li><a class="" href="/units/unit-9/apis-data-retrieval.html">3. APIs and Data Retrieval</a></li>
+                <li><a class="" href="/units/unit-9/introduction-json-data-parsing.html">4. Introduction to JSON and Data Parsing</a></li>
+                <li><a class="" href="/units/unit-9/efficiency-big-o-basics.html">5. Efficiency and Big-O Basics</a></li>
+                <li><a class="" href="/units/unit-9/working-with-dates-times.html">6. Working with Dates and Times</a></li>
+                <li><a class="" href="/units/unit-9/data-visualization-matplotlib.html">7. Data Visualization with Matplotlib</a></li>
+                <li><a class="" href="/units/unit-9/basic-automation-python.html">8. Basic Automation with Python</a></li>
+                <li><a class="" href="/units/unit-9/introduction-file-formats.html">9. Introduction to File Formats (CSV, JSON, and Excel)</a></li>
+                <li><a class="active" href="/units/unit-9/applying-advanced-concepts.html">10. Applying Advanced Concepts Together</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-9.html">Unit 9</a>
+              <span class="separator">/</span>
+              <span class="current">Applying Advanced Concepts Together</span>
+            </nav>
+            <div class="eyebrow">Unit 9 • Lesson 10</div>
+            <h1 class="lesson-title">Applying Advanced Concepts Together</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>You'll combine recursion, APIs, and data visualization to build small integrated projects. This final subtopic reinforces how Python's advanced tools work together to solve complex, real-world problems, demonstrating the power of combining techniques.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">30–40 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-10.html">Next: Unit 10</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Combining concepts:</strong> How to use multiple advanced techniques together.</li>
+                  <li><strong>Project planning:</strong> Breaking down complex projects into steps.</li>
+                  <li><strong>Real-world applications:</strong> Building integrated systems.</li>
+                  <li><strong>Best practices:</strong> Organizing code and handling errors.</li>
+                  <li><strong>Problem-solving:</strong> Applying what you've learned to solve problems.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>Combining Advanced Concepts</h2>
+                <p>Real-world projects often combine multiple advanced concepts:</p>
+
+                <div class="info-card">
+                  <h4>Example: Data Collection System</h4>
+                  <p>A complete system might use:</p>
+                  <ul>
+                    <li><strong>APIs:</strong> Fetch data from online services</li>
+                    <li><strong>JSON:</strong> Parse API responses</li>
+                    <li><strong>File handling:</strong> Save data to files</li>
+                    <li><strong>Error handling:</strong> Handle API failures gracefully</li>
+                    <li><strong>Automation:</strong> Run on a schedule</li>
+                  </ul>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Example: Weather Data Collector</div>
+                  <pre class="code"><code>import requests
+import json
+from datetime import datetime
+
+def collect_weather_data():
+    try:
+        # 1. Fetch data from API
+        response = requests.get('https://api.weather.com/data')
+        
+        # 2. Parse JSON response
+        data = response.json()
+        
+        # 3. Process data
+        processed = {
+            'temperature': data['temp'],
+            'timestamp': datetime.now().isoformat()
+        }
+        
+        # 4. Save to file
+        with open('weather_data.json', 'a') as f:
+            json.dump(processed, f)
+            f.write('\n')
+            
+    except Exception as e:
+        print(f"Error: {e}")
+
+collect_weather_data()</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Complete Integrated Project Example</h2>
+                <p>Here's a complete example combining multiple concepts:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Complete Data Collection and Analysis System</div>
+                  <pre class="code"><code>import requests
+import json
+from datetime import datetime
+from pathlib import Path
+
+def collect_and_save_data(api_url, output_file):
+    """Collect data from API and save to file"""
+    try:
+        # 1. Fetch data from API
+        response = requests.get(api_url, timeout=5)
+        response.raise_for_status()  # Raise exception for bad status codes
+        
+        # 2. Parse JSON response
+        data = response.json()
+        
+        # 3. Add timestamp
+        data['collected_at'] = datetime.now().isoformat()
+        
+        # 4. Save to JSON file
+        output_path = Path(output_file)
+        with open(output_path, 'w') as f:
+            json.dump(data, f, indent=2)
+        
+        print(f"Data saved to {output_file}")
+        return data
+        
+    except requests.exceptions.RequestException as e:
+        print(f"API error: {e}")
+        return None
+    except json.JSONDecodeError:
+        print("Error: Invalid JSON response")
+        return None
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return None
+
+# Usage
+data = collect_and_save_data('https://api.example.com/data', 'data.json')</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>What This Example Shows</h4>
+                  <p>This example combines:</p>
+                  <ul>
+                    <li><strong>API requests:</strong> Fetching data from external sources</li>
+                    <li><strong>JSON parsing:</strong> Converting API responses to Python objects</li>
+                    <li><strong>File handling:</strong> Saving data persistently</li>
+                    <li><strong>Error handling:</strong> Handling different types of errors gracefully</li>
+                    <li><strong>pathlib:</strong> Modern path handling</li>
+                    <li><strong>datetime:</strong> Adding timestamps</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Project Planning Steps</h2>
+                <p>When building integrated projects, follow these steps:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Define Requirements</h4>
+                      <p>What should the project do? What data does it need? What's the end goal?</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Break Into Steps</h4>
+                      <p>Divide the project into smaller, manageable tasks. Each task should be testable independently.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Choose Tools</h4>
+                      <p>Select the right libraries and techniques for each step. Consider efficiency and ease of use.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Build and Test</h4>
+                      <p>Implement each part, test as you go. Don't wait until the end to test!</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                      <h4>Integrate</h4>
+                      <p>Combine all parts into a working system. Handle errors between components.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">6</div>
+                    <div class="step-content">
+                      <h4>Refine</h4>
+                      <p>Test the complete system, fix bugs, improve error handling, and optimize performance.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Real-World Project Ideas</h2>
+                <p>Here are project ideas that combine multiple advanced concepts:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Weather Dashboard</h4>
+                    <p>Fetch weather data from API, parse JSON, save to file, visualize with matplotlib, display trends over time.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Data Logger</h4>
+                    <p>Collect data periodically, save to CSV/JSON files, handle errors gracefully, generate reports automatically.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>File Organizer</h4>
+                    <p>Use pathlib to organize files, handle errors, log operations, automate cleanup tasks.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>API Data Pipeline</h4>
+                    <p>Fetch from multiple APIs, parse JSON, validate data, save to files, handle rate limits and errors.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: Integrated System</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try simulating an integrated system:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'import json\nfrom datetime import datetime\n\n# Simulate integrated system\n# 1. Simulate API data\napi_data = {\"temperature\": 72, \"humidity\": 50}\n\n# 2. Add timestamp\ndata = api_data.copy()\ndata[\"timestamp\"] = datetime.now().isoformat()\n\n# 3. Simulate saving to JSON\njson_output = json.dumps(data, indent=2)\nprint(\"Data collected and formatted:\")\nprint(json_output)\nprint(\"\\nIn a real system, this would be saved to a file!\")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">import json
+from datetime import datetime
+
+# Simulate integrated system
+# 1. Simulate API data
+api_data = {"temperature": 72, "humidity": 50}
+
+# 2. Add timestamp
+data = api_data.copy()
+data["timestamp"] = datetime.now().isoformat()
+
+# 3. Simulate saving to JSON
+json_output = json.dumps(data, indent=2)
+print("Data collected and formatted:")
+print(json_output)
+print("\nIn a real system, this would be saved to a file!")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You simulated collecting data, adding metadata (timestamp), and formatting it for storage. In a real system, you'd also fetch from an API and save to a file!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Code Organization Best Practices</h2>
+                <p>When building integrated projects, organize your code well:</p>
+
+                <div class="info-card">
+                  <h4>Organization Tips</h4>
+                  <ul>
+                    <li><strong>Separate concerns:</strong> Keep API calls, file operations, and data processing in separate functions</li>
+                    <li><strong>Error handling:</strong> Handle errors at appropriate levels - catch API errors where you make requests, file errors where you read/write</li>
+                    <li><strong>Configuration:</strong> Store settings (API URLs, file paths) in variables or config files</li>
+                    <li><strong>Documentation:</strong> Add docstrings to functions explaining what they do</li>
+                    <li><strong>Modularity:</strong> Break large projects into multiple files or modules</li>
+                  </ul>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Well-Organized Integrated System</div>
+                  <pre class="code"><code>import requests
+import json
+from datetime import datetime
+from pathlib import Path
+
+# Configuration
+API_URL = "https://api.example.com/data"
+OUTPUT_FILE = "collected_data.json"
+
+def fetch_data(api_url):
+    """Fetch data from API"""
+    try:
+        response = requests.get(api_url, timeout=5)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"API error: {e}")
+        return None
+
+def process_data(data):
+    """Process and enrich data"""
+    if not data:
+        return None
+    data['processed_at'] = datetime.now().isoformat()
+    data['source'] = 'api'
+    return data
+
+def save_data(data, filename):
+    """Save data to JSON file"""
+    try:
+        with open(filename, 'w') as f:
+            json.dump(data, f, indent=2)
+        print(f"Data saved to {filename}")
+        return True
+    except Exception as e:
+        print(f"Error saving file: {e}")
+        return False
+
+# Main workflow
+def main():
+    data = fetch_data(API_URL)
+    processed = process_data(data)
+    if processed:
+        save_data(processed, OUTPUT_FILE)
+
+if __name__ == "__main__":
+    main()</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>Modular Design</h4>
+                  <p>Breaking your code into functions makes it easier to test, debug, and maintain. Each function has a single responsibility, making the code clearer and more reusable.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Testing Integrated Systems</h2>
+                <p>When building integrated systems, test each component:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Test Components Separately</h4>
+                      <p>Test each function independently before integrating them.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Test Error Cases</h4>
+                      <p>Test what happens when APIs fail, files don't exist, or data is invalid.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Test Integration</h4>
+                      <p>Test the complete workflow from start to finish.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Test Edge Cases</h4>
+                      <p>Test with empty data, very large data, and unexpected formats.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>Combining concepts:</strong> Use multiple techniques together to build complete systems</li>
+                  <li><strong>Project planning:</strong> Break projects into steps for better organization</li>
+                  <li><strong>Real-world applications:</strong> Build integrated systems that solve actual problems</li>
+                  <li><strong>Best practices:</strong> Organize code, handle errors, and document your work</li>
+                  <li><strong>Problem-solving:</strong> Apply learned concepts creatively to solve problems</li>
+                  <li><strong>Code organization:</strong> Separate concerns, use functions, and keep code modular</li>
+                  <li><strong>Testing:</strong> Test components separately and together</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>The power of Python comes from combining its many features. Start with simple projects and gradually build more complex systems that integrate multiple concepts! Practice building integrated projects to master these skills.</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: Integrated Projects</h3>
+                  <p>How would you build a data collection system that combines APIs, JSON parsing, and file handling?</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Project Ideas</h3>
+                  <p>What project could you build that combines multiple advanced concepts from Unit 9?</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-9/introduction-file-formats.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-10.html">Next Unit</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

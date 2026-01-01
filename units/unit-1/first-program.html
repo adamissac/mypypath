@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 1 • First Program - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 1 • First Program • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 1 • Foundations</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-1/what-is-python.html">1. What Is Python</a></li>
+                <li><a href="/units/unit-1/installing-python-ide.html">2. Installing Python & IDE</a></li>
+                <li><a class="active" href="/units/unit-1/first-program.html">3. First Program</a></li>
+                <li><a href="/units/unit-1/syntax-indentation.html">4. Syntax & Indentation</a></li>
+                <li><a href="/units/unit-1/variables-types.html">5. Variables & Types</a></li>
+                <li><a href="/units/unit-1/type-io.html">6. Type Conversion & I/O</a></li>
+                <li><a href="/units/unit-1/comments-docs.html">7. Comments & Docs</a></li>
+                <li><a href="/units/unit-1/arithmetic-expressions.html">8. Arithmetic & Expressions</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-1.html">Unit 1</a>
+              <span class="separator">/</span>
+              <span class="current">First Program</span>
+            </nav>
+            <div class="eyebrow">Unit 1 • Lesson 3</div>
+            <h1 class="lesson-title">Writing and Running Your First Program</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>▶</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Start coding your very first Python script. You'll learn the difference between running code in a file versus interactively in the Python shell and understand how Python executes instructions line by line.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">10–15 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-1/installing-python-ide.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-1/syntax-indentation.html">Next: Syntax & Indentation</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>How to create your first Python program:</strong> Write the classic "Hello, World!" program and understand what each part does.</li>
+                  <li><strong>The difference between interactive mode and script mode:</strong> Learn when to use the Python shell versus saving code in a file.</li>
+                  <li><strong>How Python executes code:</strong> Understand how Python reads and runs your code line by line, from top to bottom.</li>
+                  <li><strong>How to run Python files:</strong> Execute saved Python programs using both VS Code and the terminal.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Building on Previous Lessons</h4>
+                  <p>This lesson assumes you have Python and VS Code installed. If you haven't completed Lesson 2 yet, go back and set up your development environment first.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: Understanding Interactive Mode vs Script Mode</h2>
+                <p>Python can run code in two different ways. Understanding the difference helps you choose the right approach for different tasks.</p>
+                
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Interactive Mode (Python Shell)</h4>
+                    <p>You type code directly into the terminal and see results immediately. Great for testing small pieces of code or experimenting. Code is not saved.</p>
+                    <p style="margin-top: 12px; font-size: 14px;"><strong>When to use:</strong> Quick tests, learning, debugging small code snippets.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Script Mode (Python Files)</h4>
+                    <p>You write code in a <code>.py</code> file, save it, and run it later. Code is saved permanently. This is how real programs are written.</p>
+                    <p style="margin-top: 12px; font-size: 14px;"><strong>When to use:</strong> Writing actual programs, saving your work, sharing code with others.</p>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Difference:</strong> Interactive mode is like having a conversation with Python. Script mode is like writing a letter that Python reads later. For learning and building real programs, you'll mostly use script mode (saving files).</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Your First Program: Hello, World!</h2>
+                <p>The "Hello, World!" program is a tradition in programming. It's the first program most people write when learning a new language. It's simple but teaches you the basics of how to write and run code.</p>
+                
+                <div class="code-example">
+                  <div class="code-header">Hello, World! Program</div>
+                  <pre class="code"><code>print("Hello, World!")</code></pre>
+                </div>
+
+                <p>This single line of code does something important: it tells Python to display the text "Hello, World!" on the screen. Let's break it down:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4><code>print</code></h4>
+                      <p>This is a built-in Python function. Functions are like commands that tell Python to do something specific. <code>print</code> tells Python to display text.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>The Parentheses <code>()</code></h4>
+                      <p>Functions in Python always use parentheses. The parentheses contain what you want the function to work with. In this case, we're telling <code>print</code> what text to display.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>The Quotation Marks <code>" "</code></h4>
+                      <p>Text in Python is called a "string". Strings must be surrounded by quotation marks (single <code>'</code> or double <code>"</code> quotes). This tells Python "this is text, not code to execute".</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4><code>"Hello, World!"</code></h4>
+                      <p>This is the actual text that will be displayed. You can change this to any text you want, and Python will display it.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Try Hello, World!</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Type the Hello, World! program in the editor below and click "Run Code" to see it execute:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'print("Hello, World!")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">print("Hello, World!")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> When you clicked "Run Code", Python read your code from top to bottom, executed the <code>print()</code> function, and displayed "Hello, World!" in the output area. This is exactly how Python runs programs: it reads each line and executes it in order.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Creating a Python File in VS Code</h2>
+                <p>Now let's create a real Python file that you can save and run anytime. This is how you'll write most of your programs.</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Create a New File</h4>
+                      <p>In VS Code, click File, then New File (or press <code>Ctrl+N</code> / <code>Cmd+N</code>). A blank editor window will appear.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Save the File</h4>
+                      <p>Click File, then Save As. Name your file <code>hello_world.py</code>. The <code>.py</code> extension is crucial. It tells VS Code and your computer that this is a Python file.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Write Your Code</h4>
+                      <p>Type <code>print("Hello, World!")</code> in the file. Notice how VS Code colors the code. This is syntax highlighting, which makes code easier to read.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Run the File</h4>
+                      <p>Click the play button (▶) in the top-right corner of VS Code, or right-click in the editor and select "Run Python File in Terminal". You should see "Hello, World!" appear in the terminal panel at the bottom.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>Why Save Files?</h4>
+                  <p>Saving your code in a file means you can:</p>
+                  <ul style="margin: 12px 0 0 0;">
+                    <li>Run the same program multiple times without retyping</li>
+                    <li>Edit and improve your code later</li>
+                    <li>Share your code with others</li>
+                    <li>Build larger programs by combining multiple files</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: How Python Executes Code</h2>
+                <p>Understanding how Python runs your code helps you write better programs and debug problems. Python follows a simple but important process:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Python Reads Your File</h4>
+                      <p>When you run a Python file, Python opens it and reads the entire file from top to bottom.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Python Checks for Errors</h4>
+                      <p>Before running anything, Python checks if your code has syntax errors (like missing quotes or parentheses). If it finds errors, it stops and shows you an error message.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Python Executes Line by Line</h4>
+                      <p>If there are no errors, Python starts at the top of your file and executes each line in order, one at a time. It never skips ahead or goes backwards.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Python Shows Results</h4>
+                      <p>As Python executes each line, it shows the results. For example, when it executes <code>print()</code>, the text appears in the terminal immediately.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Important:</strong> Python always executes code from top to bottom, line by line. This means the order of your code matters. If you put <code>print("Second")</code> before <code>print("First")</code>, "Second" will appear first in the output.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Multiple Print Statements</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try writing multiple <code>print()</code> statements. Notice how Python executes them in order:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'print("First line")\nprint("Second line")\nprint("Third line")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">print("First line")
+print("Second line")
+print("Third line")</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What to notice:</strong> Each <code>print()</code> statement appears on its own line in the output. Python executed them in the exact order you wrote them: first, then second, then third. This demonstrates Python's top-to-bottom execution order.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 5: Running Python Files from the Terminal</h2>
+                <p>You can also run Python files directly from the terminal or command prompt. This is useful when you want to run programs without opening VS Code.</p>
+
+                <div class="terminal-guide">
+                  <div class="terminal-tabs">
+                    <button class="terminal-tab active" onclick="switchTerminal('windows-run')">Windows</button>
+                    <button class="terminal-tab" onclick="switchTerminal('mac-run')">Mac</button>
+                  </div>
+
+                  <div id="windows-run" class="terminal-instructions active">
+                    <h4>On Windows:</h4>
+                    <ol>
+                      <li><strong>Open Command Prompt</strong> and navigate to the folder containing your Python file. For example, if your file is on the Desktop, type: <code>cd Desktop</code></li>
+                      <li><strong>Run the file:</strong> Type <code>python hello_world.py</code> and press Enter.</li>
+                    </ol>
+                    <p class="hint-text">Make sure you're in the same folder as your Python file. Use <code>cd</code> to change directories.</p>
+                  </div>
+
+                  <div id="mac-run" class="terminal-instructions">
+                    <h4>On Mac:</h4>
+                    <ol>
+                      <li><strong>Open Terminal</strong> and navigate to the folder containing your Python file. For example, if your file is on the Desktop, type: <code>cd Desktop</code></li>
+                      <li><strong>Run the file:</strong> Type <code>python3 hello_world.py</code> and press Enter.</li>
+                    </ol>
+                    <p class="hint-text">Remember to use <code>python3</code> on Mac, not <code>python</code>.</p>
+                  </div>
+
+                  <div class="code-example">
+                    <div class="code-header">Expected Output</div>
+                    <pre class="code"><code>Hello, World!</code></pre>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>VS Code vs Terminal</h4>
+                  <p>Both methods do the same thing: they run your Python program. VS Code is more convenient for beginners because it shows you the output right in the editor. Running from the terminal is useful when you want to run programs quickly or when working on servers.</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Customize Your Hello Message</h4>
+                  <p>Write a program that prints your own custom message. Use the <code>print()</code> function with text inside quotation marks.</p>
+                  <p class="hint-text">Remember: the text must be inside quotation marks (single or double quotes work).</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-run" onclick="runEditorCode('exercise1')" style="display:none;">Run Code</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Print Multiple Lines</h4>
+                  <p>Write a program that prints three different lines of text. Each line should use a separate <code>print()</code> statement.</p>
+                  <p class="hint-text">Each <code>print()</code> statement will create a new line in the output. Try printing your name, your favorite color, and your favorite food.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-run" onclick="runEditorCode('exercise2')" style="display:none;">Run Code</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item">
+                  <h4>Exercise 3: Create and Run a File</h4>
+                  <p>Create a new Python file in VS Code called <code>my_first_program.py</code>. Write a program that prints three things you're excited to learn about Python.</p>
+                  <p class="hint-text">Save the file with the <code>.py</code> extension, then run it using the play button in VS Code. Make sure you can see the output in the terminal panel.</p>
+                  <textarea class="reflection-input" id="reflection-ex3" placeholder="Write down what you printed in your program..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-1/installing-python-ide.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-1/syntax-indentation.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      // Exercise solutions and validation rules (defined globally)
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'print("Your custom message here")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            // Check if it's a print statement
+            if (!trimmed.startsWith('print(')) {
+              return {
+                correct: false,
+                message: 'Your code should use the print() function.',
+                hints: ['Start with print(', 'Make sure you have opening and closing parentheses']
+              };
+            }
+            // Check if it has quotes
+            if (!trimmed.includes('"') && !trimmed.includes("'")) {
+              return {
+                correct: false,
+                message: 'Your text needs to be inside quotation marks.',
+                hints: ['Put your message inside quotes: print("your message")', 'You can use single or double quotes']
+              };
+            }
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check that your quotes match (both single or both double)', 'Make sure you have closing parentheses']
+              };
+            }
+            // If it runs successfully, it's correct
+            return {
+              correct: true,
+              message: 'Correct! You successfully created a print statement with your own message.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'print("Line 1")\nprint("Line 2")\nprint("Line 3")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            const lines = trimmed.split('\n').filter(line => line.trim().length > 0);
+            
+            // Check if there are at least 3 print statements
+            const printCount = (trimmed.match(/print\(/g) || []).length;
+            if (printCount < 3) {
+              return {
+                correct: false,
+                message: `You need 3 separate print() statements. You have ${printCount}.`,
+                hints: ['Write print("something") on the first line', 'Write another print("something") on the second line', 'Write a third print("something") on the third line']
+              };
+            }
+            
+            // Check if each line has quotes
+            let hasQuotes = true;
+            for (let line of lines) {
+              if (line.includes('print(') && !line.includes('"') && !line.includes("'")) {
+                hasQuotes = false;
+                break;
+              }
+            }
+            
+            if (!hasQuotes) {
+              return {
+                correct: false,
+                message: 'Each print() statement needs text inside quotation marks.',
+                hints: ['Put quotes around the text in each print statement', 'Example: print("your text")']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check that all your quotes match', 'Make sure each print() has closing parentheses']
+              };
+            }
+            
+            // Check if output has at least 3 lines
+            const outputLines = output.stdout ? output.stdout.trim().split('\n').filter(l => l.trim().length > 0) : [];
+            if (outputLines.length < 3) {
+              return {
+                correct: false,
+                message: 'Your program should print 3 separate lines. Make sure each print() statement is on its own line.',
+                hints: ['Put each print() statement on a separate line', 'Each print() will create one line of output']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created a program with three print statements that each output a separate line.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        // Initialize Pyodide
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide; // Make accessible globally
+          
+          // Set up output capture
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true; // Make accessible globally
+        }
+
+        // Initialize Pyodide in the background
+        initPyodide();
+
+        // Store editors globally
+        window.editors = {};
+
+        // Function to run code in an editor
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            console.error('Editor not found:', editorId);
+            return;
+          }
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            // Reset captures
+            pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            
+            // Run the code
+            pyodide.runPython(code);
+            
+            // Get output
+            const stdout = pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        // Function to reset editor
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        // Function to clear saved code
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) {
+              editor.setValue('');
+            }
+          }
+        };
+
+        // Function to check exercise
+        window.checkExercise = async function(editorId) {
+          console.log('checkExercise called with:', editorId);
+          
+          // Use global references
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) {
+              output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            }
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            console.error('Editor not found:', editorId, 'Available editors:', Object.keys(window.editors));
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            console.error('Feedback or output element not found:', { feedbackEl, outputEl });
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5><p>Try writing a print() statement.</p>';
+            return;
+          }
+
+          console.log('Code to validate:', code);
+
+          // Get validation rules
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            console.error('Exercise validation not found for:', editorId, 'Available:', Object.keys(exerciseSolutions));
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          // Run the code to get output
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            // Reset captures
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            
+            // Run the code
+            window.pyodide.runPython(code);
+            
+            // Get output
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            // Show output
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          // Validate the code
+          console.log('Output before validation:', output);
+          const result = exercise.validator(code, output);
+          console.log('Validation result:', result);
+          
+          // Show feedback
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `
+              <h5>✅ Correct!</h5>
+              <p>${result.message}</p>
+            `;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => {
+                hintsHtml += `<li>${hint}</li>`;
+              });
+              hintsHtml += '</ul>';
+            }
+            
+            feedbackEl.innerHTML = `
+              <h5>❌ Not quite right</h5>
+              <p>${result.message}</p>
+              ${hintsHtml}
+            `;
+          }
+        };
+
+        // Function to show solution
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        // Function to reset exercise
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        // Storage functions
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        // Initialize CodeMirror editors
+        setTimeout(() => {
+          const editorElements = document.querySelectorAll('.code-editor-small');
+          editorElements.forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            
+            // Check if this is an exercise (has data-exercise-id parent)
+            const isExercise = textarea.closest('[data-exercise-id]');
+            
+            // Load saved code, but exercises start blank unless saved
+            let initialCode = '';
+            if (isExercise) {
+              // For exercises, only load if user has saved progress
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || '';
+            } else {
+              // For practice boxes, use default value or saved
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            
+            // Save code on change
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          // Handle reflection textareas
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) {
+              textarea.value = saved;
+            }
+            
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+            
+            // Add clear button
+            const clearBtn = document.createElement('button');
+            clearBtn.className = 'btn-clear-small';
+            clearBtn.textContent = 'Clear Saved';
+            clearBtn.type = 'button';
+            clearBtn.onclick = () => {
+              if (confirm('Clear your saved response?')) {
+                textarea.value = '';
+                clearStorage('reflection', textarea.id);
+              }
+            };
+            textarea.parentNode.insertBefore(clearBtn, textarea.nextSibling);
+          });
+        }, 100);
+
+        // Update CodeMirror theme when theme changes
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+
+        // Terminal tab switching
+        window.switchTerminal = function(tabId) {
+          document.querySelectorAll('.terminal-instructions').forEach(el => el.classList.remove('active'));
+          document.querySelectorAll('.terminal-tab').forEach(el => el.classList.remove('active'));
+          document.getElementById(tabId).classList.add('active');
+          event.target.classList.add('active');
+        };
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 2 • Boolean Logic in Practice - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 2 • Boolean Logic in Practice • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 2 • Control Flow</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-2/understanding-control-flow.html">1. Understanding Control Flow</a></li>
+                <li><a href="/units/unit-2/comparison-logical-operators.html">2. Comparison & Logical Operators</a></li>
+                <li><a href="/units/unit-2/if-statement.html">3. The if Statement</a></li>
+                <li><a href="/units/unit-2/if-else-elif.html">4. if-else and elif</a></li>
+                <li><a href="/units/unit-2/nested-conditionals.html">5. Nested Conditionals</a></li>
+                <li><a class="active" href="/units/unit-2/boolean-logic-practice.html">6. Boolean Logic in Practice</a></li>
+                <li><a href="/units/unit-2/introduction-loops.html">7. Introduction to Loops</a></li>
+                <li><a href="/units/unit-2/while-loop.html">8. The while Loop</a></li>
+                <li><a href="/units/unit-2/for-loop.html">9. The for Loop</a></li>
+                <li><a href="/units/unit-2/loop-control-statements.html">10. Loop Control Statements</a></li>
+                <li><a href="/units/unit-2/practical-control-flow-examples.html">11. Practical Control Flow Examples</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-2.html">Unit 2</a>
+              <span class="separator">/</span>
+              <span class="current">Boolean Logic in Practice</span>
+            </nav>
+            <div class="eyebrow">Unit 2 • Lesson 6</div>
+            <h1 class="lesson-title">Boolean Logic in Practice</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Combine everything learned so far to make real-world decisions using Boolean expressions. You'll practice simplifying complex conditions and ensuring your code behaves exactly as intended.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-2/nested-conditionals.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-2/introduction-loops.html">Next: Introduction to Loops</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Combining operators:</strong> How to use comparison and logical operators together effectively.</li>
+                  <li><strong>Real-world examples:</strong> Apply Boolean logic to practical programming problems.</li>
+                  <li><strong>Simplifying conditions:</strong> Learn techniques to make complex conditions easier to read.</li>
+                  <li><strong>Common patterns:</strong> Recognize and use common Boolean logic patterns in your code.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>In real programs, you often need to check multiple conditions at once. This lesson shows you how to combine everything you've learned (comparison operators, logical operators, and if statements) to solve actual problems. You'll see how Boolean logic is used in everyday programming situations.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: Review: Boolean Values and Operators</h2>
+                <p>Before we dive into practice, let's quickly review what we know about Boolean logic. Boolean values are True and False, and they're the foundation of decision-making in Python.</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Boolean Values</h4>
+                    <p>Python has two boolean values: <code>True</code> and <code>False</code>. These are not strings - they're special values that Python uses for logic.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>is_student = True
+is_adult = False
+print(type(is_student))  # &lt;class 'bool'&gt;</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Logical Operators</h4>
+                    <p><code>and</code>, <code>or</code>, and <code>not</code> combine boolean values to create more complex conditions.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>age >= 18 and has_license
+temperature > 80 or is_summer
+not is_raining</code></pre>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> Comparison operators (==, !=, <, >, <=, >=) create boolean values. Logical operators (and, or, not) combine boolean values. Together, they let you express complex conditions clearly.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Common Boolean Logic Patterns</h2>
+                <p>Many programming problems follow similar patterns. Learning these patterns helps you write code faster and more accurately.</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Pattern 1: "All Must Be True"</h4>
+                    <p>When you need multiple conditions to all be True, use <code>and</code> between them.</p>
+                    <pre class="code" style="margin-top: 12px;"><code># Can drive: must be adult AND have license
+can_drive = age >= 18 and has_license
+
+# Can enter: must be 21+ AND have ID
+can_enter = age >= 21 and has_id</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Think: "Both of these must be true"</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Pattern 2: "At Least One Must Be True"</h4>
+                    <p>When you need at least one condition to be True, use <code>or</code> between them.</p>
+                    <pre class="code" style="margin-top: 12px;"><code># Can enter: must be 21+ OR with parent
+can_enter = age >= 21 or with_parent
+
+# Can pay: must have cash OR card
+can_pay = has_cash or has_card</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Think: "Either of these is okay"</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Pattern 3: "The Opposite"</h4>
+                    <p>When you need the opposite of a condition, use <code>not</code>.</p>
+                    <pre class="code" style="margin-top: 12px;"><code># Not raining: opposite of is_raining
+go_outside = not is_raining
+
+# Not empty: opposite of isEmpty
+has_items = not is_empty</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Think: "The opposite of this"</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Pattern 4: "Combining Multiple Patterns"</h4>
+                    <p>You can combine patterns using parentheses to control the order of evaluation.</p>
+                    <pre class="code" style="margin-top: 12px;"><code># Must be 18+ AND (have license OR have permit)
+can_drive = age >= 18 and (has_license or has_permit)
+
+# (Must be 21+ OR with parent) AND have ticket
+can_enter = (age >= 21 or with_parent) and has_ticket</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Use parentheses to group conditions</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Combining Conditions</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try combining multiple conditions. Notice how the and, or, and not operators work together:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'age = 20\nhas_license = True\nhas_insurance = False\n\ncan_drive = age >= 18 and has_license\nprint(&quot;Can drive:&quot;, can_drive)\n\ncan_drive_safely = age >= 18 and has_license and has_insurance\nprint(&quot;Can drive safely:&quot;, can_drive_safely)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">age = 20
+has_license = True
+has_insurance = False
+
+can_drive = age >= 18 and has_license
+print("Can drive:", can_drive)
+
+can_drive_safely = age >= 18 and has_license and has_insurance
+print("Can drive safely:", can_drive_safely)</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The first condition (<code>age >= 18 and has_license</code>) evaluated to True because both parts were True: age (20) is >= 18, AND has_license is True. So "Can drive: True" was printed. The second condition (<code>age >= 18 and has_license and has_insurance</code>) evaluated to False because, even though age >= 18 is True and has_license is True, has_insurance is False. When you use <code>and</code> to combine multiple conditions, ALL of them must be True for the whole expression to be True. If even one condition is False, the entire expression becomes False.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Simplifying Complex Conditions</h2>
+                <p>Complex conditions can be hard to read. Here are techniques to make them clearer:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Technique 1: Store Intermediate Results</div>
+                  <pre class="code"><code># Hard to read:
+if age >= 18 and has_license and has_insurance and (score >= 80 or is_exempt):
+    print("Can drive")
+
+# Easier to read:
+is_adult = age >= 18
+has_all_docs = has_license and has_insurance
+passed_test = score >= 80 or is_exempt
+
+if is_adult and has_all_docs and passed_test:
+    print("Can drive")</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Why This Helps</h4>
+                  <p>Breaking complex conditions into smaller, named variables makes your code:</p>
+                  <ul style="margin: 12px 0 0 0;">
+                    <li><strong>Easier to read:</strong> Variable names explain what each part means</li>
+                    <li><strong>Easier to debug:</strong> You can check each part separately</li>
+                    <li><strong>Easier to modify:</strong> Change one part without affecting others</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Using Parentheses for Clarity</h2>
+                <p>Parentheses help clarify the order of operations. Even when Python would evaluate things correctly without them, parentheses make your intent clear to other programmers (and to yourself later).</p>
+
+                <div class="code-example">
+                  <div class="code-header">Using Parentheses</div>
+                  <pre class="code"><code># Without parentheses (harder to read):
+if age >= 18 and has_license or has_permit and age >= 16:
+    print("Can drive")
+
+# With parentheses (clearer):
+if age >= 18 and (has_license or has_permit):
+    print("Can drive")
+
+# Or even clearer:
+is_old_enough = age >= 18
+has_permission = has_license or has_permit
+if is_old_enough and has_permission:
+    print("Can drive")</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Best Practice:</strong> When in doubt, add parentheses. They make your code clearer and help prevent bugs. Python evaluates expressions inside parentheses first, then works outward.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Using Parentheses</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try using parentheses to control the order of evaluation:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'age = 20\nhas_license = True\nhas_permit = False\n\n# Without parentheses\nresult1 = age >= 18 and has_license or has_permit\nprint(&quot;Without parentheses:&quot;, result1)\n\n# With parentheses\nresult2 = age >= 18 and (has_license or has_permit)\nprint(&quot;With parentheses:&quot;, result2)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">age = 20
+has_license = True
+has_permit = False
+
+# Without parentheses
+result1 = age >= 18 and has_license or has_permit
+print("Without parentheses:", result1)
+
+# With parentheses
+result2 = age >= 18 and (has_license or has_permit)
+print("With parentheses:", result2)</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Both expressions evaluated to True in this case, but notice how the parentheses change the meaning. Without parentheses, Python evaluates <code>and</code> before <code>or</code>, so it's like: <code>(age >= 18 and has_license) or has_permit</code>. With parentheses, it's: <code>age >= 18 and (has_license or has_permit)</code>. The parentheses version says "must be 18+ AND (have license OR permit)", which is clearer. Try changing has_license to False to see how the results differ!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 5: Real-World Example: Access Control</h2>
+                <p>Let's apply Boolean logic to a real-world problem: deciding who can access a restricted area.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Access Control System</div>
+                  <pre class="code"><code>age = 25
+has_id = True
+is_staff = False
+has_visitor_pass = False
+
+# Rule: Must be 18+ AND (have ID OR be staff OR have visitor pass)
+can_enter = age >= 18 and (has_id or is_staff or has_visitor_pass)
+
+if can_enter:
+    print("Access granted!")
+else:
+    print("Access denied.")</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Breaking Down the Logic</h4>
+                  <p>Let's understand this step by step:</p>
+                  <ol style="margin: 12px 0 0 0;">
+                    <li>First, check if <code>age >= 18</code>. This must be True.</li>
+                    <li>Then check if at least one of these is True: <code>has_id</code>, <code>is_staff</code>, or <code>has_visitor_pass</code>.</li>
+                    <li>Only if BOTH requirements are met (age >= 18 AND at least one form of ID), access is granted.</li>
+                  </ol>
+                  <p style="margin-top: 12px;">This pattern is common in real programs: "You must meet requirement A AND (at least one of requirements B, C, or D)."</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 6: Common Mistakes to Avoid</h2>
+                <p>Here are some common mistakes beginners make with Boolean logic, and how to avoid them:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>❌ Mistake 1: Using = Instead of ==</h4>
+                    <p>Remember: <code>=</code> assigns values, <code>==</code> compares values.</p>
+                    <pre class="code" style="margin-top: 12px;"><code># Wrong:
+if age = 18:  # ERROR!
+
+# Correct:
+if age == 18:</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>❌ Mistake 2: Forgetting Parentheses</h4>
+                    <p>When combining <code>and</code> and <code>or</code>, use parentheses to be clear.</p>
+                    <pre class="code" style="margin-top: 12px;"><code># Unclear:
+if age >= 18 and has_license or has_permit
+
+# Clear:
+if age >= 18 and (has_license or has_permit)</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>❌ Mistake 3: Double Negatives</h4>
+                    <p>Avoid <code>not not</code> - it's confusing. Use positive conditions when possible.</p>
+                    <pre class="code" style="margin-top: 12px;"><code># Confusing:
+if not not is_student:
+
+# Clear:
+if is_student:</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>❌ Mistake 4: Comparing with True/False</h4>
+                    <p>Don't write <code>if condition == True</code> - just write <code>if condition</code>.</p>
+                    <pre class="code" style="margin-top: 12px;"><code># Unnecessary:
+if is_student == True:
+
+# Better:
+if is_student:</code></pre>
+                  </div>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Combine Multiple Conditions</h4>
+                  <p>Create variables: <code>age</code> = 20, <code>has_license</code> = True, <code>has_insurance</code> = True. Write an if statement that checks if age >= 18 AND has_license AND has_insurance. If all are true, print "You can drive legally!".</p>
+                  <p class="hint-text">Use the and operator to combine all three conditions in one if statement.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Use Parentheses</h4>
+                  <p>Create variables: <code>age</code> = 20, <code>has_ticket</code> = True, <code>is_vip</code> = False. Write an if statement that checks if age >= 18 AND (has_ticket OR is_vip). If true, print "You can enter!".</p>
+                  <p class="hint-text">Use parentheses to group the OR condition: (has_ticket or is_vip)</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-2/nested-conditionals.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-2/introduction-loops.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'age = 20\nhas_license = True\nhas_insurance = True\nif age >= 18 and has_license and has_insurance:\n    print("You can drive legally!")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for age variable
+            if (!trimmed.includes('age') || !trimmed.includes('20')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable age with value 20.',
+                hints: ['Write: age = 20']
+              };
+            }
+            
+            // Check for has_license variable
+            if (!trimmed.includes('has_license') || (!trimmed.includes('True') && !trimmed.includes('true'))) {
+              return {
+                correct: false,
+                message: 'You need to create a variable has_license with value True.',
+                hints: ['Write: has_license = True', 'Note: True starts with capital T']
+              };
+            }
+            
+            // Check for has_insurance variable
+            if (!trimmed.includes('has_insurance') || (!trimmed.includes('True') && !trimmed.includes('true'))) {
+              return {
+                correct: false,
+                message: 'You need to create a variable has_insurance with value True.',
+                hints: ['Write: has_insurance = True']
+              };
+            }
+            
+            // Check for if statement
+            if (!trimmed.includes('if')) {
+              return {
+                correct: false,
+                message: 'You need to write an if statement.',
+                hints: ['Start with: if age >= 18 and has_license and has_insurance:', 'Don\'t forget the colon']
+              };
+            }
+            
+            // Check for all three conditions with and
+            if (!trimmed.includes('age >= 18') || !trimmed.includes('has_license') || !trimmed.includes('has_insurance')) {
+              return {
+                correct: false,
+                message: 'You need to check all three conditions: age >= 18, has_license, and has_insurance.',
+                hints: ['Use: if age >= 18 and has_license and has_insurance:', 'Make sure all three conditions are included']
+              };
+            }
+            
+            // Check for and operators (should have at least 2)
+            const andCount = (trimmed.match(/\band\b/g) || []).length;
+            if (andCount < 2) {
+              return {
+                correct: false,
+                message: 'You need to use the and operator to combine all three conditions.',
+                hints: ['Use and between each condition', 'Write: age >= 18 and has_license and has_insurance']
+              };
+            }
+            
+            // Check for print statement
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print "You can drive legally!".',
+                hints: ['Add a print statement inside the if block', 'Make sure it\'s indented', 'Print: "You can drive legally!"']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have a colon after if', 'Check your indentation']
+              };
+            }
+            
+            // Check output contains the message
+            const outputText = output.stdout || '';
+            if (!outputText.includes('drive') && !outputText.includes('Drive')) {
+              return {
+                correct: false,
+                message: 'Your code should print "You can drive legally!" when all conditions are True.',
+                hints: ['Check your print statement', 'Make sure it prints "You can drive legally!"', 'Verify all conditions are True']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully combined multiple conditions using and operators.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'age = 20\nhas_ticket = True\nis_vip = False\nif age >= 18 and (has_ticket or is_vip):\n    print("You can enter!")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for age variable
+            if (!trimmed.includes('age') || !trimmed.includes('20')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable age with value 20.',
+                hints: ['Write: age = 20']
+              };
+            }
+            
+            // Check for has_ticket variable
+            if (!trimmed.includes('has_ticket') || (!trimmed.includes('True') && !trimmed.includes('true'))) {
+              return {
+                correct: false,
+                message: 'You need to create a variable has_ticket with value True.',
+                hints: ['Write: has_ticket = True']
+              };
+            }
+            
+            // Check for is_vip variable
+            if (!trimmed.includes('is_vip') || (!trimmed.includes('False') && !trimmed.includes('false'))) {
+              return {
+                correct: false,
+                message: 'You need to create a variable is_vip with value False.',
+                hints: ['Write: is_vip = False', 'Note: False starts with capital F']
+              };
+            }
+            
+            // Check for if statement
+            if (!trimmed.includes('if')) {
+              return {
+                correct: false,
+                message: 'You need to write an if statement.',
+                hints: ['Start with: if age >= 18 and (has_ticket or is_vip):']
+              };
+            }
+            
+            // Check for parentheses
+            if (!trimmed.includes('(') || !trimmed.includes(')')) {
+              return {
+                correct: false,
+                message: 'You need to use parentheses to group the OR condition.',
+                hints: ['Write: (has_ticket or is_vip)', 'The parentheses group the OR part']
+              };
+            }
+            
+            // Check for and operator
+            if (!trimmed.includes('and')) {
+              return {
+                correct: false,
+                message: 'You need to use the and operator.',
+                hints: ['Use: if age >= 18 and (has_ticket or is_vip):', 'The and connects age >= 18 with the parenthesized part']
+              };
+            }
+            
+            // Check for or operator
+            if (!trimmed.includes('or')) {
+              return {
+                correct: false,
+                message: 'You need to use the or operator.',
+                hints: ['Inside the parentheses, use: has_ticket or is_vip', 'The or means "at least one must be true"']
+              };
+            }
+            
+            // Check for print statement
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print "You can enter!".',
+                hints: ['Add a print statement inside the if block', 'Make sure it\'s indented', 'Print: "You can enter!"']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure parentheses are balanced', 'Check your indentation']
+              };
+            }
+            
+            // Check output contains the message
+            const outputText = output.stdout || '';
+            if (!outputText.includes('enter') && !outputText.includes('Enter')) {
+              return {
+                correct: false,
+                message: 'Your code should print "You can enter!" when the condition is True.',
+                hints: ['Check your print statement', 'Make sure it prints "You can enter!"', 'Verify your condition is correct']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used parentheses to group conditions and combined them with and.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

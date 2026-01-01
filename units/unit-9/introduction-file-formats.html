@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 9 • Introduction to File Formats (CSV, JSON, and Excel) • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 9 • Advanced Topics</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-9/recursion-problem-decomposition.html">1. Recursion and Problem Decomposition</a></li>
+                <li><a class="" href="/units/unit-9/working-with-external-libraries.html">2. Working with External Libraries</a></li>
+                <li><a class="" href="/units/unit-9/apis-data-retrieval.html">3. APIs and Data Retrieval</a></li>
+                <li><a class="" href="/units/unit-9/introduction-json-data-parsing.html">4. Introduction to JSON and Data Parsing</a></li>
+                <li><a class="" href="/units/unit-9/efficiency-big-o-basics.html">5. Efficiency and Big-O Basics</a></li>
+                <li><a class="" href="/units/unit-9/working-with-dates-times.html">6. Working with Dates and Times</a></li>
+                <li><a class="" href="/units/unit-9/data-visualization-matplotlib.html">7. Data Visualization with Matplotlib</a></li>
+                <li><a class="" href="/units/unit-9/basic-automation-python.html">8. Basic Automation with Python</a></li>
+                <li><a class="active" href="/units/unit-9/introduction-file-formats.html">9. Introduction to File Formats (CSV, JSON, and Excel)</a></li>
+                <li><a class="" href="/units/unit-9/applying-advanced-concepts.html">10. Applying Advanced Concepts Together</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-9.html">Unit 9</a>
+              <span class="separator">/</span>
+              <span class="current">Introduction to File Formats (CSV, JSON, and Excel)</span>
+            </nav>
+            <div class="eyebrow">Unit 9 • Lesson 9</div>
+            <h1 class="lesson-title">Introduction to File Formats (CSV, JSON, and Excel)</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Data often comes in structured file formats. You'll practice reading and writing CSV, JSON, and Excel files with Python libraries like <code>csv</code> and <code>pandas</code> to prepare for real-world data handling, working with common data sources.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">30–40 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-9/applying-advanced-concepts.html">Next: Applying Advanced Concepts Together</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>CSV files:</strong> Comma-separated values format for tabular data.</li>
+                  <li><strong>JSON files:</strong> Structured data format for APIs and configs.</li>
+                  <li><strong>Excel files:</strong> Spreadsheet format with formatting.</li>
+                  <li><strong>Reading files:</strong> How to read data from each format.</li>
+                  <li><strong>Writing files:</strong> How to write data to each format.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>Common File Formats</h2>
+                <p>Different file formats serve different purposes:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>CSV</h4>
+                    <p>Simple text format, comma-separated values, good for spreadsheets and data exchange</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>JSON</h4>
+                    <p>Structured text format, hierarchical data, commonly used in APIs and configs</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Excel</h4>
+                    <p>Binary format, complex formatting, good for rich spreadsheets with formulas</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Working with CSV Files</h2>
+                <p>CSV (Comma-Separated Values) files are simple text files that store tabular data. Python's built-in <code>csv</code> module makes working with CSV files easy:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Reading CSV with csv.reader()</div>
+                  <pre class="code"><code>import csv
+
+# Reading CSV as lists
+with open('data.csv', 'r') as file:
+    reader = csv.reader(file)
+    header = next(reader)  # Read header row
+    print(f"Columns: {header}")
+    
+    for row in reader:
+        print(row)  # Each row is a list</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Reading CSV with csv.DictReader()</div>
+                  <pre class="code"><code>import csv
+
+# Reading CSV as dictionaries (easier to work with)
+with open('data.csv', 'r') as file:
+    reader = csv.DictReader(file)
+    for row in reader:
+        print(f"Name: {row['name']}, Age: {row['age']}")
+        # Access columns by name instead of index</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Writing CSV Files</div>
+                  <pre class="code"><code>import csv
+
+# Writing CSV
+data = [
+    ['Name', 'Age', 'City'],
+    ['Alice', 25, 'New York'],
+    ['Bob', 30, 'Los Angeles'],
+    ['Charlie', 35, 'Chicago']
+]
+
+with open('output.csv', 'w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerows(data)  # Write all rows at once
+
+# Or write row by row
+with open('output2.csv', 'w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(['Name', 'Age'])  # Header
+    writer.writerow(['Alice', 25])
+    writer.writerow(['Bob', 30])</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>CSV File Format</h4>
+                  <p>A CSV file looks like this:</p>
+                  <pre class="code" style="margin-top: 8px;"><code>Name,Age,City
+Alice,25,New York
+Bob,30,Los Angeles
+Charlie,35,Chicago</code></pre>
+                  <p style="margin-top: 8px;">Each line is a row, and values are separated by commas. The first line is usually the header.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Working with JSON Files</h2>
+                <p>JSON files store structured data. We covered JSON parsing earlier, but here's how to work with JSON files:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Reading and Writing JSON Files</div>
+                  <pre class="code"><code>import json
+
+# Reading JSON file
+with open('data.json', 'r') as file:
+    data = json.load(file)  # Loads entire file as Python object
+    print(data)
+
+# Writing JSON file
+data_to_save = {
+    'users': [
+        {'name': 'Alice', 'age': 25},
+        {'name': 'Bob', 'age': 30}
+    ],
+    'total': 2
+}
+
+with open('output.json', 'w') as file:
+    json.dump(data_to_save, file, indent=2)  # indent=2 for pretty formatting</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>JSON vs CSV</h4>
+                  <p>JSON is better for nested/hierarchical data, while CSV is better for simple tabular data. JSON preserves data types (numbers, booleans), while CSV treats everything as text.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Working with Excel Files</h2>
+                <p>For Excel files (.xlsx), use the <code>pandas</code> library, which provides powerful data manipulation capabilities:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Reading Excel Files</div>
+                  <pre class="code"><code>import pandas as pd
+
+# Reading Excel file
+df = pd.read_excel('data.xlsx')
+
+# Display first few rows
+print(df.head())
+
+# Access specific columns
+print(df['Name'])
+print(df['Age'])
+
+# Filter data
+young_people = df[df['Age'] < 30]
+print(young_people)</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Writing Excel Files</div>
+                  <pre class="code"><code>import pandas as pd
+
+# Create DataFrame
+data = {
+    'Name': ['Alice', 'Bob', 'Charlie'],
+    'Age': [25, 30, 35],
+    'City': ['New York', 'Los Angeles', 'Chicago']
+}
+df = pd.DataFrame(data)
+
+# Write to Excel
+df.to_excel('output.xlsx', index=False)  # index=False removes row numbers
+
+# Write to specific sheet
+df.to_excel('output.xlsx', sheet_name='Users', index=False)</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Installing Required Libraries</h4>
+                  <p>For Excel files, install pandas and openpyxl:</p>
+                  <pre class="code" style="margin-top: 8px;"><code>pip install pandas openpyxl</code></pre>
+                  <p style="margin-top: 8px;"><strong>pandas</strong> provides DataFrames for data manipulation, and <strong>openpyxl</strong> handles Excel file reading/writing.</p>
+                </div>
+
+                <div class="info-callout">
+                  <h4>When to Use Each Format</h4>
+                  <ul>
+                    <li><strong>CSV:</strong> Simple tabular data, easy to share, works everywhere</li>
+                    <li><strong>JSON:</strong> Structured/nested data, APIs, configuration files</li>
+                    <li><strong>Excel:</strong> Complex spreadsheets with formatting, formulas, multiple sheets</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: Working with File Formats</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try simulating CSV and JSON operations:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'import json\n\n# Simulate CSV data\ncsv_data = [\n    [\"Name\", \"Age\"],\n    [\"Alice\", 25],\n    [\"Bob\", 30]\n]\n\nprint(\"CSV Data:\")\nfor row in csv_data:\n    print(\", \".join(str(x) for x in row))\n\n# Simulate JSON data\njson_data = {\n    \"users\": [\n        {\"name\": \"Alice\", \"age\": 25},\n        {\"name\": \"Bob\", \"age\": 30}\n    ]\n}\n\nprint(\"\\nJSON Data:\")\nprint(json.dumps(json_data, indent=2))')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">import json
+
+# Simulate CSV data
+csv_data = [
+    ["Name", "Age"],
+    ["Alice", 25],
+    ["Bob", 30]
+]
+
+print("CSV Data:")
+for row in csv_data:
+    print(", ".join(str(x) for x in row))
+
+# Simulate JSON data
+json_data = {
+    "users": [
+        {"name": "Alice", "age": 25},
+        {"name": "Bob", "age": 30}
+    ]
+}
+
+print("\nJSON Data:")
+print(json.dumps(json_data, indent=2))</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You simulated working with CSV (tabular) and JSON (structured) data formats. In real programs, you would use <code>csv</code> module for CSV files and <code>json</code> module for JSON files.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>CSV:</strong> Simple text format for tabular data</li>
+                  <li><strong>JSON:</strong> Structured format for hierarchical data</li>
+                  <li><strong>Excel:</strong> Binary format for rich spreadsheets</li>
+                  <li><strong>Reading:</strong> Use csv module for CSV, pandas for Excel</li>
+                  <li><strong>Writing:</strong> Use csv module for CSV, pandas for Excel</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>Choose the right format for your data. CSV for simple tables, JSON for structured data exchange, Excel for complex spreadsheets with formatting.</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: File Formats</h3>
+                  <p>What are the differences between CSV, JSON, and Excel files? When would you use each?</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Working with Files</h3>
+                  <p>How do you read and write CSV files? How about Excel files?</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-9/basic-automation-python.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-9/applying-advanced-concepts.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

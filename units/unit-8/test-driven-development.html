@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 8 • Test-Driven Development (TDD) • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 8 • Testing & Debugging</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-8/what-is-debugging.html">1. What Is Debugging and Why It Matters</a></li>
+                <li><a class="" href="/units/unit-8/common-types-errors.html">2. Common Types of Errors</a></li>
+                <li><a class="" href="/units/unit-8/print-statements-debugging.html">3. Using Print Statements for Debugging</a></li>
+                <li><a class="" href="/units/unit-8/breakpoints-debuggers.html">4. Using Breakpoints and Debuggers</a></li>
+                <li><a class="" href="/units/unit-8/understanding-tracebacks.html">5. Understanding Tracebacks and Error Messages</a></li>
+                <li><a class="" href="/units/unit-8/writing-running-tests.html">6. Writing and Running Tests</a></li>
+                <li><a class="" href="/units/unit-8/introduction-unittest.html">7. Introduction to the unittest Module</a></li>
+                <li><a class="active" href="/units/unit-8/test-driven-development.html">8. Test-Driven Development (TDD)</a></li>
+                <li><a class="" href="/units/unit-8/debugging-logical-runtime-errors.html">9. Debugging Logical and Runtime Errors</a></li>
+                <li><a class="" href="/units/unit-8/maintaining-code-quality.html">10. Maintaining Code Quality Through Continuous Testing</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-8.html">Unit 8</a>
+              <span class="separator">/</span>
+              <span class="current">Test-Driven Development (TDD)</span>
+            </nav>
+            <div class="eyebrow">Unit 8 • Lesson 8</div>
+            <h1 class="lesson-title">Test-Driven Development (TDD)</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>TDD encourages writing tests before the code itself. You'll explore how this approach promotes cleaner design, reduces debugging time, and helps maintain long-term project stability, adopting a professional development methodology.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">25–30 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-8/debugging-logical-runtime-errors.html">Next: Debugging Logical and Runtime Errors</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What TDD is:</strong> Test-Driven Development methodology.</li>
+                  <li><strong>The TDD cycle:</strong> Red, Green, Refactor.</li>
+                  <li><strong>Writing tests first:</strong> Benefits of test-first development.</li>
+                  <li><strong>TDD benefits:</strong> How TDD improves code quality.</li>
+                  <li><strong>When to use TDD:</strong> Appropriate situations for TDD.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>What Is Test-Driven Development?</h2>
+                <p><strong>Test-Driven Development (TDD)</strong> is a development methodology where you write tests <em>before</em> writing the actual code. This might seem backwards, but it leads to better-designed, more reliable code.</p>
+
+                <div class="info-card">
+                  <h4>The TDD Cycle</h4>
+                  <p>TDD follows a simple three-step cycle:</p>
+                  <ol>
+                    <li><strong>Red:</strong> Write a failing test</li>
+                    <li><strong>Green:</strong> Write code to make the test pass</li>
+                    <li><strong>Refactor:</strong> Improve the code while keeping tests passing</li>
+                  </ol>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">TDD Example</div>
+                  <pre class="code"><code># Step 1: RED - Write failing test
+def test_calculate_total():
+    assert calculate_total(10, 5) == 50  # This will fail!
+
+# Step 2: GREEN - Write minimal code to pass
+def calculate_total(price, quantity):
+    return price * quantity  # Now test passes!
+
+# Step 3: REFACTOR - Improve if needed
+# Code already simple, no refactoring needed</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>The TDD Process</h2>
+                <p>Let's break down the TDD cycle:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Red: Write Failing Test</h4>
+                      <p>Write a test for the feature you want. It will fail because the code doesn't exist yet. This clarifies what you're building.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Green: Make It Pass</h4>
+                      <p>Write the minimum code needed to make the test pass. Don't worry about perfection yet—just make it work.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Refactor: Improve</h4>
+                      <p>Now that tests pass, improve the code. Clean it up, remove duplication, improve readability. Tests ensure you don't break anything.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Repeat</h4>
+                      <p>Start the cycle again for the next feature or improvement.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Benefits of TDD</h2>
+                <p>TDD offers many advantages:</p>
+
+                <div class="feature-grid">
+                  <div class="feature-card">
+                    <h4>Better Design</h4>
+                    <p>Writing tests first forces you to think about how code will be used, leading to better interfaces.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Fewer Bugs</h4>
+                    <p>Tests catch bugs immediately, before they compound into bigger problems.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Confidence</h4>
+                    <p>When tests pass, you know your code works. You can refactor fearlessly.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Documentation</h4>
+                    <p>Tests serve as executable documentation showing how code should work.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Faster Development</h4>
+                    <p>While TDD seems slower, it actually speeds up development by catching bugs early.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Regression Prevention</h4>
+                    <p>Tests prevent old bugs from coming back when you make changes.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>TDD:</strong> Write tests before code</li>
+                  <li><strong>Cycle:</strong> Red → Green → Refactor</li>
+                  <li><strong>Benefits:</strong> Better design, fewer bugs, more confidence</li>
+                  <li><strong>Process:</strong> Test first, code second, refactor third</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>TDD is a powerful methodology used by professional developers. Start with small features and practice the cycle. Over time, TDD becomes natural and significantly improves code quality!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: TDD</h3>
+                  <p>What is Test-Driven Development? What is the TDD cycle?</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: TDD Benefits</h3>
+                  <p>What are the benefits of writing tests before code? How does TDD improve development?</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-8/introduction-unittest.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-8/debugging-logical-runtime-errors.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

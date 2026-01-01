@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 6 • The super() Function - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 6 • The super() Function • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 6 • Object-Oriented Programming</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-6/introduction-oop-concepts.html">1. Introduction to OOP Concepts</a></li>
+                <li><a class="" href="/units/unit-6/defining-creating-classes.html">2. Defining and Creating Classes</a></li>
+                <li><a class="" href="/units/unit-6/creating-using-objects.html">3. Creating and Using Objects</a></li>
+                <li><a class="" href="/units/unit-6/instance-variables-methods.html">4. Instance Variables and Methods</a></li>
+                <li><a class="" href="/units/unit-6/class-variables-class-methods.html">5. Class Variables and Class Methods</a></li>
+                <li><a class="" href="/units/unit-6/encapsulation-access-control.html">6. Encapsulation and Access Control</a></li>
+                <li><a class="" href="/units/unit-6/inheritance-subclasses.html">7. Inheritance and Subclasses</a></li>
+                <li><a class="" href="/units/unit-6/polymorphism-method-overriding.html">8. Polymorphism and Method Overriding</a></li>
+                <li><a class="active" href="/units/unit-6/super-function.html">9. The super() Function</a></li>
+                <li><a class="" href="/units/unit-6/oop-real-projects.html">10. OOP in Real Projects</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-6.html">Unit 6</a>
+              <span class="separator">/</span>
+              <span class="current">The super() Function</span>
+            </nav>
+            <div class="eyebrow">Unit 6 • Lesson 9</div>
+            <h1 class="lesson-title">The super() Function</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>super() gives you access to a parent class's methods from a child class. You'll use it to extend base functionality and avoid code duplication when working with inherited classes, creating more maintainable inheritance hierarchies.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-6/oop-real-projects.html">Next: OOP in Real Projects</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What super() is:</strong> Understand what the super() function does and why it's useful.</li>
+                  <li><strong>Calling parent methods:</strong> Learn how to call parent class methods from a child class.</li>
+                  <li><strong>Extending functionality:</strong> See how super() helps you extend parent methods instead of replacing them.</li>
+                  <li><strong>Multiple inheritance:</strong> Understand how super() works with multiple parent classes.</li>
+                  <li><strong>Real-world examples:</strong> Practice using super() in practical scenarios.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>Understanding super()</h2>
+                <p>When you override a method in a subclass, you completely replace the parent's version. But sometimes, you want to <strong>extend</strong> the parent method — keep what it does, but add more functionality. That's where <code>super()</code> comes in.</p>
+                
+                <div class="info-card">
+                  <h3>What is super()?</h3>
+                  <p><code>super()</code> is a built-in Python function that gives you access to methods and attributes from a parent class. It's like saying "do what my parent does, then do my own thing too."</p>
+                </div>
+
+                <div class="code-example">
+                  <h3>Example: Without super()</h3>
+                  <p>Imagine you have a parent class that initializes some attributes, and a child class that needs to add more:</p>
+                  <pre class="code"><code>class Animal:
+    def __init__(self, name):
+        self.name = name
+        print(f"Animal {self.name} created")
+
+class Dog(Animal):
+    def __init__(self, name, breed):
+        self.name = name  # Duplicating parent code!
+        print(f"Animal {self.name} created")  # Duplicating parent code!
+        self.breed = breed
+        print(f"Dog {self.name} is a {self.breed}")
+
+dog = Dog("Buddy", "Golden Retriever")</code></pre>
+                  <p>This works, but we're duplicating code from the parent class. If the parent class changes, we'd have to update the child class too.</p>
+                </div>
+
+                <div class="code-example">
+                  <h3>Example: With super()</h3>
+                  <p>Now let's use <code>super()</code> to call the parent's <code>__init__</code> method:</p>
+                  <pre class="code"><code>class Animal:
+    def __init__(self, name):
+        self.name = name
+        print(f"Animal {self.name} created")
+
+class Dog(Animal):
+    def __init__(self, name, breed):
+        super().__init__(name)  # Call parent's __init__
+        self.breed = breed
+        print(f"Dog {self.name} is a {self.breed}")
+
+dog = Dog("Buddy", "Golden Retriever")</code></pre>
+                  <p>Much cleaner! The parent class handles its own initialization, and the child class adds its own attributes.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>How super() Works</h2>
+                <p><code>super()</code> returns a temporary object that represents the parent class. When you call a method on it, Python looks up the method in the parent class and executes it.</p>
+
+                <div class="code-example">
+                  <h3>Syntax</h3>
+                  <pre class="code"><code>super().method_name(arguments)</code></pre>
+                  <p>Inside a method, <code>super()</code> automatically knows which parent class to use based on the current class.</p>
+                </div>
+
+                <div class="practice-box">
+                  <h3>Try It Yourself</h3>
+                  <p>Run this code to see how super() calls the parent method:</p>
+                  <textarea id="editor-practice1" class="code-editor-small">class Vehicle:
+    def start(self):
+        print("Vehicle engine started")
+
+class Car(Vehicle):
+    def start(self):
+        super().start()  # Call parent's start()
+        print("Car is ready to drive")
+
+car = Car()
+car.start()</textarea>
+                  <div class="editor-controls">
+                    <button onclick="runEditorCode('practice1')" class="btn btn-primary">Run Code</button>
+                    <button onclick="resetEditor('practice1', 'class Vehicle:\n    def start(self):\n        print(\"Vehicle engine started\")\n\nclass Car(Vehicle):\n    def start(self):\n        super().start()  # Call parent\'s start()\n        print(\"Car is ready to drive\")\n\ncar = Car()\ncar.start()')" class="btn btn-ghost">Reset</button>
+                  </div>
+                  <div id="output-practice1" class="code-output">Click "Run Code" to see your output here</div>
+                </div>
+
+                <div class="info-callout">
+                  <h4>What happened?</h4>
+                  <p>When you call <code>car.start()</code>, Python first calls the parent's <code>start()</code> method (via <code>super().start()</code>), which prints "Vehicle engine started". Then it continues with the child's code, printing "Car is ready to drive". This is called <strong>extending</strong> the parent method.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Extending Parent Methods</h2>
+                <p>The most common use of <code>super()</code> is in the <code>__init__</code> method. When a child class needs to initialize its own attributes, it should first call the parent's <code>__init__</code> to set up inherited attributes.</p>
+
+                <div class="code-example">
+                  <h3>Example: Extending __init__</h3>
+                  <pre class="code"><code>class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+    
+    def introduce(self):
+        return f"Hi, I'm {self.name}, {self.age} years old"
+
+class Student(Person):
+    def __init__(self, name, age, student_id):
+        super().__init__(name, age)  # Initialize parent attributes
+        self.student_id = student_id  # Add child-specific attribute
+    
+    def introduce(self):
+        parent_intro = super().introduce()  # Get parent's introduction
+        return f"{parent_intro}. My student ID is {self.student_id}"
+
+student = Student("Alice", 20, "S12345")
+print(student.introduce())</code></pre>
+                </div>
+
+                <div class="practice-box">
+                  <h3>Try It Yourself</h3>
+                  <p>Create a <code>Teacher</code> class that extends <code>Person</code> and adds a <code>subject</code> attribute:</p>
+                  <textarea id="editor-practice2" class="code-editor-small">class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+class Teacher(Person):
+    def __init__(self, name, age, subject):
+        # Your code here: call super().__init__() and add subject
+        pass
+
+teacher = Teacher("Mr. Smith", 35, "Math")
+print(f"{teacher.name} teaches {teacher.subject}")</textarea>
+                  <div class="editor-controls">
+                    <button onclick="runEditorCode('practice2')" class="btn btn-primary">Run Code</button>
+                    <button onclick="resetEditor('practice2', 'class Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\n\nclass Teacher(Person):\n    def __init__(self, name, age, subject):\n        # Your code here: call super().__init__() and add subject\n        pass\n\nteacher = Teacher(\"Mr. Smith\", 35, \"Math\")\nprint(f\"{teacher.name} teaches {teacher.subject}\")')" class="btn btn-ghost">Reset</button>
+                  </div>
+                  <div id="output-practice2" class="code-output">Click "Run Code" to see your output here</div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>super() with Regular Methods</h2>
+                <p>You can use <code>super()</code> with any method, not just <code>__init__</code>. This is useful when you want to add functionality to a parent method without completely replacing it.</p>
+
+                <div class="code-example">
+                  <h3>Example: Extending a Regular Method</h3>
+                  <pre class="code"><code>class Shape:
+    def area(self):
+        return 0
+    
+    def describe(self):
+        return f"This shape has an area of {self.area()}"
+
+class Rectangle(Shape):
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+    
+    def area(self):
+        return self.width * self.height
+    
+    def describe(self):
+        parent_desc = super().describe()  # Get parent's description
+        return f"{parent_desc}. It's a rectangle with width {self.width} and height {self.height}"
+
+rect = Rectangle(5, 3)
+print(rect.describe())</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>Key Point</h4>
+                  <p>Notice that <code>super().describe()</code> calls the parent's <code>describe()</code> method, which in turn calls <code>self.area()</code>. But since <code>self</code> is a <code>Rectangle</code> object, Python uses the overridden <code>area()</code> method from the <code>Rectangle</code> class, not the parent's version. This is polymorphism in action!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>super() in Multiple Inheritance</h2>
+                <p>When a class inherits from multiple parents, <code>super()</code> follows Python's Method Resolution Order (MRO) to determine which parent to call. This ensures methods are called in a consistent order.</p>
+
+                <div class="code-example">
+                  <h3>Example: Multiple Inheritance</h3>
+                  <pre class="code"><code>class A:
+    def method(self):
+        print("A's method")
+
+class B:
+    def method(self):
+        print("B's method")
+
+class C(A, B):
+    def method(self):
+        super().method()  # Calls A's method (first in MRO)
+        print("C's method")
+
+c = C()
+c.method()</code></pre>
+                  <p>Python determines the order based on how classes are listed in the inheritance: <code>class C(A, B)</code> means A comes before B in the MRO.</p>
+                </div>
+
+                <div class="info-callout">
+                  <h4>Note</h4>
+                  <p>Multiple inheritance can be complex. For now, focus on single inheritance (one parent class). When you're comfortable with that, you can explore multiple inheritance more deeply.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Common Patterns with super()</h2>
+                <p>Here are some common ways you'll use <code>super()</code> in real code:</p>
+
+                <div class="code-example">
+                  <h3>Pattern 1: Initialization Chain</h3>
+                  <pre class="code"><code>class Base:
+    def __init__(self):
+        print("Base initialized")
+
+class Middle(Base):
+    def __init__(self):
+        super().__init__()
+        print("Middle initialized")
+
+class Top(Middle):
+    def __init__(self):
+        super().__init__()
+        print("Top initialized")
+
+obj = Top()</code></pre>
+                  <p>This creates a chain: Top → Middle → Base. Each class initializes itself and then calls the parent.</p>
+                </div>
+
+                <div class="code-example">
+                  <h3>Pattern 2: Adding Validation</h3>
+                  <pre class="code"><code>class BankAccount:
+    def __init__(self, balance):
+        self.balance = balance
+    
+    def withdraw(self, amount):
+        self.balance -= amount
+        return self.balance
+
+class SavingsAccount(BankAccount):
+    def withdraw(self, amount):
+        if amount > self.balance:
+            raise ValueError("Insufficient funds")
+        return super().withdraw(amount)  # Call parent after validation
+
+account = SavingsAccount(100)
+print(account.withdraw(50))
+print(account.withdraw(60))  # This will raise an error</code></pre>
+                  <p>The child class adds validation, then calls the parent method to do the actual work.</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Complete these exercises to practice using <code>super()</code>:</p>
+
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h3>Exercise 1: Extend Animal Class</h3>
+                  <p>Create a <code>Cat</code> class that extends <code>Animal</code>. The <code>Cat</code> should call the parent's <code>__init__</code> using <code>super()</code> and add a <code>color</code> attribute. Then override the <code>make_sound()</code> method to print "Meow" but also call the parent's <code>make_sound()</code> first.</p>
+                  <textarea id="editor-exercise1" class="code-editor-small"></textarea>
+                  <div class="editor-controls">
+                    <button onclick="checkExercise('exercise1')" class="btn btn-primary">Check Answer</button>
+                    <button onclick="showSolution('exercise1')" class="btn btn-ghost">Show Solution</button>
+                    <button onclick="resetExercise('exercise1')" class="btn btn-ghost">Reset</button>
+                  </div>
+                  <div id="output-exercise1" class="code-output">Write your code above and click "Check Answer" to verify it's correct.</div>
+                  <div id="feedback-exercise1" class="exercise-feedback"></div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h3>Exercise 2: Extend Employee Class</h3>
+                  <p>Create a <code>Manager</code> class that extends <code>Employee</code>. Use <code>super()</code> to call the parent's <code>__init__</code> and add a <code>team_size</code> attribute. Override the <code>get_info()</code> method to include the team size in the output, but first get the parent's info using <code>super()</code>.</p>
+                  <textarea id="editor-exercise2" class="code-editor-small"></textarea>
+                  <div class="editor-controls">
+                    <button onclick="checkExercise('exercise2')" class="btn btn-primary">Check Answer</button>
+                    <button onclick="showSolution('exercise2')" class="btn btn-ghost">Show Solution</button>
+                    <button onclick="resetExercise('exercise2')" class="btn btn-ghost">Reset</button>
+                  </div>
+                  <div id="output-exercise2" class="code-output">Write your code above and click "Check Answer" to verify it's correct.</div>
+                  <div id="feedback-exercise2" class="exercise-feedback"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-6/polymorphism-method-overriding.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-6/oop-real-projects.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'class Animal:\n    def __init__(self, name):\n        self.name = name\n    \n    def make_sound(self):\n        print(f"{self.name} makes a sound")\n\nclass Cat(Animal):\n    def __init__(self, name, color):\n        super().__init__(name)\n        self.color = color\n    \n    def make_sound(self):\n        super().make_sound()\n        print("Meow")\n\ncat = Cat("Whiskers", "orange")\ncat.make_sound()\nprint(f"Color: {cat.color}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('class Animal')) {
+              return {
+                correct: false,
+                message: 'You need to create an Animal class.',
+                hints: ['Define: class Animal:', 'Add __init__ and make_sound methods']
+              };
+            }
+            
+            if (!trimmed.includes('class Cat(Animal)') && !trimmed.includes('Cat(Animal)')) {
+              return {
+                correct: false,
+                message: 'You need to create a Cat class that inherits from Animal.',
+                hints: ['Define: class Cat(Animal):']
+              };
+            }
+            
+            if (!trimmed.includes('super().__init__')) {
+              return {
+                correct: false,
+                message: 'You need to call super().__init__() in Cat\'s __init__ method.',
+                hints: ['In Cat.__init__: super().__init__(name)']
+              };
+            }
+            
+            if (!trimmed.includes('self.color')) {
+              return {
+                correct: false,
+                message: 'You need to add a color attribute in Cat.',
+                hints: ['Add: self.color = color']
+              };
+            }
+            
+            if (!trimmed.includes('super().make_sound()')) {
+              return {
+                correct: false,
+                message: 'You need to call super().make_sound() in Cat\'s make_sound method.',
+                hints: ['In Cat.make_sound: super().make_sound()']
+              };
+            }
+            
+            if (!trimmed.includes('print("Meow")') && !trimmed.includes("print('Meow')")) {
+              return {
+                correct: false,
+                message: 'You need to print "Meow" in Cat\'s make_sound method.',
+                hints: ['Add: print("Meow")']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure indentation is correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('Meow')) {
+              return {
+                correct: false,
+                message: 'The output should include "Meow".',
+                hints: ['Make sure you call cat.make_sound()']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used super() to extend parent methods.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'class Employee:\n    def __init__(self, name, position):\n        self.name = name\n        self.position = position\n    \n    def get_info(self):\n        return f"{self.name} - {self.position}"\n\nclass Manager(Employee):\n    def __init__(self, name, position, team_size):\n        super().__init__(name, position)\n        self.team_size = team_size\n    \n    def get_info(self):\n        parent_info = super().get_info()\n        return f"{parent_info} (Team size: {self.team_size})"\n\nmanager = Manager("Sarah", "Project Manager", 5)\nprint(manager.get_info())',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('class Employee')) {
+              return {
+                correct: false,
+                message: 'You need to create an Employee class.',
+                hints: ['Define: class Employee:', 'Add __init__ and get_info methods']
+              };
+            }
+            
+            if (!trimmed.includes('class Manager(Employee)') && !trimmed.includes('Manager(Employee)')) {
+              return {
+                correct: false,
+                message: 'You need to create a Manager class that inherits from Employee.',
+                hints: ['Define: class Manager(Employee):']
+              };
+            }
+            
+            if (!trimmed.includes('super().__init__')) {
+              return {
+                correct: false,
+                message: 'You need to call super().__init__() in Manager\'s __init__ method.',
+                hints: ['In Manager.__init__: super().__init__(name, position)']
+              };
+            }
+            
+            if (!trimmed.includes('self.team_size')) {
+              return {
+                correct: false,
+                message: 'You need to add a team_size attribute in Manager.',
+                hints: ['Add: self.team_size = team_size']
+              };
+            }
+            
+            if (!trimmed.includes('super().get_info()')) {
+              return {
+                correct: false,
+                message: 'You need to call super().get_info() in Manager\'s get_info method.',
+                hints: ['In Manager.get_info: parent_info = super().get_info()']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure indentation is correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('Team size') || !outputText.includes('team_size')) {
+              return {
+                correct: false,
+                message: 'The output should include the team size.',
+                hints: ['Make sure you include team_size in the return statement']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used super() to extend parent methods.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

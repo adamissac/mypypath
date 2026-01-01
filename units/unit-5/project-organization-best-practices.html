@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 5 • Project Organization Best Practices - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 5 • Project Organization Best Practices • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 5 • Modules & Packages</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-5/what-are-modules.html">1. What Are Modules?</a></li>
+                <li><a href="/units/unit-5/importing-builtin-modules.html">2. Importing Built-in Modules</a></li>
+                <li><a href="/units/unit-5/creating-your-own-modules.html">3. Creating Your Own Modules</a></li>
+                <li><a href="/units/unit-5/name-main-pattern.html">4. The __name__ == "__main__" Pattern</a></li>
+                <li><a href="/units/unit-5/working-with-packages.html">5. Working with Packages</a></li>
+                <li><a href="/units/unit-5/python-standard-library.html">6. The Python Standard Library</a></li>
+                <li><a href="/units/unit-5/installing-external-packages.html">7. Installing External Packages with pip</a></li>
+                <li><a href="/units/unit-5/virtual-environments.html">8. Virtual Environments and Dependency Management</a></li>
+                <li><a href="/units/unit-5/module-aliases-selective-imports.html">9. Module Aliases and Selective Imports</a></li>
+                <li><a class="active" href="/units/unit-5/project-organization-best-practices.html">10. Project Organization Best Practices</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-5.html">Unit 5</a>
+              <span class="separator">/</span>
+              <span class="current">Project Organization Best Practices</span>
+            </nav>
+            <div class="eyebrow">Unit 5 • Lesson 10</div>
+            <h1 class="lesson-title">Project Organization Best Practices</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Good project structure makes collaboration easier and code more maintainable. You'll learn how to organize files into logical directories, use proper naming conventions, and follow real-world Python package design standards, setting you up for professional development.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">25–30 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-5/module-aliases-selective-imports.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-6.html">Next Unit</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Directory structure:</strong> Learn how to organize files into logical folders.</li>
+                  <li><strong>Naming conventions:</strong> Understand Python naming best practices.</li>
+                  <li><strong>Package structure:</strong> Discover how to structure Python packages properly.</li>
+                  <li><strong>Project templates:</strong> Learn standard project organization patterns.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>As your projects grow, organization becomes critical. A well-organized project is easier to understand, maintain, and share. Following best practices makes your code look professional and helps others (and future you) understand your project quickly. Good organization is a sign of experienced developers!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: Basic Project Structure</h2>
+                <p>Here's a standard way to organize a Python project:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Standard Project Structure</div>
+                  <pre class="code"><code>myproject/
+    ├── README.md              # Project description
+    ├── requirements.txt       # Dependencies
+    ├── setup.py               # Package setup (optional)
+    ├── main.py                # Entry point
+    ├── .gitignore             # Git ignore file
+    ├── src/                   # Source code
+    │   ├── __init__.py
+    │   ├── module1.py
+    │   └── module2.py
+    ├── tests/                 # Test files
+    │   ├── __init__.py
+    │   └── test_module1.py
+    └── docs/                  # Documentation
+        └── README.md</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Root Directory</h4>
+                      <p>The project folder contains configuration files (README.md, requirements.txt) and an entry point (main.py).</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Source Code</h4>
+                      <p>Put your main code in a <code>src</code> folder or directly in the project root. Organize modules logically.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Tests</h4>
+                      <p>Keep test files in a separate <code>tests</code> folder. This keeps code and tests organized.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> A well-organized project has a clear structure. Related files are grouped together, configuration is at the root, and documentation is accessible. This makes it easy to find what you need!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Naming Conventions</h2>
+                <p>Python has conventions for naming files, folders, and code:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Naming Conventions</div>
+                  <pre class="code"><code># File and folder names: lowercase with underscores
+# Good:
+my_module.py
+data_processing.py
+utils/
+
+# Bad:
+MyModule.py
+DataProcessing.py
+Utils/
+
+# Variable and function names: lowercase with underscores
+def calculate_total():
+    user_name = "Alice"
+
+# Class names: PascalCase
+class UserAccount:
+    pass</code></pre>
+                </div>
+
+                <div class="uses-grid">
+                  <div class="feature-grid">
+                    <div class="feature">
+                      <h4>Files and Folders</h4>
+                      <p>Use lowercase with underscores: <code>my_module.py</code>, <code>data_utils/</code></p>
+                    </div>
+                    <div class="feature">
+                      <h4>Variables and Functions</h4>
+                      <p>Use lowercase with underscores: <code>user_name</code>, <code>calculate_total()</code></p>
+                    </div>
+                    <div class="feature">
+                      <h4>Classes</h4>
+                      <p>Use PascalCase: <code>UserAccount</code>, <code>DataProcessor</code></p>
+                    </div>
+                    <div class="feature">
+                      <h4>Constants</h4>
+                      <p>Use UPPERCASE with underscores: <code>MAX_SIZE</code>, <code>DEFAULT_VALUE</code></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Organizing Code</h2>
+                <p>Group related functionality together:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Logical Organization</div>
+                  <pre class="code"><code># Group related functions in modules
+# math_utils.py - all math-related functions
+def add(a, b):
+    return a + b
+
+def multiply(a, b):
+    return a * b
+
+# string_utils.py - all string-related functions
+def capitalize(text):
+    return text.capitalize()
+
+def reverse(text):
+    return text[::-1]</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Organization Principles</h4>
+                  <ul>
+                    <li>Group related code together in modules</li>
+                    <li>Keep modules focused on one purpose</li>
+                    <li>Separate concerns (data processing, UI, business logic)</li>
+                    <li>Use packages for larger projects</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Essential Files</h2>
+                <p>Every project should have these files:</p>
+
+                <div class="uses-grid">
+                  <div class="feature-grid">
+                    <div class="feature">
+                      <h4>README.md</h4>
+                      <p>Describes what the project does and how to use it. Essential for sharing projects!</p>
+                    </div>
+                    <div class="feature">
+                      <h4>requirements.txt</h4>
+                      <p>Lists all package dependencies. Others can install them with <code>pip install -r requirements.txt</code>.</p>
+                    </div>
+                    <div class="feature">
+                      <h4>.gitignore</h4>
+                      <p>Tells Git which files to ignore (like virtual environments, cache files, etc.).</p>
+                    </div>
+                    <div class="feature">
+                      <h4>LICENSE</h4>
+                      <p>Specifies how others can use your code. Important for open-source projects!</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Project Structure Concepts</h4>
+                  <p>Create comments explaining what each folder in a standard project structure contains: <code>src/</code>, <code>tests/</code>, and <code>docs/</code>. Then print a message explaining why good project organization matters.</p>
+                  <p class="hint-text">Write comments explaining each folder, then print an explanation.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Naming Conventions</h4>
+                  <p>Create a comment explaining Python naming conventions. Then create a function with a proper name (using lowercase with underscores) that calculates the square of a number. Call it with 5 and print the result.</p>
+                  <p class="hint-text">Write a comment about naming, then create a function following conventions.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-5/module-aliases-selective-imports.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-6.html">Next Unit</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: '# src/ contains source code modules\n# tests/ contains test files\n# docs/ contains documentation\n\nprint("Good project organization makes code easier to understand, maintain, and share with others.")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('src') && !trimmed.includes('source')) {
+              return {
+                correct: false,
+                message: 'You need to explain what src/ contains.',
+                hints: ['Add comment: # src/ contains source code']
+              };
+            }
+            
+            if (!trimmed.includes('test') && !trimmed.includes('test')) {
+              return {
+                correct: false,
+                message: 'You need to explain what tests/ contains.',
+                hints: ['Add comment: # tests/ contains test files']
+              };
+            }
+            
+            if (!trimmed.includes('doc') && !trimmed.includes('documentation')) {
+              return {
+                correct: false,
+                message: 'You need to explain what docs/ contains.',
+                hints: ['Add comment: # docs/ contains documentation']
+              };
+            }
+            
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print an explanation about project organization.',
+                hints: ['Use print() to explain why organization matters']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure quotes match']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully explained project structure and organization.'
+            };
+          }
+        },
+        exercise2: {
+          solution: '# Python naming: functions use lowercase_with_underscores\n\ndef calculate_square(n):\n    return n ** 2\n\nresult = calculate_square(5)\nprint(f"Square of 5: {result}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('def ') && !trimmed.includes('def ')) {
+              return {
+                correct: false,
+                message: 'You need to create a function with proper naming conventions.',
+                hints: ['Define: def calculate_square(n):', 'Use lowercase_with_underscores']
+              };
+            }
+            
+            if (!trimmed.includes('** 2') && !trimmed.includes('* n')) {
+              return {
+                correct: false,
+                message: 'You need to calculate the square (n ** 2).',
+                hints: ['Return: n ** 2', 'Or: n * n']
+              };
+            }
+            
+            if (!trimmed.includes('5') && !trimmed.includes('calculate_square')) {
+              return {
+                correct: false,
+                message: 'You need to call the function with 5 and print the result.',
+                hints: ['Call: calculate_square(5)', 'Print the result']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure the function returns a value']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('25')) {
+              return {
+                correct: false,
+                message: 'The output should show that the square of 5 is 25.',
+                hints: ['Check your calculation', 'Make sure you print the result']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created a function following Python naming conventions.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

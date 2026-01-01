@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 7 • Opening and Closing Files • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit">
+    <div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 7 • Files & Errors</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-7/introduction-file-handling.html">1. Introduction to File Handling</a></li>
+                <li><a class="active" href="/units/unit-7/opening-closing-files.html">2. Opening and Closing Files</a></li>
+                <li><a class="" href="/units/unit-7/reading-data-from-files.html">3. Reading Data from Files</a></li>
+                <li><a class="" href="/units/unit-7/writing-data-to-files.html">4. Writing Data to Files</a></li>
+                <li><a class="" href="/units/unit-7/working-with-file-paths.html">5. Working with File Paths</a></li>
+                <li><a class="" href="/units/unit-7/with-statement-file-operations.html">6. Using the with Statement for File Operations</a></li>
+                <li><a class="" href="/units/unit-7/understanding-errors-exceptions.html">7. Understanding Errors and Exceptions</a></li>
+                <li><a class="" href="/units/unit-7/try-except-blocks.html">8. The try and except Blocks</a></li>
+                <li><a class="" href="/units/unit-7/raising-customizing-exceptions.html">9. Raising and Customizing Exceptions</a></li>
+                <li><a class="" href="/units/unit-7/file-error-handling-real-projects.html">10. File and Error Handling in Real Projects</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-7.html">Unit 7</a>
+              <span class="separator">/</span>
+              <span class="current">Opening and Closing Files</span>
+            </nav>
+            <div class="eyebrow">Unit 7 • Lesson 2</div>
+            <h1 class="lesson-title">Opening and Closing Files</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Python's built-in <code>open()</code> function allows you to access files in various modes like read ('r'), write ('w'), and append ('a'). You'll also discover the importance of closing files properly to prevent memory leaks and data loss, ensuring reliable file operations.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-7/reading-data-from-files.html">Next: Reading Data from Files</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>How to open files:</strong> Use Python's <code>open()</code> function to access files.</li>
+                  <li><strong>File modes:</strong> Understand read ('r'), write ('w'), and append ('a') modes.</li>
+                  <li><strong>How to close files:</strong> Learn why closing files is important and how to do it.</li>
+                  <li><strong>File objects:</strong> Understand what <code>open()</code> returns and how to use it.</li>
+                  <li><strong>Common mistakes:</strong> Avoid forgetting to close files and using wrong modes.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>The <code>open()</code> Function</h2>
+                <p>Python's <code>open()</code> function is how you tell Python which file you want to work with. It creates a connection between your program and the file on your computer.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Basic Syntax</div>
+                  <pre class="code"><code>file = open("filename.txt", "mode")</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Two Required Arguments</h4>
+                  <ol>
+                    <li><strong>Filename:</strong> The name (and path) of the file you want to open</li>
+                    <li><strong>Mode:</strong> What you want to do with the file (read, write, etc.)</li>
+                  </ol>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Example: Opening a File</div>
+                  <pre class="code"><code># Open a file called "data.txt" for reading
+file = open("data.txt", "r")
+
+# Now you can work with the file
+# ... (we'll learn what to do next)
+
+# Always close when done
+file.close()</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>File Modes</h2>
+                <p>When you open a file, you must specify what you want to do with it. This is called the <strong>file mode</strong>. Python has several modes:</p>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Mode</th>
+                      <th>Name</th>
+                      <th>What It Does</th>
+                      <th>What Happens if File Doesn't Exist</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>'r'</code></td>
+                      <td>Read</td>
+                      <td>Read data from the file</td>
+                      <td>Error (FileNotFoundError)</td>
+                    </tr>
+                    <tr>
+                      <td><code>'w'</code></td>
+                      <td>Write</td>
+                      <td>Write data to the file (overwrites existing content)</td>
+                      <td>Creates a new file</td>
+                    </tr>
+                    <tr>
+                      <td><code>'a'</code></td>
+                      <td>Append</td>
+                      <td>Add data to the end of the file</td>
+                      <td>Creates a new file</td>
+                    </tr>
+                    <tr>
+                      <td><code>'x'</code></td>
+                      <td>Exclusive</td>
+                      <td>Create a new file (fails if file exists)</td>
+                      <td>Creates a new file</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="info-callout">
+                  <h4>Default Mode</h4>
+                  <p>If you don't specify a mode, Python defaults to <code>'r'</code> (read mode). However, it's better to always specify the mode explicitly for clarity.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Opening Files in Different Modes</h2>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Read Mode ('r')</h4>
+                    <p>Use this when you want to read data from an existing file. The file must exist, or you'll get an error.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>file = open("data.txt", "r")
+# Now you can read from the file
+file.close()</code></pre>
+                  </div>
+
+                  <div class="feature-card">
+                    <h4>Write Mode ('w')</h4>
+                    <p>Use this when you want to write data to a file. <strong>Warning:</strong> This will delete all existing content in the file if it already exists!</p>
+                    <pre class="code" style="margin-top: 12px;"><code>file = open("output.txt", "w")
+# Now you can write to the file
+# This will overwrite any existing content
+file.close()</code></pre>
+                  </div>
+
+                  <div class="feature-card">
+                    <h4>Append Mode ('a')</h4>
+                    <p>Use this when you want to add new data to the end of an existing file without deleting what's already there.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>file = open("log.txt", "a")
+# Now you can add new lines to the end
+# Existing content stays intact
+file.close()</code></pre>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>What Does <code>open()</code> Return?</h2>
+                <p>When you call <code>open()</code>, it returns a <strong>file object</strong>. This object represents the connection to your file and has methods you can use to read from or write to it.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Understanding File Objects</div>
+                  <pre class="code"><code># open() returns a file object
+file = open("data.txt", "r")
+
+# You can check what type it is
+print(type(file))  # <class '_io.TextIOWrapper'>
+
+# The file object has methods like read(), write(), close()
+# We'll learn about these in the next lessons
+
+file.close()</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Think of it like this:</strong> The file object is like a handle or a key that gives you access to the file. You use this handle to perform operations on the file.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Why You Must Close Files</h2>
+                <p>Closing files is <strong>very important</strong>. Here's why:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Saves Your Changes</h4>
+                      <p>When you write to a file, Python may not immediately save the data to disk. Closing the file ensures all changes are written.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Frees Resources</h4>
+                      <p>Open files use system resources. Closing them frees up memory and file handles that other programs might need.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Prevents Data Loss</h4>
+                      <p>If your program crashes or you forget to close a file, you might lose data that hasn't been saved yet.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Always Close Files</div>
+                  <pre class="code"><code># Open a file
+file = open("data.txt", "r")
+
+# Do your work with the file
+content = file.read()
+
+# Always close when done!
+file.close()</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Common Mistakes</h2>
+
+                <div class="info-card">
+                  <h4>Mistake 1: Forgetting to Close</h4>
+                  <pre class="code" style="margin-top: 12px;"><code># ❌ BAD: File never closed
+file = open("data.txt", "r")
+content = file.read()
+# Oops! Forgot to close
+
+# ✅ GOOD: Always close
+file = open("data.txt", "r")
+content = file.read()
+file.close()  # Don't forget this!</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Mistake 2: Wrong Mode</h4>
+                  <pre class="code" style="margin-top: 12px;"><code># ❌ BAD: Trying to write in read mode
+file = open("data.txt", "r")
+file.write("Hello")  # Error! Can't write in read mode
+
+# ✅ GOOD: Use write mode for writing
+file = open("data.txt", "w")
+file.write("Hello")  # This works!
+file.close()</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Mistake 3: File Doesn't Exist (Read Mode)</h4>
+                  <pre class="code" style="margin-top: 12px;"><code># ❌ BAD: File doesn't exist
+file = open("nonexistent.txt", "r")  # FileNotFoundError!
+
+# ✅ GOOD: Check if file exists first, or use write/append mode
+# (We'll learn better ways to handle this with try/except later)</code></pre>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: Opening and Closing Files</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try opening a file in different modes. Notice how each mode behaves differently:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Open a file in write mode\nfile = open(&quot;test.txt&quot;, &quot;w&quot;)\nfile.write(&quot;Hello, World!&quot;)\nfile.close()\nprint(&quot;File created and closed successfully&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Open a file in write mode
+file = open("test.txt", "w")
+file.write("Hello, World!")
+file.close()
+print("File created and closed successfully")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You opened a file in write mode, wrote some text to it, and then closed it. The file was created (or overwritten if it existed) with your text.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong><code>open()</code> function:</strong> Opens a file and returns a file object</li>
+                  <li><strong>File modes:</strong> 'r' for reading, 'w' for writing, 'a' for appending</li>
+                  <li><strong>Closing files:</strong> Always call <code>close()</code> when done to save changes and free resources</li>
+                  <li><strong>File objects:</strong> The object returned by <code>open()</code> that you use to interact with the file</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>Always follow this pattern: <strong>Open → Use → Close</strong>. Never forget to close your files!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: File Modes</h3>
+                  <p>What's the difference between 'w' mode and 'a' mode? When would you use each?</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Why Close?</h3>
+                  <p>Explain why it's important to close files after using them.</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-7/introduction-file-handling.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-7/reading-data-from-files.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

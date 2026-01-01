@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 5 • What Are Modules? - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 5 • What Are Modules? • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 5 • Modules & Packages</h3>
+            <nav>
+              <ul>
+                <li><a class="active" href="/units/unit-5/what-are-modules.html">1. What Are Modules?</a></li>
+                <li><a href="/units/unit-5/importing-builtin-modules.html">2. Importing Built-in Modules</a></li>
+                <li><a href="/units/unit-5/creating-your-own-modules.html">3. Creating Your Own Modules</a></li>
+                <li><a href="/units/unit-5/name-main-pattern.html">4. The __name__ == "__main__" Pattern</a></li>
+                <li><a href="/units/unit-5/working-with-packages.html">5. Working with Packages</a></li>
+                <li><a href="/units/unit-5/python-standard-library.html">6. The Python Standard Library</a></li>
+                <li><a href="/units/unit-5/installing-external-packages.html">7. Installing External Packages with pip</a></li>
+                <li><a href="/units/unit-5/virtual-environments.html">8. Virtual Environments and Dependency Management</a></li>
+                <li><a href="/units/unit-5/module-aliases-selective-imports.html">9. Module Aliases and Selective Imports</a></li>
+                <li><a href="/units/unit-5/project-organization-best-practices.html">10. Project Organization Best Practices</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-5.html">Unit 5</a>
+              <span class="separator">/</span>
+              <span class="current">What Are Modules?</span>
+            </nav>
+            <div class="eyebrow">Unit 5 • Lesson 1</div>
+            <h1 class="lesson-title">What Are Modules?</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Modules are Python files that contain reusable code, such as functions and variables, which can be imported into other programs. You'll learn how they help break large projects into smaller components, making code easier to manage and debug, enabling you to write more organized and maintainable programs.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">15–20 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-4/choosing-right-structure.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-5/importing-builtin-modules.html">Next: Importing Built-in Modules</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What modules are:</strong> Understand that modules are Python files containing reusable code.</li>
+                  <li><strong>Why modules matter:</strong> Learn how modules help organize and reuse code.</li>
+                  <li><strong>How modules work:</strong> Discover how Python finds and loads modules.</li>
+                  <li><strong>Module benefits:</strong> Understand how modules make code more maintainable.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>So far, you've written all your code in single files. But as programs grow larger, putting everything in one file becomes messy and hard to manage. Modules let you split your code into separate files, each handling a specific task. This makes your code organized, reusable, and easier to understand. Think of modules like chapters in a book - each chapter focuses on one topic, making the whole book easier to navigate!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What Is a Module?</h2>
+                <p>A module is simply a Python file (ending in <code>.py</code>) that contains code you can reuse in other programs. It can contain functions, variables, classes, or any other Python code. When you import a module, Python runs the code in that file and makes its contents available to your program.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Example: A Simple Module</div>
+                  <pre class="code"><code># File: math_utils.py (this is a module)
+def add(a, b):
+    return a + b
+
+def multiply(a, b):
+    return a * b
+
+PI = 3.14159</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Module File</h4>
+                      <p>A module is just a regular Python file with a <code>.py</code> extension. The filename (without <code>.py</code>) becomes the module name.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Reusable Code</h4>
+                      <p>Modules contain code that can be used in multiple programs. Functions, variables, and classes defined in a module can be imported and used elsewhere.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Import and Use</h4>
+                      <p>Other Python files can import the module using <code>import</code> and then use its functions and variables.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> A module is like a toolbox. Instead of rewriting the same tools (functions) in every program, you put them in a toolbox (module) and bring the toolbox with you whenever you need those tools. This saves time and keeps your code organized!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Understanding Modules</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Python comes with many built-in modules. Try importing the <code>math</code> module:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'import math\n\n# Use functions from the math module\nprint(f\"Pi: {math.pi}\")\nprint(f\"Square root of 16: {math.sqrt(16)}\")\nprint(f\"Power: {math.pow(2, 3)}\")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">import math
+
+# Use functions from the math module
+print(f"Pi: {math.pi}")
+print(f"Square root of 16: {math.sqrt(16)}")
+print(f"Power: {math.pow(2, 3)}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> When you write <code>import math</code>, Python loads the <code>math</code> module and makes all its functions and variables available. You can then use them by writing <code>math.pi</code>, <code>math.sqrt()</code>, etc. The <code>math.</code> prefix tells Python you're using something from the math module!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Why Use Modules?</h2>
+                <p>Modules provide several important benefits:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Code Reusability</h4>
+                    <p>Write code once, use it in many programs. No need to copy and paste the same functions everywhere.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Organization</h4>
+                    <p>Split large programs into smaller, manageable files. Each module handles one specific task.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Maintainability</h4>
+                    <p>Fix bugs or update code in one place. All programs using that module automatically get the updates.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Namespace Separation</h4>
+                    <p>Avoid naming conflicts. Functions in different modules can have the same name without interfering.</p>
+                  </div>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Without Modules (Messy)</div>
+                  <pre class="code"><code># Everything in one file - 1000+ lines!
+def calculate_area():
+    # ... 50 lines of code
+
+def calculate_volume():
+    # ... 50 lines of code
+
+def process_data():
+    # ... 200 lines of code
+
+def generate_report():
+    # ... 300 lines of code
+
+# Main program
+# ... 400 more lines</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">With Modules (Organized)</div>
+                  <pre class="code"><code># geometry.py - handles shapes
+def calculate_area():
+    # ... 50 lines
+
+def calculate_volume():
+    # ... 50 lines
+
+# data_processing.py - handles data
+def process_data():
+    # ... 200 lines
+
+# reporting.py - handles reports
+def generate_report():
+    # ... 300 lines
+
+# main.py - main program
+import geometry
+import data_processing
+import reporting
+# ... 50 lines</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: How Python Finds Modules</h2>
+                <p>When you write <code>import math</code>, Python searches for the module in specific locations:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Built-in Modules</h4>
+                      <p>Python first checks if it's a built-in module (like <code>math</code>, <code>random</code>, <code>os</code>). These come with Python and are always available.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Current Directory</h4>
+                      <p>Python checks the directory where your script is running. If you have a file called <code>my_module.py</code> in the same folder, Python can import it.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Python Path</h4>
+                      <p>Python checks directories listed in <code>sys.path</code>, which includes standard library locations and installed packages.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>Module Search Order</h4>
+                  <p>Python searches in this order: 1) Built-in modules, 2) Current directory, 3) Directories in <code>sys.path</code>. The first match found is used. This means if you create a file called <code>math.py</code> in your current directory, it will be imported instead of Python's built-in <code>math</code> module - so be careful with naming!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Exploring Module Contents</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>You can see what's inside a module using the <code>dir()</code> function:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'import math\n\n# See all names in the math module\nprint(\"Contents of math module:\")\nprint(dir(math))\n\n# Get help on a specific function\nprint(\"\\nHelp for sqrt:\")\nprint(help(math.sqrt))')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">import math
+
+# See all names in the math module
+print("Contents of math module:")
+print(dir(math))
+
+# Get help on a specific function
+print("\nHelp for sqrt:")
+print(help(math.sqrt))</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The <code>dir()</code> function shows you all the names (functions, variables, etc.) available in a module. This is helpful when exploring what a module can do. The <code>help()</code> function shows documentation for specific functions, explaining what they do and how to use them!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Types of Modules</h2>
+                <p>There are three main types of modules in Python:</p>
+
+                <div class="uses-grid">
+                  <div class="feature-grid">
+                    <div class="feature">
+                      <h4>Built-in Modules</h4>
+                      <p>Come with Python installation. Examples: <code>math</code>, <code>random</code>, <code>os</code>, <code>sys</code>.</p>
+                      <p><strong>Usage:</strong> <code>import math</code></p>
+                    </div>
+                    <div class="feature">
+                      <h4>Standard Library Modules</h4>
+                      <p>Part of Python's standard library but need to be imported. Examples: <code>datetime</code>, <code>json</code>, <code>csv</code>.</p>
+                      <p><strong>Usage:</strong> <code>import datetime</code></p>
+                    </div>
+                    <div class="feature">
+                      <h4>Third-party Modules</h4>
+                      <p>Created by others and installed separately. Examples: <code>numpy</code>, <code>requests</code>, <code>pandas</code>.</p>
+                      <p><strong>Usage:</strong> <code>pip install numpy</code> then <code>import numpy</code></p>
+                    </div>
+                    <div class="feature">
+                      <h4>Your Own Modules</h4>
+                      <p>Python files you create yourself. Any <code>.py</code> file can be a module.</p>
+                      <p><strong>Usage:</strong> Create <code>my_module.py</code>, then <code>import my_module</code></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Import and Use a Module</h4>
+                  <p>Import the <code>random</code> module and use it to generate a random number between 1 and 10. Print the result.</p>
+                  <p class="hint-text">Use import random, then random.randint(1, 10).</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Explore Module Contents</h4>
+                  <p>Import the <code>random</code> module and use <code>dir()</code> to see what functions it contains. Then use <code>help()</code> to get information about the <code>choice()</code> function.</p>
+                  <p class="hint-text">Use dir(random) and help(random.choice).</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-4/choosing-right-structure.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-5/importing-builtin-modules.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'import random\n\nnumber = random.randint(1, 10)\nprint(f"Random number: {number}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('import random')) {
+              return {
+                correct: false,
+                message: 'You need to import the random module.',
+                hints: ['Use: import random', 'This loads the random module']
+              };
+            }
+            
+            if (!trimmed.includes('random.randint') && !trimmed.includes('randint')) {
+              return {
+                correct: false,
+                message: 'You need to use random.randint() to generate a random number.',
+                hints: ['Use: random.randint(1, 10)', 'This generates a random integer between 1 and 10']
+              };
+            }
+            
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print the random number.',
+                hints: ['Use print() to display the result']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you imported random']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('Random') && !outputText.match(/\d/)) {
+              return {
+                correct: false,
+                message: 'Your output should show a random number between 1 and 10.',
+                hints: ['Make sure you print the result', 'The number should be between 1 and 10']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully imported and used the random module.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'import random\n\nprint("Functions in random module:")\nprint(dir(random))\n\nprint("\\nHelp for choice:")\nprint(help(random.choice))',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('import random')) {
+              return {
+                correct: false,
+                message: 'You need to import the random module.',
+                hints: ['Use: import random']
+              };
+            }
+            
+            if (!trimmed.includes('dir(random)')) {
+              return {
+                correct: false,
+                message: 'You need to use dir() to see module contents.',
+                hints: ['Use: dir(random)', 'This shows all names in the module']
+              };
+            }
+            
+            if (!trimmed.includes('help(random.choice)') && !trimmed.includes('help(random')) {
+              return {
+                correct: false,
+                message: 'You need to use help() to get information about choice().',
+                hints: ['Use: help(random.choice)', 'This shows documentation for the function']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you imported random']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully explored the random module using dir() and help().'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

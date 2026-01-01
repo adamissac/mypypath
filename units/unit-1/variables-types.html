@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 1 • Variables & Types - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 1 • Variables & Types • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 1 • Foundations</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-1/what-is-python.html">1. What Is Python</a></li>
+                <li><a href="/units/unit-1/installing-python-ide.html">2. Installing Python & IDE</a></li>
+                <li><a href="/units/unit-1/first-program.html">3. First Program</a></li>
+                <li><a href="/units/unit-1/syntax-indentation.html">4. Syntax & Indentation</a></li>
+                <li><a class="active" href="/units/unit-1/variables-types.html">5. Variables & Types</a></li>
+                <li><a href="/units/unit-1/type-io.html">6. Type Conversion & I/O</a></li>
+                <li><a href="/units/unit-1/comments-docs.html">7. Comments & Docs</a></li>
+                <li><a href="/units/unit-1/arithmetic-expressions.html">8. Arithmetic & Expressions</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-1.html">Unit 1</a>
+              <span class="separator">/</span>
+              <span class="current">Variables & Types</span>
+            </nav>
+            <div class="eyebrow">Unit 1 • Lesson 5</div>
+            <h1 class="lesson-title">Variables and Data Types</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Variables are containers that store data in your program. You'll learn how to create variables, assign values to them, and understand Python's basic data types: integers, floats, strings, and booleans.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">15–20 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-1/syntax-indentation.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-1/type-io.html">Next: Type Conversion & I/O</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What variables are and why we use them:</strong> Understand how variables store and organize data in your programs.</li>
+                  <li><strong>How to create and assign variables:</strong> Learn the syntax for creating variables and storing values.</li>
+                  <li><strong>Python's basic data types:</strong> Master integers, floats, strings, and booleans.</li>
+                  <li><strong>Variable naming rules:</strong> Learn what makes a good variable name and what Python allows.</li>
+                  <li><strong>How Python infers types:</strong> Understand how Python automatically determines what type of data you're working with.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why Variables Matter</h4>
+                  <p>Variables are like labeled boxes. Instead of remembering "the number 42" or "the text 'Hello'", you can give them names like <code>age</code> or <code>greeting</code>. This makes your code readable and allows you to reuse values throughout your program.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What Are Variables?</h2>
+                <p>A variable is a named container that stores a value. Think of it like a labeled box. You put something in the box (a value) and write a label on it (the variable name). Later, you can use the label to get what's inside.</p>
+                
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Real-World Analogy</h4>
+                    <p>Imagine a filing cabinet. Each drawer has a label (variable name) and contains papers (the value). You can open "Age" drawer to get the number 25, or "Name" drawer to get "Alice".</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>In Python</h4>
+                    <p>You create a variable by giving it a name and assigning a value using the equals sign <code>=</code>. Python stores the value and remembers it by the name you gave it.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>age = 25
+name = "Alice"</code></pre>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> The equals sign <code>=</code> in Python means "assign" or "store", not "equals" like in math. When you write <code>age = 25</code>, you're saying "store the value 25 in a variable called age", not "age equals 25".</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Creating Your First Variable</h2>
+                <p>Creating a variable in Python is simple. You write the variable name, then an equals sign, then the value you want to store:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Basic Variable Assignment</div>
+                  <pre class="code"><code>name = "Python"
+number = 42
+price = 19.99</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Choose a Name</h4>
+                      <p>Pick a descriptive name that tells you what the variable stores. Use lowercase letters and underscores for multiple words.</p>
+                      <pre class="code" style="margin-top: 8px;"><code>student_name = "Alice"</code></pre>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Use the Equals Sign</h4>
+                      <p>The equals sign <code>=</code> tells Python "store this value in this variable".</p>
+                      <pre class="code" style="margin-top: 8px;"><code>student_name = "Alice"</code></pre>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Provide the Value</h4>
+                      <p>Give Python the actual data you want to store. This can be a number, text, or other types of data.</p>
+                      <pre class="code" style="margin-top: 8px;"><code>student_name = "Alice"</code></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Create Variables</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try creating some variables. Notice how Python stores them and you can use them later:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'name = "Python"\nage = 10\nprint(name)\nprint(age)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">name = "Python"
+age = 10
+print(name)
+print(age)</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You created two variables (<code>name</code> and <code>age</code>), stored values in them, and then printed those values. Variables let you store data and use it whenever you need it.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Python's Basic Data Types</h2>
+                <p>Python has several built-in data types. Each type represents a different kind of data. Understanding these types helps you write correct code and avoid errors.</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>1. Integers (int)</h4>
+                    <p>Whole numbers without decimals. Can be positive, negative, or zero.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>age = 25
+count = -5
+zero = 0</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>2. Floats (float)</h4>
+                    <p>Numbers with decimal points. Used for measurements, prices, and calculations requiring precision.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>price = 19.99
+temperature = -5.5
+pi = 3.14159</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>3. Strings (str)</h4>
+                    <p>Text data enclosed in quotes. Can use single or double quotes.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>name = "Alice"
+message = 'Hello'
+text = "Python is fun"</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>4. Booleans (bool)</h4>
+                    <p>True or False values. Used for conditions and logic.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>is_student = True
+is_adult = False</code></pre>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>Python Infers Types Automatically</h4>
+                  <p>Unlike some languages, you don't need to tell Python what type a variable is. Python figures it out automatically based on the value you assign. This is called "type inference".</p>
+                  <pre class="code" style="margin-top: 12px;"><code>x = 5        # Python knows this is an int
+y = 3.14     # Python knows this is a float
+z = "Hello"  # Python knows this is a string</code></pre>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Different Data Types</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try creating variables with different data types. Notice how Python handles each one:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'my_int = 42\nmy_float = 3.14\nmy_string = "Hello"\nmy_bool = True\n\nprint(my_int)\nprint(my_float)\nprint(my_string)\nprint(my_bool)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">my_int = 42
+my_float = 3.14
+my_string = "Hello"
+my_bool = True
+
+print(my_int)
+print(my_float)
+print(my_string)
+print(my_bool)</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>Notice:</strong> Each variable stores a different type of data. Python automatically knows what type each one is based on the value you assigned.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Variable Naming Rules</h2>
+                <p>Python has specific rules for naming variables. Following these rules ensures your code works correctly and is readable.</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Rules You Must Follow</h4>
+                      <ul style="margin: 8px 0;">
+                        <li>Variable names can contain letters, numbers, and underscores</li>
+                        <li>Must start with a letter or underscore (not a number)</li>
+                        <li>Cannot use Python keywords (like <code>if</code>, <code>for</code>, <code>print</code>)</li>
+                        <li>Case-sensitive: <code>age</code> and <code>Age</code> are different variables</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Good Naming Practices</h4>
+                      <ul style="margin: 8px 0;">
+                        <li>Use descriptive names that explain what the variable stores</li>
+                        <li>Use lowercase letters</li>
+                        <li>For multiple words, use underscores: <code>student_name</code></li>
+                        <li>Keep names short but clear</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">✅ Good Variable Names</div>
+                  <pre class="code"><code>student_name = "Alice"
+age = 25
+total_price = 19.99
+is_active = True</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">❌ Bad Variable Names</div>
+                  <pre class="code"><code>n = "Alice"        # Too short, unclear
+studentName = 25   # Should use underscores
+2age = 25          # Can't start with number
+if = 5             # Can't use keyword</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 5: Using Variables</h2>
+                <p>Once you create a variable, you can use it anywhere in your code. You can print it, use it in calculations, or assign it to another variable.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Using Variables in Calculations</div>
+                  <pre class="code"><code>price = 10
+quantity = 3
+total = price * quantity
+print(total)  # Prints 30</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Changing Variable Values</div>
+                  <pre class="code"><code>age = 25
+print(age)  # Prints 25
+age = 26    # Change the value
+print(age)  # Prints 26</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Important:</strong> When you assign a new value to a variable, the old value is replaced. Variables can change throughout your program, which makes them powerful tools for storing data that might change.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #3: Using Variables</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try using variables in calculations and see how they work:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice3">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice3')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice3', 'length = 5\nwidth = 3\narea = length * width\nprint("Area:", area)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice3')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice3">length = 5
+width = 3
+area = length * width
+print("Area:", area)</textarea>
+                  <div class="editor-output" id="output-practice3">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You created variables, used them in a calculation, and printed the result. This shows how variables make your code flexible and reusable.</p>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Create Variables</h4>
+                  <p>Create three variables: one integer, one float, and one string. Then print all three.</p>
+                  <p class="hint-text">Remember: integers are whole numbers, floats have decimals, and strings are text in quotes.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Use Variables in Calculation</h4>
+                  <p>Create two variables: <code>price</code> (set to 15.50) and <code>quantity</code> (set to 4). Calculate and print the total cost.</p>
+                  <p class="hint-text">Multiply price by quantity to get the total.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-1/syntax-indentation.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-1/type-io.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'my_int = 42\nmy_float = 3.14\nmy_string = "Hello"\nprint(my_int)\nprint(my_float)\nprint(my_string)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            const lines = trimmed.split('\n').filter(l => l.trim().length > 0);
+            
+            // Check for variable assignments
+            const assignments = lines.filter(line => line.includes('=') && !line.trim().startsWith('#'));
+            if (assignments.length < 3) {
+              return {
+                correct: false,
+                message: `You need to create 3 variables. You have ${assignments.length}.`,
+                hints: ['Create one variable for an integer (whole number)', 'Create one variable for a float (decimal number)', 'Create one variable for a string (text in quotes)']
+              };
+            }
+            
+            // Check for print statements
+            const printCount = (trimmed.match(/print\(/g) || []).length;
+            if (printCount < 3) {
+              return {
+                correct: false,
+                message: `You need to print all 3 variables. You have ${printCount} print statements.`,
+                hints: ['Print each variable after creating it', 'Use print(variable_name) for each variable']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check that all quotes match', 'Make sure variable names don\'t start with numbers', 'Check your syntax']
+              };
+            }
+            
+            // Check output has content
+            if (!output.stdout || output.stdout.trim().length === 0) {
+              return {
+                correct: false,
+                message: 'Your code should print the values of your variables.',
+                hints: ['Make sure you have print() statements', 'Print each variable you created']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created variables of different types and printed them.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'price = 15.50\nquantity = 4\ntotal = price * quantity\nprint(total)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for price variable
+            if (!trimmed.includes('price') || !trimmed.includes('15.50')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable called price and set it to 15.50.',
+                hints: ['Write: price = 15.50', 'Make sure it\'s a float (has a decimal point)']
+              };
+            }
+            
+            // Check for quantity variable
+            if (!trimmed.includes('quantity') || !trimmed.includes('4')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable called quantity and set it to 4.',
+                hints: ['Write: quantity = 4', 'This should be an integer']
+              };
+            }
+            
+            // Check for calculation
+            if (!trimmed.includes('*') && !trimmed.includes('total')) {
+              return {
+                correct: false,
+                message: 'You need to calculate the total by multiplying price and quantity.',
+                hints: ['Multiply price by quantity', 'Store the result in a variable called total', 'Use: total = price * quantity']
+              };
+            }
+            
+            // Check for print
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print the total.',
+                hints: ['Add a print statement', 'Print the total variable']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure all variable names are spelled correctly', 'Check that you used the multiplication operator *']
+              };
+            }
+            
+            // Check output contains 62 (15.50 * 4 = 62.0)
+            const outputText = output.stdout || '';
+            if (!outputText.includes('62')) {
+              return {
+                correct: false,
+                message: 'The total should be 62.0 (15.50 multiplied by 4).',
+                hints: ['Check your calculation', 'Make sure you multiplied price by quantity', 'The answer should be 62.0']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used variables in a calculation and got the right answer.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

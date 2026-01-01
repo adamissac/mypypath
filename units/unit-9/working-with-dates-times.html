@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 9 • Working with Dates and Times • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 9 • Advanced Topics</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-9/recursion-problem-decomposition.html">1. Recursion and Problem Decomposition</a></li>
+                <li><a class="" href="/units/unit-9/working-with-external-libraries.html">2. Working with External Libraries</a></li>
+                <li><a class="" href="/units/unit-9/apis-data-retrieval.html">3. APIs and Data Retrieval</a></li>
+                <li><a class="" href="/units/unit-9/introduction-json-data-parsing.html">4. Introduction to JSON and Data Parsing</a></li>
+                <li><a class="" href="/units/unit-9/efficiency-big-o-basics.html">5. Efficiency and Big-O Basics</a></li>
+                <li><a class="active" href="/units/unit-9/working-with-dates-times.html">6. Working with Dates and Times</a></li>
+                <li><a class="" href="/units/unit-9/data-visualization-matplotlib.html">7. Data Visualization with Matplotlib</a></li>
+                <li><a class="" href="/units/unit-9/basic-automation-python.html">8. Basic Automation with Python</a></li>
+                <li><a class="" href="/units/unit-9/introduction-file-formats.html">9. Introduction to File Formats (CSV, JSON, and Excel)</a></li>
+                <li><a class="" href="/units/unit-9/applying-advanced-concepts.html">10. Applying Advanced Concepts Together</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-9.html">Unit 9</a>
+              <span class="separator">/</span>
+              <span class="current">Working with Dates and Times</span>
+            </nav>
+            <div class="eyebrow">Unit 9 • Lesson 6</div>
+            <h1 class="lesson-title">Working with Dates and Times</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Many applications require tracking dates, times, or durations. This topic covers using the <code>datetime</code> module to perform calculations, format timestamps, and build programs that rely on scheduling or time tracking, handling temporal data effectively.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-9/data-visualization-matplotlib.html">Next: Data Visualization with Matplotlib</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>datetime module:</strong> Working with dates, times, and timestamps.</li>
+                  <li><strong>Creating dates:</strong> How to create date and datetime objects.</li>
+                  <li><strong>Formatting dates:</strong> Converting dates to strings and parsing strings to dates.</li>
+                  <li><strong>Time differences:</strong> Calculating durations with timedelta.</li>
+                  <li><strong>Date arithmetic:</strong> Adding and subtracting time from dates.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>The datetime Module</h2>
+                <p>Python's <code>datetime</code> module provides classes for working with dates and times:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>datetime</h4>
+                    <p>Date and time together (year, month, day, hour, minute, second)</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>date</h4>
+                    <p>Just the date (year, month, day)</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>time</h4>
+                    <p>Just the time (hour, minute, second)</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>timedelta</h4>
+                    <p>Time differences and durations</p>
+                  </div>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Working with datetime</div>
+                  <pre class="code"><code>from datetime import datetime, date, timedelta
+
+# Get current date and time
+now = datetime.now()
+print(now)  # Output: 2024-01-15 14:30:45.123456
+
+# Create a specific date
+birthday = date(2000, 5, 15)
+print(birthday)  # Output: 2000-05-15
+
+# Calculate time difference
+future = datetime.now() + timedelta(days=30)
+print(future)  # Output: 30 days from now</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Formatting Dates</h2>
+                <p>Convert dates to strings and parse strings to dates using format codes:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Date Formatting with strftime()</div>
+                  <pre class="code"><code>from datetime import datetime
+
+# Get current date and time
+now = datetime.now()
+
+# Format date as string
+formatted1 = now.strftime("%B %d, %Y")
+print(formatted1)  # Output: January 15, 2024
+
+formatted2 = now.strftime("%Y-%m-%d %H:%M:%S")
+print(formatted2)  # Output: 2024-01-15 14:30:45
+
+formatted3 = now.strftime("%A, %B %d, %Y")
+print(formatted3)  # Output: Monday, January 15, 2024</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Parsing Strings to Dates with strptime()</div>
+                  <pre class="code"><code>from datetime import datetime
+
+# Parse string to date
+date_string1 = "2024-01-15"
+parsed_date1 = datetime.strptime(date_string1, "%Y-%m-%d")
+print(parsed_date1)  # Output: 2024-01-15 00:00:00
+
+date_string2 = "January 15, 2024"
+parsed_date2 = datetime.strptime(date_string2, "%B %d, %Y")
+print(parsed_date2)  # Output: 2024-01-15 00:00:00</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Common Format Codes</h4>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Code</th>
+                        <th>Meaning</th>
+                        <th>Example</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code>%Y</code></td>
+                        <td>4-digit year</td>
+                        <td>2024</td>
+                      </tr>
+                      <tr>
+                        <td><code>%m</code></td>
+                        <td>Month as number (01-12)</td>
+                        <td>01</td>
+                      </tr>
+                      <tr>
+                        <td><code>%d</code></td>
+                        <td>Day of month (01-31)</td>
+                        <td>15</td>
+                      </tr>
+                      <tr>
+                        <td><code>%B</code></td>
+                        <td>Full month name</td>
+                        <td>January</td>
+                      </tr>
+                      <tr>
+                        <td><code>%A</code></td>
+                        <td>Full weekday name</td>
+                        <td>Monday</td>
+                      </tr>
+                      <tr>
+                        <td><code>%H</code></td>
+                        <td>Hour (00-23)</td>
+                        <td>14</td>
+                      </tr>
+                      <tr>
+                        <td><code>%M</code></td>
+                        <td>Minute (00-59)</td>
+                        <td>30</td>
+                      </tr>
+                      <tr>
+                        <td><code>%S</code></td>
+                        <td>Second (00-59)</td>
+                        <td>45</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Time Differences and Calculations</h2>
+                <p>Use <code>timedelta</code> to work with time differences:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Working with timedelta</div>
+                  <pre class="code"><code>from datetime import datetime, timedelta
+
+# Get current time
+now = datetime.now()
+print(f"Now: {now}")
+
+# Add time
+future = now + timedelta(days=30)
+print(f"30 days from now: {future}")
+
+# Subtract time
+past = now - timedelta(hours=5)
+print(f"5 hours ago: {past}")
+
+# Calculate difference
+date1 = datetime(2024, 1, 1)
+date2 = datetime(2024, 1, 15)
+difference = date2 - date1
+print(f"Difference: {difference.days} days")</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>timedelta Parameters</h4>
+                  <p>You can specify days, seconds, microseconds, milliseconds, minutes, hours, or weeks:</p>
+                  <ul>
+                    <li><code>timedelta(days=7)</code> - 7 days</li>
+                    <li><code>timedelta(hours=24)</code> - 24 hours</li>
+                    <li><code>timedelta(weeks=2)</code> - 2 weeks</li>
+                    <li><code>timedelta(days=1, hours=12)</code> - 1.5 days</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: Working with Dates</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try working with dates and times:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'from datetime import datetime, timedelta\n\n# Create a date\nbirthday = datetime(2000, 5, 15)\nprint(f\"Birthday: {birthday.strftime(\\\"%B %d, %Y\\\")}\")\n\n# Calculate age (simplified)\ntoday = datetime.now()\nage_days = (today - birthday).days\nprint(f\"Days since birthday: {age_days}\")\n\n# Add time\nfuture_date = birthday + timedelta(days=365)\nprint(f\"One year later: {future_date.strftime(\\\"%B %d, %Y\\\")}\")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">from datetime import datetime, timedelta
+
+# Create a date
+birthday = datetime(2000, 5, 15)
+print(f"Birthday: {birthday.strftime("%B %d, %Y")}")
+
+# Calculate age (simplified)
+today = datetime.now()
+age_days = (today - birthday).days
+print(f"Days since birthday: {age_days}")
+
+# Add time
+future_date = birthday + timedelta(days=365)
+print(f"One year later: {future_date.strftime("%B %d, %Y")}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You created a date, formatted it as a string, calculated the difference between dates, and added time using timedelta.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Working with Timezones</h2>
+                <p>For applications that need timezone awareness:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Timezone-Aware datetime</div>
+                  <pre class="code"><code>from datetime import datetime
+import pytz  # Need to install: pip install pytz
+
+# Create timezone-aware datetime
+utc = pytz.UTC
+now_utc = datetime.now(utc)
+print(f"UTC time: {now_utc}")
+
+# Convert to different timezone
+ny_tz = pytz.timezone('America/New_York')
+ny_time = now_utc.astimezone(ny_tz)
+print(f"New York time: {ny_time}")</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>Note</h4>
+                  <p>For most beginner projects, you don't need timezones. But if you're building applications that work across regions, timezone handling becomes important!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Common Date/Time Operations</h2>
+                <p>Here are common operations you'll perform:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Calculating Age</div>
+                  <pre class="code"><code>from datetime import datetime
+
+def calculate_age(birth_date):
+    today = datetime.now()
+    age = today.year - birth_date.year
+    # Adjust if birthday hasn't occurred this year
+    if (today.month, today.day) < (birth_date.month, birth_date.day):
+        age -= 1
+    return age
+
+birthday = datetime(2000, 5, 15)
+age = calculate_age(birthday)
+print(f"Age: {age} years")</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Finding Days Between Dates</div>
+                  <pre class="code"><code>from datetime import datetime, timedelta
+
+def days_between(date1, date2):
+    return abs((date2 - date1).days)
+
+start = datetime(2024, 1, 1)
+end = datetime(2024, 12, 31)
+days = days_between(start, end)
+print(f"Days between: {days}")</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Working with Weekdays</div>
+                  <pre class="code"><code>from datetime import datetime, timedelta
+
+def get_next_weekday(date, weekday):
+    """Get next occurrence of weekday (0=Monday, 6=Sunday)"""
+    days_ahead = weekday - date.weekday()
+    if days_ahead <= 0:
+        days_ahead += 7
+    return date + timedelta(days=days_ahead)
+
+today = datetime.now()
+next_monday = get_next_weekday(today, 0)
+print(f"Next Monday: {next_monday.strftime('%B %d, %Y')}")</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>datetime module:</strong> Classes for dates, times, and durations</li>
+                  <li><strong>Creating dates:</strong> Use <code>datetime.now()</code> or <code>datetime(year, month, day)</code></li>
+                  <li><strong>Formatting:</strong> Use <code>strftime()</code> to format, <code>strptime()</code> to parse</li>
+                  <li><strong>Time differences:</strong> Use <code>timedelta</code> for calculations</li>
+                  <li><strong>Date arithmetic:</strong> Add/subtract <code>timedelta</code> from dates</li>
+                  <li><strong>Common operations:</strong> Age calculation, days between dates, weekday operations</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>Dates and times are essential for many applications - logging, scheduling, data analysis, timestamps. The datetime module makes it easy to work with temporal data. Practice with common operations like calculating ages and finding date differences!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: datetime Classes</h3>
+                  <p>What are the main classes in the datetime module? What does each one represent?</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Date Operations</h3>
+                  <p>How would you calculate a date 30 days from now? How would you format it as "January 15, 2024"?</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-9/efficiency-big-o-basics.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-9/data-visualization-matplotlib.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

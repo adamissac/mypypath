@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 7 • Raising and Customizing Exceptions - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 7 • Raising and Customizing Exceptions • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 7 • Files & Errors</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-7/introduction-file-handling.html">1. Introduction to File Handling</a></li>
+                <li><a class="" href="/units/unit-7/opening-closing-files.html">2. Opening and Closing Files</a></li>
+                <li><a class="" href="/units/unit-7/reading-data-from-files.html">3. Reading Data from Files</a></li>
+                <li><a class="" href="/units/unit-7/writing-data-to-files.html">4. Writing Data to Files</a></li>
+                <li><a class="" href="/units/unit-7/working-with-file-paths.html">5. Working with File Paths</a></li>
+                <li><a class="" href="/units/unit-7/with-statement-file-operations.html">6. Using the with Statement for File Operations</a></li>
+                <li><a class="" href="/units/unit-7/understanding-errors-exceptions.html">7. Understanding Errors and Exceptions</a></li>
+                <li><a class="" href="/units/unit-7/try-except-blocks.html">8. The try and except Blocks</a></li>
+                <li><a class="active" href="/units/unit-7/raising-customizing-exceptions.html">9. Raising and Customizing Exceptions</a></li>
+                <li><a class="" href="/units/unit-7/file-error-handling-real-projects.html">10. File and Error Handling in Real Projects</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-7.html">Unit 7</a>
+              <span class="separator">/</span>
+              <span class="current">Raising and Customizing Exceptions</span>
+            </nav>
+            <div class="eyebrow">Unit 7 • Lesson 9</div>
+            <h1 class="lesson-title">Raising and Customizing Exceptions</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Sometimes you'll need to trigger your own exceptions to signal errors in logic or input. You'll learn to use <code>raise</code> and define custom exception classes that make your code more robust and predictable, creating clear error communication.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-7/file-error-handling-real-projects.html">Next: File and Error Handling in Real Projects</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Raising exceptions:</strong> Use <code>raise</code> to trigger your own exceptions.</li>
+                  <li><strong>When to raise:</strong> Understand when it's appropriate to raise exceptions.</li>
+                  <li><strong>Custom exceptions:</strong> Create your own exception classes for specific errors.</li>
+                  <li><strong>Error messages:</strong> Provide helpful error messages with your exceptions.</li>
+                  <li><strong>Best practices:</strong> Write clear, informative exceptions.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>Raising Exceptions with <code>raise</code></h2>
+                <p>Sometimes you want to trigger an exception yourself when something goes wrong. You can do this with the <code>raise</code> keyword.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Basic raise Syntax</div>
+                  <pre class="code"><code>raise Exception("Something went wrong!")</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Example: Validating Input</div>
+                  <pre class="code"><code>def divide(a, b):
+    if b == 0:
+        raise ValueError("Cannot divide by zero!")
+    return a / b
+
+result = divide(10, 0)
+# ValueError: Cannot divide by zero!</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>When to Raise Exceptions</h4>
+                  <ul>
+                    <li>When input is invalid</li>
+                    <li>When a required condition isn't met</li>
+                    <li>When something unexpected happens</li>
+                    <li>To signal errors to calling code</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Raising Specific Exceptions</h2>
+                <p>You can raise any built-in exception type:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Raising Different Exception Types</div>
+                  <pre class="code"><code># Raise ValueError for invalid input
+if age < 0:
+    raise ValueError("Age cannot be negative!")
+
+# Raise FileNotFoundError
+if not os.path.exists(filename):
+    raise FileNotFoundError(f"File '{filename}' not found!")
+
+# Raise TypeError
+if not isinstance(value, int):
+    raise TypeError("Expected an integer!")</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Creating Custom Exceptions</h2>
+                <p>You can create your own exception classes for specific situations. This makes your code clearer and easier to debug.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Defining a Custom Exception</div>
+                  <pre class="code"><code>class InvalidAgeError(Exception):
+    """Raised when age is invalid"""
+    pass
+
+# Using the custom exception
+def set_age(age):
+    if age < 0 or age > 150:
+        raise InvalidAgeError(f"Age {age} is not valid!")
+    return age</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>Custom Exception Benefits</h4>
+                  <p>Custom exceptions make it clear what went wrong and allow callers to catch specific error types.</p>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Custom Exception with Message</div>
+                  <pre class="code"><code>class FileFormatError(Exception):
+    """Raised when file format is incorrect"""
+    def __init__(self, message, filename):
+        self.message = message
+        self.filename = filename
+        super().__init__(self.message)
+
+# Using it
+raise FileFormatError("Invalid format", "data.txt")</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Raising Exceptions in Functions</h2>
+                <p>Functions often raise exceptions to signal errors to the caller:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Function with Validation</div>
+                  <pre class="code"><code>def read_config(filename):
+    if not filename.endswith('.txt'):
+        raise ValueError("Config file must be .txt format")
+    
+    try:
+        with open(filename, 'r') as file:
+            return file.read()
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Config file '{filename}' not found!")
+
+# Using the function
+try:
+    config = read_config("settings.txt")
+except ValueError as e:
+    print(f"Invalid input: {e}")
+except FileNotFoundError as e:
+    print(f"File error: {e}")</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Re-raising Exceptions</h2>
+                <p>Sometimes you want to catch an exception, do something, and then re-raise it:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Re-raising Exceptions</div>
+                  <pre class="code"><code>try:
+    file = open("data.txt", "r")
+    content = file.read()
+except FileNotFoundError:
+    print("Logging: File not found")
+    raise  # Re-raise the exception</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Use case:</strong> You might want to log an error before letting it propagate to the caller.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: Raising Exceptions</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try creating and raising your own exceptions:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'def validate_age(age):\n    if age < 0:\n        raise ValueError(&quot;Age cannot be negative!&quot;)\n    if age > 150:\n        raise ValueError(&quot;Age cannot be greater than 150!&quot;)\n    return age\n\ntry:\n    result = validate_age(-5)\nexcept ValueError as e:\n    print(f&quot;Error: {e}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">def validate_age(age):
+    if age < 0:
+        raise ValueError("Age cannot be negative!")
+    if age > 150:
+        raise ValueError("Age cannot be greater than 150!")
+    return age
+
+try:
+    result = validate_age(-5)
+except ValueError as e:
+    print(f"Error: {e}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The function validated the age and raised a ValueError with a helpful message when the age was invalid.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Advanced Custom Exception Examples</h2>
+                <p>Here are more examples of custom exceptions for different scenarios:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Custom Exception with Additional Data</div>
+                  <pre class="code"><code>class ValidationError(Exception):
+    """Raised when validation fails"""
+    def __init__(self, message, field_name, value):
+        self.message = message
+        self.field_name = field_name
+        self.value = value
+        super().__init__(self.message)
+    
+    def __str__(self):
+        return f"{self.message} (Field: {self.field_name}, Value: {self.value})"
+
+# Usage
+def validate_email(email):
+    if '@' not in email:
+        raise ValidationError("Invalid email format", "email", email)
+    return email
+
+try:
+    validate_email("notanemail")
+except ValidationError as e:
+    print(e)  # Prints: Invalid email format (Field: email, Value: notanemail)</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Exception Hierarchy</div>
+                  <pre class="code"><code>class FileError(Exception):
+    """Base exception for file-related errors"""
+    pass
+
+class FileNotFoundError(FileError):
+    """Raised when file doesn't exist"""
+    pass
+
+class FilePermissionError(FileError):
+    """Raised when file permission is denied"""
+    pass
+
+class FileFormatError(FileError):
+    """Raised when file format is invalid"""
+    pass
+
+# You can catch the base exception to catch all file errors
+try:
+    # Some file operation
+    pass
+except FileError as e:
+    print(f"File error occurred: {e}")</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Exception Inheritance</h4>
+                  <p>Creating exception hierarchies allows you to:</p>
+                  <ul>
+                    <li>Catch related exceptions together using the base class</li>
+                    <li>Organize exceptions logically</li>
+                    <li>Provide more specific error handling</li>
+                    <li>Make code more maintainable</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Best Practices</h2>
+                <p>When raising exceptions, follow these guidelines:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Use Appropriate Types</h4>
+                      <p>Raise the most specific exception type that fits the error. Use built-in exceptions when they fit, create custom ones when needed.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Clear Messages</h4>
+                      <p>Provide helpful error messages that explain what went wrong and how to fix it. Include relevant context like filenames or values.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Document Exceptions</h4>
+                      <p>Document what exceptions your functions might raise in docstrings. This helps other developers (and yourself) understand error handling.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Don't Overuse Exceptions</h4>
+                      <p>Exceptions are for exceptional cases. Don't use them for normal control flow. Use return values or status codes for expected conditions.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Well-Documented Function</div>
+                  <pre class="code"><code>def process_config_file(filename):
+    """
+    Load and process a configuration file.
+    
+    Args:
+        filename: Path to the configuration file
+        
+    Returns:
+        dict: Configuration dictionary
+        
+    Raises:
+        FileNotFoundError: If the config file doesn't exist
+        ValueError: If the file format is invalid
+        PermissionError: If file cannot be read
+        
+    Example:
+        >>> config = process_config_file("settings.json")
+        >>> print(config['host'])
+    """
+    # Implementation here
+    pass</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>raise:</strong> Trigger exceptions yourself when errors occur</li>
+                  <li><strong>Specific exceptions:</strong> Raise appropriate exception types</li>
+                  <li><strong>Custom exceptions:</strong> Create your own exception classes for clarity</li>
+                  <li><strong>Re-raising:</strong> Catch, handle, and re-raise exceptions when needed</li>
+                  <li><strong>Best practices:</strong> Use clear messages and appropriate types</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>Raising exceptions is a way to communicate errors. Make sure your error messages are clear and helpful!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: When to Raise</h3>
+                  <p>When should you raise an exception in your code? Give an example of a function that would benefit from raising exceptions.</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Custom Exceptions</h3>
+                  <p>Why might you want to create a custom exception class instead of using a built-in one?</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-7/try-except-blocks.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-7/file-error-handling-real-projects.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

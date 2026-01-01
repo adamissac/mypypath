@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 4 • Introduction to Data Structures - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 4 • Introduction to Data Structures • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 4 • Data Structures</h3>
+            <nav>
+              <ul>
+                <li><a class="active" href="/units/unit-4/introduction-data-structures.html">1. Introduction to Data Structures</a></li>
+                <li><a href="/units/unit-4/lists-operations.html">2. Lists and List Operations</a></li>
+                <li><a href="/units/unit-4/indexing-slicing-lists.html">3. Indexing and Slicing Lists</a></li>
+                <li><a href="/units/unit-4/nested-lists-2d.html">4. Nested Lists and 2D Structures</a></li>
+                <li><a href="/units/unit-4/tuples-immutable.html">5. Tuples and Immutable Data</a></li>
+                <li><a href="/units/unit-4/dictionaries-key-value.html">6. Dictionaries and Key-Value Pairs</a></li>
+                <li><a href="/units/unit-4/dictionary-methods-iteration.html">7. Dictionary Methods and Iteration</a></li>
+                <li><a href="/units/unit-4/sets-unique-collections.html">8. Sets and Unique Collections</a></li>
+                <li><a href="/units/unit-4/copying-comparing-structures.html">9. Copying and Comparing Data Structures</a></li>
+                <li><a href="/units/unit-4/choosing-right-structure.html">10. Choosing the Right Data Structure</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-4.html">Unit 4</a>
+              <span class="separator">/</span>
+              <span class="current">Introduction to Data Structures</span>
+            </nav>
+            <div class="eyebrow">Unit 4 • Lesson 1</div>
+            <h1 class="lesson-title">Introduction to Data Structures</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Learn what data structures are and why they matter. You'll understand how they let programs manage and organize data for real-world applications such as analytics and databases, and discover the fundamental role they play in efficient programming.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">15–20 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-3/practical-function-examples.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-4/lists-operations.html">Next: Lists and List Operations</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What data structures are:</strong> Understand how data structures organize and store information.</li>
+                  <li><strong>Why they matter:</strong> Learn why choosing the right data structure makes programs more efficient.</li>
+                  <li><strong>Types of data structures:</strong> Discover the main data structures in Python.</li>
+                  <li><strong>When to use each:</strong> Understand which data structure fits different situations.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>So far, you've worked with individual variables that store single values. But real programs need to work with collections of data - like a list of students, a dictionary of user information, or a set of unique items. Data structures let you organize and manage multiple pieces of data efficiently. Understanding data structures is essential for writing programs that can handle real-world data!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What Is a Data Structure?</h2>
+                <p>A data structure is a way of organizing and storing data in a computer so that it can be accessed and used efficiently. Think of it like different types of containers - each container is designed for a specific purpose and has different ways of storing and accessing items.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Simple Variables vs Data Structures</div>
+                  <pre class="code"><code># Single variable - stores one value
+name = "Alice"
+
+# Data structure - stores multiple values
+names = ["Alice", "Bob", "Charlie"]</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Single Variables</h4>
+                      <p>Regular variables like <code>name = "Alice"</code> store one piece of data. This works fine when you only need to remember one thing.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Data Structures</h4>
+                      <p>Data structures like <code>names = ["Alice", "Bob", "Charlie"]</code> store multiple pieces of data together. This lets you work with collections of information.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Organization</h4>
+                      <p>Different data structures organize data in different ways. Some keep items in order, some allow duplicates, some don't. Each has advantages for different situations.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> Data structures are like different types of storage containers. A list is like a shopping cart where items stay in order. A dictionary is like a filing cabinet where you find things by their label. A set is like a collection where duplicates aren't allowed. Each structure is designed for specific needs!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Understanding Data Structures</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try creating different types of data structures:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Single variable\nname = &quot;Alice&quot;\nprint(f&quot;Name: {name}&quot;)\n\n# List - ordered collection\nfruits = [&quot;apple&quot;, &quot;banana&quot;, &quot;orange&quot;]\nprint(f&quot;Fruits: {fruits}&quot;)\n\n# Dictionary - key-value pairs\nperson = {&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 25}\nprint(f&quot;Person: {person}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Single variable
+name = "Alice"
+print(f"Name: {name}")
+
+# List - ordered collection
+fruits = ["apple", "banana", "orange"]
+print(f"Fruits: {fruits}")
+
+# Dictionary - key-value pairs
+person = {"name": "Alice", "age": 25}
+print(f"Person: {person}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You can see the difference between storing a single value in a variable versus storing multiple values in data structures. The list <code>fruits</code> stores multiple items in order. The dictionary <code>person</code> stores information organized by keys (like "name" and "age"). Each data structure has its own way of organizing and accessing data!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Why Do Data Structures Matter?</h2>
+                <p>Data structures matter because they help you:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Organize Data</h4>
+                    <p>Keep related information together in a logical way.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>students = ["Alice", "Bob"]</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Access Efficiently</h4>
+                    <p>Find and use data quickly based on how it's organized.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>grades = {"Alice": 95}</code></pre>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>Real-World Example</h4>
+                  <p>Imagine you're building a program to manage a library. You could use a list to store all the books in order. You could use a dictionary to look up a book by its ISBN number. You could use a set to keep track of which books are currently checked out (no duplicates). Each data structure helps solve a different part of the problem!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Main Data Structures in Python</h2>
+                <p>Python has four main built-in data structures:</p>
+
+                <div class="uses-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="info-card">
+                    <h4>Lists</h4>
+                    <p>Ordered collections that can change. Items stay in order and duplicates are allowed.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>[1, 2, 3]</code></pre>
+                  </div>
+                  <div class="info-card">
+                    <h4>Tuples</h4>
+                    <p>Ordered collections that cannot change. Like lists but immutable.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>(1, 2, 3)</code></pre>
+                  </div>
+                  <div class="info-card">
+                    <h4>Dictionaries</h4>
+                    <p>Key-value pairs. Find values by their keys, like a real dictionary.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>{"key": "value"}</code></pre>
+                  </div>
+                  <div class="info-card">
+                    <h4>Sets</h4>
+                    <p>Unordered collections of unique items. No duplicates allowed.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>{1, 2, 3}</code></pre>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> Each data structure has different properties. Lists are ordered and changeable. Tuples are ordered but unchangeable. Dictionaries store key-value pairs. Sets are unordered and only store unique values. You'll learn about each one in detail in the following lessons!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Exploring Data Structures</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try creating and printing different data structures:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', '# List\nnumbers = [10, 20, 30]\nprint(f&quot;List: {numbers}&quot;)\n\n# Tuple\ncoordinates = (5, 10)\nprint(f&quot;Tuple: {coordinates}&quot;)\n\n# Dictionary\nstudent = {&quot;name&quot;: &quot;Alice&quot;, &quot;grade&quot;: &quot;A&quot;}\nprint(f&quot;Dictionary: {student}&quot;)\n\n# Set\nunique_numbers = {1, 2, 3, 3, 4}\nprint(f&quot;Set: {unique_numbers}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2"># List
+numbers = [10, 20, 30]
+print(f"List: {numbers}")
+
+# Tuple
+coordinates = (5, 10)
+print(f"Tuple: {coordinates}")
+
+# Dictionary
+student = {"name": "Alice", "grade": "A"}
+print(f"Dictionary: {student}")
+
+# Set
+unique_numbers = {1, 2, 3, 3, 4}
+print(f"Set: {unique_numbers}")</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You created all four main data structures! Notice how each one looks different. The list uses square brackets <code>[]</code>, the tuple uses parentheses <code>()</code>, the dictionary uses curly braces with colons <code>{}</code>, and the set uses curly braces <code>{}</code>. Also notice that the set only shows unique values - even though you put <code>3</code> twice, it only appears once in the set!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: When to Use Each Data Structure</h2>
+                <p>Choosing the right data structure depends on what you need:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Use Lists</h4>
+                      <p>When you need an ordered collection that can change. Perfect for shopping carts, to-do lists, or any sequence where order matters and items might be added or removed.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Use Tuples</h4>
+                      <p>When you need an ordered collection that shouldn't change. Great for coordinates, dates, or any data that should stay fixed once created.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Use Dictionaries</h4>
+                      <p>When you need to look up values by keys. Perfect for user profiles, settings, or any data where you need to find information by a specific label.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Use Sets</h4>
+                      <p>When you need unique items and don't care about order. Great for tracking unique visitors, removing duplicates, or checking membership.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Tip:</strong> Don't worry if you're not sure which one to use yet. As you learn more about each data structure in the following lessons, you'll develop a sense for which one fits each situation. The key is understanding what each structure can do!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Create Different Data Structures</h4>
+                  <p>Create a list with three colors, a tuple with two numbers representing coordinates, a dictionary with your name and age, and a set with five numbers (include some duplicates). Print each one.</p>
+                  <p class="hint-text">Use square brackets for lists, parentheses for tuples, curly braces with colons for dictionaries, and curly braces for sets.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Identify Data Structure Types</h4>
+                  <p>Create variables for: a list of three fruits, a tuple of two coordinates (x, y), a dictionary mapping "city" to "New York", and a set with numbers 1, 2, 2, 3. Print each and explain what type it is in a comment.</p>
+                  <p class="hint-text">Use comments to label each data structure type.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-3/practical-function-examples.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-4/lists-operations.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: '# List\ncolors = ["red", "blue", "green"]\nprint(f"List: {colors}")\n\n# Tuple\ncoordinates = (10, 20)\nprint(f"Tuple: {coordinates}")\n\n# Dictionary\nperson = {"name": "Alice", "age": 25}\nprint(f"Dictionary: {person}")\n\n# Set\nnumbers = {1, 2, 3, 3, 4, 5}\nprint(f"Set: {numbers}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('[') || !trimmed.includes(']')) {
+              return {
+                correct: false,
+                message: 'You need to create a list using square brackets [].',
+                hints: ['Create: colors = ["red", "blue", "green"]', 'Use square brackets for lists']
+              };
+            }
+            
+            if (!trimmed.includes('(') || !trimmed.includes(')')) {
+              return {
+                correct: false,
+                message: 'You need to create a tuple using parentheses ().',
+                hints: ['Create: coordinates = (10, 20)', 'Use parentheses for tuples']
+              };
+            }
+            
+            if (!trimmed.includes('{') || !trimmed.includes(':')) {
+              return {
+                correct: false,
+                message: 'You need to create a dictionary using curly braces with colons.',
+                hints: ['Create: person = {"name": "Alice", "age": 25}', 'Use curly braces with colons for dictionaries']
+              };
+            }
+            
+            if (!trimmed.match(/\{[^:]*\}/)) {
+              return {
+                correct: false,
+                message: 'You need to create a set using curly braces without colons.',
+                hints: ['Create: numbers = {1, 2, 3, 3, 4, 5}', 'Use curly braces without colons for sets']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure all brackets and parentheses match', 'Check your quotes']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created all four types of data structures.'
+            };
+          }
+        },
+        exercise2: {
+          solution: '# List\nfruits = ["apple", "banana", "orange"]\nprint(f"List: {fruits}")\n\n# Tuple\ncoordinates = (5, 10)\nprint(f"Tuple: {coordinates}")\n\n# Dictionary\nlocation = {"city": "New York"}\nprint(f"Dictionary: {location}")\n\n# Set\nnumbers = {1, 2, 2, 3}\nprint(f"Set: {numbers}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('fruits') || !trimmed.includes('[')) {
+              return {
+                correct: false,
+                message: 'You need to create a list named fruits with three fruits.',
+                hints: ['Create: fruits = ["apple", "banana", "orange"]', 'Use square brackets']
+              };
+            }
+            
+            if (!trimmed.includes('coordinates') || !trimmed.includes('(')) {
+              return {
+                correct: false,
+                message: 'You need to create a tuple named coordinates with two numbers.',
+                hints: ['Create: coordinates = (5, 10)', 'Use parentheses']
+              };
+            }
+            
+            if (!trimmed.includes('city') || !trimmed.includes('New York') || !trimmed.includes(':')) {
+              return {
+                correct: false,
+                message: 'You need to create a dictionary with "city" mapped to "New York".',
+                hints: ['Create: location = {"city": "New York"}', 'Use curly braces with colons']
+              };
+            }
+            
+            if (!trimmed.includes('{') || !trimmed.match(/\{[^:]*2.*2/)) {
+              return {
+                correct: false,
+                message: 'You need to create a set with numbers including duplicates (1, 2, 2, 3).',
+                hints: ['Create: numbers = {1, 2, 2, 3}', 'Use curly braces without colons', 'Include duplicates - the set will remove them']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure all brackets match', 'Check your quotes']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created and identified all four data structure types.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 6 • Introduction to OOP Concepts - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 6 • Introduction to OOP Concepts • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 6 • Object-Oriented Programming</h3>
+            <nav>
+              <ul>
+                <li><a class="active" href="/units/unit-6/introduction-oop-concepts.html">1. Introduction to OOP Concepts</a></li>
+                <li><a href="/units/unit-6/defining-creating-classes.html">2. Defining and Creating Classes</a></li>
+                <li><a href="/units/unit-6/creating-using-objects.html">3. Creating and Using Objects</a></li>
+                <li><a href="/units/unit-6/instance-variables-methods.html">4. Instance Variables and Methods</a></li>
+                <li><a href="/units/unit-6/class-variables-class-methods.html">5. Class Variables and Class Methods</a></li>
+                <li><a href="/units/unit-6/encapsulation-access-control.html">6. Encapsulation and Access Control</a></li>
+                <li><a href="/units/unit-6/inheritance-subclasses.html">7. Inheritance and Subclasses</a></li>
+                <li><a href="/units/unit-6/polymorphism-method-overriding.html">8. Polymorphism and Method Overriding</a></li>
+                <li><a href="/units/unit-6/super-function.html">9. The super() Function</a></li>
+                <li><a href="/units/unit-6/oop-real-projects.html">10. OOP in Real Projects</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-6.html">Unit 6</a>
+              <span class="separator">/</span>
+              <span class="current">Introduction to OOP Concepts</span>
+            </nav>
+            <div class="eyebrow">Unit 6 • Lesson 1</div>
+            <h1 class="lesson-title">Introduction to OOP Concepts</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>OOP organizes code into classes and objects that represent real-world entities. You'll explore how this approach makes complex programs easier to design, maintain, and extend over time, providing a powerful paradigm for building scalable applications.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-5/project-organization-best-practices.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-6/defining-creating-classes.html">Next: Defining and Creating Classes</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What OOP is:</strong> Understand Object-Oriented Programming and why it's useful.</li>
+                  <li><strong>Classes and objects:</strong> Learn the difference between classes (blueprints) and objects (instances).</li>
+                  <li><strong>Key concepts:</strong> Discover encapsulation, inheritance, and polymorphism.</li>
+                  <li><strong>Real-world analogy:</strong> See how OOP models real-world concepts in code.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>So far, you've been writing procedural code - code that follows a sequence of steps. Object-Oriented Programming (OOP) is a different way of thinking about code. Instead of just functions and variables, OOP organizes code around "objects" - things that have both data (attributes) and behaviors (methods). This makes code more organized, reusable, and easier to understand, especially for larger programs!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What Is Object-Oriented Programming?</h2>
+                <p>Object-Oriented Programming (OOP) is a programming paradigm that organizes code around objects. An object is a combination of data (attributes) and functions (methods) that work together:</p>
+
+                <div class="code-example">
+                  <div class="code-header">OOP Concept</div>
+                  <pre class="code"><code># Instead of separate functions and variables:
+name = "Alice"
+age = 25
+
+def greet(name):
+    return f"Hello, {name}!"
+
+# OOP groups related data and functions together:
+# Person object has both data (name, age) and behavior (greet)</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Objects</h4>
+                      <p>Objects are things that have both data (attributes) and behaviors (methods). Think of an object like a real-world thing - a car has data (color, speed) and behaviors (drive, brake).</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Classes</h4>
+                      <p>Classes are blueprints for creating objects. A class defines what attributes and methods objects of that type will have. Like a blueprint for a house defines what rooms it will have.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Instances</h4>
+                      <p>When you create an object from a class, you create an "instance". Each instance has its own data but shares the same methods defined in the class.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> OOP groups related data and functions together into objects. Instead of having separate variables and functions scattered around, everything related to one concept is bundled together. This makes code more organized and easier to understand!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Understanding Objects</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Think about objects in real life. A car object would have:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Simulating a car object\n# Data (attributes):\nbrand = \"Toyota\"\ncolor = \"Red\"\nspeed = 0\n\n# Behavior (methods):\ndef accelerate():\n    return \"Car is accelerating!\"\n\ndef brake():\n    return \"Car is braking!\"\n\nprint(f\"Car: {brand} {color}\")\nprint(accelerate())\nprint(f\"Current speed: {speed}\")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Simulating a car object
+# Data (attributes):
+brand = "Toyota"
+color = "Red"
+speed = 0
+
+# Behavior (methods):
+def accelerate():
+    return "Car is accelerating!"
+
+def brake():
+    return "Car is braking!"
+
+print(f"Car: {brand} {color}")
+print(accelerate())
+print(f"Current speed: {speed}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> In OOP, we would group the car's data (brand, color, speed) and behaviors (accelerate, brake) together into a Car class. This keeps everything related to a car in one place, making it easier to manage and reuse!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Classes vs Objects</h2>
+                <p>Understanding the difference between classes and objects is crucial:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Class vs Object Analogy</div>
+                  <pre class="code"><code># Class = Blueprint
+# Person class defines what a person has and can do
+
+# Object = Instance created from the blueprint
+# alice = Person("Alice", 25)  # One person object
+# bob = Person("Bob", 30)      # Another person object
+
+# Both are Person objects but with different data!</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Class (Blueprint)</h4>
+                      <p>A class is like a blueprint or template. It defines what attributes and methods objects of that type will have, but it doesn't create any objects itself.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Object (Instance)</h4>
+                      <p>An object is an actual instance created from a class. Each object has its own values for the attributes defined in the class.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Multiple Objects</h4>
+                      <p>You can create many objects from one class. Each object is independent and has its own data, but they all share the same methods.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>Real-World Analogy</h4>
+                  <p>Think of a class like a cookie cutter and objects like the cookies:</p>
+                  <ul>
+                    <li><strong>Cookie Cutter (Class):</strong> Defines the shape - all cookies will be the same shape</li>
+                    <li><strong>Cookies (Objects):</strong> Each cookie is an instance - they're all the same shape but can have different decorations (data)</li>
+                    <li><strong>Multiple Cookies:</strong> You can make many cookies from one cookie cutter!</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Key OOP Concepts</h2>
+                <p>OOP is built on four main principles:</p>
+
+                <div class="uses-grid">
+                  <div class="feature-grid">
+                    <div class="feature">
+                      <h4>Encapsulation</h4>
+                      <p>Bundling data and methods together in a class. Data is kept private and accessed through methods.</p>
+                    </div>
+                    <div class="feature">
+                      <h4>Inheritance</h4>
+                      <p>Creating new classes based on existing ones. Child classes inherit attributes and methods from parent classes.</p>
+                    </div>
+                    <div class="feature">
+                      <h4>Polymorphism</h4>
+                      <p>Different classes can have methods with the same name but different implementations. The same method call works differently for different objects.</p>
+                    </div>
+                    <div class="feature">
+                      <h4>Abstraction</h4>
+                      <p>Hiding complex implementation details and showing only what's necessary. Users interact with simple interfaces.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> Don't worry if these concepts seem abstract right now! We'll explore each one in detail in the coming lessons. For now, just understand that OOP helps organize code by grouping related data and behaviors together.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Thinking in Objects</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Think about what a Book object would have:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', '# Book object would have:\n# Data: title, author, pages\n# Behavior: read, open, close\n\ntitle = \"Python Basics\"\nauthor = \"John Doe\"\npages = 300\n\ndef read():\n    return f\"Reading {title}...\"\n\ndef get_info():\n    return f\"{title} by {author}, {pages} pages\"\n\nprint(get_info())\nprint(read())')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2"># Book object would have:
+# Data: title, author, pages
+# Behavior: read, open, close
+
+title = "Python Basics"
+author = "John Doe"
+pages = 300
+
+def read():
+    return f"Reading {title}..."
+
+def get_info():
+    return f"{title} by {author}, {pages} pages"
+
+print(get_info())
+print(read())</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> In OOP, we would create a Book class that groups the book's data (title, author, pages) and behaviors (read, get_info) together. This makes it easy to create multiple book objects, each with its own title, author, and pages!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Benefits of OOP</h2>
+                <p>OOP provides several advantages:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Organization</h4>
+                    <p>Code is organized around objects, making it easier to find and understand related code.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Reusability</h4>
+                    <p>Classes can be reused to create many objects. Write once, use many times!</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Maintainability</h4>
+                    <p>Changes to a class affect all objects created from it. Fix bugs in one place!</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Modeling</h4>
+                    <p>OOP naturally models real-world concepts, making code more intuitive.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Understanding Classes and Objects</h4>
+                  <p>Create a comment explaining the difference between a class and an object. Then print a message explaining how a class is like a blueprint and an object is like a house built from that blueprint.</p>
+                  <p class="hint-text">Write comments explaining classes vs objects, then print an explanation.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Object Attributes and Methods</h4>
+                  <p>Think about a Dog object. Create variables for a dog's attributes (name, breed, age) and a function that simulates a dog's behavior (bark). Print the dog's information and call the bark function.</p>
+                  <p class="hint-text">Create variables for dog data, create a bark function, then print and call them.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-5/project-organization-best-practices.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-6/defining-creating-classes.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: '# A class is a blueprint that defines attributes and methods\n# An object is an instance created from a class\n\nprint("A class is like a blueprint - it defines what objects will have. An object is like a house built from that blueprint - it has the same structure but its own unique data.")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('class') && !trimmed.includes('blueprint')) {
+              return {
+                correct: false,
+                message: 'You need to explain what a class is.',
+                hints: ['Add comments explaining classes and objects', 'Explain the blueprint analogy']
+              };
+            }
+            
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print an explanation about classes and objects.',
+                hints: ['Use print() to explain the blueprint analogy']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure quotes match']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully explained the difference between classes and objects.'
+            };
+          }
+        },
+        exercise2: {
+          solution: '# Dog object attributes\ndog_name = "Buddy"\ndog_breed = "Golden Retriever"\ndog_age = 3\n\n# Dog behavior\ndef bark():\n    return "Woof! Woof!"\n\nprint(f"Dog: {dog_name}, {dog_breed}, {dog_age} years old")\nprint(bark())',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('name') || !trimmed.includes('breed') || !trimmed.includes('age')) {
+              return {
+                correct: false,
+                message: 'You need to create variables for name, breed, and age.',
+                hints: ['Create: dog_name, dog_breed, dog_age', 'Assign values to each']
+              };
+            }
+            
+            if (!trimmed.includes('def bark') && !trimmed.includes('bark')) {
+              return {
+                correct: false,
+                message: 'You need to create a bark function.',
+                hints: ['Define: def bark():', 'Return a bark message']
+              };
+            }
+            
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print the dog information and call bark().',
+                hints: ['Print dog info', 'Call and print bark()']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure function is defined correctly']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created a dog object with attributes and methods.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

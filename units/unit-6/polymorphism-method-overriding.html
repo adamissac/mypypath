@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 6 • Polymorphism and Method Overriding - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 6 • Polymorphism and Method Overriding • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 6 • Object-Oriented Programming</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-6/introduction-oop-concepts.html">1. Introduction to OOP Concepts</a></li>
+                <li><a href="/units/unit-6/defining-creating-classes.html">2. Defining and Creating Classes</a></li>
+                <li><a href="/units/unit-6/creating-using-objects.html">3. Creating and Using Objects</a></li>
+                <li><a href="/units/unit-6/instance-variables-methods.html">4. Instance Variables and Methods</a></li>
+                <li><a href="/units/unit-6/class-variables-class-methods.html">5. Class Variables and Class Methods</a></li>
+                <li><a href="/units/unit-6/encapsulation-access-control.html">6. Encapsulation and Access Control</a></li>
+                <li><a href="/units/unit-6/inheritance-subclasses.html">7. Inheritance and Subclasses</a></li>
+                <li><a class="active" href="/units/unit-6/polymorphism-method-overriding.html">8. Polymorphism and Method Overriding</a></li>
+                <li><a href="/units/unit-6/super-function.html">9. The super() Function</a></li>
+                <li><a href="/units/unit-6/oop-real-projects.html">10. OOP in Real Projects</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-6.html">Unit 6</a>
+              <span class="separator">/</span>
+              <span class="current">Polymorphism and Method Overriding</span>
+            </nav>
+            <div class="eyebrow">Unit 6 • Lesson 8</div>
+            <h1 class="lesson-title">Polymorphism and Method Overriding</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Polymorphism lets different classes respond to the same function call in unique ways. You'll see how method overriding allows subclasses to redefine inherited methods for customized behavior, enabling flexible and extensible code design.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-6/inheritance-subclasses.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-6/super-function.html">Next: The super() Function</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Polymorphism:</strong> Understand what polymorphism is and how it works in Python.</li>
+                  <li><strong>Method overriding:</strong> Learn how to override parent methods in subclasses.</li>
+                  <li><strong>Same interface, different behavior:</strong> Discover how different classes can respond to the same method call differently.</li>
+                  <li><strong>Practical applications:</strong> See how polymorphism makes code flexible and extensible.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Polymorphism is one of the most powerful OOP concepts! It lets you write code that works with different types of objects in the same way, even though each object behaves differently. Think of it like a universal remote - you press the same button (call the same method), but different devices (different classes) respond in their own way. This makes your code flexible, extensible, and easier to maintain!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What is Polymorphism?</h2>
+                <p>Polymorphism means "many forms" - different classes can respond to the same method call in different ways:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Polymorphism Example</div>
+                  <pre class="code"><code>class Animal:
+    def speak(self):
+        return "Some sound"
+
+class Dog(Animal):
+    def speak(self):
+        return "Woof!"
+
+class Cat(Animal):
+    def speak(self):
+        return "Meow!"
+
+# Same method call, different behaviors
+animals = [Dog(), Cat()]
+for animal in animals:
+    print(animal.speak())  # "Woof!" then "Meow!"</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Same Method Name</h4>
+                      <p>Different classes can have methods with the same name. When you call that method, each class responds in its own way!</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Different Implementations</h4>
+                      <p>Each class implements the method differently. Dog's <code>speak()</code> returns "Woof!", Cat's returns "Meow!"</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Unified Interface</h4>
+                      <p>You can treat different objects the same way - call <code>speak()</code> on any animal, and it responds appropriately!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> Polymorphism is like having a universal "play" button. When you press play on a music player, it plays music. When you press play on a video player, it plays video. Same button, different behavior - that's polymorphism!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Polymorphism</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Create multiple classes with the same method:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'class Shape:\n    def area(self):\n        return 0\n\nclass Rectangle(Shape):\n    def __init__(self, width, height):\n        self.width = width\n        self.height = height\n    \n    def area(self):\n        return self.width * self.height\n\nclass Circle(Shape):\n    def __init__(self, radius):\n        self.radius = radius\n    \n    def area(self):\n        return 3.14 * self.radius ** 2\n\nshapes = [Rectangle(5, 10), Circle(3)]\nfor shape in shapes:\n    print(f"Area: {shape.area()}")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">class Shape:
+    def area(self):
+        return 0
+
+class Rectangle(Shape):
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+    
+    def area(self):
+        return self.width * self.height
+
+class Circle(Shape):
+    def __init__(self, radius):
+        self.radius = radius
+    
+    def area(self):
+        return 3.14 * self.radius ** 2
+
+shapes = [Rectangle(5, 10), Circle(3)]
+for shape in shapes:
+    print(f"Area: {shape.area()}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Both Rectangle and Circle have an <code>area()</code> method, but they calculate area differently! When you call <code>shape.area()</code> on each object, Python automatically uses the correct implementation. This is polymorphism - same method name, different behavior!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Method Overriding</h2>
+                <p>Method overriding happens when a subclass redefines a method from the parent class:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Method Overriding</div>
+                  <pre class="code"><code>class Vehicle:
+    def start(self):
+        return "Vehicle starts"
+
+class Car(Vehicle):
+    def start(self):  # Override parent method
+        return "Car engine starts"
+
+class Bike(Vehicle):
+    def start(self):  # Override parent method
+        return "Bike pedals start"
+
+car = Car()
+bike = Bike()
+print(car.start())  # "Car engine starts"
+print(bike.start()) # "Bike pedals start"</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Parent Defines Method</h4>
+                      <p>The parent class defines a method with a default implementation. This provides a fallback behavior.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Subclass Overrides</h4>
+                      <p>The subclass defines the same method name with its own implementation. This replaces the parent's version!</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Subclass Version Used</h4>
+                      <p>When you call the method on a subclass object, Python uses the subclass's version, not the parent's!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>Why Override?</h4>
+                  <p>Method overriding lets you customize behavior for specific subclasses while keeping a consistent interface. All vehicles can start, but cars and bikes start differently. Overriding lets each subclass implement its own version!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Polymorphism in Action</h2>
+                <p>Polymorphism shines when you work with multiple objects of different types:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Polymorphism in Practice</div>
+                  <pre class="code"><code>class Employee:
+    def calculate_pay(self):
+        return 0
+
+class FullTime(Employee):
+    def calculate_pay(self):
+        return 5000
+
+class PartTime(Employee):
+    def calculate_pay(self):
+        return 2500
+
+employees = [FullTime(), PartTime(), FullTime()]
+total = sum(emp.calculate_pay() for emp in employees)
+print(f"Total payroll: ${total}")  # $12500</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> Polymorphism lets you write code that works with different types without knowing the specific type! You can call <code>calculate_pay()</code> on any employee, and each type calculates it correctly. This makes your code flexible and easy to extend!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Polymorphism with Lists</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Use polymorphism with a list of different objects:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'class Animal:\n    def make_sound(self):\n        return "Some sound"\n\nclass Dog(Animal):\n    def make_sound(self):\n        return "Woof!"\n\nclass Cat(Animal):\n    def make_sound(self):\n        return "Meow!"\n\nclass Bird(Animal):\n    def make_sound(self):\n        return "Tweet!"\n\nanimals = [Dog(), Cat(), Bird()]\nfor animal in animals:\n    print(animal.make_sound())')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">class Animal:
+    def make_sound(self):
+        return "Some sound"
+
+class Dog(Animal):
+    def make_sound(self):
+        return "Woof!"
+
+class Cat(Animal):
+    def make_sound(self):
+        return "Meow!"
+
+class Bird(Animal):
+    def make_sound(self):
+        return "Tweet!"
+
+animals = [Dog(), Cat(), Bird()]
+for animal in animals:
+    print(animal.make_sound())</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You created a list containing different types of animals (Dog, Cat, Bird). When you loop through and call <code>make_sound()</code> on each, Python automatically uses the correct implementation for each type! This is polymorphism - one interface, many forms!</p>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Method Overriding</h4>
+                  <p>Create a parent class <code>Shape</code> with method <code>draw(self)</code> that returns "Drawing shape". Create a subclass <code>Circle</code> that overrides <code>draw</code> to return "Drawing circle". Create a Circle object and call draw().</p>
+                  <p class="hint-text">Define class Shape with draw method, create Circle(Shape) that overrides draw, create Circle object, call draw.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Polymorphism</h4>
+                  <p>Create a parent class <code>Payment</code> with method <code>process(self)</code> that returns "Processing payment". Create subclasses <code>CreditCard</code> and <code>PayPal</code> that override <code>process</code> to return "Processing credit card" and "Processing PayPal" respectively. Create a list with one of each and call process() on each.</p>
+                  <p class="hint-text">Define class Payment with process method, create CreditCard and PayPal subclasses that override process, create list, loop and call process.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-6/inheritance-subclasses.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-6/super-function.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'class Shape:\n    def draw(self):\n        return "Drawing shape"\n\nclass Circle(Shape):\n    def draw(self):  # Override parent method\n        return "Drawing circle"\n\ncircle = Circle()\nprint(circle.draw())',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('class Shape')) {
+              return {
+                correct: false,
+                message: 'You need to create a Shape class.',
+                hints: ['Define: class Shape:', 'Add draw method']
+              };
+            }
+            
+            if (!trimmed.includes('def draw') || (trimmed.match(/def draw/g) || []).length < 1) {
+              return {
+                correct: false,
+                message: 'You need to create a draw method in Shape.',
+                hints: ['def draw(self):', 'return "Drawing shape"']
+              };
+            }
+            
+            if (!trimmed.includes('class Circle(Shape)') && !trimmed.includes('Circle(Shape)')) {
+              return {
+                correct: false,
+                message: 'You need to create a Circle class that inherits from Shape.',
+                hints: ['Define: class Circle(Shape):']
+              };
+            }
+            
+            if ((trimmed.match(/def draw/g) || []).length < 2) {
+              return {
+                correct: false,
+                message: 'You need to override draw in Circle class.',
+                hints: ['In Circle: def draw(self):', 'return "Drawing circle"']
+              };
+            }
+            
+            if (!trimmed.includes('Circle()')) {
+              return {
+                correct: false,
+                message: 'You need to create a Circle object.',
+                hints: ['Create: circle = Circle()']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure indentation is correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('circle')) {
+              return {
+                correct: false,
+                message: 'The output should show "Drawing circle".',
+                hints: ['Call circle.draw() and print it']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully overrode a parent method in a subclass.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'class Payment:\n    def process(self):\n        return "Processing payment"\n\nclass CreditCard(Payment):\n    def process(self):\n        return "Processing credit card"\n\nclass PayPal(Payment):\n    def process(self):\n        return "Processing PayPal"\n\npayments = [CreditCard(), PayPal()]\nfor payment in payments:\n    print(payment.process())',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('class Payment')) {
+              return {
+                correct: false,
+                message: 'You need to create a Payment class.',
+                hints: ['Define: class Payment:', 'Add process method']
+              };
+            }
+            
+            if (!trimmed.includes('class CreditCard') || !trimmed.includes('CreditCard(Payment)')) {
+              return {
+                correct: false,
+                message: 'You need to create a CreditCard class that inherits from Payment.',
+                hints: ['Define: class CreditCard(Payment):']
+              };
+            }
+            
+            if (!trimmed.includes('class PayPal') || !trimmed.includes('PayPal(Payment)')) {
+              return {
+                correct: false,
+                message: 'You need to create a PayPal class that inherits from Payment.',
+                hints: ['Define: class PayPal(Payment):']
+              };
+            }
+            
+            if (!trimmed.includes('CreditCard()') || !trimmed.includes('PayPal()')) {
+              return {
+                correct: false,
+                message: 'You need to create a list with CreditCard and PayPal objects.',
+                hints: ['Create: payments = [CreditCard(), PayPal()]']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure indentation is correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('credit card') || !outputText.includes('PayPal')) {
+              return {
+                correct: false,
+                message: 'The output should show both "Processing credit card" and "Processing PayPal".',
+                hints: ['Loop through payments and call process() on each']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully demonstrated polymorphism with multiple subclasses.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

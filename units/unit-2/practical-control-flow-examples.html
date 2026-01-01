@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 2 • Practical Control Flow Examples - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 2 • Practical Control Flow Examples • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 2 • Control Flow</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-2/understanding-control-flow.html">1. Understanding Control Flow</a></li>
+                <li><a href="/units/unit-2/comparison-logical-operators.html">2. Comparison & Logical Operators</a></li>
+                <li><a href="/units/unit-2/if-statement.html">3. The if Statement</a></li>
+                <li><a href="/units/unit-2/if-else-elif.html">4. if-else and elif</a></li>
+                <li><a href="/units/unit-2/nested-conditionals.html">5. Nested Conditionals</a></li>
+                <li><a href="/units/unit-2/boolean-logic-practice.html">6. Boolean Logic in Practice</a></li>
+                <li><a href="/units/unit-2/introduction-loops.html">7. Introduction to Loops</a></li>
+                <li><a href="/units/unit-2/while-loop.html">8. The while Loop</a></li>
+                <li><a href="/units/unit-2/for-loop.html">9. The for Loop</a></li>
+                <li><a href="/units/unit-2/loop-control-statements.html">10. Loop Control Statements</a></li>
+                <li><a class="active" href="/units/unit-2/practical-control-flow-examples.html">11. Practical Control Flow Examples</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-2.html">Unit 2</a>
+              <span class="separator">/</span>
+              <span class="current">Practical Control Flow Examples</span>
+            </nav>
+            <div class="eyebrow">Unit 2 • Lesson 11</div>
+            <h1 class="lesson-title">Practical Control Flow Examples</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Put everything together by building small interactive programs — from simple calculators to number-guessing games. This subtopic focuses on applying conditional logic and loops to solve real-world problems.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">30–40 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-2/loop-control-statements.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-3.html">Next: Unit 3</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Combining concepts:</strong> See how conditionals, loops, and control statements work together.</li>
+                  <li><strong>Building real programs:</strong> Create complete programs that solve practical problems.</li>
+                  <li><strong>Problem-solving approach:</strong> Learn how to break down problems and use control flow to solve them.</li>
+                  <li><strong>Reading and understanding code:</strong> Practice reading more complex programs that combine multiple concepts.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Real programs combine multiple concepts together. In this lesson, you'll see how everything you've learned — conditionals, loops, variables, and more — work together to create useful programs. This is where you start thinking like a programmer, breaking problems into smaller pieces and using control flow to solve them.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Example 1: Simple Calculator</h2>
+                <p>Let's build a simple calculator that performs basic arithmetic operations. This combines conditionals, user input, and variables.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Simple Calculator Program</div>
+                  <pre class="code"><code># Get two numbers from the user
+num1 = float(input("Enter first number: "))
+num2 = float(input("Enter second number: "))
+
+# Get the operation
+operation = input("Enter operation (+, -, *, /): ")
+
+# Perform the calculation based on operation
+if operation == "+":
+    result = num1 + num2
+elif operation == "-":
+    result = num1 - num2
+elif operation == "*":
+    result = num1 * num2
+elif operation == "/":
+    if num2 != 0:
+        result = num1 / num2
+    else:
+        result = "Error: Cannot divide by zero!"
+else:
+    result = "Invalid operation"
+
+print(f"Result: {result}")</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How This Works</h4>
+                  <p>This program first gets two numbers from the user and stores them in variables. Then it asks what operation to perform. Using if-elif-else statements, it checks which operation was chosen and performs the appropriate calculation. Notice how it handles division by zero — if the user tries to divide by zero, it prints an error message instead of crashing. This is a practical example of combining conditionals to handle different cases.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Try It: Simple Calculator</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Note: Since we can't use input() interactively here, try modifying the code to use fixed values:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Simple calculator with fixed values\nnum1 = 10\nnum2 = 5\noperation = &quot;+&quot;\n\nif operation == &quot;+&quot;:\n    result = num1 + num2\nelif operation == &quot;-&quot;:\n    result = num1 - num2\nelif operation == &quot;*&quot;:\n    result = num1 * num2\nelif operation == &quot;/&quot;:\n    result = num1 / num2\nelse:\n    result = &quot;Invalid operation&quot;\n\nprint(f&quot;{num1} {operation} {num2} = {result}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Simple calculator with fixed values
+num1 = 10
+num2 = 5
+operation = "+"
+
+if operation == "+":
+    result = num1 + num2
+elif operation == "-":
+    result = num1 - num2
+elif operation == "*":
+    result = num1 * num2
+elif operation == "/":
+    result = num1 / num2
+else:
+    result = "Invalid operation"
+
+print(f"{num1} {operation} {num2} = {result}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The code used if-elif-else statements to check which operation was chosen. Since operation was "+", Python entered the first if block and calculated num1 + num2, which equals 15. Try changing operation to "-", "*", or "/" to see different calculations. This demonstrates how conditionals let your program make decisions and perform different actions based on the input.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Example 2: Number Guessing Game</h2>
+                <p>Let's create a simple number guessing game that combines loops and conditionals. The program picks a number and the user tries to guess it.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Number Guessing Game</div>
+                  <pre class="code"><code># Secret number (in a real game, this would be random)
+secret = 7
+guess = None
+attempts = 0
+
+print("I'm thinking of a number between 1 and 10!")
+
+while guess != secret:
+    guess = int(input("Guess the number: "))
+    attempts = attempts + 1
+    
+    if guess < secret:
+        print("Too low! Try again.")
+    elif guess > secret:
+        print("Too high! Try again.")
+    else:
+        print(f"Correct! You guessed it in {attempts} attempts!")</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How This Works</h4>
+                  <p>This program uses a while loop that keeps running until the user guesses correctly. Inside the loop, it gets a guess from the user and checks if it's too low, too high, or correct. If it's correct, the condition <code>guess != secret</code> becomes False and the loop stops. The program also tracks how many attempts the user made. This combines a while loop with nested conditionals to create an interactive game.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Try It: Simplified Guessing Game</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try a simplified version that checks guesses in a loop:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', '# Simplified guessing game\nsecret = 7\nguesses = [3, 5, 7, 9]  # Simulated guesses\nattempts = 0\n\nfor guess in guesses:\n    attempts = attempts + 1\n    if guess < secret:\n        print(f&quot;Guess {attempts}: {guess} - Too low!&quot;)\n    elif guess > secret:\n        print(f&quot;Guess {attempts}: {guess} - Too high!&quot;)\n    else:\n        print(f&quot;Guess {attempts}: {guess} - Correct!&quot;)\n        break')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2"># Simplified guessing game
+secret = 7
+guesses = [3, 5, 7, 9]  # Simulated guesses
+attempts = 0
+
+for guess in guesses:
+    attempts = attempts + 1
+    if guess < secret:
+        print(f"Guess {attempts}: {guess} - Too low!")
+    elif guess > secret:
+        print(f"Guess {attempts}: {guess} - Too high!")
+    else:
+        print(f"Guess {attempts}: {guess} - Correct!")
+        break</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The program went through each guess in the list. For guess 3, it was less than 7 (the secret), so it printed "Too low!". For guess 5, it was still less than 7, so it printed "Too low!" again. For guess 7, it matched the secret number, so it printed "Correct!" and then executed <code>break</code>, which stopped the loop immediately (so guess 9 was never checked). This demonstrates combining a for loop with conditionals and break to create a game-like program!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Example 3: Counting and Filtering</h2>
+                <p>Let's create a program that processes a list of numbers, counting how many are positive, negative, or zero, and filtering out certain values.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Counting and Filtering Numbers</div>
+                  <pre class="code"><code>numbers = [5, -3, 0, 12, -8, 7, 0, -1]
+positive_count = 0
+negative_count = 0
+zero_count = 0
+filtered_numbers = []
+
+for num in numbers:
+    if num > 0:
+        positive_count = positive_count + 1
+        filtered_numbers.append(num)
+    elif num < 0:
+        negative_count = negative_count + 1
+    else:
+        zero_count = zero_count + 1
+
+print(f"Positive: {positive_count}")
+print(f"Negative: {negative_count}")
+print(f"Zero: {zero_count}")
+print(f"Filtered (positive only): {filtered_numbers}")</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How This Works</h4>
+                  <p>This program loops through each number in a list. For each number, it uses if-elif-else to categorize it as positive, negative, or zero, and increments the appropriate counter. It also adds positive numbers to a new list called filtered_numbers. This demonstrates how loops and conditionals work together to process data and extract information.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Try It: Count and Filter</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try this counting and filtering example:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice3">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice3')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice3', 'numbers = [5, -3, 0, 12, -8, 7, 0, -1]\npositive_count = 0\nnegative_count = 0\nzero_count = 0\nfiltered_numbers = []\n\nfor num in numbers:\n    if num > 0:\n        positive_count = positive_count + 1\n        filtered_numbers.append(num)\n    elif num < 0:\n        negative_count = negative_count + 1\n    else:\n        zero_count = zero_count + 1\n\nprint(f&quot;Positive: {positive_count}&quot;)\nprint(f&quot;Negative: {negative_count}&quot;)\nprint(f&quot;Zero: {zero_count}&quot;)\nprint(f&quot;Filtered (positive only): {filtered_numbers}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice3')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice3">numbers = [5, -3, 0, 12, -8, 7, 0, -1]
+positive_count = 0
+negative_count = 0
+zero_count = 0
+filtered_numbers = []
+
+for num in numbers:
+    if num > 0:
+        positive_count = positive_count + 1
+        filtered_numbers.append(num)
+    elif num < 0:
+        negative_count = negative_count + 1
+    else:
+        zero_count = zero_count + 1
+
+print(f"Positive: {positive_count}")
+print(f"Negative: {negative_count}")
+print(f"Zero: {zero_count}")
+print(f"Filtered (positive only): {filtered_numbers}")</textarea>
+                  <div class="editor-output" id="output-practice3">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The program went through each number in the list. For 5, it was positive, so it incremented positive_count and added 5 to filtered_numbers. For -3, it was negative, so it incremented negative_count. For 0, it was zero, so it incremented zero_count. This continued for all numbers. At the end, it printed the counts: 3 positive, 3 negative, 2 zero, and the filtered list contained only the positive numbers [5, 12, 7]. This shows how loops and conditionals work together to process and categorize data!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Example 4: Finding Maximum Value</h2>
+                <p>Let's create a program that finds the maximum value in a list. This combines loops, conditionals, and variables.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Finding Maximum Value</div>
+                  <pre class="code"><code>numbers = [23, 45, 12, 67, 34, 89, 56]
+max_value = numbers[0]  # Start with first number
+
+for num in numbers:
+    if num > max_value:
+        max_value = num
+
+print(f"The maximum value is: {max_value}")</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How This Works</h4>
+                  <p>This program starts by assuming the first number is the maximum. Then it loops through each number in the list. For each number, it checks if it's greater than the current maximum. If it is, it updates max_value to that number. By the end of the loop, max_value contains the largest number. This is a common pattern for finding maximum or minimum values!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Build a Simple Calculator</h4>
+                  <p>Create two variables: <code>num1</code> = 15 and <code>num2</code> = 3. Create a variable <code>operation</code> = "*". Use if-elif-else to perform the operation and print the result.</p>
+                  <p class="hint-text">Check if operation is "+", "-", "*", or "/" and perform the appropriate calculation.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Find Even Numbers</h4>
+                  <p>Create a list: <code>numbers</code> = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]. Use a for loop and an if statement to print only the even numbers.</p>
+                  <p class="hint-text">Use for num in numbers:, then check if num % 2 == 0 to find even numbers.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-2/loop-control-statements.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-3.html">Next Unit</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'num1 = 15\nnum2 = 3\noperation = "*"\n\nif operation == "+":\n    result = num1 + num2\nelif operation == "-":\n    result = num1 - num2\nelif operation == "*":\n    result = num1 * num2\nelif operation == "/":\n    result = num1 / num2\nelse:\n    result = "Invalid operation"\n\nprint(result)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for num1
+            if (!trimmed.includes('num1') || !trimmed.includes('15')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable num1 with value 15.',
+                hints: ['Write: num1 = 15']
+              };
+            }
+            
+            // Check for num2
+            if (!trimmed.includes('num2') || !trimmed.includes('3')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable num2 with value 3.',
+                hints: ['Write: num2 = 3']
+              };
+            }
+            
+            // Check for operation
+            if (!trimmed.includes('operation') || !trimmed.includes('"*"')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable operation with value "*".',
+                hints: ['Write: operation = "*"']
+              };
+            }
+            
+            // Check for if-elif-else structure
+            if (!trimmed.includes('if') || !trimmed.includes('elif')) {
+              return {
+                correct: false,
+                message: 'You need to use if-elif-else statements to check the operation.',
+                hints: ['Use: if operation == "+":', 'Then add elif for "-", "*", "/"', 'Add else for invalid operations']
+              };
+            }
+            
+            // Check for multiplication case
+            if (!trimmed.includes('operation == "*"') && !trimmed.includes('operation=="*"')) {
+              return {
+                correct: false,
+                message: 'You need to check if operation == "*".',
+                hints: ['Add: elif operation == "*":', 'Then calculate: result = num1 * num2']
+              };
+            }
+            
+            // Check for print statement
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print the result.',
+                hints: ['Add a print statement', 'Print: result']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have colons after if/elif/else', 'Check your indentation']
+              };
+            }
+            
+            // Check output contains 45 (15 * 3)
+            const outputText = output.stdout || '';
+            if (!outputText.includes('45')) {
+              return {
+                correct: false,
+                message: 'With num1=15, num2=3, and operation="*", the result should be 45.',
+                hints: ['Check your multiplication calculation', 'Make sure you\'re checking operation == "*"', 'Verify your print statement']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully built a calculator using conditionals.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\nfor num in numbers:\n    if num % 2 == 0:\n        print(num)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for numbers list
+            if (!trimmed.includes('numbers') || (!trimmed.includes('[1') && !trimmed.includes('[ 1'))) {
+              return {
+                correct: false,
+                message: 'You need to create a list numbers with values [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].',
+                hints: ['Write: numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]']
+              };
+            }
+            
+            // Check for for loop
+            if (!trimmed.includes('for')) {
+              return {
+                correct: false,
+                message: 'You need to write a for loop.',
+                hints: ['Start with: for num in numbers:', 'Don\'t forget the colon']
+              };
+            }
+            
+            // Check for if statement
+            if (!trimmed.includes('if')) {
+              return {
+                correct: false,
+                message: 'You need to use an if statement to check if a number is even.',
+                hints: ['Add: if num % 2 == 0:', 'The % operator gives the remainder when dividing']
+              };
+            }
+            
+            // Check for modulo check (num % 2 == 0)
+            if (!trimmed.includes('% 2') && !trimmed.includes('%2')) {
+              return {
+                correct: false,
+                message: 'You need to check if num % 2 == 0 to find even numbers.',
+                hints: ['Add: if num % 2 == 0:', 'Even numbers have remainder 0 when divided by 2']
+              };
+            }
+            
+            // Check for print statement
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print even numbers inside the if block.',
+                hints: ['Add a print statement', 'Make sure it\'s indented inside the if block', 'Print: num']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have a colon after if', 'Check your indentation']
+              };
+            }
+            
+            // Check output contains even numbers (2, 4, 6, 8, 10)
+            const outputText = output.stdout || '';
+            if (!outputText.includes('2') || !outputText.includes('4') || !outputText.includes('6')) {
+              return {
+                correct: false,
+                message: 'Your loop should print the even numbers: 2, 4, 6, 8, 10.',
+                hints: ['Check your modulo check', 'Make sure print is inside the if block', 'Verify your indentation']
+              };
+            }
+            
+            // Check output does NOT contain odd numbers (1, 3, 5, 7, 9)
+            if (outputText.includes('1') || outputText.includes('3') || outputText.includes('5')) {
+              return {
+                correct: false,
+                message: 'Your loop should only print even numbers (not odd numbers like 1, 3, 5, 7, 9).',
+                hints: ['Check your condition', 'Make sure print is only inside the if block', 'Even numbers are divisible by 2']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully combined loops and conditionals to filter even numbers.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

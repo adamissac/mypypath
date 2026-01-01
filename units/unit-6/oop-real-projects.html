@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 6 • OOP in Real Projects - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 6 • OOP in Real Projects • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 6 • Object-Oriented Programming</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-6/introduction-oop-concepts.html">1. Introduction to OOP Concepts</a></li>
+                <li><a class="" href="/units/unit-6/defining-creating-classes.html">2. Defining and Creating Classes</a></li>
+                <li><a class="" href="/units/unit-6/creating-using-objects.html">3. Creating and Using Objects</a></li>
+                <li><a class="" href="/units/unit-6/instance-variables-methods.html">4. Instance Variables and Methods</a></li>
+                <li><a class="" href="/units/unit-6/class-variables-class-methods.html">5. Class Variables and Class Methods</a></li>
+                <li><a class="" href="/units/unit-6/encapsulation-access-control.html">6. Encapsulation and Access Control</a></li>
+                <li><a class="" href="/units/unit-6/inheritance-subclasses.html">7. Inheritance and Subclasses</a></li>
+                <li><a class="" href="/units/unit-6/polymorphism-method-overriding.html">8. Polymorphism and Method Overriding</a></li>
+                <li><a class="" href="/units/unit-6/super-function.html">9. The super() Function</a></li>
+                <li><a class="active" href="/units/unit-6/oop-real-projects.html">10. OOP in Real Projects</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-6.html">Unit 6</a>
+              <span class="separator">/</span>
+              <span class="current">OOP in Real Projects</span>
+            </nav>
+            <div class="eyebrow">Unit 6 • Lesson 10</div>
+            <h1 class="lesson-title">OOP in Real Projects</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>This final topic brings everything together with hands-on examples like banking systems, games, or inventory trackers. You'll learn how combining classes, inheritance, and encapsulation helps build robust, real-world applications, demonstrating the power of OOP in practice.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">30–40 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-7.html">Next: Unit 7</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Designing with OOP:</strong> How to structure real-world problems using classes and objects.</li>
+                  <li><strong>Building complete systems:</strong> Create working applications that combine multiple OOP concepts.</li>
+                  <li><strong>Best practices:</strong> Learn how to organize code, use inheritance effectively, and apply encapsulation.</li>
+                  <li><strong>Real-world examples:</strong> Build a banking system, a simple game, and an inventory tracker.</li>
+                  <li><strong>Putting it all together:</strong> See how classes, inheritance, polymorphism, and encapsulation work together.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>Project 1: Banking System</h2>
+                <p>Let's build a simple banking system that demonstrates encapsulation, inheritance, and method overriding. This system will have different types of accounts with different behaviors.</p>
+
+                <div class="code-example">
+                  <h3>Complete Banking System</h3>
+                  <pre class="code"><code>class BankAccount:
+    def __init__(self, account_number, balance=0):
+        self.__account_number = account_number  # Private attribute
+        self.__balance = balance  # Private attribute
+    
+    def deposit(self, amount):
+        if amount > 0:
+            self.__balance += amount
+            return f"Deposited ${amount}. New balance: ${self.__balance}"
+        return "Invalid deposit amount"
+    
+    def withdraw(self, amount):
+        if amount > 0 and amount <= self.__balance:
+            self.__balance -= amount
+            return f"Withdrew ${amount}. New balance: ${self.__balance}"
+        return "Insufficient funds or invalid amount"
+    
+    def get_balance(self):
+        return self.__balance
+    
+    def get_account_number(self):
+        return self.__account_number
+
+class SavingsAccount(BankAccount):
+    def __init__(self, account_number, balance=0, interest_rate=0.02):
+        super().__init__(account_number, balance)
+        self.__interest_rate = interest_rate
+    
+    def add_interest(self):
+        interest = self.get_balance() * self.__interest_rate
+        self.deposit(interest)
+        return f"Interest added: ${interest:.2f}"
+    
+    def withdraw(self, amount):
+        if amount > self.get_balance() * 0.9:  # Can't withdraw more than 90%
+            return "Cannot withdraw more than 90% of balance"
+        return super().withdraw(amount)
+
+class CheckingAccount(BankAccount):
+    def __init__(self, account_number, balance=0, overdraft_limit=100):
+        super().__init__(account_number, balance)
+        self.__overdraft_limit = overdraft_limit
+    
+    def withdraw(self, amount):
+        available = self.get_balance() + self.__overdraft_limit
+        if amount <= available:
+            self._BankAccount__balance -= amount  # Accessing private attribute
+            return f"Withdrew ${amount}. Balance: ${self.get_balance()}"
+        return "Exceeds overdraft limit"
+
+# Usage
+savings = SavingsAccount("SAV001", 1000, 0.03)
+checking = CheckingAccount("CHK001", 500, 200)
+
+print(savings.deposit(200))
+print(savings.add_interest())
+print(checking.withdraw(600))  # Uses overdraft
+print(f"Savings balance: ${savings.get_balance()}")</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>Key OOP Concepts Used</h4>
+                  <ul>
+                    <li><strong>Encapsulation:</strong> Private attributes (<code>__balance</code>, <code>__account_number</code>) protect data.</li>
+                    <li><strong>Inheritance:</strong> <code>SavingsAccount</code> and <code>CheckingAccount</code> inherit from <code>BankAccount</code>.</li>
+                    <li><strong>Polymorphism:</strong> Both subclasses override <code>withdraw()</code> with different behaviors.</li>
+                    <li><strong>Method overriding:</strong> Each account type has its own withdrawal rules.</li>
+                  </ul>
+                </div>
+
+                <div class="practice-box">
+                  <h3>Try It Yourself</h3>
+                  <p>Run the banking system code above and experiment with creating accounts, making deposits, and withdrawals:</p>
+                  <textarea id="editor-banking" class="code-editor-small">class BankAccount:
+    def __init__(self, account_number, balance=0):
+        self.__account_number = account_number
+        self.__balance = balance
+    
+    def deposit(self, amount):
+        if amount > 0:
+            self.__balance += amount
+            return f"Deposited ${amount}. New balance: ${self.__balance}"
+        return "Invalid deposit amount"
+    
+    def withdraw(self, amount):
+        if amount > 0 and amount <= self.__balance:
+            self.__balance -= amount
+            return f"Withdrew ${amount}. New balance: ${self.__balance}"
+        return "Insufficient funds or invalid amount"
+    
+    def get_balance(self):
+        return self.__balance
+
+savings = BankAccount("SAV001", 1000)
+print(savings.deposit(200))
+print(savings.withdraw(300))
+print(f"Final balance: ${savings.get_balance()}")</textarea>
+                  <div class="editor-controls">
+                    <button onclick="runEditorCode('banking')" class="btn btn-primary">Run Code</button>
+                    <button onclick="resetEditor('banking', 'class BankAccount:\n    def __init__(self, account_number, balance=0):\n        self.__account_number = account_number\n        self.__balance = balance\n    \n    def deposit(self, amount):\n        if amount > 0:\n            self.__balance += amount\n            return f\"Deposited ${amount}. New balance: ${self.__balance}\"\n        return \"Invalid deposit amount\"\n    \n    def withdraw(self, amount):\n        if amount > 0 and amount <= self.__balance:\n            self.__balance -= amount\n            return f\"Withdrew ${amount}. New balance: ${self.__balance}\"\n        return \"Insufficient funds or invalid amount\"\n    \n    def get_balance(self):\n        return self.__balance\n\nsavings = BankAccount(\"SAV001\", 1000)\nprint(savings.deposit(200))\nprint(savings.withdraw(300))\nprint(f\"Final balance: ${savings.get_balance()}\")')" class="btn btn-ghost">Reset</button>
+                  </div>
+                  <div id="output-banking" class="code-output">Click "Run Code" to see your output here</div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Project 2: Simple Game System</h2>
+                <p>Let's create a simple game system with different character types. This demonstrates inheritance, polymorphism, and how to structure a game using OOP.</p>
+
+                <div class="code-example">
+                  <h3>Game Character System</h3>
+                  <pre class="code"><code>class Character:
+    def __init__(self, name, health=100):
+        self.name = name
+        self.health = health
+        self.max_health = health
+    
+    def attack(self):
+        return 10  # Base attack damage
+    
+    def take_damage(self, damage):
+        self.health -= damage
+        if self.health < 0:
+            self.health = 0
+        return f"{self.name} took {damage} damage. Health: {self.health}/{self.max_health}"
+    
+    def heal(self, amount):
+        self.health += amount
+        if self.health > self.max_health:
+            self.health = self.max_health
+        return f"{self.name} healed {amount}. Health: {self.health}/{self.max_health}"
+    
+    def is_alive(self):
+        return self.health > 0
+    
+    def __str__(self):
+        return f"{self.name} (Health: {self.health}/{self.max_health})"
+
+class Warrior(Character):
+    def __init__(self, name, health=120):
+        super().__init__(name, health)
+        self.armor = 5
+    
+    def attack(self):
+        return 15  # Warriors hit harder
+    
+    def take_damage(self, damage):
+        actual_damage = max(0, damage - self.armor)  # Armor reduces damage
+        return super().take_damage(actual_damage)
+
+class Mage(Character):
+    def __init__(self, name, health=80):
+        super().__init__(name, health)
+        self.mana = 100
+    
+    def attack(self):
+        if self.mana >= 20:
+            self.mana -= 20
+            return 25  # Mages hit hardest but use mana
+        return 5  # Weak attack without mana
+    
+    def cast_spell(self):
+        if self.mana >= 30:
+            self.mana -= 30
+            return 30  # Powerful spell
+        return 0
+
+class Archer(Character):
+    def __init__(self, name, health=90):
+        super().__init__(name, health)
+        self.arrows = 10
+    
+    def attack(self):
+        if self.arrows > 0:
+            self.arrows -= 1
+            return 12
+        return 3  # Weak melee attack without arrows
+    
+    def restock_arrows(self, amount):
+        self.arrows += amount
+        return f"{self.name} restocked {amount} arrows. Total: {self.arrows}"
+
+# Game simulation
+warrior = Warrior("Conan")
+mage = Mage("Gandalf")
+archer = Archer("Legolas")
+
+characters = [warrior, mage, archer]
+
+for char in characters:
+    print(char)
+    print(f"  Attack damage: {char.attack()}")
+    print(char.take_damage(20))
+    print()</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>OOP Benefits in Game Design</h4>
+                  <ul>
+                    <li><strong>Reusability:</strong> Common character behavior is defined once in the base class.</li>
+                    <li><strong>Extensibility:</strong> Easy to add new character types (Rogue, Paladin, etc.).</li>
+                    <li><strong>Polymorphism:</strong> All characters can be treated the same way, but behave differently.</li>
+                    <li><strong>Maintainability:</strong> Changes to base behavior automatically affect all characters.</li>
+                  </ul>
+                </div>
+
+                <div class="practice-box">
+                  <h3>Try It Yourself</h3>
+                  <p>Create a simple battle between two characters:</p>
+                  <textarea id="editor-game" class="code-editor-small">class Character:
+    def __init__(self, name, health=100):
+        self.name = name
+        self.health = health
+    
+    def attack(self):
+        return 10
+    
+    def take_damage(self, damage):
+        self.health -= damage
+        if self.health < 0:
+            self.health = 0
+    
+    def is_alive(self):
+        return self.health > 0
+
+# Create two characters and make them fight
+player1 = Character("Hero", 100)
+player2 = Character("Enemy", 80)
+
+# Simple battle loop
+while player1.is_alive() and player2.is_alive():
+    damage1 = player1.attack()
+    player2.take_damage(damage1)
+    print(f"{player1.name} attacks {player2.name} for {damage1} damage!")
+    
+    if player2.is_alive():
+        damage2 = player2.attack()
+        player1.take_damage(damage2)
+        print(f"{player2.name} attacks {player1.name} for {damage2} damage!")
+    
+    print(f"{player1.name}: {player1.health} HP, {player2.name}: {player2.health} HP\n")
+
+winner = player1 if player1.is_alive() else player2
+print(f"{winner.name} wins!")</textarea>
+                  <div class="editor-controls">
+                    <button onclick="runEditorCode('game')" class="btn btn-primary">Run Code</button>
+                    <button onclick="resetEditor('game', 'class Character:\n    def __init__(self, name, health=100):\n        self.name = name\n        self.health = health\n    \n    def attack(self):\n        return 10\n    \n    def take_damage(self, damage):\n        self.health -= damage\n        if self.health < 0:\n            self.health = 0\n    \n    def is_alive(self):\n        return self.health > 0\n\n# Create two characters and make them fight\nplayer1 = Character(\"Hero\", 100)\nplayer2 = Character(\"Enemy\", 80)\n\n# Simple battle loop\nwhile player1.is_alive() and player2.is_alive():\n    damage1 = player1.attack()\n    player2.take_damage(damage1)\n    print(f\"{player1.name} attacks {player2.name} for {damage1} damage!\")\n    \n    if player2.is_alive():\n        damage2 = player2.attack()\n        player1.take_damage(damage2)\n        print(f\"{player2.name} attacks {player1.name} for {damage2} damage!\")\n    \n    print(f\"{player1.name}: {player1.health} HP, {player2.name}: {player2.health} HP\\n\")\n\nwinner = player1 if player1.is_alive() else player2\nprint(f\"{winner.name} wins!\")')" class="btn btn-ghost">Reset</button>
+                  </div>
+                  <div id="output-game" class="code-output">Click "Run Code" to see your output here</div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Project 3: Inventory Management System</h2>
+                <p>An inventory system demonstrates how to manage collections of objects, use class methods, and apply OOP principles to real-world data management.</p>
+
+                <div class="code-example">
+                  <h3>Complete Inventory System</h3>
+                  <pre class="code"><code>class Product:
+    total_products = 0  # Class variable
+    
+    def __init__(self, name, price, quantity=0):
+        self.name = name
+        self.price = price
+        self.quantity = quantity
+        Product.total_products += 1
+        self.product_id = Product.total_products
+    
+    def update_quantity(self, change):
+        self.quantity += change
+        if self.quantity < 0:
+            self.quantity = 0
+    
+    def get_value(self):
+        return self.price * self.quantity
+    
+    def __str__(self):
+        return f"{self.name} (ID: {self.product_id}) - ${self.price:.2f} x {self.quantity}"
+    
+    @classmethod
+    def get_total_products(cls):
+        return cls.total_products
+
+class Inventory:
+    def __init__(self):
+        self.products = {}  # Dictionary: product_id -> Product
+    
+    def add_product(self, product):
+        self.products[product.product_id] = product
+        return f"Added {product.name} to inventory"
+    
+    def remove_product(self, product_id):
+        if product_id in self.products:
+            product = self.products.pop(product_id)
+            return f"Removed {product.name} from inventory"
+        return "Product not found"
+    
+    def find_product(self, product_id):
+        return self.products.get(product_id)
+    
+    def get_total_value(self):
+        total = sum(product.get_value() for product in self.products.values())
+        return total
+    
+    def list_products(self):
+        if not self.products:
+            return "Inventory is empty"
+        result = "Inventory:\n"
+        for product in self.products.values():
+            result += f"  {product}\n"
+        return result
+    
+    def low_stock_items(self, threshold=5):
+        low_stock = [p for p in self.products.values() if p.quantity <= threshold]
+        return low_stock
+
+# Usage
+inventory = Inventory()
+
+# Add products
+laptop = Product("Laptop", 999.99, 10)
+mouse = Product("Mouse", 29.99, 25)
+keyboard = Product("Keyboard", 79.99, 3)
+
+inventory.add_product(laptop)
+inventory.add_product(mouse)
+inventory.add_product(keyboard)
+
+print(inventory.list_products())
+print(f"Total inventory value: ${inventory.get_total_value():.2f}")
+print(f"Total products in system: {Product.get_total_products()}")
+
+# Check low stock
+low_stock = inventory.low_stock_items(threshold=5)
+print("\nLow stock items:")
+for item in low_stock:
+    print(f"  {item.name}: {item.quantity} remaining")</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>OOP Concepts in Inventory System</h4>
+                  <ul>
+                    <li><strong>Class variables:</strong> <code>total_products</code> tracks all products created.</li>
+                    <li><strong>Class methods:</strong> <code>get_total_products()</code> works with the class, not instances.</li>
+                    <li><strong>Composition:</strong> <code>Inventory</code> contains multiple <code>Product</code> objects.</li>
+                    <li><strong>Data management:</strong> Dictionary stores products for efficient lookup.</li>
+                  </ul>
+                </div>
+
+                <div class="practice-box">
+                  <h3>Try It Yourself</h3>
+                  <p>Create your own inventory and add some products:</p>
+                  <textarea id="editor-inventory" class="code-editor-small">class Product:
+    def __init__(self, name, price, quantity=0):
+        self.name = name
+        self.price = price
+        self.quantity = quantity
+    
+    def get_value(self):
+        return self.price * self.quantity
+    
+    def __str__(self):
+        return f"{self.name} - ${self.price:.2f} x {self.quantity}"
+
+class Inventory:
+    def __init__(self):
+        self.products = []
+    
+    def add_product(self, product):
+        self.products.append(product)
+    
+    def get_total_value(self):
+        return sum(p.get_value() for p in self.products)
+    
+    def list_products(self):
+        for product in self.products:
+            print(product)
+
+# Create inventory and add products
+my_inventory = Inventory()
+my_inventory.add_product(Product("Book", 15.99, 5))
+my_inventory.add_product(Product("Pen", 2.50, 20))
+
+my_inventory.list_products()
+print(f"\nTotal value: ${my_inventory.get_total_value():.2f}")</textarea>
+                  <div class="editor-controls">
+                    <button onclick="runEditorCode('inventory')" class="btn btn-primary">Run Code</button>
+                    <button onclick="resetEditor('inventory', 'class Product:\n    def __init__(self, name, price, quantity=0):\n        self.name = name\n        self.price = price\n        self.quantity = quantity\n    \n    def get_value(self):\n        return self.price * self.quantity\n    \n    def __str__(self):\n        return f\"{self.name} - ${self.price:.2f} x {self.quantity}\"\n\nclass Inventory:\n    def __init__(self):\n        self.products = []\n    \n    def add_product(self, product):\n        self.products.append(product)\n    \n    def get_total_value(self):\n        return sum(p.get_value() for p in self.products)\n    \n    def list_products(self):\n        for product in self.products:\n            print(product)\n\n# Create inventory and add products\nmy_inventory = Inventory()\nmy_inventory.add_product(Product(\"Book\", 15.99, 5))\nmy_inventory.add_product(Product(\"Pen\", 2.50, 20))\n\nmy_inventory.list_products()\nprint(f\"\\nTotal value: ${my_inventory.get_total_value():.2f}\")')" class="btn btn-ghost">Reset</button>
+                  </div>
+                  <div id="output-inventory" class="code-output">Click "Run Code" to see your output here</div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Best Practices for OOP Projects</h2>
+                <p>When building real-world projects with OOP, keep these principles in mind:</p>
+
+                <div class="info-card">
+                  <h3>1. Single Responsibility Principle</h3>
+                  <p>Each class should have one clear purpose. A <code>BankAccount</code> handles banking operations, not user authentication or email notifications.</p>
+                </div>
+
+                <div class="info-card">
+                  <h3>2. Use Inheritance Wisely</h3>
+                  <p>Only use inheritance when there's a true "is-a" relationship. A <code>Dog</code> is an <code>Animal</code>, but a <code>Car</code> is not a <code>Vehicle</code> if you're building a transportation app — it might be better to use composition instead.</p>
+                </div>
+
+                <div class="info-card">
+                  <h3>3. Encapsulate Data</h3>
+                  <p>Use private attributes (<code>__attribute</code>) to protect important data. Provide getter and setter methods when external access is needed.</p>
+                </div>
+
+                <div class="info-card">
+                  <h3>4. Keep Methods Focused</h3>
+                  <p>Each method should do one thing well. If a method is doing too much, break it into smaller methods.</p>
+                </div>
+
+                <div class="info-card">
+                  <h3>5. Use Polymorphism</h3>
+                  <p>Design your code so that different objects can be used interchangeably. This makes your code more flexible and easier to extend.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Putting It All Together</h2>
+                <p>Real-world applications combine all these OOP concepts:</p>
+                <ul>
+                  <li><strong>Classes</strong> define the structure of your data and behavior.</li>
+                  <li><strong>Objects</strong> represent specific instances with their own data.</li>
+                  <li><strong>Inheritance</strong> allows you to reuse and extend existing code.</li>
+                  <li><strong>Polymorphism</strong> lets different objects respond to the same interface.</li>
+                  <li><strong>Encapsulation</strong> protects data and controls access.</li>
+                  <li><strong>super()</strong> helps you extend parent functionality without duplication.</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>OOP is a tool to help you organize code and solve problems. Don't force OOP where it doesn't fit — sometimes a simple function is better than a class. But when you're dealing with multiple related pieces of data and behavior, OOP shines!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Complete these exercises to practice building real-world OOP systems:</p>
+
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h3>Exercise 1: Library System</h3>
+                  <p>Create a library system with a <code>Book</code> class and a <code>Library</code> class. Books should have title, author, and ISBN. The Library should be able to add books, remove books, find books by title, and list all books. Use encapsulation to protect the book collection.</p>
+                  <textarea id="editor-exercise1" class="code-editor-small"></textarea>
+                  <div class="editor-controls">
+                    <button onclick="checkExercise('exercise1')" class="btn btn-primary">Check Answer</button>
+                    <button onclick="showSolution('exercise1')" class="btn btn-ghost">Show Solution</button>
+                    <button onclick="resetExercise('exercise1')" class="btn btn-ghost">Reset</button>
+                  </div>
+                  <div id="output-exercise1" class="code-output">Write your code above and click "Check Answer" to verify it's correct.</div>
+                  <div id="feedback-exercise1" class="exercise-feedback"></div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h3>Exercise 2: Shape Hierarchy</h3>
+                  <p>Create a <code>Shape</code> base class with an <code>area()</code> method. Create <code>Rectangle</code> and <code>Circle</code> subclasses that override <code>area()</code> with their specific calculations. Create a list of different shapes and calculate the total area using polymorphism.</p>
+                  <textarea id="editor-exercise2" class="code-editor-small"></textarea>
+                  <div class="editor-controls">
+                    <button onclick="checkExercise('exercise2')" class="btn btn-primary">Check Answer</button>
+                    <button onclick="showSolution('exercise2')" class="btn btn-ghost">Show Solution</button>
+                    <button onclick="resetExercise('exercise2')" class="btn btn-ghost">Reset</button>
+                  </div>
+                  <div id="output-exercise2" class="code-output">Write your code above and click "Check Answer" to verify it's correct.</div>
+                  <div id="feedback-exercise2" class="exercise-feedback"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-6/super-function.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-7.html">Next Unit</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'class Book:\n    def __init__(self, title, author, isbn):\n        self.title = title\n        self.author = author\n        self.isbn = isbn\n    \n    def __str__(self):\n        return f"{self.title} by {self.author} (ISBN: {self.isbn})"\n\nclass Library:\n    def __init__(self):\n        self.__books = []  # Private attribute\n    \n    def add_book(self, book):\n        self.__books.append(book)\n        return f"Added {book.title} to library"\n    \n    def remove_book(self, isbn):\n        for i, book in enumerate(self.__books):\n            if book.isbn == isbn:\n                removed = self.__books.pop(i)\n                return f"Removed {removed.title} from library"\n        return "Book not found"\n    \n    def find_book(self, title):\n        for book in self.__books:\n            if book.title.lower() == title.lower():\n                return book\n        return None\n    \n    def list_books(self):\n        if not self.__books:\n            return "Library is empty"\n        result = "Library Books:\\n"\n        for book in self.__books:\n            result += f"  {book}\\n"\n        return result\n\nlibrary = Library()\nlibrary.add_book(Book("Python Basics", "John Doe", "123456"))\nlibrary.add_book(Book("Advanced Python", "Jane Smith", "789012"))\nprint(library.list_books())\nfound = library.find_book("Python Basics")\nif found:\n    print(f"Found: {found}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('class Book')) {
+              return {
+                correct: false,
+                message: 'You need to create a Book class.',
+                hints: ['Define: class Book:', 'Add __init__ with title, author, isbn']
+              };
+            }
+            
+            if (!trimmed.includes('class Library')) {
+              return {
+                correct: false,
+                message: 'You need to create a Library class.',
+                hints: ['Define: class Library:', 'Add __init__ with private books list']
+              };
+            }
+            
+            if (!trimmed.includes('__books') && !trimmed.includes('self.books')) {
+              return {
+                correct: false,
+                message: 'You need to store books in the Library.',
+                hints: ['Add: self.__books = [] or self.books = []']
+              };
+            }
+            
+            if (!trimmed.includes('add_book')) {
+              return {
+                correct: false,
+                message: 'You need an add_book method.',
+                hints: ['def add_book(self, book):', 'Append book to the list']
+              };
+            }
+            
+            if (!trimmed.includes('find_book') && !trimmed.includes('find')) {
+              return {
+                correct: false,
+                message: 'You need a method to find books by title.',
+                hints: ['def find_book(self, title):', 'Loop through books and match title']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure indentation is correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('Library') && !outputText.includes('Book')) {
+              return {
+                correct: false,
+                message: 'Your code should create and use Library and Book objects.',
+                hints: ['Create a Library instance', 'Add some books', 'Call list_books()']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created a library system with encapsulation.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'import math\n\nclass Shape:\n    def area(self):\n        return 0\n\nclass Rectangle(Shape):\n    def __init__(self, width, height):\n        self.width = width\n        self.height = height\n    \n    def area(self):\n        return self.width * self.height\n\nclass Circle(Shape):\n    def __init__(self, radius):\n        self.radius = radius\n    \n    def area(self):\n        return math.pi * self.radius ** 2\n\n# Create different shapes\nshapes = [\n    Rectangle(5, 3),\n    Circle(4),\n    Rectangle(2, 8),\n    Circle(2)\n]\n\n# Calculate total area using polymorphism\ntotal_area = sum(shape.area() for shape in shapes)\nprint(f"Total area: {total_area:.2f}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('class Shape')) {
+              return {
+                correct: false,
+                message: 'You need to create a Shape base class.',
+                hints: ['Define: class Shape:', 'Add area() method']
+              };
+            }
+            
+            if (!trimmed.includes('class Rectangle(Shape)') && !trimmed.includes('Rectangle(Shape)')) {
+              return {
+                correct: false,
+                message: 'You need to create a Rectangle class that inherits from Shape.',
+                hints: ['Define: class Rectangle(Shape):']
+              };
+            }
+            
+            if (!trimmed.includes('class Circle(Shape)') && !trimmed.includes('Circle(Shape)')) {
+              return {
+                correct: false,
+                message: 'You need to create a Circle class that inherits from Shape.',
+                hints: ['Define: class Circle(Shape):']
+              };
+            }
+            
+            if (!trimmed.includes('def area') || (trimmed.match(/def area/g) || []).length < 3) {
+              return {
+                correct: false,
+                message: 'You need to override area() in both Rectangle and Circle.',
+                hints: ['Override area() in Rectangle', 'Override area() in Circle']
+              };
+            }
+            
+            if (!trimmed.includes('Rectangle(') || !trimmed.includes('Circle(')) {
+              return {
+                correct: false,
+                message: 'You need to create instances of Rectangle and Circle.',
+                hints: ['Create: Rectangle(5, 3)', 'Create: Circle(4)']
+              };
+            }
+            
+            if (!trimmed.includes('sum') && !trimmed.includes('for') && !trimmed.includes('total')) {
+              return {
+                correct: false,
+                message: 'You need to calculate the total area of all shapes.',
+                hints: ['Create a list of shapes', 'Use sum() or loop to calculate total']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure indentation is correct', 'Import math if needed']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('area') && !outputText.includes('Area')) {
+              return {
+                correct: false,
+                message: 'Your code should calculate and display the total area.',
+                hints: ['Print the total area']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully demonstrated polymorphism with a shape hierarchy.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

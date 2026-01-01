@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 7 • Reading Data from Files • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit">
+    <div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 7 • Files & Errors</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-7/introduction-file-handling.html">1. Introduction to File Handling</a></li>
+                <li><a class="" href="/units/unit-7/opening-closing-files.html">2. Opening and Closing Files</a></li>
+                <li><a class="active" href="/units/unit-7/reading-data-from-files.html">3. Reading Data from Files</a></li>
+                <li><a class="" href="/units/unit-7/writing-data-to-files.html">4. Writing Data to Files</a></li>
+                <li><a class="" href="/units/unit-7/working-with-file-paths.html">5. Working with File Paths</a></li>
+                <li><a class="" href="/units/unit-7/with-statement-file-operations.html">6. Using the with Statement for File Operations</a></li>
+                <li><a class="" href="/units/unit-7/understanding-errors-exceptions.html">7. Understanding Errors and Exceptions</a></li>
+                <li><a class="" href="/units/unit-7/try-except-blocks.html">8. The try and except Blocks</a></li>
+                <li><a class="" href="/units/unit-7/raising-customizing-exceptions.html">9. Raising and Customizing Exceptions</a></li>
+                <li><a class="" href="/units/unit-7/file-error-handling-real-projects.html">10. File and Error Handling in Real Projects</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-7.html">Unit 7</a>
+              <span class="separator">/</span>
+              <span class="current">Reading Data from Files</span>
+            </nav>
+            <div class="eyebrow">Unit 7 • Lesson 3</div>
+            <h1 class="lesson-title">Reading Data from Files</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Learn how to read file content using methods like <code>read()</code>, <code>readline()</code>, and <code>readlines()</code>. You'll practice iterating through files line by line and processing large datasets efficiently without overloading memory, handling files of any size.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-7/writing-data-to-files.html">Next: Writing Data to Files</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Reading entire files:</strong> Use <code>read()</code> to get all file content at once.</li>
+                  <li><strong>Reading line by line:</strong> Use <code>readline()</code> and <code>readlines()</code> to process files line by line.</li>
+                  <li><strong>Iterating through files:</strong> Loop through files efficiently using a for loop.</li>
+                  <li><strong>Processing large files:</strong> Learn techniques for handling files that are too big to load into memory.</li>
+                  <li><strong>Common patterns:</strong> Master the most common ways to read and process file data.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>Three Ways to Read Files</h2>
+                <p>Python provides three main methods for reading data from files. Each has its own use case:</p>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Method</th>
+                      <th>What It Does</th>
+                      <th>When to Use</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>read()</code></td>
+                      <td>Reads the entire file as one string</td>
+                      <td>Small files, when you need all content at once</td>
+                    </tr>
+                    <tr>
+                      <td><code>readline()</code></td>
+                      <td>Reads one line at a time</td>
+                      <td>When you want to process line by line, or read just one line</td>
+                    </tr>
+                    <tr>
+                      <td><code>readlines()</code></td>
+                      <td>Reads all lines into a list</td>
+                      <td>When you need all lines but want them as a list</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="content-section">
+                <h2>Method 1: <code>read()</code> - Read Everything</h2>
+                <p>The <code>read()</code> method reads the entire file and returns it as a single string.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Reading Entire File</div>
+                  <pre class="code"><code>file = open("data.txt", "r")
+content = file.read()
+print(content)
+file.close()</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Example File: data.txt</h4>
+                  <pre class="code" style="margin-top: 12px;"><code>Line 1
+Line 2
+Line 3</code></pre>
+                  <p style="margin-top: 12px;">When you use <code>read()</code>, you get:</p>
+                  <pre class="code" style="margin-top: 12px;"><code>"Line 1\nLine 2\nLine 3"</code></pre>
+                  <p style="margin-top: 12px;">Notice the <code>\n</code> characters - these represent newlines.</p>
+                </div>
+
+                <div class="info-callout">
+                  <h4>When to Use <code>read()</code></h4>
+                  <p>Use <code>read()</code> for small files where you need all the content at once. For large files, this can use too much memory.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Method 2: <code>readline()</code> - Read One Line</h2>
+                <p>The <code>readline()</code> method reads just one line from the file. Each time you call it, it reads the next line.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Reading One Line at a Time</div>
+                  <pre class="code"><code>file = open("data.txt", "r")
+
+line1 = file.readline()  # Reads first line
+line2 = file.readline()  # Reads second line
+line3 = file.readline()  # Reads third line
+
+print(line1)  # "Line 1\n"
+print(line2)  # "Line 2\n"
+print(line3)  # "Line 3\n"
+
+file.close()</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Note:</strong> <code>readline()</code> includes the newline character (<code>\n</code>) at the end of each line. If the file ends, it returns an empty string.</p>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Reading Until End of File</div>
+                  <pre class="code"><code>file = open("data.txt", "r")
+
+while True:
+    line = file.readline()
+    if not line:  # Empty string means end of file
+        break
+    print(line.strip())  # strip() removes the \n
+
+file.close()</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Method 3: <code>readlines()</code> - Read All Lines</h2>
+                <p>The <code>readlines()</code> method reads all lines and returns them as a list of strings.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Reading All Lines as a List</div>
+                  <pre class="code"><code>file = open("data.txt", "r")
+lines = file.readlines()
+file.close()
+
+print(lines)
+# Output: ['Line 1\n', 'Line 2\n', 'Line 3\n']
+
+# Process each line
+for line in lines:
+    print(line.strip())</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>When to Use <code>readlines()</code></h4>
+                  <p>Use <code>readlines()</code> when you need all lines as a list, which is useful for processing or manipulating the lines. Like <code>read()</code>, this loads everything into memory, so use it for smaller files.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Best Method: Iterating with a For Loop</h2>
+                <p>The most Pythonic and memory-efficient way to read a file is to iterate over it directly with a for loop. This reads one line at a time without loading everything into memory.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Recommended: Iterate Over File</div>
+                  <pre class="code"><code>file = open("data.txt", "r")
+
+for line in file:
+    print(line.strip())  # Process each line
+
+file.close()</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Why This is Best</h4>
+                  <ul>
+                    <li><strong>Memory efficient:</strong> Only one line is in memory at a time</li>
+                    <li><strong>Simple:</strong> Clean, readable code</li>
+                    <li><strong>Fast:</strong> Works well even for very large files</li>
+                    <li><strong>Pythonic:</strong> This is the recommended Python way</li>
+                  </ul>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Processing Lines</div>
+                  <pre class="code"><code>file = open("scores.txt", "r")
+
+total = 0
+count = 0
+
+for line in file:
+    score = int(line.strip())  # Convert to integer
+    total += score
+    count += 1
+
+file.close()
+
+average = total / count
+print(f"Average score: {average}")</code></pre>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: Reading Files</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try reading a file using different methods. Notice how each method works:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Simulate reading a file\ncontent = &quot;Line 1\\nLine 2\\nLine 3&quot;\nlines = content.split(&quot;\\n&quot;)\nfor line in lines:\n    print(line)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Simulate reading a file
+content = "Line 1\nLine 2\nLine 3"
+lines = content.split("\n")
+for line in lines:
+    print(line)</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You simulated reading a file line by line. In a real program, you would use <code>for line in file:</code> to iterate through the file.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Removing Newlines</h2>
+                <p>When you read lines from a file, each line ends with a newline character (<code>\n</code>). Often, you'll want to remove this.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Using <code>strip()</code> to Remove Newlines</div>
+                  <pre class="code"><code>file = open("data.txt", "r")
+
+for line in file:
+    cleaned = line.strip()  # Removes \n and whitespace
+    print(cleaned)
+
+file.close()</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4><code>strip()</code> Method</h4>
+                  <p>The <code>strip()</code> method removes whitespace (including newlines) from both ends of a string:</p>
+                  <pre class="code" style="margin-top: 12px;"><code>line = "  Hello World  \n"
+cleaned = line.strip()  # "Hello World"</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Reading Specific Amounts</h2>
+                <p>You can also read a specific number of characters from a file by passing a number to <code>read()</code>.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Reading N Characters</div>
+                  <pre class="code"><code>file = open("data.txt", "r")
+
+first_10 = file.read(10)  # Read first 10 characters
+print(first_10)
+
+file.close()</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Use case:</strong> This is useful when you only need part of a file, or when reading binary files where you need specific byte counts.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong><code>read()</code>:</strong> Reads entire file as one string - use for small files</li>
+                  <li><strong><code>readline()</code>:</strong> Reads one line at a time - use when you need line-by-line control</li>
+                  <li><strong><code>readlines()</code>:</strong> Reads all lines as a list - use when you need a list of lines</li>
+                  <li><strong>For loop iteration:</strong> Best method - memory efficient and Pythonic</li>
+                  <li><strong><code>strip()</code>:</strong> Removes newlines and whitespace from strings</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>For most cases, use <code>for line in file:</code> - it's the most efficient and Pythonic way to read files!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: Which Method?</h3>
+                  <p>When would you use <code>read()</code> vs <code>readlines()</code> vs a for loop? Give an example for each.</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Processing Lines</h3>
+                  <p>Write pseudocode for reading a file and counting how many lines contain the word "Python".</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-7/opening-closing-files.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-7/writing-data-to-files.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

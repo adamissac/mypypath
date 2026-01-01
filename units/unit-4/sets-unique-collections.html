@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 4 • Sets and Unique Collections - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 4 • Sets and Unique Collections • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 4 • Data Structures</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-4/introduction-data-structures.html">1. Introduction to Data Structures</a></li>
+                <li><a href="/units/unit-4/lists-operations.html">2. Lists and List Operations</a></li>
+                <li><a href="/units/unit-4/indexing-slicing-lists.html">3. Indexing and Slicing Lists</a></li>
+                <li><a href="/units/unit-4/nested-lists-2d.html">4. Nested Lists and 2D Structures</a></li>
+                <li><a href="/units/unit-4/tuples-immutable.html">5. Tuples and Immutable Data</a></li>
+                <li><a href="/units/unit-4/dictionaries-key-value.html">6. Dictionaries and Key-Value Pairs</a></li>
+                <li><a href="/units/unit-4/dictionary-methods-iteration.html">7. Dictionary Methods and Iteration</a></li>
+                <li><a class="active" href="/units/unit-4/sets-unique-collections.html">8. Sets and Unique Collections</a></li>
+                <li><a href="/units/unit-4/copying-comparing-structures.html">9. Copying and Comparing Data Structures</a></li>
+                <li><a href="/units/unit-4/choosing-right-structure.html">10. Choosing the Right Data Structure</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-4.html">Unit 4</a>
+              <span class="separator">/</span>
+              <span class="current">Sets and Unique Collections</span>
+            </nav>
+            <div class="eyebrow">Unit 4 • Lesson 8</div>
+            <h1 class="lesson-title">Sets and Unique Collections</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Sets automatically remove duplicates and allow for fast membership testing, making them perfect for unique collections. You'll learn how to perform set operations such as union, intersection, and difference for comparing data, enabling you to solve problems involving unique values and set mathematics.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-4/dictionary-methods-iteration.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-4/copying-comparing-structures.html">Next: Copying and Comparing Data Structures</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What sets are:</strong> Understand how sets store unique, unordered items.</li>
+                  <li><strong>Creating sets:</strong> Learn how to create and modify sets.</li>
+                  <li><strong>Set operations:</strong> Discover union, intersection, and difference operations.</li>
+                  <li><strong>When to use sets:</strong> Understand when sets are better than lists.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Sets automatically ensure all items are unique - no duplicates allowed! This makes them perfect for situations where you need to eliminate duplicates from a list, check if something exists (membership testing), or perform mathematical set operations. Sets are also optimized for fast lookups, making them very efficient for checking membership!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What Is a Set?</h2>
+                <p>A set is an unordered collection of unique items. Unlike lists, sets don't allow duplicates and don't maintain order:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Creating Sets</div>
+                  <pre class="code"><code># Create a set with curly braces
+fruits = {"apple", "banana", "orange"}
+
+# Create set from a list (removes duplicates)
+numbers = set([1, 2, 2, 3, 3, 3])
+print(numbers)  # Output: {1, 2, 3} (duplicates removed!)
+
+# Empty set (must use set(), not {})
+empty = set()</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Curly Braces</h4>
+                      <p>Sets use curly braces <code>{}</code>, but unlike dictionaries, they contain individual values, not key-value pairs. To create an empty set, you must use <code>set()</code> because <code>{}</code> creates an empty dictionary!</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>No Duplicates</h4>
+                      <p>Sets automatically remove duplicates. If you try to add the same item twice, it only appears once in the set!</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Unordered</h4>
+                      <p>Sets don't maintain the order of items. When you print a set, items might appear in a different order than you added them!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> Sets are perfect for storing unique values. If you have a list with duplicates and need to remove them, convert it to a set! Sets also provide fast membership testing - checking if an item is in a set is very fast, even with large sets!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Creating Sets</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try creating sets and see how duplicates are removed:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Create set with duplicates\nnumbers = set([1, 2, 2, 3, 3, 3, 4])\nprint(f&quot;Unique numbers: {numbers}&quot;)\n\n# Create set directly\ncolors = {&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;, &quot;red&quot;}\nprint(f&quot;Unique colors: {colors}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Create set with duplicates
+numbers = set([1, 2, 2, 3, 3, 3, 4])
+print(f"Unique numbers: {numbers}")
+
+# Create set directly
+colors = {"red", "green", "blue", "red"}
+print(f"Unique colors: {colors}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Sets automatically removed duplicates! Notice how the list [1, 2, 2, 3, 3, 3, 4] became {1, 2, 3, 4} - all duplicates were removed. This is one of the most useful features of sets - converting a list to a set is the easiest way to remove duplicates!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Adding and Removing Items</h2>
+                <p>Use <code>add()</code> to add items and <code>remove()</code> or <code>discard()</code> to remove them:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Modifying Sets</div>
+                  <pre class="code"><code>fruits = {"apple", "banana"}
+
+# Add an item
+fruits.add("orange")
+print(fruits)  # Output: {'apple', 'banana', 'orange'}
+
+# Remove an item
+fruits.remove("banana")
+print(fruits)  # Output: {'apple', 'orange'}
+
+# Discard (doesn't error if item doesn't exist)
+fruits.discard("grape")  # Safe - no error if "grape" doesn't exist</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How It Works</h4>
+                  <p>The <code>add()</code> method adds a single item to the set. <code>remove()</code> removes an item and raises an error if it doesn't exist. <code>discard()</code> also removes an item but doesn't raise an error if the item doesn't exist - it's safer to use when you're not sure if the item is in the set!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Set Operations</h2>
+                <p>Sets support mathematical operations like union, intersection, and difference:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Set Operations</div>
+                  <pre class="code"><code>set1 = {1, 2, 3, 4}
+set2 = {3, 4, 5, 6}
+
+# Union (all items from both sets)
+union = set1 | set2  # or set1.union(set2)
+print(union)  # Output: {1, 2, 3, 4, 5, 6}
+
+# Intersection (items in both sets)
+intersection = set1 & set2  # or set1.intersection(set2)
+print(intersection)  # Output: {3, 4}
+
+# Difference (items in set1 but not in set2)
+difference = set1 - set2  # or set1.difference(set2)
+print(difference)  # Output: {1, 2}</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Union</h4>
+                      <p>Union combines all items from both sets, removing duplicates. Use <code>|</code> or <code>union()</code> method.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Intersection</h4>
+                      <p>Intersection gives you items that appear in both sets. Use <code>&</code> or <code>intersection()</code> method.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Difference</h4>
+                      <p>Difference gives you items in the first set but not in the second. Use <code>-</code> or <code>difference()</code> method.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Set Operations</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try performing set operations:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'math_students = {&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;}\nscience_students = {&quot;Bob&quot;, &quot;David&quot;, &quot;Eve&quot;}\n\n# Students in both\nboth = math_students & science_students\nprint(f&quot;Both subjects: {both}&quot;)\n\n# All students\nall_students = math_students | science_students\nprint(f&quot;All students: {all_students}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">math_students = {"Alice", "Bob", "Charlie"}
+science_students = {"Bob", "David", "Eve"}
+
+# Students in both
+both = math_students & science_students
+print(f"Both subjects: {both}")
+
+# All students
+all_students = math_students | science_students
+print(f"All students: {all_students}")</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You used set operations to find common elements (intersection) and combine sets (union). The intersection found "Bob" who is in both sets. The union combined all students from both sets, automatically removing duplicates. Set operations are powerful for comparing and combining collections!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Checking Membership</h2>
+                <p>Sets are optimized for fast membership testing:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Membership Testing</div>
+                  <pre class="code"><code>fruits = {"apple", "banana", "orange"}
+
+# Check if item is in set
+if "apple" in fruits:
+    print("Apple is in the set!")
+
+# Fast membership test
+print("banana" in fruits)  # Output: True
+print("grape" in fruits)   # Output: False</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> Checking if an item is in a set is very fast, even with large sets. This makes sets perfect for membership testing. Use the <code>in</code> keyword to check membership!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Create and Modify a Set</h4>
+                  <p>Create a set called <code>colors</code> with values {"red", "green", "blue"}. Add "yellow" to the set, then remove "green". Print the final set.</p>
+                  <p class="hint-text">Use add() to add items and remove() to remove items.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Set Operations</h4>
+                  <p>Create two sets: <code>set1</code> = {1, 2, 3, 4} and <code>set2</code> = {3, 4, 5, 6}. Find and print the intersection (common items) and the union (all items) of both sets.</p>
+                  <p class="hint-text">Use & for intersection and | for union.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-4/dictionary-methods-iteration.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-4/copying-comparing-structures.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'colors = {"red", "green", "blue"}\ncolors.add("yellow")\ncolors.remove("green")\nprint(colors)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('colors = {') || !trimmed.includes('"red"') || !trimmed.includes('"green"') || !trimmed.includes('"blue"')) {
+              return {
+                correct: false,
+                message: 'You need to create a set named colors with {"red", "green", "blue"}.',
+                hints: ['Create: colors = {"red", "green", "blue"}', 'Use curly braces']
+              };
+            }
+            
+            if (!trimmed.includes('.add("yellow")')) {
+              return {
+                correct: false,
+                message: 'You need to add "yellow" using add() method.',
+                hints: ['Use: colors.add("yellow")', 'add() adds a single item']
+              };
+            }
+            
+            if (!trimmed.includes('.remove("green")')) {
+              return {
+                correct: false,
+                message: 'You need to remove "green" using remove() method.',
+                hints: ['Use: colors.remove("green")', 'remove() removes an item']
+              };
+            }
+            
+            if (!trimmed.includes('print(colors)')) {
+              return {
+                correct: false,
+                message: 'You need to print the final set.',
+                hints: ['Use: print(colors)', 'Print after modifications']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure quotes are correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('red') || !outputText.includes('blue') || !outputText.includes('yellow') || outputText.includes('green')) {
+              return {
+                correct: false,
+                message: 'The final set should contain red, blue, and yellow (not green).',
+                hints: ['Make sure you added yellow', 'Make sure you removed green']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created and modified a set.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'set1 = {1, 2, 3, 4}\nset2 = {3, 4, 5, 6}\nintersection = set1 & set2\nunion = set1 | set2\nprint(f"Intersection: {intersection}")\nprint(f"Union: {union}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('set1 = {1, 2, 3, 4}') || !trimmed.includes('set2 = {3, 4, 5, 6}')) {
+              return {
+                correct: false,
+                message: 'You need to create set1 = {1, 2, 3, 4} and set2 = {3, 4, 5, 6}.',
+                hints: ['Create: set1 = {1, 2, 3, 4}', 'Create: set2 = {3, 4, 5, 6}']
+              };
+            }
+            
+            if (!trimmed.includes('&') && !trimmed.includes('.intersection(')) {
+              return {
+                correct: false,
+                message: 'You need to find the intersection using & or intersection() method.',
+                hints: ['Use: set1 & set2', 'Or: set1.intersection(set2)', 'Intersection is {3, 4}']
+              };
+            }
+            
+            if (!trimmed.includes('|') && !trimmed.includes('.union(')) {
+              return {
+                correct: false,
+                message: 'You need to find the union using | or union() method.',
+                hints: ['Use: set1 | set2', 'Or: set1.union(set2)', 'Union is {1, 2, 3, 4, 5, 6}']
+              };
+            }
+            
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print both the intersection and union.',
+                hints: ['Print the intersection', 'Print the union']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure set operations are correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('3') || !outputText.includes('4')) {
+              return {
+                correct: false,
+                message: 'The intersection should contain 3 and 4.',
+                hints: ['Check your intersection operation', 'Make sure you printed it']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully performed set operations.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

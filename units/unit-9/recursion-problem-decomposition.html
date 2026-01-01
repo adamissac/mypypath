@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 9 • Recursion and Problem Decomposition • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 9 • Advanced Topics</h3>
+            <nav>
+              <ul>
+                <li><a class="active" href="/units/unit-9/recursion-problem-decomposition.html">1. Recursion and Problem Decomposition</a></li>
+                <li><a class="" href="/units/unit-9/working-with-external-libraries.html">2. Working with External Libraries</a></li>
+                <li><a class="" href="/units/unit-9/apis-data-retrieval.html">3. APIs and Data Retrieval</a></li>
+                <li><a class="" href="/units/unit-9/introduction-json-data-parsing.html">4. Introduction to JSON and Data Parsing</a></li>
+                <li><a class="" href="/units/unit-9/efficiency-big-o-basics.html">5. Efficiency and Big-O Basics</a></li>
+                <li><a class="" href="/units/unit-9/working-with-dates-times.html">6. Working with Dates and Times</a></li>
+                <li><a class="" href="/units/unit-9/data-visualization-matplotlib.html">7. Data Visualization with Matplotlib</a></li>
+                <li><a class="" href="/units/unit-9/basic-automation-python.html">8. Basic Automation with Python</a></li>
+                <li><a class="" href="/units/unit-9/introduction-file-formats.html">9. Introduction to File Formats (CSV, JSON, and Excel)</a></li>
+                <li><a class="" href="/units/unit-9/applying-advanced-concepts.html">10. Applying Advanced Concepts Together</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-9.html">Unit 9</a>
+              <span class="separator">/</span>
+              <span class="current">Recursion and Problem Decomposition</span>
+            </nav>
+            <div class="eyebrow">Unit 9 • Lesson 1</div>
+            <h1 class="lesson-title">Recursion and Problem Decomposition</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Recursion allows a function to call itself to solve smaller parts of a problem. You'll learn how to write recursive functions, understand base and recursive cases, and compare recursion to iteration in terms of efficiency and readability, mastering a powerful problem-solving technique.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">25–30 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-9/working-with-external-libraries.html">Next: Working with External Libraries</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What recursion is:</strong> Functions that call themselves.</li>
+                  <li><strong>Base cases:</strong> The stopping condition for recursion.</li>
+                  <li><strong>Recursive cases:</strong> How functions call themselves with smaller problems.</li>
+                  <li><strong>Problem decomposition:</strong> Breaking problems into smaller, similar subproblems.</li>
+                  <li><strong>When to use recursion:</strong> Comparing recursion to iteration.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>What Is Recursion?</h2>
+                <p><strong>Recursion</strong> is when a function calls itself to solve a problem. Instead of using loops, recursive functions break problems into smaller versions of the same problem.</p>
+
+                <div class="info-card">
+                  <h4>Key Concept</h4>
+                  <p>Recursion is like Russian nesting dolls - each doll contains a smaller version of itself. Similarly, recursive functions solve problems by solving smaller versions of the same problem.</p>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Simple Recursive Example: Factorial</div>
+                  <pre class="code"><code>def factorial(n):
+    # Base case: stop recursion
+    if n == 0 or n == 1:
+        return 1
+    # Recursive case: call function with smaller problem
+    return n * factorial(n - 1)
+
+print(factorial(5))  # Output: 120</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Two Essential Components</h2>
+                <p>Every recursive function needs two parts:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Base Case</h4>
+                      <p>The stopping condition that prevents infinite recursion. This is when the problem is small enough to solve directly.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Recursive Case</h4>
+                      <p>The part that calls the function again with a smaller or simpler version of the problem.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <h4>Warning: Missing Base Case</h4>
+                  <p>Without a base case, recursion will continue forever (until Python runs out of memory). Always ensure your recursive function has a base case!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>How Recursion Works</h2>
+                <p>Let's trace through a recursive function:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Example: Sum of Numbers</div>
+                  <pre class="code"><code>def sum_list(numbers):
+    # Base case: empty list
+    if not numbers:
+        return 0
+    # Recursive case: first number + sum of rest
+    return numbers[0] + sum_list(numbers[1:])
+
+result = sum_list([1, 2, 3, 4])
+print(result)  # Output: 10</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How It Works</h4>
+                  <p>sum_list([1, 2, 3, 4]) calls sum_list([2, 3, 4]), which calls sum_list([3, 4]), which calls sum_list([4]), which calls sum_list([]). The empty list returns 0, then each call adds its number and returns the result back up.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Recursion vs Iteration</h2>
+                <p>Both recursion and loops can solve the same problems:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Recursion</h4>
+                    <p>More elegant for some problems, closer to mathematical definitions, can be harder to understand</p>
+                  </div>
+
+                  <div class="feature-card">
+                    <h4>Iteration (Loops)</h4>
+                    <p>More efficient (less memory), easier to understand for many, more Pythonic for simple cases</p>
+                  </div>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Same Problem, Two Approaches</div>
+                  <pre class="code"><code># Recursive approach
+def count_down_recursive(n):
+    if n <= 0:
+        print("Done!")
+        return
+    print(n)
+    count_down_recursive(n - 1)
+
+# Iterative approach
+def count_down_iterative(n):
+    while n > 0:
+        print(n)
+        n -= 1
+    print("Done!")</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>More Recursive Examples</h2>
+                <p>Let's look at more examples to understand recursion better:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Example: Fibonacci Sequence</div>
+                  <pre class="code"><code>def fibonacci(n):
+    # Base cases
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    # Recursive case: sum of previous two numbers
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+# Calculate first 10 Fibonacci numbers
+for i in range(10):
+    print(f"fib({i}) = {fibonacci(i)}")</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Example: Power Function</div>
+                  <pre class="code"><code>def power(base, exponent):
+    # Base case: any number to the power of 0 is 1
+    if exponent == 0:
+        return 1
+    # Recursive case: base * base^(exponent-1)
+    return base * power(base, exponent - 1)
+
+print(power(2, 5))  # Output: 32 (2^5)</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Understanding Recursive Calls</h4>
+                  <p>When tracing recursive functions:</p>
+                  <ol>
+                    <li>Start with the original call</li>
+                    <li>Follow each recursive call until you reach the base case</li>
+                    <li>Work backwards, returning values up the call stack</li>
+                    <li>Each recursive call works on a smaller problem</li>
+                  </ol>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Problem Decomposition</h2>
+                <p>Recursion helps break complex problems into smaller, similar subproblems:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Example: Finding Maximum in List</div>
+                  <pre class="code"><code>def find_max(numbers):
+    # Base case: list with one element
+    if len(numbers) == 1:
+        return numbers[0]
+    
+    # Recursive case: compare first element with max of rest
+    max_of_rest = find_max(numbers[1:])
+    return numbers[0] if numbers[0] > max_of_rest else max_of_rest
+
+numbers = [3, 7, 2, 9, 1, 5]
+print(find_max(numbers))  # Output: 9</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Decomposition Strategy</h4>
+                  <p>When decomposing problems recursively:</p>
+                  <ul>
+                    <li>Identify the smallest case (base case)</li>
+                    <li>Figure out how to reduce the problem size</li>
+                    <li>Combine the solution to the smaller problem with the current step</li>
+                    <li>Ensure each recursive call gets closer to the base case</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>When to Use Recursion</h2>
+                <p>Recursion is great for:</p>
+
+                <div class="uses-grid">
+                  <div class="use-item">
+                    <h4>Tree Structures</h4>
+                    <p>Navigating file systems, parsing HTML/XML, traversing directory trees</p>
+                  </div>
+                  <div class="use-item">
+                    <h4>Mathematical Problems</h4>
+                    <p>Factorials, Fibonacci, mathematical sequences, recursive formulas</p>
+                  </div>
+                  <div class="use-item">
+                    <h4>Divide and Conquer</h4>
+                    <p>Sorting algorithms (merge sort, quick sort), binary search</p>
+                  </div>
+                  <div class="use-item">
+                    <h4>Backtracking</h4>
+                    <p>Solving puzzles (Sudoku, N-queens), pathfinding algorithms</p>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <h4>When NOT to Use Recursion</h4>
+                  <p>Recursion can be inefficient for simple problems that loops handle better. Use recursion when:</p>
+                  <ul>
+                    <li>The problem naturally has a recursive structure (trees, nested data)</li>
+                    <li>The recursive solution is clearer than an iterative one</li>
+                    <li>Performance isn't critical (recursion can be slower due to function call overhead)</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: Recursion</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try writing a recursive function:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'def count_down(n):\n    # Base case\n    if n <= 0:\n        print(\"Done!\")\n        return\n    # Recursive case\n    print(n)\n    count_down(n - 1)\n\ncount_down(5)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">def count_down(n):
+    # Base case
+    if n <= 0:
+        print("Done!")
+        return
+    # Recursive case
+    print(n)
+    count_down(n - 1)
+
+count_down(5)</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The function calls itself with a smaller value each time until it reaches the base case (n <= 0). Notice how each recursive call gets closer to the base case!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>Recursion:</strong> Functions that call themselves</li>
+                  <li><strong>Base case:</strong> Stopping condition to prevent infinite recursion</li>
+                  <li><strong>Recursive case:</strong> Calling the function with a smaller problem</li>
+                  <li><strong>Problem decomposition:</strong> Breaking problems into smaller subproblems</li>
+                  <li><strong>When to use:</strong> Tree structures, mathematical problems, divide-and-conquer algorithms</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>Recursion is a powerful tool, but always ensure you have a base case! Start with simple recursive problems and work your way up to more complex ones.</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: Recursion Components</h3>
+                  <p>What are the two essential components of a recursive function? Why is each important?</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Problem Decomposition</h3>
+                  <p>How does recursion help with problem decomposition? Give an example.</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <span></span>
+              <a class="btn btn-primary" href="/units/unit-9/working-with-external-libraries.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

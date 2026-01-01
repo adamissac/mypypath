@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 2 • Introduction to Loops - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 2 • Introduction to Loops • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 2 • Control Flow</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-2/understanding-control-flow.html">1. Understanding Control Flow</a></li>
+                <li><a href="/units/unit-2/comparison-logical-operators.html">2. Comparison & Logical Operators</a></li>
+                <li><a href="/units/unit-2/if-statement.html">3. The if Statement</a></li>
+                <li><a href="/units/unit-2/if-else-elif.html">4. if-else and elif</a></li>
+                <li><a href="/units/unit-2/nested-conditionals.html">5. Nested Conditionals</a></li>
+                <li><a href="/units/unit-2/boolean-logic-practice.html">6. Boolean Logic in Practice</a></li>
+                <li><a class="active" href="/units/unit-2/introduction-loops.html">7. Introduction to Loops</a></li>
+                <li><a href="/units/unit-2/while-loop.html">8. The while Loop</a></li>
+                <li><a href="/units/unit-2/for-loop.html">9. The for Loop</a></li>
+                <li><a href="/units/unit-2/loop-control-statements.html">10. Loop Control Statements</a></li>
+                <li><a href="/units/unit-2/practical-control-flow-examples.html">11. Practical Control Flow Examples</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-2.html">Unit 2</a>
+              <span class="separator">/</span>
+              <span class="current">Introduction to Loops</span>
+            </nav>
+            <div class="eyebrow">Unit 2 • Lesson 7</div>
+            <h1 class="lesson-title">Introduction to Loops</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Discover how loops let your program repeat actions efficiently. You'll explore when to use loops instead of repetitive code and understand the difference between definite and indefinite iteration.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">15–20 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-2/boolean-logic-practice.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-2/while-loop.html">Next: The while Loop</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What loops are:</strong> Understand how loops let you repeat code efficiently.</li>
+                  <li><strong>Why loops are useful:</strong> Learn when and why to use loops instead of writing repetitive code.</li>
+                  <li><strong>Types of loops:</strong> Discover the two main types: definite and indefinite loops.</li>
+                  <li><strong>When to use loops:</strong> Recognize situations where loops make your code better.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Loops are one of the most powerful features in programming. They let you repeat actions without writing the same code over and over. Instead of writing <code>print("Hello")</code> ten times, you can use a loop to do it once. This makes your code shorter, easier to read, and easier to maintain.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What Are Loops?</h2>
+                <p>A loop is a way to repeat code multiple times. Think of it like a playlist that repeats songs, or a recipe step you do multiple times. Instead of writing the same code over and over, you write it once and tell Python how many times to repeat it (or when to stop).</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Without Loops (Repetitive)</h4>
+                    <p>You'd have to write the same code multiple times:</p>
+                    <pre class="code" style="margin-top: 12px;"><code>print("Hello")
+print("Hello")
+print("Hello")
+print("Hello")
+print("Hello")</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">This is tedious and hard to change</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>With Loops (Efficient)</h4>
+                    <p>Write it once and repeat it:</p>
+                    <pre class="code" style="margin-top: 12px;"><code>for i in range(5):
+    print("Hello")</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Much cleaner and easier to modify</p>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> Loops let you write code once and execute it multiple times. This is called "iteration" - repeating an action. Loops are essential for processing lists of data, repeating calculations, and automating repetitive tasks.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Why Use Loops?</h2>
+                <p>Loops solve several problems that come up when programming:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Efficiency</h4>
+                      <p>Instead of writing the same code many times, you write it once. This saves time and reduces errors.</p>
+                      <pre class="code" style="margin-top: 8px;"><code># Instead of 100 lines:
+for i in range(100):
+    print("Hello")</code></pre>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Flexibility</h4>
+                      <p>You can easily change how many times code runs by changing one number, instead of adding or removing lines.</p>
+                      <pre class="code" style="margin-top: 8px;"><code># Change 5 to 10 easily:
+for i in range(10):
+    print("Hello")</code></pre>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Processing Collections</h4>
+                      <p>Loops let you work with lists, strings, and other collections of data, doing something with each item.</p>
+                      <pre class="code" style="margin-top: 8px;"><code># Process each item:
+for name in ["Alice", "Bob", "Charlie"]:
+    print("Hello,", name)</code></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: See the Difference</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Compare writing code without loops vs. with loops:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Without a loop (repetitive)\nprint(&quot;Count: 1&quot;)\nprint(&quot;Count: 2&quot;)\nprint(&quot;Count: 3&quot;)\n\nprint(&quot;---&quot;)\n\n# With a loop (efficient)\nfor i in range(1, 4):\n    print(f&quot;Count: {i}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Without a loop (repetitive)
+print("Count: 1")
+print("Count: 2")
+print("Count: 3")
+
+print("---")
+
+# With a loop (efficient)
+for i in range(1, 4):
+    print(f"Count: {i}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Both approaches produce the same output, but notice the difference. Without a loop, you need three separate print statements. With a loop, you write the print statement once and it runs three times. The loop version is shorter, easier to read, and if you wanted to count to 100, you'd just change <code>range(1, 4)</code> to <code>range(1, 101)</code> instead of writing 100 print statements! This is the power of loops.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Types of Loops</h2>
+                <p>Python has two main types of loops. Understanding the difference helps you choose the right one for each situation:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Definite Loops (<code>for</code>)</h4>
+                    <p>These loops run a specific number of times. You know exactly how many times the code will execute before the loop starts.</p>
+                    <pre class="code" style="margin-top: 12px;"><code># Runs exactly 5 times
+for i in range(5):
+    print("Hello")</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Use when: You know how many times to repeat</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Indefinite Loops (<code>while</code>)</h4>
+                    <p>These loops run as long as a condition is True. You don't know exactly how many times it will run - it depends on when the condition becomes False.</p>
+                    <pre class="code" style="margin-top: 12px;"><code># Runs until count >= 5
+count = 0
+while count < 5:
+    print("Hello")
+    count = count + 1</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Use when: You repeat until a condition changes</p>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>Real-World Analogy</h4>
+                  <p>Think of definite loops like counting to 10 - you know you'll count exactly 10 numbers. Think of indefinite loops like waiting for a bus - you keep waiting until the bus arrives (the condition changes). Both are useful, but for different situations.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: When to Use Loops</h2>
+                <p>Here are common situations where loops are helpful:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Common Loop Use Cases</div>
+                  <pre class="code"><code># 1. Repeating an action multiple times
+for i in range(10):
+    print("Hello")
+
+# 2. Processing items in a list
+names = ["Alice", "Bob", "Charlie"]
+for name in names:
+    print("Hello,", name)
+
+# 3. Counting or accumulating values
+total = 0
+for i in range(1, 6):
+    total = total + i
+print(total)  # Sums 1+2+3+4+5
+
+# 4. Repeating until a condition is met
+count = 0
+while count < 5:
+    print(count)
+    count = count + 1</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Rule of Thumb:</strong> If you find yourself copying and pasting the same code multiple times, or if you need to do something with each item in a collection, use a loop. Loops make your code cleaner, more maintainable, and less error-prone.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 5: Loop Structure</h2>
+                <p>All loops in Python follow a similar structure. Understanding this structure helps you read and write loops correctly:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Basic Loop Structure</div>
+                  <pre class="code"><code>for variable in sequence:
+    # Code to repeat
+    print(variable)
+    # More code if needed
+
+# After the loop ends, code continues here
+print("Loop finished")</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Loop Header</h4>
+                      <p>The first line defines the loop. It starts with <code>for</code> or <code>while</code>, includes a condition or sequence, and ends with a colon <code>:</code>.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Loop Body</h4>
+                      <p>The indented code after the colon is the "loop body" - this is what gets repeated. All code in the body must be indented consistently.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Loop Completion</h4>
+                      <p>When the loop finishes, Python continues with the next non-indented line. The loop doesn't run forever - it stops when its condition is met or sequence is exhausted.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> Just like with if statements, the colon <code>:</code> after the loop header is required, and all code inside the loop body must be indented. Python uses indentation to know what belongs to the loop.</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Write a Simple Loop</h4>
+                  <p>Write a <code>for</code> loop that prints "Hello" exactly 3 times. Use <code>range(3)</code>.</p>
+                  <p class="hint-text">Use for i in range(3): followed by an indented print statement.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-2/boolean-logic-practice.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-2/while-loop.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'for i in range(3):\n    print("Hello")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for for loop
+            if (!trimmed.includes('for')) {
+              return {
+                correct: false,
+                message: 'You need to write a for loop.',
+                hints: ['Start with: for i in range(3):', 'Don\'t forget the colon']
+              };
+            }
+            
+            // Check for range(3)
+            if (!trimmed.includes('range(3)')) {
+              return {
+                correct: false,
+                message: 'You need to use range(3) to loop 3 times.',
+                hints: ['Use: for i in range(3):', 'range(3) creates a sequence of 0, 1, 2']
+              };
+            }
+            
+            // Check for print statement
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print "Hello" inside the loop.',
+                hints: ['Add a print statement inside the loop', 'Make sure it\'s indented', 'Print: "Hello"']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have a colon after range(3)', 'Check your indentation']
+              };
+            }
+            
+            // Check output contains "Hello" three times
+            const outputText = output.stdout || '';
+            const helloCount = (outputText.match(/Hello/g) || []).length;
+            if (helloCount < 3) {
+              return {
+                correct: false,
+                message: 'Your loop should print "Hello" exactly 3 times.',
+                hints: ['Check your range(3)', 'Make sure print is inside the loop', 'Verify your indentation']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully wrote a for loop that repeats code multiple times.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 6 • Inheritance and Subclasses - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 6 • Inheritance and Subclasses • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 6 • Object-Oriented Programming</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-6/introduction-oop-concepts.html">1. Introduction to OOP Concepts</a></li>
+                <li><a href="/units/unit-6/defining-creating-classes.html">2. Defining and Creating Classes</a></li>
+                <li><a href="/units/unit-6/creating-using-objects.html">3. Creating and Using Objects</a></li>
+                <li><a href="/units/unit-6/instance-variables-methods.html">4. Instance Variables and Methods</a></li>
+                <li><a href="/units/unit-6/class-variables-class-methods.html">5. Class Variables and Class Methods</a></li>
+                <li><a href="/units/unit-6/encapsulation-access-control.html">6. Encapsulation and Access Control</a></li>
+                <li><a class="active" href="/units/unit-6/inheritance-subclasses.html">7. Inheritance and Subclasses</a></li>
+                <li><a href="/units/unit-6/polymorphism-method-overriding.html">8. Polymorphism and Method Overriding</a></li>
+                <li><a href="/units/unit-6/super-function.html">9. The super() Function</a></li>
+                <li><a href="/units/unit-6/oop-real-projects.html">10. OOP in Real Projects</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-6.html">Unit 6</a>
+              <span class="separator">/</span>
+              <span class="current">Inheritance and Subclasses</span>
+            </nav>
+            <div class="eyebrow">Unit 6 • Lesson 7</div>
+            <h1 class="lesson-title">Inheritance and Subclasses</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Inheritance allows one class to reuse and extend the behavior of another. You'll practice creating subclasses that inherit methods and attributes while adding their own unique features, reducing code duplication and building hierarchical relationships.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">25–30 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-6/encapsulation-access-control.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-6/polymorphism-method-overriding.html">Next: Polymorphism and Method Overriding</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Inheritance basics:</strong> Understand what inheritance is and how it works.</li>
+                  <li><strong>Creating subclasses:</strong> Learn how to create a subclass that inherits from a parent class.</li>
+                  <li><strong>Inherited methods:</strong> Discover how subclasses automatically get parent class methods.</li>
+                  <li><strong>Adding new features:</strong> Learn how to add new methods and attributes to subclasses.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Inheritance lets you avoid writing the same code over and over! Instead of copying code between similar classes, you create a parent class with common functionality, then create child classes (subclasses) that inherit that functionality and add their own unique features. This is DRY (Don't Repeat Yourself) principle in action - it makes your code cleaner, easier to maintain, and more organized!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What is Inheritance?</h2>
+                <p>Inheritance allows a class (child/subclass) to inherit attributes and methods from another class (parent/superclass):</p>
+
+                <div class="code-example">
+                  <div class="code-header">Basic Inheritance</div>
+                  <pre class="code"><code>class Animal:  # Parent class
+    def __init__(self, name):
+        self.name = name
+    
+    def speak(self):
+        return f"{self.name} makes a sound"
+
+class Dog(Animal):  # Child class inherits from Animal
+    pass  # Inherits everything from Animal
+
+dog = Dog("Buddy")
+print(dog.speak())  # "Buddy makes a sound"</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Parent Class</h4>
+                      <p>The parent class (also called superclass or base class) defines common attributes and methods that child classes will inherit.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Child Class</h4>
+                      <p>The child class (also called subclass or derived class) inherits from the parent by putting the parent name in parentheses: <code>class Child(Parent):</code></p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Automatic Inheritance</h4>
+                      <p>Child classes automatically get all methods and attributes from the parent class. You don't need to rewrite them!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> Inheritance is like genetics - a child inherits traits from their parents! A Dog class inherits the ability to speak from Animal, just like a real dog inherits traits from the animal kingdom. But dogs can also have their own unique traits!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Basic Inheritance</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Create a parent class and a child class:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'class Vehicle:\n    def __init__(self, brand):\n        self.brand = brand\n    \n    def start(self):\n        return f"{self.brand} starts"\n\nclass Car(Vehicle):  # Car inherits from Vehicle\n    pass\n\ncar = Car("Toyota")\nprint(car.start())  # Inherited method!')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">class Vehicle:
+    def __init__(self, brand):
+        self.brand = brand
+    
+    def start(self):
+        return f"{self.brand} starts"
+
+class Car(Vehicle):  # Car inherits from Vehicle
+    pass
+
+car = Car("Toyota")
+print(car.start())  # Inherited method!</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The <code>Car</code> class inherited from <code>Vehicle</code>! Even though <code>Car</code> is empty (just <code>pass</code>), it automatically got the <code>__init__</code> method and the <code>start()</code> method from <code>Vehicle</code>. This is the power of inheritance - code reuse!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Adding New Methods to Subclasses</h2>
+                <p>Subclasses can add their own unique methods while still inheriting parent methods:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Adding Methods to Subclasses</div>
+                  <pre class="code"><code>class Animal:
+    def __init__(self, name):
+        self.name = name
+    
+    def speak(self):
+        return f"{self.name} makes a sound"
+
+class Dog(Animal):
+    def bark(self):  # New method only for Dog
+        return f"{self.name} barks: Woof!"
+
+dog = Dog("Buddy")
+print(dog.speak())  # Inherited from Animal
+print(dog.bark())   # Unique to Dog</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Inherit Parent Methods</h4>
+                      <p>Subclasses automatically get all methods from the parent class. You can call them directly!</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Add New Methods</h4>
+                      <p>Subclasses can define their own methods that are unique to them. These methods don't exist in the parent class!</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Best of Both</h4>
+                      <p>Subclasses get parent functionality AND their own unique features. This is how inheritance makes code flexible!</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Overriding Parent Methods</h2>
+                <p>Subclasses can override (replace) parent methods with their own implementation:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Method Overriding</div>
+                  <pre class="code"><code>class Animal:
+    def speak(self):
+        return "Some sound"
+
+class Dog(Animal):
+    def speak(self):  # Override parent's speak method
+        return "Woof!"
+
+class Cat(Animal):
+    def speak(self):  # Override parent's speak method
+        return "Meow!"
+
+dog = Dog()
+cat = Cat()
+print(dog.speak())  # "Woof!"
+print(cat.speak())  # "Meow!"</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Method Overriding</h4>
+                  <p>When a subclass defines a method with the same name as a parent method, it overrides (replaces) the parent's version. The subclass version is used instead. This lets you customize behavior while keeping the same interface!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Overriding Methods</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Override a parent method in a subclass:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'class Shape:\n    def area(self):\n        return 0\n\nclass Rectangle(Shape):\n    def __init__(self, width, height):\n        self.width = width\n        self.height = height\n    \n    def area(self):  # Override parent method\n        return self.width * self.height\n\nrect = Rectangle(5, 10)\nprint(f"Area: {rect.area()}")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">class Shape:
+    def area(self):
+        return 0
+
+class Rectangle(Shape):
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+    
+    def area(self):  # Override parent method
+        return self.width * self.height
+
+rect = Rectangle(5, 10)
+print(f"Area: {rect.area()}")</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The <code>Rectangle</code> class overrode the <code>area()</code> method from <code>Shape</code>. When you call <code>rect.area()</code>, it uses the Rectangle's version (which calculates width × height) instead of the Shape's version (which returns 0). This is method overriding!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Multiple Levels of Inheritance</h2>
+                <p>You can create inheritance chains with multiple levels:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Multiple Inheritance Levels</div>
+                  <pre class="code"><code>class Animal:
+    def __init__(self, name):
+        self.name = name
+
+class Mammal(Animal):  # Inherits from Animal
+    def breathe(self):
+        return "Breathes air"
+
+class Dog(Mammal):  # Inherits from Mammal (which inherits from Animal)
+    def bark(self):
+        return "Woof!"
+
+dog = Dog("Buddy")
+print(dog.name)      # From Animal
+print(dog.breathe()) # From Mammal
+print(dog.bark())    # From Dog</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> Inheritance can go multiple levels deep! A class can inherit from a class that inherits from another class. Each level adds more functionality, creating a hierarchy of classes!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Create a Subclass</h4>
+                  <p>Create a parent class <code>Person</code> with <code>__init__(self, name)</code> and method <code>introduce(self)</code> that returns "Hi, I'm {name}". Create a subclass <code>Student</code> that inherits from Person. Create a Student object and call introduce().</p>
+                  <p class="hint-text">Define class Person, create Student(Person), create Student object, call introduce.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Override a Method</h4>
+                  <p>Create a parent class <code>Animal</code> with method <code>make_sound(self)</code> that returns "Some sound". Create a subclass <code>Dog</code> that overrides <code>make_sound</code> to return "Woof!". Create a Dog object and call make_sound().</p>
+                  <p class="hint-text">Define class Animal with make_sound, create Dog(Animal) that overrides make_sound, create Dog object, call make_sound.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-6/encapsulation-access-control.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-6/polymorphism-method-overriding.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'class Person:\n    def __init__(self, name):\n        self.name = name\n    \n    def introduce(self):\n        return f"Hi, I\'m {self.name}"\n\nclass Student(Person):  # Student inherits from Person\n    pass\n\nstudent = Student("Alice")\nprint(student.introduce())',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('class Person')) {
+              return {
+                correct: false,
+                message: 'You need to create a Person class.',
+                hints: ['Define: class Person:', 'Add __init__ and introduce methods']
+              };
+            }
+            
+            if (!trimmed.includes('def introduce')) {
+              return {
+                correct: false,
+                message: 'You need to create an introduce method in Person.',
+                hints: ['def introduce(self):', 'return f"Hi, I\'m {self.name}"']
+              };
+            }
+            
+            if (!trimmed.includes('class Student(Person)') && !trimmed.includes('Student(Person)')) {
+              return {
+                correct: false,
+                message: 'You need to create a Student class that inherits from Person.',
+                hints: ['Define: class Student(Person):']
+              };
+            }
+            
+            if (!trimmed.includes('Student(')) {
+              return {
+                correct: false,
+                message: 'You need to create a Student object.',
+                hints: ['Create: student = Student("Alice")']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure indentation is correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('Hi') || !outputText.includes('Alice')) {
+              return {
+                correct: false,
+                message: 'The output should show "Hi, I\'m Alice".',
+                hints: ['Call student.introduce() and print it']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created a subclass that inherits from a parent class.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'class Animal:\n    def make_sound(self):\n        return "Some sound"\n\nclass Dog(Animal):\n    def make_sound(self):  # Override parent method\n        return "Woof!"\n\ndog = Dog()\nprint(dog.make_sound())',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('class Animal')) {
+              return {
+                correct: false,
+                message: 'You need to create an Animal class.',
+                hints: ['Define: class Animal:', 'Add make_sound method']
+              };
+            }
+            
+            if (!trimmed.includes('def make_sound') || (trimmed.match(/def make_sound/g) || []).length < 1) {
+              return {
+                correct: false,
+                message: 'You need to create a make_sound method in Animal.',
+                hints: ['def make_sound(self):', 'return "Some sound"']
+              };
+            }
+            
+            if (!trimmed.includes('class Dog(Animal)') && !trimmed.includes('Dog(Animal)')) {
+              return {
+                correct: false,
+                message: 'You need to create a Dog class that inherits from Animal.',
+                hints: ['Define: class Dog(Animal):']
+              };
+            }
+            
+            if ((trimmed.match(/def make_sound/g) || []).length < 2) {
+              return {
+                correct: false,
+                message: 'You need to override make_sound in Dog class.',
+                hints: ['In Dog class: def make_sound(self):', 'return "Woof!"']
+              };
+            }
+            
+            if (!trimmed.includes('Dog()')) {
+              return {
+                correct: false,
+                message: 'You need to create a Dog object.',
+                hints: ['Create: dog = Dog()']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure indentation is correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('Woof')) {
+              return {
+                correct: false,
+                message: 'The output should show "Woof!".',
+                hints: ['Call dog.make_sound() and print it']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully overrode a parent method in a subclass.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

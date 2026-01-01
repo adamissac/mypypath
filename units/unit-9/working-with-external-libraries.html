@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 9 • Working with External Libraries • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 9 • Advanced Topics</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-9/recursion-problem-decomposition.html">1. Recursion and Problem Decomposition</a></li>
+                <li><a class="active" href="/units/unit-9/working-with-external-libraries.html">2. Working with External Libraries</a></li>
+                <li><a class="" href="/units/unit-9/apis-data-retrieval.html">3. APIs and Data Retrieval</a></li>
+                <li><a class="" href="/units/unit-9/introduction-json-data-parsing.html">4. Introduction to JSON and Data Parsing</a></li>
+                <li><a class="" href="/units/unit-9/efficiency-big-o-basics.html">5. Efficiency and Big-O Basics</a></li>
+                <li><a class="" href="/units/unit-9/working-with-dates-times.html">6. Working with Dates and Times</a></li>
+                <li><a class="" href="/units/unit-9/data-visualization-matplotlib.html">7. Data Visualization with Matplotlib</a></li>
+                <li><a class="" href="/units/unit-9/basic-automation-python.html">8. Basic Automation with Python</a></li>
+                <li><a class="" href="/units/unit-9/introduction-file-formats.html">9. Introduction to File Formats (CSV, JSON, and Excel)</a></li>
+                <li><a class="" href="/units/unit-9/applying-advanced-concepts.html">10. Applying Advanced Concepts Together</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-9.html">Unit 9</a>
+              <span class="separator">/</span>
+              <span class="current">Working with External Libraries</span>
+            </nav>
+            <div class="eyebrow">Unit 9 • Lesson 2</div>
+            <h1 class="lesson-title">Working with External Libraries</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Libraries extend Python's core features to handle specialized tasks like math, data analysis, and graphics. You'll learn how to import, install, and explore external libraries such as <code>math</code>, <code>requests</code>, and <code>matplotlib</code>, expanding Python's capabilities for your projects.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-9/apis-data-retrieval.html">Next: APIs and Data Retrieval</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Built-in vs external libraries:</strong> The difference between libraries that come with Python and those you install.</li>
+                  <li><strong>Installing libraries:</strong> How to use pip to install external libraries.</li>
+                  <li><strong>Importing libraries:</strong> Different ways to import and use library functions.</li>
+                  <li><strong>Popular libraries:</strong> Common external libraries and what they do.</li>
+                  <li><strong>Library documentation:</strong> How to find and use library documentation.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>Built-in vs External Libraries</h2>
+                <p>Python comes with many <strong>built-in libraries</strong> like <code>math</code>, <code>random</code>, and <code>datetime</code>. But for specialized tasks, you'll need <strong>external libraries</strong> that must be installed first.</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Built-in Libraries</h4>
+                    <p>Come with Python, work immediately, examples: math, random, datetime, os</p>
+                  </div>
+
+                  <div class="feature-card">
+                    <h4>External Libraries</h4>
+                    <p>Need to install with pip, examples: requests, matplotlib, pandas, numpy</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Installing External Libraries</h2>
+                <p>Use <code>pip</code> (Python's package installer) to install external libraries:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Installing a Library</div>
+                  <pre class="code"><code># In your terminal/command prompt:
+pip install requests
+
+# Or for Python 3 specifically:
+pip3 install requests</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>pip Command</h4>
+                  <p><code>pip</code> is Python's package manager. It downloads and installs libraries from the Python Package Index (PyPI). Always install libraries in your terminal, not in Python code!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Ways to Import Libraries</h2>
+                <p>There are several ways to import libraries:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Different Import Methods</div>
+                  <pre class="code"><code># 1. Full import
+import math
+result = math.sqrt(16)
+
+# 2. Import specific functions
+from math import sqrt, pi
+result = sqrt(16)
+
+# 3. Import with alias
+import math as m
+result = m.sqrt(16)
+
+# 4. Import everything (not recommended)
+from math import *
+result = sqrt(16)</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Best Practices</h4>
+                  <ul>
+                    <li>Use full imports for clarity: <code>import math</code></li>
+                    <li>Use specific imports to avoid namespace pollution: <code>from math import sqrt</code></li>
+                    <li>Use aliases for long names: <code>import matplotlib.pyplot as plt</code></li>
+                    <li>Avoid <code>import *</code> - it makes code harder to read</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Finding and Choosing Libraries</h2>
+                <p>How to find the right library for your needs:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Search PyPI</h4>
+                      <p>Visit <a href="https://pypi.org" target="_blank">pypi.org</a> to search for libraries. PyPI (Python Package Index) is the official repository of Python packages.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Read Documentation</h4>
+                      <p>Check the library's documentation to understand its features, usage examples, and requirements.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Check Popularity</h4>
+                      <p>Look at download counts and GitHub stars. Popular libraries are usually well-maintained and have good community support.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Read Reviews</h4>
+                      <p>Check GitHub issues and discussions to see if the library is actively maintained and has good support.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>Installing Specific Versions</h4>
+                  <p>You can install specific versions of libraries:</p>
+                  <pre class="code" style="margin-top: 8px;"><code># Install specific version
+pip install requests==2.28.0
+
+# Install latest version
+pip install requests
+
+# Upgrade existing library
+pip install --upgrade requests</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Popular External Libraries</h2>
+                <p>Here are some commonly used external libraries and what they do:</p>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Library</th>
+                      <th>Purpose</th>
+                      <th>Installation</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>requests</code></td>
+                      <td>Make HTTP requests to APIs and websites</td>
+                      <td><code>pip install requests</code></td>
+                    </tr>
+                    <tr>
+                      <td><code>matplotlib</code></td>
+                      <td>Create charts and visualizations</td>
+                      <td><code>pip install matplotlib</code></td>
+                    </tr>
+                    <tr>
+                      <td><code>pandas</code></td>
+                      <td>Data analysis and manipulation</td>
+                      <td><code>pip install pandas</code></td>
+                    </tr>
+                    <tr>
+                      <td><code>numpy</code></td>
+                      <td>Numerical computing and arrays</td>
+                      <td><code>pip install numpy</code></td>
+                    </tr>
+                    <tr>
+                      <td><code>beautifulsoup4</code></td>
+                      <td>Web scraping and HTML parsing</td>
+                      <td><code>pip install beautifulsoup4</code></td>
+                    </tr>
+                    <tr>
+                      <td><code>flask</code></td>
+                      <td>Build web applications</td>
+                      <td><code>pip install flask</code></td>
+                    </tr>
+                    <tr>
+                      <td><code>pillow</code></td>
+                      <td>Image processing</td>
+                      <td><code>pip install pillow</code></td>
+                    </tr>
+                    <tr>
+                      <td><code>selenium</code></td>
+                      <td>Web browser automation</td>
+                      <td><code>pip install selenium</code></td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="info-card">
+                  <h4>Library Categories</h4>
+                  <p>Libraries are often grouped by purpose:</p>
+                  <ul>
+                    <li><strong>Web:</strong> requests, flask, django, beautifulsoup4</li>
+                    <li><strong>Data Science:</strong> pandas, numpy, matplotlib, seaborn</li>
+                    <li><strong>Automation:</strong> selenium, pyautogui, schedule</li>
+                    <li><strong>Utilities:</strong> python-dateutil, pytz, colorama</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Using Library Documentation</h2>
+                <p>Learning to read library documentation is crucial:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Example: Using requests Library</div>
+                  <pre class="code"><code>import requests
+
+# Basic GET request
+response = requests.get('https://api.github.com/users/octocat')
+
+# Check status code
+if response.status_code == 200:
+    data = response.json()
+    print(f"Username: {data['login']}")
+else:
+    print(f"Error: {response.status_code}")
+
+# With error handling
+try:
+    response = requests.get('https://api.github.com/users/octocat', timeout=5)
+    response.raise_for_status()  # Raises exception for bad status codes
+    data = response.json()
+except requests.exceptions.RequestException as e:
+    print(f"Request failed: {e}")</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>Reading Documentation</h4>
+                  <p>When learning a new library:</p>
+                  <ol>
+                    <li>Start with the "Quick Start" or "Getting Started" section</li>
+                    <li>Look at code examples</li>
+                    <li>Understand the basic concepts</li>
+                    <li>Try the examples yourself</li>
+                    <li>Read the API reference for specific functions</li>
+                  </ol>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: Using Libraries</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try using Python's built-in math library:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'import math\n\n# Use math library functions\nprint(f\"Square root of 16: {math.sqrt(16)}\")\nprint(f\"Pi: {math.pi}\")\nprint(f\"Cosine of 0: {math.cos(0)}\")\nprint(f\"Factorial of 5: {math.factorial(5)}\")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">import math
+
+# Use math library functions
+print(f"Square root of 16: {math.sqrt(16)}")
+print(f"Pi: {math.pi}")
+print(f"Cosine of 0: {math.cos(0)}")
+print(f"Factorial of 5: {math.factorial(5)}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You imported the math library and used its functions. External libraries work the same way - install them with pip, then import and use them!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>Built-in libraries:</strong> Come with Python, work immediately</li>
+                  <li><strong>External libraries:</strong> Need to be installed with pip</li>
+                  <li><strong>Import methods:</strong> Full import, specific import, aliases</li>
+                  <li><strong>Popular libraries:</strong> requests, matplotlib, pandas, numpy</li>
+                  <li><strong>Best practices:</strong> Use clear import statements</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>External libraries extend Python's power. Always check library documentation to learn how to use them. The Python community has created libraries for almost everything!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: Libraries</h3>
+                  <p>What is the difference between a built-in library and an external library? Give examples of each.</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Importing</h3>
+                  <p>What are the different ways to import a library in Python? When would you use each method?</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-9/recursion-problem-decomposition.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-9/apis-data-retrieval.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

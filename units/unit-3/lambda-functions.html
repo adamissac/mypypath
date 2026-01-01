@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 3 • Lambda Functions - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 3 • Lambda Functions • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 3 • Functions</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-3/what-are-functions.html">1. What Are Functions</a></li>
+                <li><a href="/units/unit-3/defining-calling-functions.html">2. Defining & Calling Functions</a></li>
+                <li><a href="/units/unit-3/parameters-arguments.html">3. Parameters & Arguments</a></li>
+                <li><a href="/units/unit-3/return-statements.html">4. Return Statements</a></li>
+                <li><a href="/units/unit-3/variable-scope-lifetime.html">5. Variable Scope & Lifetime</a></li>
+                <li><a href="/units/unit-3/default-optional-parameters.html">6. Default & Optional Parameters</a></li>
+                <li><a href="/units/unit-3/docstrings-documentation.html">7. Docstrings & Documentation</a></li>
+                <li><a href="/units/unit-3/nested-helper-functions.html">8. Nested & Helper Functions</a></li>
+                <li><a class="active" href="/units/unit-3/lambda-functions.html">9. Lambda Functions</a></li>
+                <li><a href="/units/unit-3/practical-function-examples.html">10. Practical Function Examples</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-3.html">Unit 3</a>
+              <span class="separator">/</span>
+              <span class="current">Lambda Functions</span>
+            </nav>
+            <div class="eyebrow">Unit 3 • Lesson 9</div>
+            <h1 class="lesson-title">Lambda Functions</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Lambda functions are small, anonymous functions that you can create on the fly. You'll learn how to write simple functions in a single line, use them with functions like map() and filter(), and understand when lambda functions make your code more concise and readable.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-3/nested-helper-functions.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-3/practical-function-examples.html">Next: Practical Function Examples</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What lambda functions are:</strong> Understand anonymous functions in Python.</li>
+                  <li><strong>Lambda syntax:</strong> Learn how to write lambda functions.</li>
+                  <li><strong>Using lambdas:</strong> Discover when and how to use lambda functions.</li>
+                  <li><strong>Lambda vs regular functions:</strong> Understand when to use each.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Lambda functions let you write small, simple functions quickly without needing to define them with <code>def</code>. They're especially useful when you need a function for a short, one-time use - like passing a function to another function. While they're not always necessary, they can make your code more concise and readable when used appropriately.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What Is a Lambda Function?</h2>
+                <p>A lambda function is a small, anonymous function that you can create in a single line. It's called "lambda" after the Greek letter λ, which is used in mathematics to represent functions. Lambda functions are useful for simple operations that don't need a full function definition.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Lambda Function Syntax</div>
+                  <pre class="code"><code># Regular function
+def add(x, y):
+    return x + y
+
+# Lambda function (same thing)
+add = lambda x, y: x + y
+
+print(add(3, 5))  # Output: 8</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Use lambda Keyword</h4>
+                      <p>Start with the <code>lambda</code> keyword instead of <code>def</code>. This tells Python you're creating an anonymous function.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>List Parameters</h4>
+                      <p>After <code>lambda</code>, list the parameters (like <code>x, y</code>). No parentheses needed around the parameters.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Add Expression</h4>
+                      <p>After a colon (<code>:</code>), write the expression that the function returns. Lambda functions automatically return the result of this expression - no <code>return</code> keyword needed.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> Lambda functions are limited - they can only contain a single expression, not multiple statements. If you need multiple lines of code or complex logic, use a regular function with <code>def</code> instead. Lambda functions are best for simple, one-line operations.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Your First Lambda</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try creating and using a lambda function:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'square = lambda x: x * x\n\nprint(square(5))\nprint(square(10))')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">square = lambda x: x * x
+
+print(square(5))
+print(square(10))</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The lambda function <code>lambda x: x * x</code> takes one parameter <code>x</code> and returns <code>x * x</code>. You can assign it to a variable (<code>square</code>) and use it just like a regular function. When you call <code>square(5)</code>, it calculates <code>5 * 5 = 25</code>. Lambda functions are a quick way to create simple functions without writing a full <code>def</code> statement!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Lambda with Multiple Parameters</h2>
+                <p>Lambda functions can take multiple parameters, just like regular functions:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Lambda with Multiple Parameters</div>
+                  <pre class="code"><code>multiply = lambda x, y: x * y
+add = lambda a, b, c: a + b + c
+
+print(multiply(3, 4))      # Output: 12
+print(add(1, 2, 3))        # Output: 6</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How It Works</h4>
+                  <p>You can list multiple parameters separated by commas. The lambda function will take all those parameters and use them in the expression. Just like regular functions, the number of arguments you provide must match the number of parameters.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Using Lambda with Built-in Functions</h2>
+                <p>Lambda functions are commonly used with functions like <code>map()</code> and <code>filter()</code>:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Lambda with map()</div>
+                  <pre class="code"><code>numbers = [1, 2, 3, 4, 5]
+squared = list(map(lambda x: x * x, numbers))
+print(squared)  # Output: [1, 4, 9, 16, 25]</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>map() Function</h4>
+                      <p>The <code>map()</code> function applies a function to every item in a list. It takes two arguments: the function to apply, and the list to process.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Lambda as Function</h4>
+                      <p>Instead of defining a separate function, you can pass a lambda function directly to <code>map()</code>. This is more concise than defining a function just to use it once.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Convert to List</h4>
+                      <p><code>map()</code> returns a map object, so you need to convert it to a list using <code>list()</code> to see the results.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> Lambda functions are perfect for simple operations that you only need once. If you find yourself using the same lambda multiple times, or if the logic is complex, consider using a regular function instead.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Lambda with filter()</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try using a lambda function with filter() to find even numbers:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\neven_numbers = list(filter(lambda x: x % 2 == 0, numbers))\nprint(even_numbers)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+even_numbers = list(filter(lambda x: x % 2 == 0, numbers))
+print(even_numbers)</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The <code>filter()</code> function keeps only items from a list that meet a condition. The lambda function <code>lambda x: x % 2 == 0</code> checks if a number is even (divisible by 2). <code>filter()</code> applies this lambda to each number and keeps only the even ones. This is much more concise than writing a separate function just to check if a number is even!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: When to Use Lambda Functions</h2>
+                <p>Lambda functions are best for:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Simple Operations</h4>
+                    <p>One-line expressions that are easy to understand.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>double = lambda x: x * 2</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>One-Time Use</h4>
+                    <p>Functions you only need once, like with map() or filter().</p>
+                    <pre class="code" style="margin-top: 12px;"><code>list(map(lambda x: x*2, nums))</code></pre>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>When NOT to Use Lambda</h4>
+                  <p>Don't use lambda functions for complex logic, multiple statements, or functions you'll use multiple times. Regular functions with <code>def</code> are better for those cases because they're easier to read, test, and debug.</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Create a Lambda Function</h4>
+                  <p>Create a lambda function that takes one parameter <code>number</code> and returns <code>number * 3</code>. Assign it to a variable named <code>triple</code> and use it to triple the number 7.</p>
+                  <p class="hint-text">Use lambda keyword with the syntax: lambda parameter: expression</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Use Lambda with map()</h4>
+                  <p>Create a list of numbers <code>[1, 2, 3, 4, 5]</code>. Use <code>map()</code> with a lambda function to square each number. Convert the result to a list and print it.</p>
+                  <p class="hint-text">Use map(lambda x: x * x, numbers) and convert to list.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-3/nested-helper-functions.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-3/practical-function-examples.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'triple = lambda number: number * 3\nprint(triple(7))',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('lambda')) {
+              return {
+                correct: false,
+                message: 'You need to create a lambda function.',
+                hints: ['Use: triple = lambda number: number * 3', 'Start with the lambda keyword']
+              };
+            }
+            
+            if (!trimmed.includes('triple')) {
+              return {
+                correct: false,
+                message: 'Your lambda function should be assigned to a variable named triple.',
+                hints: ['Write: triple = lambda number: number * 3', 'Make sure the variable name matches']
+              };
+            }
+            
+            if (!trimmed.includes('number * 3') && !trimmed.includes('number*3')) {
+              return {
+                correct: false,
+                message: 'Your lambda should return number * 3.',
+                hints: ['Write: lambda number: number * 3', 'Use the * operator to multiply']
+              };
+            }
+            
+            if (!trimmed.includes('triple(7)')) {
+              return {
+                correct: false,
+                message: 'You need to call triple(7) and print the result.',
+                hints: ['Call: triple(7)', 'Print the result']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure lambda syntax is correct', 'Check: lambda parameter: expression']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('21')) {
+              return {
+                correct: false,
+                message: 'triple(7) should return 21 (7 * 3 = 21).',
+                hints: ['Check your lambda expression', 'Make sure it multiplies by 3']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created and used a lambda function.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'numbers = [1, 2, 3, 4, 5]\nsquared = list(map(lambda x: x * x, numbers))\nprint(squared)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('numbers = [1, 2, 3, 4, 5]')) {
+              return {
+                correct: false,
+                message: 'You need to create a list of numbers [1, 2, 3, 4, 5].',
+                hints: ['Write: numbers = [1, 2, 3, 4, 5]', 'Make sure it\'s a list']
+              };
+            }
+            
+            if (!trimmed.includes('lambda')) {
+              return {
+                correct: false,
+                message: 'You need to use a lambda function.',
+                hints: ['Use: lambda x: x * x', 'This will square each number']
+              };
+            }
+            
+            if (!trimmed.includes('map(')) {
+              return {
+                correct: false,
+                message: 'You need to use the map() function.',
+                hints: ['Use: map(lambda x: x * x, numbers)', 'map() applies the function to each item']
+              };
+            }
+            
+            if (!trimmed.includes('list(')) {
+              return {
+                correct: false,
+                message: 'You need to convert the map result to a list.',
+                hints: ['Use: list(map(...))', 'map() returns a map object, convert it to list']
+              };
+            }
+            
+            if (!trimmed.includes('print(')) {
+              return {
+                correct: false,
+                message: 'You need to print the result.',
+                hints: ['Use: print(squared)', 'Print the squared list']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure lambda syntax is correct', 'Check map() and list() usage']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('1') || !outputText.includes('4') || !outputText.includes('25')) {
+              return {
+                correct: false,
+                message: 'The squared list should be [1, 4, 9, 16, 25].',
+                hints: ['Check your lambda function', 'Make sure it squares each number (x * x)', 'Verify map() is working correctly']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used lambda with map() to square numbers.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

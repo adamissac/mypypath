@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 3 • Variable Scope & Lifetime - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 3 • Variable Scope & Lifetime • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 3 • Functions</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-3/what-are-functions.html">1. What Are Functions</a></li>
+                <li><a href="/units/unit-3/defining-calling-functions.html">2. Defining & Calling Functions</a></li>
+                <li><a href="/units/unit-3/parameters-arguments.html">3. Parameters & Arguments</a></li>
+                <li><a href="/units/unit-3/return-statements.html">4. Return Statements</a></li>
+                <li><a class="active" href="/units/unit-3/variable-scope-lifetime.html">5. Variable Scope & Lifetime</a></li>
+                <li><a href="/units/unit-3/default-optional-parameters.html">6. Default & Optional Parameters</a></li>
+                <li><a href="/units/unit-3/docstrings-documentation.html">7. Docstrings & Documentation</a></li>
+                <li><a href="/units/unit-3/nested-helper-functions.html">8. Nested & Helper Functions</a></li>
+                <li><a href="/units/unit-3/lambda-functions.html">9. Lambda Functions</a></li>
+                <li><a href="/units/unit-3/practical-function-examples.html">10. Practical Function Examples</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-3.html">Unit 3</a>
+              <span class="separator">/</span>
+              <span class="current">Variable Scope & Lifetime</span>
+            </nav>
+            <div class="eyebrow">Unit 3 • Lesson 5</div>
+            <h1 class="lesson-title">Variable Scope and Lifetime</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Understand the difference between local and global variables. You'll learn how Python determines where a variable is accessible, and why managing scope prevents naming conflicts and bugs, ensuring your code behaves predictably across different contexts.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-3/return-statements.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-3/default-optional-parameters.html">Next: Default & Optional Parameters</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Local vs global variables:</strong> Understand where variables can be accessed.</li>
+                  <li><strong>Variable scope:</strong> Learn how Python determines which variables are available.</li>
+                  <li><strong>Variable lifetime:</strong> Understand when variables are created and destroyed.</li>
+                  <li><strong>Best practices:</strong> Learn how to avoid common scope-related bugs.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Understanding variable scope helps you write better code and avoid bugs. When you know where variables can be accessed, you can prevent naming conflicts, write more organized code, and understand why some variables work in some places but not others. This knowledge is essential for building larger programs.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What Is Variable Scope?</h2>
+                <p>Variable scope determines where in your code a variable can be accessed. Python has two main types of scope: local scope (inside functions) and global scope (outside functions). A variable's scope is like its "territory" - it can only be used within its own territory.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Local vs Global Variables</div>
+                  <pre class="code"><code># Global variable (defined outside any function)
+name = "Alice"
+
+def greet():
+    # Local variable (defined inside the function)
+    message = "Hello"
+    print(message + ", " + name)
+
+greet()
+# print(message)  # ERROR! message is local, can't access here</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Global Variables</h4>
+                      <p>Variables defined outside any function are global. They can be accessed from anywhere in your program, including inside functions. In the example, <code>name = "Alice"</code> is a global variable because it's defined outside the function.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Local Variables</h4>
+                      <p>Variables defined inside a function are local. They can only be accessed within that function. In the example, <code>message = "Hello"</code> is a local variable because it's defined inside the <code>greet()</code> function.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Access Rules</h4>
+                      <p>Functions can read global variables, but if you try to access a local variable outside its function, you'll get an error. That's why <code>print(message)</code> outside the function would cause an error - <code>message</code> only exists inside <code>greet()</code>.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> Global variables are accessible everywhere, but local variables are only accessible inside the function where they're defined. This separation helps prevent bugs and keeps your code organized - each function has its own "workspace" with its own variables.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Understanding Scope</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try running this code. Notice which variables are accessible where:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'global_var = &quot;I am global&quot;\n\ndef my_function():\n    local_var = &quot;I am local&quot;\n    print(&quot;Inside function:&quot;)\n    print(global_var)  # Can access global\n    print(local_var)   # Can access local\n\nmy_function()\nprint(&quot;Outside function:&quot;)\nprint(global_var)  # Can access global\n# print(local_var)  # ERROR! Can\'t access local')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">global_var = "I am global"
+
+def my_function():
+    local_var = "I am local"
+    print("Inside function:")
+    print(global_var)  # Can access global
+    print(local_var)   # Can access local
+
+my_function()
+print("Outside function:")
+print(global_var)  # Can access global
+# print(local_var)  # ERROR! Can't access local</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Inside the function, both <code>global_var</code> and <code>local_var</code> are accessible. The function can read the global variable, and it can use its own local variable. However, outside the function, only <code>global_var</code> is accessible. If you tried to print <code>local_var</code> outside the function (uncomment that line), Python would give you an error saying <code>local_var</code> is not defined. This is because <code>local_var</code> only exists inside the function - when the function finishes, the local variable is destroyed!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Local Variables Are Isolated</h2>
+                <p>Each function has its own separate set of local variables. Even if two functions use the same variable name, they're completely separate:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Separate Local Variables</div>
+                  <pre class="code"><code>def function1():
+    x = 10
+    print("Function 1, x =", x)
+
+def function2():
+    x = 20
+    print("Function 2, x =", x)
+
+function1()
+function2()
+print("Outside, x =", x)  # ERROR! x doesn't exist here</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How It Works</h4>
+                  <p>Each function has its own "workspace" with its own variables. When <code>function1()</code> creates <code>x = 10</code>, that variable only exists inside <code>function1()</code>. When <code>function2()</code> creates <code>x = 20</code>, it's a completely different variable with the same name. They don't interfere with each other because they're in different scopes. Outside both functions, <code>x</code> doesn't exist at all - it was only created inside each function.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Separate Scopes</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try running this code. Notice how each function has its own separate variables:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'def calculate_area():\n    length = 5\n    width = 3\n    area = length * width\n    print(&quot;Area:&quot;, area)\n\ndef calculate_perimeter():\n    length = 10\n    width = 4\n    perimeter = 2 * (length + width)\n    print(&quot;Perimeter:&quot;, perimeter)\n\ncalculate_area()\ncalculate_perimeter()')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">def calculate_area():
+    length = 5
+    width = 3
+    area = length * width
+    print("Area:", area)
+
+def calculate_perimeter():
+    length = 10
+    width = 4
+    perimeter = 2 * (length + width)
+    print("Perimeter:", perimeter)
+
+calculate_area()
+calculate_perimeter()</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Both functions use variables named <code>length</code> and <code>width</code>, but they're completely separate! When <code>calculate_area()</code> runs, it uses <code>length = 5</code> and <code>width = 3</code> to calculate area = 15. When <code>calculate_perimeter()</code> runs, it uses its own <code>length = 10</code> and <code>width = 4</code> to calculate perimeter = 28. Even though they have the same names, they're different variables in different scopes. This isolation prevents functions from accidentally interfering with each other!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Reading Global Variables</h2>
+                <p>Functions can read global variables without any special syntax. You can use a global variable inside a function just like any other variable:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Reading Global Variables</div>
+                  <pre class="code"><code>count = 0  # Global variable
+
+def increment():
+    print("Current count:", count)  # Can read global
+
+increment()
+print("Final count:", count)</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> Functions can read global variables without any special keyword. Just use the variable name inside the function, and Python will look for it in the global scope if it's not found locally.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Modifying Global Variables</h2>
+                <p>If you want to modify a global variable inside a function, you need to use the <code>global</code> keyword. This tells Python "I want to use the global variable, not create a local one":</p>
+
+                <div class="code-example">
+                  <div class="code-header">Modifying Global Variables</div>
+                  <pre class="code"><code>count = 0  # Global variable
+
+def increment():
+    global count  # Tell Python to use global count
+    count = count + 1
+    print("Count is now:", count)
+
+increment()
+increment()
+print("Final count:", count)  # Output: 2</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Declare Global</h4>
+                      <p>Use <code>global variable_name</code> at the start of your function to tell Python you want to modify the global variable, not create a local one.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Modify the Variable</h4>
+                      <p>Now you can modify the global variable. When you write <code>count = count + 1</code>, Python knows you mean the global <code>count</code>, not a local one.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>When to Use Global</h4>
+                  <p>Generally, it's better to avoid modifying global variables. Instead, use parameters and return values to pass data between functions. However, sometimes you need to modify a global variable (like a counter or configuration), and that's when you use the <code>global</code> keyword.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 5: Variable Lifetime</h2>
+                <p>Variable lifetime refers to when a variable is created and destroyed:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Global Variables</h4>
+                    <p>Created when the program starts and exist until the program ends.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>name = "Alice"
+# Created at program start
+# Exists until program ends</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Long lifetime</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Local Variables</h4>
+                    <p>Created when the function is called and destroyed when the function ends.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>def my_func():
+    x = 10
+    # Created when function called
+    # Destroyed when function ends</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Short lifetime</p>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> Local variables are temporary - they only exist while the function is running. Once the function finishes, all its local variables are destroyed. This is why you can't access them outside the function - they don't exist anymore!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Create Local and Global Variables</h4>
+                  <p>Create a global variable <code>name</code> with value "Python". Then create a function <code>greet()</code> that creates a local variable <code>greeting</code> with value "Hello" and prints both the greeting and name.</p>
+                  <p class="hint-text">Use a global variable outside the function, and a local variable inside the function.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Modify a Global Variable</h4>
+                  <p>Create a global variable <code>counter</code> with value 0. Then create a function <code>increment_counter()</code> that uses the <code>global</code> keyword to increment the counter by 1 and prints it. Call the function twice.</p>
+                  <p class="hint-text">Use global counter inside the function to modify the global variable.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-3/return-statements.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-3/default-optional-parameters.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'name = "Python"\n\ndef greet():\n    greeting = "Hello"\n    print(greeting + ", " + name)\n\ngreet()',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('name =')) {
+              return {
+                correct: false,
+                message: 'You need to create a global variable named name.',
+                hints: ['Write: name = "Python"', 'This should be outside the function']
+              };
+            }
+            
+            if (!trimmed.includes('def')) {
+              return {
+                correct: false,
+                message: 'You need to define a function using def.',
+                hints: ['Start with: def greet():', 'Don\'t forget the colon']
+              };
+            }
+            
+            if (!trimmed.includes('greet')) {
+              return {
+                correct: false,
+                message: 'Your function should be named greet.',
+                hints: ['Write: def greet():', 'Make sure the name matches exactly']
+              };
+            }
+            
+            if (!trimmed.includes('greeting =')) {
+              return {
+                correct: false,
+                message: 'You need to create a local variable named greeting inside the function.',
+                hints: ['Inside the function, write: greeting = "Hello"', 'Make sure it\'s indented']
+              };
+            }
+            
+            if (!trimmed.includes('greet(')) {
+              return {
+                correct: false,
+                message: 'You need to call the greet function.',
+                hints: ['Call the function by writing: greet()', 'Make sure to include the parentheses']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have a colon after def', 'Check your indentation', 'Make sure variables inside the function are indented']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('Hello') || !outputText.includes('Python')) {
+              return {
+                correct: false,
+                message: 'Your function should print both the greeting and name.',
+                hints: ['Check your print statement', 'Make sure it includes both greeting and name']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created both global and local variables.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'counter = 0\n\ndef increment_counter():\n    global counter\n    counter = counter + 1\n    print(counter)\n\nincrement_counter()\nincrement_counter()',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('counter = 0')) {
+              return {
+                correct: false,
+                message: 'You need to create a global variable counter = 0.',
+                hints: ['Write: counter = 0', 'This should be outside the function']
+              };
+            }
+            
+            if (!trimmed.includes('def')) {
+              return {
+                correct: false,
+                message: 'You need to define a function using def.',
+                hints: ['Start with: def increment_counter():', 'Don\'t forget the colon']
+              };
+            }
+            
+            if (!trimmed.includes('increment_counter')) {
+              return {
+                correct: false,
+                message: 'Your function should be named increment_counter.',
+                hints: ['Write: def increment_counter():', 'Use underscores, not spaces']
+              };
+            }
+            
+            if (!trimmed.includes('global counter')) {
+              return {
+                correct: false,
+                message: 'You need to use the global keyword to modify the global counter.',
+                hints: ['Inside the function, write: global counter', 'This tells Python to use the global variable']
+              };
+            }
+            
+            if (!trimmed.includes('counter = counter + 1') && !trimmed.includes('counter += 1')) {
+              return {
+                correct: false,
+                message: 'You need to increment the counter.',
+                hints: ['Write: counter = counter + 1', 'Or use: counter += 1']
+              };
+            }
+            
+            const callCount = (trimmed.match(/increment_counter\(\)/g) || []).length;
+            if (callCount < 2) {
+              return {
+                correct: false,
+                message: 'You need to call increment_counter() twice.',
+                hints: ['Call: increment_counter()', 'Call it two times']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have a colon after def', 'Check your indentation', 'Make sure global counter is inside the function']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('1') || !outputText.includes('2')) {
+              return {
+                correct: false,
+                message: 'After calling increment_counter() twice, the counter should be 2.',
+                hints: ['Check your increment logic', 'Make sure you\'re using global counter', 'Verify you called the function twice']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully modified a global variable using the global keyword.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 3 • What Are Functions - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 3 • What Are Functions • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 3 • Functions</h3>
+            <nav>
+              <ul>
+                <li><a class="active" href="/units/unit-3/what-are-functions.html">1. What Are Functions</a></li>
+                <li><a href="/units/unit-3/defining-calling-functions.html">2. Defining & Calling Functions</a></li>
+                <li><a href="/units/unit-3/parameters-arguments.html">3. Parameters & Arguments</a></li>
+                <li><a href="/units/unit-3/return-statements.html">4. Return Statements</a></li>
+                <li><a href="/units/unit-3/variable-scope-lifetime.html">5. Variable Scope & Lifetime</a></li>
+                <li><a href="/units/unit-3/default-optional-parameters.html">6. Default & Optional Parameters</a></li>
+                <li><a href="/units/unit-3/docstrings-documentation.html">7. Docstrings & Documentation</a></li>
+                <li><a href="/units/unit-3/nested-helper-functions.html">8. Nested & Helper Functions</a></li>
+                <li><a href="/units/unit-3/lambda-functions.html">9. Lambda Functions</a></li>
+                <li><a href="/units/unit-3/practical-function-examples.html">10. Practical Function Examples</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-3.html">Unit 3</a>
+              <span class="separator">/</span>
+              <span class="current">What Are Functions</span>
+            </nav>
+            <div class="eyebrow">Unit 3 • Lesson 1</div>
+            <h1 class="lesson-title">What Are Functions and Why Use Them</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Functions let you group instructions into reusable blocks that make programs shorter and clearer. You'll understand how functions improve structure, reduce repetition, and make collaboration easier, while also learning when and why to use them in your Python programs.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">15–20 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-2/practical-control-flow-examples.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-3/defining-calling-functions.html">Next: Defining & Calling Functions</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What functions are:</strong> Understand how functions group code into reusable blocks.</li>
+                  <li><strong>Why functions are useful:</strong> Learn how functions make code shorter, clearer, and easier to maintain.</li>
+                  <li><strong>When to use functions:</strong> Recognize situations where functions improve your code.</li>
+                  <li><strong>Built-in functions:</strong> Discover functions Python provides that you've already been using.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Functions are one of the most important concepts in programming. They let you write code once and use it many times, organize your code into logical pieces, and make programs easier to understand and fix. Almost every program you write will use functions - both ones you create and ones Python provides.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What Are Functions?</h2>
+                <p>A function is a named block of code that performs a specific task. Think of it like a recipe - you write the recipe once (define the function), and then you can follow it whenever you need to make that dish (call the function). Functions let you organize code into reusable pieces.</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Without Functions (Repetitive)</h4>
+                    <p>You'd have to write the same code multiple times:</p>
+                    <pre class="code" style="margin-top: 12px;"><code># Calculate area three times
+length1 = 5
+width1 = 3
+area1 = length1 * width1
+print(area1)
+
+length2 = 7
+width2 = 4
+area2 = length2 * width2
+print(area2)
+
+length3 = 6
+width3 = 2
+area3 = length3 * width3
+print(area3)</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Lots of repeated code</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>With Functions (Efficient)</h4>
+                    <p>Write it once, use it many times:</p>
+                    <pre class="code" style="margin-top: 12px;"><code>def calculate_area(length, width):
+    return length * width
+
+print(calculate_area(5, 3))
+print(calculate_area(7, 4))
+print(calculate_area(6, 2))</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Much cleaner and reusable</p>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> Functions are like mini-programs within your program. They take inputs (called parameters), do something with them, and optionally return a result. Once you define a function, you can call it from anywhere in your code, as many times as you want.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Why Use Functions?</h2>
+                <p>Functions solve several problems that come up when programming:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Reduce Repetition</h4>
+                      <p>Instead of writing the same code multiple times, you write it once in a function and call it whenever you need it.</p>
+                      <pre class="code" style="margin-top: 8px;"><code># Instead of repeating:
+def greet():
+    print("Hello!")
+    print("Welcome!")
+
+greet()  # Use it many times
+greet()
+greet()</code></pre>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Organize Code</h4>
+                      <p>Functions break your program into logical pieces. Each function does one specific thing, making your code easier to understand.</p>
+                      <pre class="code" style="margin-top: 8px;"><code># Clear organization:
+def get_user_input():
+    # Get input from user
+    
+def process_data():
+    # Process the data
+    
+def display_results():
+    # Show results</code></pre>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Easier to Fix</h4>
+                      <p>If you need to change how something works, you only change it in one place (the function definition) instead of many places.</p>
+                      <pre class="code" style="margin-top: 8px;"><code># Fix once, works everywhere:
+def calculate_total(price, tax):
+    return price + (price * tax)
+    # Change this formula once,
+    # affects all calculations</code></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: See the Difference</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Compare code without functions vs. with functions:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Without a function (repetitive)\nprint(&quot;Welcome!&quot;)\nprint(&quot;Have a great day!&quot;)\nprint(&quot;---&quot;)\nprint(&quot;Welcome!&quot;)\nprint(&quot;Have a great day!&quot;)\nprint(&quot;---&quot;)\nprint(&quot;Welcome!&quot;)\nprint(&quot;Have a great day!&quot;)\n\nprint(&quot;\\n---\\n&quot;)\n\n# With a function (efficient)\ndef greet():\n    print(&quot;Welcome!&quot;)\n    print(&quot;Have a great day!&quot;)\n    print(&quot;---&quot;)\n\ngreet()\ngreet()\ngreet()')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Without a function (repetitive)
+print("Welcome!")
+print("Have a great day!")
+print("---")
+print("Welcome!")
+print("Have a great day!")
+print("---")
+print("Welcome!")
+print("Have a great day!")
+
+print("\n---\n")
+
+# With a function (efficient)
+def greet():
+    print("Welcome!")
+    print("Have a great day!")
+    print("---")
+
+greet()
+greet()
+greet()</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Both approaches produce the same output, but notice the difference. Without a function, you need to write the same three print statements three times (9 lines total). With a function, you define the greeting once (4 lines), then call it three times (3 lines). The function version is shorter, easier to read, and if you wanted to change the greeting message, you'd only change it in one place instead of three! This is the power of functions.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Built-in Functions You Already Know</h2>
+                <p>Python comes with many built-in functions that you've already been using. These are functions that Python provides for common tasks:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Common Built-in Functions</div>
+                  <pre class="code"><code># print() - displays output
+print("Hello, World!")
+
+# len() - gets length of a string or list
+name = "Python"
+print(len(name))  # Output: 6
+
+# input() - gets input from user
+# name = input("What's your name? ")
+
+# type() - shows the type of a value
+print(type(5))      # Output: <class 'int'>
+print(type("hi"))   # Output: <class 'str'>
+
+# int(), float(), str() - convert types
+number = int("42")
+text = str(42)</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How Built-in Functions Work</h4>
+                  <p>When you write <code>print("Hello")</code>, you're calling a function named <code>print</code> that Python provides. The function takes the text "Hello" as input (called an argument), performs the task of displaying it, and returns nothing (it just prints). You don't need to write the code for <code>print</code> - Python already has it built in. You can create your own functions the same way!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: When to Use Functions</h2>
+                <p>Here are common situations where functions are helpful:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Common Function Use Cases</div>
+                  <pre class="code"><code># 1. Repeating the same code multiple times
+def calculate_tip(amount):
+    return amount * 0.15
+
+tip1 = calculate_tip(20)
+tip2 = calculate_tip(35)
+tip3 = calculate_tip(50)
+
+# 2. Organizing code into logical pieces
+def get_user_info():
+    # Get name, age, etc.
+    pass
+
+def validate_info():
+    # Check if info is valid
+    pass
+
+def save_info():
+    # Save to database
+    pass
+
+# 3. Making code easier to understand
+def calculate_total(items):
+    # Clear what this does
+    total = 0
+    for item in items:
+        total = total + item.price
+    return total</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Rule of Thumb:</strong> If you find yourself writing the same code more than once, or if you have a block of code that does one specific thing, consider making it a function. Functions make your code cleaner, more maintainable, and easier to test.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 5: Function Structure</h2>
+                <p>All functions in Python follow a similar structure. Understanding this structure helps you read and write functions correctly:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Basic Function Structure</div>
+                  <pre class="code"><code>def function_name():
+    # Function body - code that runs
+    print("This code runs when function is called")
+    # More code here
+
+# After defining, call the function:
+function_name()</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Function Definition</h4>
+                      <p>Start with <code>def</code> followed by the function name and parentheses. End with a colon <code>:</code>.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Function Body</h4>
+                      <p>The indented code after the colon is the "function body" - this is what gets executed when the function is called.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Function Call</h4>
+                      <p>To use the function, write its name followed by parentheses. This "calls" or "invokes" the function, running its code.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> Defining a function doesn't run it - it just tells Python what the function does. You must call the function (write its name with parentheses) to actually execute the code inside it.</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Identify Built-in Functions</h4>
+                  <p>Write code that uses three different built-in functions: <code>print()</code>, <code>len()</code>, and <code>type()</code>. Print the length of the string "Python" and its type.</p>
+                  <p class="hint-text">Use print(len("Python")) and print(type("Python")).</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-2/practical-control-flow-examples.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-3/defining-calling-functions.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'print(len("Python"))\nprint(type("Python"))',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for print function
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to use the print() function.',
+                hints: ['Use print() to display output']
+              };
+            }
+            
+            // Check for len function
+            if (!trimmed.includes('len')) {
+              return {
+                correct: false,
+                message: 'You need to use the len() function.',
+                hints: ['Use len("Python") to get the length', 'len() returns the number of characters']
+              };
+            }
+            
+            // Check for type function
+            if (!trimmed.includes('type')) {
+              return {
+                correct: false,
+                message: 'You need to use the type() function.',
+                hints: ['Use type("Python") to get the type', 'type() shows what kind of data it is']
+              };
+            }
+            
+            // Check for "Python" string
+            if (!trimmed.includes('"Python"') && !trimmed.includes("'Python'")) {
+              return {
+                correct: false,
+                message: 'You need to use the string "Python".',
+                hints: ['Use "Python" as the string', 'Make sure it\'s in quotes']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure all parentheses are closed', 'Check your quotes']
+              };
+            }
+            
+            // Check output contains 6 (length of "Python")
+            const outputText = output.stdout || '';
+            if (!outputText.includes('6')) {
+              return {
+                correct: false,
+                message: 'The length of "Python" should be 6.',
+                hints: ['Check your len() usage', 'Make sure you\'re using "Python"']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used built-in functions to work with data.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

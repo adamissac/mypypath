@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 3 • Docstrings & Documentation - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 3 • Docstrings & Documentation • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 3 • Functions</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-3/what-are-functions.html">1. What Are Functions</a></li>
+                <li><a href="/units/unit-3/defining-calling-functions.html">2. Defining & Calling Functions</a></li>
+                <li><a href="/units/unit-3/parameters-arguments.html">3. Parameters & Arguments</a></li>
+                <li><a href="/units/unit-3/return-statements.html">4. Return Statements</a></li>
+                <li><a href="/units/unit-3/variable-scope-lifetime.html">5. Variable Scope & Lifetime</a></li>
+                <li><a href="/units/unit-3/default-optional-parameters.html">6. Default & Optional Parameters</a></li>
+                <li><a class="active" href="/units/unit-3/docstrings-documentation.html">7. Docstrings & Documentation</a></li>
+                <li><a href="/units/unit-3/nested-helper-functions.html">8. Nested & Helper Functions</a></li>
+                <li><a href="/units/unit-3/lambda-functions.html">9. Lambda Functions</a></li>
+                <li><a href="/units/unit-3/practical-function-examples.html">10. Practical Function Examples</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-3.html">Unit 3</a>
+              <span class="separator">/</span>
+              <span class="current">Docstrings & Documentation</span>
+            </nav>
+            <div class="eyebrow">Unit 3 • Lesson 7</div>
+            <h1 class="lesson-title">Docstrings and Documentation</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Learn how to document your functions using docstrings. You'll understand how to write clear descriptions that explain what your function does, what parameters it takes, and what it returns, making your code easier to understand and use for yourself and others.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">15–20 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-3/default-optional-parameters.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-3/nested-helper-functions.html">Next: Nested & Helper Functions</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What docstrings are:</strong> Understand how to document your functions.</li>
+                  <li><strong>Writing docstrings:</strong> Learn the proper format for function documentation.</li>
+                  <li><strong>Accessing docstrings:</strong> Discover how to view function documentation.</li>
+                  <li><strong>Best practices:</strong> Learn what makes good documentation.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Documentation helps you and others understand what your code does. When you write a docstring, you're explaining the purpose of your function, what it expects, and what it returns. This makes your code much easier to use and maintain - you can read the docstring instead of reading through all the code to understand what a function does.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What Is a Docstring?</h2>
+                <p>A docstring is a special string that documents what a function does. It's placed right after the function definition, inside triple quotes. Python stores this string and makes it available through the <code>help()</code> function and other tools.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Function with Docstring</div>
+                  <pre class="code"><code>def add_numbers(a, b):
+    """Add two numbers together and return the result."""
+    return a + b</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Place After Function Definition</h4>
+                      <p>The docstring goes immediately after the <code>def</code> line, before any code in the function body. It's the first statement inside the function.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Use Triple Quotes</h4>
+                      <p>Docstrings use triple quotes (<code>"""</code> or <code>'''</code>) to allow multi-line strings. This lets you write longer descriptions that span multiple lines.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Write a Clear Description</h4>
+                      <p>The docstring should explain what the function does in simple terms. It should be clear enough that someone reading it understands the function's purpose without reading the code.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> Docstrings are different from comments. Comments (using <code>#</code>) are for explaining code logic, while docstrings (using <code>"""</code>) are for documenting what the function does. Docstrings are accessible through Python's help system, while comments are just for reading the source code.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Writing Your First Docstring</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try writing a function with a docstring and then accessing it:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'def multiply(x, y):\n    &quot;&quot;&quot;Multiply two numbers and return the product.&quot;&quot;&quot;\n    return x * y\n\n# Access the docstring\nprint(multiply.__doc__)\n\n# Or use help()\nhelp(multiply)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">def multiply(x, y):
+    """Multiply two numbers and return the product."""
+    return x * y
+
+# Access the docstring
+print(multiply.__doc__)
+
+# Or use help()
+help(multiply)</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The docstring is stored as part of the function object. You can access it using <code>function_name.__doc__</code> or by calling <code>help(function_name)</code>. The <code>help()</code> function displays the docstring in a formatted way, making it easy to read. This is how Python's built-in documentation system works - when you use <code>help()</code> on any function, it shows you the docstring!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Multi-Line Docstrings</h2>
+                <p>For more complex functions, you can write multi-line docstrings that include more details:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Multi-Line Docstring</div>
+                  <pre class="code"><code>def calculate_area(length, width):
+    """
+    Calculate the area of a rectangle.
+    
+    This function multiplies the length and width to find
+    the total area of a rectangular shape.
+    
+    Parameters:
+    length (float): The length of the rectangle
+    width (float): The width of the rectangle
+    
+    Returns:
+    float: The area of the rectangle
+    """
+    return length * width</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How It Works</h4>
+                  <p>Multi-line docstrings can include a summary line, followed by a blank line, then more detailed information. You can describe parameters, return values, and any important notes. This format makes it easy for others (and future you) to understand how to use the function.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: What to Include in Docstrings</h2>
+                <p>A good docstring should include:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Summary</h4>
+                    <p>A one-line description of what the function does.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>"""Calculate the total price."""</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Parameters</h4>
+                    <p>What each parameter is and what it's used for.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>Parameters:
+price (float): The base price</code></pre>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Best Practice:</strong> Keep docstrings clear and concise. Focus on what the function does, not how it does it (that's what comments are for). Write docstrings as if explaining to someone who has never seen your code before.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Writing a Detailed Docstring</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try writing a function with a detailed multi-line docstring:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'def greet_person(name, age):\n    &quot;&quot;&quot;\n    Greet a person with their name and age.\n    \n    This function creates a friendly greeting message\n    that includes the person\'s name and age.\n    \n    Parameters:\n    name (str): The person\'s name\n    age (int): The person\'s age\n    \n    Returns:\n    str: A greeting message\n    &quot;&quot;&quot;\n    return f&quot;Hello, {name}! You are {age} years old.&quot;\n\nprint(greet_person(&quot;Alice&quot;, 25))\nhelp(greet_person)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">def greet_person(name, age):
+    """
+    Greet a person with their name and age.
+    
+    This function creates a friendly greeting message
+    that includes the person's name and age.
+    
+    Parameters:
+    name (str): The person's name
+    age (int): The person's age
+    
+    Returns:
+    str: A greeting message
+    """
+    return f"Hello, {name}! You are {age} years old."
+
+print(greet_person("Alice", 25))
+help(greet_person)</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The multi-line docstring provides detailed information about the function. It includes a summary, explains what the function does, describes each parameter (what type it is and what it's for), and explains what the function returns. When you call <code>help(greet_person)</code>, Python displays all this information in a nicely formatted way. This makes it easy for anyone using your function to understand how to use it correctly!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Comments vs Docstrings</h2>
+                <p>It's important to understand the difference between comments and docstrings:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Comments (#)</h4>
+                    <p>Explain how code works, for reading the source code.</p>
+                    <pre class="code" style="margin-top: 12px;"><code># Check if number is positive
+if x > 0:
+    return x</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">For code logic explanation</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Docstrings (""")</h4>
+                    <p>Document what the function does, accessible via help().</p>
+                    <pre class="code" style="margin-top: 12px;"><code>def add(a, b):
+    """Add two numbers."""
+    return a + b</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">For function documentation</p>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> Use comments to explain complex logic or tricky parts of your code. Use docstrings to document what your function does, what it expects, and what it returns. Both are important, but they serve different purposes!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Write a Function with a Docstring</h4>
+                  <p>Create a function named <code>square_number</code> that takes one parameter <code>number</code> and returns the square of that number. Add a docstring that explains what the function does. Then call <code>help(square_number)</code> to display the documentation.</p>
+                  <p class="hint-text">Use triple quotes for the docstring right after the function definition.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Write a Multi-Line Docstring</h4>
+                  <p>Create a function named <code>calculate_total</code> that takes two parameters: <code>price</code> and <code>tax_rate</code> (default 0.08). It should return the total price including tax. Write a multi-line docstring that includes a summary, describes the parameters, and explains what it returns.</p>
+                  <p class="hint-text">Use triple quotes for a multi-line docstring with Parameters and Returns sections.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-3/default-optional-parameters.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-3/nested-helper-functions.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'def square_number(number):\n    """Calculate and return the square of a number."""\n    return number * number\n\nhelp(square_number)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('def')) {
+              return {
+                correct: false,
+                message: 'You need to define a function using def.',
+                hints: ['Start with: def square_number(number):', 'Don\'t forget the colon']
+              };
+            }
+            
+            if (!trimmed.includes('square_number')) {
+              return {
+                correct: false,
+                message: 'Your function should be named square_number.',
+                hints: ['Write: def square_number(number):', 'Use underscores, not spaces']
+              };
+            }
+            
+            if (!trimmed.includes('"""') && !trimmed.includes("'''")) {
+              return {
+                correct: false,
+                message: 'You need to add a docstring using triple quotes.',
+                hints: ['Add: """Calculate and return the square of a number."""', 'Place it right after the def line']
+              };
+            }
+            
+            if (!trimmed.includes('return')) {
+              return {
+                correct: false,
+                message: 'Your function should return the square of the number.',
+                hints: ['Use: return number * number', 'Make sure to return the value']
+              };
+            }
+            
+            if (!trimmed.includes('help(')) {
+              return {
+                correct: false,
+                message: 'You need to call help(square_number) to display the documentation.',
+                hints: ['Call: help(square_number)', 'This will show the docstring']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have a colon after def', 'Check your indentation', 'Make sure the docstring is indented']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created a function with a docstring.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'def calculate_total(price, tax_rate=0.08):\n    """\n    Calculate the total price including tax.\n    \n    This function takes a base price and applies a tax rate\n    to calculate the final total price.\n    \n    Parameters:\n    price (float): The base price before tax\n    tax_rate (float): The tax rate (default is 0.08)\n    \n    Returns:\n    float: The total price including tax\n    """\n    return price * (1 + tax_rate)\n\nhelp(calculate_total)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('def')) {
+              return {
+                correct: false,
+                message: 'You need to define a function using def.',
+                hints: ['Start with: def calculate_total(price, tax_rate=0.08):', 'Don\'t forget the colon']
+              };
+            }
+            
+            if (!trimmed.includes('calculate_total')) {
+              return {
+                correct: false,
+                message: 'Your function should be named calculate_total.',
+                hints: ['Write: def calculate_total(price, tax_rate=0.08):', 'Use underscores, not spaces']
+              };
+            }
+            
+            if (!trimmed.includes('"""') && !trimmed.includes("'''")) {
+              return {
+                correct: false,
+                message: 'You need to add a multi-line docstring using triple quotes.',
+                hints: ['Add: """..."""', 'Include Parameters and Returns sections']
+              };
+            }
+            
+            if (!trimmed.includes('Parameters:') || !trimmed.includes('Returns:')) {
+              return {
+                correct: false,
+                message: 'Your docstring should include Parameters and Returns sections.',
+                hints: ['Add: Parameters:', 'Add: Returns:', 'Describe price and tax_rate parameters']
+              };
+            }
+            
+            if (!trimmed.includes('return')) {
+              return {
+                correct: false,
+                message: 'Your function should return the total price.',
+                hints: ['Use: return price * (1 + tax_rate)', 'Make sure to return the value']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have a colon after def', 'Check your indentation', 'Make sure the docstring is properly formatted']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created a function with a detailed multi-line docstring.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

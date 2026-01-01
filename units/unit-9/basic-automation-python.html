@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 9 • Basic Automation with Python • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 9 • Advanced Topics</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-9/recursion-problem-decomposition.html">1. Recursion and Problem Decomposition</a></li>
+                <li><a class="" href="/units/unit-9/working-with-external-libraries.html">2. Working with External Libraries</a></li>
+                <li><a class="" href="/units/unit-9/apis-data-retrieval.html">3. APIs and Data Retrieval</a></li>
+                <li><a class="" href="/units/unit-9/introduction-json-data-parsing.html">4. Introduction to JSON and Data Parsing</a></li>
+                <li><a class="" href="/units/unit-9/efficiency-big-o-basics.html">5. Efficiency and Big-O Basics</a></li>
+                <li><a class="" href="/units/unit-9/working-with-dates-times.html">6. Working with Dates and Times</a></li>
+                <li><a class="" href="/units/unit-9/data-visualization-matplotlib.html">7. Data Visualization with Matplotlib</a></li>
+                <li><a class="active" href="/units/unit-9/basic-automation-python.html">8. Basic Automation with Python</a></li>
+                <li><a class="" href="/units/unit-9/introduction-file-formats.html">9. Introduction to File Formats (CSV, JSON, and Excel)</a></li>
+                <li><a class="" href="/units/unit-9/applying-advanced-concepts.html">10. Applying Advanced Concepts Together</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-9.html">Unit 9</a>
+              <span class="separator">/</span>
+              <span class="current">Basic Automation with Python</span>
+            </nav>
+            <div class="eyebrow">Unit 9 • Lesson 8</div>
+            <h1 class="lesson-title">Basic Automation with Python</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Python can automate repetitive tasks like renaming files, cleaning data, or sending emails. You'll write short scripts that save time by automating everyday digital chores and workflows, making your daily tasks more efficient.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">25–30 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-9/introduction-file-formats.html">Next: Introduction to File Formats (CSV, JSON, and Excel)</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What automation is:</strong> Using code to perform repetitive tasks.</li>
+                  <li><strong>File automation:</strong> Renaming, organizing, and processing files.</li>
+                  <li><strong>Data automation:</strong> Processing and cleaning data automatically.</li>
+                  <li><strong>Task automation:</strong> Automating everyday workflows.</li>
+                  <li><strong>Benefits:</strong> Saving time and reducing errors.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>What Is Automation?</h2>
+                <p><strong>Automation</strong> is using code to perform repetitive tasks automatically. Instead of doing something manually many times, you write a script to do it for you.</p>
+
+                <div class="info-card">
+                  <h4>Why Automate?</h4>
+                  <ul>
+                    <li>Saves time on repetitive tasks</li>
+                    <li>Reduces human errors</li>
+                    <li>Works 24/7 without breaks</li>
+                    <li>Handles large volumes of work</li>
+                    <li>Provides consistent results</li>
+                  </ul>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Example: Renaming Files</div>
+                  <pre class="code"><code>import os
+
+# Rename all files in a directory
+for filename in os.listdir('.'):
+    if filename.endswith('.txt'):
+        new_name = filename.replace('old_', 'new_')
+        os.rename(filename, new_name)
+        print(f"Renamed {filename} to {new_name}")</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>File Automation Examples</h2>
+                <p>Automate file operations to save time:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Organizing Files by Extension</div>
+                  <pre class="code"><code>import os
+import shutil
+from pathlib import Path
+
+def organize_files(directory):
+    """Organize files into folders by extension"""
+    for filename in os.listdir(directory):
+        file_path = Path(directory) / filename
+        
+        if file_path.is_file():
+            # Get file extension
+            extension = file_path.suffix[1:]  # Remove the dot
+            
+            # Create folder for extension if it doesn't exist
+            folder_path = Path(directory) / extension
+            folder_path.mkdir(exist_ok=True)
+            
+            # Move file to appropriate folder
+            shutil.move(str(file_path), str(folder_path / filename))
+            print(f"Moved {filename} to {extension}/ folder")
+
+organize_files('.')</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Batch Renaming Files</div>
+                  <pre class="code"><code>import os
+from pathlib import Path
+
+def rename_files(directory, prefix='photo_'):
+    """Rename all files in a directory with a prefix"""
+    files = [f for f in os.listdir(directory) 
+             if os.path.isfile(os.path.join(directory, f))]
+    
+    for i, filename in enumerate(files, start=1):
+        file_path = Path(directory) / filename
+        extension = file_path.suffix
+        new_name = f"{prefix}{i:03d}{extension}"
+        new_path = Path(directory) / new_name
+        
+        os.rename(file_path, new_path)
+        print(f"Renamed {filename} to {new_name}")
+
+rename_files('.', prefix='document_')</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Data Processing Automation</h2>
+                <p>Automate data cleaning and processing:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Cleaning CSV Data</div>
+                  <pre class="code"><code>import csv
+
+def clean_csv(input_file, output_file):
+    """Remove empty rows and clean data"""
+    cleaned_rows = []
+    
+    with open(input_file, 'r') as infile:
+        reader = csv.reader(infile)
+        for row in reader:
+            # Skip empty rows
+            if any(cell.strip() for cell in row):
+                # Clean whitespace from each cell
+                cleaned_row = [cell.strip() for cell in row]
+                cleaned_rows.append(cleaned_row)
+    
+    # Write cleaned data
+    with open(output_file, 'w', newline='') as outfile:
+        writer = csv.writer(outfile)
+        writer.writerows(cleaned_rows)
+    
+    print(f"Cleaned {len(cleaned_rows)} rows")
+
+clean_csv('data.csv', 'cleaned_data.csv')</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Common Automation Tasks</h2>
+                <p>Examples of tasks you can automate:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>File Organization</h4>
+                      <p>Sort files by type, date, or name automatically</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Data Processing</h4>
+                      <p>Clean, transform, and analyze data in batches</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Email Sending</h4>
+                      <p>Send automated reports or notifications</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Web Scraping</h4>
+                      <p>Collect data from websites automatically</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                      <h4>Backup Tasks</h4>
+                      <p>Automatically backup files and folders</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">6</div>
+                    <div class="step-content">
+                      <h4>Report Generation</h4>
+                      <p>Create and send reports automatically</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Automation Best Practices</h2>
+                <p>Follow these guidelines when automating tasks:</p>
+
+                <div class="info-card">
+                  <h4>Best Practices</h4>
+                  <ul>
+                    <li><strong>Test first:</strong> Test your script on a small sample before running on all files</li>
+                    <li><strong>Backup data:</strong> Always backup important data before automating changes</li>
+                    <li><strong>Error handling:</strong> Use try/except blocks to handle errors gracefully</li>
+                    <li><strong>Logging:</strong> Log what your script does for debugging</li>
+                    <li><strong>Dry run:</strong> Add a "dry run" mode to preview changes without making them</li>
+                    <li><strong>Documentation:</strong> Document what your script does and how to use it</li>
+                  </ul>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Safe Automation with Error Handling</div>
+                  <pre class="code"><code>import os
+from pathlib import Path
+
+def safe_rename_files(directory, prefix='new_', dry_run=True):
+    """Safely rename files with error handling"""
+    files = [f for f in os.listdir(directory) 
+             if os.path.isfile(os.path.join(directory, f))]
+    
+    for i, filename in enumerate(files, start=1):
+        try:
+            file_path = Path(directory) / filename
+            extension = file_path.suffix
+            new_name = f"{prefix}{i:03d}{extension}"
+            new_path = Path(directory) / new_name
+            
+            if dry_run:
+                print(f"[DRY RUN] Would rename {filename} to {new_name}")
+            else:
+                os.rename(file_path, new_path)
+                print(f"Renamed {filename} to {new_name}")
+        except Exception as e:
+            print(f"Error renaming {filename}: {e}")
+
+# Test with dry run first
+safe_rename_files('.', prefix='backup_', dry_run=True)</code></pre>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: File Automation</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try simulating file automation:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Simulate file organization\nfiles = [\"photo1.jpg\", \"document.pdf\", \"photo2.png\", \"data.csv\"]\n\n# Group by extension\norganized = {}\nfor filename in files:\n    ext = filename.split(\".\")[-1]\n    if ext not in organized:\n        organized[ext] = []\n    organized[ext].append(filename)\n\nprint(\"Files organized by extension:\")\nfor ext, file_list in organized.items():\n    print(f\"  {ext.upper()}: {file_list}\")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Simulate file organization
+files = ["photo1.jpg", "document.pdf", "photo2.png", "data.csv"]
+
+# Group by extension
+organized = {}
+for filename in files:
+    ext = filename.split(".")[-1]
+    if ext not in organized:
+        organized[ext] = []
+    organized[ext].append(filename)
+
+print("Files organized by extension:")
+for ext, file_list in organized.items():
+    print(f"  {ext.upper()}: {file_list}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You simulated organizing files by their extension. In a real automation script, you would use <code>os.listdir()</code> and <code>shutil.move()</code> to actually organize files.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>Automation:</strong> Using code to perform repetitive tasks</li>
+                  <li><strong>Benefits:</strong> Saves time, reduces errors, works continuously</li>
+                  <li><strong>File automation:</strong> Organizing and processing files</li>
+                  <li><strong>Data automation:</strong> Processing and cleaning data</li>
+                  <li><strong>Task automation:</strong> Automating workflows</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>If you find yourself doing the same task repeatedly, consider automating it! Start with simple scripts and build up to more complex automation.</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: Automation</h3>
+                  <p>What is automation and why is it useful? Give examples of repetitive tasks that could be automated.</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Automation Ideas</h3>
+                  <p>What repetitive tasks do you do that could be automated?</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-9/data-visualization-matplotlib.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-9/introduction-file-formats.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

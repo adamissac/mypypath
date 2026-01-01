@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 5 • Installing External Packages with pip - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 5 • Installing External Packages with pip • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 5 • Modules & Packages</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-5/what-are-modules.html">1. What Are Modules?</a></li>
+                <li><a href="/units/unit-5/importing-builtin-modules.html">2. Importing Built-in Modules</a></li>
+                <li><a href="/units/unit-5/creating-your-own-modules.html">3. Creating Your Own Modules</a></li>
+                <li><a href="/units/unit-5/name-main-pattern.html">4. The __name__ == "__main__" Pattern</a></li>
+                <li><a href="/units/unit-5/working-with-packages.html">5. Working with Packages</a></li>
+                <li><a href="/units/unit-5/python-standard-library.html">6. The Python Standard Library</a></li>
+                <li><a class="active" href="/units/unit-5/installing-external-packages.html">7. Installing External Packages with pip</a></li>
+                <li><a href="/units/unit-5/virtual-environments.html">8. Virtual Environments and Dependency Management</a></li>
+                <li><a href="/units/unit-5/module-aliases-selective-imports.html">9. Module Aliases and Selective Imports</a></li>
+                <li><a href="/units/unit-5/project-organization-best-practices.html">10. Project Organization Best Practices</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-5.html">Unit 5</a>
+              <span class="separator">/</span>
+              <span class="current">Installing External Packages with pip</span>
+            </nav>
+            <div class="eyebrow">Unit 5 • Lesson 7</div>
+            <h1 class="lesson-title">Installing External Packages with pip</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>pip allows you to install thousands of third-party libraries to expand Python's functionality. You'll learn how to use commands like <code>pip install</code>, <code>pip list</code>, and <code>pip uninstall</code> to manage packages efficiently, accessing powerful tools created by the Python community.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-5/python-standard-library.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-5/virtual-environments.html">Next: Virtual Environments and Dependency Management</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What pip is:</strong> Understand that pip is Python's package installer.</li>
+                  <li><strong>Installing packages:</strong> Learn how to install packages using <code>pip install</code>.</li>
+                  <li><strong>Managing packages:</strong> Discover how to list, upgrade, and uninstall packages.</li>
+                  <li><strong>Finding packages:</strong> Understand how to discover packages on PyPI.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>While Python's standard library is powerful, thousands of additional packages are available for specialized tasks. Want to work with data science? Install pandas. Need web scraping? Install requests. Need to create graphs? Install matplotlib. pip lets you easily install these packages and expand Python's capabilities!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What Is pip?</h2>
+                <p><code>pip</code> stands for "Pip Installs Packages" and is Python's package installer. It comes with Python (Python 3.4+) and lets you install packages from PyPI (Python Package Index):</p>
+
+                <div class="code-example">
+                  <div class="code-header">pip Commands</div>
+                  <pre class="code"><code># Check if pip is installed
+pip --version
+
+# Install a package
+pip install package_name
+
+# List installed packages
+pip list
+
+# Uninstall a package
+pip uninstall package_name</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Package Manager</h4>
+                      <p>pip is a command-line tool that downloads and installs Python packages from PyPI (Python Package Index), a repository of thousands of packages.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Automatic Dependencies</h4>
+                      <p>When you install a package, pip automatically installs any other packages it depends on. This makes installation simple!</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Version Management</h4>
+                      <p>You can install specific versions of packages, upgrade them, or uninstall them. pip handles all the details!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> pip is like an app store for Python packages. Instead of manually downloading and installing packages, pip does it for you with a simple command. It's the standard way to install Python packages!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Installing Packages</h2>
+                <p>The basic command to install a package is:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Installing Packages</div>
+                  <pre class="code"><code># Install a package
+pip install requests
+
+# Install a specific version
+pip install requests==2.31.0
+
+# Install from requirements file
+pip install -r requirements.txt</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Common Packages</h4>
+                  <p>Here are some popular packages you might install:</p>
+                  <ul>
+                    <li><code>requests</code> - For making HTTP requests</li>
+                    <li><code>numpy</code> - For numerical computing</li>
+                    <li><code>pandas</code> - For data analysis</li>
+                    <li><code>matplotlib</code> - For creating plots</li>
+                    <li><code>flask</code> - For web development</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Managing Installed Packages</h2>
+                <p>You can manage your installed packages:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Package Management</div>
+                  <pre class="code"><code># List all installed packages
+pip list
+
+# Show information about a package
+pip show package_name
+
+# Upgrade a package
+pip install --upgrade package_name
+
+# Uninstall a package
+pip uninstall package_name</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>List Packages</h4>
+                      <p><code>pip list</code> shows all installed packages and their versions. This helps you see what's installed.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Show Details</h4>
+                      <p><code>pip show package_name</code> displays detailed information about a specific package, including dependencies.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Upgrade Packages</h4>
+                      <p><code>pip install --upgrade package_name</code> upgrades an installed package to the latest version.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Finding Packages</h2>
+                <p>You can discover packages on PyPI (Python Package Index) at pypi.org:</p>
+
+                <div class="info-card">
+                  <h4>PyPI - Python Package Index</h4>
+                  <p>PyPI (pypi.org) is the official repository for Python packages. You can:</p>
+                  <ul>
+                    <li>Search for packages by name or functionality</li>
+                    <li>View package documentation and examples</li>
+                    <li>See installation instructions</li>
+                    <li>Check package popularity and maintenance status</li>
+                  </ul>
+                  <p>Most packages you'll need are available on PyPI!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Understanding pip Commands</h4>
+                  <p>Simulate the pip workflow: Create a comment explaining what the command <code>pip install requests</code> would do. Then simulate importing and using the requests module (you can create a simple function that simulates what requests.get() might do).</p>
+                  <p class="hint-text">Write a comment explaining pip install, then create a simple function to simulate requests.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Package Management Concepts</h4>
+                  <p>Create a comment explaining what <code>pip list</code> does, and another comment explaining what <code>pip uninstall package_name</code> does. Then print a message explaining how pip helps manage Python packages.</p>
+                  <p class="hint-text">Write comments explaining the commands, then print an explanation.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-5/python-standard-library.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-5/virtual-environments.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: '# pip install requests would download and install the requests package\n# After installation, you could import it like:\n# import requests\n\n# Simulating requests functionality\ndef simulate_get(url):\n    return f"GET request to {url} - Status: 200 OK"\n\n# Using the simulated function\nresult = simulate_get("https://example.com")\nprint(result)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('pip install') && !trimmed.includes('pip')) {
+              return {
+                correct: false,
+                message: 'You need to include information about pip install.',
+                hints: ['Add a comment explaining pip install', 'Explain what it does']
+              };
+            }
+            
+            if (!trimmed.includes('def') && !trimmed.includes('requests')) {
+              return {
+                correct: false,
+                message: 'You need to simulate using the requests module.',
+                hints: ['Create a function that simulates requests', 'Or explain importing requests']
+              };
+            }
+            
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print something to demonstrate usage.',
+                hints: ['Print the result or explanation']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure comments use #']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully explained pip install and simulated package usage.'
+            };
+          }
+        },
+        exercise2: {
+          solution: '# pip list shows all installed packages\n# pip uninstall package_name removes a package\n\nprint("pip helps manage Python packages by allowing you to install, list, upgrade, and uninstall packages easily.")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('pip list') && !trimmed.includes('list')) {
+              return {
+                correct: false,
+                message: 'You need to explain what pip list does.',
+                hints: ['Add a comment: # pip list shows all installed packages']
+              };
+            }
+            
+            if (!trimmed.includes('pip uninstall') && !trimmed.includes('uninstall')) {
+              return {
+                correct: false,
+                message: 'You need to explain what pip uninstall does.',
+                hints: ['Add a comment: # pip uninstall removes a package']
+              };
+            }
+            
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print an explanation about pip.',
+                hints: ['Use print() to explain how pip helps manage packages']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure quotes match']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully explained pip package management commands.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

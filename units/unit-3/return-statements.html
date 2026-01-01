@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 3 • Return Statements - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 3 • Return Statements • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 3 • Functions</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-3/what-are-functions.html">1. What Are Functions</a></li>
+                <li><a href="/units/unit-3/defining-calling-functions.html">2. Defining & Calling Functions</a></li>
+                <li><a href="/units/unit-3/parameters-arguments.html">3. Parameters & Arguments</a></li>
+                <li><a class="active" href="/units/unit-3/return-statements.html">4. Return Statements</a></li>
+                <li><a href="/units/unit-3/variable-scope-lifetime.html">5. Variable Scope & Lifetime</a></li>
+                <li><a href="/units/unit-3/default-optional-parameters.html">6. Default & Optional Parameters</a></li>
+                <li><a href="/units/unit-3/docstrings-documentation.html">7. Docstrings & Documentation</a></li>
+                <li><a href="/units/unit-3/nested-helper-functions.html">8. Nested & Helper Functions</a></li>
+                <li><a href="/units/unit-3/lambda-functions.html">9. Lambda Functions</a></li>
+                <li><a href="/units/unit-3/practical-function-examples.html">10. Practical Function Examples</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-3.html">Unit 3</a>
+              <span class="separator">/</span>
+              <span class="current">Return Statements</span>
+            </nav>
+            <div class="eyebrow">Unit 3 • Lesson 4</div>
+            <h1 class="lesson-title">Return Statements and Outputs</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Functions can send data back to the part of the program that called them. This lesson covers how <code>return</code> statements work, how to handle multiple return values, and how returned data can be used in other expressions to build more complex program logic.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-3/parameters-arguments.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-3/variable-scope-lifetime.html">Next: Variable Scope & Lifetime</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What return does:</strong> Understand how functions send values back to the caller.</li>
+                  <li><strong>Using return values:</strong> Learn how to use the value a function returns.</li>
+                  <li><strong>Return vs print:</strong> Distinguish between returning a value and printing it.</li>
+                  <li><strong>Functions without return:</strong> Understand what happens when a function doesn't return anything.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Return statements let functions produce results that you can use elsewhere in your program. Instead of just printing something (which you can't use later), returning a value lets you store it, use it in calculations, or pass it to other functions. This makes functions much more powerful and flexible.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What Is a Return Statement?</h2>
+                <p>A return statement sends a value back from a function to wherever it was called. When Python encounters a <code>return</code> statement, it immediately exits the function and sends the value back. Think of it like a function answering a question - you ask it to do something, and it gives you back the answer.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Function with Return Statement</div>
+                  <pre class="code"><code>def add(a, b):
+    result = a + b
+    return result
+
+sum = add(3, 5)
+print(sum)  # Output: 8</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Calculate the Result</h4>
+                      <p>Inside the function, you perform calculations or operations. In this example, <code>result = a + b</code> adds the two numbers together.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Return the Value</h4>
+                      <p>Use the <code>return</code> keyword followed by the value you want to send back. When Python sees <code>return result</code>, it immediately exits the function and sends the value of <code>result</code> back to where the function was called.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Use the Returned Value</h4>
+                      <p>When you call the function, you can store its return value in a variable. In <code>sum = add(3, 5)</code>, the function returns 8, which gets stored in the variable <code>sum</code>. You can then use <code>sum</code> anywhere in your program.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> A return statement immediately exits the function and sends a value back. Any code after a return statement in the same function won't run because Python leaves the function as soon as it hits return. The returned value can be stored in a variable, used in expressions, or passed to other functions.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Your First Return Statement</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try calling the function and storing its return value. Notice how you can use the returned value:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'def multiply(x, y):\n    result = x * y\n    return result\n\nproduct = multiply(4, 5)\nprint(&quot;Product:&quot;, product)\nprint(&quot;Double the product:&quot;, product * 2)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">def multiply(x, y):
+    result = x * y
+    return result
+
+product = multiply(4, 5)
+print("Product:", product)
+print("Double the product:", product * 2)</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> When Python calls <code>multiply(4, 5)</code>, the function calculates <code>4 * 5 = 20</code> and returns that value. The return value (20) gets stored in the variable <code>product</code>. Then you can use <code>product</code> just like any other variable - you can print it, use it in calculations (like <code>product * 2</code>), or pass it to other functions. This is the power of return statements: they let functions produce values that you can use throughout your program!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Return vs Print</h2>
+                <p>It's important to understand the difference between <code>return</code> and <code>print</code>. They serve different purposes:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Print (Display Only)</h4>
+                    <p>Shows output to the user but doesn't give you a value you can use.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>def add_print(a, b):
+    print(a + b)
+
+result = add_print(3, 5)
+# result is None!
+# You can't use the value</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Prints to screen but returns None</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Return (Use the Value)</h4>
+                    <p>Gives you a value you can store, use in calculations, or pass to other functions.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>def add_return(a, b):
+    return a + b
+
+result = add_return(3, 5)
+# result is 8!
+# You can use it anywhere</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Returns a value you can use</p>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>When to Use Each</h4>
+                  <p>Use <code>print</code> when you just want to display something to the user. Use <code>return</code> when you need the function to produce a value that you'll use elsewhere in your program. If a function doesn't have a return statement, it automatically returns <code>None</code> (which means "nothing").</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Using Return Values</h2>
+                <p>You can use return values in many ways - store them in variables, use them directly in expressions, or pass them to other functions:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Different Ways to Use Return Values</div>
+                  <pre class="code"><code>def calculate_area(length, width):
+    return length * width
+
+# Store in a variable
+area = calculate_area(5, 3)
+print(area)
+
+# Use directly in an expression
+total = calculate_area(5, 3) * 2
+print(total)
+
+# Use in another function call
+print("Area is", calculate_area(5, 3))</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> When you call a function that returns a value, you can use that value anywhere you would use a variable or a literal value. The function call (like <code>calculate_area(5, 3)</code>) literally becomes the value it returns (like <code>15</code>).</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Using Return Values</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try using return values in different ways. Notice how flexible they are:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'def square(number):\n    return number * number\n\nresult1 = square(5)\nprint(&quot;Square of 5:&quot;, result1)\n\nresult2 = square(3) + square(4)\nprint(&quot;Sum of squares:&quot;, result2)\n\nprint(&quot;Square of 10:&quot;, square(10))')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">def square(number):
+    return number * number
+
+result1 = square(5)
+print("Square of 5:", result1)
+
+result2 = square(3) + square(4)
+print("Sum of squares:", result2)
+
+print("Square of 10:", square(10))</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The function <code>square</code> returns the square of a number. You can store its return value in a variable (<code>result1 = square(5)</code>), use multiple return values in an expression (<code>result2 = square(3) + square(4)</code>), or use the return value directly in a print statement (<code>print("Square of 10:", square(10))</code>). Each time you call <code>square()</code>, it returns a value that you can use immediately without storing it first. This flexibility makes return statements very powerful!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Functions Without Return</h2>
+                <p>If a function doesn't have a return statement, it automatically returns <code>None</code>. This is useful for functions that do something (like printing) but don't need to produce a value:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Function Without Return Statement</div>
+                  <pre class="code"><code>def greet(name):
+    print("Hello, " + name + "!")
+
+result = greet("Alice")
+print(result)  # Output: None</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> Functions that don't explicitly return a value automatically return <code>None</code>. This is Python's way of saying "this function doesn't produce a value." If you try to use <code>None</code> in calculations or operations that expect a number, you'll get an error.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 5: Return Ends the Function</h2>
+                <p>When Python encounters a return statement, it immediately exits the function. Any code after the return statement in that function won't run:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Return Immediately Exits</div>
+                  <pre class="code"><code>def check_age(age):
+    if age >= 18:
+        return "Adult"
+        print("This won't print")  # Never runs!
+    return "Minor"
+
+print(check_age(20))  # Output: Adult</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How It Works</h4>
+                  <p>As soon as Python sees <code>return "Adult"</code>, it exits the function immediately. The print statement after it never runs because Python already left the function. This is useful for early exits - you can check conditions and return early if needed, without running the rest of the function.</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Create a Function That Returns a Value</h4>
+                  <p>Create a function named <code>calculate_perimeter</code> that takes two parameters: <code>length</code> and <code>width</code>. It should return the perimeter (2 × length + 2 × width). Store the result in a variable and print it.</p>
+                  <p class="hint-text">Use return to send back the calculated perimeter value.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Use Return Value in Expression</h4>
+                  <p>Create a function named <code>double</code> that takes one parameter <code>number</code> and returns <code>number * 2</code>. Then use it in an expression: calculate <code>double(5) + double(3)</code> and print the result.</p>
+                  <p class="hint-text">Your function should return the doubled value, then use it in an expression.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-3/parameters-arguments.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-3/variable-scope-lifetime.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'def calculate_perimeter(length, width):\n    return 2 * length + 2 * width\n\nperimeter = calculate_perimeter(5, 3)\nprint(perimeter)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('def')) {
+              return {
+                correct: false,
+                message: 'You need to define a function using def.',
+                hints: ['Start with: def calculate_perimeter(length, width):', 'Don\'t forget the colon']
+              };
+            }
+            
+            if (!trimmed.includes('calculate_perimeter')) {
+              return {
+                correct: false,
+                message: 'Your function should be named calculate_perimeter.',
+                hints: ['Write: def calculate_perimeter(length, width):', 'Use underscores, not spaces']
+              };
+            }
+            
+            if (!trimmed.includes('length') || !trimmed.includes('width')) {
+              return {
+                correct: false,
+                message: 'Your function should have parameters length and width.',
+                hints: ['Write: def calculate_perimeter(length, width):', 'Include both parameters']
+              };
+            }
+            
+            if (!trimmed.includes('return')) {
+              return {
+                correct: false,
+                message: 'Your function should return a value.',
+                hints: ['Use: return 2 * length + 2 * width', 'The return statement sends the value back']
+              };
+            }
+            
+            if (!trimmed.includes('calculate_perimeter(')) {
+              return {
+                correct: false,
+                message: 'You need to call the function and store its return value.',
+                hints: ['Call: perimeter = calculate_perimeter(5, 3)', 'Store the return value in a variable']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have a colon after def', 'Check your indentation', 'Make sure return is indented inside the function']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('16')) {
+              return {
+                correct: false,
+                message: 'The perimeter of 5×3 rectangle should be 16 (2×5 + 2×3 = 16).',
+                hints: ['Check your calculation', 'Perimeter = 2×length + 2×width', 'Make sure you\'re returning the value']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created a function that returns a value and used it.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'def double(number):\n    return number * 2\n\nresult = double(5) + double(3)\nprint(result)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('def')) {
+              return {
+                correct: false,
+                message: 'You need to define a function using def.',
+                hints: ['Start with: def double(number):', 'Don\'t forget the colon']
+              };
+            }
+            
+            if (!trimmed.includes('double')) {
+              return {
+                correct: false,
+                message: 'Your function should be named double.',
+                hints: ['Write: def double(number):', 'Make sure the name matches exactly']
+              };
+            }
+            
+            if (!trimmed.includes('return')) {
+              return {
+                correct: false,
+                message: 'Your function should return a value.',
+                hints: ['Use: return number * 2', 'The return statement sends the value back']
+              };
+            }
+            
+            if (!trimmed.includes('number * 2') && !trimmed.includes('number*2') && !trimmed.includes('* 2')) {
+              return {
+                correct: false,
+                message: 'Your function should return number * 2.',
+                hints: ['Calculate: return number * 2', 'Use the * operator to multiply']
+              };
+            }
+            
+            if (!trimmed.includes('double(5)') || !trimmed.includes('double(3)')) {
+              return {
+                correct: false,
+                message: 'You need to use double(5) + double(3).',
+                hints: ['Write: result = double(5) + double(3)', 'Use the return values in an expression']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have a colon after def', 'Check your indentation', 'Make sure return is indented inside the function']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('16')) {
+              return {
+                correct: false,
+                message: 'double(5) + double(3) should be 10 + 6 = 16.',
+                hints: ['Check your calculation', 'double(5) = 10, double(3) = 6', 'Verify your return statement is correct']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used return values in an expression.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

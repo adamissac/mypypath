@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 1 • Arithmetic & Expressions - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 1 • Arithmetic & Expressions • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 1 • Foundations</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-1/what-is-python.html">1. What Is Python</a></li>
+                <li><a href="/units/unit-1/installing-python-ide.html">2. Installing Python & IDE</a></li>
+                <li><a href="/units/unit-1/first-program.html">3. First Program</a></li>
+                <li><a href="/units/unit-1/syntax-indentation.html">4. Syntax & Indentation</a></li>
+                <li><a href="/units/unit-1/variables-types.html">5. Variables & Types</a></li>
+                <li><a href="/units/unit-1/type-io.html">6. Type Conversion & I/O</a></li>
+                <li><a href="/units/unit-1/comments-docs.html">7. Comments & Docs</a></li>
+                <li><a class="active" href="/units/unit-1/arithmetic-expressions.html">8. Arithmetic & Expressions</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-1.html">Unit 1</a>
+              <span class="separator">/</span>
+              <span class="current">Arithmetic & Expressions</span>
+            </nav>
+            <div class="eyebrow">Unit 1 • Lesson 8</div>
+            <h1 class="lesson-title">Arithmetic and Expressions</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Python can serve as a powerful calculator. You'll learn how to perform mathematical operations using arithmetic operators, combine them into complex expressions, and apply order of operations to get accurate results.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">15–20 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-1/comments-docs.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-2.html">Next: Unit 2</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Basic arithmetic operators:</strong> Master addition, subtraction, multiplication, and division.</li>
+                  <li><strong>Advanced operators:</strong> Learn about floor division, modulo, and exponentiation.</li>
+                  <li><strong>Order of operations:</strong> Understand how Python evaluates expressions (PEMDAS).</li>
+                  <li><strong>Using variables in expressions:</strong> Combine variables and numbers in calculations.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Almost every program needs to do math. Whether you're calculating prices, measuring distances, or counting items, arithmetic operations are fundamental. Understanding how Python handles math will help you write correct programs.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: Basic Arithmetic Operators</h2>
+                <p>Python supports all the basic math operations you learned in school. These operators work with numbers (integers and floats) to perform calculations.</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Addition: <code>+</code></h4>
+                    <p>Adds two numbers together.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>5 + 3        # Returns 8
+10 + 2.5     # Returns 12.5</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Subtraction: <code>-</code></h4>
+                    <p>Subtracts the second number from the first.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>10 - 3       # Returns 7
+5.5 - 2      # Returns 3.5</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Multiplication: <code>*</code></h4>
+                    <p>Multiplies two numbers together.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>4 * 3        # Returns 12
+2.5 * 4      # Returns 10.0</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Division: <code>/</code></h4>
+                    <p>Divides the first number by the second. Always returns a float.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>10 / 2       # Returns 5.0
+15 / 4       # Returns 3.75</code></pre>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Important:</strong> Division in Python always returns a float, even if the result is a whole number. So <code>10 / 2</code> returns <code>5.0</code>, not <code>5</code>. This is different from some other programming languages.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Basic Math</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try performing some basic calculations. Notice how Python handles different operations:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'print(10 + 5)\nprint(10 - 3)\nprint(4 * 6)\nprint(20 / 4)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">print(10 + 5)
+print(10 - 3)
+print(4 * 6)
+print(20 / 4)</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>Notice:</strong> Each operation produces a result. Python evaluates the expression and gives you the answer. Notice that division returns a float (5.0) even though it's a whole number.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Advanced Arithmetic Operators</h2>
+                <p>Python also provides some advanced operators that are useful for specific types of calculations.</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Floor Division: <code>//</code></h4>
+                    <p>Divides and rounds down to the nearest whole number. Returns an integer.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>15 // 4      # Returns 3
+10 // 3      # Returns 3</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Useful when you need whole number results.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Modulo: <code>%</code></h4>
+                    <p>Returns the remainder after division. Very useful for checking if numbers are even/odd.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>15 % 4       # Returns 3 (remainder)
+10 % 3       # Returns 1 (remainder)
+8 % 2        # Returns 0 (even number)</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Great for checking divisibility.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Exponentiation: <code>**</code></h4>
+                    <p>Raises a number to a power. The first number is the base, the second is the exponent.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>2 ** 3       # Returns 8 (2³)
+5 ** 2       # Returns 25 (5²)
+10 ** 0.5    # Returns 3.16... (square root)</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Useful for powers and roots.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Parentheses: <code>()</code></h4>
+                    <p>Control the order of operations. Operations inside parentheses happen first.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>(2 + 3) * 4  # Returns 20
+2 + (3 * 4)  # Returns 14</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Use to override default order.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Advanced Operators</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try using the advanced operators. Notice how they work differently from basic division:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'print(15 // 4)\nprint(15 % 4)\nprint(2 ** 4)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">print(15 // 4)
+print(15 % 4)
+print(2 ** 4)</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Floor division (<code>//</code>) gave you 3 (15 divided by 4, rounded down). Modulo (<code>%</code>) gave you 3 (the remainder). Exponentiation (<code>**</code>) gave you 16 (2 to the power of 4).</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Order of Operations (PEMDAS)</h2>
+                <p>Python follows the same order of operations you learned in math class. This is often remembered as PEMDAS: Parentheses, Exponents, Multiplication, Division, Addition, Subtraction.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Order of Operations</div>
+                  <pre class="code"><code>2 + 3 * 4      # Returns 14 (multiplication first)
+(2 + 3) * 4    # Returns 20 (parentheses first)
+2 ** 3 + 1     # Returns 9 (exponentiation first)
+10 / 2 * 3     # Returns 15.0 (left to right)</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Parentheses</h4>
+                      <p>Operations inside parentheses are done first. Use parentheses to control the order.</p>
+                      <pre class="code" style="margin-top: 8px;"><code>(2 + 3) * 4  # Parentheses first: 5 * 4 = 20</code></pre>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Exponents</h4>
+                      <p>Exponentiation (<code>**</code>) happens next, before multiplication and division.</p>
+                      <pre class="code" style="margin-top: 8px;"><code>2 ** 3 + 1  # Exponent first: 8 + 1 = 9</code></pre>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Multiplication & Division</h4>
+                      <p>Multiplication and division happen next, from left to right.</p>
+                      <pre class="code" style="margin-top: 8px;"><code>10 / 2 * 3  # Left to right: 5.0 * 3 = 15.0</code></pre>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Addition & Subtraction</h4>
+                      <p>Addition and subtraction happen last, from left to right.</p>
+                      <pre class="code" style="margin-top: 8px;"><code>10 - 3 + 2  # Left to right: 7 + 2 = 9</code></pre>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>When in Doubt, Use Parentheses</h4>
+                  <p>If you're not sure about the order of operations, use parentheses to make your intent clear. This makes your code easier to read and prevents mistakes.</p>
+                  <pre class="code" style="margin-top: 12px;"><code># Unclear order
+result = 2 + 3 * 4
+
+# Clear with parentheses
+result = 2 + (3 * 4)  # Makes it obvious</code></pre>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #3: Order of Operations</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try these expressions. Can you predict the results before running them?</p>
+                
+                <div class="interactive-editor" data-editor-id="practice3">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice3')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice3', 'print(2 + 3 * 4)\nprint((2 + 3) * 4)\nprint(10 - 2 ** 2)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice3')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice3">print(2 + 3 * 4)
+print((2 + 3) * 4)
+print(10 - 2 ** 2)</textarea>
+                  <div class="editor-output" id="output-practice3">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>Notice:</strong> The parentheses changed the result! Without parentheses, multiplication happens first (2 + 12 = 14). With parentheses, addition happens first (5 * 4 = 20).</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Using Variables in Expressions</h2>
+                <p>You can use variables in arithmetic expressions just like you use numbers. This makes your code flexible and powerful.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Variables in Expressions</div>
+                  <pre class="code"><code>price = 10
+quantity = 3
+total = price * quantity
+print(total)  # Prints 30</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Complex Expressions</div>
+                  <pre class="code"><code>length = 5
+width = 3
+height = 2
+volume = length * width * height
+print(volume)  # Prints 30</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> When Python sees a variable in an expression, it replaces the variable with its value, then performs the calculation. So <code>price * quantity</code> becomes <code>10 * 3</code> if price is 10 and quantity is 3.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 5: Common Math Operations</h2>
+                <p>Here are some common patterns you'll use when doing math in Python:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Calculating Totals</h4>
+                    <p>Multiply price by quantity to get total cost.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>price = 5.99
+quantity = 4
+total = price * quantity</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Finding Averages</h4>
+                    <p>Add numbers and divide by count.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>sum = 10 + 20 + 30
+average = sum / 3</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Checking Even/Odd</h4>
+                    <p>Use modulo to check if a number is divisible by 2.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>number = 8
+is_even = number % 2 == 0  # True if even</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Calculating Percentages</h4>
+                    <p>Multiply by the percentage as a decimal.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>price = 100
+discount = price * 0.20  # 20% discount</code></pre>
+                  </div>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Calculate Area</h4>
+                  <p>Create variables: <code>length</code> = 8 and <code>width</code> = 5. Calculate and print the area of a rectangle (length × width).</p>
+                  <p class="hint-text">Multiply length by width to get the area.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Complex Expression</h4>
+                  <p>Calculate: (10 + 5) × 3 - 8. Use parentheses to control the order of operations, then print the result.</p>
+                  <p class="hint-text">Remember PEMDAS: Parentheses first, then multiplication, then subtraction.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-1/comments-docs.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-2.html">Next Unit</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'length = 8\nwidth = 5\narea = length * width\nprint(area)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for length variable
+            if (!trimmed.includes('length') || !trimmed.includes('8')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable length with value 8.',
+                hints: ['Write: length = 8', 'This is the length of the rectangle']
+              };
+            }
+            
+            // Check for width variable
+            if (!trimmed.includes('width') || !trimmed.includes('5')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable width with value 5.',
+                hints: ['Write: width = 5', 'This is the width of the rectangle']
+              };
+            }
+            
+            // Check for multiplication
+            if (!trimmed.includes('*') || !trimmed.includes('area')) {
+              return {
+                correct: false,
+                message: 'You need to calculate the area by multiplying length and width.',
+                hints: ['Multiply length by width', 'Store the result in a variable called area', 'Use: area = length * width']
+              };
+            }
+            
+            // Check for print
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print the area.',
+                hints: ['Add a print statement', 'Print the area variable']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure all variable names are spelled correctly', 'Check your calculation']
+              };
+            }
+            
+            // Check output contains 40
+            const outputText = output.stdout || '';
+            if (!outputText.includes('40')) {
+              return {
+                correct: false,
+                message: 'The area should be 40 (8 multiplied by 5).',
+                hints: ['Check your calculation', 'Make sure you multiplied length by width', 'The answer should be 40']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully calculated the area using variables and multiplication.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'result = (10 + 5) * 3 - 8\nprint(result)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for parentheses
+            if (!trimmed.includes('(') || !trimmed.includes(')')) {
+              return {
+                correct: false,
+                message: 'You need to use parentheses to control the order of operations.',
+                hints: ['Put (10 + 5) in parentheses', 'This ensures addition happens before multiplication']
+              };
+            }
+            
+            // Check for the correct numbers and operations
+            const has10 = trimmed.includes('10');
+            const has5 = trimmed.includes('5');
+            const has3 = trimmed.includes('3');
+            const has8 = trimmed.includes('8');
+            const hasMult = trimmed.includes('*');
+            const hasSub = trimmed.includes('-');
+            
+            if (!has10 || !has5 || !has3 || !has8 || !hasMult || !hasSub) {
+              return {
+                correct: false,
+                message: 'Your expression should include: (10 + 5) × 3 - 8',
+                hints: ['Include all numbers: 10, 5, 3, and 8', 'Use + for addition, * for multiplication, - for subtraction', 'Use parentheses around (10 + 5)']
+              };
+            }
+            
+            // Check for print
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print the result.',
+                hints: ['Add a print statement', 'Print the result of your calculation']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure parentheses match', 'Check your operators']
+              };
+            }
+            
+            // Check output contains 37 ((10+5)*3-8 = 15*3-8 = 45-8 = 37)
+            const outputText = output.stdout || '';
+            if (!outputText.includes('37')) {
+              return {
+                correct: false,
+                message: 'The result should be 37. Check your order of operations: (10 + 5) × 3 - 8 = 15 × 3 - 8 = 45 - 8 = 37',
+                hints: ['Parentheses first: (10 + 5) = 15', 'Then multiplication: 15 × 3 = 45', 'Then subtraction: 45 - 8 = 37']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used parentheses to control the order of operations and got the right answer.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

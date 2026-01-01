@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 1 • Installing Python & IDE - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 1 • Installing Python & IDE • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 1 • Foundations</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-1/what-is-python.html">1. What Is Python</a></li>
+                <li><a class="active" href="/units/unit-1/installing-python-ide.html">2. Installing Python & IDE</a></li>
+                <li><a href="/units/unit-1/first-program.html">3. First Program</a></li>
+                <li><a href="/units/unit-1/syntax-indentation.html">4. Syntax & Indentation</a></li>
+                <li><a href="/units/unit-1/variables-types.html">5. Variables & Types</a></li>
+                <li><a href="/units/unit-1/type-io.html">6. Type Conversion & I/O</a></li>
+                <li><a href="/units/unit-1/comments-docs.html">7. Comments & Docs</a></li>
+                <li><a href="/units/unit-1/arithmetic-expressions.html">8. Arithmetic & Expressions</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-1.html">Unit 1</a>
+              <span class="separator">/</span>
+              <span class="current">Installing Python & IDE</span>
+            </nav>
+            <div class="eyebrow">Unit 1 • Lesson 2</div>
+            <h1 class="lesson-title">Set Up Your Python Environment (Python + VS Code/IDLE)</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Follow step-by-step instructions to install Python on your computer and set up an integrated development environment (IDE) like VS Code or IDLE. You’ll also learn how to configure paths and check your installation using the terminal or command prompt.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">15–20 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-1/what-is-python.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-1/first-program.html">Next: First Program</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What Python needs to run on your computer:</strong> Understanding the difference between Python (the language) and an IDE (where you write code), and why you need both.</li>
+                  <li><strong>How to install Python the correct and safe way:</strong> Step-by-step instructions for Windows and Mac, including important settings like adding Python to PATH.</li>
+                  <li><strong>What an IDE is and why you need one:</strong> Learn what Integrated Development Environments do and how they make coding easier with features like syntax highlighting and error detection.</li>
+                  <li><strong>How to write and run your first real <code>.py</code> file:</strong> Create an actual Python file, write code in it, and execute it to see your program run.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Beginner-Friendly</h4>
+                  <p>This lesson is very beginner-friendly. No previous experience is needed. We'll explain every step in detail, including what each tool does and why you need it.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What You Need to Install</h2>
+                <p>To start coding in Python, you need two essential tools installed on your computer:</p>
+                
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>1. Python Itself</h4>
+                    <p>This is the actual programming language interpreter. Think of it as the engine that runs your Python code. When you install Python, you're installing a program that can read <code>.py</code> files and execute the instructions inside them. Without Python installed, your computer won't understand Python code at all.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>2. An IDE (Integrated Development Environment)</h4>
+                    <p>This is where you write and edit your code. Think of it like Microsoft Word for writing essays. VS Code is for writing Python code. An IDE provides a workspace with helpful features like color-coded text, automatic suggestions, and buttons to run your code. While you could write Python in Notepad, an IDE makes coding much more efficient and less error-prone.</p>
+                  </div>
+                </div>
+                
+                <div class="info-callout">
+                  <p><strong>Why You Need Both:</strong> Python is like the engine of a car. It makes things run. An IDE is like the dashboard and controls. It helps you drive. You can technically write Python code in any text editor (like Notepad), but IDEs provide essential features like syntax highlighting (colors that help you read code), error detection (catching mistakes before you run code), code completion (suggestions as you type), and a run button (executing code with one click). These features make coding WAY easier and help prevent mistakes.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Installing Python (Windows & Mac)</h2>
+                <p>Python is completely free and open-source. Install it directly from the official Python website to get the legitimate, up-to-date version.</p>
+                
+                <div class="link-card">
+                  <a href="https://www.python.org/downloads/" target="_blank" rel="noopener noreferrer" class="external-link">
+                    <strong>https://www.python.org/downloads/</strong>
+                    <span class="link-icon">↗</span>
+                  </a>
+                  <p class="link-note">Always use the official site. It's free, safe, and maintained by the Python Software Foundation.</p>
+                </div>
+
+                <p>When you visit the Python downloads page, you'll see a prominent download button that says something like "Download Python 3.12". The website automatically detects your operating system and shows the correct version. Click that button to start the download.</p>
+                
+                <div class="info-callout">
+                  <p><strong>About Python Versions:</strong> Python 3.x is the current version (Python 2 is outdated and no longer supported). Any version of Python 3.8 or higher will work perfectly for learning. Don't worry about getting the absolute latest version. Focus on getting Python installed correctly.</p>
+                </div>
+
+                <div class="installation-steps">
+                  <div class="os-tabs">
+                    <button class="os-tab active" onclick="switchOS('windows')">Windows</button>
+                    <button class="os-tab" onclick="switchOS('mac')">Mac</button>
+                  </div>
+
+                  <div id="windows-instructions" class="os-instructions active">
+                    <h3>Windows Installation Instructions</h3>
+                    <ol class="step-list">
+                      <li><strong>Download the installer</strong> from python.org. The file will be named something like <code>python-3.12.x-amd64.exe</code>.</li>
+                      <li><strong>Open the installer</strong> by double-clicking the downloaded file. If you see a Windows security warning, click "Yes" or "Run" to proceed.</li>
+                      <li>
+                        <strong>VERY IMPORTANT:</strong> On the first screen of the installer, you'll see a checkbox at the bottom that says:
+                        <div class="important-box">
+                          <input type="checkbox" id="path-checkbox" disabled checked>
+                          <label for="path-checkbox">Add Python to PATH</label>
+                        </div>
+                        <p class="hint-text"><strong>What is PATH?</strong> PATH is a list of folders your computer searches when you type commands. By checking this box, you're telling Windows "whenever I type 'python' in the terminal, look for it in the Python installation folder." If you don't check this, you'll have to type the full path to Python every time, which is very inconvenient. <strong>Always check this box!</strong></p>
+                      </li>
+                      <li><strong>Click "Install Now"</strong> (not "Customize installation". That's for advanced users). The installer will show a progress bar as it installs Python and its components.</li>
+                      <li><strong>Wait for completion.</strong> The installation usually takes 2-5 minutes. When it finishes, you'll see a screen that says "Setup was successful".</li>
+                      <li><strong>Click "Close".</strong> Python is now installed on your computer!</li>
+                    </ol>
+                  </div>
+
+                  <div id="mac-instructions" class="os-instructions">
+                    <h3>Mac Installation Instructions</h3>
+                    <ol class="step-list">
+                      <li><strong>Download the macOS installer</strong> from python.org. The file will be a <code>.pkg</code> file named something like <code>python-3.12.x-macos11.pkg</code>.</li>
+                      <li><strong>Open the installer</strong> by double-clicking the downloaded <code>.pkg</code> file. Your Mac may ask if you're sure you want to open it. Click "Open" to proceed.</li>
+                      <li><strong>Follow the installation wizard.</strong> Click "Continue" on each screen to proceed.</li>
+                      <li><strong>Enter your password.</strong> macOS will ask for your administrator password. Type your password and click "Install Software" or "OK".</li>
+                      <li><strong>Wait for installation.</strong> The installation typically takes 2-5 minutes. Don't close the installer window during this time.</li>
+                      <li><strong>Click "Close"</strong> when you see "The installation was successful". Python is now installed on your Mac!</li>
+                    </ol>
+                    <div class="info-callout" style="margin-top: 16px;">
+                      <p><strong>Note for Mac users:</strong> On Mac, you'll use <code>python3</code> (not <code>python</code>) in the terminal. This is because macOS comes with an old version of Python 2 pre-installed, and <code>python3</code> ensures you're using the new version you just installed.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <p>Python will now be installed on your system.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Check if Python Installed Correctly</h2>
+                <p>After installation, verify that Python is working correctly. Open a terminal (also called Command Prompt on Windows) and ask Python to tell us its version number. This confirms that:</p>
+                <ul style="margin: 16px 0;">
+                  <li>Python is installed</li>
+                  <li>Your computer can find Python when you type its name</li>
+                  <li>Python is ready to run code</li>
+                </ul>
+
+                <div class="terminal-guide">
+                  <div class="terminal-tabs">
+                    <button class="terminal-tab active" onclick="switchTerminal('windows-cmd')">Windows</button>
+                    <button class="terminal-tab" onclick="switchTerminal('mac-cmd')">Mac</button>
+                  </div>
+
+                  <div id="windows-cmd" class="terminal-instructions active">
+                    <h4>On Windows:</h4>
+                    <ol>
+                      <li><strong>Open Command Prompt:</strong> Click the Windows search bar or press the Windows key, then type <code>cmd</code> and press Enter.</li>
+                      <li><strong>Check Python version:</strong> In the terminal, type exactly: <code>python --version</code> (with a space and two dashes before "version"), then press Enter.</li>
+                    </ol>
+                  </div>
+
+                  <div id="mac-cmd" class="terminal-instructions">
+                    <h4>On Mac:</h4>
+                    <ol>
+                      <li><strong>Open Terminal:</strong> Press <code>Cmd + Space</code> to open Spotlight search, type "Terminal", and press Enter.</li>
+                      <li><strong>Check Python version:</strong> In the terminal window, type exactly: <code>python3 --version</code> (note: use <code>python3</code>, not <code>python</code>), then press Enter.</li>
+                    </ol>
+                  </div>
+
+                  <div class="code-example">
+                    <div class="code-header">Expected Output</div>
+                    <pre class="code"><code>Python 3.12.1</code></pre>
+                    <p style="margin: 12px 0 0 0; padding: 0 20px 12px; font-size: 14px; color: var(--muted);">The exact version number may differ (like 3.11.5 or 3.13.0), but you should see "Python" followed by a version number.</p>
+                  </div>
+
+                  <div class="success-box">
+                    <p><strong>If you see something like "Python 3.12.1", congrats! Python is installed correctly!</strong></p>
+                    <p>This means Python is installed and your computer can find it. You're ready to start coding!</p>
+                    <p style="margin-top: 12px; margin-bottom: 0; font-size: 14px;">If you see an error like "python is not recognized" or "command not found", Python might not be installed correctly, or it might not be added to your PATH. Try reinstalling Python and make sure to check the "Add Python to PATH" box on Windows.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="practice-box">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Test Python Shell</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>The Python shell (also called the Python REPL) is an interactive mode where you can type Python code and see results immediately. This is great for testing small pieces of code. Let's try it:</p>
+                <div class="command-box">
+                  <div class="command-item">
+                    <span class="command-label">Windows:</span>
+                    <code class="command">python</code>
+                  </div>
+                  <div class="command-item">
+                    <span class="command-label">Mac:</span>
+                    <code class="command">python3</code>
+                  </div>
+                </div>
+                <p>After typing the command and pressing Enter, you should see the Python prompt appear:</p>
+                <pre class="code"><code>>>></code></pre>
+                <p>The <code>>>></code> symbols mean Python is ready and waiting for you to type code. This is called the "Python prompt" or "Python shell". You can now type Python commands directly here. For example, try typing <code>print("Hello!")</code> and pressing Enter. You should see "Hello!" printed below.</p>
+                <p><strong>To exit the Python shell and return to your regular terminal, type:</strong> <code>exit()</code> and press Enter. You'll see the <code>>>></code> disappear and return to your normal terminal prompt.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Install an IDE (We will use VS Code)</h2>
+                <p>While you can write Python code in any text editor, using an IDE (Integrated Development Environment) makes coding much easier and more efficient. An IDE is like a specialized word processor for code. It understands Python syntax and provides helpful features.</p>
+                
+                <p>We'll use <strong>Visual Studio Code (VS Code)</strong>, which is free, beginner-friendly, and used by millions of developers worldwide. It's made by Microsoft and works on Windows, Mac, and Linux.</p>
+
+                <div class="link-card">
+                  <a href="https://code.visualstudio.com/" target="_blank" rel="noopener noreferrer" class="external-link">
+                    <strong>https://code.visualstudio.com/</strong>
+                    <span class="link-icon">↗</span>
+                  </a>
+                  <p class="link-note">Visit the website and click the large download button. The site will automatically detect your operating system and offer the correct version.</p>
+                </div>
+
+                <p>After downloading, run the installer and follow the on-screen instructions. The default settings are fine for beginners.</p>
+
+                <h3>Set Up Python Inside VS Code</h3>
+                <p>VS Code needs a Python extension to understand and run Python code. Extensions are like plugins that add features to VS Code. Here's how to install the Python extension:</p>
+                
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Open VS Code</h4>
+                      <p>Launch Visual Studio Code from your applications or desktop.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Go to Extensions</h4>
+                      <p>Click the Extensions icon in the left sidebar (looks like four squares). Alternatively, press <code>Ctrl+Shift+X</code> (Windows) or <code>Cmd+Shift+X</code> (Mac).</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Search for Python</h4>
+                      <p>Type "Python" in the search box at the top of the Extensions panel.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Install the Extension</h4>
+                      <p>Find the extension called "Python" published by Microsoft. Click the green "Install" button. Once installed, you may need to reload VS Code. If prompted, click "Reload".</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>What the Python Extension Gives You</h4>
+                  <p>The Python extension adds powerful features that make coding easier:</p>
+                  <ul style="margin: 12px 0 0 0;">
+                    <li><strong>Syntax highlighting:</strong> Your code will be color-coded. Keywords like <code>print</code> and <code>if</code> appear in different colors, making code easier to read.</li>
+                    <li><strong>Auto-complete:</strong> As you type, VS Code will suggest completions. For example, if you type <code>pr</code>, it might suggest <code>print</code>. Press Tab to accept suggestions.</li>
+                    <li><strong>Error detection:</strong> VS Code will underline mistakes in red before you run your code, helping you catch errors early.</li>
+                    <li><strong>Run button:</strong> A play button (▶) appears in the top-right corner, allowing you to run your Python file with one click instead of typing commands in the terminal.</li>
+                    <li><strong>Code formatting:</strong> Automatically formats your code to look clean and consistent.</li>
+                  </ul>
+                  <p style="margin-top: 12px; margin-bottom: 0;">These features make coding much easier and help prevent common mistakes!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Your First Python File</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Now let's create your first actual Python file! This is different from the Python shell. A <code>.py</code> file is a saved program that you can run anytime.</p>
+                <p><strong>In VS Code, follow these steps:</strong></p>
+                <ol style="margin: 16px 0;">
+                  <li><strong>Create a new file:</strong> Click File, then New File (or press <code>Ctrl+N</code> on Windows / <code>Cmd+N</code> on Mac).</li>
+                  <li><strong>Save the file:</strong> Click File, then Save As (or press <code>Ctrl+S</code> / <code>Cmd+S</code>). Name the file <code>first_program.py</code>. The <code>.py</code> extension tells VS Code this is a Python file.</li>
+                  <li><strong>Type your code:</strong> In the editor, type the following code:</li>
+                </ol>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'print(\"Hello world!\")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">print("Hello world!")</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>To run your code in VS Code:</strong> Click the play button (▶) in the top-right corner of VS Code, or right-click in the editor and select "Run Python File in Terminal". You should see "Hello world!" appear in the terminal panel at the bottom of VS Code.</p>
+                <p><strong>If it worked and printed "Hello world!", congratulations! You've just written and executed your first Python program!</strong> You're officially coding! This is the foundation of everything you'll learn: creating files, writing code, and running them to see results.</p>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item">
+                  <h4>Exercise 1: Verify Python Version</h4>
+                  <p>This exercise helps you confirm that Python is installed correctly and teaches you how to check version information. This is a useful skill when troubleshooting or working with different Python versions.</p>
+                  <p><strong>Instructions:</strong> Open your terminal (Command Prompt on Windows, Terminal on Mac) and type the version command you learned earlier. When you see the version number, write it down in the box below.</p>
+                  <p class="reflection-prompt"><strong>Example format: "My Python version is 3.11.4"</strong></p>
+                  <p class="hint-text">This information is useful to know. Some Python features require specific versions, and when asking for help online, people often ask what version you're using.</p>
+                  <textarea class="reflection-input" id="reflection-ex1" placeholder="Type your Python version here (e.g., 'My Python version is 3.12.1')..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h4>Exercise 2: Run Your First File</h4>
+                  <p>Now you'll create a Python program that prints multiple lines of information about yourself. This exercise teaches you how to use multiple <code>print()</code> statements to display different pieces of information.</p>
+                  <p><strong>Instructions:</strong> Create and run a <code>.py</code> file (either in VS Code or using the editor below) that prints three separate lines:</p>
+                  <ul style="margin: 12px 0;">
+                    <li><strong>Your name</strong> (replace "Your Name" with your actual name)</li>
+                    <li><strong>Your favorite hobby or subject</strong></li>
+                    <li><strong>Why you want to learn Python</strong></li>
+                  </ul>
+                  <p class="hint-text">Each <code>print()</code> statement creates a new line of output. You can use the editor below to practice, or create a real <code>.py</code> file in VS Code and run it there.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-run" onclick="runEditorCode('exercise2')">Run Code</button>
+                      <button class="btn-reset" onclick="resetEditor('exercise2', 'print(\"Your Name\")\nprint(\"Your favorite hobby or subject\")\nprint(\"Why you want to learn Python\")')">Reset</button>
+                      <button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2">print("Your Name")
+print("Your favorite hobby or subject")
+print("Why you want to learn Python")</textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                    </div>
+                  </div>
+
+                  <p style="margin-top: 16px;"><strong>What you should see:</strong> When you run the code, each <code>print()</code> statement will output its text on a separate line. Here's an example of what the output might look like:</p>
+                  <pre class="code"><code>Adam
+I love math and CS.
+I want to learn Python to build AI projects!</code></pre>
+                  <p><strong>Success criteria:</strong> If you see three separate lines printed (one for your name, one for your hobby/subject, and one for your reason), you've successfully completed this exercise! You've learned how to create a multi-line Python program.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-1/what-is-python.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-1/first-program.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+    <script>
+      let pyodideInstance = null;
+      let pyodideReady = false;
+
+      async function initPyodide() {
+        if (pyodideReady) return;
+        try {
+          pyodideInstance = await loadPyodide({
+            indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/'
+          });
+          
+          pyodideInstance.runPython(`
+            import sys
+            from io import StringIO
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    if s:
+                        self.buffer.write(str(s))
+                
+                def flush(self):
+                    pass
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    from io import StringIO
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+        } catch (error) {
+          console.error('Failed to load Pyodide:', error);
+        }
+      }
+
+      async function runEditorCode(editorId) {
+        if (!pyodideReady) {
+          await initPyodide();
+          if (!pyodideReady) {
+            document.getElementById(`output-${editorId}`).innerHTML = '<div class="output-error">Loading Python interpreter...</div>';
+            return;
+          }
+        }
+
+        const editor = window.editors && window.editors[editorId];
+        const code = editor ? editor.getValue() : (document.getElementById(`editor-${editorId}`)?.value || '');
+        const outputEl = document.getElementById(`output-${editorId}`);
+
+        if (!code.trim()) {
+          outputEl.innerHTML = '<div class="output-placeholder">No code to run. Write some Python code first!</div>';
+          return;
+        }
+
+        outputEl.innerHTML = '<div class="output-loading">Running code...</div>';
+
+        try {
+          pyodideInstance.runPython(`
+            stdout_capture.reset()
+            stderr_capture.reset()
+          `);
+
+          pyodideInstance.runPython(code);
+
+          const stdout = pyodideInstance.runPython('stdout_capture.getvalue()');
+          const stderr = pyodideInstance.runPython('stderr_capture.getvalue()');
+
+          let outputHTML = '';
+
+          if (stdout) {
+            outputHTML += `<div class="output-line"><span class="output-label">Output:</span><pre class="output-text">${escapeHtml(stdout)}</pre></div>`;
+          }
+
+          if (stderr) {
+            outputHTML += `<div class="output-line error"><span class="output-label">Error:</span><pre class="output-text">${escapeHtml(stderr)}</pre></div>`;
+          }
+
+          if (!stdout && !stderr) {
+            outputHTML = '<div class="output-placeholder">Code executed successfully (no output).</div>';
+          }
+
+          outputEl.innerHTML = outputHTML;
+
+        } catch (error) {
+          const errorMessage = error.toString();
+          outputEl.innerHTML = `<div class="output-line error"><span class="output-label">Error:</span><pre class="output-text">${escapeHtml(errorMessage)}</pre></div>`;
+        }
+      }
+
+      function resetEditor(editorId, defaultCode) {
+        if (window.editors && window.editors[editorId]) {
+          window.editors[editorId].setValue(defaultCode);
+          clearStorage('code', editorId);
+        } else {
+          const textarea = document.getElementById(`editor-${editorId}`);
+          if (textarea) {
+            textarea.value = defaultCode;
+            clearStorage('code', editorId);
+          }
+        }
+        document.getElementById(`output-${editorId}`).innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // Save/Load functions for localStorage
+      function getStorageKey(type, id) {
+        const pagePath = window.location.pathname;
+        return `pypath-lesson-${pagePath}-${type}-${id}`;
+      }
+
+      function saveToStorage(type, id, value) {
+        try {
+          const key = getStorageKey(type, id);
+          localStorage.setItem(key, value);
+        } catch (e) {
+          console.warn('Failed to save to localStorage:', e);
+        }
+      }
+
+      function loadFromStorage(type, id) {
+        try {
+          const key = getStorageKey(type, id);
+          return localStorage.getItem(key);
+        } catch (e) {
+          console.warn('Failed to load from localStorage:', e);
+          return null;
+        }
+      }
+
+      function clearStorage(type, id) {
+        try {
+          const key = getStorageKey(type, id);
+          localStorage.removeItem(key);
+        } catch (e) {
+          console.warn('Failed to clear localStorage:', e);
+        }
+      }
+
+      function clearSaved(editorId) {
+        if (confirm('Clear your saved code for this editor? You can still reset to default.')) {
+          clearStorage('code', editorId);
+          if (window.editors && window.editors[editorId]) {
+            const defaultCode = editorId === 'practice2' 
+              ? 'print("Hello world!")'
+              : 'print("Your Name")\nprint("Your favorite hobby or subject")\nprint("Why you want to learn Python")';
+            window.editors[editorId].setValue(defaultCode);
+          }
+        }
+      }
+
+      function switchOS(os) {
+        document.querySelectorAll('.os-tab').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.os-instructions').forEach(inst => inst.classList.remove('active'));
+        
+        event.target.classList.add('active');
+        document.getElementById(`${os}-instructions`).classList.add('active');
+      }
+
+      function switchTerminal(os) {
+        document.querySelectorAll('.terminal-tab').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.terminal-instructions').forEach(inst => inst.classList.remove('active'));
+        
+        event.target.classList.add('active');
+        document.getElementById(os).classList.add('active');
+      }
+
+      // Initialize CodeMirror editors
+      window.editors = {};
+      document.addEventListener('DOMContentLoaded', () => {
+        initPyodide();
+        
+        // Load saved reflection inputs
+        document.querySelectorAll('.reflection-input').forEach(textarea => {
+          const saved = loadFromStorage('reflection', textarea.id);
+          if (saved) {
+            textarea.value = saved;
+          }
+          
+          // Save on input
+          textarea.addEventListener('input', () => {
+            saveToStorage('reflection', textarea.id, textarea.value);
+          });
+          
+          // Add clear button
+          const clearBtn = document.createElement('button');
+          clearBtn.className = 'btn-clear-small';
+          clearBtn.textContent = 'Clear Saved';
+          clearBtn.type = 'button';
+          clearBtn.onclick = () => {
+            if (confirm('Clear your saved response?')) {
+              textarea.value = '';
+              clearStorage('reflection', textarea.id);
+            }
+          };
+          textarea.parentNode.insertBefore(clearBtn, textarea.nextSibling);
+        });
+        
+        // Wait a bit for DOM to be ready
+        setTimeout(() => {
+          const editorElements = document.querySelectorAll('.code-editor-small');
+          editorElements.forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            
+            // Load saved code
+            const savedCode = loadFromStorage('code', editorId);
+            const initialCode = savedCode || textarea.value;
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            
+            // Save code on change
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+        }, 100);
+      });
+    </script>
+  </body>
+  </html>
+
+

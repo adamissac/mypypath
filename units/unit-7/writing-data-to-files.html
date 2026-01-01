@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 7 • Writing Data to Files • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit">
+    <div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 7 • Files & Errors</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-7/introduction-file-handling.html">1. Introduction to File Handling</a></li>
+                <li><a class="" href="/units/unit-7/opening-closing-files.html">2. Opening and Closing Files</a></li>
+                <li><a class="" href="/units/unit-7/reading-data-from-files.html">3. Reading Data from Files</a></li>
+                <li><a class="active" href="/units/unit-7/writing-data-to-files.html">4. Writing Data to Files</a></li>
+                <li><a class="" href="/units/unit-7/working-with-file-paths.html">5. Working with File Paths</a></li>
+                <li><a class="" href="/units/unit-7/with-statement-file-operations.html">6. Using the with Statement for File Operations</a></li>
+                <li><a class="" href="/units/unit-7/understanding-errors-exceptions.html">7. Understanding Errors and Exceptions</a></li>
+                <li><a class="" href="/units/unit-7/try-except-blocks.html">8. The try and except Blocks</a></li>
+                <li><a class="" href="/units/unit-7/raising-customizing-exceptions.html">9. Raising and Customizing Exceptions</a></li>
+                <li><a class="" href="/units/unit-7/file-error-handling-real-projects.html">10. File and Error Handling in Real Projects</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-7.html">Unit 7</a>
+              <span class="separator">/</span>
+              <span class="current">Writing Data to Files</span>
+            </nav>
+            <div class="eyebrow">Unit 7 • Lesson 4</div>
+            <h1 class="lesson-title">Writing Data to Files</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Python makes it simple to store data by writing to files. You'll use <code>write()</code> and <code>writelines()</code> to output information and learn how overwriting, appending, and formatting affect stored results, creating persistent data storage solutions.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-7/working-with-file-paths.html">Next: Working with File Paths</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Writing to files:</strong> Use <code>write()</code> to save data to files.</li>
+                  <li><strong>Writing multiple lines:</strong> Use <code>writelines()</code> to write lists of strings.</li>
+                  <li><strong>Write vs append:</strong> Understand the difference between overwriting and adding to files.</li>
+                  <li><strong>Formatting output:</strong> Learn how to format data before writing it to files.</li>
+                  <li><strong>Common patterns:</strong> Master the most common ways to save data.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>The <code>write()</code> Method</h2>
+                <p>The <code>write()</code> method writes a string to a file. You can only write to files opened in write ('w') or append ('a') mode.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Basic Writing</div>
+                  <pre class="code"><code>file = open("output.txt", "w")
+file.write("Hello, World!")
+file.close()</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Important:</strong> <code>write()</code> only accepts strings. If you want to write numbers or other types, convert them to strings first using <code>str()</code>.</p>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Writing Different Data Types</div>
+                  <pre class="code"><code>file = open("data.txt", "w")
+
+file.write("Text: Hello\n")
+file.write("Number: " + str(42) + "\n")
+file.write("Float: " + str(3.14) + "\n")
+
+file.close()</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Write Mode vs Append Mode</h2>
+                <p>Understanding the difference between 'w' and 'a' modes is crucial for file writing:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Write Mode ('w')</h4>
+                    <p><strong>Overwrites</strong> the entire file. If the file exists, all its content is deleted first.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>file = open("log.txt", "w")
+file.write("New content")
+file.close()
+# File now contains ONLY "New content"</code></pre>
+                  </div>
+
+                  <div class="feature-card">
+                    <h4>Append Mode ('a')</h4>
+                    <p><strong>Adds</strong> to the end of the file. Existing content stays intact.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>file = open("log.txt", "a")
+file.write("More content")
+file.close()
+# File now contains old content + "More content"</code></pre>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <h4>When to Use Each</h4>
+                  <ul>
+                    <li><strong>Use 'w':</strong> When you want to create a new file or replace all existing content</li>
+                    <li><strong>Use 'a':</strong> When you want to add to an existing file (like logging or keeping a history)</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Writing Multiple Lines</h2>
+                <p>To write multiple lines, you need to include newline characters (<code>\n</code>) in your strings.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Writing Multiple Lines</div>
+                  <pre class="code"><code>file = open("lines.txt", "w")
+
+file.write("Line 1\n")
+file.write("Line 2\n")
+file.write("Line 3\n")
+
+file.close()</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Remember the Newline</h4>
+                  <p>Without <code>\n</code>, everything would be on one line. Always add <code>\n</code> at the end of each line you write.</p>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Using f-strings for Formatting</div>
+                  <pre class="code"><code>name = "Alice"
+score = 95
+
+file = open("scores.txt", "w")
+file.write(f"{name}: {score}\n")
+file.close()</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>The <code>writelines()</code> Method</h2>
+                <p>The <code>writelines()</code> method writes a list of strings to a file. It's useful when you have multiple lines stored in a list.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Using writelines()</div>
+                  <pre class="code"><code>lines = ["Line 1\n", "Line 2\n", "Line 3\n"]
+
+file = open("output.txt", "w")
+file.writelines(lines)
+file.close()</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Important:</strong> <code>writelines()</code> doesn't add newlines automatically. You must include <code>\n</code> in each string if you want separate lines.</p>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Writing a List of Data</div>
+                  <pre class="code"><code>names = ["Alice", "Bob", "Charlie"]
+
+file = open("names.txt", "w")
+for name in names:
+    file.write(name + "\n")
+file.close()
+
+# Or using writelines:
+lines = [name + "\n" for name in names]
+file = open("names.txt", "w")
+file.writelines(lines)
+file.close()</code></pre>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: Writing to Files</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try writing different types of data to a file:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Simulate writing to a file\ncontent = []\ncontent.append(&quot;Name: Alice\\n&quot;)\ncontent.append(&quot;Age: 25\\n&quot;)\ncontent.append(&quot;Score: 95\\n&quot;)\nresult = &quot;&quot;.join(content)\nprint(result)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Simulate writing to a file
+content = []
+content.append("Name: Alice\n")
+content.append("Age: 25\n")
+content.append("Score: 95\n")
+result = "".join(content)
+print(result)</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You simulated writing multiple lines to a file. In a real program, you would use <code>file.write()</code> for each line.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Common Writing Patterns</h2>
+                <p>Here are the most common patterns for writing to files:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Writing Formatted Data</h4>
+                      <p>Use f-strings or string formatting to create readable output.</p>
+                      <pre class="code" style="margin-top: 8px;"><code>with open("report.txt", "w") as file:
+    file.write(f"Total: {total}\n")
+    file.write(f"Average: {average:.2f}\n")
+    file.write(f"Count: {count}\n")</code></pre>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Writing from a Loop</h4>
+                      <p>Process data and write results line by line.</p>
+                      <pre class="code" style="margin-top: 8px;"><code>with open("output.txt", "w") as file:
+    for item in data:
+        file.write(f"{item}\n")</code></pre>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Appending Logs</h4>
+                      <p>Use append mode to keep a history of events.</p>
+                      <pre class="code" style="margin-top: 8px;"><code>from datetime import datetime
+with open("log.txt", "a") as file:
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    file.write(f"{timestamp}: {event}\n")</code></pre>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Writing Structured Data</h4>
+                      <p>Write data in a structured format (like CSV).</p>
+                      <pre class="code" style="margin-top: 8px;"><code>students = [("Alice", 95), ("Bob", 87)]
+with open("grades.txt", "w") as file:
+    file.write("Name,Score\n")
+    for name, score in students:
+        file.write(f"{name},{score}\n")</code></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Important Notes About Writing</h2>
+                <p>Keep these important points in mind when writing to files:</p>
+
+                <div class="info-card">
+                  <h4>Writing Considerations</h4>
+                  <ul>
+                    <li><strong>Newlines:</strong> Always add <code>\n</code> at the end of each line you write</li>
+                    <li><strong>String conversion:</strong> <code>write()</code> only accepts strings - convert numbers using <code>str()</code></li>
+                    <li><strong>Mode matters:</strong> 'w' overwrites, 'a' appends - choose carefully!</li>
+                    <li><strong>Buffering:</strong> Data might not be written immediately - closing the file ensures it's saved</li>
+                    <li><strong>File existence:</strong> 'w' and 'a' modes create the file if it doesn't exist</li>
+                  </ul>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Example: Writing Different Data Types</div>
+                  <pre class="code"><code>name = "Alice"
+age = 25
+score = 95.5
+is_active = True
+
+with open("data.txt", "w") as file:
+    file.write(f"Name: {name}\n")
+    file.write(f"Age: {str(age)}\n")  # Convert to string
+    file.write(f"Score: {str(score)}\n")
+    file.write(f"Active: {str(is_active)}\n")
+
+# Or use f-strings (they convert automatically)
+with open("data2.txt", "w") as file:
+    file.write(f"Name: {name}\n")
+    file.write(f"Age: {age}\n")  # f-string converts automatically
+    file.write(f"Score: {score}\n")
+    file.write(f"Active: {is_active}\n")</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong><code>write()</code>:</strong> Writes a string to a file - remember to add <code>\n</code> for new lines</li>
+                  <li><strong><code>writelines()</code>:</strong> Writes a list of strings to a file</li>
+                  <li><strong>Write mode ('w'):</strong> Overwrites existing content - use to create new files</li>
+                  <li><strong>Append mode ('a'):</strong> Adds to end of file - use for logs and history</li>
+                  <li><strong>Formatting:</strong> Use f-strings to format data before writing</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>Always close files after writing to ensure your data is saved! And don't forget the <code>\n</code> for newlines.</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: Write vs Append</h3>
+                  <p>When would you use write mode vs append mode? Give a real-world example for each.</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Writing Data</h3>
+                  <p>Write pseudocode for saving a list of student names and scores to a file, with each student on a separate line.</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-7/reading-data-from-files.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-7/working-with-file-paths.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

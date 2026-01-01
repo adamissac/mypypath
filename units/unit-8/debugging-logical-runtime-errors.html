@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 8 • Debugging Logical and Runtime Errors • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 8 • Testing & Debugging</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-8/what-is-debugging.html">1. What Is Debugging and Why It Matters</a></li>
+                <li><a class="" href="/units/unit-8/common-types-errors.html">2. Common Types of Errors</a></li>
+                <li><a class="" href="/units/unit-8/print-statements-debugging.html">3. Using Print Statements for Debugging</a></li>
+                <li><a class="" href="/units/unit-8/breakpoints-debuggers.html">4. Using Breakpoints and Debuggers</a></li>
+                <li><a class="" href="/units/unit-8/understanding-tracebacks.html">5. Understanding Tracebacks and Error Messages</a></li>
+                <li><a class="" href="/units/unit-8/writing-running-tests.html">6. Writing and Running Tests</a></li>
+                <li><a class="" href="/units/unit-8/introduction-unittest.html">7. Introduction to the unittest Module</a></li>
+                <li><a class="" href="/units/unit-8/test-driven-development.html">8. Test-Driven Development (TDD)</a></li>
+                <li><a class="active" href="/units/unit-8/debugging-logical-runtime-errors.html">9. Debugging Logical and Runtime Errors</a></li>
+                <li><a class="" href="/units/unit-8/maintaining-code-quality.html">10. Maintaining Code Quality Through Continuous Testing</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-8.html">Unit 8</a>
+              <span class="separator">/</span>
+              <span class="current">Debugging Logical and Runtime Errors</span>
+            </nav>
+            <div class="eyebrow">Unit 8 • Lesson 9</div>
+            <h1 class="lesson-title">Debugging Logical and Runtime Errors</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Not all bugs cause crashes — some just produce wrong results. You'll learn how to trace logic flaws, check assumptions, and systematically test different inputs to isolate the issue, developing advanced debugging skills for complex problems.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">25–30 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-8/maintaining-code-quality.html">Next: Maintaining Code Quality Through Continuous Testing</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Logical errors:</strong> Bugs where code runs but produces wrong results.</li>
+                  <li><strong>Runtime errors:</strong> Errors that occur during execution.</li>
+                  <li><strong>Debugging strategies:</strong> Techniques for finding these errors.</li>
+                  <li><strong>Tracing logic:</strong> Following code execution step by step.</li>
+                  <li><strong>Testing approaches:</strong> Using tests to find logical errors.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>Logical vs Runtime Errors</h2>
+                <p>Understanding the difference helps you debug more effectively:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Runtime Errors</h4>
+                    <p>Code crashes with an error message. Python tells you exactly what went wrong and where.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Logical Errors</h4>
+                    <p>Code runs without crashing, but produces incorrect results. These are harder to find.</p>
+                  </div>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Example: Logical Error</div>
+                  <pre class="code"><code># This code runs but gives wrong answer
+def calculate_discount(price, discount_percent):
+    # Bug: should multiply by discount_percent / 100
+    return price * discount_percent  # Wrong!
+
+# Test case
+result = calculate_discount(100, 20)  # Should be 20, but returns 2000!
+print(result)  # Output: 2000 (wrong!)</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Debugging Logical Errors</h2>
+                <p>Logical errors require systematic debugging:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Identify Expected vs Actual</h4>
+                      <p>Know what the correct result should be. Compare it to what you're getting.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Trace Through Code</h4>
+                      <p>Follow the code step-by-step with your test input. See where logic goes wrong.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Check Assumptions</h4>
+                      <p>Verify your assumptions about how the code works. Are they correct?</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Test Edge Cases</h4>
+                      <p>Try different inputs: empty lists, zero values, negative numbers, etc.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                      <h4>Use Print/Debugger</h4>
+                      <p>Add print statements or use a debugger to see variable values at each step.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Common Logical Error Patterns</h2>
+                <p>Watch out for these common mistakes:</p>
+
+                <div class="uses-grid">
+                  <div class="use-item">
+                    <h4>Off-by-One Errors</h4>
+                    <p>Using wrong index or loop range</p>
+                  </div>
+                  <div class="use-item">
+                    <h4>Wrong Operator</h4>
+                    <p>Using + instead of *, or == instead of !=</p>
+                  </div>
+                  <div class="use-item">
+                    <h4>Missing Edge Cases</h4>
+                    <p>Not handling empty lists, zero, or None</p>
+                  </div>
+                  <div class="use-item">
+                    <h4>Wrong Order</h4>
+                    <p>Operations in wrong sequence</p>
+                  </div>
+                  <div class="use-item">
+                    <h4>Type Confusion</h4>
+                    <p>Treating strings as numbers or vice versa</p>
+                  </div>
+                  <div class="use-item">
+                    <h4>Incorrect Logic</h4>
+                    <p>Wrong conditional logic or algorithm</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>Logical errors:</strong> Code runs but produces wrong results</li>
+                  <li><strong>Runtime errors:</strong> Code crashes with error messages</li>
+                  <li><strong>Debugging:</strong> Trace through code, check assumptions, test edge cases</li>
+                  <li><strong>Common patterns:</strong> Off-by-one, wrong operators, missing edge cases</li>
+                  <li><strong>Tools:</strong> Print statements and debuggers help find logical errors</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>Logical errors are trickier than runtime errors because they don't announce themselves. Systematic debugging—tracing through code, testing edge cases, and checking assumptions—is key to finding them!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: Error Types</h3>
+                  <p>What's the difference between logical errors and runtime errors? Which is harder to find?</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Debugging Strategies</h3>
+                  <p>What strategies help you find logical errors? How do you trace through code?</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-8/test-driven-development.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-8/maintaining-code-quality.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

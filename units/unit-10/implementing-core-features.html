@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 10 • Implementing Core Features • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 10 • Final Projects</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-10/project-planning-brainstorming.html">1. Project Planning and Brainstorming</a></li>
+                <li><a class="" href="/units/unit-10/writing-project-proposal.html">2. Writing a Project Proposal</a></li>
+                <li><a class="" href="/units/unit-10/structuring-python-project.html">3. Structuring a Python Project</a></li>
+                <li><a class="active" href="/units/unit-10/implementing-core-features.html">4. Implementing Core Features</a></li>
+                <li><a class="" href="/units/unit-10/adding-user-interaction.html">5. Adding User Interaction</a></li>
+                <li><a class="" href="/units/unit-10/error-handling-testing-code.html">6. Error Handling and Testing Your Code</a></li>
+                <li><a class="" href="/units/unit-10/polishing-visuals-output-formatting.html">7. Polishing with Visuals or Output Formatting</a></li>
+                <li><a class="" href="/units/unit-10/writing-documentation-comments.html">8. Writing Documentation and Comments</a></li>
+                <li><a class="" href="/units/unit-10/presenting-your-project.html">9. Presenting Your Project</a></li>
+                <li><a class="" href="/units/unit-10/reflection-next-steps.html">10. Reflection and Next Steps</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-10.html">Unit 10</a>
+              <span class="separator">/</span>
+              <span class="current">Implementing Core Features</span>
+            </nav>
+            <div class="eyebrow">Unit 10 • Lesson 4</div>
+            <h1 class="lesson-title">Implementing Core Features</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>You'll begin coding the main logic of your project — whether it's a game, data tool, or automation script. This subtopic focuses on using loops, conditionals, and functions effectively to build strong foundations, creating the heart of your application.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">40–50 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-10/adding-user-interaction.html">Next: Adding User Interaction</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Core features:</strong> Essential functionality your project needs.</li>
+                  <li><strong>Implementation strategy:</strong> How to build features step by step.</li>
+                  <li><strong>Using functions:</strong> Breaking code into manageable pieces.</li>
+                  <li><strong>Testing as you go:</strong> Verifying features work before moving on.</li>
+                  <li><strong>Building incrementally:</strong> Adding features one at a time.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>What Are Core Features?</h2>
+                <p><strong>Core features</strong> are the essential functions that make your project work. These are the must-have features from your proposal—the ones that define what your project does.</p>
+
+                <div class="info-card">
+                  <h4>Core vs Nice-to-Have</h4>
+                  <ul>
+                    <li><strong>Core features:</strong> Essential functionality. Project doesn't work without them.</li>
+                    <li><strong>Nice-to-have:</strong> Enhancements that improve the project but aren't essential.</li>
+                  </ul>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Example: Task Manager Core Features</div>
+                  <pre class="code"><code># Core Features (Must Have):
+1. Add task
+2. View tasks
+3. Mark task complete
+4. Save to file
+
+# Nice-to-Have (Later):
+- Task categories
+- Due dates
+- Priority levels
+- Search functionality</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Implementation Strategy</h2>
+                <p>Build features systematically:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Start with Simplest Feature</h4>
+                      <p>Begin with the easiest core feature. Get something working first.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Test Each Feature</h4>
+                      <p>Verify each feature works before moving to the next.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Build Incrementally</h4>
+                      <p>Add one feature at a time. Don't try to build everything at once.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Refactor as Needed</h4>
+                      <p>Improve code structure as you add features.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Using Functions Effectively</h2>
+                <p>Break your code into functions:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Example: Function-Based Implementation</div>
+                  <pre class="code"><code># Each core feature becomes a function
+def add_task(tasks, task_name):
+    """Add a new task to the list."""
+    tasks.append({"name": task_name, "completed": False})
+    return tasks
+
+def view_tasks(tasks):
+    """Display all tasks."""
+    for i, task in enumerate(tasks, 1):
+        status = "✓" if task["completed"] else " "
+        print(f"{i}. [{status}] {task['name']}")
+
+def mark_complete(tasks, task_number):
+    """Mark a task as complete."""
+    if 1 <= task_number <= len(tasks):
+        tasks[task_number - 1]["completed"] = True
+    return tasks</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>Function Benefits</h4>
+                  <p>Functions make code reusable, testable, and easier to understand. Each function should do one thing well!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>Core features:</strong> Essential functionality your project needs</li>
+                  <li><strong>Strategy:</strong> Start simple, test each feature, build incrementally</li>
+                  <li><strong>Functions:</strong> Break code into manageable, reusable pieces</li>
+                  <li><strong>Testing:</strong> Verify features work before moving on</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>Focus on core features first. Get them working well before adding enhancements. A project with working core features is better than one with many broken features!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: Core Features</h3>
+                  <p>What are core features and why should you implement them first?</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Implementation Strategy</h3>
+                  <p>What is a good strategy for implementing core features? How do functions help?</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-10/structuring-python-project.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-10/adding-user-interaction.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

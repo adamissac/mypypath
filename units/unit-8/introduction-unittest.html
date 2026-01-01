@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 8 • Introduction to the unittest Module • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 8 • Testing & Debugging</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-8/what-is-debugging.html">1. What Is Debugging and Why It Matters</a></li>
+                <li><a class="" href="/units/unit-8/common-types-errors.html">2. Common Types of Errors</a></li>
+                <li><a class="" href="/units/unit-8/print-statements-debugging.html">3. Using Print Statements for Debugging</a></li>
+                <li><a class="" href="/units/unit-8/breakpoints-debuggers.html">4. Using Breakpoints and Debuggers</a></li>
+                <li><a class="" href="/units/unit-8/understanding-tracebacks.html">5. Understanding Tracebacks and Error Messages</a></li>
+                <li><a class="" href="/units/unit-8/writing-running-tests.html">6. Writing and Running Tests</a></li>
+                <li><a class="active" href="/units/unit-8/introduction-unittest.html">7. Introduction to the unittest Module</a></li>
+                <li><a class="" href="/units/unit-8/test-driven-development.html">8. Test-Driven Development (TDD)</a></li>
+                <li><a class="" href="/units/unit-8/debugging-logical-runtime-errors.html">9. Debugging Logical and Runtime Errors</a></li>
+                <li><a class="" href="/units/unit-8/maintaining-code-quality.html">10. Maintaining Code Quality Through Continuous Testing</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-8.html">Unit 8</a>
+              <span class="separator">/</span>
+              <span class="current">Introduction to the unittest Module</span>
+            </nav>
+            <div class="eyebrow">Unit 8 • Lesson 7</div>
+            <h1 class="lesson-title">Introduction to the unittest Module</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>The <code>unittest</code> module is Python's built-in framework for systematic testing. You'll write and run test cases, understand setup and teardown methods, and interpret results to improve code reliability, following industry-standard testing practices.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">25–30 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-8/test-driven-development.html">Next: Test-Driven Development (TDD)</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>The unittest module:</strong> Python's built-in testing framework.</li>
+                  <li><strong>Test classes:</strong> Organizing tests using classes.</li>
+                  <li><strong>Test methods:</strong> Writing individual test cases.</li>
+                  <li><strong>Assertion methods:</strong> Different ways to check results.</li>
+                  <li><strong>Running unittest:</strong> Executing tests with the unittest framework.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>Introduction to unittest</h2>
+                <p>The <code>unittest</code> module is Python's built-in testing framework. It provides a structured way to write and organize tests, making it easier to test complex programs.</p>
+
+                <div class="info-card">
+                  <h4>Why Use unittest?</h4>
+                  <ul>
+                    <li>Organized test structure</li>
+                    <li>Built-in assertion methods</li>
+                    <li>Test discovery (finds tests automatically)</li>
+                    <li>Setup and teardown methods</li>
+                    <li>Detailed test reports</li>
+                  </ul>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Basic unittest Example</div>
+                  <pre class="code"><code>import unittest
+
+def add(a, b):
+    return a + b
+
+class TestAdd(unittest.TestCase):
+    def test_add_positive(self):
+        self.assertEqual(add(2, 3), 5)
+    
+    def test_add_negative(self):
+        self.assertEqual(add(-1, -2), -3)
+    
+    def test_add_zero(self):
+        self.assertEqual(add(0, 5), 5)
+
+if __name__ == '__main__':
+    unittest.main()</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Test Classes and Methods</h2>
+                <p>In unittest, tests are organized into classes that inherit from <code>unittest.TestCase</code>:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Create Test Class</h4>
+                      <p>Inherit from <code>unittest.TestCase</code></p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Write Test Methods</h4>
+                      <p>Methods starting with <code>test_</code> are automatically run</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Use Assertion Methods</h4>
+                      <p>Use <code>self.assertEqual()</code>, <code>self.assertTrue()</code>, etc.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Run Tests</h4>
+                      <p>Call <code>unittest.main()</code> or run with <code>python -m unittest</code></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Common Assertion Methods</h2>
+                <p>unittest provides many assertion methods:</p>
+
+                <div class="info-card">
+                  <h4>Assertion Methods</h4>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Method</th>
+                        <th>Checks</th>
+                        <th>Example</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code>assertEqual(a, b)</code></td>
+                        <td>a == b</td>
+                        <td><code>self.assertEqual(2+2, 4)</code></td>
+                      </tr>
+                      <tr>
+                        <td><code>assertTrue(x)</code></td>
+                        <td>x is True</td>
+                        <td><code>self.assertTrue(len([1,2]) > 0)</code></td>
+                      </tr>
+                      <tr>
+                        <td><code>assertFalse(x)</code></td>
+                        <td>x is False</td>
+                        <td><code>self.assertFalse(1 > 2)</code></td>
+                      </tr>
+                      <tr>
+                        <td><code>assertIn(item, container)</code></td>
+                        <td>item in container</td>
+                        <td><code>self.assertIn(3, [1,2,3])</code></td>
+                      </tr>
+                      <tr>
+                        <td><code>assertRaises(Exception)</code></td>
+                        <td>Exception is raised</td>
+                        <td><code>self.assertRaises(ValueError, int, "hello")</code></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>unittest module:</strong> Python's built-in testing framework</li>
+                  <li><strong>Test classes:</strong> Organize tests using classes</li>
+                  <li><strong>Test methods:</strong> Methods starting with <code>test_</code></li>
+                  <li><strong>Assertion methods:</strong> assertEqual, assertTrue, assertIn, etc.</li>
+                  <li><strong>Running tests:</strong> Use unittest.main() or command line</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>unittest provides a professional structure for testing. As your projects grow, organized tests become essential. Start with simple tests and build up to more complex test suites!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: unittest Module</h3>
+                  <p>What is the unittest module and how does it help organize tests?</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Test Structure</h3>
+                  <p>How do you structure tests using unittest? What are test classes and test methods?</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-8/writing-running-tests.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-8/test-driven-development.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

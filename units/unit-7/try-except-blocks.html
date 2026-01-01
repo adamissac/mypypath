@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 7 • The try and except Blocks • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit">
+    <div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 7 • Files & Errors</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-7/introduction-file-handling.html">1. Introduction to File Handling</a></li>
+                <li><a class="" href="/units/unit-7/opening-closing-files.html">2. Opening and Closing Files</a></li>
+                <li><a class="" href="/units/unit-7/reading-data-from-files.html">3. Reading Data from Files</a></li>
+                <li><a class="" href="/units/unit-7/writing-data-to-files.html">4. Writing Data to Files</a></li>
+                <li><a class="" href="/units/unit-7/working-with-file-paths.html">5. Working with File Paths</a></li>
+                <li><a class="" href="/units/unit-7/with-statement-file-operations.html">6. Using the with Statement for File Operations</a></li>
+                <li><a class="" href="/units/unit-7/understanding-errors-exceptions.html">7. Understanding Errors and Exceptions</a></li>
+                <li><a class="active" href="/units/unit-7/try-except-blocks.html">8. The try and except Blocks</a></li>
+                <li><a class="" href="/units/unit-7/raising-customizing-exceptions.html">9. Raising and Customizing Exceptions</a></li>
+                <li><a class="" href="/units/unit-7/file-error-handling-real-projects.html">10. File and Error Handling in Real Projects</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-7.html">Unit 7</a>
+              <span class="separator">/</span>
+              <span class="current">The try and except Blocks</span>
+            </nav>
+            <div class="eyebrow">Unit 7 • Lesson 8</div>
+            <h1 class="lesson-title">The try and except Blocks</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>You can use <code>try</code> and <code>except</code> blocks to prevent crashes and respond to problems gracefully. This section shows how to catch specific exceptions, print helpful error messages, and continue program execution safely, building fault-tolerant applications.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">25–30 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-7/raising-customizing-exceptions.html">Next: Raising and Customizing Exceptions</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>try and except:</strong> Use these blocks to catch and handle exceptions.</li>
+                  <li><strong>Handling specific exceptions:</strong> Catch only the errors you expect.</li>
+                  <li><strong>Error messages:</strong> Print helpful messages when errors occur.</li>
+                  <li><strong>else and finally:</strong> Use optional blocks for additional control.</li>
+                  <li><strong>Best practices:</strong> Write robust code that handles errors gracefully.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>The Problem: Programs Crashing</h2>
+                <p>When an exception occurs, your program stops running. This is called "crashing." But what if you want your program to continue even when something goes wrong?</p>
+
+                <div class="code-example">
+                  <div class="code-header">Problem: Program Crashes on Error</div>
+                  <pre class="code"><code>file = open("data.txt", "r")
+content = file.read()
+file.close()
+# If file doesn't exist, program crashes here!
+print("Program continues...")  # Never reached</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>The issue:</strong> If the file doesn't exist, Python raises a FileNotFoundError and stops. The rest of your program never runs.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Solution: <code>try</code> and <code>except</code></h2>
+                <p>The <code>try</code> and <code>except</code> blocks let you catch exceptions and handle them gracefully, so your program can continue running.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Basic Syntax</div>
+                  <pre class="code"><code>try:
+    # Code that might cause an error
+    file = open("data.txt", "r")
+    content = file.read()
+    file.close()
+except FileNotFoundError:
+    # What to do if the error occurs
+    print("File not found!")
+    
+print("Program continues...")  # This runs even if error occurred</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How It Works</h4>
+                  <ol>
+                    <li>Python tries to execute the code in the <code>try</code> block</li>
+                    <li>If an exception occurs, Python jumps to the <code>except</code> block</li>
+                    <li>After handling the error, the program continues normally</li>
+                  </ol>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Catching Specific Exceptions</h2>
+                <p>You can catch specific types of exceptions by naming them after <code>except</code>:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Catching FileNotFoundError</div>
+                  <pre class="code"><code>try:
+    file = open("data.txt", "r")
+    content = file.read()
+    file.close()
+except FileNotFoundError:
+    print("The file doesn't exist!")
+except PermissionError:
+    print("You don't have permission to read this file!")</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Catching Multiple Exceptions</div>
+                  <pre class="code"><code>try:
+    number = int(input("Enter a number: "))
+    result = 10 / number
+except ValueError:
+    print("That's not a valid number!")
+except ZeroDivisionError:
+    print("You can't divide by zero!")</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Catching All Exceptions</h2>
+                <p>You can catch any exception using <code>except</code> without specifying a type, but this is generally not recommended:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Catching Any Exception</div>
+                  <pre class="code"><code>try:
+    file = open("data.txt", "r")
+    content = file.read()
+    file.close()
+except:
+    print("Something went wrong!")
+    # This catches ALL exceptions - use carefully!</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>Best Practice</h4>
+                  <p>Always catch specific exceptions when possible. Catching all exceptions can hide bugs and make debugging harder.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Getting Error Information</h2>
+                <p>You can access the error message using <code>as</code>:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Accessing Error Details</div>
+                  <pre class="code"><code>try:
+    file = open("data.txt", "r")
+    content = file.read()
+    file.close()
+except FileNotFoundError as e:
+    print(f"Error: {e}")
+    # Prints: Error: [Errno 2] No such file or directory</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>The <code>else</code> Block</h2>
+                <p>The <code>else</code> block runs only if no exception occurred:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Using else</div>
+                  <pre class="code"><code>try:
+    file = open("data.txt", "r")
+    content = file.read()
+    file.close()
+except FileNotFoundError:
+    print("File not found!")
+else:
+    print("File read successfully!")
+    # This only runs if no exception occurred</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>The <code>finally</code> Block</h2>
+                <p>The <code>finally</code> block always runs, whether an exception occurred or not. It's useful for cleanup:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Using finally</div>
+                  <pre class="code"><code>try:
+    file = open("data.txt", "r")
+    content = file.read()
+except FileNotFoundError:
+    print("File not found!")
+finally:
+    print("Cleanup: This always runs")
+    # Useful for closing files, cleaning up resources, etc.</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Note</h4>
+                  <p>With the <code>with</code> statement, you don't need <code>finally</code> for file closing, but it's still useful for other cleanup tasks.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Combining with File Operations</h2>
+                <p>Here's how to use <code>try</code> and <code>except</code> with file operations:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Safe File Reading</div>
+                  <pre class="code"><code>try:
+    with open("data.txt", "r") as file:
+        content = file.read()
+        print(content)
+except FileNotFoundError:
+    print("The file 'data.txt' was not found.")
+except PermissionError:
+    print("You don't have permission to read this file.")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Safe File Writing</div>
+                  <pre class="code"><code>def safe_write_file(filename, data):
+    """Safely write data to a file"""
+    try:
+        with open(filename, "w") as file:
+            file.write(data)
+        print(f"Successfully wrote to {filename}")
+        return True
+    except PermissionError:
+        print(f"Permission denied: Cannot write to {filename}")
+        return False
+    except OSError as e:
+        print(f"OS error: {e}")
+        return False
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return False
+
+# Usage
+success = safe_write_file("output.txt", "Hello, World!")
+if success:
+    print("File operation completed successfully")</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Complete File Operation with All Blocks</div>
+                  <pre class="code"><code>def read_file_complete(filename):
+    """Demonstrates try, except, else, and finally"""
+    file = None
+    try:
+        file = open(filename, "r")
+        content = file.read()
+    except FileNotFoundError:
+        print(f"Error: File '{filename}' not found")
+        return None
+    except PermissionError:
+        print(f"Error: Permission denied for '{filename}'")
+        return None
+    else:
+        print("File read successfully!")
+        return content
+    finally:
+        if file:
+            file.close()
+        print("Cleanup: File handle closed")
+
+# Note: Using 'with' statement is better, but this shows finally</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>try/except/else/finally Flow</h4>
+                  <p>Understanding the execution flow:</p>
+                  <ol>
+                    <li><strong>try:</strong> Code that might raise an exception</li>
+                    <li><strong>except:</strong> Runs if an exception occurs</li>
+                    <li><strong>else:</strong> Runs only if NO exception occurred</li>
+                    <li><strong>finally:</strong> Always runs, regardless of exceptions</li>
+                  </ol>
+                  <p style="margin-top: 8px;"><strong>Remember:</strong> With the <code>with</code> statement, you rarely need <code>finally</code> for file closing, but it's useful for other cleanup tasks.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Nested try/except Blocks</h2>
+                <p>You can nest try/except blocks for more granular error handling:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Nested Exception Handling</div>
+                  <pre class="code"><code>def process_multiple_files(filenames):
+    """Process multiple files with individual error handling"""
+    results = []
+    
+    for filename in filenames:
+        try:
+            with open(filename, "r") as file:
+                content = file.read()
+                # Process content
+                processed = content.upper()
+                results.append(processed)
+        except FileNotFoundError:
+            print(f"Warning: {filename} not found, skipping...")
+            continue  # Skip to next file
+        except PermissionError:
+            print(f"Warning: Cannot read {filename}, skipping...")
+            continue
+        except Exception as e:
+            print(f"Unexpected error with {filename}: {e}")
+            continue
+    
+    return results
+
+# Usage
+files = ["file1.txt", "file2.txt", "file3.txt"]
+results = process_multiple_files(files)
+print(f"Processed {len(results)} files successfully")</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>Error Handling Strategy</h4>
+                  <p>When processing multiple items (like files), handle errors individually so one failure doesn't stop the entire process. This makes your program more resilient!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: Handling Exceptions</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try using try and except to handle errors gracefully:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'try:\n    number = int(&quot;abc&quot;)\n    print(f&quot;Number: {number}&quot;)\nexcept ValueError:\n    print(&quot;That\\'s not a valid number!&quot;)\n\nprint(&quot;Program continues...&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">try:
+    number = int("abc")
+    print(f"Number: {number}")
+except ValueError:
+    print("That's not a valid number!")
+
+print("Program continues...")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The code tried to convert "abc" to an integer, which caused a ValueError. The except block caught it and printed a message, then the program continued.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>try/except:</strong> Catch and handle exceptions to prevent crashes</li>
+                  <li><strong>Specific exceptions:</strong> Catch only the exceptions you expect</li>
+                  <li><strong>Error messages:</strong> Use <code>as</code> to access error details</li>
+                  <li><strong>else:</strong> Runs only if no exception occurred</li>
+                  <li><strong>finally:</strong> Always runs, useful for cleanup</li>
+                  <li><strong>Best practice:</strong> Combine with <code>with</code> statement for file operations</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>Always handle exceptions that you expect might occur. This makes your programs more robust and user-friendly!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: Why Try/Except?</h3>
+                  <p>Why is it important to use try/except blocks when working with files? Give an example.</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Handling Errors</h3>
+                  <p>Write pseudocode for safely reading a file that might not exist, and printing a helpful message if it doesn't.</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-7/understanding-errors-exceptions.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-7/raising-customizing-exceptions.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

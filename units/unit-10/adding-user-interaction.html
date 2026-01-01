@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 10 • Adding User Interaction • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 10 • Final Projects</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-10/project-planning-brainstorming.html">1. Project Planning and Brainstorming</a></li>
+                <li><a class="" href="/units/unit-10/writing-project-proposal.html">2. Writing a Project Proposal</a></li>
+                <li><a class="" href="/units/unit-10/structuring-python-project.html">3. Structuring a Python Project</a></li>
+                <li><a class="" href="/units/unit-10/implementing-core-features.html">4. Implementing Core Features</a></li>
+                <li><a class="active" href="/units/unit-10/adding-user-interaction.html">5. Adding User Interaction</a></li>
+                <li><a class="" href="/units/unit-10/error-handling-testing-code.html">6. Error Handling and Testing Your Code</a></li>
+                <li><a class="" href="/units/unit-10/polishing-visuals-output-formatting.html">7. Polishing with Visuals or Output Formatting</a></li>
+                <li><a class="" href="/units/unit-10/writing-documentation-comments.html">8. Writing Documentation and Comments</a></li>
+                <li><a class="" href="/units/unit-10/presenting-your-project.html">9. Presenting Your Project</a></li>
+                <li><a class="" href="/units/unit-10/reflection-next-steps.html">10. Reflection and Next Steps</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-10.html">Unit 10</a>
+              <span class="separator">/</span>
+              <span class="current">Adding User Interaction</span>
+            </nav>
+            <div class="eyebrow">Unit 10 • Lesson 5</div>
+            <h1 class="lesson-title">Adding User Interaction</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Programs are more engaging when they interact with users. You'll integrate input and output elements, handle invalid input safely, and provide clear feedback for a smooth user experience, making your project user-friendly and robust.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">25–30 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-10/error-handling-testing-code.html">Next: Error Handling and Testing Your Code</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>User input:</strong> Getting data from users.</li>
+                  <li><strong>Input validation:</strong> Checking that input is correct.</li>
+                  <li><strong>User feedback:</strong> Providing clear messages to users.</li>
+                  <li><strong>Error messages:</strong> Handling invalid input gracefully.</li>
+                  <li><strong>User experience:</strong> Making programs easy to use.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>Why User Interaction Matters</h2>
+                <p>Programs that interact well with users are:</p>
+
+                <div class="feature-grid">
+                  <div class="feature-card">
+                    <h4>More Usable</h4>
+                    <p>Users understand what to do and what's happening</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>More Reliable</h4>
+                    <p>Invalid input is handled gracefully</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>More Professional</h4>
+                    <p>Shows attention to detail and user needs</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>More Enjoyable</h4>
+                    <p>Users have a better experience</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Getting User Input</h2>
+                <p>Use <code>input()</code> to get data from users:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Basic Input Examples</div>
+                  <pre class="code"><code># Simple input
+name = input("Enter your name: ")
+print(f"Hello, {name}!")
+
+# Input with validation
+while True:
+    age = input("Enter your age: ")
+    if age.isdigit():
+        age = int(age)
+        break
+    else:
+        print("Please enter a valid number.")
+
+# Menu-driven interface
+def show_menu():
+    print("1. Add task")
+    print("2. View tasks")
+    print("3. Exit")
+    choice = input("Choose an option: ")
+    return choice</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Input Validation</h2>
+                <p>Always validate user input to prevent errors:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Get Input</h4>
+                      <p>Use <code>input()</code> to get user data</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Check Validity</h4>
+                      <p>Verify input meets requirements</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Handle Invalid Input</h4>
+                      <p>Show error message and ask again</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Use Valid Input</h4>
+                      <p>Proceed with validated data</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Input Validation Example</div>
+                  <pre class="code"><code>def get_task_number(max_tasks):
+    """Get valid task number from user."""
+    while True:
+        try:
+            number = int(input(f"Enter task number (1-{max_tasks}): "))
+            if 1 <= number <= max_tasks:
+                return number
+            else:
+                print(f"Please enter a number between 1 and {max_tasks}.")
+        except ValueError:
+            print("Please enter a valid number.")</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Providing Feedback</h2>
+                <p>Give users clear feedback about what's happening:</p>
+
+                <div class="info-card">
+                  <h4>Feedback Best Practices</h4>
+                  <ul>
+                    <li><strong>Confirm actions:</strong> "Task added successfully!"</li>
+                    <li><strong>Show results:</strong> Display what happened</li>
+                    <li><strong>Error messages:</strong> Explain what went wrong</li>
+                    <li><strong>Instructions:</strong> Tell users what to do next</li>
+                  </ul>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Good Feedback Examples</div>
+                  <pre class="code"><code># Confirmation messages
+print("✓ Task added successfully!")
+print("✓ Task marked as complete!")
+
+# Error messages
+print("✗ Invalid input. Please try again.")
+print("✗ Task not found. Please check the number.")
+
+# Status updates
+print(f"Loading {len(tasks)} tasks...")
+print("Saving your data...")</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>User input:</strong> Get data using <code>input()</code></li>
+                  <li><strong>Validation:</strong> Always check input is valid</li>
+                  <li><strong>Feedback:</strong> Provide clear messages to users</li>
+                  <li><strong>Error handling:</strong> Handle invalid input gracefully</li>
+                  <li><strong>User experience:</strong> Make programs easy to use</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>Good user interaction makes your project professional and user-friendly. Always validate input and provide clear feedback. Your users will thank you!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: User Interaction</h3>
+                  <p>Why is user interaction important? How do you get and validate user input?</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Feedback</h3>
+                  <p>What makes good user feedback? Give examples of effective feedback messages.</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-10/implementing-core-features.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-10/error-handling-testing-code.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 4 • Lists and List Operations - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 4 • Lists and List Operations • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 4 • Data Structures</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-4/introduction-data-structures.html">1. Introduction to Data Structures</a></li>
+                <li><a class="active" href="/units/unit-4/lists-operations.html">2. Lists and List Operations</a></li>
+                <li><a href="/units/unit-4/indexing-slicing-lists.html">3. Indexing and Slicing Lists</a></li>
+                <li><a href="/units/unit-4/nested-lists-2d.html">4. Nested Lists and 2D Structures</a></li>
+                <li><a href="/units/unit-4/tuples-immutable.html">5. Tuples and Immutable Data</a></li>
+                <li><a href="/units/unit-4/dictionaries-key-value.html">6. Dictionaries and Key-Value Pairs</a></li>
+                <li><a href="/units/unit-4/dictionary-methods-iteration.html">7. Dictionary Methods and Iteration</a></li>
+                <li><a href="/units/unit-4/sets-unique-collections.html">8. Sets and Unique Collections</a></li>
+                <li><a href="/units/unit-4/copying-comparing-structures.html">9. Copying and Comparing Data Structures</a></li>
+                <li><a href="/units/unit-4/choosing-right-structure.html">10. Choosing the Right Data Structure</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-4.html">Unit 4</a>
+              <span class="separator">/</span>
+              <span class="current">Lists and List Operations</span>
+            </nav>
+            <div class="eyebrow">Unit 4 • Lesson 2</div>
+            <h1 class="lesson-title">Lists and List Operations</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Lists are ordered, changeable collections of data that can hold multiple items of any type. You'll practice creating lists, accessing elements, slicing, and modifying them with methods like <code>append()</code>, <code>remove()</code>, and <code>sort()</code> to manipulate data efficiently.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-4/introduction-data-structures.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-4/indexing-slicing-lists.html">Next: Indexing and Slicing Lists</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Creating lists:</strong> Learn how to create lists with different types of data.</li>
+                  <li><strong>List methods:</strong> Understand how to add, remove, and modify items in lists.</li>
+                  <li><strong>Common operations:</strong> Discover useful operations like sorting and finding items.</li>
+                  <li><strong>List properties:</strong> Understand that lists are ordered, changeable, and allow duplicates.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Lists are one of the most commonly used data structures in Python. They're perfect for storing collections of items where order matters and you need to be able to add, remove, or change items. Whether you're managing a shopping cart, tracking scores, or storing user data, lists are essential tools for organizing information!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: Creating Lists</h2>
+                <p>A list is created by placing items inside square brackets <code>[]</code>, separated by commas. Lists can contain any type of data - numbers, strings, or even other lists!</p>
+
+                <div class="code-example">
+                  <div class="code-header">Creating Lists</div>
+                  <pre class="code"><code># List of numbers
+numbers = [1, 2, 3, 4, 5]
+
+# List of strings
+fruits = ["apple", "banana", "orange"]
+
+# List with mixed types
+mixed = [1, "hello", 3.14, True]
+
+# Empty list
+empty = []</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Use Square Brackets</h4>
+                      <p>Lists are created using square brackets <code>[]</code>. This tells Python you're creating a list.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Separate with Commas</h4>
+                      <p>Items in a list are separated by commas. You can have as many items as you need.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Any Data Type</h4>
+                      <p>Lists can contain any type of data - numbers, strings, booleans, or even other lists. You can mix different types in the same list!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> Lists are ordered, which means items stay in the order you put them. Lists are also changeable (mutable), which means you can add, remove, or modify items after creating the list. Lists also allow duplicates - you can have the same item appear multiple times!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Creating Lists</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try creating different types of lists:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Create a list of your favorite colors\ncolors = [&quot;blue&quot;, &quot;green&quot;, &quot;red&quot;]\nprint(f&quot;Colors: {colors}&quot;)\n\n# Create a list of numbers\nnumbers = [10, 20, 30, 40]\nprint(f&quot;Numbers: {numbers}&quot;)\n\n# Create an empty list\nempty = []\nprint(f&quot;Empty list: {empty}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Create a list of your favorite colors
+colors = ["blue", "green", "red"]
+print(f"Colors: {colors}")
+
+# Create a list of numbers
+numbers = [10, 20, 30, 40]
+print(f"Numbers: {numbers}")
+
+# Create an empty list
+empty = []
+print(f"Empty list: {empty}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You created lists using square brackets! Notice how each list keeps its items in order - the colors stay in the order you wrote them. Lists are flexible - you can create lists with any items you want, or even start with an empty list and add items later!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Adding Items to Lists</h2>
+                <p>You can add items to a list using the <code>append()</code> method, which adds an item to the end of the list:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Adding Items with append()</div>
+                  <pre class="code"><code>fruits = ["apple", "banana"]
+fruits.append("orange")
+print(fruits)  # Output: ['apple', 'banana', 'orange']</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How append() Works</h4>
+                  <p>The <code>append()</code> method adds a single item to the end of the list. It modifies the list directly - you don't need to assign the result back to the variable. The item is always added at the end, maintaining the order of existing items.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Removing Items from Lists</h2>
+                <p>You can remove items using <code>remove()</code> or <code>pop()</code>:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Removing Items</div>
+                  <pre class="code"><code>fruits = ["apple", "banana", "orange"]
+
+# Remove by value
+fruits.remove("banana")
+print(fruits)  # Output: ['apple', 'orange']
+
+# Remove by index (removes and returns the item)
+last_fruit = fruits.pop()
+print(last_fruit)  # Output: 'orange'
+print(fruits)      # Output: ['apple']</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>remove() Method</h4>
+                      <p><code>remove()</code> removes the first item that matches the value you specify. If the item appears multiple times, only the first occurrence is removed.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>pop() Method</h4>
+                      <p><code>pop()</code> removes and returns the item at a specific index. If you don't specify an index, it removes the last item. This is useful when you need both to remove an item and use its value.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Adding and Removing Items</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try adding and removing items from a list:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'shopping = [&quot;bread&quot;, &quot;milk&quot;]\nprint(f&quot;Initial: {shopping}&quot;)\n\n# Add items\nshopping.append(&quot;eggs&quot;)\nshopping.append(&quot;cheese&quot;)\nprint(f&quot;After adding: {shopping}&quot;)\n\n# Remove an item\nshopping.remove(&quot;milk&quot;)\nprint(f&quot;After removing milk: {shopping}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">shopping = ["bread", "milk"]
+print(f"Initial: {shopping}")
+
+# Add items
+shopping.append("eggs")
+shopping.append("cheese")
+print(f"After adding: {shopping}")
+
+# Remove an item
+shopping.remove("milk")
+print(f"After removing milk: {shopping}")</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You used <code>append()</code> to add items to the end of the list, and <code>remove()</code> to remove a specific item. Notice how the list changes each time - lists are mutable, meaning you can modify them after creating them. The order is maintained - new items are added at the end!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Other Useful List Methods</h2>
+                <p>Python provides many useful methods for working with lists:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Common List Methods</div>
+                  <pre class="code"><code>numbers = [3, 1, 4, 1, 5]
+
+# Sort the list
+numbers.sort()
+print(numbers)  # Output: [1, 1, 3, 4, 5]
+
+# Reverse the list
+numbers.reverse()
+print(numbers)  # Output: [5, 4, 3, 1, 1]
+
+# Count occurrences
+count = numbers.count(1)
+print(count)  # Output: 2
+
+# Find index
+index = numbers.index(3)
+print(index)  # Output: 2</code></pre>
+                </div>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>sort()</h4>
+                    <p>Sorts the list in ascending order. Modifies the list directly.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>reverse()</h4>
+                    <p>Reverses the order of items in the list.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>count()</h4>
+                    <p>Returns how many times a value appears in the list.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>index()</h4>
+                    <p>Returns the index of the first occurrence of a value.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 5: Getting List Information</h2>
+                <p>You can get information about lists using built-in functions:</p>
+
+                <div class="code-example">
+                  <div class="code-header">List Information</div>
+                  <pre class="code"><code>fruits = ["apple", "banana", "orange"]
+
+# Get length
+length = len(fruits)
+print(length)  # Output: 3
+
+# Check if item exists
+has_apple = "apple" in fruits
+print(has_apple)  # Output: True</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> <code>len()</code> tells you how many items are in the list. The <code>in</code> keyword checks if an item exists in the list. These are very useful for checking list contents before performing operations!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Create and Modify a List</h4>
+                  <p>Create a list called <code>grades</code> with three numbers: 85, 90, 78. Add 92 to the list using <code>append()</code>, then remove 78 using <code>remove()</code>. Print the final list.</p>
+                  <p class="hint-text">Use append() to add and remove() to remove items.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Sort and Count</h4>
+                  <p>Create a list called <code>numbers</code> with values [5, 2, 8, 2, 1]. Sort the list, then count how many times 2 appears. Print both the sorted list and the count.</p>
+                  <p class="hint-text">Use sort() to sort and count() to count occurrences.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-4/introduction-data-structures.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-4/indexing-slicing-lists.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'grades = [85, 90, 78]\ngrades.append(92)\ngrades.remove(78)\nprint(grades)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('grades = [85, 90, 78]')) {
+              return {
+                correct: false,
+                message: 'You need to create a list named grades with values [85, 90, 78].',
+                hints: ['Create: grades = [85, 90, 78]', 'Use square brackets']
+              };
+            }
+            
+            if (!trimmed.includes('append(92)')) {
+              return {
+                correct: false,
+                message: 'You need to add 92 to the list using append(92).',
+                hints: ['Use: grades.append(92)', 'append() adds to the end']
+              };
+            }
+            
+            if (!trimmed.includes('remove(78)')) {
+              return {
+                correct: false,
+                message: 'You need to remove 78 from the list using remove(78).',
+                hints: ['Use: grades.remove(78)', 'remove() removes by value']
+              };
+            }
+            
+            if (!trimmed.includes('print(grades)')) {
+              return {
+                correct: false,
+                message: 'You need to print the final list.',
+                hints: ['Use: print(grades)', 'Print the list after modifications']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure brackets are correct', 'Check method names']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('92') || !outputText.includes('90') || outputText.includes('78')) {
+              return {
+                correct: false,
+                message: 'The final list should contain 85, 90, and 92 (not 78).',
+                hints: ['Make sure you added 92', 'Make sure you removed 78', 'Check the order of operations']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created and modified a list.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'numbers = [5, 2, 8, 2, 1]\nnumbers.sort()\ncount = numbers.count(2)\nprint(f"Sorted: {numbers}")\nprint(f"Count of 2: {count}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('numbers = [5, 2, 8, 2, 1]')) {
+              return {
+                correct: false,
+                message: 'You need to create a list named numbers with values [5, 2, 8, 2, 1].',
+                hints: ['Create: numbers = [5, 2, 8, 2, 1]', 'Use square brackets']
+              };
+            }
+            
+            if (!trimmed.includes('sort()')) {
+              return {
+                correct: false,
+                message: 'You need to sort the list using sort().',
+                hints: ['Use: numbers.sort()', 'sort() modifies the list']
+              };
+            }
+            
+            if (!trimmed.includes('count(2)')) {
+              return {
+                correct: false,
+                message: 'You need to count occurrences of 2 using count(2).',
+                hints: ['Use: numbers.count(2)', 'count() returns the number of occurrences']
+              };
+            }
+            
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print the sorted list and the count.',
+                hints: ['Print the sorted list', 'Print the count']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure brackets are correct', 'Check method names']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('1') || !outputText.includes('2') || !outputText.includes('5') || !outputText.includes('8')) {
+              return {
+                correct: false,
+                message: 'The sorted list should be [1, 2, 2, 5, 8].',
+                hints: ['Make sure you called sort()', 'Check that the list is sorted']
+              };
+            }
+            
+            if (!outputText.includes('2') || outputText.match(/Count.*[^2]/)) {
+              return {
+                correct: false,
+                message: 'The count of 2 should be 2 (it appears twice in the list).',
+                hints: ['Make sure you used count(2)', 'The number 2 appears twice in [5, 2, 8, 2, 1]']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully sorted a list and counted occurrences.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

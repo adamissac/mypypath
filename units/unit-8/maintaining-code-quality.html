@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 8 • Maintaining Code Quality Through Continuous Testing • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 8 • Testing & Debugging</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-8/what-is-debugging.html">1. What Is Debugging and Why It Matters</a></li>
+                <li><a class="" href="/units/unit-8/common-types-errors.html">2. Common Types of Errors</a></li>
+                <li><a class="" href="/units/unit-8/print-statements-debugging.html">3. Using Print Statements for Debugging</a></li>
+                <li><a class="" href="/units/unit-8/breakpoints-debuggers.html">4. Using Breakpoints and Debuggers</a></li>
+                <li><a class="" href="/units/unit-8/understanding-tracebacks.html">5. Understanding Tracebacks and Error Messages</a></li>
+                <li><a class="" href="/units/unit-8/writing-running-tests.html">6. Writing and Running Tests</a></li>
+                <li><a class="" href="/units/unit-8/introduction-unittest.html">7. Introduction to the unittest Module</a></li>
+                <li><a class="" href="/units/unit-8/test-driven-development.html">8. Test-Driven Development (TDD)</a></li>
+                <li><a class="" href="/units/unit-8/debugging-logical-runtime-errors.html">9. Debugging Logical and Runtime Errors</a></li>
+                <li><a class="active" href="/units/unit-8/maintaining-code-quality.html">10. Maintaining Code Quality Through Continuous Testing</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-8.html">Unit 8</a>
+              <span class="separator">/</span>
+              <span class="current">Maintaining Code Quality Through Continuous Testing</span>
+            </nav>
+            <div class="eyebrow">Unit 8 • Lesson 10</div>
+            <h1 class="lesson-title">Maintaining Code Quality Through Continuous Testing</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Regular testing keeps your codebase stable as projects grow. You'll understand how to integrate testing into daily development and use version control to track and fix errors over time, ensuring long-term project health and maintainability.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">25–30 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-9.html">Next: Unit 9</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Continuous testing:</strong> Running tests regularly during development.</li>
+                  <li><strong>Test maintenance:</strong> Keeping tests up to date with code changes.</li>
+                  <li><strong>Code quality:</strong> How testing improves overall code quality.</li>
+                  <li><strong>Best practices:</strong> Integrating testing into your workflow.</li>
+                  <li><strong>Long-term benefits:</strong> How testing helps projects scale.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>What Is Continuous Testing?</h2>
+                <p><strong>Continuous testing</strong> means running tests regularly as you develop, not just at the end. This catches bugs immediately and keeps your codebase stable.</p>
+
+                <div class="info-card">
+                  <h4>Continuous Testing Benefits</h4>
+                  <ul>
+                    <li>Catch bugs immediately when they're introduced</li>
+                    <li>Prevent bugs from accumulating</li>
+                    <li>Maintain code quality as project grows</li>
+                    <li>Build confidence in your codebase</li>
+                    <li>Enable safe refactoring</li>
+                  </ul>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Testing Workflow</div>
+                  <pre class="code"><code># 1. Write code
+def new_feature():
+    return "result"
+
+# 2. Write test immediately
+def test_new_feature():
+    assert new_feature() == "result"
+
+# 3. Run tests
+# python -m unittest test_file.py
+
+# 4. Fix any failures
+# 5. Repeat for next feature</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Maintaining Test Quality</h2>
+                <p>Tests need maintenance just like code:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Keep Tests Updated</h4>
+                      <p>When you change code, update tests to match. Don't let tests become outdated.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Run Tests Frequently</h4>
+                      <p>Run tests after every significant change. Catch problems early.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Fix Failing Tests</h4>
+                      <p>Don't ignore failing tests. Fix them or update them if requirements changed.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Add Tests for Bugs</h4>
+                      <p>When you find a bug, write a test that catches it. This prevents regression.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>How Testing Improves Code Quality</h2>
+                <p>Regular testing leads to better code:</p>
+
+                <div class="feature-grid">
+                  <div class="feature-card">
+                    <h4>Catches Bugs Early</h4>
+                    <p>Find problems before they reach users or compound into bigger issues.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Enables Refactoring</h4>
+                    <p>Tests give you confidence to improve code without breaking functionality.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Documents Behavior</h4>
+                    <p>Tests show how code should work, serving as living documentation.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Prevents Regression</h4>
+                    <p>Tests ensure old bugs don't come back when you make changes.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>Continuous testing:</strong> Run tests regularly during development</li>
+                  <li><strong>Test maintenance:</strong> Keep tests updated with code changes</li>
+                  <li><strong>Code quality:</strong> Testing improves overall code quality</li>
+                  <li><strong>Best practices:</strong> Integrate testing into daily workflow</li>
+                  <li><strong>Long-term:</strong> Testing helps projects scale and maintain quality</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>Testing isn't a one-time task—it's an ongoing practice. Make testing part of your development routine. The more you test, the more reliable your code becomes, and the easier it is to maintain and extend!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: Continuous Testing</h3>
+                  <p>What is continuous testing and why is it important for maintaining code quality?</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Test Maintenance</h3>
+                  <p>How do you maintain tests as your code changes? What happens if tests become outdated?</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-8/debugging-logical-runtime-errors.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-9.html">Next Unit</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

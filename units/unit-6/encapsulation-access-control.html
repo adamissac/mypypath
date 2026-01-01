@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 6 • Encapsulation and Access Control - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 6 • Encapsulation and Access Control • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 6 • Object-Oriented Programming</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-6/introduction-oop-concepts.html">1. Introduction to OOP Concepts</a></li>
+                <li><a href="/units/unit-6/defining-creating-classes.html">2. Defining and Creating Classes</a></li>
+                <li><a href="/units/unit-6/creating-using-objects.html">3. Creating and Using Objects</a></li>
+                <li><a href="/units/unit-6/instance-variables-methods.html">4. Instance Variables and Methods</a></li>
+                <li><a href="/units/unit-6/class-variables-class-methods.html">5. Class Variables and Class Methods</a></li>
+                <li><a class="active" href="/units/unit-6/encapsulation-access-control.html">6. Encapsulation and Access Control</a></li>
+                <li><a href="/units/unit-6/inheritance-subclasses.html">7. Inheritance and Subclasses</a></li>
+                <li><a href="/units/unit-6/polymorphism-method-overriding.html">8. Polymorphism and Method Overriding</a></li>
+                <li><a href="/units/unit-6/super-function.html">9. The super() Function</a></li>
+                <li><a href="/units/unit-6/oop-real-projects.html">10. OOP in Real Projects</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-6.html">Unit 6</a>
+              <span class="separator">/</span>
+              <span class="current">Encapsulation and Access Control</span>
+            </nav>
+            <div class="eyebrow">Unit 6 • Lesson 6</div>
+            <h1 class="lesson-title">Encapsulation and Access Control</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Encapsulation keeps object data private and secure by restricting direct access. You'll learn to use naming conventions like <code>_</code> and <code>__</code> to hide variables and protect internal functionality from unwanted changes, following best practices for data protection.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-6/class-variables-class-methods.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-6/inheritance-subclasses.html">Next: Inheritance and Subclasses</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Encapsulation:</strong> Understand what encapsulation is and why it's important.</li>
+                  <li><strong>Public attributes:</strong> Learn about public attributes that can be accessed directly.</li>
+                  <li><strong>Protected attributes:</strong> Discover the <code>_</code> convention for protected attributes.</li>
+                  <li><strong>Private attributes:</strong> Learn the <code>__</code> convention for private attributes.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Encapsulation protects your object's internal data from being accidentally changed or accessed incorrectly. It's like having a lock on your diary - you control who can read or write to it. By using naming conventions, you signal to other programmers (and yourself) which parts of your class are meant to be public, protected, or private. This prevents bugs and makes your code more maintainable!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What is Encapsulation?</h2>
+                <p>Encapsulation is the practice of hiding internal details and controlling access to an object's data:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Encapsulation Concept</div>
+                  <pre class="code"><code>class BankAccount:
+    def __init__(self, balance):
+        self.balance = balance  # Public - anyone can access
+    
+    def deposit(self, amount):
+        if amount > 0:
+            self.balance += amount  # Controlled access through method</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Hide Implementation</h4>
+                      <p>Encapsulation hides how data is stored and manipulated internally. Users interact through methods, not direct variable access.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Control Access</h4>
+                      <p>By using methods to access data, you can add validation, logging, or other logic. This prevents invalid data from being set!</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Protect Data</h4>
+                      <p>Encapsulation protects your object's internal state from being accidentally corrupted or accessed incorrectly.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> Encapsulation is like a vending machine - you don't need to know how it works internally. You just press buttons (methods) and get what you want. The internal mechanisms (private data) are protected!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Public Attributes</h2>
+                <p>Public attributes can be accessed directly from outside the class:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Public Attributes</div>
+                  <pre class="code"><code>class Person:
+    def __init__(self, name):
+        self.name = name  # Public attribute
+
+person = Person("Alice")
+print(person.name)  # Direct access - OK!
+person.name = "Bob"  # Direct modification - OK!</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Public by Default</h4>
+                  <p>In Python, all attributes are public by default - you can access and modify them directly. This is simple but can be dangerous if you want to protect your data!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Protected Attributes (_)</h2>
+                <p>Protected attributes use a single underscore prefix. This is a convention that signals "internal use":</p>
+
+                <div class="code-example">
+                  <div class="code-header">Protected Attributes</div>
+                  <pre class="code"><code>class BankAccount:
+    def __init__(self, balance):
+        self._balance = balance  # Protected (convention)
+    
+    def get_balance(self):
+        return self._balance
+
+account = BankAccount(100)
+print(account._balance)  # Works, but convention says "don't do this"
+print(account.get_balance())  # Better - use the method</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Single Underscore</h4>
+                      <p>Prefix an attribute with <code>_</code> to indicate it's protected. This is a convention, not enforced by Python!</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Still Accessible</h4>
+                      <p>Protected attributes can still be accessed directly, but the convention tells other programmers "this is internal, use methods instead!"</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Use Methods</h4>
+                      <p>It's best practice to access protected attributes through methods (getters/setters) rather than directly.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Protected Attributes</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Create a class with protected attributes:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'class Student:\n    def __init__(self, name, grade):\n        self.name = name  # Public\n        self._grade = grade  # Protected\n    \n    def get_grade(self):\n        return self._grade\n    \n    def set_grade(self, grade):\n        if 0 <= grade <= 100:\n            self._grade = grade\n\nstudent = Student("Alice", 85)\nprint(f"{student.name}: {student.get_grade()}")\nstudent.set_grade(90)\nprint(f"New grade: {student.get_grade()}")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">class Student:
+    def __init__(self, name, grade):
+        self.name = name  # Public
+        self._grade = grade  # Protected
+    
+    def get_grade(self):
+        return self._grade
+    
+    def set_grade(self, grade):
+        if 0 <= grade <= 100:
+            self._grade = grade
+
+student = Student("Alice", 85)
+print(f"{student.name}: {student.get_grade()}")
+student.set_grade(90)
+print(f"New grade: {student.get_grade()}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The <code>_grade</code> attribute is protected (single underscore). We access it through methods (<code>get_grade()</code> and <code>set_grade()</code>), which allows us to add validation. The <code>set_grade()</code> method ensures grades are between 0 and 100!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Private Attributes (__)</h2>
+                <p>Private attributes use double underscores. Python actually changes their name internally:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Private Attributes</div>
+                  <pre class="code"><code>class BankAccount:
+    def __init__(self, balance):
+        self.__balance = balance  # Private (name mangling)
+    
+    def get_balance(self):
+        return self.__balance
+
+account = BankAccount(100)
+print(account.get_balance())  # Works!
+# print(account.__balance)  # Error! AttributeError</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Double Underscore</h4>
+                      <p>Prefix an attribute with <code>__</code> to make it private. Python performs "name mangling" - it changes the name internally!</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Name Mangling</h4>
+                      <p>Python changes <code>__balance</code> to <code>_BankAccount__balance</code> internally. This makes it harder to access accidentally!</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Use Methods</h4>
+                      <p>Private attributes should only be accessed through methods. This gives you full control over how data is accessed and modified!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>Name Mangling</h4>
+                  <p>When you use <code>__</code>, Python automatically changes the name to <code>_ClassName__attribute</code>. This prevents accidental access and name conflicts in inheritance. It's not true privacy (you can still access it if you know the mangled name), but it's a strong signal!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Private Attributes</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Create a class with private attributes:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'class Secret:\n    def __init__(self, secret_value):\n        self.__secret = secret_value  # Private\n    \n    def reveal(self):\n        return self.__secret\n    \n    def change_secret(self, new_value):\n        self.__secret = new_value\n\ns = Secret("My secret")\nprint(s.reveal())  # Access through method\ns.change_secret("New secret")\nprint(s.reveal())')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">class Secret:
+    def __init__(self, secret_value):
+        self.__secret = secret_value  # Private
+    
+    def reveal(self):
+        return self.__secret
+    
+    def change_secret(self, new_value):
+        self.__secret = new_value
+
+s = Secret("My secret")
+print(s.reveal())  # Access through method
+s.change_secret("New secret")
+print(s.reveal())</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The <code>__secret</code> attribute is private (double underscore). We can only access it through methods like <code>reveal()</code> and <code>change_secret()</code>. This protects the data and gives us control over how it's accessed!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 5: Getters and Setters</h2>
+                <p>Getters and setters are methods that control access to attributes:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Getters and Setters</div>
+                  <pre class="code"><code>class Temperature:
+    def __init__(self, celsius):
+        self.__celsius = celsius
+    
+    def get_celsius(self):  # Getter
+        return self.__celsius
+    
+    def set_celsius(self, celsius):  # Setter
+        if celsius < -273.15:
+            raise ValueError("Temperature too low!")
+        self.__celsius = celsius
+
+temp = Temperature(25)
+print(temp.get_celsius())  # 25
+temp.set_celsius(30)  # Valid
+# temp.set_celsius(-300)  # Raises ValueError!</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> Getters and setters let you add validation, logging, or computation when accessing attributes. They're the proper way to access protected or private attributes!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Protected Attributes</h4>
+                  <p>Create a <code>BankAccount</code> class with a protected attribute <code>_balance</code> (set to 0 in __init__). Add methods <code>get_balance()</code> and <code>deposit(amount)</code>. Create an account, deposit 100, and print the balance.</p>
+                  <p class="hint-text">Define class BankAccount, add _balance protected attribute, add get_balance and deposit methods, create object, deposit, print balance.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Private Attributes</h4>
+                  <p>Create a <code>Person</code> class with a private attribute <code>__age</code>. Add methods <code>get_age()</code> and <code>set_age(age)</code> that validates age is between 0 and 150. Create a Person, set age to 25, and print it.</p>
+                  <p class="hint-text">Define class Person, add __age private attribute, add get_age and set_age with validation, create object, set age, print age.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-6/class-variables-class-methods.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-6/inheritance-subclasses.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'class BankAccount:\n    def __init__(self):\n        self._balance = 0  # Protected\n    \n    def get_balance(self):\n        return self._balance\n    \n    def deposit(self, amount):\n        self._balance += amount\n\naccount = BankAccount()\naccount.deposit(100)\nprint(f"Balance: {account.get_balance()}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('class BankAccount')) {
+              return {
+                correct: false,
+                message: 'You need to create a BankAccount class.',
+                hints: ['Define: class BankAccount:', 'Add __init__ method']
+              };
+            }
+            
+            if (!trimmed.includes('_balance = 0')) {
+              return {
+                correct: false,
+                message: 'You need to create a protected attribute _balance = 0.',
+                hints: ['In __init__: self._balance = 0']
+              };
+            }
+            
+            if (!trimmed.includes('def get_balance')) {
+              return {
+                correct: false,
+                message: 'You need to create a get_balance method.',
+                hints: ['def get_balance(self):', 'return self._balance']
+              };
+            }
+            
+            if (!trimmed.includes('def deposit')) {
+              return {
+                correct: false,
+                message: 'You need to create a deposit method.',
+                hints: ['def deposit(self, amount):', 'self._balance += amount']
+              };
+            }
+            
+            if (!trimmed.includes('deposit(100)')) {
+              return {
+                correct: false,
+                message: 'You need to deposit 100.',
+                hints: ['Call: account.deposit(100)']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure indentation is correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('100')) {
+              return {
+                correct: false,
+                message: 'The output should show balance 100.',
+                hints: ['Print account.get_balance() after depositing']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used protected attributes with getters.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'class Person:\n    def __init__(self):\n        self.__age = 0  # Private\n    \n    def get_age(self):\n        return self.__age\n    \n    def set_age(self, age):\n        if 0 <= age <= 150:\n            self.__age = age\n\nperson = Person()\nperson.set_age(25)\nprint(f"Age: {person.get_age()}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('class Person')) {
+              return {
+                correct: false,
+                message: 'You need to create a Person class.',
+                hints: ['Define: class Person:', 'Add __init__ method']
+              };
+            }
+            
+            if (!trimmed.includes('__age')) {
+              return {
+                correct: false,
+                message: 'You need to create a private attribute __age.',
+                hints: ['In __init__: self.__age = 0']
+              };
+            }
+            
+            if (!trimmed.includes('def get_age')) {
+              return {
+                correct: false,
+                message: 'You need to create a get_age method.',
+                hints: ['def get_age(self):', 'return self.__age']
+              };
+            }
+            
+            if (!trimmed.includes('def set_age')) {
+              return {
+                correct: false,
+                message: 'You need to create a set_age method with validation.',
+                hints: ['def set_age(self, age):', 'if 0 <= age <= 150:', 'self.__age = age']
+              };
+            }
+            
+            if (!trimmed.includes('set_age(25)')) {
+              return {
+                correct: false,
+                message: 'You need to set age to 25.',
+                hints: ['Call: person.set_age(25)']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure indentation is correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('25')) {
+              return {
+                correct: false,
+                message: 'The output should show age 25.',
+                hints: ['Print person.get_age() after setting age']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used private attributes with getters and setters.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

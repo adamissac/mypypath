@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 8 • Common Types of Errors • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 8 • Testing & Debugging</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-8/what-is-debugging.html">1. What Is Debugging and Why It Matters</a></li>
+                <li><a class="active" href="/units/unit-8/common-types-errors.html">2. Common Types of Errors</a></li>
+                <li><a class="" href="/units/unit-8/print-statements-debugging.html">3. Using Print Statements for Debugging</a></li>
+                <li><a class="" href="/units/unit-8/breakpoints-debuggers.html">4. Using Breakpoints and Debuggers</a></li>
+                <li><a class="" href="/units/unit-8/understanding-tracebacks.html">5. Understanding Tracebacks and Error Messages</a></li>
+                <li><a class="" href="/units/unit-8/writing-running-tests.html">6. Writing and Running Tests</a></li>
+                <li><a class="" href="/units/unit-8/introduction-unittest.html">7. Introduction to the unittest Module</a></li>
+                <li><a class="" href="/units/unit-8/test-driven-development.html">8. Test-Driven Development (TDD)</a></li>
+                <li><a class="" href="/units/unit-8/debugging-logical-runtime-errors.html">9. Debugging Logical and Runtime Errors</a></li>
+                <li><a class="" href="/units/unit-8/maintaining-code-quality.html">10. Maintaining Code Quality Through Continuous Testing</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-8.html">Unit 8</a>
+              <span class="separator">/</span>
+              <span class="current">Common Types of Errors</span>
+            </nav>
+            <div class="eyebrow">Unit 8 • Lesson 2</div>
+            <h1 class="lesson-title">Common Types of Errors</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Python programs can fail due to syntax, runtime, or logical errors. You'll explore how to identify each type, understand their causes, and develop strategies to prevent them before they occur, building more reliable code from the start.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-8/print-statements-debugging.html">Next: Using Print Statements for Debugging</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Syntax errors:</strong> Mistakes in code structure that prevent Python from running.</li>
+                  <li><strong>Runtime errors:</strong> Errors that occur while your program is executing.</li>
+                  <li><strong>Logical errors:</strong> Bugs where code runs but produces wrong results.</li>
+                  <li><strong>How to identify each type:</strong> Recognizing error patterns and messages.</li>
+                  <li><strong>Prevention strategies:</strong> Techniques to avoid common errors.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>Three Main Types of Errors</h2>
+                <p>Python errors fall into three main categories. Understanding these categories helps you debug more efficiently:</p>
+
+                <div class="feature-grid">
+                  <div class="feature-card">
+                    <h4>1. Syntax Errors</h4>
+                    <p>Code structure mistakes that Python catches before running. These are the easiest to fix.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>2. Runtime Errors</h4>
+                    <p>Errors that occur while your program runs. Python stops execution when these happen.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>3. Logical Errors</h4>
+                    <p>Code runs without crashing but produces incorrect results. These are the hardest to find.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Syntax Errors</h2>
+                <p><strong>Syntax errors</strong> occur when your code doesn't follow Python's rules. Python catches these before your program runs, so they're the first errors you'll encounter.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Common Syntax Errors</div>
+                  <pre class="code"><code># Missing colon
+if x > 5  # SyntaxError: expected ':'
+
+# Missing closing parenthesis
+print("Hello"  # SyntaxError: unexpected EOF
+
+# Incorrect indentation
+def my_function():
+print("Hello")  # IndentationError: expected an indented block
+
+# Misspelled keyword
+whle True:  # SyntaxError: invalid syntax
+    print("Loop")</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How to Fix Syntax Errors</h4>
+                  <ul>
+                    <li>Read the error message carefully - it tells you the line number</li>
+                    <li>Check for missing colons, parentheses, brackets, or quotes</li>
+                    <li>Verify indentation is correct (Python is strict about this!)</li>
+                    <li>Check for typos in keywords like <code>if</code>, <code>def</code>, <code>while</code></li>
+                    <li>Use a code editor with syntax highlighting to catch errors early</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Runtime Errors</h2>
+                <p><strong>Runtime errors</strong> (also called exceptions) occur while your program is running. The code syntax is correct, but something goes wrong during execution.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Common Runtime Errors</div>
+                  <pre class="code"><code># ZeroDivisionError
+result = 10 / 0  # Can't divide by zero!
+
+# NameError
+print(undefined_variable)  # Variable doesn't exist
+
+# TypeError
+number = "5"
+result = number + 10  # Can't add string and integer
+
+# IndexError
+my_list = [1, 2, 3]
+print(my_list[10])  # Index out of range
+
+# KeyError
+my_dict = {"name": "Alice"}
+print(my_dict["age"])  # Key doesn't exist
+
+# FileNotFoundError
+with open("nonexistent.txt", "r") as f:
+    content = f.read()  # File doesn't exist</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Common Runtime Error Types</h4>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Error Type</th>
+                        <th>When It Happens</th>
+                        <th>Example</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code>ZeroDivisionError</code></td>
+                        <td>Dividing by zero</td>
+                        <td><code>10 / 0</code></td>
+                      </tr>
+                      <tr>
+                        <td><code>NameError</code></td>
+                        <td>Using undefined variable</td>
+                        <td><code>print(x)</code> when x doesn't exist</td>
+                      </tr>
+                      <tr>
+                        <td><code>TypeError</code></td>
+                        <td>Wrong data type operation</td>
+                        <td><code>"5" + 10</code></td>
+                      </tr>
+                      <tr>
+                        <td><code>IndexError</code></td>
+                        <td>List index out of range</td>
+                        <td><code>my_list[100]</code> when list has 3 items</td>
+                      </tr>
+                      <tr>
+                        <td><code>KeyError</code></td>
+                        <td>Dictionary key doesn't exist</td>
+                        <td><code>my_dict["missing"]</code></td>
+                      </tr>
+                      <tr>
+                        <td><code>ValueError</code></td>
+                        <td>Wrong value type</td>
+                        <td><code>int("hello")</code></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Logical Errors</h2>
+                <p><strong>Logical errors</strong> are the trickiest type. Your code runs without crashing, but it produces incorrect results. These require careful thinking to find.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Example: Logical Error</div>
+                  <pre class="code"><code># This code runs but gives wrong answer
+def calculate_average(numbers):
+    total = 0
+    for num in numbers:
+        total += num
+    return total / len(numbers) - 1  # Bug: subtracting 1 makes average wrong!
+
+# Should return 5.0, but returns 4.0
+result = calculate_average([4, 5, 6])
+print(result)</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>Finding Logical Errors</h4>
+                  <p>Logical errors require:</p>
+                  <ul>
+                    <li>Understanding what the code <em>should</em> do</li>
+                    <li>Testing with known inputs and expected outputs</li>
+                    <li>Tracing through code step-by-step</li>
+                    <li>Using print statements or a debugger to see what's happening</li>
+                    <li>Writing tests to catch these errors early</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Preventing Errors</h2>
+                <p>While you can't avoid all errors, you can prevent many of them:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Write Clear Code</h4>
+                      <p>Use descriptive variable names and write comments explaining complex logic.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Test Incrementally</h4>
+                      <p>Test your code as you write it, not just at the end.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Handle Edge Cases</h4>
+                      <p>Think about what happens with empty lists, zero values, or None.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Use Type Hints</h4>
+                      <p>Python's type hints help catch type-related errors early.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                      <h4>Write Tests</h4>
+                      <p>Automated tests catch errors before they reach users.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>Syntax errors:</strong> Caught before execution, usually easy to fix</li>
+                  <li><strong>Runtime errors:</strong> Occur during execution, Python stops and shows error</li>
+                  <li><strong>Logical errors:</strong> Code runs but produces wrong results, hardest to find</li>
+                  <li><strong>Common error types:</strong> ZeroDivisionError, NameError, TypeError, IndexError, KeyError, ValueError</li>
+                  <li><strong>Prevention:</strong> Write clear code, test incrementally, handle edge cases</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>Errors are learning opportunities! Each error teaches you something about how Python works. Don't be discouraged by errors—every programmer encounters them constantly. The key is learning to identify and fix them efficiently.</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: Error Types</h3>
+                  <p>What are the three main types of errors in Python? Give an example of each and explain how they differ.</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Common Errors</h3>
+                  <p>Name three common runtime errors and explain when each one occurs. How would you prevent or handle each?</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-8/what-is-debugging.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-8/print-statements-debugging.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

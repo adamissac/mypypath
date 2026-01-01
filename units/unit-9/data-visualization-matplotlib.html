@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 9 • Data Visualization with Matplotlib • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 9 • Advanced Topics</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-9/recursion-problem-decomposition.html">1. Recursion and Problem Decomposition</a></li>
+                <li><a class="" href="/units/unit-9/working-with-external-libraries.html">2. Working with External Libraries</a></li>
+                <li><a class="" href="/units/unit-9/apis-data-retrieval.html">3. APIs and Data Retrieval</a></li>
+                <li><a class="" href="/units/unit-9/introduction-json-data-parsing.html">4. Introduction to JSON and Data Parsing</a></li>
+                <li><a class="" href="/units/unit-9/efficiency-big-o-basics.html">5. Efficiency and Big-O Basics</a></li>
+                <li><a class="" href="/units/unit-9/working-with-dates-times.html">6. Working with Dates and Times</a></li>
+                <li><a class="active" href="/units/unit-9/data-visualization-matplotlib.html">7. Data Visualization with Matplotlib</a></li>
+                <li><a class="" href="/units/unit-9/basic-automation-python.html">8. Basic Automation with Python</a></li>
+                <li><a class="" href="/units/unit-9/introduction-file-formats.html">9. Introduction to File Formats (CSV, JSON, and Excel)</a></li>
+                <li><a class="" href="/units/unit-9/applying-advanced-concepts.html">10. Applying Advanced Concepts Together</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-9.html">Unit 9</a>
+              <span class="separator">/</span>
+              <span class="current">Data Visualization with Matplotlib</span>
+            </nav>
+            <div class="eyebrow">Unit 9 • Lesson 7</div>
+            <h1 class="lesson-title">Data Visualization with Matplotlib</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Graphs and charts make data easier to understand. You'll learn to create simple line, bar, and scatter plots using <code>matplotlib</code>, customizing colors, labels, and titles to make your visualizations clear and informative, presenting data visually.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">25–30 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-9/basic-automation-python.html">Next: Basic Automation with Python</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Why visualize data:</strong> Making data easier to understand.</li>
+                  <li><strong>matplotlib basics:</strong> Creating simple plots and charts.</li>
+                  <li><strong>Plot types:</strong> Line plots, bar charts, scatter plots, histograms.</li>
+                  <li><strong>Customization:</strong> Adding labels, titles, and colors.</li>
+                  <li><strong>Displaying plots:</strong> Showing and saving visualizations.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>Why Visualize Data?</h2>
+                <p>Visualizations make data easier to understand:</p>
+
+                <div class="info-card">
+                  <h4>Benefits of Visualization</h4>
+                  <ul>
+                    <li>Makes patterns and trends visible</li>
+                    <li>Easier to understand than raw numbers</li>
+                    <li>Helps communicate findings</li>
+                    <li>Enables data-driven decisions</li>
+                    <li>Identifies outliers and anomalies</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Creating Your First Plot</h2>
+                <p>Basic steps to create a plot with matplotlib:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Simple Line Plot</div>
+                  <pre class="code"><code>import matplotlib.pyplot as plt
+
+# Prepare data
+x = [1, 2, 3, 4, 5]
+y = [2, 4, 6, 8, 10]
+
+# Create plot
+plt.plot(x, y)
+
+# Add labels and title
+plt.xlabel('X Axis')
+plt.ylabel('Y Axis')
+plt.title('My First Plot')
+
+# Display plot
+plt.show()</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Installing matplotlib</h2>
+                <p>First, install matplotlib using pip:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Installation</div>
+                  <pre class="code"><code># In your terminal:
+pip install matplotlib
+
+# Or for Python 3:
+pip3 install matplotlib</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>Import Convention</h4>
+                  <p>Most Python programmers import matplotlib.pyplot as <code>plt</code> for convenience: <code>import matplotlib.pyplot as plt</code></p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Common Plot Types</h2>
+                <p>Different plots for different data. Choose the right plot type for your data:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Line Plot - Trends Over Time</div>
+                  <pre class="code"><code>import matplotlib.pyplot as plt
+
+# Data
+months = ['Jan', 'Feb', 'Mar', 'Apr', 'May']
+sales = [100, 120, 140, 110, 150]
+
+# Create line plot
+plt.plot(months, sales, marker='o', color='blue', linewidth=2)
+plt.xlabel('Month')
+plt.ylabel('Sales')
+plt.title('Monthly Sales Trend')
+plt.grid(True)
+plt.show()</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Bar Chart - Comparing Categories</div>
+                  <pre class="code"><code>import matplotlib.pyplot as plt
+
+# Data
+categories = ['A', 'B', 'C', 'D']
+values = [23, 45, 56, 78]
+
+# Create bar chart
+plt.bar(categories, values, color=['red', 'blue', 'green', 'orange'])
+plt.xlabel('Category')
+plt.ylabel('Value')
+plt.title('Category Comparison')
+plt.show()</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Scatter Plot - Relationships</div>
+                  <pre class="code"><code>import matplotlib.pyplot as plt
+
+# Data
+x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+y = [2, 4, 5, 7, 8, 9, 11, 12, 13, 15]
+
+# Create scatter plot
+plt.scatter(x, y, s=100, alpha=0.6, color='purple')
+plt.xlabel('X Values')
+plt.ylabel('Y Values')
+plt.title('Relationship Between X and Y')
+plt.show()</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Histogram - Distribution</div>
+                  <pre class="code"><code>import matplotlib.pyplot as plt
+
+# Data
+scores = [65, 70, 75, 80, 85, 90, 95, 100, 85, 90, 75, 80, 85]
+
+# Create histogram
+plt.hist(scores, bins=10, color='skyblue', edgecolor='black')
+plt.xlabel('Score')
+plt.ylabel('Frequency')
+plt.title('Score Distribution')
+plt.show()</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Choosing the Right Plot</h4>
+                  <ul>
+                    <li><strong>Line Plot:</strong> Use for trends over time or continuous data</li>
+                    <li><strong>Bar Chart:</strong> Use for comparing discrete categories</li>
+                    <li><strong>Scatter Plot:</strong> Use to show relationships between two variables</li>
+                    <li><strong>Histogram:</strong> Use to show the distribution of a single variable</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Customizing Plots</h2>
+                <p>Make your plots more informative and visually appealing:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Customization Example</div>
+                  <pre class="code"><code>import matplotlib.pyplot as plt
+
+# Data
+x = [1, 2, 3, 4, 5]
+y1 = [2, 4, 6, 8, 10]
+y2 = [1, 3, 5, 7, 9]
+
+# Create figure with custom size
+plt.figure(figsize=(10, 6))
+
+# Plot multiple lines
+plt.plot(x, y1, label='Series 1', marker='o', linewidth=2)
+plt.plot(x, y2, label='Series 2', marker='s', linewidth=2)
+
+# Customize
+plt.xlabel('X Axis Label', fontsize=12)
+plt.ylabel('Y Axis Label', fontsize=12)
+plt.title('Customized Plot', fontsize=14, fontweight='bold')
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.show()</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Common Customizations</h4>
+                  <ul>
+                    <li><strong>Colors:</strong> Use <code>color='red'</code> or hex codes like <code>color='#FF5733'</code></li>
+                    <li><strong>Markers:</strong> Use <code>marker='o'</code> (circle), <code>'s'</code> (square), <code>'^'</code> (triangle)</li>
+                    <li><strong>Line width:</strong> Use <code>linewidth=2</code> for thicker lines</li>
+                    <li><strong>Transparency:</strong> Use <code>alpha=0.5</code> for semi-transparent plots</li>
+                    <li><strong>Figure size:</strong> Use <code>plt.figure(figsize=(10, 6))</code> for custom dimensions</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: Creating Plots</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try creating a simple plot:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Simulate matplotlib plot\n# In real code: import matplotlib.pyplot as plt\n\n# Simulated data\nx = [1, 2, 3, 4, 5]\ny = [2, 4, 6, 8, 10]\n\nprint(\"Creating plot with data:\")\nfor i in range(len(x)):\n    print(f\"  Point ({x[i]}, {y[i]})\")\nprint(\"\\nIn real matplotlib, this would display a line plot!\")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Simulate matplotlib plot
+# In real code: import matplotlib.pyplot as plt
+
+# Simulated data
+x = [1, 2, 3, 4, 5]
+y = [2, 4, 6, 8, 10]
+
+print("Creating plot with data:")
+for i in range(len(x)):
+    print(f"  Point ({x[i]}, {y[i]})")
+print("\nIn real matplotlib, this would display a line plot!")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>Note:</strong> This is a simulation. In a real program with matplotlib installed, <code>plt.plot(x, y)</code> followed by <code>plt.show()</code> would display a visual plot!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Advanced Customization</h2>
+                <p>matplotlib offers extensive customization options:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Multiple Plots in One Figure</div>
+                  <pre class="code"><code>import matplotlib.pyplot as plt
+
+# Create figure with subplots
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+
+# First subplot: Line plot
+x1 = [1, 2, 3, 4, 5]
+y1 = [2, 4, 6, 8, 10]
+ax1.plot(x1, y1, marker='o')
+ax1.set_title('Line Plot')
+ax1.set_xlabel('X')
+ax1.set_ylabel('Y')
+
+# Second subplot: Bar chart
+categories = ['A', 'B', 'C']
+values = [10, 20, 15]
+ax2.bar(categories, values, color=['red', 'blue', 'green'])
+ax2.set_title('Bar Chart')
+ax2.set_xlabel('Category')
+ax2.set_ylabel('Value')
+
+plt.tight_layout()  # Adjust spacing
+plt.show()</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Saving Plots to Files</div>
+                  <pre class="code"><code>import matplotlib.pyplot as plt
+
+# Create a plot
+x = [1, 2, 3, 4, 5]
+y = [2, 4, 6, 8, 10]
+plt.plot(x, y, marker='o')
+plt.xlabel('X Axis')
+plt.ylabel('Y Axis')
+plt.title('My Plot')
+
+# Save to file (instead of showing)
+plt.savefig('my_plot.png', dpi=300, bbox_inches='tight')
+# Formats: PNG, PDF, SVG, JPG</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Common Customization Options</h4>
+                  <ul>
+                    <li><strong>Colors:</strong> Use color names ('red', 'blue') or hex codes ('#FF5733')</li>
+                    <li><strong>Line styles:</strong> Use <code>linestyle='--'</code> for dashed, <code>'-.'</code> for dash-dot</li>
+                    <li><strong>Markers:</strong> Use <code>marker='o'</code> for circles, <code>'s'</code> for squares</li>
+                    <li><strong>Figure size:</strong> Use <code>figsize=(width, height)</code> in inches</li>
+                    <li><strong>Legends:</strong> Use <code>plt.legend()</code> to show what each line/bar represents</li>
+                    <li><strong>Grid:</strong> Use <code>plt.grid(True)</code> to add grid lines</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>Visualization:</strong> Makes data easier to understand and identify patterns</li>
+                  <li><strong>matplotlib:</strong> Python library for creating plots and charts</li>
+                  <li><strong>Plot types:</strong> Line plots, bar charts, scatter plots, histograms</li>
+                  <li><strong>Customization:</strong> Colors, labels, titles, markers, grid lines</li>
+                  <li><strong>Display:</strong> Use <code>plt.show()</code> to display plots or <code>plt.savefig()</code> to save them</li>
+                  <li><strong>Subplots:</strong> Create multiple plots in one figure</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>Good visualizations tell a story! Choose the right plot type for your data, always add clear labels and titles, and use colors and styles that make your data easy to understand.</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: Data Visualization</h3>
+                  <p>Why is data visualization important? What types of plots would you use for different situations?</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: matplotlib Basics</h3>
+                  <p>What are the basic steps to create a plot with matplotlib?</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-9/working-with-dates-times.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-9/basic-automation-python.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

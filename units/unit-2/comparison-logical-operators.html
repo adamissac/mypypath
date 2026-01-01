@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 2 • Comparison & Logical Operators - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 2 • Comparison & Logical Operators • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 2 • Control Flow</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-2/understanding-control-flow.html">1. Understanding Control Flow</a></li>
+                <li><a class="active" href="/units/unit-2/comparison-logical-operators.html">2. Comparison & Logical Operators</a></li>
+                <li><a href="/units/unit-2/if-statement.html">3. The if Statement</a></li>
+                <li><a href="/units/unit-2/if-else-elif.html">4. if-else and elif</a></li>
+                <li><a href="/units/unit-2/nested-conditionals.html">5. Nested Conditionals</a></li>
+                <li><a href="/units/unit-2/boolean-logic-practice.html">6. Boolean Logic in Practice</a></li>
+                <li><a href="/units/unit-2/introduction-loops.html">7. Introduction to Loops</a></li>
+                <li><a href="/units/unit-2/while-loop.html">8. The while Loop</a></li>
+                <li><a href="/units/unit-2/for-loop.html">9. The for Loop</a></li>
+                <li><a href="/units/unit-2/loop-control-statements.html">10. Loop Control Statements</a></li>
+                <li><a href="/units/unit-2/practical-control-flow-examples.html">11. Practical Control Flow Examples</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-2.html">Unit 2</a>
+              <span class="separator">/</span>
+              <span class="current">Comparison & Logical Operators</span>
+            </nav>
+            <div class="eyebrow">Unit 2 • Lesson 2</div>
+            <h1 class="lesson-title">Comparison and Logical Operators</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Before writing conditions, you need to compare values. You'll learn about relational operators (==, !=, <, >, etc.) and logical operators (and, or, not) to build complex decision statements that evaluate multiple conditions at once.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">15–20 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-2/understanding-control-flow.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-2/if-statement.html">Next: The if Statement</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Comparison operators:</strong> How to compare values using ==, !=, <, >, <=, >=</li>
+                  <li><strong>Boolean results:</strong> Understanding True and False values</li>
+                  <li><strong>Logical operators:</strong> How to combine conditions using and, or, not</li>
+                  <li><strong>Complex conditions:</strong> Building multi-part decision statements</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Comparison and logical operators are the foundation of decision-making in Python. Without them, you can't write if statements or loops. They let your program ask questions like "Is this greater than that?" or "Are both conditions true?"</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: Comparison Operators</h2>
+                <p>Comparison operators let you compare two values. They always return <code>True</code> or <code>False</code> (these are called boolean values). Think of them like asking questions: "Is 5 equal to 5?" → True, "Is 5 equal to 3?" → False.</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4><code>==</code> - Equal To</h4>
+                    <p>Checks if two values are equal. Returns True if they match exactly, False otherwise. Notice it uses TWO equals signs, not one.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>5 == 5      # True
+5 == 3      # False
+"hi" == "hi"  # True
+"hi" == "Hi"  # False (case matters!)</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4><code>!=</code> - Not Equal To</h4>
+                    <p>Checks if two values are different. Returns True if they don't match, False if they're the same.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>5 != 3      # True (they're different)
+5 != 5      # False (they're the same)
+"hi" != "bye"  # True</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4><code>&lt;</code> - Less Than</h4>
+                    <p>Checks if the left value is smaller than the right value. Works with numbers.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>3 < 5       # True (3 is smaller)
+5 < 3       # False (5 is bigger)
+10 < 10     # False (they're equal)</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4><code>&gt;</code> - Greater Than</h4>
+                    <p>Checks if the left value is larger than the right value.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>5 > 3       # True (5 is bigger)
+3 > 5       # False (3 is smaller)
+10 > 10     # False (they're equal)</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4><code>&lt;=</code> - Less Than or Equal</h4>
+                    <p>Checks if the left value is smaller than OR equal to the right value.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>5 <= 5      # True (equal counts!)
+3 <= 5      # True (3 is smaller)
+6 <= 5      # False (6 is bigger)</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4><code>&gt;=</code> - Greater Than or Equal</h4>
+                    <p>Checks if the left value is larger than OR equal to the right value.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>5 >= 5      # True (equal counts!)
+5 >= 3      # True (5 is bigger)
+5 >= 6      # False (5 is smaller)</code></pre>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Important:</strong> Don't confuse <code>==</code> (comparison) with <code>=</code> (assignment). Remember: <code>==</code> asks "are these equal?" while <code>=</code> means "store this value". If you use <code>=</code> in an if statement, you'll get an error!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Comparison Operators</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try these comparisons. Notice how each one returns True or False:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'print(5 == 5)\nprint(5 != 3)\nprint(3 < 5)\nprint(5 > 3)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">print(5 == 5)
+print(5 != 3)
+print(3 < 5)
+print(5 > 3)</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Each comparison returned either True or False. These are called boolean values (named after mathematician George Boole). When Python evaluates a comparison like <code>5 == 5</code>, it checks if the statement is true or false and returns the corresponding boolean value. These True/False values are what Python uses to make decisions in if statements. Think of it like answering yes/no questions: "Is 5 equal to 5?" → True (yes), "Is 5 equal to 3?" → False (no).</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Logical Operators</h2>
+                <p>Logical operators let you combine multiple conditions. They help you build complex decision statements. Think of them like connecting multiple yes/no questions together.</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4><code>and</code> - Both Must Be True</h4>
+                    <p>Returns True only if both conditions are True. If either is False, the result is False. It's like saying "both of these must be true".</p>
+                    <pre class="code" style="margin-top: 12px;"><code>True and True    # True
+True and False   # False
+False and False  # False</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Example: age >= 18 and has_license</p>
+                    <p style="margin-top: 4px; font-size: 13px;">Both must be True for the whole thing to be True</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4><code>or</code> - At Least One Must Be True</h4>
+                    <p>Returns True if at least one condition is True. Only False if both are False. It's like saying "at least one of these is okay".</p>
+                    <pre class="code" style="margin-top: 12px;"><code>True or True     # True
+True or False    # True
+False or False   # False</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Example: age >= 18 or parent_present</p>
+                    <p style="margin-top: 4px; font-size: 13px;">Only one needs to be True</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4><code>not</code> - Reverses the Result</h4>
+                    <p>Flips True to False and False to True. It's like saying "the opposite of".</p>
+                    <pre class="code" style="margin-top: 12px;"><code>not True         # False
+not False        # True
+not (5 > 3)      # False (because 5 > 3 is True)</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Example: not is_raining</p>
+                    <p style="margin-top: 4px; font-size: 13px;">Gives you the opposite</p>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>Real-World Examples</h4>
+                  <p>Here are some practical examples of how logical operators are used:</p>
+                  <pre class="code" style="margin-top: 12px;"><code># Can drive: must be 18+ AND have license
+can_drive = age >= 18 and has_license
+
+# Can enter: must be 21+ OR have parent
+can_enter = age >= 21 or parent_present
+
+# Is not raining: the opposite of is_raining
+go_outside = not is_raining</code></pre>
+                  <p style="margin-top: 12px;">Notice how <code>and</code> requires both to be true, <code>or</code> only needs one, and <code>not</code> flips the value.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Logical Operators</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try combining conditions with logical operators:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'age = 20\nhas_license = True\nprint(age >= 18 and has_license)\nprint(age < 18 or has_license)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">age = 20
+has_license = True
+print(age >= 18 and has_license)
+print(age < 18 or has_license)</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The first comparison (<code>age >= 18 and has_license</code>) returned True because both parts were True: age (20) is >= 18, AND has_license is True. The <code>and</code> operator is like saying "both must be true". The second comparison (<code>age < 18 or has_license</code>) also returned True because even though age < 18 is False, has_license is True. The <code>or</code> operator is like saying "at least one must be true". This is how you combine multiple conditions to make more complex decisions.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Combining Comparison and Logical Operators</h2>
+                <p>You can combine comparison operators with logical operators to create complex conditions. Python evaluates them in this order: comparisons first, then <code>not</code>, then <code>and</code>, then <code>or</code>. Use parentheses to make the order clear.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Complex Conditions</div>
+                  <pre class="code"><code>age = 25
+has_license = True
+has_insurance = False
+
+# Complex condition: must be 18+ AND have license AND insurance
+can_drive = age >= 18 and has_license and has_insurance
+print(can_drive)  # False (missing insurance)
+
+# Alternative: must be 18+ AND (have license OR have insurance)
+can_drive_alt = age >= 18 and (has_license or has_insurance)
+print(can_drive_alt)  # True</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Tip:</strong> Use parentheses to make the order of evaluation clear. Python will evaluate what's inside parentheses first. This makes your code easier to read and prevents mistakes.</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Use Comparison Operators</h4>
+                  <p>Create variables: <code>age</code> = 20 and <code>minimum_age</code> = 18. Use the >= operator to check if age is greater than or equal to minimum_age, then print the result.</p>
+                  <p class="hint-text">Use the >= operator to compare age and minimum_age.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Combine Conditions</h4>
+                  <p>Create variables: <code>age</code> = 20, <code>has_ticket</code> = True. Check if age >= 18 AND has_ticket is True, then print the result.</p>
+                  <p class="hint-text">Use the and operator to combine two conditions.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-2/understanding-control-flow.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-2/if-statement.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'age = 20\nminimum_age = 18\nresult = age >= minimum_age\nprint(result)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for age variable
+            if (!trimmed.includes('age') || !trimmed.includes('20')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable age with value 20.',
+                hints: ['Write: age = 20', 'This is the age to check']
+              };
+            }
+            
+            // Check for minimum_age variable
+            if (!trimmed.includes('minimum_age') || !trimmed.includes('18')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable minimum_age with value 18.',
+                hints: ['Write: minimum_age = 18', 'This is the minimum age']
+              };
+            }
+            
+            // Check for >= operator
+            if (!trimmed.includes('>=')) {
+              return {
+                correct: false,
+                message: 'You need to use the >= operator to compare age and minimum_age.',
+                hints: ['Use >= to check if age is greater than or equal to minimum_age', 'Write: age >= minimum_age']
+              };
+            }
+            
+            // Check for print
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print the result.',
+                hints: ['Add a print statement', 'Print the result of your comparison']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure all variable names are spelled correctly', 'Check your comparison operator']
+              };
+            }
+            
+            // Check output contains True
+            const outputText = output.stdout || '';
+            if (!outputText.includes('True')) {
+              return {
+                correct: false,
+                message: 'The result should be True (20 >= 18).',
+                hints: ['Check your comparison', '20 is greater than or equal to 18', 'The answer should be True']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used the >= operator to compare values.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'age = 20\nhas_ticket = True\nresult = age >= 18 and has_ticket\nprint(result)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for age variable
+            if (!trimmed.includes('age') || !trimmed.includes('20')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable age with value 20.',
+                hints: ['Write: age = 20']
+              };
+            }
+            
+            // Check for has_ticket variable
+            if (!trimmed.includes('has_ticket') || (!trimmed.includes('True') && !trimmed.includes('true'))) {
+              return {
+                correct: false,
+                message: 'You need to create a variable has_ticket with value True.',
+                hints: ['Write: has_ticket = True', 'Note: True starts with capital T']
+              };
+            }
+            
+            // Check for and operator
+            if (!trimmed.includes('and')) {
+              return {
+                correct: false,
+                message: 'You need to use the and operator to combine conditions.',
+                hints: ['Use and to combine age >= 18 and has_ticket', 'Write: age >= 18 and has_ticket']
+              };
+            }
+            
+            // Check for >= operator
+            if (!trimmed.includes('>=')) {
+              return {
+                correct: false,
+                message: 'You need to check if age >= 18.',
+                hints: ['Use >= to check if age is greater than or equal to 18', 'Combine it with and has_ticket']
+              };
+            }
+            
+            // Check for print
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print the result.',
+                hints: ['Add a print statement', 'Print the result of your combined condition']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure True is capitalized', 'Check your logical operator']
+              };
+            }
+            
+            // Check output contains True
+            const outputText = output.stdout || '';
+            if (!outputText.includes('True')) {
+              return {
+                correct: false,
+                message: 'The result should be True (age >= 18 is True AND has_ticket is True).',
+                hints: ['Check your conditions', 'Both age >= 18 and has_ticket should be True', 'The answer should be True']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully combined conditions using the and operator.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

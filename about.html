@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About • PyPath</title>
+    <meta name="description" content="About the creator of PyPath — Adam J. Issac." />
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Adam's toggle - select the button that controls adam-details
+        const adamToggle = document.querySelector('button[aria-controls="adam-details"]');
+        const adamDetails = document.getElementById('adam-details');
+        const cofoundersLayout = document.querySelector('.cofounders-layout');
+        
+        if (adamToggle && adamDetails && cofoundersLayout) {
+          adamToggle.addEventListener('click', function() {
+            const isExpanded = adamToggle.getAttribute('aria-expanded') === 'true';
+            const arrow = adamToggle.querySelector('.dropdown-arrow');
+            
+            adamToggle.setAttribute('aria-expanded', !isExpanded);
+            adamDetails.style.display = isExpanded ? 'none' : 'block';
+            adamToggle.querySelector('span').textContent = isExpanded ? 'View Qualifications' : 'Hide Qualifications';
+            
+            // Toggle layout class to move Ritesh
+            // Also remove ritesh-details-expanded and prahas-details-expanded if they exist
+            if (isExpanded) {
+              cofoundersLayout.classList.remove('details-expanded');
+              cofoundersLayout.classList.remove('ritesh-details-expanded');
+              cofoundersLayout.classList.remove('prahas-details-expanded');
+              arrow.classList.remove('rotated');
+            } else {
+              cofoundersLayout.classList.add('details-expanded');
+              cofoundersLayout.classList.remove('ritesh-details-expanded');
+              cofoundersLayout.classList.remove('prahas-details-expanded');
+              arrow.classList.add('rotated');
+            }
+          });
+        }
+        
+        // Ritesh's toggle (side-by-side view)
+        const riteshToggleSide = document.querySelector('.ritesh-toggle-side');
+        const riteshDetailsSide = document.getElementById('ritesh-details-side');
+        
+        if (riteshToggleSide && riteshDetailsSide && cofoundersLayout) {
+          riteshToggleSide.addEventListener('click', function() {
+            const isExpanded = riteshToggleSide.getAttribute('aria-expanded') === 'true';
+            const arrow = riteshToggleSide.querySelector('.dropdown-arrow');
+            
+            riteshToggleSide.setAttribute('aria-expanded', !isExpanded);
+            
+            // Toggle layout class to hide other cards when Ritesh's details are shown
+            // Also remove details-expanded and prahas-details-expanded if they exist
+            if (isExpanded) {
+              cofoundersLayout.classList.remove('ritesh-details-expanded');
+              cofoundersLayout.classList.remove('details-expanded');
+              cofoundersLayout.classList.remove('prahas-details-expanded');
+              riteshDetailsSide.style.maxHeight = null;
+              riteshDetailsSide.style.display = 'none';
+              arrow.classList.remove('rotated');
+            } else {
+              cofoundersLayout.classList.add('ritesh-details-expanded');
+              cofoundersLayout.classList.remove('details-expanded');
+              cofoundersLayout.classList.remove('prahas-details-expanded');
+              riteshDetailsSide.style.display = 'block';
+              riteshDetailsSide.style.maxHeight = riteshDetailsSide.scrollHeight + 'px';
+              arrow.classList.add('rotated');
+            }
+            
+            riteshToggleSide.querySelector('span').textContent = isExpanded ? 'View Qualifications' : 'Hide Qualifications';
+          });
+        }
+        
+        // Ritesh's toggle (expanded view - when Adam's details are shown)
+        const riteshToggle = document.querySelector('.ritesh-toggle');
+        const riteshDetails = document.getElementById('ritesh-details');
+        
+        if (riteshToggle && riteshDetails) {
+          riteshToggle.addEventListener('click', function() {
+            const isExpanded = riteshToggle.getAttribute('aria-expanded') === 'true';
+            const arrow = riteshToggle.querySelector('.dropdown-arrow');
+            
+            riteshToggle.setAttribute('aria-expanded', !isExpanded);
+            
+            if (isExpanded) {
+              riteshDetails.style.maxHeight = null;
+              riteshDetails.style.display = 'none';
+              if (arrow) arrow.classList.remove('rotated');
+            } else {
+              riteshDetails.style.display = 'block';
+              riteshDetails.style.maxHeight = riteshDetails.scrollHeight + 'px';
+              if (arrow) arrow.classList.add('rotated');
+            }
+            
+            riteshToggle.querySelector('span').textContent = isExpanded ? 'View Qualifications' : 'Hide Qualifications';
+          });
+        }
+        
+        // Prahas's toggle (side-by-side view)
+        const prahasToggleSide = document.querySelector('.prahas-toggle-side');
+        const prahasDetailsSide = document.getElementById('prahas-details-side');
+        
+        if (prahasToggleSide && prahasDetailsSide && cofoundersLayout) {
+          prahasToggleSide.addEventListener('click', function() {
+            const isExpanded = prahasToggleSide.getAttribute('aria-expanded') === 'true';
+            const arrow = prahasToggleSide.querySelector('.dropdown-arrow');
+            
+            prahasToggleSide.setAttribute('aria-expanded', !isExpanded);
+            
+            // Toggle layout class to hide other cards when Prahas's details are shown
+            if (isExpanded) {
+              cofoundersLayout.classList.remove('prahas-details-expanded');
+              cofoundersLayout.classList.remove('details-expanded');
+              cofoundersLayout.classList.remove('ritesh-details-expanded');
+              prahasDetailsSide.style.maxHeight = null;
+              prahasDetailsSide.style.display = 'none';
+              arrow.classList.remove('rotated');
+            } else {
+              cofoundersLayout.classList.add('prahas-details-expanded');
+              cofoundersLayout.classList.remove('details-expanded');
+              cofoundersLayout.classList.remove('ritesh-details-expanded');
+              prahasDetailsSide.style.display = 'block';
+              prahasDetailsSide.style.maxHeight = prahasDetailsSide.scrollHeight + 'px';
+              arrow.classList.add('rotated');
+            }
+            
+            prahasToggleSide.querySelector('span').textContent = isExpanded ? 'View Qualifications' : 'Hide Qualifications';
+          });
+        }
+      });
+    </script>
+  </head>
+  <body class="page page-about"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a class="active" href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <!-- Mission Statement -->
+      <section class="section reveal">
+        <div class="container">
+          <div class="mission-statement">
+            <h2 class="mission-title">Our Mission</h2>
+            <p class="mission-text">PyPath is dedicated to making Python programming education accessible, engaging, and effective for learners at all levels. We believe that everyone should have the opportunity to learn coding in a supportive, interactive environment that combines clear explanations with hands-on practice. Through our comprehensive curriculum, interactive exercises, and real-world projects, we empower students to build confidence and master Python programming skills. Our goal is to inspire the next generation of programmers and make coding education a transformative experience for all.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Co-Founders Section -->
+      <section class="section reveal" id="about-cofounders">
+        <div class="container">
+          <div class="team-disclaimer">
+            <p><strong>Note:</strong> While we each have specific roles listed, our contributions extend across all areas of the platform. We all worked together on development, design, curriculum, and content creation. The roles shown reflect our primary focus areas, but we collaborated on everything.</p>
+          </div>
+          <div class="cofounders-layout">
+            <div class="cofounders-cards-wrapper">
+              <div class="founder-card-wrapper adam-card">
+            <div class="about-card reveal-up">
+              <div class="about-avatar">
+                <img src="assets/img/adam.jpg" alt="Adam J. Issac" />
+              </div>
+              <div class="about-meta">
+                    <h2 class="cofounder-name">Adam Issac</h2>
+                    <div class="cofounder-title">Co-Founder / Lead Software Engineer</div>
+                    <div class="sub">Senior at Denmark High School</div>
+                    <p class="cofounder-bio">A passionate student and tutor focused on making education accessible and engaging for everyone.</p>
+                  </div>
+                </div>
+                
+                <div class="details-toggle-wrapper">
+                  <button class="details-toggle" aria-expanded="false" aria-controls="adam-details">
+                    <span>View Qualifications</span>
+                    <svg class="dropdown-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="founder-card-wrapper ritesh-card">
+                <div class="about-card reveal-up">
+                  <div class="about-avatar">
+                    <img src="assets/img/ritesh.jpg" alt="Ritesh Konakanchi" />
+                  </div>
+                  <div class="about-meta">
+                    <h2 class="cofounder-name">Ritesh Konakanchi</h2>
+                    <div class="cofounder-title">Co-Founder / Lead UX/UI Designer</div>
+                <div class="sub">Senior at Denmark High School</div>
+                    <p class="cofounder-bio">Passionate about education and technology, working to make learning accessible and engaging for everyone.</p>
+                  </div>
+                </div>
+                
+                <div class="details-toggle-wrapper">
+                  <button class="details-toggle ritesh-toggle-side" aria-expanded="false" aria-controls="ritesh-details-side">
+                    <span>View Qualifications</span>
+                    <svg class="dropdown-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Prahas's Card -->
+            <div class="founder-card-wrapper prahas-card">
+              <div class="about-card reveal-up">
+                <div class="about-avatar">
+                  <img src="assets/img/prahas.jpg" alt="Prahas Visikamalla" />
+                </div>
+                <div class="about-meta">
+                  <h2 class="cofounder-name">Prahas Visikamalla</h2>
+                  <div class="cofounder-title">Head of Curriculum</div>
+                  <div class="sub">Senior at Denmark High School</div>
+                  <p class="cofounder-bio">Dedicated to creating comprehensive and engaging educational content that helps students master Python programming.</p>
+                </div>
+              </div>
+              
+              <div class="details-toggle-wrapper">
+                <button class="details-toggle prahas-toggle-side" aria-expanded="false" aria-controls="prahas-details-side">
+                  <span>View Qualifications</span>
+                  <svg class="dropdown-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Prahas's Details (side-by-side view) -->
+            <div class="prahas-details-side" id="prahas-details-side" style="display: none;">
+              <div class="features-grid about-grid">
+                <div class="feature">
+                  <div class="about-header"><h3 style="margin:0">Experience</h3></div>
+                  <div class="stack-16">
+                    <div>
+                      <h4 style="margin:0">Personal Equity Portfolio — Co-Manager</h4>
+                      <p class="muted" style="margin:4px 0 6px;">Co-managed a long-term equity portfolio achieving triple-digit growth.</p>
+                      <ul class="checklist">
+                        <li><span class="icon"></span> Achieved 102% growth, consistently outperforming the S&P 500 through disciplined equity research.</li>
+                        <li><span class="icon"></span> Conducted fundamental analysis, evaluated risk, and diversified holdings to optimize returns.</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 style="margin:10px 0 0;">Coding for a Change — Chief Financial Officer</h4>
+                      <p class="muted" style="margin:4px 0 6px;">Managed budgeting and financial planning for a student-led nonprofit.</p>
+                      <ul class="checklist">
+                        <li><span class="icon"></span> Coordinated fundraising initiatives generating $100+ to support coding workshops for under-resourced children.</li>
+                        <li><span class="icon"></span> Strengthened financial accountability while working closely with executive leadership.</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 style="margin:10px 0 0;">Tanishq Jewelry — Junior Marketing Intern</h4>
+                      <p class="muted" style="margin:4px 0 6px;">Assisted with marketing campaigns and sales initiatives.</p>
+                      <ul class="checklist">
+                        <li><span class="icon"></span> Promoted store visits and coupon programs to enhance customer engagement.</li>
+                        <li><span class="icon"></span> Represented the store independently at marketing conferences, demonstrating professionalism and initiative.</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="feature">
+                  <div class="about-header"><h3 style="margin:0">Leadership & Skills</h3></div>
+                  <div class="stack-16">
+                    <div>
+                      <h4 style="margin:0">Sequoia Club — Co-President</h4>
+                      <p class="muted" style="margin:4px 0 6px;">Led community service initiatives supporting local businesses and neighborhoods.</p>
+                      <ul class="checklist">
+                        <li><span class="icon"></span> Organized events and volunteer efforts totaling 150+ community service hours.</li>
+                        <li><span class="icon"></span> Built leadership, organizational, and project-management skills through hands-on coordination.</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 style="margin:10px 0 0;">Sloka Class — Volunteer Lead & Junior Tutor</h4>
+                      <p class="muted" style="margin:4px 0 6px;">Guided younger students in learning traditional slokas.</p>
+                      <ul class="checklist">
+                        <li><span class="icon"></span> Assisted instructors while developing public speaking, mentorship, and cultural leadership skills.</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div style="margin-top: 20px;">
+                    <div class="about-header"><h3 style="margin:0">Skills</h3></div>
+                    <div class="badge-list">
+                      <span class="badge-chip"><span class="dot"></span> Equity Research & Portfolio Management (Bloomberg Certified)</span>
+                      <span class="badge-chip"><span class="dot"></span> Financial Analysis & Long-Term Investing</span>
+                      <span class="badge-chip"><span class="dot"></span> Budgeting & Fundraising</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Ritesh's Details (side-by-side view) -->
+            <div class="ritesh-details-side" id="ritesh-details-side" style="display: none;">
+              <div class="features-grid about-grid">
+                <div class="feature">
+                  <div class="about-header"><h3 style="margin:0">Experience</h3></div>
+                  <div class="stack-16">
+                    <div>
+                      <h4 style="margin:0">Software Development Intern — Maxeom</h4>
+                      <p class="muted" style="margin:4px 0 6px;">Built SQL queries and analytics dashboards for sales team.</p>
+                      <ul class="checklist">
+                        <li><span class="icon"></span> Wrote 15+ SQL queries to clean and join 120k rows for analytics.</li>
+                        <li><span class="icon"></span> Built 3 dashboards for the sales team; indexing cut weekly report runtime by 15%.</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 style="margin:10px 0 0;">Software & Business Development Intern — Punch Rewards</h4>
+                      <p class="muted" style="margin:4px 0 6px;">Developed front-end features for a restaurant rewards app.</p>
+                      <ul class="checklist">
+                        <li><span class="icon"></span> Shipped front-end features for restaurant rewards app.</li>
+                        <li><span class="icon"></span> Supported outreach to onboard 5+ businesses; beta app reached 200+ users.</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 style="margin:10px 0 0;">AI & ML Club — Vice President</h4>
+                      <p class="muted" style="margin:4px 0 6px;">Together with Adam, we lead a 70+ member club; running projects, hackathons, and workshops.</p>
+                      <ul class="checklist">
+                        <li><span class="icon"></span> Organized AI/ML workshops and competitions; built club curriculum and demo projects.</li>
+                        <li><span class="icon"></span> Led teams and live demos; created slides/code resources for meetings.</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="feature">
+                  <div class="about-header"><h3 style="margin:0">Projects</h3></div>
+                  <ul class="checklist">
+                    <li><span class="icon"></span> Car Price Predictor — Random Forest and Linear Regression on 10,000 records; mean error $1,100, R² 0.87.</li>
+                    <li><span class="icon"></span> Tesla Stock Forecaster — RNNs in TensorFlow; 62% trend accuracy, 2.1% MAPE.</li>
+                    <li><span class="icon"></span> Image Classification Model — CNN in Keras/TensorFlow; 90% test accuracy across 10 categories.</li>
+                    <li><span class="icon"></span> Pokémon Battle Predictor — Naïve Bayes and decision trees; 88% validation accuracy.</li>
+                  </ul>
+                  <div style="margin-top: 20px;">
+                    <h4 style="margin:16px 0 6px;">Python Tutor — Coding for a Change</h4>
+                    <p class="muted" style="margin:4px 0 6px;">Taught Python programming and problem-solving skills to students.</p>
+                    <ul class="checklist">
+                      <li><span class="icon"></span> Taught 15 students weekly online; led projects and coding lessons.</li>
+                      <li><span class="icon"></span> Built core Python and problem-solving skills through hands-on projects.</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Certifications Horizontal Box -->
+              <div class="certifications-box">
+                <h3 class="certifications-title">Certifications</h3>
+                <div class="certifications-grid">
+                  <div class="cert-item">
+                    <h4>IT Specialist - Python</h4>
+                    <p>Python programming proficiency</p>
+                  </div>
+                  <div class="cert-item">
+                    <h4>IT Specialist - Software Development</h4>
+                    <p>Core software development skills</p>
+                  </div>
+                  <div class="cert-item">
+                    <h4>IT Specialist - Data Analytics</h4>
+                    <p>Analyzing and visualizing data</p>
+                  </div>
+                  <div class="cert-item">
+                    <h4>AZ-900: Azure Fundamentals</h4>
+                    <p>Cloud concepts and Azure services</p>
+                  </div>
+                  <div class="cert-item">
+                    <h4>AI-900: Azure AI Fundamentals</h4>
+                    <p>AI concepts and Azure AI services</p>
+                  </div>
+              </div>
+            </div>
+          </div>
+            
+            <div class="founder-details" id="adam-details" style="display: none;">
+          <div class="features-grid about-grid">
+            <div class="feature">
+              <div class="about-header"><h3 style="margin:0">Academics</h3></div>
+              <div class="stat-row">
+                <div class="stat"><div class="label">GPA (Unweighted)</div><div class="value">4.0</div></div>
+                <div class="stat"><div class="label">GPA (Weighted)</div><div class="value">4.722</div></div>
+              </div>
+              <div class="stat-row single">
+                <div class="stat"><div class="label">Class Rank</div><div class="value">3 / 631</div></div>
+              </div>
+                <p class="muted" style="margin-top: 12px; margin-bottom: 0;">Dual Enrollment: Georgia State University & Georgia Tech</p>
+            </div>
+            <div class="feature">
+              <div class="about-header"><h3 style="margin:0">Relevant Coursework</h3></div>
+              <div class="badge-list">
+                <span class="badge-chip"><span class="dot"></span> AP CSP (Python)</span>
+                <span class="badge-chip"><span class="dot"></span> AP CSA (Java)</span>
+                <span class="badge-chip"><span class="dot"></span> CS 1331 – OOP</span>
+                <span class="badge-chip"><span class="dot"></span> Intro to AI Concepts</span>
+                <span class="badge-chip"><span class="dot"></span> AI Concepts (Pandas, NumPy, SQL)</span>
+                <span class="badge-chip"><span class="dot"></span> Data Structures & Algorithms</span>
+                <span class="badge-chip"><span class="dot"></span> Databases / SQL</span>
+                <span class="badge-chip"><span class="dot"></span> TensorFlow • Keras • scikit‑learn</span>
+                <span class="badge-chip"><span class="dot"></span> Jupyter • OpenCV</span>
+                <span class="badge-chip"><span class="dot"></span> Web: HTML • CSS • JS</span>
+              </div>
+            </div>
+            <div class="feature">
+              <div class="about-header"><h3 style="margin:0">Experience — Apex146 & AI/ML Club</h3></div>
+              <div class="stack-16">
+                <div>
+                  <h4 style="margin:0">Apex146 — Internship</h4>
+                  <p class="muted" style="margin:4px 0 6px;">Applied Python/ML to MotoGP & F1 data; built data pipelines and models.</p>
+                  <ul class="checklist">
+                      <li><span class="icon"></span> Data pipelines with pandas/NumPy.</li>
+                      <li><span class="icon"></span> Telemetry analysis and prospect‑scoring prototypes.</li>
+                      <li><span class="icon"></span> Visual reports for stakeholders.</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 style="margin:10px 0 0;">AI & ML Club — Co‑President</h4>
+                    <p class="muted" style="margin:4px 0 6px;">Lead a 70+ member club; running projects, hackathons, and workshops.</p>
+                  <ul class="checklist">
+                      <li><span class="icon"></span> Hands‑on sessions in Python, NumPy, pandas, TensorFlow.</li>
+                      <li><span class="icon"></span> Mini‑hackathons and model challenges with peer reviews.</li>
+                      <li><span class="icon"></span> Mentored newcomers on project structure and demos.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="feature">
+              <div class="about-header"><h3 style="margin:0">Projects</h3></div>
+              <ul class="checklist">
+                  <li><span class="icon"></span> RNN stock forecaster (TensorFlow) — tuned for low RMSE and strong trend capture.</li>
+                  <li><span class="icon"></span> Local LLM QA on 500‑page corpus (Ollama) — answered 150+ queries with citations.</li>
+                  <li><span class="icon"></span> CPI forecasting with LSTM — RMSE ≈ 0.037 and accurate short‑term trend prediction.</li>
+                  <li><span class="icon"></span> Heart disease risk ML study — 89% accuracy, 0.85 F1 after model comparison/tuning.</li>
+              </ul>
+              <div class="projects-gallery reveal">
+                <figure>
+                  <img src="assets/img/proj-ml-1.jpg" alt="Heart disease prediction results" />
+                    <figcaption>Heart disease prediction (ML)</figcaption>
+                </figure>
+                <figure>
+                  <img src="assets/img/proj-llm-1.jpg" alt="Face detection output" />
+                    <figcaption>Face detection (LLM/CV)</figcaption>
+                </figure>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Certifications Horizontal Box -->
+            <div class="certifications-box">
+              <h3 class="certifications-title">Certifications</h3>
+              <div class="certifications-grid">
+                <div class="cert-item">
+                  <h4>IT Specialist - Artificial Intelligence</h4>
+                  <p>AI concepts and applications</p>
+                </div>
+                <div class="cert-item">
+                  <h4>IT Specialist - Data Analytics</h4>
+                  <p>Analyzing and visualizing data</p>
+                </div>
+                <div class="cert-item">
+                  <h4>IT Specialist - Python</h4>
+                  <p>Python programming proficiency</p>
+                </div>
+                <div class="cert-item">
+                  <h4>IT Specialist - Java</h4>
+                  <p>Object-oriented design and development</p>
+                </div>
+                <div class="cert-item">
+                  <h4>IT Specialist - Software Development</h4>
+                  <p>Core software development skills</p>
+                </div>
+                <div class="cert-item">
+                  <h4>AZ-900: Azure Fundamentals</h4>
+                  <p>Cloud concepts and Azure services</p>
+                </div>
+                <div class="cert-item">
+                  <h4>AI-900: Azure AI Fundamentals</h4>
+                  <p>AI concepts and Azure AI services</p>
+                </div>
+              </div>
+            </div>
+            </div>
+            </div>
+            
+            <!-- Ritesh's Card (moves below when expanded) -->
+            <div class="ritesh-card-expanded">
+              <div class="founder-card-wrapper ritesh-card-wrapper-expanded">
+                <div class="about-card reveal-up">
+                  <div class="about-avatar">
+                    <img src="assets/img/ritesh.jpg" alt="Ritesh Konakanchi" />
+                  </div>
+                  <div class="about-meta">
+                    <h2 class="cofounder-name">Ritesh Konakanchi</h2>
+                    <div class="cofounder-title">Co-Founder / Lead UX/UI Designer</div>
+                    <div class="sub">Senior at Denmark High School</div>
+                    <p class="cofounder-bio">Passionate about education and technology, working to make learning accessible and engaging for everyone.</p>
+                  </div>
+                </div>
+                
+                <div class="details-toggle-wrapper">
+                  <button class="details-toggle ritesh-toggle" aria-expanded="false" aria-controls="ritesh-details">
+                    <span>View Qualifications</span>
+                    <svg class="dropdown-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Ritesh's Details -->
+              <div class="ritesh-details" id="ritesh-details" style="display: none;">
+                <div class="features-grid about-grid">
+                  <div class="feature">
+                    <div class="about-header"><h3 style="margin:0">Experience</h3></div>
+                    <div class="stack-16">
+                      <div>
+                        <h4 style="margin:0">Software Development Intern — Maxeom</h4>
+                        <p class="muted" style="margin:4px 0 6px;">Built SQL queries and analytics dashboards for sales team.</p>
+                        <ul class="checklist">
+                          <li><span class="icon"></span> Wrote 15+ SQL queries to clean and join 120k rows for analytics.</li>
+                          <li><span class="icon"></span> Built 3 dashboards for the sales team; indexing cut weekly report runtime by 15%.</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 style="margin:10px 0 0;">Software & Business Development Intern — Punch Rewards</h4>
+                        <p class="muted" style="margin:4px 0 6px;">Developed front-end features for a restaurant rewards app.</p>
+                        <ul class="checklist">
+                          <li><span class="icon"></span> Shipped front-end features for restaurant rewards app.</li>
+                          <li><span class="icon"></span> Supported outreach to onboard 5+ businesses; beta app reached 200+ users.</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 style="margin:10px 0 0;">AI & ML Club — Vice President</h4>
+                        <p class="muted" style="margin:4px 0 6px;">Together with Adam, we lead a 70+ member club; running projects, hackathons, and workshops.</p>
+                        <ul class="checklist">
+                          <li><span class="icon"></span> Organized AI/ML workshops and competitions; built club curriculum and demo projects.</li>
+                          <li><span class="icon"></span> Led teams and live demos; created slides/code resources for meetings.</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="feature">
+                    <div class="about-header"><h3 style="margin:0">Projects</h3></div>
+                    <ul class="checklist">
+                      <li><span class="icon"></span> Car Price Predictor — Random Forest and Linear Regression on 10,000 records; mean error $1,100, R² 0.87.</li>
+                      <li><span class="icon"></span> Tesla Stock Forecaster — RNNs in TensorFlow; 62% trend accuracy, 2.1% MAPE.</li>
+                      <li><span class="icon"></span> Image Classification Model — CNN in Keras/TensorFlow; 90% test accuracy across 10 categories.</li>
+                      <li><span class="icon"></span> Pokémon Battle Predictor — Naïve Bayes and decision trees; 88% validation accuracy.</li>
+                    </ul>
+                    <div style="margin-top: 20px;">
+                      <h4 style="margin:16px 0 6px;">Python Tutor — Coding for a Change</h4>
+                      <p class="muted" style="margin:4px 0 6px;">Taught Python programming and problem-solving skills to students.</p>
+                      <ul class="checklist">
+                        <li><span class="icon"></span> Taught 15 students weekly online; led projects and coding lessons.</li>
+                        <li><span class="icon"></span> Built core Python and problem-solving skills through hands-on projects.</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Certifications Horizontal Box -->
+              <div class="certifications-box">
+                <h3 class="certifications-title">Certifications</h3>
+                <div class="certifications-grid">
+                  <div class="cert-item">
+                    <h4>IT Specialist - Python</h4>
+                    <p>Python programming proficiency</p>
+                  </div>
+                  <div class="cert-item">
+                    <h4>IT Specialist - Software Development</h4>
+                    <p>Core software development skills</p>
+                  </div>
+                  <div class="cert-item">
+                    <h4>IT Specialist - Data Analytics</h4>
+                    <p>Analyzing and visualizing data</p>
+                  </div>
+                  <div class="cert-item">
+                    <h4>AZ-900: Azure Fundamentals</h4>
+                    <p>Cloud concepts and Azure services</p>
+                  </div>
+                  <div class="cert-item">
+                    <h4>AI-900: Azure AI Fundamentals</h4>
+                    <p>AI concepts and Azure AI services</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact Section -->
+      <section class="section">
+        <div class="container">
+          <div class="contact-section" style="margin-top: 40px; padding-top: 32px; border-top: 2px solid var(--border); text-align: center;">
+            <p class="muted" style="margin: 0; font-size: 16px;">
+              <strong>Contact Us:</strong><br>
+              <strong>Adam:</strong> LinkedIn: <a class="text-link" href="https://www.linkedin.com/in/adam-issac-a144b32b7/" target="_blank" rel="noreferrer noopener">adam-issac</a> • 
+              Email: <a class="text-link" href="mailto:adamissac08@gmail.com">adamissac08@gmail.com</a><br>
+              <strong>Ritesh:</strong> LinkedIn: <a class="text-link" href="https://www.linkedin.com/in/ritesh-konakanchi-5744a62aa/" target="_blank" rel="noreferrer noopener">ritesh-konakanchi</a> • 
+              Email: <a class="text-link" href="mailto:ritesh.konakanchi@gmail.com">ritesh.konakanchi@gmail.com</a>
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/certifications.html" class="route">Certifications</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+  </html>
+
+

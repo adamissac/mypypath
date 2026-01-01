@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 2 • Loop Control Statements - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 2 • Loop Control Statements • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 2 • Control Flow</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-2/understanding-control-flow.html">1. Understanding Control Flow</a></li>
+                <li><a href="/units/unit-2/comparison-logical-operators.html">2. Comparison & Logical Operators</a></li>
+                <li><a href="/units/unit-2/if-statement.html">3. The if Statement</a></li>
+                <li><a href="/units/unit-2/if-else-elif.html">4. if-else and elif</a></li>
+                <li><a href="/units/unit-2/nested-conditionals.html">5. Nested Conditionals</a></li>
+                <li><a href="/units/unit-2/boolean-logic-practice.html">6. Boolean Logic in Practice</a></li>
+                <li><a href="/units/unit-2/introduction-loops.html">7. Introduction to Loops</a></li>
+                <li><a href="/units/unit-2/while-loop.html">8. The while Loop</a></li>
+                <li><a href="/units/unit-2/for-loop.html">9. The for Loop</a></li>
+                <li><a class="active" href="/units/unit-2/loop-control-statements.html">10. Loop Control Statements</a></li>
+                <li><a href="/units/unit-2/practical-control-flow-examples.html">11. Practical Control Flow Examples</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-2.html">Unit 2</a>
+              <span class="separator">/</span>
+              <span class="current">Loop Control Statements</span>
+            </nav>
+            <div class="eyebrow">Unit 2 • Lesson 10</div>
+            <h1 class="lesson-title">Loop Control Statements</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Learn to modify loop behavior using break, continue, and pass. These tools help you fine-tune how and when a loop should stop, skip steps, or do nothing temporarily.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-2/for-loop.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-2/practical-control-flow-examples.html">Next: Practical Examples</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What break does:</strong> Understand how to exit a loop early when a condition is met.</li>
+                  <li><strong>What continue does:</strong> Learn how to skip the rest of the current iteration and move to the next one.</li>
+                  <li><strong>What pass does:</strong> Discover how to use a placeholder statement that does nothing.</li>
+                  <li><strong>When to use each:</strong> Recognize situations where each control statement is most useful.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Sometimes you need more control over loops than just letting them run normally. You might want to stop early when you find what you're looking for (break), skip certain iterations (continue), or temporarily leave code empty (pass). These statements give you that flexibility.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: The break Statement</h2>
+                <p>The <code>break</code> statement immediately exits the loop, even if the loop condition is still True. Think of it like an emergency exit - when you hit break, Python stops the loop completely and continues with the code after the loop.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Using break to Exit Early</div>
+                  <pre class="code"><code>for i in range(10):
+    print(i)
+    if i == 5:
+        break
+print("Loop finished")</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Normal Loop Execution</h4>
+                      <p>The loop starts normally, processing each item or iteration as usual.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Condition Check</h4>
+                      <p>Inside the loop, you check if a condition is met (like finding what you're looking for).</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Execute break</h4>
+                      <p>If the condition is True, you execute <code>break</code>, which immediately exits the loop.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Continue After Loop</h4>
+                      <p>Python continues with the code after the loop, skipping any remaining iterations.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Point:</strong> When Python encounters <code>break</code>, it doesn't finish the current iteration. It immediately stops the entire loop and jumps to the code after the loop. This is different from letting the loop finish naturally.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Using break</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try this example that uses break to stop early:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'for i in range(1, 10):\n    print(f&quot;Checking {i}...&quot;)\n    if i == 5:\n        print(&quot;Found it!&quot;)\n        break\nprint(&quot;Done!&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">for i in range(1, 10):
+    print(f"Checking {i}...")
+    if i == 5:
+        print("Found it!")
+        break
+print("Done!")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The loop started processing numbers from 1 to 9. It printed "Checking 1...", then "Checking 2...", and so on. When it reached 5, it printed "Checking 5..." and then "Found it!". At that point, <code>break</code> was executed, which immediately stopped the loop. Python didn't continue to check 6, 7, 8, or 9 - it jumped straight to the code after the loop and printed "Done!". This is useful when you're searching for something and want to stop as soon as you find it!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: The continue Statement</h2>
+                <p>The <code>continue</code> statement skips the rest of the current iteration and moves to the next one. Think of it like skipping to the next song in a playlist - you don't stop the playlist, you just skip the current song and move forward.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Using continue to Skip Iterations</div>
+                  <pre class="code"><code>for i in range(10):
+    if i % 2 == 0:  # Skip even numbers
+        continue
+    print(i)</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Loop Starts Iteration</h4>
+                      <p>The loop begins processing the current item or iteration.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Condition Check</h4>
+                      <p>You check if you want to skip this iteration (like checking if a number is even).</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Execute continue</h4>
+                      <p>If the condition is True, you execute <code>continue</code>, which skips the rest of the current iteration.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Move to Next Iteration</h4>
+                      <p>Python immediately moves to the next iteration of the loop, continuing the loop normally.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Difference:</strong> Unlike <code>break</code>, which stops the entire loop, <code>continue</code> just skips the current iteration and keeps the loop running. The loop continues with the next item in the sequence.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Using continue</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try this example that uses continue to skip even numbers:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'for i in range(1, 11):\n    if i % 2 == 0:  # Skip even numbers\n        continue\n    print(f&quot;Odd number: {i}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">for i in range(1, 11):
+    if i % 2 == 0:  # Skip even numbers
+        continue
+    print(f"Odd number: {i}")</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The loop went through numbers 1 to 10. For each number, it checked if it was even using <code>i % 2 == 0</code> (this checks if the remainder when dividing by 2 is 0). When the number was even (2, 4, 6, 8, 10), <code>continue</code> was executed, which skipped the print statement and moved to the next number. When the number was odd (1, 3, 5, 7, 9), the loop continued normally and printed "Odd number: [number]". Notice how the loop didn't stop - it just skipped certain iterations and kept going!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: The pass Statement</h2>
+                <p>The <code>pass</code> statement is a placeholder that does nothing. It's useful when you need to write code syntactically (because Python requires something) but you don't want to do anything yet. Think of it like a placeholder card that says "to be filled in later".</p>
+
+                <div class="code-example">
+                  <div class="code-header">Using pass as a Placeholder</div>
+                  <pre class="code"><code>for i in range(5):
+    if i == 2:
+        pass  # TODO: Add logic here later
+    else:
+        print(i)</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>When to Use pass</h4>
+                  <p>You use <code>pass</code> when:</p>
+                  <ul style="margin: 12px 0 0 0;">
+                    <li>You're writing code structure but haven't implemented the logic yet</li>
+                    <li>You need something syntactically but don't want it to do anything</li>
+                    <li>You're planning to add code later and need a placeholder</li>
+                  </ul>
+                  <p style="margin-top: 12px;">Unlike <code>break</code> and <code>continue</code>, <code>pass</code> doesn't affect loop flow - it just does nothing and continues normally.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Comparing break, continue, and pass</h2>
+                <p>Understanding the difference helps you choose the right one:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4><code>break</code></h4>
+                    <p>Stops the entire loop immediately.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>for i in range(10):
+    if i == 5:
+        break
+    print(i)</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Prints: 0, 1, 2, 3, 4</p>
+                    <p style="margin-top: 8px; font-size: 13px;">Loop stops completely</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4><code>continue</code></h4>
+                    <p>Skips current iteration, continues loop.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>for i in range(10):
+    if i == 5:
+        continue
+    print(i)</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Prints: 0, 1, 2, 3, 4, 6, 7, 8, 9</p>
+                    <p style="margin-top: 8px; font-size: 13px;">Skips 5, keeps going</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4><code>pass</code></h4>
+                    <p>Does nothing, continues normally.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>for i in range(10):
+    if i == 5:
+        pass
+    print(i)</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Prints: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9</p>
+                    <p style="margin-top: 8px; font-size: 13px;">All numbers print</p>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Memory Aid:</strong> Think of <code>break</code> as "break out of the loop", <code>continue</code> as "continue to the next iteration", and <code>pass</code> as "pass it by" (do nothing).</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Use break</h4>
+                  <p>Write a for loop that goes through range(1, 11). Print each number, but use break to stop when you reach 7.</p>
+                  <p class="hint-text">Use for i in range(1, 11):, print i, then check if i == 7 and break.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Use continue</h4>
+                  <p>Write a for loop that goes through range(1, 11). Print each number, but use continue to skip numbers divisible by 3.</p>
+                  <p class="hint-text">Use for i in range(1, 11):, check if i % 3 == 0 and continue, then print i.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-2/for-loop.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-2/practical-control-flow-examples.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'for i in range(1, 11):\n    print(i)\n    if i == 7:\n        break',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for for loop
+            if (!trimmed.includes('for')) {
+              return {
+                correct: false,
+                message: 'You need to write a for loop.',
+                hints: ['Start with: for i in range(1, 11):', 'Don\'t forget the colon']
+              };
+            }
+            
+            // Check for range(1, 11)
+            if (!trimmed.includes('range(1, 11)') && !trimmed.includes('range(1,11)')) {
+              return {
+                correct: false,
+                message: 'You need to use range(1, 11) to create numbers 1 through 10.',
+                hints: ['Use: for i in range(1, 11):', 'range(1, 11) creates: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10']
+              };
+            }
+            
+            // Check for break
+            if (!trimmed.includes('break')) {
+              return {
+                correct: false,
+                message: 'You need to use break to stop the loop.',
+                hints: ['Add: break', 'This should be inside an if statement checking if i == 7']
+              };
+            }
+            
+            // Check for if statement with i == 7
+            if (!trimmed.includes('if') || (!trimmed.includes('i == 7') && !trimmed.includes('i==7'))) {
+              return {
+                correct: false,
+                message: 'You need to check if i == 7 before breaking.',
+                hints: ['Add: if i == 7:', 'Then break inside that if block']
+              };
+            }
+            
+            // Check for print statement
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print each number before breaking.',
+                hints: ['Add a print statement', 'Make sure it prints i', 'It should print before the break']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have a colon after if', 'Check your indentation']
+              };
+            }
+            
+            // Check output contains 1-7 but not 8, 9, 10 (since break stops at 7)
+            const outputText = output.stdout || '';
+            if (!outputText.includes('7')) {
+              return {
+                correct: false,
+                message: 'Your loop should print 7 before breaking.',
+                hints: ['Make sure print comes before break', 'Check your condition']
+              };
+            }
+            
+            // Check that 8, 9, 10 are NOT printed (break should stop before them)
+            if (outputText.includes('8') || outputText.includes('9') || outputText.includes('10')) {
+              return {
+                correct: false,
+                message: 'Your loop should stop at 7 (break should prevent 8, 9, 10 from printing).',
+                hints: ['Make sure break is executed when i == 7', 'Check your indentation']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used break to exit a loop early.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'for i in range(1, 11):\n    if i % 3 == 0:\n        continue\n    print(i)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for for loop
+            if (!trimmed.includes('for')) {
+              return {
+                correct: false,
+                message: 'You need to write a for loop.',
+                hints: ['Start with: for i in range(1, 11):', 'Don\'t forget the colon']
+              };
+            }
+            
+            // Check for range(1, 11)
+            if (!trimmed.includes('range(1, 11)') && !trimmed.includes('range(1,11)')) {
+              return {
+                correct: false,
+                message: 'You need to use range(1, 11) to create numbers 1 through 10.',
+                hints: ['Use: for i in range(1, 11):']
+              };
+            }
+            
+            // Check for continue
+            if (!trimmed.includes('continue')) {
+              return {
+                correct: false,
+                message: 'You need to use continue to skip iterations.',
+                hints: ['Add: continue', 'This should be inside an if statement']
+              };
+            }
+            
+            // Check for modulo check (i % 3 == 0)
+            if (!trimmed.includes('% 3') && !trimmed.includes('%3')) {
+              return {
+                correct: false,
+                message: 'You need to check if i is divisible by 3 using i % 3 == 0.',
+                hints: ['Add: if i % 3 == 0:', 'The % operator gives the remainder when dividing']
+              };
+            }
+            
+            // Check for print statement
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print numbers that are not divisible by 3.',
+                hints: ['Add a print statement', 'Make sure it prints i', 'It should come after the continue']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have a colon after if', 'Check your indentation']
+              };
+            }
+            
+            // Check output does NOT contain 3, 6, 9 (should be skipped)
+            const outputText = output.stdout || '';
+            if (outputText.includes('3') || outputText.includes('6') || outputText.includes('9')) {
+              return {
+                correct: false,
+                message: 'Your loop should skip numbers divisible by 3 (3, 6, 9 should not print).',
+                hints: ['Make sure continue is executed when i % 3 == 0', 'Check your condition']
+              };
+            }
+            
+            // Check output contains some numbers (1, 2, 4, 5, 7, 8, 10 should print)
+            if (!outputText.includes('1') || !outputText.includes('2')) {
+              return {
+                correct: false,
+                message: 'Your loop should print numbers that are NOT divisible by 3 (like 1, 2, 4, 5, etc.).',
+                hints: ['Check your continue logic', 'Make sure print comes after the if block']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used continue to skip certain iterations.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

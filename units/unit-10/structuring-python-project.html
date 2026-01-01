@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 10 • Structuring a Python Project • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 10 • Final Projects</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-10/project-planning-brainstorming.html">1. Project Planning and Brainstorming</a></li>
+                <li><a class="" href="/units/unit-10/writing-project-proposal.html">2. Writing a Project Proposal</a></li>
+                <li><a class="active" href="/units/unit-10/structuring-python-project.html">3. Structuring a Python Project</a></li>
+                <li><a class="" href="/units/unit-10/implementing-core-features.html">4. Implementing Core Features</a></li>
+                <li><a class="" href="/units/unit-10/adding-user-interaction.html">5. Adding User Interaction</a></li>
+                <li><a class="" href="/units/unit-10/error-handling-testing-code.html">6. Error Handling and Testing Your Code</a></li>
+                <li><a class="" href="/units/unit-10/polishing-visuals-output-formatting.html">7. Polishing with Visuals or Output Formatting</a></li>
+                <li><a class="" href="/units/unit-10/writing-documentation-comments.html">8. Writing Documentation and Comments</a></li>
+                <li><a class="" href="/units/unit-10/presenting-your-project.html">9. Presenting Your Project</a></li>
+                <li><a class="" href="/units/unit-10/reflection-next-steps.html">10. Reflection and Next Steps</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-10.html">Unit 10</a>
+              <span class="separator">/</span>
+              <span class="current">Structuring a Python Project</span>
+            </nav>
+            <div class="eyebrow">Unit 10 • Lesson 3</div>
+            <h1 class="lesson-title">Structuring a Python Project</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Organization is key to large projects. You'll learn how to separate code into files, create modules, and use folders to keep your project clean and manageable as it grows, following professional project organization standards.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">25–30 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-10/implementing-core-features.html">Next: Implementing Core Features</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Project structure:</strong> How to organize files and folders.</li>
+                  <li><strong>Separating concerns:</strong> Dividing code into logical modules.</li>
+                  <li><strong>File organization:</strong> Best practices for Python projects.</li>
+                  <li><strong>Module creation:</strong> Creating reusable code modules.</li>
+                  <li><strong>Importing modules:</strong> Using your own modules in projects.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>Why Structure Matters</h2>
+                <p>As projects grow, organization becomes critical. A well-structured project is:</p>
+
+                <div class="feature-grid">
+                  <div class="feature-card">
+                    <h4>Easier to Navigate</h4>
+                    <p>You can quickly find the code you need</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Easier to Maintain</h4>
+                    <p>Changes are localized to specific files</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Easier to Test</h4>
+                    <p>You can test individual modules separately</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>More Professional</h4>
+                    <p>Shows you understand software development</p>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <h4>Start Simple</h4>
+                  <p>For small projects, a single file might be fine. But as projects grow, structure becomes essential. Start organizing early!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Basic Project Structure</h2>
+                <p>Here's a simple structure for Python projects:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Example Project Structure</div>
+                  <pre class="code"><code>my_project/
+├── main.py           # Entry point - runs the program
+├── utils.py          # Helper functions
+├── data.py           # Data handling functions
+├── config.py         # Configuration settings
+├── data/             # Folder for data files
+│   └── tasks.csv
+├── tests/            # Folder for test files
+│   └── test_utils.py
+└── README.md        # Project documentation</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>File Organization Principles</h4>
+                  <ul>
+                    <li><strong>One main file:</strong> <code>main.py</code> or <code>app.py</code> runs your program</li>
+                    <li><strong>Separate by function:</strong> Group related code together</li>
+                    <li><strong>Use folders:</strong> Organize data, tests, and config files</li>
+                    <li><strong>Clear names:</strong> File names should describe their purpose</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Creating Modules</h2>
+                <p>Modules are Python files that contain related functions. Here's how to create and use them:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Create Module File</h4>
+                      <p>Create a <code>.py</code> file with related functions</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Write Functions</h4>
+                      <p>Add functions that work together</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Import in Main File</h4>
+                      <p>Use <code>import</code> to use module functions</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Example: Creating and Using Modules</div>
+                  <pre class="code"><code># utils.py - Helper functions module
+def format_date(date):
+    return date.strftime("%Y-%m-%d")
+
+def validate_input(text):
+    return text.strip() != ""
+
+# main.py - Main program file
+from utils import format_date, validate_input
+
+user_input = input("Enter task: ")
+if validate_input(user_input):
+    print("Valid input!")
+else:
+    print("Input cannot be empty")</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>Structure:</strong> Organize files and folders logically</li>
+                  <li><strong>Modules:</strong> Separate code into reusable files</li>
+                  <li><strong>Organization:</strong> Group related code together</li>
+                  <li><strong>Benefits:</strong> Easier navigation, maintenance, and testing</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>Good structure makes projects manageable. Even small projects benefit from organization. Start with a simple structure and expand as needed!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: Project Structure</h3>
+                  <p>Why is project structure important? How would you organize a Python project?</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Modules</h3>
+                  <p>What are modules and how do you create and use them in Python?</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-10/writing-project-proposal.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-10/implementing-core-features.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

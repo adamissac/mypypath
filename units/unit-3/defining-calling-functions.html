@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 3 • Defining and Calling Functions - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 3 • Defining and Calling Functions • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 3 • Functions</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-3/what-are-functions.html">1. What Are Functions</a></li>
+                <li><a class="active" href="/units/unit-3/defining-calling-functions.html">2. Defining & Calling Functions</a></li>
+                <li><a href="/units/unit-3/parameters-arguments.html">3. Parameters & Arguments</a></li>
+                <li><a href="/units/unit-3/return-statements.html">4. Return Statements</a></li>
+                <li><a href="/units/unit-3/variable-scope-lifetime.html">5. Variable Scope & Lifetime</a></li>
+                <li><a href="/units/unit-3/default-optional-parameters.html">6. Default & Optional Parameters</a></li>
+                <li><a href="/units/unit-3/docstrings-documentation.html">7. Docstrings & Documentation</a></li>
+                <li><a href="/units/unit-3/nested-helper-functions.html">8. Nested & Helper Functions</a></li>
+                <li><a href="/units/unit-3/lambda-functions.html">9. Lambda Functions</a></li>
+                <li><a href="/units/unit-3/practical-function-examples.html">10. Practical Function Examples</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-3.html">Unit 3</a>
+              <span class="separator">/</span>
+              <span class="current">Defining and Calling Functions</span>
+            </nav>
+            <div class="eyebrow">Unit 3 • Lesson 2</div>
+            <h1 class="lesson-title">Defining and Calling Functions</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Learn how to create functions with the <code>def</code> keyword and call them from anywhere in your code. You'll see how indentation, naming, and parentheses define a function's body and trigger its execution, and practice writing your first custom functions from scratch.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">15–20 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-3/what-are-functions.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-3/parameters-arguments.html">Next: Parameters & Arguments</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>How to define functions:</strong> Use the <code>def</code> keyword to create your own functions.</li>
+                  <li><strong>Function syntax:</strong> Understand the structure of function definitions including the colon and indentation.</li>
+                  <li><strong>How to call functions:</strong> Execute functions by writing their name followed by parentheses.</li>
+                  <li><strong>Function naming:</strong> Learn best practices for naming your functions clearly and descriptively.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Defining your own functions is one of the first steps toward writing professional Python code. Functions let you organize your code into reusable pieces, making your programs easier to read, test, and maintain. Once you can define and call functions, you can start building more complex programs.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: Defining a Function</h2>
+                <p>To create a function in Python, you use the <code>def</code> keyword followed by the function name and parentheses. The function body (the code that runs when you call it) goes on the next line, indented.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Basic Function Definition</div>
+                  <pre class="code"><code>def greet():
+    print("Hello!")
+    print("Welcome to Python!")</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Start with <code>def</code></h4>
+                      <p>The keyword <code>def</code> tells Python you're defining a function. It's short for "define" and is required to create a function.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Choose a Function Name</h4>
+                      <p>After <code>def</code>, write the function name. Use lowercase letters and underscores, like <code>greet</code> or <code>calculate_total</code>. The name should describe what the function does.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Add Parentheses</h4>
+                      <p>After the function name, add parentheses <code>()</code>. These are required even if your function doesn't take any inputs (we'll learn about inputs in the next lesson).</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Add a Colon</h4>
+                      <p>End the definition line with a colon <code>:</code>. This tells Python that the function body is coming next.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                      <h4>Write the Function Body</h4>
+                      <p>On the next line, indent and write the code that should run when the function is called. All code inside the function must be indented consistently (typically 4 spaces).</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Important:</strong> Defining a function doesn't run it - it just tells Python what the function does. To actually execute the code inside a function, you must call it (write its name with parentheses). Think of defining a function like writing a recipe - the recipe doesn't cook the food, you have to follow it!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Define Your First Function</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try defining a simple function. Notice that nothing happens until you call it:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'def greet():\n    print(&quot;Hello!&quot;)\n    print(&quot;Welcome!&quot;)\n\nprint(&quot;Function defined, but not called yet&quot;)\ngreet()\nprint(&quot;Function called!&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">def greet():
+    print("Hello!")
+    print("Welcome!")
+
+print("Function defined, but not called yet")
+greet()
+print("Function called!")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> When Python first encounters <code>def greet():</code>, it doesn't run the code inside the function - it just remembers that a function named <code>greet</code> exists. That's why "Function defined, but not called yet" prints first. Then, when Python sees <code>greet()</code> (the function call), it jumps to the function definition and runs all the indented code inside it. That's when "Hello!" and "Welcome!" are printed. Finally, Python continues with the rest of the program and prints "Function called!". This shows the difference between defining a function (telling Python what it does) and calling a function (actually running it).</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Calling a Function</h2>
+                <p>To execute a function, you write its name followed by parentheses. This is called "calling" or "invoking" the function. When you call a function, Python jumps to the function definition, runs all the code inside it, and then returns to where you called it.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Calling a Function</div>
+                  <pre class="code"><code>def greet():
+    print("Hello!")
+
+greet()  # This calls the function
+greet()  # You can call it multiple times
+greet()  # Each call runs the function again</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How Function Calls Work</h4>
+                  <p>When Python sees <code>greet()</code>, it looks for a function named <code>greet</code> that you've defined earlier in your code. It then executes all the code inside that function's body. After the function finishes, Python continues with the next line after the function call. You can call a function as many times as you want - each call runs the function independently.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Function Naming Rules</h2>
+                <p>Function names follow the same rules as variable names in Python. They should be descriptive and follow Python naming conventions:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Good Function Names</div>
+                  <pre class="code"><code># Use lowercase letters and underscores
+def calculate_total():
+    pass
+
+def get_user_name():
+    pass
+
+def print_welcome_message():
+    pass</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Avoid These Naming Patterns</div>
+                  <pre class="code"><code># Don't start with numbers
+def 2calculate():  # ERROR!
+
+# Don't use spaces
+def calculate total():  # ERROR!
+
+# Don't use Python keywords
+def if():  # ERROR! 'if' is a keyword
+def print():  # ERROR! 'print' is a built-in function</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Best Practice:</strong> Function names should clearly describe what the function does. Use verbs like <code>calculate</code>, <code>get</code>, <code>print</code>, or <code>check</code> to make it obvious. For example, <code>calculate_total</code> is better than <code>ct</code> or <code>func1</code> because it tells you exactly what the function does.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Multiple Function Calls</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Notice how you can call a function multiple times, and each call runs independently:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'def print_info():\n    print(&quot;Name: Python&quot;)\n    print(&quot;Version: 3.12&quot;)\n    print(&quot;---&quot;)\n\nprint_info()\nprint_info()\nprint_info()')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">def print_info():
+    print("Name: Python")
+    print("Version: 3.12")
+    print("---")
+
+print_info()
+print_info()
+print_info()</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Each time Python sees <code>print_info()</code>, it runs the entire function body. That's why you see the same three lines printed three times. This demonstrates one of the key benefits of functions: you write the code once (in the function definition), but you can use it many times (by calling it multiple times). Without functions, you'd have to write those three print statements three times, which is repetitive and harder to maintain.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Functions Can Be Called Anywhere</h2>
+                <p>Once you define a function, you can call it from anywhere in your code - before or after other code, inside loops, inside other functions (we'll learn about this later), or even multiple times. The only rule is that the function must be defined before you try to call it.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Calling Functions in Different Places</div>
+                  <pre class="code"><code>def greet():
+    print("Hello!")
+
+greet()  # Call it here
+
+for i in range(3):
+    greet()  # Call it inside a loop
+
+greet()  # Call it again here</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Function Definition Order</h4>
+                  <p>Python reads your code from top to bottom. When it encounters a function definition, it remembers it but doesn't run it. When it encounters a function call, it looks for the function definition that came before it. This means you must define a function before you call it - if you try to call a function before it's defined, Python will give you an error.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 5: Empty Functions</h2>
+                <p>Sometimes you want to define a function but haven't written the code yet. Python requires that function bodies have at least one line, so you can use the <code>pass</code> keyword as a placeholder. This tells Python "this function does nothing for now, but it's valid syntax."</p>
+
+                <div class="code-example">
+                  <div class="code-header">Using pass as a Placeholder</div>
+                  <pre class="code"><code>def calculate_total():
+    pass  # Function does nothing yet
+
+# You can call it, but nothing happens
+calculate_total()</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>When to Use pass:</strong> Use <code>pass</code> when you're planning out your program structure and want to define functions before writing their code. It's also useful when you need a function that does nothing (though this is rare). Later, you can replace <code>pass</code> with the actual function code.</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Create and Call a Function</h4>
+                  <p>Create a function named <code>introduce</code> that prints your name and a hobby. Then call the function twice.</p>
+                  <p class="hint-text">Use def introduce(): followed by print statements, then call introduce() twice.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Function with Multiple Statements</h4>
+                  <p>Create a function named <code>display_info</code> that prints three different pieces of information (like your name, age, and favorite color). Call it once.</p>
+                  <p class="hint-text">Your function should have three print statements inside it.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-3/what-are-functions.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-3/parameters-arguments.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'def introduce():\n    print("My name is Python")\n    print("I love programming")\n\nintroduce()\nintroduce()',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for def keyword
+            if (!trimmed.includes('def')) {
+              return {
+                correct: false,
+                message: 'You need to define a function using def.',
+                hints: ['Start with: def introduce():', 'Don\'t forget the colon']
+              };
+            }
+            
+            // Check for introduce function name
+            if (!trimmed.includes('introduce')) {
+              return {
+                correct: false,
+                message: 'Your function should be named introduce.',
+                hints: ['Write: def introduce():', 'Make sure the name matches exactly']
+              };
+            }
+            
+            // Check for colon
+            if (!trimmed.includes(':')) {
+              return {
+                correct: false,
+                message: 'You need a colon after the function definition.',
+                hints: ['Add a colon after: def introduce()', 'The colon tells Python the function body is coming']
+              };
+            }
+            
+            // Check for print statements
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'Your function should print something.',
+                hints: ['Add print statements inside the function', 'Make sure they\'re indented']
+              };
+            }
+            
+            // Check for function calls
+            const callCount = (trimmed.match(/introduce\(\)/g) || []).length;
+            if (callCount < 2) {
+              return {
+                correct: false,
+                message: 'You need to call the function twice.',
+                hints: ['Call introduce() two times', 'Write introduce() on separate lines']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have a colon after def', 'Check your indentation', 'Make sure print statements are indented inside the function']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully defined a function and called it multiple times.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'def display_info():\n    print("Name: Python")\n    print("Age: 30")\n    print("Favorite Color: Blue")\n\ndisplay_info()',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for def keyword
+            if (!trimmed.includes('def')) {
+              return {
+                correct: false,
+                message: 'You need to define a function using def.',
+                hints: ['Start with: def display_info():', 'Don\'t forget the colon']
+              };
+            }
+            
+            // Check for display_info function name
+            if (!trimmed.includes('display_info')) {
+              return {
+                correct: false,
+                message: 'Your function should be named display_info.',
+                hints: ['Write: def display_info():', 'Use underscores, not spaces']
+              };
+            }
+            
+            // Check for print statements
+            const printCount = (trimmed.match(/print\(/g) || []).length;
+            if (printCount < 3) {
+              return {
+                correct: false,
+                message: 'Your function should have at least three print statements.',
+                hints: ['Add three print statements inside the function', 'Each should print different information']
+              };
+            }
+            
+            // Check for function call
+            if (!trimmed.includes('display_info()')) {
+              return {
+                correct: false,
+                message: 'You need to call the display_info function.',
+                hints: ['Call the function by writing: display_info()', 'Make sure to include the parentheses']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have a colon after def', 'Check your indentation', 'Make sure all print statements are indented']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created a function with multiple statements and called it.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

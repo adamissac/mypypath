@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 2 • Nested Conditionals - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 2 • Nested Conditionals • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 2 • Control Flow</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-2/understanding-control-flow.html">1. Understanding Control Flow</a></li>
+                <li><a href="/units/unit-2/comparison-logical-operators.html">2. Comparison & Logical Operators</a></li>
+                <li><a href="/units/unit-2/if-statement.html">3. The if Statement</a></li>
+                <li><a href="/units/unit-2/if-else-elif.html">4. if-else and elif</a></li>
+                <li><a class="active" href="/units/unit-2/nested-conditionals.html">5. Nested Conditionals</a></li>
+                <li><a href="/units/unit-2/boolean-logic-practice.html">6. Boolean Logic in Practice</a></li>
+                <li><a href="/units/unit-2/introduction-loops.html">7. Introduction to Loops</a></li>
+                <li><a href="/units/unit-2/while-loop.html">8. The while Loop</a></li>
+                <li><a href="/units/unit-2/for-loop.html">9. The for Loop</a></li>
+                <li><a href="/units/unit-2/loop-control-statements.html">10. Loop Control Statements</a></li>
+                <li><a href="/units/unit-2/practical-control-flow-examples.html">11. Practical Control Flow Examples</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-2.html">Unit 2</a>
+              <span class="separator">/</span>
+              <span class="current">Nested Conditionals</span>
+            </nav>
+            <div class="eyebrow">Unit 2 • Lesson 5</div>
+            <h1 class="lesson-title">Nested Conditionals</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Learn how to write conditionals inside other conditionals to create more precise and layered logic. This section focuses on keeping nested code readable while managing multiple logical checks.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-2/if-else-elif.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-2/boolean-logic-practice.html">Next: Boolean Logic in Practice</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What nested conditionals are:</strong> Understand how to put if statements inside other if statements.</li>
+                  <li><strong>Why nesting is useful:</strong> Learn when and why you'd want to nest conditionals.</li>
+                  <li><strong>How indentation works:</strong> Master the indentation rules for nested code blocks.</li>
+                  <li><strong>Keeping code readable:</strong> Learn best practices for writing clear nested conditionals.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Sometimes you need to make decisions based on multiple conditions. Nested conditionals let you check conditions inside other conditions, like asking "If this is true, then check if that is also true." This creates more precise logic for complex situations.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What Are Nested Conditionals?</h2>
+                <p>A nested conditional is an if statement (or if-else, if-elif-else) that appears inside another if statement. Think of it like Russian nesting dolls - one conditional inside another. This lets you check multiple conditions in a structured way.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Basic Nested Conditional Structure</div>
+                  <pre class="code"><code>if outer_condition:
+    # This code runs if outer_condition is True
+    if inner_condition:
+        # This code runs if BOTH conditions are True
+        print("Both conditions are true!")</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Start with the Outer if</h4>
+                      <p>Write your first if statement with its condition. This is the "outer" conditional - it's checked first.</p>
+                      <pre class="code" style="margin-top: 8px;"><code>if age >= 18:
+    # Outer if block starts here</code></pre>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Add the Inner if</h4>
+                      <p>Inside the outer if block (indented), write another if statement. This is the "inner" or "nested" conditional.</p>
+                      <pre class="code" style="margin-top: 8px;"><code>if age >= 18:
+    if has_license:
+        # Inner if block - indented twice!</code></pre>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Indent Properly</h4>
+                      <p>The inner if must be indented inside the outer if. Code inside the inner if must be indented even more (8 spaces total, or 2 levels of indentation).</p>
+                      <pre class="code" style="margin-top: 8px;"><code>if age >= 18:        # 0 spaces
+    if has_license:   # 4 spaces (inside outer if)
+        print("Can drive")  # 8 spaces (inside inner if)</code></pre>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> For code inside a nested if to run, BOTH conditions must be True. First, the outer condition must be True. Only then does Python check the inner condition. If the outer condition is False, Python never even looks at the inner condition - it skips the entire outer block.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Your First Nested Conditional</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try this nested conditional. Notice how both conditions must be True for the inner code to run:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'age = 20\nhas_license = True\nif age >= 18:\n    print(&quot;You are an adult.&quot;)\n    if has_license:\n        print(&quot;You can drive!&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">age = 20
+has_license = True
+if age >= 18:
+    print("You are an adult.")
+    if has_license:
+        print("You can drive!")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Python first checked the outer condition: <code>age >= 18</code>. Since age is 20, this was True, so Python entered the outer if block and printed "You are an adult." Then, still inside the outer if block, Python checked the inner condition: <code>has_license</code>. Since has_license is True, Python entered the inner if block and printed "You can drive!" Notice that both messages printed because both conditions were True. Try changing has_license to False - you'll see only "You are an adult." prints, because the inner condition becomes False.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Why Use Nested Conditionals?</h2>
+                <p>Nested conditionals are useful when you need to check conditions in a specific order, or when one condition only matters if another condition is already True.</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>When Order Matters</h4>
+                    <p>Sometimes you need to check one thing before checking another. For example, you can only check if someone can drive if they're already an adult.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>if age >= 18:
+    if has_license:
+        print("Can drive")
+    else:
+        print("Adult but no license")</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>More Precise Logic</h4>
+                    <p>Nesting lets you create more specific conditions. Instead of checking everything at once, you check step by step.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>if is_raining:
+    if have_umbrella:
+        print("Go outside")
+    else:
+        print("Stay inside")</code></pre>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>Real-World Example: Movie Ticket Pricing</h4>
+                  <p>Imagine a movie theater with these rules: Children (under 12) get a discount, but only if they're with an adult. Adults pay full price. Seniors (65+) get a discount. You could write this with nested conditionals:</p>
+                  <pre class="code" style="margin-top: 12px;"><code>if age < 12:
+    if with_adult:
+        price = 5  # Child discount
+    else:
+        price = 10  # No discount without adult
+elif age >= 65:
+    price = 7  # Senior discount
+else:
+    price = 10  # Full price</code></pre>
+                  <p style="margin-top: 12px;">This structure makes it clear that the "with adult" check only matters for children.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Understanding Indentation Levels</h2>
+                <p>Indentation is crucial for nested conditionals. Each level of nesting requires another level of indentation. Python uses indentation to understand which code belongs to which conditional.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Indentation Levels Explained</div>
+                  <pre class="code"><code># Level 0: No indentation (main code)
+age = 20
+has_license = True
+
+if age >= 18:                    # Level 0: Outer if
+    print("Adult")              # Level 1: Inside outer if (4 spaces)
+    if has_license:             # Level 1: Inner if (4 spaces)
+        print("Can drive")      # Level 2: Inside inner if (8 spaces)
+    else:                       # Level 1: Inner else (4 spaces)
+        print("No license")    # Level 2: Inside inner else (8 spaces)
+else:                           # Level 0: Outer else (0 spaces)
+    print("Minor")              # Level 1: Inside outer else (4 spaces)</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Level 0: Main Code</h4>
+                      <p>Code at the main level has no indentation. This includes variable assignments and the outer if/else statements.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Level 1: Inside Outer Conditional</h4>
+                      <p>Code inside the outer if/else is indented 4 spaces. This includes the inner if statement itself.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Level 2: Inside Inner Conditional</h4>
+                      <p>Code inside the inner if/else is indented 8 spaces (two levels). This is the deepest level in this example.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> Python is very strict about indentation. All code at the same logical level must have the same indentation. If you mix spaces and tabs, or have inconsistent spacing, Python will give you an error. Most Python programmers use 4 spaces per indentation level.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Multiple Levels of Nesting</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try this example with multiple levels. Pay attention to the indentation:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'temperature = 85\nis_summer = True\nif temperature > 80:\n    print(&quot;It\\'s hot!&quot;)\n    if is_summer:\n        print(&quot;Perfect for swimming!&quot;)\n    else:\n        print(&quot;Unusual for this season.&quot;)\nelse:\n    print(&quot;It\\'s not too hot.&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">temperature = 85
+is_summer = True
+if temperature > 80:
+    print("It's hot!")
+    if is_summer:
+        print("Perfect for swimming!")
+    else:
+        print("Unusual for this season.")
+else:
+    print("It's not too hot.")</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Python first checked if temperature > 80. Since temperature is 85, this was True, so Python entered the outer if block and printed "It's hot!" Then, still inside the outer if block, Python checked if is_summer is True. Since it is True, Python entered the inner if block and printed "Perfect for swimming!" Notice how the inner else block was skipped because the inner if condition was True. Try changing is_summer to False to see the inner else block execute instead.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Nested if-else Structures</h2>
+                <p>You can nest any type of conditional structure. You can have if-else inside if, if-elif-else inside if, or even multiple levels of nesting.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Nested if-else Example</div>
+                  <pre class="code"><code>age = 20
+has_license = True
+has_insurance = False
+
+if age >= 18:
+    print("You are an adult.")
+    if has_license:
+        print("You have a license.")
+        if has_insurance:
+            print("You can drive legally!")
+        else:
+            print("You need insurance to drive.")
+    else:
+        print("You need a license to drive.")
+else:
+    print("You are a minor.")</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How Python Evaluates This</h4>
+                  <p>Python evaluates nested conditionals from outside to inside:</p>
+                  <ol style="margin: 12px 0 0 0;">
+                    <li>First, it checks <code>age >= 18</code>. If False, it goes to the outer else.</li>
+                    <li>If True, it enters the outer if block and checks <code>has_license</code>.</li>
+                    <li>If has_license is True, it enters that if block and checks <code>has_insurance</code>.</li>
+                    <li>Only if all three conditions are True does the innermost code run.</li>
+                  </ol>
+                  <p style="margin-top: 12px;">This creates a "decision tree" where each level narrows down the possibilities.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 5: When NOT to Use Nested Conditionals</h2>
+                <p>While nested conditionals are powerful, sometimes there are better alternatives. Knowing when to use them and when to avoid them makes your code cleaner.</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>✅ Good: When Order Matters</h4>
+                    <p>Use nesting when one check only makes sense after another check passes.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>if age >= 18:
+    if has_license:
+        print("Can drive")</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Makes sense: can't check license if not adult</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>❌ Avoid: When You Can Use and</h4>
+                    <p>If both conditions are independent, use <code>and</code> instead of nesting.</p>
+                    <pre class="code" style="margin-top: 12px;"><code># Instead of nesting:
+if age >= 18:
+    if has_license:
+        print("Can drive")
+
+# Use and:
+if age >= 18 and has_license:
+    print("Can drive")</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Simpler and easier to read</p>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Best Practice:</strong> Use nested conditionals when the inner condition only matters if the outer condition is True. Use <code>and</code> when both conditions are equally important and independent. Generally, if you can use <code>and</code> instead of nesting, do it - it's simpler and easier to read.</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Write a Nested Conditional</h4>
+                  <p>Create variables: <code>age</code> = 20 and <code>has_license</code> = True. Write a nested conditional that first checks if age >= 18, and if true, checks if has_license is True. If both are true, print "You can drive!".</p>
+                  <p class="hint-text">Use an outer if to check age, then an inner if to check has_license. Make sure to indent properly.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Nested if-else</h4>
+                  <p>Create variables: <code>temperature</code> = 85 and <code>is_summer</code> = True. Write a nested conditional: if temperature > 80, then check if is_summer is True. If it's summer, print "Perfect for swimming!", otherwise print "Unusual heat for this season."</p>
+                  <p class="hint-text">Use an outer if for temperature, then an inner if-else for is_summer.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-2/if-else-elif.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-2/boolean-logic-practice.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'age = 20\nhas_license = True\nif age >= 18:\n    if has_license:\n        print("You can drive!")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for age variable
+            if (!trimmed.includes('age') || !trimmed.includes('20')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable age with value 20.',
+                hints: ['Write: age = 20']
+              };
+            }
+            
+            // Check for has_license variable
+            if (!trimmed.includes('has_license') || (!trimmed.includes('True') && !trimmed.includes('true'))) {
+              return {
+                correct: false,
+                message: 'You need to create a variable has_license with value True.',
+                hints: ['Write: has_license = True', 'Note: True starts with capital T']
+              };
+            }
+            
+            // Check for outer if
+            if (!trimmed.includes('if')) {
+              return {
+                correct: false,
+                message: 'You need to write an if statement.',
+                hints: ['Start with: if age >= 18:', 'Don\'t forget the colon']
+              };
+            }
+            
+            // Check for nested if (looking for if inside if)
+            const lines = trimmed.split('\n');
+            let hasOuterIf = false;
+            let hasNestedIf = false;
+            for (let i = 0; i < lines.length; i++) {
+              const line = lines[i];
+              if (line.includes('if') && line.includes('age') && line.includes('>=')) {
+                hasOuterIf = true;
+                // Check if next indented line has another if
+                if (i + 1 < lines.length && lines[i + 1].trim().startsWith('if')) {
+                  hasNestedIf = true;
+                }
+              }
+            }
+            
+            if (!hasOuterIf) {
+              return {
+                correct: false,
+                message: 'You need an outer if statement checking age >= 18.',
+                hints: ['Write: if age >= 18:', 'This is the outer conditional']
+              };
+            }
+            
+            if (!hasNestedIf) {
+              return {
+                correct: false,
+                message: 'You need a nested (inner) if statement checking has_license.',
+                hints: ['Inside the outer if block, add: if has_license:', 'Make sure it\'s indented 4 spaces', 'This is the inner conditional']
+              };
+            }
+            
+            // Check for print statement
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print "You can drive!".',
+                hints: ['Add a print statement inside the inner if block', 'Make sure it\'s indented 8 spaces (two levels)', 'Print: "You can drive!"']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have colons after if statements', 'Check your indentation - inner if should be indented 4 spaces, print should be indented 8 spaces']
+              };
+            }
+            
+            // Check output contains the message
+            const outputText = output.stdout || '';
+            if (!outputText.includes('drive') && !outputText.includes('Drive')) {
+              return {
+                correct: false,
+                message: 'Your code should print "You can drive!" when both conditions are True.',
+                hints: ['Check your print statement', 'Make sure it prints "You can drive!"', 'Verify both conditions are True']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully wrote a nested conditional that checks multiple conditions in order.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'temperature = 85\nis_summer = True\nif temperature > 80:\n    if is_summer:\n        print("Perfect for swimming!")\n    else:\n        print("Unusual heat for this season.")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for temperature variable
+            if (!trimmed.includes('temperature') || !trimmed.includes('85')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable temperature with value 85.',
+                hints: ['Write: temperature = 85']
+              };
+            }
+            
+            // Check for is_summer variable
+            if (!trimmed.includes('is_summer') || (!trimmed.includes('True') && !trimmed.includes('true'))) {
+              return {
+                correct: false,
+                message: 'You need to create a variable is_summer with value True.',
+                hints: ['Write: is_summer = True', 'Note: True starts with capital T']
+              };
+            }
+            
+            // Check for outer if
+            if (!trimmed.includes('if') || !trimmed.includes('temperature > 80')) {
+              return {
+                correct: false,
+                message: 'You need an outer if statement checking temperature > 80.',
+                hints: ['Write: if temperature > 80:', 'This is the outer conditional']
+              };
+            }
+            
+            // Check for nested if-else
+            const lines = trimmed.split('\n');
+            let hasNestedIf = false;
+            let hasNestedElse = false;
+            for (let i = 0; i < lines.length; i++) {
+              const line = lines[i];
+              if (line.includes('if') && line.includes('is_summer')) {
+                hasNestedIf = true;
+              }
+              if (line.includes('else') && i > 0 && lines[i-1].trim().includes('if')) {
+                hasNestedElse = true;
+              }
+            }
+            
+            if (!hasNestedIf) {
+              return {
+                correct: false,
+                message: 'You need a nested if statement checking is_summer.',
+                hints: ['Inside the outer if block, add: if is_summer:', 'Make sure it\'s indented 4 spaces']
+              };
+            }
+            
+            if (!hasNestedElse) {
+              return {
+                correct: false,
+                message: 'You need a nested else clause.',
+                hints: ['After the nested if, add: else:', 'Make sure it\'s at the same indentation level as the nested if (4 spaces)']
+              };
+            }
+            
+            // Check for print statements
+            const printCount = (trimmed.match(/print\(/g) || []).length;
+            if (printCount < 2) {
+              return {
+                correct: false,
+                message: 'You need two print statements: one for the if case and one for the else case.',
+                hints: ['Print "Perfect for swimming!" in the nested if block', 'Print "Unusual heat for this season." in the nested else block']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have colons after if and else', 'Check your indentation']
+              };
+            }
+            
+            // Check output contains the message
+            const outputText = output.stdout || '';
+            if (!outputText.includes('swimming') && !outputText.includes('Swimming')) {
+              return {
+                correct: false,
+                message: 'With temperature = 85 and is_summer = True, your code should print "Perfect for swimming!".',
+                hints: ['Check your nested if condition', 'Make sure it checks is_summer', 'Verify your print statement']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully wrote a nested if-else structure that handles multiple conditions.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

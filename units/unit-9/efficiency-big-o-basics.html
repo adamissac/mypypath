@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 9 • Efficiency and Big-O Basics • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 9 • Advanced Topics</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-9/recursion-problem-decomposition.html">1. Recursion and Problem Decomposition</a></li>
+                <li><a class="" href="/units/unit-9/working-with-external-libraries.html">2. Working with External Libraries</a></li>
+                <li><a class="" href="/units/unit-9/apis-data-retrieval.html">3. APIs and Data Retrieval</a></li>
+                <li><a class="" href="/units/unit-9/introduction-json-data-parsing.html">4. Introduction to JSON and Data Parsing</a></li>
+                <li><a class="active" href="/units/unit-9/efficiency-big-o-basics.html">5. Efficiency and Big-O Basics</a></li>
+                <li><a class="" href="/units/unit-9/working-with-dates-times.html">6. Working with Dates and Times</a></li>
+                <li><a class="" href="/units/unit-9/data-visualization-matplotlib.html">7. Data Visualization with Matplotlib</a></li>
+                <li><a class="" href="/units/unit-9/basic-automation-python.html">8. Basic Automation with Python</a></li>
+                <li><a class="" href="/units/unit-9/introduction-file-formats.html">9. Introduction to File Formats (CSV, JSON, and Excel)</a></li>
+                <li><a class="" href="/units/unit-9/applying-advanced-concepts.html">10. Applying Advanced Concepts Together</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-9.html">Unit 9</a>
+              <span class="separator">/</span>
+              <span class="current">Efficiency and Big-O Basics</span>
+            </nav>
+            <div class="eyebrow">Unit 9 • Lesson 5</div>
+            <h1 class="lesson-title">Efficiency and Big-O Basics</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Not all code runs equally fast — efficiency matters. You'll be introduced to the concept of algorithmic complexity (Big-O notation) and learn simple ways to make your programs faster and more memory-efficient, writing code that scales well.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">25–30 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-9/working-with-dates-times.html">Next: Working with Dates and Times</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Algorithm efficiency:</strong> Why some code runs faster than others.</li>
+                  <li><strong>Big-O notation:</strong> How to describe algorithm performance.</li>
+                  <li><strong>Time complexity:</strong> How execution time grows with input size.</li>
+                  <li><strong>Common complexities:</strong> O(1), O(n), O(n²) and what they mean.</li>
+                  <li><strong>Optimization:</strong> Simple ways to make code more efficient.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>Why Efficiency Matters</h2>
+                <p>Efficient code runs faster and uses less memory. As your programs handle more data, efficiency becomes crucial.</p>
+
+                <div class="info-card">
+                  <h4>Real-World Impact</h4>
+                  <ul>
+                    <li>Faster programs = better user experience</li>
+                    <li>Efficient code uses less memory</li>
+                    <li>Scales better with larger datasets</li>
+                    <li>Can handle more users or requests</li>
+                    <li>Saves computational resources</li>
+                  </ul>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Example: Inefficient vs Efficient</div>
+                  <pre class="code"><code># Inefficient: O(n²) - nested loops
+def find_duplicates_slow(items):
+    duplicates = []
+    for i in range(len(items)):
+        for j in range(i + 1, len(items)):
+            if items[i] == items[j]:
+                duplicates.append(items[i])
+    return duplicates
+
+# Efficient: O(n) - single loop with set
+def find_duplicates_fast(items):
+    seen = set()
+    duplicates = []
+    for item in items:
+        if item in seen:
+            duplicates.append(item)
+        seen.add(item)
+    return duplicates</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Big-O Notation</h2>
+                <p><strong>Big-O notation</strong> describes how algorithm performance changes as input size grows. It shows the worst-case scenario and helps you understand scalability.</p>
+
+                <div class="info-card">
+                  <h4>Understanding Big-O</h4>
+                  <p>Big-O notation uses "O" followed by a function that describes how the algorithm's time or space requirements grow. The "n" represents the input size. We focus on the dominant term and ignore constants.</p>
+                </div>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>O(1) - Constant Time</h4>
+                    <p>Accessing a list element by index. Time doesn't change with input size.</p>
+                    <pre class="code" style="margin-top: 8px;"><code>my_list[0]  # Always takes same time</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>O(n) - Linear Time</h4>
+                    <p>Looping through a list once. Time grows proportionally with input size.</p>
+                    <pre class="code" style="margin-top: 8px;"><code>for item in my_list:  # Time = n</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>O(n²) - Quadratic Time</h4>
+                    <p>Nested loops. Time grows with the square of input size.</p>
+                    <pre class="code" style="margin-top: 8px;"><code>for i in range(n):
+    for j in range(n):  # Time = n²</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>O(log n) - Logarithmic Time</h4>
+                    <p>Binary search. Time grows slowly as input increases.</p>
+                    <pre class="code" style="margin-top: 8px;"><code># Binary search halves
+# search space each step</code></pre>
+                  </div>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Comparing Complexities</div>
+                  <pre class="code"><code># O(1) - Constant
+def get_first(items):
+    return items[0]  # Always same time
+
+# O(n) - Linear
+def find_max(items):
+    max_val = items[0]
+    for item in items:  # Loops n times
+        if item > max_val:
+            max_val = item
+    return max_val
+
+# O(n²) - Quadratic
+def find_duplicates(items):
+    duplicates = []
+    for i in range(len(items)):      # Outer loop: n
+        for j in range(i+1, len(items)):  # Inner loop: n
+            if items[i] == items[j]:
+                duplicates.append(items[i])
+    return duplicates</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>Complexity Comparison</h4>
+                  <p>For n=1000: O(1) = 1 operation, O(n) = 1000 operations, O(n²) = 1,000,000 operations! As data grows, the difference becomes huge.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Optimization Tips</h2>
+                <p>Simple ways to make your code more efficient:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Choose the Right Data Structure</h4>
+                      <p>Use sets for membership testing (O(1)) instead of lists (O(n)). Use dictionaries for lookups.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Avoid Nested Loops When Possible</h4>
+                      <p>Nested loops create O(n²) complexity. Look for ways to use a single loop or built-in functions.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Use Built-in Functions</h4>
+                      <p>Python's built-in functions are often optimized in C. Use <code>max()</code>, <code>min()</code>, <code>sum()</code> instead of writing loops.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Cache Results</h4>
+                      <p>If you compute the same value multiple times, store it in a variable instead of recalculating.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Optimization Example</div>
+                  <pre class="code"><code># Slow: O(n²) - nested loops
+def has_duplicate_slow(items):
+    for i in range(len(items)):
+        for j in range(i+1, len(items)):
+            if items[i] == items[j]:
+                return True
+    return False
+
+# Fast: O(n) - single loop with set
+def has_duplicate_fast(items):
+    seen = set()
+    for item in items:
+        if item in seen:  # O(1) lookup
+            return True
+        seen.add(item)
+    return False</code></pre>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: Understanding Complexity</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try identifying the complexity of different operations:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# O(1) - Constant time\nitems = [1, 2, 3, 4, 5]\nfirst = items[0]  # Always same time\nprint(f\"First item: {first}\")\n\n# O(n) - Linear time\nfor item in items:\n    print(item)  # Loops n times\n\nprint(\"\\nComplexity: O(1) for access, O(n) for loop\")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># O(1) - Constant time
+items = [1, 2, 3, 4, 5]
+first = items[0]  # Always same time
+print(f"First item: {first}")
+
+# O(n) - Linear time
+for item in items:
+    print(item)  # Loops n times
+
+print("\nComplexity: O(1) for access, O(n) for loop")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Accessing an element by index is O(1) - it always takes the same time. Looping through all elements is O(n) - time grows with the list size.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Space Complexity</h2>
+                <p>Big-O can also describe space (memory) usage:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Space Complexity Examples</div>
+                  <pre class="code"><code># O(1) space - constant memory
+def get_first(items):
+    return items[0]  # Only uses one variable
+
+# O(n) space - memory grows with input
+def copy_list(items):
+    new_list = []  # Creates new list of size n
+    for item in items:
+        new_list.append(item)
+    return new_list
+
+# O(n²) space - memory grows quadratically
+def create_matrix(n):
+    matrix = []
+    for i in range(n):
+        row = [0] * n  # Creates n×n matrix
+        matrix.append(row)
+    return matrix</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Time vs Space</h4>
+                  <p>Sometimes you can trade time for space or vice versa:</p>
+                  <ul>
+                    <li><strong>Time optimization:</strong> Use more memory (caching) to speed up calculations</li>
+                    <li><strong>Space optimization:</strong> Use more time (recalculating) to save memory</li>
+                    <li><strong>Balance:</strong> Choose based on what's more important for your application</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Real-World Efficiency Examples</h2>
+                <p>Understanding efficiency helps in real projects:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Example: Finding Duplicates</div>
+                  <pre class="code"><code># O(n²) - Slow for large lists
+def has_duplicates_slow(items):
+    for i in range(len(items)):
+        for j in range(i + 1, len(items)):
+            if items[i] == items[j]:
+                return True
+    return False
+
+# O(n) - Fast, uses set for O(1) lookups
+def has_duplicates_fast(items):
+    seen = set()
+    for item in items:
+        if item in seen:  # O(1) lookup
+            return True
+        seen.add(item)
+    return False
+
+# For 1000 items:
+# Slow version: ~500,000 comparisons
+# Fast version: ~1000 operations</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>Practical Impact</h4>
+                  <p>For small datasets (10-100 items), efficiency doesn't matter much. But for large datasets (thousands or millions), choosing the right algorithm can mean the difference between seconds and hours!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>Efficiency:</strong> Important for performance and scalability</li>
+                  <li><strong>Big-O:</strong> Describes how algorithms scale with input size</li>
+                  <li><strong>Common complexities:</strong> O(1), O(n), O(n²), O(log n)</li>
+                  <li><strong>Optimization:</strong> Choose efficient algorithms and data structures</li>
+                  <li><strong>Space complexity:</strong> Memory usage also matters</li>
+                  <li><strong>Real-world impact:</strong> Efficiency becomes critical with large datasets</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>Don't optimize prematurely! First make your code work correctly, then optimize if needed. But understanding efficiency helps you write better code from the start. When in doubt, use built-in functions and appropriate data structures (sets for membership, dictionaries for lookups).</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: Big-O</h3>
+                  <p>What does Big-O notation describe? Give examples of O(1) and O(n) operations.</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Efficiency</h3>
+                  <p>Why is efficiency important in programming?</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-9/introduction-json-data-parsing.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-9/working-with-dates-times.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

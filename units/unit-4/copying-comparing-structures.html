@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 4 • Copying and Comparing Data Structures - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 4 • Copying and Comparing Data Structures • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 4 • Data Structures</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-4/introduction-data-structures.html">1. Introduction to Data Structures</a></li>
+                <li><a href="/units/unit-4/lists-operations.html">2. Lists and List Operations</a></li>
+                <li><a href="/units/unit-4/indexing-slicing-lists.html">3. Indexing and Slicing Lists</a></li>
+                <li><a href="/units/unit-4/nested-lists-2d.html">4. Nested Lists and 2D Structures</a></li>
+                <li><a href="/units/unit-4/tuples-immutable.html">5. Tuples and Immutable Data</a></li>
+                <li><a href="/units/unit-4/dictionaries-key-value.html">6. Dictionaries and Key-Value Pairs</a></li>
+                <li><a href="/units/unit-4/dictionary-methods-iteration.html">7. Dictionary Methods and Iteration</a></li>
+                <li><a href="/units/unit-4/sets-unique-collections.html">8. Sets and Unique Collections</a></li>
+                <li><a class="active" href="/units/unit-4/copying-comparing-structures.html">9. Copying and Comparing Data Structures</a></li>
+                <li><a href="/units/unit-4/choosing-right-structure.html">10. Choosing the Right Data Structure</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-4.html">Unit 4</a>
+              <span class="separator">/</span>
+              <span class="current">Copying and Comparing Data Structures</span>
+            </nav>
+            <div class="eyebrow">Unit 4 • Lesson 9</div>
+            <h1 class="lesson-title">Copying and Comparing Data Structures</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Learn how to clone lists, tuples, or dictionaries safely without unintended links between copies. This section explains shallow vs. deep copies and how equality works across structures, helping you avoid common bugs when working with mutable data.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-4/sets-unique-collections.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-4/choosing-right-structure.html">Next: Choosing the Right Data Structure</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Shallow copying:</strong> Understand how to create a copy that shares references.</li>
+                  <li><strong>Deep copying:</strong> Learn how to create completely independent copies.</li>
+                  <li><strong>Equality vs identity:</strong> Discover the difference between <code>==</code> and <code>is</code>.</li>
+                  <li><strong>Comparing structures:</strong> Understand how Python compares different data structures.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>When you assign a list to another variable, both variables point to the same list - changes to one affect the other! Understanding copying helps you avoid unexpected bugs. Knowing when to use <code>==</code> (equality) versus <code>is</code> (identity) helps you write correct comparisons!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: Assignment vs Copying</h2>
+                <p>When you assign a list to another variable, both variables refer to the same object:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Assignment Creates a Reference</div>
+                  <pre class="code"><code>original = [1, 2, 3]
+reference = original  # Both point to the same list!
+
+reference.append(4)
+print(original)  # Output: [1, 2, 3, 4] (both changed!)
+print(reference)  # Output: [1, 2, 3, 4]</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Same Object</h4>
+                      <p>Assignment (<code>reference = original</code>) doesn't create a new list - it creates a new name that points to the same list object in memory.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Shared Changes</h4>
+                      <p>When you modify one variable, the other variable sees the same changes because they're both pointing to the same object!</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Need a Copy</h4>
+                      <p>If you want an independent copy that doesn't affect the original, you need to explicitly create a copy.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> In Python, variables are like labels pointing to objects. When you assign <code>reference = original</code>, you're creating a new label for the same object, not creating a new object. To have a separate copy, you need to explicitly copy it!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Understanding Assignment</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>See how assignment creates a reference:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'list1 = [1, 2, 3]\nlist2 = list1  # Reference, not copy!\n\nlist2.append(4)\nprint(f&quot;list1: {list1}&quot;)\nprint(f&quot;list2: {list2}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">list1 = [1, 2, 3]
+list2 = list1  # Reference, not copy!
+
+list2.append(4)
+print(f"list1: {list1}")
+print(f"list2: {list2}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Both <code>list1</code> and <code>list2</code> changed when you modified <code>list2</code>! This is because they both point to the same list object. Assignment doesn't create a copy - it creates a new name for the same object!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Shallow Copying</h2>
+                <p>A shallow copy creates a new object, but nested objects are still shared:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Creating Shallow Copies</div>
+                  <pre class="code"><code>original = [1, 2, 3]
+
+# Method 1: Using copy()
+shallow_copy = original.copy()
+
+# Method 2: Using list()
+shallow_copy = list(original)
+
+# Method 3: Using slicing
+shallow_copy = original[:]
+
+shallow_copy.append(4)
+print(original)  # Output: [1, 2, 3] (unchanged!)
+print(shallow_copy)  # Output: [1, 2, 3, 4]</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How It Works</h4>
+                  <p>A shallow copy creates a new list object, so changes to the copy don't affect the original. However, if the list contains nested lists or other mutable objects, those nested objects are still shared between the original and the copy!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Deep Copying</h2>
+                <p>A deep copy creates completely independent copies, including nested objects:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Creating Deep Copies</div>
+                  <pre class="code"><code>import copy
+
+original = [[1, 2], [3, 4]]
+
+# Shallow copy (nested lists still shared)
+shallow = original.copy()
+shallow[0].append(5)
+print(original)  # Output: [[1, 2, 5], [3, 4]] (changed!)
+
+# Deep copy (completely independent)
+deep = copy.deepcopy(original)
+deep[0].append(6)
+print(original)  # Output: [[1, 2, 5], [3, 4]] (unchanged!)
+print(deep)  # Output: [[1, 2, 5, 6], [3, 4]]</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> Use <code>copy.deepcopy()</code> when you need completely independent copies of nested structures. For simple lists without nested mutable objects, a shallow copy is usually sufficient!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Creating Copies</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try creating copies:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'original = [1, 2, 3]\ncopy_list = original.copy()  # Shallow copy\n\ncopy_list.append(4)\nprint(f&quot;Original: {original}&quot;)\nprint(f&quot;Copy: {copy_list}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">original = [1, 2, 3]
+copy_list = original.copy()  # Shallow copy
+
+copy_list.append(4)
+print(f"Original: {original}")
+print(f"Copy: {copy_list}")</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The original list stayed unchanged when you modified the copy! This is because <code>copy()</code> created a new list object. The copy is independent of the original, so changes to the copy don't affect the original list!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Equality vs Identity</h2>
+                <p>Python has two ways to compare: <code>==</code> checks if values are equal, while <code>is</code> checks if they're the same object:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Equality vs Identity</div>
+                  <pre class="code"><code>list1 = [1, 2, 3]
+list2 = [1, 2, 3]
+list3 = list1
+
+print(list1 == list2)  # Output: True (same values)
+print(list1 is list2)  # Output: False (different objects)
+print(list1 is list3)  # Output: True (same object)</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Equality (==)</h4>
+                      <p><code>==</code> checks if two objects have the same values. Two different lists with the same items are equal.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Identity (is)</h4>
+                      <p><code>is</code> checks if two variables point to the same object in memory. This is stricter than equality!</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>When to Use</h4>
+                      <p>Use <code>==</code> to compare values. Use <code>is</code> to check if variables point to the same object (especially useful for checking <code>None</code>).</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Create a Copy</h4>
+                  <p>Create a list called <code>original</code> with [1, 2, 3]. Create a copy called <code>copy_list</code> using the <code>copy()</code> method. Modify <code>copy_list</code> by appending 4, then print both lists to show they're independent.</p>
+                  <p class="hint-text">Use copy() method to create a shallow copy.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Compare Equality and Identity</h4>
+                  <p>Create two lists: <code>list1</code> = [1, 2, 3] and <code>list2</code> = [1, 2, 3]. Check if they're equal using <code>==</code> and check if they're the same object using <code>is</code>. Print both results.</p>
+                  <p class="hint-text">Use == for equality and is for identity checks.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-4/sets-unique-collections.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-4/choosing-right-structure.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'original = [1, 2, 3]\ncopy_list = original.copy()\ncopy_list.append(4)\nprint(f"Original: {original}")\nprint(f"Copy: {copy_list}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('original = [1, 2, 3]')) {
+              return {
+                correct: false,
+                message: 'You need to create a list named original with [1, 2, 3].',
+                hints: ['Create: original = [1, 2, 3]', 'Use square brackets']
+              };
+            }
+            
+            if (!trimmed.includes('.copy()')) {
+              return {
+                correct: false,
+                message: 'You need to create a copy using copy() method.',
+                hints: ['Use: copy_list = original.copy()', 'This creates a shallow copy']
+              };
+            }
+            
+            if (!trimmed.includes('.append(4)')) {
+              return {
+                correct: false,
+                message: 'You need to append 4 to copy_list.',
+                hints: ['Use: copy_list.append(4)', 'This modifies the copy']
+              };
+            }
+            
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print both lists.',
+                hints: ['Print original', 'Print copy_list']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure brackets are correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('[1, 2, 3]') || !outputText.includes('[1, 2, 3, 4]')) {
+              return {
+                correct: false,
+                message: 'The original should be [1, 2, 3] and the copy should be [1, 2, 3, 4].',
+                hints: ['Make sure original stayed unchanged', 'Make sure copy_list has 4 appended']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created an independent copy of a list.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'list1 = [1, 2, 3]\nlist2 = [1, 2, 3]\nprint(f"Equal: {list1 == list2}")\nprint(f"Same object: {list1 is list2}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('list1 = [1, 2, 3]') || !trimmed.includes('list2 = [1, 2, 3]')) {
+              return {
+                correct: false,
+                message: 'You need to create list1 = [1, 2, 3] and list2 = [1, 2, 3].',
+                hints: ['Create: list1 = [1, 2, 3]', 'Create: list2 = [1, 2, 3]']
+              };
+            }
+            
+            if (!trimmed.includes('list1 == list2') && !trimmed.match(/list1\s*==\s*list2/)) {
+              return {
+                correct: false,
+                message: 'You need to check equality using == operator.',
+                hints: ['Use: list1 == list2', 'This checks if values are equal']
+              };
+            }
+            
+            if (!trimmed.includes('list1 is list2') && !trimmed.match(/list1\s+is\s+list2/)) {
+              return {
+                correct: false,
+                message: 'You need to check identity using is operator.',
+                hints: ['Use: list1 is list2', 'This checks if they\'re the same object']
+              };
+            }
+            
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print both comparison results.',
+                hints: ['Print the equality result', 'Print the identity result']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure brackets are correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('True') || !outputText.includes('False')) {
+              return {
+                correct: false,
+                message: 'The equality should be True (same values) and identity should be False (different objects).',
+                hints: ['Equality (==) should be True', 'Identity (is) should be False']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully compared lists using equality and identity.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 2 • if-else and elif - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 2 • if-else and elif • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 2 • Control Flow</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-2/understanding-control-flow.html">1. Understanding Control Flow</a></li>
+                <li><a href="/units/unit-2/comparison-logical-operators.html">2. Comparison & Logical Operators</a></li>
+                <li><a href="/units/unit-2/if-statement.html">3. The if Statement</a></li>
+                <li><a class="active" href="/units/unit-2/if-else-elif.html">4. if-else and elif</a></li>
+                <li><a href="/units/unit-2/nested-conditionals.html">5. Nested Conditionals</a></li>
+                <li><a href="/units/unit-2/boolean-logic-practice.html">6. Boolean Logic in Practice</a></li>
+                <li><a href="/units/unit-2/introduction-loops.html">7. Introduction to Loops</a></li>
+                <li><a href="/units/unit-2/while-loop.html">8. The while Loop</a></li>
+                <li><a href="/units/unit-2/for-loop.html">9. The for Loop</a></li>
+                <li><a href="/units/unit-2/loop-control-statements.html">10. Loop Control Statements</a></li>
+                <li><a href="/units/unit-2/practical-control-flow-examples.html">11. Practical Control Flow Examples</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-2.html">Unit 2</a>
+              <span class="separator">/</span>
+              <span class="current">if-else and elif</span>
+            </nav>
+            <div class="eyebrow">Unit 2 • Lesson 4</div>
+            <h1 class="lesson-title">if-else and elif Structures</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Expand on simple if logic by handling alternative outcomes using else and multiple cases with elif. You'll learn how to write branching logic that responds dynamically to different scenarios.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">15–20 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-2/if-statement.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-2/nested-conditionals.html">Next: Nested Conditionals</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>The else clause:</strong> How to handle cases when the if condition is False.</li>
+                  <li><strong>The elif clause:</strong> How to check multiple conditions in sequence.</li>
+                  <li><strong>When each block runs:</strong> Understanding the order of evaluation.</li>
+                  <li><strong>Practical examples:</strong> Using if-else-elif to handle complex decision-making.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Simple if statements only handle one case. With else and elif, you can handle multiple scenarios and ensure your program always takes some action, no matter what the conditions are.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: The else Clause</h2>
+                <p>The <code>else</code> clause lets you specify what happens when the if condition is False. It's like saying "if this is true, do that; otherwise, do this other thing."</p>
+
+                <div class="code-example">
+                  <div class="code-header">Basic if-else Structure</div>
+                  <pre class="code"><code>if condition:
+    # code to run if condition is True
+    print("Condition is true!")
+else:
+    # code to run if condition is False
+    print("Condition is false!")</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Start with if</h4>
+                      <p>Write your if statement as usual with a condition and colon.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Add the else Clause</h4>
+                      <p>After the if block, add <code>else:</code> on a new line at the same indentation level as <code>if</code>.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Indent the else Block</h4>
+                      <p>All code that should run when the condition is False must be indented under <code>else</code>.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Important:</strong> The <code>else</code> clause doesn't have a condition — it automatically handles all cases where the if condition is False. Also, <code>else</code> must be at the same indentation level as <code>if</code>, not indented under it.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Using else</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try this if-else statement. Notice how it always prints something:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'age = 20\nif age >= 18:\n    print(&quot;You are an adult!&quot;)\nelse:\n    print(&quot;You are a minor.&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">age = 20
+if age >= 18:
+    print("You are an adult!")
+else:
+    print("You are a minor.")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Python first checked the if condition: <code>age >= 18</code>. Since age is 20, and 20 is greater than or equal to 18, the condition is True. When the if condition is True, Python runs the if block and prints "You are an adult!", then skips the else block entirely. If you change age to 15, the if condition would be False (15 is not >= 18), so Python would skip the if block and run the else block instead, printing "You are a minor." The else clause ensures that something always happens - either the if block runs OR the else block runs, but never both.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: The elif Clause</h2>
+                <p>The <code>elif</code> clause (short for "else if") lets you check multiple conditions in sequence. Python checks each condition from top to bottom and runs the first block where the condition is True.</p>
+
+                <div class="code-example">
+                  <div class="code-header">if-elif-else Structure</div>
+                  <pre class="code"><code>if condition1:
+    # runs if condition1 is True
+    print("First case")
+elif condition2:
+    # runs if condition1 is False AND condition2 is True
+    print("Second case")
+else:
+    # runs if both conditions are False
+    print("Default case")</code></pre>
+                </div>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>How elif Works</h4>
+                    <p>Python checks conditions in order. Once it finds a True condition, it runs that block and skips the rest.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>score = 85
+if score >= 90:
+    print("A")
+elif score >= 80:
+    print("B")  # This runs!
+elif score >= 70:
+    print("C")  # Skipped</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Multiple elif Clauses</h4>
+                    <p>You can have as many elif clauses as you need. They're checked in order.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>temperature = 75
+if temperature > 80:
+    print("Hot")
+elif temperature > 60:
+    print("Warm")
+elif temperature > 40:
+    print("Cool")
+else:
+    print("Cold")</code></pre>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> Only one block runs in an if-elif-else chain. Python stops checking conditions once it finds one that's True. This is why elif is better than multiple if statements when you only want one action to happen.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Using elif</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try this if-elif-else chain. Notice how only one block runs:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'score = 85\nif score >= 90:\n    print(&quot;Grade: A&quot;)\nelif score >= 80:\n    print(&quot;Grade: B&quot;)\nelif score >= 70:\n    print(&quot;Grade: C&quot;)\nelse:\n    print(&quot;Grade: F&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">score = 85
+if score >= 90:
+    print("Grade: A")
+elif score >= 80:
+    print("Grade: B")
+elif score >= 70:
+    print("Grade: C")
+else:
+    print("Grade: F")</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Python checked conditions from top to bottom. First, it checked <code>score >= 90</code> - this was False (85 is not >= 90), so Python moved to the next condition. Then it checked <code>score >= 80</code> - this was True (85 is >= 80), so Python ran the elif block and printed "Grade: B". Once Python found a True condition, it stopped checking the remaining elif conditions and skipped the else block. This is why only "Grade: B" printed, even though 85 is also >= 70. The key point: Python stops at the first True condition in an if-elif-else chain, so order matters!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Order Matters</h2>
+                <p>The order of your conditions is important. Python checks them from top to bottom and stops at the first True condition.</p>
+
+                <div class="code-example">
+                  <div class="code-header">✅ Correct Order</div>
+                  <pre class="code"><code>score = 85
+if score >= 90:
+    print("A")
+elif score >= 80:
+    print("B")  # Runs for 85
+elif score >= 70:
+    print("C")
+else:
+    print("F")</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">❌ Wrong Order</div>
+                  <pre class="code"><code>score = 85
+if score >= 70:
+    print("C")  # Runs first! Wrong!
+elif score >= 80:
+    print("B")  # Never reached
+elif score >= 90:
+    print("A")  # Never reached</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Best Practice</h4>
+                  <p>Always check conditions from most specific to least specific, or from highest to lowest values. This ensures the correct block runs.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: When to Use Each Structure</h2>
+                <p>Different structures are useful for different situations:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Use <code>if</code> alone</h4>
+                    <p>When you only care about one case. The program continues regardless.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>if is_raining:
+    print("Bring umbrella")</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Use <code>if-else</code></h4>
+                    <p>When you have exactly two cases and want to handle both.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>if age >= 18:
+    print("Adult")
+else:
+    print("Minor")</code></pre>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Use <code>if-elif-else</code></h4>
+                    <p>When you have three or more cases and want exactly one action.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>if score >= 90:
+    print("A")
+elif score >= 80:
+    print("B")
+else:
+    print("Below B")</code></pre>
+                  </div>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Write an if-else Statement</h4>
+                  <p>Create a variable <code>age</code> = 15. Write an if-else statement that prints "Adult" if age >= 18, otherwise prints "Minor".</p>
+                  <p class="hint-text">Use if age >= 18: followed by else: with appropriate print statements.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Use elif</h4>
+                  <p>Create a variable <code>score</code> = 85. Write an if-elif-else statement that prints "A" if score >= 90, "B" if score >= 80, "C" if score >= 70, otherwise "F".</p>
+                  <p class="hint-text">Use if, elif, and else to check conditions in order from highest to lowest.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-2/if-statement.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-2/nested-conditionals.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'age = 15\nif age >= 18:\n    print("Adult")\nelse:\n    print("Minor")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for age variable
+            if (!trimmed.includes('age') || !trimmed.includes('15')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable age with value 15.',
+                hints: ['Write: age = 15']
+              };
+            }
+            
+            // Check for if statement
+            if (!trimmed.includes('if')) {
+              return {
+                correct: false,
+                message: 'You need to write an if statement.',
+                hints: ['Start with: if age >= 18:', 'Don\'t forget the colon']
+              };
+            }
+            
+            // Check for else
+            if (!trimmed.includes('else')) {
+              return {
+                correct: false,
+                message: 'You need to use an else clause.',
+                hints: ['Add else: after the if block', 'Make sure else is at the same indentation level as if']
+              };
+            }
+            
+            // Check for print statements
+            const printCount = (trimmed.match(/print\(/g) || []).length;
+            if (printCount < 2) {
+              return {
+                correct: false,
+                message: 'You need two print statements: one for "Adult" and one for "Minor".',
+                hints: ['Print "Adult" in the if block', 'Print "Minor" in the else block']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have colons after if and else', 'Check your indentation']
+              };
+            }
+            
+            // Check output contains "Minor" (since age is 15)
+            const outputText = output.stdout || '';
+            if (!outputText.includes('Minor') && !outputText.includes('minor')) {
+              return {
+                correct: false,
+                message: 'With age = 15, your code should print "Minor" (since 15 < 18).',
+                hints: ['Check your else block', 'Make sure it prints "Minor"', 'Verify your if condition']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully wrote an if-else statement that handles both cases.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'score = 85\nif score >= 90:\n    print("A")\nelif score >= 80:\n    print("B")\nelif score >= 70:\n    print("C")\nelse:\n    print("F")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for score variable
+            if (!trimmed.includes('score') || !trimmed.includes('85')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable score with value 85.',
+                hints: ['Write: score = 85']
+              };
+            }
+            
+            // Check for if statement
+            if (!trimmed.includes('if')) {
+              return {
+                correct: false,
+                message: 'You need to write an if statement.',
+                hints: ['Start with: if score >= 90:']
+              };
+            }
+            
+            // Check for elif
+            if (!trimmed.includes('elif')) {
+              return {
+                correct: false,
+                message: 'You need to use elif clauses.',
+                hints: ['Add elif score >= 80:', 'Add elif score >= 70:', 'Make sure elif is at the same indentation level as if']
+              };
+            }
+            
+            // Check for else
+            if (!trimmed.includes('else')) {
+              return {
+                correct: false,
+                message: 'You need to use an else clause.',
+                hints: ['Add else: for the final case', 'Make sure else is at the same indentation level as if']
+              };
+            }
+            
+            // Check for print statements
+            const printCount = (trimmed.match(/print\(/g) || []).length;
+            if (printCount < 4) {
+              return {
+                correct: false,
+                message: 'You need print statements for all four cases: A, B, C, and F.',
+                hints: ['Print "A" in the if block', 'Print "B" in the first elif block', 'Print "C" in the second elif block', 'Print "F" in the else block']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have colons after if, elif, and else', 'Check your indentation']
+              };
+            }
+            
+            // Check output contains "B" (since score is 85)
+            const outputText = output.stdout || '';
+            if (!outputText.includes('B') && !outputText.includes('b')) {
+              return {
+                correct: false,
+                message: 'With score = 85, your code should print "B" (since 85 >= 80 but < 90).',
+                hints: ['Check your elif conditions', 'Make sure they\'re in the right order', 'Verify score >= 80 prints "B"']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully wrote an if-elif-else chain that handles multiple cases.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

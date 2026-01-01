@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 2 • The while Loop - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 2 • The while Loop • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 2 • Control Flow</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-2/understanding-control-flow.html">1. Understanding Control Flow</a></li>
+                <li><a href="/units/unit-2/comparison-logical-operators.html">2. Comparison & Logical Operators</a></li>
+                <li><a href="/units/unit-2/if-statement.html">3. The if Statement</a></li>
+                <li><a href="/units/unit-2/if-else-elif.html">4. if-else and elif</a></li>
+                <li><a href="/units/unit-2/nested-conditionals.html">5. Nested Conditionals</a></li>
+                <li><a href="/units/unit-2/boolean-logic-practice.html">6. Boolean Logic in Practice</a></li>
+                <li><a href="/units/unit-2/introduction-loops.html">7. Introduction to Loops</a></li>
+                <li><a class="active" href="/units/unit-2/while-loop.html">8. The while Loop</a></li>
+                <li><a href="/units/unit-2/for-loop.html">9. The for Loop</a></li>
+                <li><a href="/units/unit-2/loop-control-statements.html">10. Loop Control Statements</a></li>
+                <li><a href="/units/unit-2/practical-control-flow-examples.html">11. Practical Control Flow Examples</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-2.html">Unit 2</a>
+              <span class="separator">/</span>
+              <span class="current">The while Loop</span>
+            </nav>
+            <div class="eyebrow">Unit 2 • Lesson 8</div>
+            <h1 class="lesson-title">The while Loop</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>The while loop repeats as long as a condition remains true. You'll learn to use it for indefinite repetition, track counters, and prevent infinite loops with proper control statements.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-2/introduction-loops.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-2/for-loop.html">Next: The for Loop</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What a while loop is:</strong> Understand how while loops repeat code as long as a condition is True.</li>
+                  <li><strong>How while loops work:</strong> Learn the step-by-step process of how Python evaluates and executes while loops.</li>
+                  <li><strong>Using counters:</strong> Master how to track progress and control loop execution with counters.</li>
+                  <li><strong>Preventing infinite loops:</strong> Learn how to ensure your loops eventually stop.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>The while loop is perfect for situations where you don't know exactly how many times you need to repeat code. It keeps running until a condition becomes False. This is essential for user input validation, game loops, and any situation where you need to repeat until something changes.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What Is a while Loop?</h2>
+                <p>A while loop repeats code as long as a condition is True. Think of it like a question: "While this is true, keep doing that." It's different from a for loop because you don't know exactly how many times it will run - it depends on when the condition becomes False.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Basic while Loop Structure</div>
+                  <pre class="code"><code>while condition:
+    # Code to repeat
+    print("This runs while condition is True")
+    # More code here</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Start with <code>while</code></h4>
+                      <p>The keyword <code>while</code> tells Python you're starting a loop that repeats based on a condition.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Write the Condition</h4>
+                      <p>After <code>while</code>, write a condition that evaluates to True or False. This can be a comparison, a boolean variable, or a logical expression.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Add a Colon</h4>
+                      <p>End the condition line with a colon <code>:</code>. This tells Python that the code block is coming next.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Indent the Code Block</h4>
+                      <p>All code that should run when the condition is True must be indented. Python uses indentation to know what belongs to the while loop.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Difference:</strong> Unlike a for loop, a while loop doesn't automatically stop after a certain number of times. It keeps running until the condition becomes False. This makes it powerful but also potentially dangerous - if the condition never becomes False, you'll get an infinite loop!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Your First while Loop</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try this simple while loop that counts from 1 to 5:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'count = 1\nwhile count <= 5:\n    print(f&quot;Count: {count}&quot;)\n    count = count + 1\nprint(&quot;Done!&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">count = 1
+while count <= 5:
+    print(f"Count: {count}")
+    count = count + 1
+print("Done!")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Python first checked the condition: <code>count <= 5</code>. Since count is 1, and 1 is less than or equal to 5, the condition was True, so Python entered the loop and printed "Count: 1". Then it increased count by 1 (using <code>count = count + 1</code>), making count equal to 2. Python then checked the condition again. Since 2 <= 5 is still True, it printed "Count: 2" and increased count again. This process repeated until count became 6. When Python checked <code>6 <= 5</code>, it was False, so the loop stopped and Python printed "Done!". Notice how the counter (<code>count</code>) changes each time through the loop, eventually making the condition False.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: How while Loops Work</h2>
+                <p>Python evaluates the condition before each iteration (each time through the loop). If the condition is True, Python runs all the indented code. After running the code, Python checks the condition again. If it's still True, the loop runs again. This continues until the condition becomes False.</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>When Condition Is True</h4>
+                    <p>Python runs all indented code, then checks the condition again.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>count = 1
+while count <= 3:
+    print(count)
+    count = count + 1</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Output: 1<br>2<br>3</p>
+                    <p style="margin-top: 8px; font-size: 13px;">Loop runs 3 times</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>When Condition Is False</h4>
+                    <p>Python skips the entire while block and continues with the next line.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>count = 10
+while count <= 3:
+    print(count)
+    count = count + 1
+print("Skipped")</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Output: Skipped</p>
+                    <p style="margin-top: 8px; font-size: 13px;">Loop never runs</p>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>Execution Flow</h4>
+                  <p>Here's exactly what Python does:</p>
+                  <ol style="margin: 12px 0 0 0;">
+                    <li>Check the condition. If False, skip to step 4.</li>
+                    <li>If True, run all indented code inside the loop.</li>
+                    <li>Go back to step 1 (check the condition again).</li>
+                    <li>Continue with the next non-indented line after the loop.</li>
+                  </ol>
+                  <p style="margin-top: 12px;">This creates a cycle: check condition → run code → check condition → run code → ... until the condition becomes False.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Using Counters</h2>
+                <p>One of the most common patterns with while loops is using a counter variable. A counter keeps track of how many times the loop has run or tracks progress toward a goal. You initialize it before the loop, check it in the condition, and update it inside the loop.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Counter Pattern</div>
+                  <pre class="code"><code># 1. Initialize counter before the loop
+count = 0
+
+# 2. Check counter in the while condition
+while count < 5:
+    # 3. Do something
+    print(f"Loop iteration: {count}")
+    # 4. Update counter inside the loop
+    count = count + 1</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Initialize the Counter</h4>
+                      <p>Create a variable before the loop and set it to a starting value (usually 0 or 1).</p>
+                      <pre class="code" style="margin-top: 8px;"><code>count = 0</code></pre>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Use Counter in Condition</h4>
+                      <p>Write a condition that checks the counter value. When the counter reaches a certain value, the condition becomes False.</p>
+                      <pre class="code" style="margin-top: 8px;"><code>while count < 5:</code></pre>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Update Counter Inside Loop</h4>
+                      <p>Inside the loop, change the counter value so it moves toward making the condition False. Without this, you'd have an infinite loop!</p>
+                      <pre class="code" style="margin-top: 8px;"><code>count = count + 1</code></pre>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Critical:</strong> You MUST update the counter inside the loop. If you forget to change the counter, the condition will always be True and your loop will run forever (an infinite loop). This is one of the most common mistakes beginners make!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Counting with a Counter</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try this example that uses a counter to sum numbers:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'total = 0\ncount = 1\nwhile count <= 5:\n    total = total + count\n    print(f&quot;Adding {count}, total is now {total}&quot;)\n    count = count + 1\nprint(f&quot;Final total: {total}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">total = 0
+count = 1
+while count <= 5:
+    total = total + count
+    print(f"Adding {count}, total is now {total}")
+    count = count + 1
+print(f"Final total: {total}")</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> This code adds up the numbers from 1 to 5. The variable <code>total</code> starts at 0 and accumulates the sum. The variable <code>count</code> starts at 1 and goes up by 1 each time through the loop. Each iteration, the code adds the current value of count to total, then increases count by 1. When count becomes 6, the condition <code>count <= 5</code> becomes False, so the loop stops. The final total is 15 (1+2+3+4+5). This pattern of accumulating values is very common in programming!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Preventing Infinite Loops</h2>
+                <p>An infinite loop runs forever because the condition never becomes False. This is a serious problem - your program will freeze and become unresponsive. Always make sure something inside your loop changes a value that affects the condition.</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>✅ Safe Loop (Stops)</h4>
+                    <p>The counter is updated, so the loop eventually stops:</p>
+                    <pre class="code" style="margin-top: 12px;"><code>count = 1
+while count <= 5:
+    print(count)
+    count = count + 1  # Counter changes!</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">This will stop after 5 iterations</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>❌ Infinite Loop (Danger!)</h4>
+                    <p>The counter is never updated, so the condition stays True forever:</p>
+                    <pre class="code" style="margin-top: 12px;"><code>count = 1
+while count <= 5:
+    print(count)
+    # Missing: count = count + 1</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">This runs forever!</p>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>How to Avoid Infinite Loops</h4>
+                  <p>Before writing a while loop, ask yourself:</p>
+                  <ol style="margin: 12px 0 0 0;">
+                    <li>What makes the condition True initially?</li>
+                    <li>What will make the condition False eventually?</li>
+                    <li>Is there code inside the loop that changes a value affecting the condition?</li>
+                  </ol>
+                  <p style="margin-top: 12px;">If you can't answer these questions, your loop might run forever. Always ensure something inside the loop moves toward making the condition False.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 5: Real-World Example</h2>
+                <p>Here's a practical example of using a while loop in a real program:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Counting Down Example</div>
+                  <pre class="code"><code># Countdown timer
+seconds = 10
+
+while seconds > 0:
+    print(f"Time remaining: {seconds} seconds")
+    seconds = seconds - 1
+
+print("Time's up!")</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How This Works</h4>
+                  <p>This creates a countdown timer that starts at 10 and counts down to 1. Each time through the loop, it prints the remaining time and decreases seconds by 1. When seconds becomes 0, the condition <code>seconds > 0</code> becomes False, so the loop stops and "Time's up!" is printed. This is a common pattern for timers, games, and any situation where you need to count down or track progress.</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Write a while Loop</h4>
+                  <p>Create a variable <code>count</code> = 1. Write a while loop that prints count as long as count <= 3, then increases count by 1 each time.</p>
+                  <p class="hint-text">Use while count <= 3: followed by a print statement and count = count + 1.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Sum with while Loop</h4>
+                  <p>Create variables: <code>total</code> = 0 and <code>count</code> = 1. Use a while loop to add numbers from 1 to 5 to total. Print the final total.</p>
+                  <p class="hint-text">Use while count <= 5:, add count to total, then increase count by 1.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-2/introduction-loops.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-2/for-loop.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'count = 1\nwhile count <= 3:\n    print(count)\n    count = count + 1',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for count variable
+            if (!trimmed.includes('count') || !trimmed.includes('1')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable count with value 1.',
+                hints: ['Write: count = 1', 'This is your counter variable']
+              };
+            }
+            
+            // Check for while loop
+            if (!trimmed.includes('while')) {
+              return {
+                correct: false,
+                message: 'You need to write a while loop.',
+                hints: ['Start with: while count <= 3:', 'Don\'t forget the colon']
+              };
+            }
+            
+            // Check for condition count <= 3
+            if (!trimmed.includes('count <= 3') && !trimmed.includes('count<=3')) {
+              return {
+                correct: false,
+                message: 'You need to check if count <= 3.',
+                hints: ['Use <= to check if count is less than or equal to 3', 'Write: while count <= 3:']
+              };
+            }
+            
+            // Check for print statement
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print count inside the loop.',
+                hints: ['Add a print statement inside the loop', 'Make sure it\'s indented', 'Print: count']
+              };
+            }
+            
+            // Check for count increment
+            if (!trimmed.includes('count = count + 1') && !trimmed.includes('count += 1') && !trimmed.includes('count=count+1')) {
+              return {
+                correct: false,
+                message: 'You need to increase count by 1 inside the loop.',
+                hints: ['Add: count = count + 1', 'This is critical - without it, you\'ll have an infinite loop!', 'Make sure it\'s inside the loop (indented)']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have a colon after while', 'Check your indentation']
+              };
+            }
+            
+            // Check output contains 1, 2, 3
+            const outputText = output.stdout || '';
+            if (!outputText.includes('1') || !outputText.includes('2') || !outputText.includes('3')) {
+              return {
+                correct: false,
+                message: 'Your loop should print 1, 2, and 3.',
+                hints: ['Check your condition', 'Make sure count starts at 1', 'Verify count is incremented inside the loop']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully wrote a while loop that uses a counter to control repetition.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'total = 0\ncount = 1\nwhile count <= 5:\n    total = total + count\n    count = count + 1\nprint(total)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for total variable
+            if (!trimmed.includes('total') || !trimmed.includes('0')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable total with value 0.',
+                hints: ['Write: total = 0', 'This accumulates the sum']
+              };
+            }
+            
+            // Check for count variable
+            if (!trimmed.includes('count') || !trimmed.includes('1')) {
+              return {
+                correct: false,
+                message: 'You need to create a variable count with value 1.',
+                hints: ['Write: count = 1', 'This is your counter']
+              };
+            }
+            
+            // Check for while loop
+            if (!trimmed.includes('while')) {
+              return {
+                correct: false,
+                message: 'You need to write a while loop.',
+                hints: ['Start with: while count <= 5:', 'Don\'t forget the colon']
+              };
+            }
+            
+            // Check for condition count <= 5
+            if (!trimmed.includes('count <= 5') && !trimmed.includes('count<=5')) {
+              return {
+                correct: false,
+                message: 'You need to check if count <= 5.',
+                hints: ['Use <= to check if count is less than or equal to 5', 'Write: while count <= 5:']
+              };
+            }
+            
+            // Check for adding to total
+            if (!trimmed.includes('total = total + count') && !trimmed.includes('total += count') && !trimmed.includes('total=total+count')) {
+              return {
+                correct: false,
+                message: 'You need to add count to total inside the loop.',
+                hints: ['Add: total = total + count', 'This accumulates the sum', 'Make sure it\'s inside the loop (indented)']
+              };
+            }
+            
+            // Check for count increment
+            if (!trimmed.includes('count = count + 1') && !trimmed.includes('count += 1') && !trimmed.includes('count=count+1')) {
+              return {
+                correct: false,
+                message: 'You need to increase count by 1 inside the loop.',
+                hints: ['Add: count = count + 1', 'This prevents an infinite loop', 'Make sure it\'s inside the loop (indented)']
+              };
+            }
+            
+            // Check for print statement
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print the final total.',
+                hints: ['Add a print statement after the loop', 'Print: total']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have a colon after while', 'Check your indentation']
+              };
+            }
+            
+            // Check output contains 15 (sum of 1+2+3+4+5)
+            const outputText = output.stdout || '';
+            if (!outputText.includes('15')) {
+              return {
+                correct: false,
+                message: 'The final total should be 15 (1+2+3+4+5).',
+                hints: ['Check your loop condition', 'Make sure count goes from 1 to 5', 'Verify you\'re adding count to total']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used a while loop to accumulate a sum.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

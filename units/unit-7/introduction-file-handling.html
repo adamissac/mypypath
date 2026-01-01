@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 7 • Introduction to File Handling • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+  </head>
+  <body class="page page-unit">
+    <div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 7 • Files & Errors</h3>
+            <nav>
+              <ul>
+                <li><a class="active" href="/units/unit-7/introduction-file-handling.html">1. Introduction to File Handling</a></li>
+                <li><a class="" href="/units/unit-7/opening-closing-files.html">2. Opening and Closing Files</a></li>
+                <li><a class="" href="/units/unit-7/reading-data-from-files.html">3. Reading Data from Files</a></li>
+                <li><a class="" href="/units/unit-7/writing-data-to-files.html">4. Writing Data to Files</a></li>
+                <li><a class="" href="/units/unit-7/working-with-file-paths.html">5. Working with File Paths</a></li>
+                <li><a class="" href="/units/unit-7/with-statement-file-operations.html">6. Using the with Statement for File Operations</a></li>
+                <li><a class="" href="/units/unit-7/understanding-errors-exceptions.html">7. Understanding Errors and Exceptions</a></li>
+                <li><a class="" href="/units/unit-7/try-except-blocks.html">8. The try and except Blocks</a></li>
+                <li><a class="" href="/units/unit-7/raising-customizing-exceptions.html">9. Raising and Customizing Exceptions</a></li>
+                <li><a class="" href="/units/unit-7/file-error-handling-real-projects.html">10. File and Error Handling in Real Projects</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-7.html">Unit 7</a>
+              <span class="separator">/</span>
+              <span class="current">Introduction to File Handling</span>
+            </nav>
+            <div class="eyebrow">Unit 7 • Lesson 1</div>
+            <h1 class="lesson-title">Introduction to File Handling</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>File handling lets Python programs save and access data beyond runtime. You'll learn why persistent storage is essential, the difference between text and binary files, and how to use them in everyday programs, enabling your code to work with real-world data.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">15–20 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-7/opening-closing-files.html">Next: Opening and Closing Files</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What file handling is:</strong> Understand why programs need to work with files.</li>
+                  <li><strong>Persistent storage:</strong> Learn how files let data survive after your program ends.</li>
+                  <li><strong>Text vs binary files:</strong> Understand the difference between these two file types.</li>
+                  <li><strong>Common use cases:</strong> See when and why you'd use file handling in real programs.</li>
+                  <li><strong>Basic concepts:</strong> Get familiar with reading, writing, and file operations.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>Why Do We Need File Handling?</h2>
+                <p>So far, all the data in your programs has been stored in variables. When your program ends, that data disappears. But what if you want to:</p>
+                <ul>
+                  <li>Save user preferences for next time?</li>
+                  <li>Store a list of contacts or notes?</li>
+                  <li>Read data from a CSV file?</li>
+                  <li>Save game progress?</li>
+                </ul>
+                <p>That's where <strong>file handling</strong> comes in. Files let your program save data to your computer's hard drive, so it persists even after the program closes.</p>
+
+                <div class="info-card">
+                  <h3>Think of it Like This</h3>
+                  <p>Variables are like sticky notes — they're temporary and disappear when you're done. Files are like notebooks — they stay on your desk and you can read them again later.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>What is Persistent Storage?</h2>
+                <p><strong>Persistent storage</strong> means data that stays saved even after your program stops running. When you save a file, it's written to your computer's hard drive, which means:</p>
+                <ul>
+                  <li>The data survives program restarts</li>
+                  <li>You can share files between programs</li>
+                  <li>Data can be backed up and transferred</li>
+                  <li>Multiple programs can access the same file</li>
+                </ul>
+
+                <div class="code-example">
+                  <h3>Example: Without File Handling</h3>
+                  <pre class="code"><code># This data disappears when the program ends
+user_name = "Alice"
+score = 100
+print(f"{user_name} scored {score} points")
+# When program closes, user_name and score are gone!</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <h3>Example: With File Handling</h3>
+                  <pre class="code"><code># This data can be saved to a file
+user_name = "Alice"
+score = 100
+
+# Save to file (we'll learn how to do this)
+# File: scores.txt contains "Alice,100"
+
+# Next time program runs, we can read it back!
+# Data persists even after program closes</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Text Files vs Binary Files</h2>
+                <p>Python can work with two main types of files:</p>
+
+                <div class="info-card">
+                  <h3>Text Files</h3>
+                  <p>Text files contain human-readable characters. Examples include:</p>
+                  <ul>
+                    <li><code>.txt</code> files (plain text)</li>
+                    <li><code>.csv</code> files (comma-separated values)</li>
+                    <li><code>.json</code> files (structured data)</li>
+                    <li><code>.py</code> files (Python code)</li>
+                  </ul>
+                  <p>You can open these files in any text editor and read them directly.</p>
+                </div>
+
+                <div class="info-card">
+                  <h3>Binary Files</h3>
+                  <p>Binary files contain data in a format that's not human-readable. Examples include:</p>
+                  <ul>
+                    <li><code>.jpg</code> or <code>.png</code> files (images)</li>
+                    <li><code>.mp3</code> or <code>.wav</code> files (audio)</li>
+                    <li><code>.exe</code> files (executable programs)</li>
+                    <li><code>.zip</code> files (compressed archives)</li>
+                  </ul>
+                  <p>These files need special programs to read them.</p>
+                </div>
+
+                <div class="info-callout">
+                  <h4>For Beginners</h4>
+                  <p>We'll focus on <strong>text files</strong> first because they're easier to work with. Once you're comfortable with text files, binary files follow similar principles.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Common File Operations</h2>
+                <p>When working with files, you'll typically do these operations:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <h3>1. Open</h3>
+                    <p>Tell Python which file you want to work with and how (read, write, etc.)</p>
+                  </div>
+                  <div class="step">
+                    <h3>2. Read or Write</h3>
+                    <p>Get data from the file or save data to it</p>
+                  </div>
+                  <div class="step">
+                    <h3>3. Close</h3>
+                    <p>Tell Python you're done with the file (important for saving changes!)</p>
+                  </div>
+                </div>
+
+                <div class="code-example">
+                  <h3>Basic File Operation Pattern</h3>
+                  <pre class="code"><code># 1. Open the file
+file = open("data.txt", "r")  # "r" means read mode
+
+# 2. Read from the file
+content = file.read()
+
+# 3. Close the file
+file.close()</code></pre>
+                  <p>Don't worry about understanding this code yet — we'll cover it in detail in the next lessons!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Real-World Examples</h2>
+                <p>File handling is used everywhere in programming:</p>
+
+                <div class="uses-grid">
+                  <div class="use-item">
+                    <h4>Text Editors</h4>
+                    <p>Save and load documents</p>
+                  </div>
+                  <div class="use-item">
+                    <h4>Games</h4>
+                    <p>Save game progress and settings</p>
+                  </div>
+                  <div class="use-item">
+                    <h4>Data Analysis</h4>
+                    <p>Read CSV files with data, process it, save results</p>
+                  </div>
+                  <div class="use-item">
+                    <h4>Web Applications</h4>
+                    <p>Store user data, logs, and configuration files</p>
+                  </div>
+                  <div class="use-item">
+                    <h4>Email Clients</h4>
+                    <p>Save drafts and read saved messages</p>
+                  </div>
+                  <div class="use-item">
+                    <h4>Databases</h4>
+                    <p>Store structured data in files</p>
+                  </div>
+                </div>
+
+                <div class="info-card" style="margin-top: 24px;">
+                  <h4>Why File Handling Matters</h4>
+                  <p>Without file handling, every time you run a program, you'd have to re-enter all your data. File handling allows programs to:</p>
+                  <ul>
+                    <li>Remember user preferences between sessions</li>
+                    <li>Store large amounts of data efficiently</li>
+                    <li>Share data between different programs</li>
+                    <li>Create backups and archives</li>
+                    <li>Process data from external sources</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>File Handling Workflow</h2>
+                <p>Understanding the typical workflow when working with files:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Identify the File</h4>
+                      <p>Determine which file you want to work with and where it's located (file path).</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Choose the Mode</h4>
+                      <p>Decide what you want to do: read ('r'), write ('w'), or append ('a').</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Open the File</h4>
+                      <p>Use <code>open()</code> to create a connection to the file.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Perform Operations</h4>
+                      <p>Read data from the file or write data to it using methods like <code>read()</code>, <code>write()</code>, etc.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                      <h4>Close the File</h4>
+                      <p>Always close the file when done to save changes and free resources. Better yet, use the <code>with</code> statement!</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Important Concepts to Remember</h2>
+                <p>Before we dive into the code, remember these key points:</p>
+
+                <div class="info-callout">
+                  <h4>1. Files Must Be Opened Before Use</h4>
+                  <p>You can't read or write to a file until you've opened it. Opening a file creates a connection between your program and the file. Think of it like opening a book before you can read it!</p>
+                </div>
+
+                <div class="info-callout">
+                  <h4>2. Always Close Files When Done</h4>
+                  <p>Closing a file ensures all changes are saved and frees up system resources. Forgetting to close files can cause problems like data loss or locked files. We'll learn the <code>with</code> statement to make this automatic!</p>
+                </div>
+
+                <div class="info-callout">
+                  <h4>3. File Paths Matter</h4>
+                  <p>You need to tell Python where the file is located. This could be a relative path (like <code>"data.txt"</code>) or an absolute path (like <code>"/Users/name/Documents/data.txt"</code>). We'll cover paths in detail later.</p>
+                </div>
+
+                <div class="info-callout">
+                  <h4>4. Files Can Be Read-Only or Write-Only</h4>
+                  <p>When you open a file, you specify what you want to do with it. You can read from it, write to it, or both. This is called the "file mode" and prevents accidental overwrites.</p>
+                </div>
+
+                <div class="info-callout">
+                  <h4>5. Files Persist After Program Ends</h4>
+                  <p>Unlike variables, files remain on your computer after your program finishes. This is the whole point of file handling - to save data permanently!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Common File Operations Overview</h2>
+                <p>Here's a preview of what you'll learn in the upcoming lessons:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Opening Files</h4>
+                    <p>Use <code>open()</code> to create a connection to a file. Specify the file path and mode (read, write, append).</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Reading Files</h4>
+                    <p>Use methods like <code>read()</code>, <code>readline()</code>, and <code>readlines()</code> to get data from files.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Writing Files</h4>
+                    <p>Use <code>write()</code> and <code>writelines()</code> to save data to files.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Closing Files</h4>
+                    <p>Use <code>close()</code> or the <code>with</code> statement to properly close files and save changes.</p>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>What's Next?</h4>
+                  <p>In the next lessons, you'll learn:</p>
+                  <ul>
+                    <li>How to open files in different modes (read, write, append)</li>
+                    <li>Different ways to read file content</li>
+                    <li>How to write data to files</li>
+                    <li>Working with file paths across different operating systems</li>
+                    <li>Using the <code>with</code> statement for automatic file closing</li>
+                    <li>Handling errors when working with files</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: Why Files?</h3>
+                  <p>Name three situations where you'd need to use file handling instead of just variables.</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: File Types</h3>
+                  <p>List three examples of text files and three examples of binary files.</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <span></span>
+              <a class="btn btn-primary" href="/units/unit-7/opening-closing-files.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

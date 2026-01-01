@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 6 • Defining and Creating Classes - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 6 • Defining and Creating Classes • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 6 • Object-Oriented Programming</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-6/introduction-oop-concepts.html">1. Introduction to OOP Concepts</a></li>
+                <li><a class="active" href="/units/unit-6/defining-creating-classes.html">2. Defining and Creating Classes</a></li>
+                <li><a href="/units/unit-6/creating-using-objects.html">3. Creating and Using Objects</a></li>
+                <li><a href="/units/unit-6/instance-variables-methods.html">4. Instance Variables and Methods</a></li>
+                <li><a href="/units/unit-6/class-variables-class-methods.html">5. Class Variables and Class Methods</a></li>
+                <li><a href="/units/unit-6/encapsulation-access-control.html">6. Encapsulation and Access Control</a></li>
+                <li><a href="/units/unit-6/inheritance-subclasses.html">7. Inheritance and Subclasses</a></li>
+                <li><a href="/units/unit-6/polymorphism-method-overriding.html">8. Polymorphism and Method Overriding</a></li>
+                <li><a href="/units/unit-6/super-function.html">9. The super() Function</a></li>
+                <li><a href="/units/unit-6/oop-real-projects.html">10. OOP in Real Projects</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-6.html">Unit 6</a>
+              <span class="separator">/</span>
+              <span class="current">Defining and Creating Classes</span>
+            </nav>
+            <div class="eyebrow">Unit 6 • Lesson 2</div>
+            <h1 class="lesson-title">Defining and Creating Classes</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Classes act as blueprints for creating new objects. You'll learn how to define classes with the <code>class</code> keyword, add attributes, and use the <code>__init__</code> method to initialize object data, giving you the foundation to create your own custom objects.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">25–30 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-6/introduction-oop-concepts.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-6/creating-using-objects.html">Next: Creating and Using Objects</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Class syntax:</strong> Learn how to define a class using the <code>class</code> keyword.</li>
+                  <li><strong>__init__ method:</strong> Understand how to initialize objects with the <code>__init__</code> method.</li>
+                  <li><strong>Attributes:</strong> Learn how to add attributes to classes.</li>
+                  <li><strong>Class structure:</strong> Understand the basic structure of a Python class.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Classes are the foundation of OOP in Python. Once you know how to define a class, you can create your own custom objects that model real-world things. The <code>__init__</code> method is special - it runs automatically when you create a new object, letting you set up the object's initial state. This is your first step into real object-oriented programming!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: Basic Class Definition</h2>
+                <p>You define a class using the <code>class</code> keyword followed by the class name:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Simple Class Definition</div>
+                  <pre class="code"><code>class Person:
+    pass
+
+# This creates an empty class
+# 'pass' means "do nothing" - it's a placeholder</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Class Keyword</h4>
+                      <p>Use <code>class</code> followed by the class name. Class names should start with a capital letter (PascalCase).</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Colon</h4>
+                      <p>End the class definition line with a colon <code>:</code>. Everything indented below belongs to the class.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Class Body</h4>
+                      <p>The class body contains methods and attributes. For now, we use <code>pass</code> as a placeholder.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> A class definition is like declaring "I'm going to create a blueprint for this type of object." The class itself doesn't create any objects - it just defines what objects of this type will look like!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Define a Simple Class</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Create a simple class:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'class Dog:\n    pass\n\n# Class is defined but empty\nprint("Dog class created!")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">class Dog:
+    pass
+
+# Class is defined but empty
+print("Dog class created!")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You created a <code>Dog</code> class! Right now it's empty (just has <code>pass</code>), but you've defined the blueprint. In the next steps, we'll add attributes and methods to make it useful!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: The __init__ Method</h2>
+                <p>The <code>__init__</code> method is a special method that runs automatically when you create a new object. It's used to initialize the object's attributes:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Using __init__</div>
+                  <pre class="code"><code>class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+# When you create a Person object, __init__ runs automatically
+# It sets up the object's initial attributes</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Special Method</h4>
+                      <p><code>__init__</code> is a special method (notice the double underscores). It's called automatically when you create a new object.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Self Parameter</h4>
+                      <p>The first parameter is always <code>self</code>. It refers to the object being created. You don't pass it when creating objects!</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Initialize Attributes</h4>
+                      <p>Use <code>self.attribute_name = value</code> to set attributes. These become part of the object.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>Understanding self</h4>
+                  <p><code>self</code> is a reference to the object itself. When you write <code>self.name = name</code>, you're saying "set this object's name attribute to the name value passed in." Every method in a class needs <code>self</code> as the first parameter!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Using __init__</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Create a class with __init__:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'class Book:\n    def __init__(self, title, author):\n        self.title = title\n        self.author = author\n\n# Create a book object\nbook1 = Book(\"Python Basics\", \"John Doe\")\nprint(f\"Book: {book1.title} by {book1.author}\")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">class Book:
+    def __init__(self, title, author):
+        self.title = title
+        self.author = author
+
+# Create a book object
+book1 = Book("Python Basics", "John Doe")
+print(f"Book: {book1.title} by {book1.author}")</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> When you created <code>book1 = Book("Python Basics", "John Doe")</code>, Python automatically called the <code>__init__</code> method. It set <code>self.title = "Python Basics"</code> and <code>self.author = "John Doe"</code>. Now the book object has those attributes!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Adding Attributes</h2>
+                <p>Attributes are variables that belong to an object. You can set them in <code>__init__</code> or add them later:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Class Attributes</div>
+                  <pre class="code"><code>class Car:
+    def __init__(self, brand, color):
+        self.brand = brand      # Instance attribute
+        self.color = color      # Instance attribute
+        self.speed = 0          # Default value
+
+# Each Car object will have its own brand, color, and speed</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Instance Attributes</h4>
+                      <p>Attributes defined with <code>self.</code> are instance attributes. Each object has its own copy of these attributes.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Default Values</h4>
+                      <p>You can set default values for attributes. Here, <code>self.speed = 0</code> gives every car a starting speed of 0.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Access Attributes</h4>
+                      <p>After creating an object, access attributes using dot notation: <code>car.brand</code>, <code>car.color</code>.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Class Structure</h2>
+                <p>A complete class typically has:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Complete Class Example</div>
+                  <pre class="code"><code>class Student:
+    def __init__(self, name, student_id):
+        # Initialize attributes
+        self.name = name
+        self.student_id = student_id
+        self.grades = []
+    
+    def add_grade(self, grade):
+        # Method to add a grade
+        self.grades.append(grade)
+    
+    def get_average(self):
+        # Method to calculate average
+        if self.grades:
+            return sum(self.grades) / len(self.grades)
+        return 0</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Class Components</h4>
+                  <ul>
+                    <li><strong>__init__ method:</strong> Initializes the object with starting values</li>
+                    <li><strong>Attributes:</strong> Data stored in the object (name, student_id, grades)</li>
+                    <li><strong>Methods:</strong> Functions that belong to the class (add_grade, get_average)</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Create a Simple Class</h4>
+                  <p>Create a <code>Dog</code> class with an <code>__init__</code> method that takes <code>name</code> and <code>breed</code> as parameters. Set these as attributes. Then create a Dog object with name "Buddy" and breed "Golden Retriever", and print the dog's name and breed.</p>
+                  <p class="hint-text">Define class Dog, add __init__ with self, name, breed, then create an object.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Class with Default Value</h4>
+                  <p>Create a <code>Circle</code> class with an <code>__init__</code> method that takes <code>radius</code> as a parameter. Also add a default attribute <code>color</code> set to "Red". Create a Circle object with radius 5, then print the radius and color.</p>
+                  <p class="hint-text">Define class Circle, add __init__ with self and radius, set self.color = "Red", create object, print attributes.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-6/introduction-oop-concepts.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-6/creating-using-objects.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'class Dog:\n    def __init__(self, name, breed):\n        self.name = name\n        self.breed = breed\n\n# Create a Dog object\ndog1 = Dog("Buddy", "Golden Retriever")\nprint(f"Dog: {dog1.name}, Breed: {dog1.breed}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('class Dog')) {
+              return {
+                correct: false,
+                message: 'You need to create a Dog class.',
+                hints: ['Define: class Dog:', 'Use PascalCase for class names']
+              };
+            }
+            
+            if (!trimmed.includes('def __init__')) {
+              return {
+                correct: false,
+                message: 'You need to define the __init__ method.',
+                hints: ['Add: def __init__(self, name, breed):', 'Remember the colon']
+              };
+            }
+            
+            if (!trimmed.includes('self.name') || !trimmed.includes('self.breed')) {
+              return {
+                correct: false,
+                message: 'You need to set self.name and self.breed in __init__.',
+                hints: ['Set: self.name = name', 'Set: self.breed = breed']
+              };
+            }
+            
+            if (!trimmed.includes('Dog(') || !trimmed.includes('Buddy')) {
+              return {
+                correct: false,
+                message: 'You need to create a Dog object with name "Buddy" and breed "Golden Retriever".',
+                hints: ['Create: dog1 = Dog("Buddy", "Golden Retriever")', 'Print the attributes']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure indentation is correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('Buddy') || !outputText.includes('Golden Retriever')) {
+              return {
+                correct: false,
+                message: 'The output should show the dog\'s name and breed.',
+                hints: ['Print dog1.name and dog1.breed', 'Use f-strings for formatting']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created a class with __init__ and created an object.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'class Circle:\n    def __init__(self, radius):\n        self.radius = radius\n        self.color = "Red"\n\n# Create a Circle object\ncircle1 = Circle(5)\nprint(f"Radius: {circle1.radius}, Color: {circle1.color}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('class Circle')) {
+              return {
+                correct: false,
+                message: 'You need to create a Circle class.',
+                hints: ['Define: class Circle:', 'Use PascalCase']
+              };
+            }
+            
+            if (!trimmed.includes('def __init__')) {
+              return {
+                correct: false,
+                message: 'You need to define the __init__ method.',
+                hints: ['Add: def __init__(self, radius):']
+              };
+            }
+            
+            if (!trimmed.includes('self.radius')) {
+              return {
+                correct: false,
+                message: 'You need to set self.radius in __init__.',
+                hints: ['Set: self.radius = radius']
+              };
+            }
+            
+            if (!trimmed.includes('self.color') || !trimmed.includes('Red')) {
+              return {
+                correct: false,
+                message: 'You need to set self.color = "Red" as a default value.',
+                hints: ['Add: self.color = "Red"', 'This sets a default color']
+              };
+            }
+            
+            if (!trimmed.includes('Circle(5)')) {
+              return {
+                correct: false,
+                message: 'You need to create a Circle object with radius 5.',
+                hints: ['Create: circle1 = Circle(5)', 'Print radius and color']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure indentation is correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('5') || !outputText.includes('Red')) {
+              return {
+                correct: false,
+                message: 'The output should show radius 5 and color Red.',
+                hints: ['Print circle1.radius and circle1.color', 'Check your print statement']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created a class with a default attribute value.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 6 • Creating and Using Objects - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 6 • Creating and Using Objects • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 6 • Object-Oriented Programming</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-6/introduction-oop-concepts.html">1. Introduction to OOP Concepts</a></li>
+                <li><a href="/units/unit-6/defining-creating-classes.html">2. Defining and Creating Classes</a></li>
+                <li><a class="active" href="/units/unit-6/creating-using-objects.html">3. Creating and Using Objects</a></li>
+                <li><a href="/units/unit-6/instance-variables-methods.html">4. Instance Variables and Methods</a></li>
+                <li><a href="/units/unit-6/class-variables-class-methods.html">5. Class Variables and Class Methods</a></li>
+                <li><a href="/units/unit-6/encapsulation-access-control.html">6. Encapsulation and Access Control</a></li>
+                <li><a href="/units/unit-6/inheritance-subclasses.html">7. Inheritance and Subclasses</a></li>
+                <li><a href="/units/unit-6/polymorphism-method-overriding.html">8. Polymorphism and Method Overriding</a></li>
+                <li><a href="/units/unit-6/super-function.html">9. The super() Function</a></li>
+                <li><a href="/units/unit-6/oop-real-projects.html">10. OOP in Real Projects</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-6.html">Unit 6</a>
+              <span class="separator">/</span>
+              <span class="current">Creating and Using Objects</span>
+            </nav>
+            <div class="eyebrow">Unit 6 • Lesson 3</div>
+            <h1 class="lesson-title">Creating and Using Objects</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Objects are instances of classes that can store data and perform actions. You'll learn how to create objects, call their methods, and manage multiple instances that work independently, bringing your classes to life with actual data and behavior.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-6/defining-creating-classes.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-6/instance-variables-methods.html">Next: Instance Variables and Methods</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Creating objects:</strong> Learn how to instantiate objects from classes.</li>
+                  <li><strong>Accessing attributes:</strong> Understand how to get and set object attributes.</li>
+                  <li><strong>Calling methods:</strong> Discover how to call methods on objects.</li>
+                  <li><strong>Multiple objects:</strong> Learn how to create and work with multiple independent objects.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Defining a class is just the first step - you need to create objects from that class to actually use it! Once you create an object, you can access its attributes and call its methods. Each object is independent - creating multiple objects from the same class gives you multiple instances, each with its own data. This is the power of OOP!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: Creating Objects</h2>
+                <p>To create an object (also called an instance), you call the class name like a function:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Creating Objects</div>
+                  <pre class="code"><code>class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+# Create an object
+person1 = Person("Alice", 25)
+
+# This calls __init__ automatically
+# person1 is now a Person object with name="Alice" and age=25</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Call the Class</h4>
+                      <p>To create an object, write the class name followed by parentheses: <code>Person()</code>. Pass any required arguments.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>__init__ Runs</h4>
+                      <p>Python automatically calls the <code>__init__</code> method with the arguments you provided. This sets up the object's attributes.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Object Created</h4>
+                      <p>The object is created and returned. You can assign it to a variable to use it later!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> Creating an object is like building a house from a blueprint. The class (blueprint) defines what the object will have, but calling <code>Person("Alice", 25)</code> actually creates a real Person object with those specific values!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Create Objects</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Create objects from a class:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'class Dog:\n    def __init__(self, name, breed):\n        self.name = name\n        self.breed = breed\n\n# Create multiple Dog objects\ndog1 = Dog("Buddy", "Golden Retriever")\ndog2 = Dog("Max", "Labrador")\n\nprint(f"{dog1.name} is a {dog1.breed}")\nprint(f"{dog2.name} is a {dog2.breed}")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">class Dog:
+    def __init__(self, name, breed):
+        self.name = name
+        self.breed = breed
+
+# Create multiple Dog objects
+dog1 = Dog("Buddy", "Golden Retriever")
+dog2 = Dog("Max", "Labrador")
+
+print(f"{dog1.name} is a {dog1.breed}")
+print(f"{dog2.name} is a {dog2.breed}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You created two separate Dog objects! Each object has its own name and breed. <code>dog1</code> and <code>dog2</code> are independent - changing one doesn't affect the other. This is the power of objects - you can create as many as you need!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Accessing Attributes</h2>
+                <p>You can access and modify object attributes using dot notation:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Accessing Attributes</div>
+                  <pre class="code"><code>class Car:
+    def __init__(self, brand, color):
+        self.brand = brand
+        self.color = color
+        self.speed = 0
+
+car1 = Car("Toyota", "Red")
+
+# Access attributes
+print(car1.brand)  # "Toyota"
+print(car1.color)  # "Red"
+
+# Modify attributes
+car1.speed = 60
+print(car1.speed)  # 60</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Read Attributes</h4>
+                      <p>Use <code>object.attribute</code> to read an attribute's value. This gets the value stored in that object.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Modify Attributes</h4>
+                      <p>Use <code>object.attribute = new_value</code> to change an attribute. This updates that specific object's data.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Independent Objects</h4>
+                      <p>Each object has its own attributes. Changing one object's attributes doesn't affect other objects!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <h4>Dot Notation</h4>
+                  <p>The dot (.) is how you access anything that belongs to an object - attributes or methods. Think of it like saying "this object's thing" - <code>car1.brand</code> means "car1's brand attribute".</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Access and Modify Attributes</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Work with object attributes:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'class Student:\n    def __init__(self, name):\n        self.name = name\n        self.grade = 0\n\n# Create student\nstudent1 = Student("Alice")\nprint(f"{student1.name} starts with grade: {student1.grade}")\n\n# Update grade\nstudent1.grade = 85\nprint(f"{student1.name} now has grade: {student1.grade}")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">class Student:
+    def __init__(self, name):
+        self.name = name
+        self.grade = 0
+
+# Create student
+student1 = Student("Alice")
+print(f"{student1.name} starts with grade: {student1.grade}")
+
+# Update grade
+student1.grade = 85
+print(f"{student1.name} now has grade: {student1.grade}")</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You accessed the student's name and grade attributes using dot notation. Then you modified the grade attribute by assigning a new value. This shows how objects can store and update data!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Calling Methods</h2>
+                <p>Methods are functions that belong to objects. You call them using dot notation:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Calling Methods</div>
+                  <pre class="code"><code>class Car:
+    def __init__(self, brand):
+        self.brand = brand
+        self.speed = 0
+    
+    def accelerate(self):
+        self.speed += 10
+    
+    def get_info(self):
+        return f"{self.brand} is going {self.speed} mph"
+
+car1 = Car("Toyota")
+car1.accelerate()  # Call the method
+print(car1.get_info())  # "Toyota is going 10 mph"</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Method Definition</h4>
+                      <p>Methods are defined inside the class using <code>def</code>. They always take <code>self</code> as the first parameter.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Call Methods</h4>
+                      <p>Use <code>object.method_name()</code> to call a method. Don't pass <code>self</code> - Python does that automatically!</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Method Can Access Attributes</h4>
+                      <p>Methods can access and modify the object's attributes using <code>self</code>. They can also return values!</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Multiple Independent Objects</h2>
+                <p>Each object is independent - creating multiple objects gives you multiple instances:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Multiple Objects</div>
+                  <pre class="code"><code>class Book:
+    def __init__(self, title, author):
+        self.title = title
+        self.author = author
+
+# Create multiple books
+book1 = Book("Python Basics", "John Doe")
+book2 = Book("Advanced Python", "Jane Smith")
+
+# Each object is independent
+print(book1.title)  # "Python Basics"
+print(book2.title)  # "Advanced Python"
+
+# Changing one doesn't affect the other
+book1.title = "New Title"
+print(book1.title)  # "New Title"
+print(book2.title)  # "Advanced Python" (unchanged!)</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> Each object is a separate instance with its own data. Changing one object's attributes doesn't affect other objects created from the same class. This independence is what makes OOP powerful - you can work with many objects simultaneously!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Create and Access Objects</h4>
+                  <p>Create a <code>Person</code> class with <code>__init__</code> that takes <code>name</code> and <code>age</code>. Create two Person objects: "Alice" age 25 and "Bob" age 30. Print both people's names and ages.</p>
+                  <p class="hint-text">Define class Person, create two objects, then print their attributes.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Modify Object Attributes</h4>
+                  <p>Create a <code>Counter</code> class with <code>__init__</code> that sets <code>self.count = 0</code>. Create a Counter object, then modify its count to 5, and print the count.</p>
+                  <p class="hint-text">Define class Counter, create object, modify count attribute, print it.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-6/defining-creating-classes.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-6/instance-variables-methods.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'class Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\n\n# Create two Person objects\nperson1 = Person("Alice", 25)\nperson2 = Person("Bob", 30)\n\nprint(f"{person1.name} is {person1.age} years old")\nprint(f"{person2.name} is {person2.age} years old")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('class Person')) {
+              return {
+                correct: false,
+                message: 'You need to create a Person class.',
+                hints: ['Define: class Person:', 'Add __init__ method']
+              };
+            }
+            
+            if (!trimmed.includes('Person(') || !trimmed.includes('Alice') || !trimmed.includes('Bob')) {
+              return {
+                correct: false,
+                message: 'You need to create two Person objects: Alice age 25 and Bob age 30.',
+                hints: ['Create: person1 = Person("Alice", 25)', 'Create: person2 = Person("Bob", 30)']
+              };
+            }
+            
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print both people\'s names and ages.',
+                hints: ['Print person1.name and person1.age', 'Print person2.name and person2.age']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure indentation is correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('Alice') || !outputText.includes('Bob') || !outputText.includes('25') || !outputText.includes('30')) {
+              return {
+                correct: false,
+                message: 'The output should show Alice age 25 and Bob age 30.',
+                hints: ['Check your print statements', 'Make sure you\'re accessing the attributes correctly']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created multiple objects and accessed their attributes.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'class Counter:\n    def __init__(self):\n        self.count = 0\n\n# Create Counter object\ncounter1 = Counter()\nprint(f"Initial count: {counter1.count}")\n\n# Modify count\ncounter1.count = 5\nprint(f"Updated count: {counter1.count}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('class Counter')) {
+              return {
+                correct: false,
+                message: 'You need to create a Counter class.',
+                hints: ['Define: class Counter:', 'Add __init__ method']
+              };
+            }
+            
+            if (!trimmed.includes('self.count = 0')) {
+              return {
+                correct: false,
+                message: 'You need to set self.count = 0 in __init__.',
+                hints: ['In __init__: self.count = 0']
+              };
+            }
+            
+            if (!trimmed.includes('Counter()')) {
+              return {
+                correct: false,
+                message: 'You need to create a Counter object.',
+                hints: ['Create: counter1 = Counter()']
+              };
+            }
+            
+            if (!trimmed.includes('counter1.count = 5') && !trimmed.includes('counter.count = 5')) {
+              return {
+                correct: false,
+                message: 'You need to modify the count attribute to 5.',
+                hints: ['Set: counter1.count = 5', 'Then print the count']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure indentation is correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('5')) {
+              return {
+                correct: false,
+                message: 'The output should show count = 5.',
+                hints: ['Make sure you print counter1.count after modifying it']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created an object and modified its attributes.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 4 • Dictionary Methods and Iteration - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 4 • Dictionary Methods and Iteration • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 4 • Data Structures</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-4/introduction-data-structures.html">1. Introduction to Data Structures</a></li>
+                <li><a href="/units/unit-4/lists-operations.html">2. Lists and List Operations</a></li>
+                <li><a href="/units/unit-4/indexing-slicing-lists.html">3. Indexing and Slicing Lists</a></li>
+                <li><a href="/units/unit-4/nested-lists-2d.html">4. Nested Lists and 2D Structures</a></li>
+                <li><a href="/units/unit-4/tuples-immutable.html">5. Tuples and Immutable Data</a></li>
+                <li><a href="/units/unit-4/dictionaries-key-value.html">6. Dictionaries and Key-Value Pairs</a></li>
+                <li><a class="active" href="/units/unit-4/dictionary-methods-iteration.html">7. Dictionary Methods and Iteration</a></li>
+                <li><a href="/units/unit-4/sets-unique-collections.html">8. Sets and Unique Collections</a></li>
+                <li><a href="/units/unit-4/copying-comparing-structures.html">9. Copying and Comparing Data Structures</a></li>
+                <li><a href="/units/unit-4/choosing-right-structure.html">10. Choosing the Right Data Structure</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-4.html">Unit 4</a>
+              <span class="separator">/</span>
+              <span class="current">Dictionary Methods and Iteration</span>
+            </nav>
+            <div class="eyebrow">Unit 4 • Lesson 7</div>
+            <h1 class="lesson-title">Dictionary Methods and Iteration</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Dive deeper into useful dictionary operations that make data manipulation more powerful. You'll practice looping through keys, values, and items, and explore methods like <code>get()</code>, <code>pop()</code>, and <code>update()</code> for efficient data handling in real-world scenarios.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-4/dictionaries-key-value.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-4/sets-unique-collections.html">Next: Sets and Unique Collections</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Dictionary methods:</strong> Learn useful methods like <code>get()</code>, <code>pop()</code>, and <code>update()</code>.</li>
+                  <li><strong>Iterating through dictionaries:</strong> Discover how to loop through keys, values, and items.</li>
+                  <li><strong>Checking for keys:</strong> Learn how to safely check if a key exists.</li>
+                  <li><strong>Combining dictionaries:</strong> Understand how to merge dictionaries together.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Dictionary methods make working with dictionaries much easier and safer. Instead of always using square brackets (which can cause errors if a key doesn't exist), methods like <code>get()</code> provide safe alternatives. Iterating through dictionaries lets you process all the data efficiently, which is essential for real-world programming!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: The get() Method</h2>
+                <p>The <code>get()</code> method safely retrieves a value from a dictionary, returning <code>None</code> (or a default value) if the key doesn't exist:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Using get() Method</div>
+                  <pre class="code"><code>student = {"name": "Alice", "age": 20}
+
+# Safe access with get()
+name = student.get("name")  # Returns "Alice"
+city = student.get("city")  # Returns None (key doesn't exist)
+
+# With default value
+city = student.get("city", "Unknown")  # Returns "Unknown"</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Safer Than Brackets</h4>
+                      <p>Using <code>dictionary["key"]</code> raises a KeyError if the key doesn't exist. The <code>get()</code> method returns <code>None</code> instead, preventing crashes!</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Default Value</h4>
+                      <p>You can provide a default value as the second argument: <code>get("key", "default")</code>. If the key doesn't exist, it returns the default value instead of <code>None</code>.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>When to Use</h4>
+                      <p>Use <code>get()</code> when you're not sure if a key exists, especially when reading user input or data from external sources.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> The <code>get()</code> method is safer than using square brackets because it never raises an error if the key doesn't exist. It's perfect for cases where you're not certain a key exists in the dictionary!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Using get() Method</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try using the get() method:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'person = {&quot;name&quot;: &quot;Bob&quot;, &quot;age&quot;: 30}\n\n# Safe access\nname = person.get(&quot;name&quot;)\nemail = person.get(&quot;email&quot;, &quot;No email&quot;)\n\nprint(f&quot;Name: {name}&quot;)\nprint(f&quot;Email: {email}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">person = {"name": "Bob", "age": 30}
+
+# Safe access
+name = person.get("name")
+email = person.get("email", "No email")
+
+print(f"Name: {name}")
+print(f"Email: {email}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The <code>get()</code> method safely retrieved values. Even though "email" doesn't exist in the dictionary, the code didn't crash - it returned the default value "No email" instead. This is much safer than using <code>person["email"]</code>, which would raise a KeyError!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: The pop() Method</h2>
+                <p>The <code>pop()</code> method removes and returns a value from a dictionary:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Using pop() Method</div>
+                  <pre class="code"><code>student = {"name": "Alice", "age": 20, "grade": "A"}
+
+# Remove and get value
+age = student.pop("age")  # Removes "age" and returns 20
+print(age)  # Output: 20
+print(student)  # Output: {'name': 'Alice', 'grade': 'A'}</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How It Works</h4>
+                  <p>The <code>pop()</code> method does two things: it removes the key-value pair from the dictionary AND returns the value. This is useful when you need to remove an item and also use its value. Like <code>get()</code>, you can provide a default value if the key doesn't exist!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: The update() Method</h2>
+                <p>The <code>update()</code> method adds or updates multiple key-value pairs at once:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Using update() Method</div>
+                  <pre class="code"><code>student = {"name": "Alice", "age": 20}
+
+# Add or update multiple items
+student.update({"grade": "A", "city": "Boston"})
+print(student)  # Output: {'name': 'Alice', 'age': 20, 'grade': 'A', 'city': 'Boston'}</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> <code>update()</code> modifies the dictionary in place. If a key already exists, its value is updated. If a key doesn't exist, it's added. This is more efficient than adding multiple items one at a time!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Iterating Through Dictionaries</h2>
+                <p>You can loop through dictionaries in several ways: keys, values, or both:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Dictionary Iteration</div>
+                  <pre class="code"><code>student = {"name": "Alice", "age": 20, "grade": "A"}
+
+# Loop through keys
+for key in student:
+    print(key)  # Output: name, age, grade
+
+# Loop through keys explicitly
+for key in student.keys():
+    print(key)
+
+# Loop through values
+for value in student.values():
+    print(value)  # Output: Alice, 20, A
+
+# Loop through items (key-value pairs)
+for key, value in student.items():
+    print(f"{key}: {value}")</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Keys</h4>
+                      <p>Looping through a dictionary directly gives you the keys. You can use <code>keys()</code> method for clarity, though it's optional.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Values</h4>
+                      <p>Use <code>values()</code> to loop through just the values. This is useful when you only need the data, not the keys.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Items</h4>
+                      <p>Use <code>items()</code> to loop through both keys and values at once. This gives you tuples of (key, value) pairs!</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Iterating Through Dictionaries</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try iterating through a dictionary:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'fruit_prices = {&quot;apple&quot;: 0.5, &quot;banana&quot;: 0.3, &quot;orange&quot;: 0.6}\n\n# Loop through items\nfor fruit, price in fruit_prices.items():\n    print(f&quot;{fruit}: ${price}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">fruit_prices = {"apple": 0.5, "banana": 0.3, "orange": 0.6}
+
+# Loop through items
+for fruit, price in fruit_prices.items():
+    print(f"{fruit}: ${price}")</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You used <code>items()</code> to loop through both keys and values at once. The loop gives you each key-value pair, which you can unpack into two variables (fruit and price). This is the most efficient way to process all the data in a dictionary!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 5: Checking for Keys</h2>
+                <p>Use the <code>in</code> keyword to check if a key exists in a dictionary:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Checking for Keys</div>
+                  <pre class="code"><code>student = {"name": "Alice", "age": 20}
+
+# Check if key exists
+if "name" in student:
+    print("Name exists!")
+
+if "city" not in student:
+    print("City does not exist")</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> The <code>in</code> keyword checks for keys, not values. Use <code>"key" in dictionary</code> to check if a key exists before accessing it!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Use Dictionary Methods</h4>
+                  <p>Create a dictionary called <code>inventory</code> with "apples": 10, "bananas": 5, "oranges": 8. Use <code>get()</code> to safely get the value for "apples" and "grapes" (with default 0). Print both values.</p>
+                  <p class="hint-text">Use get() method with and without a default value.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Iterate Through Dictionary</h4>
+                  <p>Create a dictionary called <code>scores</code> with "Alice": 85, "Bob": 92, "Charlie": 78. Use a loop with <code>items()</code> to print each person's name and score in the format "Name: Score".</p>
+                  <p class="hint-text">Use for key, value in dictionary.items() to iterate.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-4/dictionaries-key-value.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-4/sets-unique-collections.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'inventory = {"apples": 10, "bananas": 5, "oranges": 8}\napples = inventory.get("apples")\ngrapes = inventory.get("grapes", 0)\nprint(f"Apples: {apples}")\nprint(f"Grapes: {grapes}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('inventory = {') || !trimmed.includes('"apples"') || !trimmed.includes('"bananas"') || !trimmed.includes('"oranges"')) {
+              return {
+                correct: false,
+                message: 'You need to create a dictionary named inventory with "apples": 10, "bananas": 5, "oranges": 8.',
+                hints: ['Create: inventory = {"apples": 10, "bananas": 5, "oranges": 8}', 'Use curly braces']
+              };
+            }
+            
+            if (!trimmed.includes('.get("apples")')) {
+              return {
+                correct: false,
+                message: 'You need to use get() method to get the value for "apples".',
+                hints: ['Use: inventory.get("apples")', 'This returns 10']
+              };
+            }
+            
+            if (!trimmed.includes('.get("grapes", 0)') && !trimmed.includes('.get("grapes",0)')) {
+              return {
+                correct: false,
+                message: 'You need to use get() with default value 0 for "grapes".',
+                hints: ['Use: inventory.get("grapes", 0)', 'This returns 0 since grapes doesn\'t exist']
+              };
+            }
+            
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print both values.',
+                hints: ['Print the apples value', 'Print the grapes value']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure quotes are correct']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used the get() method with and without default values.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'scores = {"Alice": 85, "Bob": 92, "Charlie": 78}\nfor name, score in scores.items():\n    print(f"{name}: {score}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('scores = {') || !trimmed.includes('"Alice"') || !trimmed.includes('"Bob"') || !trimmed.includes('"Charlie"')) {
+              return {
+                correct: false,
+                message: 'You need to create a dictionary named scores with "Alice": 85, "Bob": 92, "Charlie": 78.',
+                hints: ['Create: scores = {"Alice": 85, "Bob": 92, "Charlie": 78}', 'Use curly braces']
+              };
+            }
+            
+            if (!trimmed.includes('.items()') || !trimmed.match(/for\s+\w+,\s*\w+\s+in\s+scores\.items\(\)/)) {
+              return {
+                correct: false,
+                message: 'You need to use items() method to iterate through key-value pairs.',
+                hints: ['Use: for name, score in scores.items():', 'This gives you both key and value']
+              };
+            }
+            
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print each name and score.',
+                hints: ['Print inside the loop', 'Format: "Name: Score"']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure the loop is properly indented', 'Check quotes']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('Alice') || !outputText.includes('Bob') || !outputText.includes('Charlie')) {
+              return {
+                correct: false,
+                message: 'Your output should include all three names: Alice, Bob, and Charlie.',
+                hints: ['Make sure you loop through all items', 'Check your print statement']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully iterated through a dictionary using items().'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

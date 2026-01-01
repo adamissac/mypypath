@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 7 • Working with File Paths • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit">
+    <div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 7 • Files & Errors</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-7/introduction-file-handling.html">1. Introduction to File Handling</a></li>
+                <li><a class="" href="/units/unit-7/opening-closing-files.html">2. Opening and Closing Files</a></li>
+                <li><a class="" href="/units/unit-7/reading-data-from-files.html">3. Reading Data from Files</a></li>
+                <li><a class="" href="/units/unit-7/writing-data-to-files.html">4. Writing Data to Files</a></li>
+                <li><a class="active" href="/units/unit-7/working-with-file-paths.html">5. Working with File Paths</a></li>
+                <li><a class="" href="/units/unit-7/with-statement-file-operations.html">6. Using the with Statement for File Operations</a></li>
+                <li><a class="" href="/units/unit-7/understanding-errors-exceptions.html">7. Understanding Errors and Exceptions</a></li>
+                <li><a class="" href="/units/unit-7/try-except-blocks.html">8. The try and except Blocks</a></li>
+                <li><a class="" href="/units/unit-7/raising-customizing-exceptions.html">9. Raising and Customizing Exceptions</a></li>
+                <li><a class="" href="/units/unit-7/file-error-handling-real-projects.html">10. File and Error Handling in Real Projects</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-7.html">Unit 7</a>
+              <span class="separator">/</span>
+              <span class="current">Working with File Paths</span>
+            </nav>
+            <div class="eyebrow">Unit 7 • Lesson 5</div>
+            <h1 class="lesson-title">Working with File Paths</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>File locations can differ between systems, so it's important to manage paths correctly. This lesson covers using the <code>os</code> and <code>pathlib</code> modules to create, join, and navigate directories safely and consistently, ensuring cross-platform compatibility.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-7/with-statement-file-operations.html">Next: Using the with Statement for File Operations</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Relative vs absolute paths:</strong> Understand the difference and when to use each.</li>
+                  <li><strong>Path joining:</strong> Use <code>os.path.join()</code> to build paths correctly.</li>
+                  <li><strong>The pathlib module:</strong> Learn modern Python's preferred way to handle paths.</li>
+                  <li><strong>Cross-platform compatibility:</strong> Write code that works on Windows, Mac, and Linux.</li>
+                  <li><strong>Path operations:</strong> Check if files exist, get directory names, and more.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>Relative vs Absolute Paths</h2>
+                <p>A <strong>file path</strong> tells Python where to find a file on your computer. There are two types:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Relative Path</h4>
+                    <p>Relative to where your program is running. Starts from the current directory.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>"data.txt"
+"folder/file.txt"
+"../parent.txt"</code></pre>
+                  </div>
+
+                  <div class="feature-card">
+                    <h4>Absolute Path</h4>
+                    <p>Complete path from the root of the file system. Works from anywhere.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>"/Users/name/data.txt"
+"C:\\Users\\name\\data.txt"
+"/home/user/data.txt"</code></pre>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <h4>When to Use Each</h4>
+                  <ul>
+                    <li><strong>Use relative paths:</strong> When files are in the same project folder</li>
+                    <li><strong>Use absolute paths:</strong> When you need to access files in specific system locations</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Using <code>os.path.join()</code></h2>
+                <p>The <code>os.path.join()</code> function safely combines path parts, using the correct separator for your operating system.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Joining Paths</div>
+                  <pre class="code"><code>import os
+
+# Instead of this (WRONG):
+path = "folder" + "/" + "file.txt"  # Only works on Mac/Linux
+
+# Do this (RIGHT):
+path = os.path.join("folder", "file.txt")  # Works everywhere!</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Why Use os.path.join()?</h4>
+                  <ul>
+                    <li>Windows uses <code>\</code> (backslash)</li>
+                    <li>Mac/Linux use <code>/</code> (forward slash)</li>
+                    <li><code>os.path.join()</code> automatically uses the right one!</li>
+                  </ul>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Multiple Path Parts</div>
+                  <pre class="code"><code>import os
+
+path = os.path.join("users", "alice", "documents", "file.txt")
+# Result: "users/alice/documents/file.txt" (Mac/Linux)
+# Result: "users\\alice\\documents\\file.txt" (Windows)</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>The <code>pathlib</code> Module (Modern Python)</h2>
+                <p>Python 3.4+ introduced <code>pathlib</code>, which provides an object-oriented way to work with paths. It's the recommended modern approach.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Using pathlib.Path</div>
+                  <pre class="code"><code>from pathlib import Path
+
+# Create a Path object
+file_path = Path("folder") / "file.txt"
+
+# Open the file
+with open(file_path, "r") as file:
+    content = file.read()</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>pathlib Benefits</h4>
+                  <ul>
+                    <li>More readable code</li>
+                    <li>Cross-platform by default</li>
+                    <li>Many useful methods built-in</li>
+                    <li>Python's recommended way</li>
+                  </ul>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">pathlib Methods</div>
+                  <pre class="code"><code>from pathlib import Path
+
+path = Path("folder/file.txt")
+
+print(path.exists())      # Check if file exists
+print(path.name)          # "file.txt"
+print(path.parent)        # "folder"
+print(path.suffix)        # ".txt"
+print(path.stem)          # "file"</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Common Path Operations</h2>
+                <p>Both <code>os.path</code> and <code>pathlib</code> provide methods for common path operations:</p>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Operation</th>
+                      <th>os.path</th>
+                      <th>pathlib</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Join paths</td>
+                      <td><code>os.path.join("a", "b")</code></td>
+                      <td><code>Path("a") / "b"</code></td>
+                    </tr>
+                    <tr>
+                      <td>Check if exists</td>
+                      <td><code>os.path.exists(path)</code></td>
+                      <td><code>Path(path).exists()</code></td>
+                    </tr>
+                    <tr>
+                      <td>Get filename</td>
+                      <td><code>os.path.basename(path)</code></td>
+                      <td><code>Path(path).name</code></td>
+                    </tr>
+                    <tr>
+                      <td>Get directory</td>
+                      <td><code>os.path.dirname(path)</code></td>
+                      <td><code>Path(path).parent</code></td>
+                    </tr>
+                    <tr>
+                      <td>Get file extension</td>
+                      <td><code>os.path.splitext(path)[1]</code></td>
+                      <td><code>Path(path).suffix</code></td>
+                    </tr>
+                    <tr>
+                      <td>Get file stem (name without extension)</td>
+                      <td><code>os.path.splitext(path)[0]</code></td>
+                      <td><code>Path(path).stem</code></td>
+                    </tr>
+                    <tr>
+                      <td>Check if file</td>
+                      <td><code>os.path.isfile(path)</code></td>
+                      <td><code>Path(path).is_file()</code></td>
+                    </tr>
+                    <tr>
+                      <td>Check if directory</td>
+                      <td><code>os.path.isdir(path)</code></td>
+                      <td><code>Path(path).is_dir()</code></td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="code-example">
+                  <div class="code-header">More pathlib Examples</div>
+                  <pre class="code"><code>from pathlib import Path
+
+file_path = Path("documents/report.pdf")
+
+# Get different parts
+print(file_path.name)        # "report.pdf"
+print(file_path.stem)        # "report"
+print(file_path.suffix)      # ".pdf"
+print(file_path.parent)      # "documents"
+print(file_path.parts)       # ("documents", "report.pdf")
+
+# Check properties
+print(file_path.exists())    # True/False
+print(file_path.is_file())   # True/False
+print(file_path.is_dir())    # True/False
+
+# Create new paths
+new_path = file_path.parent / "backup" / file_path.name
+print(new_path)  # "documents/backup/report.pdf"</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>pathlib Advantages</h4>
+                  <p>pathlib is more intuitive and Pythonic:</p>
+                  <ul>
+                    <li>Object-oriented approach</li>
+                    <li>More readable code</li>
+                    <li>Method chaining: <code>Path("data").parent / "backup" / "file.txt"</code></li>
+                    <li>Cross-platform by default</li>
+                    <li>Many convenient methods</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: Working with Paths</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try using pathlib to work with file paths:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'from pathlib import Path\n\npath = Path(&quot;folder&quot;) / &quot;file.txt&quot;\nprint(f&quot;Path: {path}&quot;)\nprint(f&quot;Name: {path.name}&quot;)\nprint(f&quot;Parent: {path.parent}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">from pathlib import Path
+
+path = Path("folder") / "file.txt"
+print(f"Path: {path}")
+print(f"Name: {path.name}")
+print(f"Parent: {path.parent}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> You created a Path object and accessed its properties. The <code>/</code> operator joins paths automatically.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>Relative paths:</strong> Relative to current directory - use for project files</li>
+                  <li><strong>Absolute paths:</strong> Complete system path - use for system files</li>
+                  <li><strong><code>os.path.join()</code>:</strong> Safe way to join paths (works everywhere)</li>
+                  <li><strong><code>pathlib</code>:</strong> Modern, object-oriented path handling</li>
+                  <li><strong>Cross-platform:</strong> Always use these tools instead of hardcoding separators</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>Never use hardcoded <code>/</code> or <code>\</code> in paths. Always use <code>os.path.join()</code> or <code>pathlib</code> for cross-platform compatibility!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: Path Types</h3>
+                  <p>What's the difference between a relative path and an absolute path? When would you use each?</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Cross-Platform</h3>
+                  <p>Why is it important to use <code>os.path.join()</code> or <code>pathlib</code> instead of hardcoding path separators?</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-7/writing-data-to-files.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-7/with-statement-file-operations.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

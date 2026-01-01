@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 2 • The for Loop - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 2 • The for Loop • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 2 • Control Flow</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-2/understanding-control-flow.html">1. Understanding Control Flow</a></li>
+                <li><a href="/units/unit-2/comparison-logical-operators.html">2. Comparison & Logical Operators</a></li>
+                <li><a href="/units/unit-2/if-statement.html">3. The if Statement</a></li>
+                <li><a href="/units/unit-2/if-else-elif.html">4. if-else and elif</a></li>
+                <li><a href="/units/unit-2/nested-conditionals.html">5. Nested Conditionals</a></li>
+                <li><a href="/units/unit-2/boolean-logic-practice.html">6. Boolean Logic in Practice</a></li>
+                <li><a href="/units/unit-2/introduction-loops.html">7. Introduction to Loops</a></li>
+                <li><a href="/units/unit-2/while-loop.html">8. The while Loop</a></li>
+                <li><a class="active" href="/units/unit-2/for-loop.html">9. The for Loop</a></li>
+                <li><a href="/units/unit-2/loop-control-statements.html">10. Loop Control Statements</a></li>
+                <li><a href="/units/unit-2/practical-control-flow-examples.html">11. Practical Control Flow Examples</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-2.html">Unit 2</a>
+              <span class="separator">/</span>
+              <span class="current">The for Loop</span>
+            </nav>
+            <div class="eyebrow">Unit 2 • Lesson 9</div>
+            <h1 class="lesson-title">The for Loop</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Use the for loop to iterate through sequences such as strings, lists, and ranges. You'll understand how iteration works behind the scenes and how to combine it with built-in functions like range() for efficiency.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">20–25 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-2/while-loop.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-2/loop-control-statements.html">Next: Loop Control Statements</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>What a for loop is:</strong> Understand how for loops iterate through sequences.</li>
+                  <li><strong>Using range():</strong> Learn how to use range() to create sequences of numbers.</li>
+                  <li><strong>Iterating through strings:</strong> Discover how to loop through each character in a string.</li>
+                  <li><strong>Iterating through lists:</strong> Master looping through lists of items.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>The for loop is the most common type of loop in Python. It's perfect when you know what you want to iterate through - whether it's a range of numbers, characters in a string, or items in a list. It's cleaner and easier to read than while loops when you're working with sequences.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: What Is a for Loop?</h2>
+                <p>A for loop repeats code for each item in a sequence. Think of it like going through a shopping list one item at a time, or reading a book page by page. The loop automatically goes through each item in the sequence - you don't need to manually track counters like with while loops.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Basic for Loop Structure</div>
+                  <pre class="code"><code>for variable in sequence:
+    # Code to repeat for each item
+    print(variable)
+    # More code here</code></pre>
+                </div>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Start with <code>for</code></h4>
+                      <p>The keyword <code>for</code> tells Python you're starting a loop that iterates through a sequence.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Choose a Variable Name</h4>
+                      <p>After <code>for</code>, write a variable name. This variable will hold each item from the sequence, one at a time.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Use <code>in</code> and the Sequence</h4>
+                      <p>Write <code>in</code> followed by the sequence you want to iterate through (like a string, list, or range).</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Add a Colon and Indent</h4>
+                      <p>End with a colon <code>:</code> and indent the code block. This code runs once for each item in the sequence.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Concept:</strong> The for loop automatically handles the iteration process. You don't need to manually increment a counter or check conditions - Python does it for you. The loop runs exactly as many times as there are items in the sequence.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Your First for Loop</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try this simple for loop that prints each number from 1 to 5:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'for i in range(1, 6):\n    print(f&quot;Number: {i}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">for i in range(1, 6):
+    print(f"Number: {i}")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Python created a sequence of numbers from 1 to 5 using <code>range(1, 6)</code>. The for loop then went through each number in this sequence. On the first iteration, <code>i</code> was set to 1, and "Number: 1" was printed. On the second iteration, <code>i</code> was set to 2, and "Number: 2" was printed. This continued for each number in the sequence (1, 2, 3, 4, 5). Notice how you didn't need to manually increase a counter or check a condition - the for loop handled everything automatically!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Understanding range()</h2>
+                <p>The <code>range()</code> function creates a sequence of numbers. It's perfect for when you want to loop a specific number of times. There are three ways to use it:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4><code>range(stop)</code></h4>
+                    <p>Creates numbers from 0 up to (but not including) stop.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>range(5)
+# Creates: 0, 1, 2, 3, 4</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Runs 5 times</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4><code>range(start, stop)</code></h4>
+                    <p>Creates numbers from start up to (but not including) stop.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>range(1, 6)
+# Creates: 1, 2, 3, 4, 5</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Runs 5 times</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4><code>range(start, stop, step)</code></h4>
+                    <p>Creates numbers from start to stop, counting by step.</p>
+                    <pre class="code" style="margin-top: 12px;"><code>range(0, 10, 2)
+# Creates: 0, 2, 4, 6, 8</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Counts by 2s</p>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Important:</strong> The stop value is NOT included in the range. So <code>range(1, 6)</code> gives you 1, 2, 3, 4, 5 (not 6). This is consistent with Python's indexing, which starts at 0. Think of it as "up to but not including" the stop value.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Different range() Examples</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try different ways to use range():</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', '# range(stop) - starts at 0\nfor i in range(5):\n    print(i)\n\nprint(&quot;---&quot;)\n\n# range(start, stop) - starts at 2\nfor i in range(2, 6):\n    print(i)\n\nprint(&quot;---&quot;)\n\n# range(start, stop, step) - counts by 2\nfor i in range(0, 10, 2):\n    print(i)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2"># range(stop) - starts at 0
+for i in range(5):
+    print(i)
+
+print("---")
+
+# range(start, stop) - starts at 2
+for i in range(2, 6):
+    print(i)
+
+print("---")
+
+# range(start, stop, step) - counts by 2
+for i in range(0, 10, 2):
+    print(i)</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The first loop used <code>range(5)</code>, which creates numbers from 0 to 4 (5 numbers total). The second loop used <code>range(2, 6)</code>, which creates numbers from 2 to 5 (starting at 2, stopping before 6). The third loop used <code>range(0, 10, 2)</code>, which creates numbers from 0 to 8, counting by 2s (0, 2, 4, 6, 8). Notice how the step parameter lets you skip numbers - this is useful for counting by twos, threes, or any interval you want!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Iterating Through Strings</h2>
+                <p>You can use a for loop to go through each character in a string. This is very useful for processing text character by character.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Looping Through a String</div>
+                  <pre class="code"><code>word = "Python"
+for char in word:
+    print(char)</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How It Works</h4>
+                  <p>When you loop through a string, Python goes through each character one at a time. The variable <code>char</code> (or whatever name you choose) holds the current character. On the first iteration, <code>char</code> is "P". On the second, it's "y". This continues for each character in the string.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #3: Looping Through Strings</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try looping through a string:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice3">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice3')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice3', 'name = &quot;Alice&quot;\nfor letter in name:\n    print(letter)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice3')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice3">name = "Alice"
+for letter in name:
+    print(letter)</textarea>
+                  <div class="editor-output" id="output-practice3">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Python went through each character in the string "Alice" one at a time. On the first iteration, <code>letter</code> was "A" and it was printed. On the second iteration, <code>letter</code> was "l" and it was printed. This continued for each character: "A", "l", "i", "c", "e". Each character was printed on its own line. This is how you can process text character by character!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Iterating Through Lists</h2>
+                <p>You can also use a for loop to go through each item in a list. Lists are collections of items, and for loops make it easy to process each item.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Looping Through a List</div>
+                  <pre class="code"><code>names = ["Alice", "Bob", "Charlie"]
+for name in names:
+    print(f"Hello, {name}!")</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How It Works</h4>
+                  <p>When you loop through a list, Python goes through each item one at a time. The variable <code>name</code> (or whatever name you choose) holds the current item. On the first iteration, <code>name</code> is "Alice". On the second, it's "Bob". The loop automatically handles going through all items in the list.</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #4: Looping Through Lists</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try looping through a list:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice4">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice4')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice4', 'fruits = [&quot;apple&quot;, &quot;banana&quot;, &quot;orange&quot;]\nfor fruit in fruits:\n    print(f&quot;I like {fruit}&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice4')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice4">fruits = ["apple", "banana", "orange"]
+for fruit in fruits:
+    print(f"I like {fruit}")</textarea>
+                  <div class="editor-output" id="output-practice4">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Python went through each item in the list <code>fruits</code> one at a time. On the first iteration, <code>fruit</code> was "apple" and "I like apple" was printed. On the second iteration, <code>fruit</code> was "banana" and "I like banana" was printed. On the third iteration, <code>fruit</code> was "orange" and "I like orange" was printed. Then the loop was done - it had processed all three items in the list. This is much cleaner than manually accessing each item!</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 5: for Loop vs. while Loop</h2>
+                <p>Both for and while loops repeat code, but they're used for different situations:</p>
+
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
+                  <div class="feature-card">
+                    <h4>Use <code>for</code> When:</h4>
+                    <p>You know what you're iterating through - a range, string, list, or other sequence.</p>
+                    <pre class="code" style="margin-top: 12px;"><code># Iterating through a sequence
+for i in range(10):
+    print(i)
+
+for char in "Python":
+    print(char)</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">Cleaner and easier to read</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>Use <code>while</code> When:</h4>
+                    <p>You don't know how many times to repeat - it depends on a condition changing.</p>
+                    <pre class="code" style="margin-top: 12px;"><code># Repeating until condition changes
+count = 0
+while count < 10:
+    print(count)
+    count = count + 1</code></pre>
+                    <p style="margin-top: 8px; font-size: 14px;">More flexible for unknown iterations</p>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Rule of Thumb:</strong> If you're working with a sequence (range, string, list), use a for loop. If you're repeating until a condition changes and you don't know how many times it will run, use a while loop. Most of the time, if you can use a for loop, it's the better choice because it's cleaner and less error-prone.</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Use range() in a for Loop</h4>
+                  <p>Write a for loop that uses <code>range(1, 6)</code> to print the numbers 1 through 5.</p>
+                  <p class="hint-text">Use for i in range(1, 6): followed by an indented print statement.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Loop Through a List</h4>
+                  <p>Create a list: <code>colors</code> = ["red", "blue", "green"]. Write a for loop that prints each color.</p>
+                  <p class="hint-text">Use for color in colors: followed by an indented print statement.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-2/while-loop.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-2/loop-control-statements.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'for i in range(1, 6):\n    print(i)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for for loop
+            if (!trimmed.includes('for')) {
+              return {
+                correct: false,
+                message: 'You need to write a for loop.',
+                hints: ['Start with: for i in range(1, 6):', 'Don\'t forget the colon']
+              };
+            }
+            
+            // Check for range(1, 6)
+            if (!trimmed.includes('range(1, 6)') && !trimmed.includes('range(1,6)')) {
+              return {
+                correct: false,
+                message: 'You need to use range(1, 6) to create numbers 1 through 5.',
+                hints: ['Use: for i in range(1, 6):', 'range(1, 6) creates: 1, 2, 3, 4, 5']
+              };
+            }
+            
+            // Check for print statement
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print i inside the loop.',
+                hints: ['Add a print statement inside the loop', 'Make sure it\'s indented', 'Print: i']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have a colon after range(1, 6)', 'Check your indentation']
+              };
+            }
+            
+            // Check output contains 1, 2, 3, 4, 5
+            const outputText = output.stdout || '';
+            if (!outputText.includes('1') || !outputText.includes('2') || !outputText.includes('3')) {
+              return {
+                correct: false,
+                message: 'Your loop should print the numbers 1, 2, 3, 4, 5.',
+                hints: ['Check your range(1, 6)', 'Make sure print is inside the loop', 'Verify your indentation']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used a for loop with range() to iterate through numbers.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'colors = ["red", "blue", "green"]\nfor color in colors:\n    print(color)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            // Check for colors list
+            if (!trimmed.includes('colors') || (!trimmed.includes('["red"') && !trimmed.includes('[\'red\''))) {
+              return {
+                correct: false,
+                message: 'You need to create a list colors with values ["red", "blue", "green"].',
+                hints: ['Write: colors = ["red", "blue", "green"]', 'Make sure all three colors are included']
+              };
+            }
+            
+            // Check for for loop
+            if (!trimmed.includes('for')) {
+              return {
+                correct: false,
+                message: 'You need to write a for loop.',
+                hints: ['Start with: for color in colors:', 'Don\'t forget the colon']
+              };
+            }
+            
+            // Check for 'in colors'
+            if (!trimmed.includes('in colors') && !trimmed.includes('in colors:')) {
+              return {
+                correct: false,
+                message: 'You need to iterate through the colors list.',
+                hints: ['Use: for color in colors:', 'This loops through each item in the list']
+              };
+            }
+            
+            // Check for print statement
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print each color inside the loop.',
+                hints: ['Add a print statement inside the loop', 'Make sure it\'s indented', 'Print: color']
+              };
+            }
+            
+            // Check if it executes without errors
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure you have a colon after for color in colors', 'Check your indentation']
+              };
+            }
+            
+            // Check output contains all three colors
+            const outputText = output.stdout || '';
+            if (!outputText.includes('red') || !outputText.includes('blue') || !outputText.includes('green')) {
+              return {
+                correct: false,
+                message: 'Your loop should print all three colors: red, blue, and green.',
+                hints: ['Check your colors list', 'Make sure print is inside the loop', 'Verify your indentation']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used a for loop to iterate through a list.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

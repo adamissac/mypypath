@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 4 • Choosing the Right Data Structure - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 4 • Choosing the Right Data Structure • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/curriculum.html">Learn</a></li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 4 • Data Structures</h3>
+            <nav>
+              <ul>
+                <li><a href="/units/unit-4/introduction-data-structures.html">1. Introduction to Data Structures</a></li>
+                <li><a href="/units/unit-4/lists-operations.html">2. Lists and List Operations</a></li>
+                <li><a href="/units/unit-4/indexing-slicing-lists.html">3. Indexing and Slicing Lists</a></li>
+                <li><a href="/units/unit-4/nested-lists-2d.html">4. Nested Lists and 2D Structures</a></li>
+                <li><a href="/units/unit-4/tuples-immutable.html">5. Tuples and Immutable Data</a></li>
+                <li><a href="/units/unit-4/dictionaries-key-value.html">6. Dictionaries and Key-Value Pairs</a></li>
+                <li><a href="/units/unit-4/dictionary-methods-iteration.html">7. Dictionary Methods and Iteration</a></li>
+                <li><a href="/units/unit-4/sets-unique-collections.html">8. Sets and Unique Collections</a></li>
+                <li><a href="/units/unit-4/copying-comparing-structures.html">9. Copying and Comparing Data Structures</a></li>
+                <li><a class="active" href="/units/unit-4/choosing-right-structure.html">10. Choosing the Right Data Structure</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-4.html">Unit 4</a>
+              <span class="separator">/</span>
+              <span class="current">Choosing the Right Data Structure</span>
+            </nav>
+            <div class="eyebrow">Unit 4 • Lesson 10</div>
+            <h1 class="lesson-title">Choosing the Right Data Structure</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Learn when to use lists, tuples, dictionaries, or sets based on your needs. This final lesson helps you make smart decisions by comparing structures side-by-side and seeing real-world examples of choosing the right tool for each task.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">25–30 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-ghost" href="/units/unit-4/copying-comparing-structures.html">← Previous</a>
+                <a class="btn btn-primary" href="/units/unit-5.html">Next Unit</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>Choosing lists:</strong> When to use lists for ordered, changeable collections.</li>
+                  <li><strong>Choosing tuples:</strong> When to use tuples for fixed, immutable sequences.</li>
+                  <li><strong>Choosing dictionaries:</strong> When to use dictionaries for key-value lookups.</li>
+                  <li><strong>Choosing sets:</strong> When to use sets for unique elements and fast membership.</li>
+                </ul>
+                <div class="info-card">
+                  <h4>Why This Matters</h4>
+                  <p>Different data structures are optimized for different tasks. Using the wrong structure can make your code slower, harder to read, or bug-prone. Understanding when to use each structure helps you write efficient, clear, and maintainable code!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 1: Comparison Guide</h2>
+                <p>Here's a quick reference for choosing the right data structure:</p>
+
+                <div class="uses-grid">
+                  <div class="feature-grid">
+                    <div class="feature">
+                      <h4>Lists</h4>
+                      <p><strong>Use when:</strong> You need ordered, changeable items.</p>
+                      <ul>
+                        <li>Order matters (first, second, third)</li>
+                        <li>Items can be added, removed, or changed</li>
+                        <li>Duplicates are allowed</li>
+                        <li>You need indexing and slicing</li>
+                      </ul>
+                      <p><strong>Example:</strong> Shopping cart items, test scores, task queues</p>
+                    </div>
+                    <div class="feature">
+                      <h4>Tuples</h4>
+                      <p><strong>Use when:</strong> You need fixed, immutable sequences.</p>
+                      <ul>
+                        <li>Data shouldn't change after creation</li>
+                        <li>You need a fixed-size collection</li>
+                        <li>Order matters but items won't change</li>
+                        <li>Using as dictionary keys</li>
+                      </ul>
+                      <p><strong>Example:</strong> Coordinates (x, y), RGB colors, constant settings</p>
+                    </div>
+                    <div class="feature">
+                      <h4>Dictionaries</h4>
+                      <p><strong>Use when:</strong> You need key-value pairs for fast lookups.</p>
+                      <ul>
+                        <li>Looking up values by name/key</li>
+                        <li>Storing associated data (name → age)</li>
+                        <li>Counting occurrences</li>
+                        <li>Mapping relationships</li>
+                      </ul>
+                      <p><strong>Example:</strong> User profiles, word counts, config settings</p>
+                    </div>
+                    <div class="feature">
+                      <h4>Sets</h4>
+                      <p><strong>Use when:</strong> You need unique elements and fast membership tests.</p>
+                      <ul>
+                        <li>Removing duplicates</li>
+                        <li>Fast membership checks (is X in set?)</li>
+                        <li>Set operations (union, intersection)</li>
+                        <li>Order doesn't matter</li>
+                      </ul>
+                      <p><strong>Example:</strong> Unique tags, valid usernames, seen items</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 2: Real-World Examples</h2>
+                <p>Let's see how to choose the right structure for common scenarios:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Example 1: Shopping Cart</div>
+                  <pre class="code"><code># Use a LIST - order matters, items can change
+cart = ["apples", "bananas", "milk"]
+cart.append("bread")  # Add item
+cart.remove("bananas")  # Remove item
+print(cart)  # Output: ['apples', 'milk', 'bread']</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Example 2: Coordinates</div>
+                  <pre class="code"><code># Use a TUPLE - fixed position, shouldn't change
+point = (10, 20)
+x, y = point  # Unpacking
+print(f"X: {x}, Y: {y}")  # Output: X: 10, Y: 20</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Example 3: User Database</div>
+                  <pre class="code"><code># Use a DICTIONARY - look up by username
+users = {
+    "alice": {"age": 25, "email": "alice@example.com"},
+    "bob": {"age": 30, "email": "bob@example.com"}
+}
+print(users["alice"]["email"])  # Output: alice@example.com</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Example 4: Unique Tags</div>
+                  <pre class="code"><code># Use a SET - automatically removes duplicates
+tags = ["python", "coding", "python", "tutorial", "coding"]
+unique_tags = set(tags)
+print(unique_tags)  # Output: {'python', 'coding', 'tutorial'}</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 3: Decision Tree</h2>
+                <p>Follow this decision tree to choose the right structure:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Is Order Important?</h4>
+                      <p>If yes → Use a <strong>list</strong> or <strong>tuple</strong></p>
+                      <p>If no → Use a <strong>dictionary</strong> or <strong>set</strong></p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Do You Need Key-Value Pairs?</h4>
+                      <p>If yes → Use a <strong>dictionary</strong></p>
+                      <p>If no → Continue to step 3</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Can Items Change?</h4>
+                      <p>If yes → Use a <strong>list</strong></p>
+                      <p>If no → Use a <strong>tuple</strong></p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Do You Need Unique Elements?</h4>
+                      <p>If yes → Use a <strong>set</strong></p>
+                      <p>If no → Use a <strong>dictionary</strong> (for key-value) or <strong>list</strong> (for ordered)</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #1: Choosing Structures</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Create a structure for storing student grades (name → grade). Think about which structure is best!</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Use a dictionary for name → grade lookups\ngrades = {\n    "Alice": 95,\n    "Bob": 87,\n    "Charlie": 92\n}\nprint(grades["Alice"])')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Use a dictionary for name → grade lookups
+grades = {
+    "Alice": 95,
+    "Bob": 87,
+    "Charlie": 92
+}
+print(grades["Alice"])</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> A dictionary is perfect here because you need to look up grades by student name. This is much faster than searching through a list! Dictionaries are optimized for key-based lookups.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Step 4: Performance Considerations</h2>
+                <p>Different structures have different performance characteristics:</p>
+
+                <div class="info-card">
+                  <h4>Performance Quick Reference</h4>
+                  <ul>
+                    <li><strong>Lists:</strong> Fast at the end (append), slower in the middle (insert)</li>
+                    <li><strong>Tuples:</strong> Fast creation and access, but immutable</li>
+                    <li><strong>Dictionaries:</strong> Very fast lookups by key (O(1) average)</li>
+                    <li><strong>Sets:</strong> Very fast membership tests (O(1) average)</li>
+                  </ul>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Remember:</strong> For small collections, the performance difference is usually negligible. Focus on choosing the structure that makes your code clearest and easiest to understand. For large collections or performance-critical code, consider the performance characteristics!</p>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Mini Practice #2: Set Operations</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Remove duplicates from a list using a set:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice2">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'numbers = [1, 2, 2, 3, 3, 3, 4]\nunique = list(set(numbers))  # Convert to set (removes duplicates), then back to list\nprint(f"Original: {numbers}")\nprint(f"Unique: {unique}")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice2">numbers = [1, 2, 2, 3, 3, 3, 4]
+unique = list(set(numbers))  # Convert to set (removes duplicates), then back to list
+print(f"Original: {numbers}")
+print(f"Unique: {unique}")</textarea>
+                  <div class="editor-output" id="output-practice2">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Converting a list to a set automatically removes duplicates! Then converting back to a list gives you unique values. This is much more efficient than manually checking for duplicates!</p>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item" data-exercise-id="exercise1">
+                  <h4>Exercise 1: Choose the Right Structure</h4>
+                  <p>You need to store a fixed list of days of the week. Choose the appropriate data structure and create it with the days: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday.</p>
+                  <p class="hint-text">Think about whether the data should change or not.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise1')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise1')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1"></textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise1"></div>
+                  </div>
+                </div>
+
+                <div class="exercise-item" data-exercise-id="exercise2">
+                  <h4>Exercise 2: Word Counter</h4>
+                  <p>Count how many times each word appears in the list: <code>["apple", "banana", "apple", "cherry", "banana", "apple"]</code>. Use a dictionary to store word → count pairs.</p>
+                  <p class="hint-text">Use a dictionary to count occurrences. Check if a key exists before incrementing.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise2">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
+                      <button class="btn-solution" onclick="showSolution('exercise2')">Show Solution</button>
+                      <button class="btn-reset" onclick="resetExercise('exercise2')">Reset</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise2"></textarea>
+                    <div class="editor-output" id="output-exercise2">
+                      <div class="output-placeholder">Write your code above and click "Check Answer" to verify it's correct.</div>
+                    </div>
+                    <div class="exercise-feedback" id="feedback-exercise2"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Key Takeaways</h2>
+                <ul>
+                  <li><strong>Lists</strong> are best for ordered, changeable collections where duplicates are allowed.</li>
+                  <li><strong>Tuples</strong> are best for fixed, immutable sequences that won't change.</li>
+                  <li><strong>Dictionaries</strong> are best for key-value lookups and associated data.</li>
+                  <li><strong>Sets</strong> are best for unique elements and fast membership tests.</li>
+                  <li>Choose the structure that makes your code clearest - readability usually matters more than micro-optimizations!</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-4/copying-comparing-structures.html">← Prev</a>
+              <a class="btn btn-primary" href="/units/unit-5.html">Next Unit</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const exerciseSolutions = {
+        exercise1: {
+          solution: 'days = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")\nprint(days)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('Monday') || !trimmed.includes('Sunday')) {
+              return {
+                correct: false,
+                message: 'You need to include all days of the week.',
+                hints: ['Include: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday']
+              };
+            }
+            
+            if (trimmed.includes('[') && !trimmed.includes('(')) {
+              return {
+                correct: false,
+                message: 'Since days of the week are fixed and never change, consider using a tuple instead of a list.',
+                hints: ['Use parentheses () for tuples', 'Days of the week are fixed, so a tuple is more appropriate']
+              };
+            }
+            
+            if (trimmed.includes('(') && trimmed.includes(')')) {
+              if (output.error) {
+                return {
+                  correct: false,
+                  message: 'Your code has an error: ' + output.error,
+                  hints: ['Check your syntax', 'Make sure commas are correct']
+                };
+              }
+              
+              return {
+                correct: true,
+                message: 'Correct! A tuple is perfect for fixed data like days of the week that never change.'
+              };
+            }
+            
+            if (trimmed.includes('[')) {
+              if (output.error) {
+                return {
+                  correct: false,
+                  message: 'Your code has an error: ' + output.error,
+                  hints: ['Check your syntax', 'Make sure brackets are correct']
+                };
+              }
+              
+              return {
+                correct: true,
+                message: 'Good! A list works, but a tuple would be even better since days of the week are fixed.'
+              };
+            }
+            
+            return {
+              correct: false,
+              message: 'You need to create a data structure with the days of the week.',
+              hints: ['Use a tuple: days = ("Monday", "Tuesday", ...)', 'Or use a list: days = ["Monday", "Tuesday", ...]']
+            };
+          }
+        },
+        exercise2: {
+          solution: 'words = ["apple", "banana", "apple", "cherry", "banana", "apple"]\ncount = {}\nfor word in words:\n    if word in count:\n        count[word] += 1\n    else:\n        count[word] = 1\nprint(count)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('words =') && !trimmed.includes('["apple"')) {
+              return {
+                correct: false,
+                message: 'You need to create the words list with the given words.',
+                hints: ['Create: words = ["apple", "banana", "apple", "cherry", "banana", "apple"]']
+              };
+            }
+            
+            if (!trimmed.includes('count =') && !trimmed.includes('{}')) {
+              return {
+                correct: false,
+                message: 'You need to create a dictionary to store word counts.',
+                hints: ['Create: count = {}', 'This will store word → count pairs']
+              };
+            }
+            
+            if (!trimmed.includes('for') && !trimmed.includes('in')) {
+              return {
+                correct: false,
+                message: 'You need to loop through the words.',
+                hints: ['Use a for loop: for word in words:', 'This iterates through each word']
+              };
+            }
+            
+            if (!trimmed.includes('count[word]') && !trimmed.includes('count.get')) {
+              return {
+                correct: false,
+                message: 'You need to update the count dictionary for each word.',
+                hints: ['Check if word exists: if word in count:', 'Increment: count[word] += 1', 'Or initialize: count[word] = 1']
+              };
+            }
+            
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print the count dictionary.',
+                hints: ['Print the count dictionary']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure indentation is correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('apple') || !outputText.includes('3')) {
+              return {
+                correct: false,
+                message: 'The output should show apple appears 3 times. Check your counting logic.',
+                hints: ['apple should appear 3 times', 'banana should appear 2 times', 'cherry should appear 1 time']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used a dictionary to count word occurrences.'
+            };
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        let pyodide;
+        let pyodideReady = false;
+
+        async function initPyodide() {
+          pyodide = await loadPyodide();
+          window.pyodide = pyodide;
+          
+          pyodide.runPython(`
+            from io import StringIO
+            import sys
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    self.buffer.write(s)
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+          window.pyodideReady = true;
+        }
+
+        initPyodide();
+        window.editors = {};
+
+        window.runEditorCode = async function(editorId) {
+          if (!pyodideReady) {
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) return;
+
+          const code = editor.getValue();
+          const output = document.getElementById(`output-${editorId}`);
+          output.innerHTML = '<div class="output-loading">Running...</div>';
+
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            if (stderr) {
+              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              output.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
+            }
+          } catch (error) {
+            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+        };
+
+        window.resetEditor = function(editorId, defaultCode) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue(defaultCode);
+            const output = document.getElementById(`output-${editorId}`);
+            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+          }
+        };
+
+        window.clearSaved = function(editorId) {
+          if (confirm('Clear your saved code?')) {
+            localStorage.removeItem(`code_${editorId}`);
+            const editor = window.editors[editorId];
+            if (editor) editor.setValue('');
+          }
+        };
+
+        window.checkExercise = async function(editorId) {
+          const pyodide = window.pyodide;
+          const pyodideReady = window.pyodideReady || false;
+          
+          if (!pyodideReady || !pyodide) {
+            const output = document.getElementById(`output-${editorId}`);
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            await new Promise(resolve => {
+              const checkReady = setInterval(() => {
+                if (window.pyodideReady) {
+                  clearInterval(checkReady);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
+          const editor = window.editors[editorId];
+          if (!editor) {
+            alert('Editor not found. Please refresh the page.');
+            return;
+          }
+
+          const code = editor.getValue().trim();
+          const feedbackEl = document.getElementById(`feedback-${editorId}`);
+          const outputEl = document.getElementById(`output-${editorId}`);
+
+          if (!feedbackEl || !outputEl) {
+            alert('Page elements not found. Please refresh the page.');
+            return;
+          }
+
+          if (!code) {
+            feedbackEl.className = 'exercise-feedback show incorrect';
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
+            return;
+          }
+
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Exercise validation not found for ' + editorId);
+            return;
+          }
+
+          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
+          let output = { stdout: '', stderr: '', error: null };
+          
+          try {
+            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+            window.pyodide.runPython(code);
+            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
+            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+            
+            output.stdout = stdout || '';
+            output.stderr = stderr || '';
+            
+            if (stderr) {
+              output.error = stderr;
+              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
+            } else if (stdout) {
+              outputEl.innerHTML = `<pre>${stdout}</pre>`;
+            } else {
+              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
+            }
+          } catch (error) {
+            output.error = error.toString();
+            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
+          }
+
+          const result = exercise.validator(code, output);
+          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
+          feedbackEl.style.display = 'block';
+          
+          if (result.correct) {
+            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
+          } else {
+            let hintsHtml = '';
+            if (result.hints && result.hints.length > 0) {
+              hintsHtml = '<ul>';
+              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
+              hintsHtml += '</ul>';
+            }
+            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
+          }
+        };
+
+        window.showSolution = function(editorId) {
+          const exercise = exerciseSolutions[editorId];
+          if (!exercise) {
+            alert('Solution not found.');
+            return;
+          }
+          const editor = window.editors[editorId];
+          if (editor) {
+            if (confirm('Show the solution? This will replace your current code.')) {
+              editor.setValue(exercise.solution);
+              const feedbackEl = document.getElementById(`feedback-${editorId}`);
+              feedbackEl.className = 'exercise-feedback';
+              feedbackEl.innerHTML = '';
+              feedbackEl.style.display = 'none';
+            }
+          }
+        };
+
+        window.resetExercise = function(editorId) {
+          const editor = window.editors[editorId];
+          if (editor) {
+            editor.setValue('');
+            const outputEl = document.getElementById(`output-${editorId}`);
+            const feedbackEl = document.getElementById(`feedback-${editorId}`);
+            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
+            feedbackEl.className = 'exercise-feedback';
+            feedbackEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+          }
+        };
+
+        function saveToStorage(type, id, value) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.setItem(key, value);
+        }
+
+        function loadFromStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          return localStorage.getItem(key);
+        }
+
+        function clearStorage(type, id) {
+          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
+          localStorage.removeItem(key);
+        }
+
+        setTimeout(() => {
+          document.querySelectorAll('.code-editor-small').forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isExercise = textarea.closest('[data-exercise-id]');
+            let initialCode = '';
+            if (isExercise) {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value || '';
+            } else {
+              const savedCode = loadFromStorage('code', editorId);
+              initialCode = savedCode || textarea.value;
+            }
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+
+          document.querySelectorAll('.reflection-input').forEach(textarea => {
+            const saved = loadFromStorage('reflection', textarea.id);
+            if (saved) textarea.value = saved;
+            textarea.addEventListener('input', () => {
+              saveToStorage('reflection', textarea.id, textarea.value);
+            });
+          });
+        }, 100);
+
+        document.addEventListener('themechange', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          Object.values(window.editors).forEach(editor => {
+            editor.setOption('theme', isDark ? 'monokai' : 'default');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

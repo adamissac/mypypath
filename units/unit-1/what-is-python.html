@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Unit 1 • What Is Python - Learn Python programming with interactive examples and exercises." />
+    <title>Unit 1 • What Is Python • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/exercises.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 1 • Foundations</h3>
+            <nav>
+              <ul>
+                <li><a class="active" href="/units/unit-1/what-is-python.html">1. What Is Python</a></li>
+                <li><a href="/units/unit-1/installing-python-ide.html">2. Installing Python & IDE</a></li>
+                <li><a href="/units/unit-1/first-program.html">3. First Program</a></li>
+                <li><a href="/units/unit-1/syntax-indentation.html">4. Syntax & Indentation</a></li>
+                <li><a href="/units/unit-1/variables-types.html">5. Variables & Types</a></li>
+                <li><a href="/units/unit-1/type-io.html">6. Type Conversion & I/O</a></li>
+                <li><a href="/units/unit-1/comments-docs.html">7. Comments & Docs</a></li>
+                <li><a href="/units/unit-1/arithmetic-expressions.html">8. Arithmetic & Expressions</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-1.html">Unit 1</a>
+              <span class="separator">/</span>
+              <span class="current">What Is Python</span>
+            </nav>
+            <div class="eyebrow">Unit 1 • Lesson 1</div>
+            <h1 class="lesson-title">Introduction to Python — What It Is and How It Runs</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>Learn what Python is, its main uses, and why it’s one of the world’s most popular programming languages. This lesson explores Python’s versatility across web development, data science, and artificial intelligence while explaining why beginners love its simplicity.</p>
+              <div class="lesson-meta">
+                <span class="pill">Beginner</span>
+                <span class="pill">10–15 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-1/installing-python-ide.html">Next: Install Python</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What Is Python?</h2>
+                <p>Python is a high-level, interpreted programming language designed to make programming easier, cleaner, and more readable. Unlike languages that require complex syntax, Python focuses on simplicity, meaning you can solve big problems with fewer lines of code.</p>
+                
+                <div class="info-card">
+                  <h4>Used by Top Companies</h4>
+                  <p>Python is trusted by hobbyists, students, and industry leaders like Google, Netflix, Tesla, and NASA.</p>
+                </div>
+
+                <h3>Where Python Is Used</h3>
+                <p>Because of its clarity and huge library ecosystem, Python powers applications across many fields:</p>
+                <div class="uses-grid">
+                  <div class="use-item">Web Development</div>
+                  <div class="use-item">Machine Learning & AI</div>
+                  <div class="use-item">Data Science & Analytics</div>
+                  <div class="use-item">Automation</div>
+                  <div class="use-item">Cybersecurity</div>
+                  <div class="use-item">App Development</div>
+                  <div class="use-item">Robotics</div>
+                  <div class="use-item">Scientific Research</div>
+                </div>
+                <p class="text-center"><strong>If you can imagine it, Python can probably do it.</strong></p>
+              </div>
+
+              <div class="content-section">
+                <h2>Why Python Is So Popular</h2>
+                
+                <div class="feature-grid">
+                  <div class="feature-card">
+                    <h4>1. Easy to Read and Write</h4>
+                    <p>Python code looks similar to plain English. This makes it one of the best first languages for beginners.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>2. Extremely Versatile</h4>
+                    <p>Python works on Windows, Mac, and Linux, and it's used across almost every tech industry.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h4>3. Massive Community & Libraries</h4>
+                    <p>There are millions of Python developers and tens of thousands of libraries that extend Python's power.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Your First Python Program</h2>
+                <p>Here's a simple Python program that prints text to the screen:</p>
+                
+                <div class="code-example">
+                  <div class="code-header">Example Code</div>
+                  <pre class="code"><code>print("Welcome to Python!")</code></pre>
+                </div>
+                
+                <p>Notice how simple this is: there are no brackets, no semicolons, no confusing symbols — just clean, readable code.</p>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: Print Your Own Message</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Write a sentence you would like Python to print. Edit the code below and click "Run" to see your output.</p>
+                
+                  <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'print(\"My name is Adam and I\\'m learning Python!\")')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1">print("My name is Adam and I'm learning Python!")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>How Python Runs Code</h2>
+                <p>Python is an <strong>interpreted language</strong>, which means it processes and executes code line-by-line in real-time.</p>
+                
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Write Your Code</h4>
+                      <p>You write Python code in a <code>.py</code> file</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Python Reads It</h4>
+                      <p>Python reads the code line-by-line</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Immediate Execution</h4>
+                      <p>It executes each instruction immediately</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Key Advantage:</strong> Unlike compiled languages like Java or C++, Python doesn't require a separate compilation step. This means:</p>
+                  <ul style="margin: 8px 0 0 0;">
+                    <li>Your code runs faster during development</li>
+                    <li>You can test ideas instantly</li>
+                    <li>Debugging is easier</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Python in the Real World</h2>
+                <p>Here's how Python is used across different industries:</p>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Field</th>
+                      <th>Example Uses</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>AI & ML</strong></td>
+                      <td>Neural networks (TensorFlow, PyTorch)</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Data Science</strong></td>
+                      <td>Data cleaning, visualization, predictions</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Automation</strong></td>
+                      <td>Automatically sending emails, scraping websites</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Web Development</strong></td>
+                      <td>Building apps like Reddit, Instagram</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Cybersecurity</strong></td>
+                      <td>Pentesting tools, scanners</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Finance</strong></td>
+                      <td>Investment models, market forecasting</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Education</strong></td>
+                      <td>Teaching computer science fundamentals</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="text-center"><strong>Python's combination of simplicity and power is why it dominates all these fields.</strong></p>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Reflection Exercise</h4>
+                  <span class="practice-badge">Think & Write</span>
+                </div>
+                <p>Think of one field that interests you (AI, cybersecurity, automation, etc.). Complete this sentence:</p>
+                <p class="reflection-prompt"><strong>"I want to learn Python so I can eventually ___."</strong></p>
+                <textarea class="reflection-input" id="reflection1" placeholder="Type your answer here..."></textarea>
+                <p class="hint-text">Once you finish this course, you can look back at this and hopefully fulfill that goal!</p>
+              </div>
+
+              <div class="exercise-section">
+                <h3>End-of-Lesson Exercises</h3>
+                
+                <div class="exercise-item">
+                  <h4>Exercise 1: Print Multiple Lines</h4>
+                  <p>Write Python code that prints two lines of output. Your version should contain something personal.</p>
+                  
+                  <div class="interactive-editor" data-editor-id="exercise1">
+                    <div class="editor-toolbar-small">
+                      <button class="btn-run" onclick="runEditorCode('exercise1')">Run Code</button>
+                      <button class="btn-reset" onclick="resetEditor('exercise1', 'print(\"Line 1\")\nprint(\"Line 2\")')">Reset</button>
+                      <button class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
+                    </div>
+                    <textarea class="code-editor-small" id="editor-exercise1">print("Line 1")
+print("Line 2")</textarea>
+                    <div class="editor-output" id="output-exercise1">
+                      <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="exercise-item">
+                  <h4>Exercise 2: Written Reflection</h4>
+                  <p>Answer this question in 2–3 sentences:</p>
+                  <p class="reflection-prompt"><strong>Why do you think Python is a good first programming language for beginners?</strong></p>
+                  <textarea class="reflection-input" id="reflection2" placeholder="Type your answer here (2-3 sentences)..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <span></span>
+              <a class="btn btn-primary" href="/units/unit-1/installing-python-ide.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+    <script>
+      let pyodideInstance = null;
+      let pyodideReady = false;
+
+      async function initPyodide() {
+        if (pyodideReady) return;
+        try {
+          pyodideInstance = await loadPyodide({
+            indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/'
+          });
+          
+          pyodideInstance.runPython(`
+            import sys
+            from io import StringIO
+            
+            class OutputCapture:
+                def __init__(self):
+                    self.buffer = StringIO()
+                
+                def write(self, s):
+                    if s:
+                        self.buffer.write(str(s))
+                
+                def flush(self):
+                    pass
+                
+                def getvalue(self):
+                    return self.buffer.getvalue()
+                
+                def reset(self):
+                    from io import StringIO
+                    self.buffer = StringIO()
+            
+            stdout_capture = OutputCapture()
+            stderr_capture = OutputCapture()
+            sys.stdout = stdout_capture
+            sys.stderr = stderr_capture
+          `);
+          
+          pyodideReady = true;
+        } catch (error) {
+          console.error('Failed to load Pyodide:', error);
+        }
+      }
+
+      async function runEditorCode(editorId) {
+        if (!pyodideReady) {
+          await initPyodide();
+          if (!pyodideReady) {
+            document.getElementById(`output-${editorId}`).innerHTML = '<div class="output-error">Loading Python interpreter...</div>';
+            return;
+          }
+        }
+
+        const editor = window.editors && window.editors[editorId];
+        const code = editor ? editor.getValue() : (document.getElementById(`editor-${editorId}`)?.value || '');
+        const outputEl = document.getElementById(`output-${editorId}`);
+
+        if (!code.trim()) {
+          outputEl.innerHTML = '<div class="output-placeholder">No code to run. Write some Python code first!</div>';
+          return;
+        }
+
+        outputEl.innerHTML = '<div class="output-loading">Running code...</div>';
+
+        try {
+          pyodideInstance.runPython(`
+            stdout_capture.reset()
+            stderr_capture.reset()
+          `);
+
+          pyodideInstance.runPython(code);
+
+          const stdout = pyodideInstance.runPython('stdout_capture.getvalue()');
+          const stderr = pyodideInstance.runPython('stderr_capture.getvalue()');
+
+          let outputHTML = '';
+
+          if (stdout) {
+            outputHTML += `<div class="output-line"><span class="output-label">Output:</span><pre class="output-text">${escapeHtml(stdout)}</pre></div>`;
+          }
+
+          if (stderr) {
+            outputHTML += `<div class="output-line error"><span class="output-label">Error:</span><pre class="output-text">${escapeHtml(stderr)}</pre></div>`;
+          }
+
+          if (!stdout && !stderr) {
+            outputHTML = '<div class="output-placeholder">Code executed successfully (no output).</div>';
+          }
+
+          outputEl.innerHTML = outputHTML;
+
+        } catch (error) {
+          const errorMessage = error.toString();
+          outputEl.innerHTML = `<div class="output-line error"><span class="output-label">Error:</span><pre class="output-text">${escapeHtml(errorMessage)}</pre></div>`;
+        }
+      }
+
+      function resetEditor(editorId, defaultCode) {
+        if (window.editors && window.editors[editorId]) {
+          window.editors[editorId].setValue(defaultCode);
+          clearStorage('code', editorId);
+        } else {
+          const textarea = document.getElementById(`editor-${editorId}`);
+          if (textarea) {
+            textarea.value = defaultCode;
+            clearStorage('code', editorId);
+          }
+        }
+        document.getElementById(`output-${editorId}`).innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // Save/Load functions for localStorage
+      function getStorageKey(type, id) {
+        const pagePath = window.location.pathname;
+        return `pypath-lesson-${pagePath}-${type}-${id}`;
+      }
+
+      function saveToStorage(type, id, value) {
+        try {
+          const key = getStorageKey(type, id);
+          localStorage.setItem(key, value);
+        } catch (e) {
+          console.warn('Failed to save to localStorage:', e);
+        }
+      }
+
+      function loadFromStorage(type, id) {
+        try {
+          const key = getStorageKey(type, id);
+          return localStorage.getItem(key);
+        } catch (e) {
+          console.warn('Failed to load from localStorage:', e);
+          return null;
+        }
+      }
+
+      function clearStorage(type, id) {
+        try {
+          const key = getStorageKey(type, id);
+          localStorage.removeItem(key);
+        } catch (e) {
+          console.warn('Failed to clear localStorage:', e);
+        }
+      }
+
+      function clearSaved(editorId) {
+        if (confirm('Clear your saved code for this editor? You can still reset to default.')) {
+          clearStorage('code', editorId);
+          if (window.editors && window.editors[editorId]) {
+            const defaultCode = editorId === 'practice1' 
+              ? 'print("My name is Adam and I\'m learning Python!")'
+              : 'print("Line 1")\nprint("Line 2")';
+            window.editors[editorId].setValue(defaultCode);
+          }
+        }
+      }
+
+      // Initialize CodeMirror editors
+      window.editors = {};
+      document.addEventListener('DOMContentLoaded', () => {
+        initPyodide();
+        
+        // Load saved reflection inputs
+        document.querySelectorAll('.reflection-input').forEach(textarea => {
+          const saved = loadFromStorage('reflection', textarea.id);
+          if (saved) {
+            textarea.value = saved;
+          }
+          
+          // Save on input
+          textarea.addEventListener('input', () => {
+            saveToStorage('reflection', textarea.id, textarea.value);
+          });
+          
+          // Add clear button
+          const clearBtn = document.createElement('button');
+          clearBtn.className = 'btn-clear-small';
+          clearBtn.textContent = 'Clear Saved';
+          clearBtn.type = 'button';
+          clearBtn.onclick = () => {
+            if (confirm('Clear your saved response?')) {
+              textarea.value = '';
+              clearStorage('reflection', textarea.id);
+            }
+          };
+          textarea.parentNode.insertBefore(clearBtn, textarea.nextSibling);
+        });
+        
+        // Wait a bit for DOM to be ready
+        setTimeout(() => {
+          const editorElements = document.querySelectorAll('.code-editor-small');
+          editorElements.forEach(textarea => {
+            const editorId = textarea.id.replace('editor-', '');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            
+            // Load saved code
+            const savedCode = loadFromStorage('code', editorId);
+            const initialCode = savedCode || textarea.value;
+            
+            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
+              mode: 'python',
+              theme: isDark ? 'monokai' : 'default',
+              lineNumbers: true,
+              indentUnit: 4,
+              indentWithTabs: false,
+              lineWrapping: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              value: initialCode
+            });
+
+            window.editors[editorId].setSize(null, 150);
+            
+            // Save code on change
+            window.editors[editorId].on('change', () => {
+              const code = window.editors[editorId].getValue();
+              saveToStorage('code', editorId, code);
+            });
+          });
+        }, 100);
+      });
+    </script>
+  </body>
+  </html>
+
+

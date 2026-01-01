@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit 7 • Using the with Statement for File Operations • PyPath</title>
+    <link rel="icon" href="/assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="/assets/js/sandbox.js"></script>
+  </head>
+  <body class="page page-unit">
+    <div id="page-transition" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li class="has-dropdown">
+              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
+              <ul class="dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              </ul>
+            </li>
+            <li><a href="/sandbox.html">Sandbox</a></li>
+            <li><a href="/certifications.html">Certifications</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section reveal-up">
+        <div class="container layout-course">
+          <aside class="course-sidebar">
+            <h3>Unit 7 • Files & Errors</h3>
+            <nav>
+              <ul>
+                <li><a class="" href="/units/unit-7/introduction-file-handling.html">1. Introduction to File Handling</a></li>
+                <li><a class="" href="/units/unit-7/opening-closing-files.html">2. Opening and Closing Files</a></li>
+                <li><a class="" href="/units/unit-7/reading-data-from-files.html">3. Reading Data from Files</a></li>
+                <li><a class="" href="/units/unit-7/writing-data-to-files.html">4. Writing Data to Files</a></li>
+                <li><a class="" href="/units/unit-7/working-with-file-paths.html">5. Working with File Paths</a></li>
+                <li><a class="active" href="/units/unit-7/with-statement-file-operations.html">6. Using the with Statement for File Operations</a></li>
+                <li><a class="" href="/units/unit-7/understanding-errors-exceptions.html">7. Understanding Errors and Exceptions</a></li>
+                <li><a class="" href="/units/unit-7/try-except-blocks.html">8. The try and except Blocks</a></li>
+                <li><a class="" href="/units/unit-7/raising-customizing-exceptions.html">9. Raising and Customizing Exceptions</a></li>
+                <li><a class="" href="/units/unit-7/file-error-handling-real-projects.html">10. File and Error Handling in Real Projects</a></li>
+              </ul>
+            </nav>
+          </aside>
+          <section class="course-main">
+            <div class="sidebar-toggle">
+              <button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>
+            </div>
+            <nav aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="separator">/</span>
+              <a href="/curriculum.html">Learn</a>
+              <span class="separator">/</span>
+              <a href="/units/unit-7.html">Unit 7</a>
+              <span class="separator">/</span>
+              <span class="current">Using the with Statement for File Operations</span>
+            </nav>
+            <div class="eyebrow">Unit 7 • Lesson 6</div>
+            <h1 class="lesson-title">Using the with Statement for File Operations</h1>
+            <div class="lesson-overview" style="margin-top:8px;">
+              <div class="lesson-head">
+                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <h2 class="gradient-text" style="margin:0;">Overview</h2>
+              </div>
+              <p>The <code>with</code> statement automatically manages file opening and closing, preventing common errors. You'll learn how context managers simplify code, improve safety, and make file handling more readable, following Python best practices.</p>
+              <div class="lesson-meta">
+                <span class="pill">Intermediate</span>
+                <span class="pill">15–20 min</span>
+              </div>
+              <div class="lesson-actions">
+                <a class="btn btn-primary" href="/units/unit-7/understanding-errors-exceptions.html">Next: Understanding Errors and Exceptions</a>
+                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <div class="content-section">
+                <h2>What You Will Learn in This Lesson</h2>
+                <p>By the end of this lesson, you will know:</p>
+                <ul>
+                  <li><strong>The with statement:</strong> Use Python's context manager for automatic file closing.</li>
+                  <li><strong>Why it's better:</strong> Understand why <code>with</code> is preferred over manual closing.</li>
+                  <li><strong>Context managers:</strong> Learn how context managers work behind the scenes.</li>
+                  <li><strong>Multiple files:</strong> Handle multiple files safely with nested <code>with</code> statements.</li>
+                  <li><strong>Best practices:</strong> Write cleaner, safer file handling code.</li>
+                </ul>
+              </div>
+
+              <div class="content-section">
+                <h2>The Problem with Manual Closing</h2>
+                <p>So far, we've been opening and closing files manually. But what if something goes wrong before you close the file?</p>
+
+                <div class="code-example">
+                  <div class="code-header">Problem: What if an error occurs?</div>
+                  <pre class="code"><code>file = open("data.txt", "r")
+content = file.read()
+# What if an error happens here?
+# The file never gets closed!
+file.close()  # This might never run</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <h4>The Issue</h4>
+                  <p>If an error occurs between opening and closing, the file might never get closed. This can cause problems like memory leaks or locked files.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Solution: The <code>with</code> Statement</h2>
+                <p>The <code>with</code> statement automatically closes files, even if an error occurs. It's Python's recommended way to handle files.</p>
+
+                <div class="code-example">
+                  <div class="code-header">Using the with Statement</div>
+                  <pre class="code"><code>with open("data.txt", "r") as file:
+    content = file.read()
+    # File is automatically closed when this block ends
+    # Even if an error occurs!</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>How It Works</h4>
+                  <ol>
+                    <li>Open the file</li>
+                    <li>Execute the code inside the block</li>
+                    <li>Automatically close the file when done (even on errors!)</li>
+                  </ol>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Comparison: Old vs New Way</div>
+                  <pre class="code"><code># OLD WAY (manual closing)
+file = open("data.txt", "r")
+content = file.read()
+file.close()
+
+# NEW WAY (automatic closing)
+with open("data.txt", "r") as file:
+    content = file.read()
+# File automatically closed here!</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Why Use <code>with</code>?</h2>
+                <p>The <code>with</code> statement has several advantages:</p>
+
+                <div class="process-steps">
+                  <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                      <h4>Automatic Closing</h4>
+                      <p>Files are always closed, even if errors occur. No need to remember <code>close()</code>. This prevents resource leaks.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                      <h4>Cleaner Code</h4>
+                      <p>Less code to write and read. The intent is clearer. The indentation shows the scope of file usage.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                      <h4>Error Safety</h4>
+                      <p>If an exception occurs, the file is still closed properly. No need for try/finally blocks just for closing files.</p>
+                    </div>
+                  </div>
+                  <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                      <h4>Pythonic</h4>
+                      <p>This is the recommended Python way to handle files. It follows Python's philosophy of "explicit is better than implicit."</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Example: Error Handling</div>
+                  <pre class="code"><code># Even if an error occurs, file is closed
+with open("data.txt", "r") as file:
+    content = file.read()
+    result = 10 / 0  # This causes an error!
+    # But file is still closed automatically</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Comparison: Manual vs with Statement</div>
+                  <pre class="code"><code># MANUAL WAY (more error-prone)
+file = None
+try:
+    file = open("data.txt", "r")
+    content = file.read()
+    # Process content
+except Exception as e:
+    print(f"Error: {e}")
+finally:
+    if file:
+        file.close()  # Must remember to close!
+
+# WITH STATEMENT (cleaner and safer)
+try:
+    with open("data.txt", "r") as file:
+        content = file.read()
+        # Process content
+except Exception as e:
+    print(f"Error: {e}")
+# File automatically closed, no finally needed!</code></pre>
+                </div>
+
+                <div class="info-card">
+                  <h4>Context Managers</h4>
+                  <p>The <code>with</code> statement uses something called a "context manager." File objects are context managers that:</p>
+                  <ul>
+                    <li>Set up resources when entering the <code>with</code> block (open file)</li>
+                    <li>Clean up resources when exiting the block (close file)</li>
+                    <li>Handle exceptions automatically</li>
+                  </ul>
+                  <p style="margin-top: 8px;">This pattern is used throughout Python for resource management!</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Common Patterns with <code>with</code></h2>
+                <p>Here are common patterns you'll use:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Pattern 1: Read and Process</div>
+                  <pre class="code"><code>with open("data.txt", "r") as file:
+    for line in file:
+        processed = line.strip().upper()
+        print(processed)</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Pattern 2: Read All at Once</div>
+                  <pre class="code"><code>with open("data.txt", "r") as file:
+    content = file.read()
+    # Process entire content
+    words = content.split()
+    print(f"Found {len(words)} words")</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Pattern 3: Write with Formatting</div>
+                  <pre class="code"><code>data = ["Alice", "Bob", "Charlie"]
+with open("names.txt", "w") as file:
+    for name in data:
+        file.write(f"{name}\n")  # Write each name on a new line</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Reading Files with <code>with</code></h2>
+                <p>All the reading methods work the same way inside a <code>with</code> block:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Reading Entire File</div>
+                  <pre class="code"><code>with open("data.txt", "r") as file:
+    content = file.read()
+    print(content)</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Reading Line by Line</div>
+                  <pre class="code"><code>with open("data.txt", "r") as file:
+    for line in file:
+        print(line.strip())</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Reading All Lines</div>
+                  <pre class="code"><code>with open("data.txt", "r") as file:
+    lines = file.readlines()
+    for line in lines:
+        print(line.strip())</code></pre>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Writing Files with <code>with</code></h2>
+                <p>Writing works the same way:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Writing to File</div>
+                  <pre class="code"><code>with open("output.txt", "w") as file:
+    file.write("Hello, World!\n")
+    file.write("This is line 2\n")
+# File is automatically closed and saved</code></pre>
+                </div>
+
+                <div class="info-callout">
+                  <p><strong>Important:</strong> When you write to a file with <code>with</code>, the file is automatically closed and all changes are saved when the block ends.</p>
+                </div>
+              </div>
+
+              <div class="content-section">
+                <h2>Multiple Files</h2>
+                <p>You can handle multiple files by nesting <code>with</code> statements:</p>
+
+                <div class="code-example">
+                  <div class="code-header">Reading from One File, Writing to Another</div>
+                  <pre class="code"><code>with open("input.txt", "r") as input_file:
+    with open("output.txt", "w") as output_file:
+        for line in input_file:
+            output_file.write(line.upper())
+# Both files are automatically closed</code></pre>
+                </div>
+
+                <div class="code-example">
+                  <div class="code-header">Multiple Files (One Line)</div>
+                  <pre class="code"><code># You can also write it on one line
+with open("input.txt", "r") as input_file, \
+     open("output.txt", "w") as output_file:
+    for line in input_file:
+        output_file.write(line.upper())</code></pre>
+                </div>
+              </div>
+
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: Using the with Statement</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Try using the <code>with</code> statement to handle files:</p>
+                
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Simulate file operations\ncontent = &quot;Line 1\\nLine 2\\nLine 3&quot;\nprint(&quot;Reading file:&quot;)\nprint(content)\nprint(&quot;\\nFile automatically closed!&quot;)')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Simulate file operations
+content = "Line 1\nLine 2\nLine 3"
+print("Reading file:")
+print(content)
+print("\nFile automatically closed!")</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> In a real program, you would use <code>with open("file.txt", "r") as file:</code> and the file would automatically close when the block ends.</p>
+              </div>
+
+              <div class="content-section">
+                <h2>Summary</h2>
+                <p>In this lesson, you learned:</p>
+                <ul>
+                  <li><strong>The <code>with</code> statement:</strong> Automatically manages file opening and closing</li>
+                  <li><strong>Automatic closing:</strong> Files are always closed, even if errors occur</li>
+                  <li><strong>Cleaner code:</strong> Less code to write, clearer intent</li>
+                  <li><strong>Multiple files:</strong> Can handle multiple files with nested or comma-separated <code>with</code> statements</li>
+                  <li><strong>Best practice:</strong> This is Python's recommended way to handle files</li>
+                </ul>
+
+                <div class="info-callout">
+                  <h4>Remember</h4>
+                  <p>Always use the <code>with</code> statement for file operations. It's safer, cleaner, and more Pythonic than manual closing!</p>
+                </div>
+              </div>
+
+              <div class="exercise-section">
+                <h2>End-of-Lesson Exercises</h2>
+                <p>Think about these questions to reinforce what you've learned:</p>
+
+                <div class="exercise-item">
+                  <h3>Exercise 1: Why with?</h3>
+                  <p>What are the main advantages of using the <code>with</code> statement instead of manually closing files?</p>
+                  <textarea id="reflection-exercise1" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div class="exercise-item">
+                  <h3>Exercise 2: Multiple Files</h3>
+                  <p>Write pseudocode for reading from one file and writing processed data to another file using the <code>with</code> statement.</p>
+                  <textarea id="reflection-exercise2" class="reflection-input" rows="4" placeholder="Type your answer here..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-nav">
+              <a class="btn btn-ghost" href="/units/unit-7/working-with-file-paths.html">← Previous</a>
+              <a class="btn btn-primary" href="/units/unit-7/understanding-errors-exceptions.html">Next</a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand small" href="/">
+            <span class="logo small"></span>
+            <span class="brand-text">PyPath</span>
+          </a>
+          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/" class="route">Home</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>
