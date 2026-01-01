@@ -3263,10 +3263,41 @@ body.route-leaving { filter: saturate(0.96) blur(2px); opacity: 0.85; transition
 /* Responsive adjustments */
 @media (max-width: 768px) {
   /* Improved button sizes for touch */
-  .btn {
-    padding: 16px 24px;
+  .btn:not(.btn-small):not(.btn-run):not(.btn-reset):not(.btn-check):not(.btn-solution):not(.btn-clear):not(.btn-clear-small) {
+    padding: 14px 20px;
     min-height: 44px;
     font-size: 16px;
+  }
+  
+  /* Keep exercise buttons reasonable size */
+  .exercise-actions .btn {
+    padding: 12px 18px;
+    min-height: 44px;
+    font-size: 15px;
+  }
+  
+  /* Code editor buttons */
+  .btn-run, .btn-reset, .btn-check, .btn-solution {
+    padding: 12px 18px;
+    min-height: 44px;
+    font-size: 14px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  
+  /* Button groups */
+  .exercise-actions,
+  .code-example-header,
+  .interactive-editor-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .exercise-actions .btn,
+  .code-example-header .btn,
+  .interactive-editor-header .btn {
+    flex: 1 1 auto;
+    min-width: 0;
   }
   
   .primary-nav a, .primary-nav button {
@@ -3363,6 +3394,18 @@ body.route-leaving { filter: saturate(0.96) blur(2px); opacity: 0.85; transition
   .cta .btn {
     width: 100%;
     justify-content: center;
+    max-width: 100%;
+  }
+  
+  /* Lesson navigation buttons */
+  .lesson-nav {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .lesson-nav .btn {
+    width: 100%;
+    max-width: 100%;
   }
   
   /* Prevent zoom on input focus (iOS) */
@@ -3392,6 +3435,8 @@ body.route-leaving { filter: saturate(0.96) blur(2px); opacity: 0.85; transition
   
   .lesson-nav .btn {
     width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   
   /* Better table responsiveness */
