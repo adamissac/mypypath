@@ -282,7 +282,9 @@
       }
       
       // Submit button handler
-      submitBtn.addEventListener('click', () => {
+      submitBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
         const userAnswer = textarea.value.trim();
         if (!userAnswer) {
           alert('Please enter an answer before saving.');
@@ -303,7 +305,9 @@
       });
       
       // Show answer button handler (always available)
-      showAnswerBtn.addEventListener('click', () => {
+      showAnswerBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
         const answerContent = answerDisplay.querySelector('.correct-answer-content');
         if (correctAnswer) {
           answerContent.textContent = correctAnswer;

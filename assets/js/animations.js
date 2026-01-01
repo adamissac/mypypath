@@ -19,8 +19,19 @@
   function pageTransitions() {
     // Subtle fade/blur without overlay
     document.addEventListener('click', (e) => {
+      // Don't intercept if clicking on a button or inside a button
+      if (e.target.closest('button') || e.target.tagName === 'BUTTON') {
+        return;
+      }
+      
       const a = e.target.closest('a.route');
       if (!a || a.target === '_blank' || a.hasAttribute('download') || a.href.indexOf('#') !== -1) return;
+      
+      // Don't intercept if the link contains a button
+      if (a.querySelector('button')) {
+        return;
+      }
+      
       e.preventDefault();
       document.body.classList.add('route-leaving');
       setTimeout(() => { window.location.href = a.href; }, 180);
