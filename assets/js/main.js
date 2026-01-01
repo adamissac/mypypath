@@ -91,8 +91,16 @@
       }
     }, { passive: true });
     
-    document.addEventListener('touchmove', () => {
-      touchMoved = true;
+    document.addEventListener('touchmove', (e) => {
+      // Only mark as moved if it's a significant movement (more than 3px)
+      // This allows for small finger movements during taps
+      if (e.touches && e.touches[0]) {
+        const moveX = Math.abs(e.touches[0].clientX - touchStartX);
+        const moveY = Math.abs(e.touches[0].clientY - touchStartY);
+        if (moveX > 3 || moveY > 3) {
+          touchMoved = true;
+        }
+      }
     }, { passive: true });
     
     // Intercept ALL clicks on mobile and validate them aggressively
