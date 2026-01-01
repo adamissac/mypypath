@@ -3492,6 +3492,24 @@ body.route-leaving { filter: saturate(0.96) blur(2px); opacity: 0.85; transition
     font-size: 16px !important;
   }
   
+  /* Prevent invisible clickable areas on mobile */
+  /* Only make links clickable on their actual content area */
+  nav a,
+  .menu a,
+  .course-sidebar nav a,
+  .footer-links a {
+    /* Don't expand beyond content */
+    flex: none !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  
+  /* Ensure hidden/transformed elements don't capture clicks */
+  .course-sidebar:not(.sidebar-open) {
+    pointer-events: none !important;
+  }
+  
   /* Better badge spacing */
   .badges {
     gap: 8px;
