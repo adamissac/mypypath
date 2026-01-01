@@ -208,9 +208,11 @@
     document.documentElement.dataset.sidebar = v;
     const courseLayout = document.querySelector('.layout-course');
     if (courseLayout) {
-      if (v === 'hidden') courseLayout.classList.add('sidebar-closed');
-      else if (v === 'always') courseLayout.classList.remove('sidebar-closed');
-      // auto mode handled by default behavior
+      if (v === 'hidden') {
+        courseLayout.classList.add('sidebar-closed');
+      } else {
+        courseLayout.classList.remove('sidebar-closed');
+      }
     }
   }
 
