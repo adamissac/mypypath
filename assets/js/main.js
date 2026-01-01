@@ -348,7 +348,24 @@
     }
   }
 
+  // Detect mobile device and add class for mobile-specific styling
+  function detectMobileDevice() {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
+                     ('ontouchstart' in window) || 
+                     (navigator.maxTouchPoints > 0) ||
+                     window.innerWidth <= 768;
+    
+    if (isMobile) {
+      document.documentElement.classList.add('mobile-device');
+      document.body.classList.add('mobile-device');
+    } else {
+      document.documentElement.classList.add('desktop-device');
+      document.body.classList.add('desktop-device');
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
+    detectMobileDevice();
     currentYear();
     navInteractions();
     smoothInternalLinks();
