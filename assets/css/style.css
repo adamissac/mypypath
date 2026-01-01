@@ -783,6 +783,39 @@ body.route-leaving { filter: saturate(0.96) blur(2px); opacity: 0.85; transition
 
 /* Responsive */
 @media (max-width: 980px) {
+  /* Prevent horizontal overflow and invisible clickable areas */
+  html, body {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+    width: 100% !important;
+  }
+  
+  /* Ensure all containers respect viewport */
+  .container,
+  .section,
+  main,
+  header,
+  footer,
+  .site-header,
+  .site-footer {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Prevent fixed/absolute elements from creating invisible clickable areas */
+  body::before,
+  body::after {
+    max-width: 100vw !important;
+    left: 0 !important;
+    right: 0 !important;
+  }
+  
+  /* Constrain all positioned elements */
+  [class*="fixed"],
+  [class*="absolute"] {
+    max-width: 100vw !important;
+  }
+  
   .hero-grid { grid-template-columns: 1fr; }
   .hero-visual { height: 400px; }
   .features-grid { grid-template-columns: repeat(2, 1fr); }
