@@ -36,6 +36,28 @@
     document.addEventListener('click', (e) => {
       const a = e.target.closest('a[href^="#"]');
       if (!a) return;
+      
+      // Prevent clicks on invisible or off-screen links
+      const rect = a.getBoundingClientRect();
+      const isVisible = rect.width > 0 && rect.height > 0 && 
+                       rect.top < window.innerHeight && 
+                       rect.bottom > 0 && 
+                       rect.left < window.innerWidth && 
+                       rect.right > 0;
+      
+      // Check if element is actually visible (not hidden by CSS)
+      const style = window.getComputedStyle(a);
+      const isHidden = style.display === 'none' || 
+                      style.visibility === 'hidden' || 
+                      style.opacity === '0' ||
+                      style.pointerEvents === 'none';
+      
+      if (!isVisible || isHidden) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+      
       const id = a.getAttribute('href');
       if (!id) return;
       const target = qs(id);
@@ -44,6 +66,52 @@
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     });
+  }
+  
+  // Prevent clicks on invisible links on mobile
+  function preventInvisibleLinkClicks() {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
+                     ('ontouchstart' in window) || 
+                     (navigator.maxTouchPoints > 0);
+    
+    if (!isMobile) return;
+    
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a');
+      if (!a) return;
+      
+      // Check if link is actually visible and clickable
+      const rect = a.getBoundingClientRect();
+      const style = window.getComputedStyle(a);
+      
+      // If link is invisible or has no dimensions, prevent click
+      if (style.display === 'none' || 
+          style.visibility === 'hidden' || 
+          style.opacity === '0' ||
+          style.pointerEvents === 'none' ||
+          rect.width === 0 || 
+          rect.height === 0 ||
+          rect.top >= window.innerHeight ||
+          rect.bottom <= 0 ||
+          rect.left >= window.innerWidth ||
+          rect.right <= 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+      
+      // Check if click is actually on the link content, not empty space
+      const clickX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+      const clickY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+      
+      if (clickX && clickY) {
+        if (clickX < rect.left || clickX > rect.right || clickY < rect.top || clickY > rect.bottom) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+      }
+    }, true); // Use capture phase to catch early
   }
 
   function reducedMotionRespect() {
@@ -196,6 +264,7 @@
     currentYear();
     navInteractions();
     smoothInternalLinks();
+    preventInvisibleLinkClicks();
     reducedMotionRespect();
     markUnitCompletedFromPage();
     updateGlobalProgress();
