@@ -578,7 +578,17 @@ p { margin: 0 0 12px; }
   background: color-mix(in srgb, var(--primary) 12%, transparent); 
 }
 
-.mobile-toggle { display: none; flex-direction: column; gap: 5px; padding: 10px; }
+.mobile-toggle { 
+  display: none; 
+  flex-direction: column; 
+  gap: 5px; 
+  padding: 10px; 
+}
+
+/* Always show mobile toggle on mobile devices */
+.mobile-device .mobile-toggle {
+  display: flex !important;
+}
 .mobile-toggle span { width: 24px; height: 3px; background: var(--text); display: block; border-radius: 3px; }
 
 .has-dropdown { position: relative; }
