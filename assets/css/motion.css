@@ -46,12 +46,10 @@ html {
   opacity: 1;
   transition: transform var(--dur-base) var(--ease-out);
   transition-delay: 0ms;
-  will-change: transform;
 }
 
 .js-enabled [data-reveal].is-visible {
   transform: none;
-  will-change: auto;
 }
 
 /* Direction variants */
@@ -150,9 +148,8 @@ html {
   content: "";
   position: absolute;
   border-radius: 50%;
-  filter: blur(72px);
+  filter: blur(48px);
   opacity: 0.35;
-  will-change: transform;
   backface-visibility: hidden;
   transform: translate3d(0, 0, 0);
 }
@@ -163,7 +160,6 @@ html {
   top: -15%;
   right: -10%;
   background: color-mix(in srgb, var(--primary) 14%, transparent);
-  animation: aurora-drift-a 48s var(--ease-bg-drift) infinite alternate;
 }
 
 .bg-layer--aurora::after {
@@ -172,8 +168,6 @@ html {
   bottom: -10%;
   left: -8%;
   background: color-mix(in srgb, var(--accent) 12%, transparent);
-  animation: aurora-drift-b 42s var(--ease-bg-drift) infinite alternate;
-  animation-delay: -12s;
 }
 
 .bg-aurora-orb {
@@ -182,32 +176,6 @@ html {
   top: 35%;
   left: 42%;
   background: color-mix(in srgb, var(--primary) 8%, transparent);
-  animation: aurora-drift-c 54s var(--ease-bg-drift) infinite alternate;
-  animation-delay: -24s;
-}
-
-@keyframes aurora-drift-a {
-  0%   { transform: translate3d(0, 0, 0) scale(1); }
-  20%  { transform: translate3d(-2%, 3%, 0) scale(1.03); }
-  45%  { transform: translate3d(-4%, 6%, 0) scale(1.07); }
-  70%  { transform: translate3d(1%, 2%, 0) scale(1.02); }
-  100% { transform: translate3d(3%, -4%, 0) scale(0.96); }
-}
-
-@keyframes aurora-drift-b {
-  0%   { transform: translate3d(0, 0, 0) scale(1); }
-  25%  { transform: translate3d(3%, -2%, 0) scale(1.04); }
-  50%  { transform: translate3d(5%, -5%, 0) scale(1.06); }
-  75%  { transform: translate3d(-1%, 2%, 0) scale(1.01); }
-  100% { transform: translate3d(-3%, 4%, 0) scale(0.97); }
-}
-
-@keyframes aurora-drift-c {
-  0%   { transform: translate3d(0, 0, 0) scale(1); }
-  30%  { transform: translate3d(-3%, -2%, 0) scale(1.05); }
-  55%  { transform: translate3d(2%, 4%, 0) scale(0.98); }
-  80%  { transform: translate3d(4%, -3%, 0) scale(1.03); }
-  100% { transform: translate3d(-2%, 1%, 0) scale(1); }
 }
 
 [data-theme="dark"] .bg-layer--aurora::before,
@@ -222,12 +190,6 @@ html {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 200px 200px;
   mix-blend-mode: overlay;
-  animation: noise-shift 32s linear infinite;
-}
-
-@keyframes noise-shift {
-  0%   { background-position: 0 0; }
-  100% { background-position: 200px 200px; }
 }
 
 [data-theme="dark"] .bg-layer--noise {
@@ -246,7 +208,6 @@ body[data-bg*="noise"]::after {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 200px 200px;
   mix-blend-mode: overlay;
-  animation: noise-shift 32s linear infinite;
 }
 
 [data-theme="dark"] body[data-bg*="noise"]::after {
@@ -323,9 +284,7 @@ html.reduced-motion body[data-bg*="noise"]::after,
 }
 
 .site-header.is-scrolled {
-  background: color-mix(in srgb, var(--panel) 88%, transparent);
-  backdrop-filter: blur(12px) saturate(1.2);
-  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  background: color-mix(in srgb, var(--panel) 94%, transparent);
   border-bottom-color: color-mix(in srgb, var(--border) 70%, transparent);
   box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
 }
@@ -416,9 +375,7 @@ html.reduced-motion body[data-bg*="noise"]::after,
     margin: 0;
     padding: 12px;
     list-style: none;
-    background: color-mix(in srgb, var(--panel) 96%, transparent);
-    backdrop-filter: blur(16px) saturate(1.15);
-    -webkit-backdrop-filter: blur(16px) saturate(1.15);
+    background: var(--panel);
     border: 3px solid var(--border);
     border-radius: 20px;
     box-shadow: var(--shadow-strong);
@@ -596,14 +553,9 @@ textarea:focus-visible,
   }
 }
 
-/* Hero floating screen */
+/* Hero screen — static (no infinite float) */
 .hero-visual .screen.floating {
-  animation: hero-float 6s var(--ease-in-out) infinite;
-}
-
-@keyframes hero-float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-8px); }
+  animation: none;
 }
 
 /* --------------------------------------------------------------------------
@@ -1012,16 +964,11 @@ pre:focus-within .copy-snippet-btn,
    18. Theme transitioning
    -------------------------------------------------------------------------- */
 html.theme-transitioning,
-html.theme-transitioning *,
-html.theme-transitioning *::before,
-html.theme-transitioning *::after {
+html.theme-transitioning body {
   transition:
-    background-color var(--dur-slow) var(--ease-in-out),
-    color var(--dur-slow) var(--ease-in-out),
-    border-color var(--dur-slow) var(--ease-in-out),
-    box-shadow var(--dur-slow) var(--ease-in-out),
-    fill var(--dur-slow) var(--ease-in-out),
-    stroke var(--dur-slow) var(--ease-in-out) !important;
+    background-color var(--dur-base) var(--ease-in-out),
+    color var(--dur-base) var(--ease-in-out),
+    border-color var(--dur-base) var(--ease-in-out);
 }
 
 /* --------------------------------------------------------------------------
@@ -1071,12 +1018,7 @@ html.theme-transitioning *::after {
 }
 
 .divider.is-visible svg path {
-  animation: divider-breathe 4s var(--ease-in-out) infinite alternate;
-}
-
-@keyframes divider-breathe {
-  from { opacity: 0.04; }
-  to   { opacity: 0.09; }
+  opacity: 0.07;
 }
 
 /* Toast entrance */
