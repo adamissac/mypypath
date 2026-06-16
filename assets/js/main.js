@@ -145,21 +145,6 @@
 
   window.PyUI = Object.assign({}, window.PyUI || {}, { showToast: showToast });
 
-  function setupButtonRipples() {
-    document.addEventListener('click', function (e) {
-      var btn = e.target.closest('button.btn, button[class*="btn"]');
-      if (!btn || btn.tagName !== 'BUTTON') return;
-      if (window.PyMotion && window.PyMotion.prefersReduced()) return;
-      var rect = btn.getBoundingClientRect();
-      var span = document.createElement('span');
-      span.className = 'ripple';
-      span.style.left = (e.clientX - rect.left) + 'px';
-      span.style.top = (e.clientY - rect.top) + 'px';
-      btn.appendChild(span);
-      span.addEventListener('animationend', function () { span.remove(); });
-    });
-  }
-
   function setupSettingsActions() {
     var resetBtn = qs('#reset-btn');
     if (resetBtn) {
@@ -212,7 +197,6 @@
     reducedMotionRespect();
     markUnitCompletedFromPage();
     updateGlobalProgress();
-    setupButtonRipples();
     setupSettingsActions();
     initSidebarToggle();
     initCertAccordions();
