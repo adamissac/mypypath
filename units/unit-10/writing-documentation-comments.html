@@ -2,65 +2,79 @@
 <html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
+    <script src="/assets/js/theme-init.js"></script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Unit 10 • Writing Documentation and Comments • PyPath</title>
     <link rel="icon" href="/assets/img/favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/assets/css/style.css" />
-
-        <link rel="stylesheet" href="/assets/css/motion.css" />
-    <script defer src="/assets/js/theme.js"></script>
-    <script defer src="/assets/js/icons.js"></script>
-    <script defer src="/assets/js/motion.js"></script>
-    <script defer src="/assets/js/layout.js"></script>
-    <script defer src="/assets/js/dropdowns.js"></script>
-    <script defer src="/assets/js/main.js"></script>
-    <script defer src="/assets/js/lesson-ui.js"></script>
+<link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/pypath-fast.css" />
+<script defer src="/assets/js/theme.js"></script>
+<script defer src="/assets/js/motion.js"></script>
+    <script defer src="/assets/js/core.js"></script>
+<script defer src="/assets/js/lesson-ui.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
         <script defer src="/assets/js/pyodide-loader.js"></script>
     <script defer src="/assets/js/exercises.js"></script>
+    <script defer src="/assets/js/lesson-runner.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
   </head>
-  <body class="page page-unit" data-bg="noise"><div id="page-transition" aria-hidden="true"></div>
-    <header class="site-header">
-      <div class="container nav">
-        <a class="brand" href="/">
-          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+  <body class="page page-unit">
+    <div id="page-transition" aria-hidden="true"></div>
+
+            <header class="site-header">
+      <div class="header-accent" aria-hidden="true"></div>
+      <div class="container header-inner">
+        <a class="brand route" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo" width="36" height="36">
           <span class="brand-text">PyPath</span>
         </a>
-        <nav class="primary-nav" aria-label="Primary">
-          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
-            <span></span><span></span><span></span>
-          </button>
-          <ul class="menu">
-            <li><a href="/">Home</a></li>
-            <li class="has-dropdown">
-              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
-              <ul class="dropdown" role="menu">
-                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
-                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
-                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
-                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
-                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
-                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
-                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
-                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
-                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
-                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+        <div class="header-actions">
+          <nav class="primary-nav" aria-label="Primary" aria-expanded="false">
+            <button type="button" class="mobile-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-menu">
+              <span class="mobile-toggle-bar" aria-hidden="true"></span>
+              <span class="mobile-toggle-bar" aria-hidden="true"></span>
+              <span class="mobile-toggle-bar" aria-hidden="true"></span>
+            </button>
+            <div class="nav-pill">
+              <ul class="menu" id="primary-menu">
+              <li><a href="/" class="route">Home</a></li>
+              <li class="dd dd--nav" data-dd>
+                <button type="button" class="dd-trigger" id="nav-units-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="nav-units-panel" aria-current="page">
+                  <span>Units</span> <svg class="dd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <div class="dd-panel" id="nav-units-panel" role="menu" aria-labelledby="nav-units-btn" hidden>
+                  <div class="dd-panel__head">
+                    <span class="dd-panel__label">Curriculum</span>
+                    <span class="dd-panel__hint">10 units</span>
+                  </div>
+                  <ul class="dd-panel__list dd-panel__list--grid">
+            <li role="none"><a role="menuitem" href="/units/unit-1/what-is-python.html" class="dd-item route"><span class="dd-item__num">1</span><span class="dd-item__body"><span class="dd-item__title">Foundations</span><span class="dd-item__meta">Unit 1</span></span></a></li>
+            <li role="none"><a role="menuitem" href="/units/unit-2/understanding-control-flow.html" class="dd-item route"><span class="dd-item__num">2</span><span class="dd-item__body"><span class="dd-item__title">Control Flow</span><span class="dd-item__meta">Unit 2</span></span></a></li>
+            <li role="none"><a role="menuitem" href="/units/unit-3/what-are-functions.html" class="dd-item route"><span class="dd-item__num">3</span><span class="dd-item__body"><span class="dd-item__title">Functions</span><span class="dd-item__meta">Unit 3</span></span></a></li>
+            <li role="none"><a role="menuitem" href="/units/unit-4/introduction-data-structures.html" class="dd-item route"><span class="dd-item__num">4</span><span class="dd-item__body"><span class="dd-item__title">Data Structures</span><span class="dd-item__meta">Unit 4</span></span></a></li>
+            <li role="none"><a role="menuitem" href="/units/unit-5/what-are-modules.html" class="dd-item route"><span class="dd-item__num">5</span><span class="dd-item__body"><span class="dd-item__title">Modules & Packages</span><span class="dd-item__meta">Unit 5</span></span></a></li>
+            <li role="none"><a role="menuitem" href="/units/unit-6/introduction-oop-concepts.html" class="dd-item route"><span class="dd-item__num">6</span><span class="dd-item__body"><span class="dd-item__title">OOP</span><span class="dd-item__meta">Unit 6</span></span></a></li>
+            <li role="none"><a role="menuitem" href="/units/unit-7/introduction-file-handling.html" class="dd-item route"><span class="dd-item__num">7</span><span class="dd-item__body"><span class="dd-item__title">Files & Errors</span><span class="dd-item__meta">Unit 7</span></span></a></li>
+            <li role="none"><a role="menuitem" href="/units/unit-8/what-is-debugging.html" class="dd-item route"><span class="dd-item__num">8</span><span class="dd-item__body"><span class="dd-item__title">Testing</span><span class="dd-item__meta">Unit 8</span></span></a></li>
+            <li role="none"><a role="menuitem" href="/units/unit-9/recursion-problem-decomposition.html" class="dd-item route"><span class="dd-item__num">9</span><span class="dd-item__body"><span class="dd-item__title">APIs</span><span class="dd-item__meta">Unit 9</span></span></a></li>
+            <li role="none"><a role="menuitem" href="/units/unit-10/project-planning-brainstorming.html" class="dd-item route is-current"><span class="dd-item__num">10</span><span class="dd-item__body"><span class="dd-item__title">Certification Prep</span><span class="dd-item__meta">Unit 10</span></span></a></li>
+                  </ul>
+                </div>
+              </li>
+              <li><a href="/sandbox.html" class="route">Sandbox</a></li>
+              <li><a href="/certifications.html" class="route">Certifications</a></li>
+              <li><a href="/about.html" class="route">About</a></li>
+              <li><a href="/settings.html" class="route">Settings</a></li>
               </ul>
-            </li>
-            <li><a href="/sandbox.html">Sandbox</a></li>
-            <li><a href="/certifications.html">Certifications</a></li>
-            <li><a href="/about.html">About</a></li>
-            <li><a href="/settings.html">Settings</a></li>
-          </ul>
-        </nav>
+            </div>
+          </nav>
+          <a href="/units/unit-1/what-is-python.html" class="btn btn-primary header-cta route">Start learning</a>
+        </div>
       </div>
     </header>
     <main>
@@ -109,8 +123,8 @@
                 <span class="pill">20–25 min</span>
               </div>
               <div class="lesson-actions">
-                <a class="btn btn-primary" href="/units/unit-10/presenting-your-project.html">Next: Presenting Your Project</a>
-                <a class="btn btn-ghost" href="/curriculum.html">All Units</a>
+                <a class="btn btn-primary route" href="/units/unit-10/presenting-your-project.html">Next: Presenting Your Project</a>
+                <a class="btn btn-ghost route" href="/curriculum.html">All Units</a>
               </div>
             </div>
             <div class="lesson-content">
@@ -268,30 +282,40 @@ python main.py
             </div>
 
             <div class="lesson-nav">
-              <a class="btn btn-ghost" href="/units/unit-10/polishing-visuals-output-formatting.html">← Previous</a>
-              <a class="btn btn-primary" href="/units/unit-10/presenting-your-project.html">Next</a>
+              <a class="btn btn-ghost route" href="/units/unit-10/polishing-visuals-output-formatting.html">← Previous</a>
+              <a class="btn btn-primary route" href="/units/unit-10/presenting-your-project.html">Next</a>
             </div>
           </section>
         </div>
       </section>
     </main>
-    <footer class="site-footer">
-      <div class="container footer-grid">
-        <div>
-          <a class="brand small" href="/">
-            <img src="/assets/img/pyPathLogo.png" alt="" class="logo small" width="28" height="28">
-            <span class="brand-text">PyPath</span>
-          </a>
-          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+                    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand small route" href="/">
+              <img src="/assets/img/pyPathLogo.png" alt="" class="logo small" width="28" height="28">
+              <span class="brand-text">PyPath</span>
+            </a>
+            <p class="footer-tagline">Learn Python with clarity — free, structured lessons from foundations to certification.</p>
+            <p class="footer-copy muted">&copy; <span id="year"></span> PyPath</p>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-heading">Learn</h4>
+            <ul class="footer-links">
+              <li><a href="/units/unit-1/what-is-python.html" class="route">Curriculum</a></li>
+              <li><a href="/sandbox.html" class="route">Sandbox</a></li>
+              <li><a href="/certifications.html" class="route">Certifications</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-heading">About</h4>
+            <ul class="footer-links">
+              <li><a href="/about.html" class="route">Team</a></li>
+              <li><a href="/settings.html" class="route">Settings</a></li>
+            </ul>
+          </div>
         </div>
-        <nav aria-label="Footer">
-          <ul class="footer-links">
-            <li><a href="/curriculum.html" class="route">Curriculum</a></li>
-            <li><a href="/certifications.html" class="route">Certifications</a></li>
-            <li><a href="/about.html" class="route">About</a></li>
-            <li><a href="/settings.html" class="route">Settings</a></li>
-          </ul>
-        </nav>
       </div>
     </footer>
   </body>
