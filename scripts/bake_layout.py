@@ -33,6 +33,8 @@ THEME_INIT = (
     '    <script src="/assets/js/theme-init.js"></script>\n'
 )
 
+PAGE_TRANSITION = '    <div id="page-transition" aria-hidden="true"></div>\n'
+
 FOOTER = """    <footer class="site-footer">
       <div class="container">
         <div class="footer-grid">
@@ -177,6 +179,17 @@ def page_kind(path: Path) -> str:
     return 'page'
 
 
+def inject_page_transition(html: str) -> str:
+    if 'id="page-transition"' in html:
+        return html
+    return re.sub(
+        r'(<body[^>]*>)',
+        r'\1\n' + PAGE_TRANSITION,
+        html,
+        count=1,
+    )
+
+
 def inject_theme_init(html: str) -> str:
     if 'theme-init.js' in html:
         return html
@@ -277,6 +290,13 @@ def misc_fixes(html: str, path: Path) -> str:
         html = re.sub(r'(?<!/)assets/img/', '/assets/img/', html)
         html = re.sub(r'href="(?!/)assets/', 'href="/assets/', html)
 
+    # Smooth nav: route class on lesson next/prev and in-content CTAs
+    html = re.sub(
+        r'<a class="btn (btn-primary|btn-ghost)(?! route)" href="(/[^"]+)"',
+        r'<a class="btn \1 route" href="\2"',
+        html,
+    )
+
     return html
 
 
@@ -328,6 +348,7 @@ def process(path: Path) -> bool:
     orig = html
     html = normalize_head(html)
     html = inject_theme_init(html)
+    html = inject_page_transition(html)
     html = normalize_scripts(html, path)
     html = replace_header(html, path)
     html = replace_footer(html)

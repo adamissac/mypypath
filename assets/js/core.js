@@ -627,6 +627,126 @@
     updateGlobalProgress();
     setupSettingsActions();
     initSidebarToggle();
+    initNavigation();
   });
+
+  function prefersReducedMotion() {
+    return document.documentElement.classList.contains('reduced-motion') ||
+      (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
+  function isInternalNavLink(a) {
+    if (!a || !a.href) return false;
+    if (a.target === '_blank' || a.hasAttribute('download') || a.hasAttribute('data-no-transition')) return false;
+    if (a.origin !== location.origin) return false;
+    var url = new URL(a.href);
+    if (url.pathname === location.pathname && url.search === location.search && url.hash) return false;
+    return true;
+  }
+
+  function prefetchUrl(href) {
+    if (!href) return;
+    try {
+      var url = new URL(href, location.href);
+      if (url.origin !== location.origin) return;
+      var key = url.pathname + url.search;
+      if (prefetchUrl.done[key]) return;
+      prefetchUrl.done[key] = true;
+      var link = document.createElement('link');
+      link.rel = 'prefetch';
+      link.href = url.href;
+      document.head.appendChild(link);
+    } catch (e) { /* ignore */ }
+  }
+  prefetchUrl.done = Object.create(null);
+
+  function showNavProgress() {
+    var bar = document.getElementById('nav-progress');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = 'nav-progress';
+      bar.className = 'nav-progress';
+      bar.setAttribute('aria-hidden', 'true');
+      bar.innerHTML = '<div class="nav-progress__bar"></div>';
+      document.body.appendChild(bar);
+    }
+    bar.classList.add('is-active');
+    requestAnimationFrame(function () {
+      bar.classList.add('is-visible');
+    });
+  }
+
+  function hideNavProgress() {
+    var bar = document.getElementById('nav-progress');
+    if (bar) {
+      bar.classList.remove('is-visible', 'is-active');
+    }
+  }
+
+  function finishPageEnter() {
+    try { sessionStorage.removeItem('pypath-nav'); } catch (e) {}
+    document.documentElement.classList.remove('page-from-nav');
+    document.documentElement.classList.add('page-entered');
+    hideNavProgress();
+    var main = document.querySelector('main');
+    if (main) main.classList.add('is-entered');
+  }
+
+  function initNavigation() {
+    qsa('.lesson-nav a[href], .lesson-overview a[href]').forEach(function (a) {
+      prefetchUrl(a.href);
+    });
+
+    document.addEventListener('mouseover', function (e) {
+      var a = e.target.closest('a[href]');
+      if (isInternalNavLink(a)) prefetchUrl(a.href);
+    }, { passive: true });
+
+    document.addEventListener('focusin', function (e) {
+      var a = e.target.closest('a[href]');
+      if (isInternalNavLink(a)) prefetchUrl(a.href);
+    });
+
+    document.addEventListener('touchstart', function (e) {
+      var a = e.target.closest('a[href]');
+      if (isInternalNavLink(a)) prefetchUrl(a.href);
+    }, { passive: true });
+
+    document.addEventListener('click', function (e) {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      var a = e.target.closest('a[href]');
+      if (!isInternalNavLink(a)) return;
+
+      try { sessionStorage.setItem('pypath-nav', '1'); } catch (err) {}
+
+      if (window.PyDropdowns) window.PyDropdowns.closeAll(null);
+      document.body.classList.remove('nav-open');
+      var nav = qs('.primary-nav');
+      if (nav) nav.setAttribute('aria-expanded', 'false');
+      var toggle = qs('.mobile-toggle', nav);
+      if (toggle) toggle.setAttribute('aria-expanded', 'false');
+
+      if (!prefersReducedMotion()) {
+        showNavProgress();
+        var overlay = document.getElementById('page-transition');
+        if (overlay) overlay.classList.add('is-active');
+      }
+    }, true);
+
+    window.addEventListener('pageshow', function (e) {
+      finishPageEnter();
+      if (e.persisted) {
+        qsa('.lesson-nav a[href], .lesson-overview a[href]').forEach(function (a) {
+          prefetchUrl(a.href);
+        });
+      }
+    });
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', finishPageEnter);
+    } else {
+      requestAnimationFrame(finishPageEnter);
+    }
+  }
 
 })();
