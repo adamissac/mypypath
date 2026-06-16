@@ -649,6 +649,9 @@ body.nav-open::before {
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
+  /* Keep motion away from headline area */
+  -webkit-mask-image: radial-gradient(circle at 50% 30%, transparent 0 220px, #000 340px);
+  mask-image: radial-gradient(circle at 50% 30%, transparent 0 220px, #000 340px);
 }
 
 .page-home .hero-float {
@@ -658,14 +661,21 @@ body.nav-open::before {
 
 @media (prefers-reduced-motion: no-preference) {
   .page-home .hero-float {
-    animation: hero-drift var(--drift-dur, 7s) ease-in-out infinite alternate;
-    animation-delay: var(--drift-delay, 0s);
+    animation: hero-fall var(--fall-dur, 6s) linear infinite;
+    animation-delay: var(--fall-delay, 0s);
   }
 }
 
-@keyframes hero-drift {
-  from { transform: translate3d(0, 0, 0) rotate(var(--drift-rot, 0deg)); }
-  to   { transform: translate3d(0, -28px, 0) rotate(calc(var(--drift-rot, 0deg) + 9deg)); }
+@keyframes hero-fall {
+  from {
+    transform: translate3d(0, -120px, 0) rotate(var(--drift-rot, 0deg));
+    opacity: 0;
+  }
+  10% { opacity: var(--fall-opacity, 0.75); }
+  to {
+    transform: translate3d(var(--fall-x, 0px), calc(100vh + 280px), 0) rotate(calc(var(--drift-rot, 0deg) + 14deg));
+    opacity: 0;
+  }
 }
 
 /* Soft color blobs */
@@ -736,17 +746,17 @@ body.nav-open::before {
   opacity: 0.7;
 }
 
-.page-home .hero-float--1  { --drift-dur: 9s;  --drift-delay: 0s;   top: 8%;  left: 4%; }
-.page-home .hero-float--2  { --drift-dur: 11s; --drift-delay: 1s;   top: 18%; right: 6%; }
-.page-home .hero-float--3  { --drift-dur: 8s;  --drift-delay: 2s;   bottom: 12%; left: 8%; }
-.page-home .hero-float--4  { --drift-dur: 6s;  --drift-delay: 0.2s; top: 10%; left: 2%;   width: 64px; height: 64px; }
-.page-home .hero-float--5  { --drift-dur: 7s;  --drift-delay: 1.2s; top: 12%; right: 3%; width: 48px; height: 48px; }
-.page-home .hero-float--6  { --drift-dur: 7.5s;--drift-delay: 0.8s; bottom: 18%; right: 5%; width: 56px; height: 56px; }
-.page-home .hero-float--7  { --drift-dur: 4.8s;--drift-delay: 0.4s; top: 36%; left: 3%; }
-.page-home .hero-float--8  { --drift-dur: 5.2s;--drift-delay: 1.8s; top: 50%; right: 4%; }
-.page-home .hero-float--9  { --drift-dur: 4.4s;--drift-delay: 0.9s; bottom: 22%; left: 6%; }
-.page-home .hero-float--10 { --drift-dur: 7.2s;--drift-delay: 2s;   bottom: 30%; right: 10%; }
-.page-home .hero-float--11 { --drift-dur: 5.6s;--drift-delay: 1.5s; top: 30%; left: 12%; }
+.page-home .hero-float--1  { --fall-dur: 5.2s; --fall-delay: -0.8s; --fall-x: 10px;  --fall-opacity: 0.5; left: 2%;  top: -18%; }
+.page-home .hero-float--2  { --fall-dur: 6.0s; --fall-delay: -2.6s; --fall-x: -14px; --fall-opacity: 0.5; right: 2%; top: -32%; }
+.page-home .hero-float--3  { --fall-dur: 4.6s; --fall-delay: -1.6s; --fall-x: 8px;   --fall-opacity: 0.45; left: 10%; top: -44%; }
+.page-home .hero-float--4  { --fall-dur: 5.6s; --fall-delay: -3.1s; --fall-x: -10px; --fall-opacity: 0.6; left: -2%; top: -22%; width: 64px; height: 64px; }
+.page-home .hero-float--5  { --fall-dur: 5.0s; --fall-delay: -0.4s; --fall-x: 12px;  --fall-opacity: 0.6; right: -1%; top: -28%; width: 48px; height: 48px; }
+.page-home .hero-float--6  { --fall-dur: 6.4s; --fall-delay: -2.1s; --fall-x: -8px;  --fall-opacity: 0.6; right: 6%;  top: -50%; width: 56px; height: 56px; }
+.page-home .hero-float--7  { --fall-dur: 4.4s; --fall-delay: -1.2s; --fall-x: 16px;  --fall-opacity: 0.55; left: 3%;  top: -10%; }
+.page-home .hero-float--8  { --fall-dur: 4.8s; --fall-delay: -2.4s; --fall-x: -18px; --fall-opacity: 0.55; right: 4%; top: -14%; }
+.page-home .hero-float--9  { --fall-dur: 4.1s; --fall-delay: -0.9s; --fall-x: 12px;  --fall-opacity: 0.5; left: 6%;  top: -36%; }
+.page-home .hero-float--10 { --fall-dur: 5.8s; --fall-delay: -3.3s; --fall-x: -10px; --fall-opacity: 0.55; right: 10%; top: -54%; }
+.page-home .hero-float--11 { --fall-dur: 5.0s; --fall-delay: -1.9s; --fall-x: 10px;  --fall-opacity: 0.55; left: 14%; top: -58%; }
 
 .page-home .hero-symbol {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -758,37 +768,37 @@ body.nav-open::before {
   line-height: 1;
 }
 
-.page-home .hero-float--12 { --drift-dur: 8s;  --drift-delay: 0.2s;  --drift-rot: -12deg; top: 14%; left: 14%; }
-.page-home .hero-float--13 { --drift-dur: 5.2s;--drift-delay: 1.4s; --drift-rot: 8deg;   top: 22%; right: 12%; }
-.page-home .hero-float--14 { --drift-dur: 6.2s;--drift-delay: 0.6s; --drift-rot: 6deg;   top: 46%; left: 6%; }
-.page-home .hero-float--15 { --drift-dur: 4.8s;--drift-delay: 1.1s; --drift-rot: -5deg;  top: 60%; right: 8%; }
-.page-home .hero-float--16 { --drift-dur: 5.6s;--drift-delay: 1.7s; --drift-rot: -8deg;  bottom: 26%; left: 16%; }
-.page-home .hero-float--17 { --drift-dur: 5.0s;--drift-delay: 0.5s; --drift-rot: 4deg;   bottom: 14%; right: 16%; font-size: 1em; opacity: 0.52; }
-.page-home .hero-float--18 { --drift-dur: 6.8s;--drift-delay: 2.2s; --drift-rot: 10deg;  top: 34%; right: 18%; }
-.page-home .hero-float--19 { --drift-dur: 6.0s;--drift-delay: 0.8s; --drift-rot: -6deg;  top: 30%; left: 24%; font-size: 1.35em; opacity: 0.52; }
-.page-home .hero-float--20 { --drift-dur: 4.6s;--drift-delay: 1.5s; --drift-rot: 3deg;   bottom: 36%; right: 22%; opacity: 0.5; }
-.page-home .hero-float--21 { --drift-dur: 5.4s;--drift-delay: 2.5s; --drift-rot: -4deg;  top: 6%;  left: 38%; font-size: 0.95em; opacity: 0.48; }
-.page-home .hero-float--22 { --drift-dur: 5.0s;--drift-delay: 1.9s; --drift-rot: 5deg;   bottom: 8%; right: 28%; font-size: 0.9em; opacity: 0.44; }
+.page-home .hero-float--12 { --fall-dur: 4.8s; --fall-delay: -0.6s; --fall-x: -12px; --drift-rot: -12deg; left: 16%; top: -26%; }
+.page-home .hero-float--13 { --fall-dur: 4.4s; --fall-delay: -2.0s; --fall-x: 14px;  --drift-rot: 8deg;   right: 14%; top: -18%; }
+.page-home .hero-float--14 { --fall-dur: 5.6s; --fall-delay: -3.7s; --fall-x: -10px; --drift-rot: 6deg;   left: 6%;  top: -66%; }
+.page-home .hero-float--15 { --fall-dur: 4.0s; --fall-delay: -1.4s; --fall-x: 18px;  --drift-rot: -5deg;  right: 8%;  top: -40%; }
+.page-home .hero-float--16 { --fall-dur: 5.2s; --fall-delay: -2.8s; --fall-x: -14px; --drift-rot: -8deg;  left: 22%; top: -52%; }
+.page-home .hero-float--17 { --fall-dur: 4.6s; --fall-delay: -0.9s; --fall-x: 12px;  --drift-rot: 4deg;   right: 18%; top: -72%; font-size: 1em; opacity: 0.52; }
+.page-home .hero-float--18 { --fall-dur: 6.1s; --fall-delay: -1.7s; --fall-x: -10px; --drift-rot: 10deg;  right: 20%; top: -58%; }
+.page-home .hero-float--19 { --fall-dur: 5.0s; --fall-delay: -2.4s; --fall-x: 10px;  --drift-rot: -6deg;  left: 26%; top: -36%; font-size: 1.35em; opacity: 0.52; }
+.page-home .hero-float--20 { --fall-dur: 4.2s; --fall-delay: -3.0s; --fall-x: -16px; --drift-rot: 3deg;   right: 24%; top: -80%; opacity: 0.5; }
+.page-home .hero-float--21 { --fall-dur: 4.9s; --fall-delay: -1.1s; --fall-x: 12px;  --drift-rot: -4deg;  left: 40%; top: -20%; font-size: 0.95em; opacity: 0.48; }
+.page-home .hero-float--22 { --fall-dur: 4.5s; --fall-delay: -3.5s; --fall-x: -12px; --drift-rot: 5deg;   right: 30%; top: -64%; font-size: 0.9em; opacity: 0.44; }
 
 /* Extra blobs */
-.page-home .hero-float--23 { --drift-dur: 7.5s; --drift-delay: 1.6s; top: 40%; right: 2%; opacity: 0.45; }
-.page-home .hero-float--24 { --drift-dur: 8.2s; --drift-delay: 0.7s; bottom: 10%; left: 28%; opacity: 0.42; }
+.page-home .hero-float--23 { --fall-dur: 6.8s; --fall-delay: -0.3s; --fall-x: 14px;  right: 2%;  top: -48%; opacity: 0.4; }
+.page-home .hero-float--24 { --fall-dur: 7.4s; --fall-delay: -2.9s; --fall-x: -10px; left: 28%; top: -78%; opacity: 0.38; }
 
 /* Extra rings / dots / shapes */
-.page-home .hero-float--25 { --drift-dur: 6.4s; --drift-delay: 2.1s; top: 24%; left: -1%; width: 42px; height: 42px; opacity: 0.55; }
-.page-home .hero-float--26 { --drift-dur: 7.1s; --drift-delay: 0.3s; bottom: 34%; right: -1%; width: 44px; height: 44px; opacity: 0.55; }
-.page-home .hero-float--27 { --drift-dur: 4.2s; --drift-delay: 1.0s; top: 16%; left: 56%; }
-.page-home .hero-float--28 { --drift-dur: 4.6s; --drift-delay: 2.6s; top: 68%; left: 2%; }
-.page-home .hero-float--29 { --drift-dur: 4.0s; --drift-delay: 0.2s; bottom: 40%; right: 14%; }
-.page-home .hero-float--30 { --drift-dur: 7.0s; --drift-delay: 2.8s; top: 8%; right: 36%; opacity: 0.52; }
-.page-home .hero-float--31 { --drift-dur: 6.6s; --drift-delay: 1.3s; bottom: 18%; right: 44%; opacity: 0.5; }
+.page-home .hero-float--25 { --fall-dur: 5.4s; --fall-delay: -2.2s; --fall-x: 12px;  left: -1%; top: -34%; width: 42px; height: 42px; opacity: 0.5; }
+.page-home .hero-float--26 { --fall-dur: 5.9s; --fall-delay: -0.7s; --fall-x: -14px; right: -1%; top: -46%; width: 44px; height: 44px; opacity: 0.5; }
+.page-home .hero-float--27 { --fall-dur: 4.1s; --fall-delay: -1.0s; --fall-x: 10px;  left: 58%; top: -22%; }
+.page-home .hero-float--28 { --fall-dur: 4.3s; --fall-delay: -2.6s; --fall-x: -12px; left: 2%;  top: -60%; }
+.page-home .hero-float--29 { --fall-dur: 4.0s; --fall-delay: -0.2s; --fall-x: 14px;  right: 14%; top: -70%; }
+.page-home .hero-float--30 { --fall-dur: 6.2s; --fall-delay: -1.8s; --fall-x: -10px; right: 36%; top: -26%; opacity: 0.48; }
+.page-home .hero-float--31 { --fall-dur: 6.0s; --fall-delay: -3.1s; --fall-x: 10px;  right: 44%; top: -58%; opacity: 0.46; }
 
 /* Extra symbols */
-.page-home .hero-float--32 { --drift-dur: 5.4s; --drift-delay: 2.0s; top: 12%; right: 28%; opacity: 0.46; }
-.page-home .hero-float--33 { --drift-dur: 6.1s; --drift-delay: 0.9s; bottom: 44%; left: 2%; opacity: 0.44; }
-.page-home .hero-float--34 { --drift-dur: 6.8s; --drift-delay: 1.8s; top: 54%; right: 0%; opacity: 0.42; }
-.page-home .hero-float--35 { --drift-dur: 5.0s; --drift-delay: 2.4s; bottom: 6%; left: 12%; opacity: 0.4; }
-.page-home .hero-float--36 { --drift-dur: 7.2s; --drift-delay: 1.1s; top: 36%; left: 34%; opacity: 0.42; }
+.page-home .hero-float--32 { --fall-dur: 4.6s; --fall-delay: -2.0s; --fall-x: 10px;  right: 28%; top: -34%; opacity: 0.44; }
+.page-home .hero-float--33 { --fall-dur: 5.8s; --fall-delay: -0.9s; --fall-x: -12px; left: 2%;  top: -84%; opacity: 0.42; }
+.page-home .hero-float--34 { --fall-dur: 6.4s; --fall-delay: -1.8s; --fall-x: 12px;  right: 0%;  top: -76%; opacity: 0.4; }
+.page-home .hero-float--35 { --fall-dur: 4.2s; --fall-delay: -2.4s; --fall-x: -10px; left: 12%; top: -92%; opacity: 0.38; }
+.page-home .hero-float--36 { --fall-dur: 5.2s; --fall-delay: -1.1s; --fall-x: 10px;  left: 34%; top: -62%; opacity: 0.4; }
 
 [data-theme="dark"] .page-home .hero-symbol {
   color: color-mix(in srgb, var(--primary) 70%, var(--text));
