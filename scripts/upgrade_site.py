@@ -38,7 +38,7 @@ ICON_REPLACEMENTS = [
 def body_bg(path: Path) -> str:
     rel = path.relative_to(ROOT)
     if path.name == 'index.html':
-        return 'aurora,constellation,noise,glow'
+        return 'aurora,noise'
     if len(rel.parts) >= 3 and rel.parts[0] == 'units' and rel.parts[1].startswith('unit-') and rel.suffix == '.html' and rel.parts[1] != rel.name:
         return 'noise'
     if path.name in ('sandbox.html', 'certifications.html', 'curriculum.html', 'about.html'):
