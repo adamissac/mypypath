@@ -11,6 +11,7 @@
   // Initialize CodeMirror editor
   function initEditor() {
     const textarea = document.getElementById('code-editor');
+    if (!textarea || !document.body.classList.contains('page-sandbox')) return;
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     
     editor = CodeMirror.fromTextArea(textarea, {
@@ -162,7 +163,8 @@
       renderProjects();
       updateProjectStatus('saved');
       if (showMessage) {
-        showNotification('Project saved!');
+        if (window.PyUI && window.PyUI.showToast) window.PyUI.showToast('Project saved');
+        else showNotification('Project saved!');
       }
       return;
     }
@@ -175,7 +177,8 @@
       renderProjects();
       updateProjectStatus('saved');
       if (showMessage) {
-        showNotification('Project saved!');
+        if (window.PyUI && window.PyUI.showToast) window.PyUI.showToast('Project saved');
+        else showNotification('Project saved!');
       }
     }
   }
@@ -201,7 +204,8 @@
     saveProjects();
     renderProjects();
     updateProjectStatus('');
-    showNotification('Project deleted.');
+    if (window.PyUI && window.PyUI.showToast) window.PyUI.showToast('Project deleted');
+    else showNotification('Project deleted.');
   }
 
   // Initialize Pyodide
@@ -259,9 +263,15 @@
 
   // Run code using Pyodide
   async function runCode() {
+    const runBtn = document.getElementById('run-btn');
+    if (runBtn) runBtn.classList.add('is-running');
+
     if (!pyodideReady) {
       await initPyodide();
-      if (!pyodideReady) return;
+      if (!pyodideReady) {
+        if (runBtn) runBtn.classList.remove('is-running');
+        return;
+      }
     }
 
     const code = editor.getValue();
@@ -269,9 +279,11 @@
     
     if (!code.trim()) {
       output.innerHTML = '<p class="muted">No code to run. Write some Python code first!</p>';
+      if (runBtn) runBtn.classList.remove('is-running');
       return;
     }
 
+    output.classList.remove('is-revealing');
     output.innerHTML = '<p class="muted">Running code...</p>';
 
     try {
@@ -313,6 +325,8 @@
       }
 
       output.innerHTML = outputHTML;
+      output.classList.add('is-revealing');
+      output.scrollTop = output.scrollHeight;
 
     } catch (error) {
       const errorMessage = error.toString();
@@ -322,6 +336,9 @@
           <pre class="output-text">${escapeHtml(errorMessage)}</pre>
         </div>
       `;
+      output.classList.add('is-revealing');
+    } finally {
+      if (runBtn) runBtn.classList.remove('is-running');
     }
   }
 
@@ -386,11 +403,34 @@
   }
 
   // Event listeners
+  function setupToolbarIcons() {
+    if (!window.PyIcons) return;
+    const map = {
+      'run-btn': 'play',
+      'save-btn': 'save',
+      'delete-btn': 'trash',
+      'new-project-btn': 'plus'
+    };
+    Object.keys(map).forEach(id => {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      const icon = window.PyIcons.el(map[id], 16);
+      const label = btn.textContent.trim().replace(/^[^\w]+/, '').trim() || id;
+      btn.textContent = '';
+      btn.appendChild(icon);
+      btn.appendChild(document.createTextNode(' ' + label));
+      if (id === 'run-btn') btn.setAttribute('aria-label', 'Run code');
+      if (id === 'save-btn') btn.setAttribute('aria-label', 'Save project');
+      if (id === 'delete-btn') btn.setAttribute('aria-label', 'Delete project');
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', async () => {
+    if (!document.body.classList.contains('page-sandbox')) return;
+
     initEditor();
     loadProjects();
-    
-    // Initialize Pyodide in the background
+    setupToolbarIcons();
     initPyodide();
 
     document.getElementById('new-project-btn').addEventListener('click', createNewProject);
@@ -399,17 +439,14 @@
     document.getElementById('run-btn').addEventListener('click', runCode);
     document.getElementById('clear-output-btn').addEventListener('click', clearOutput);
     document.getElementById('project-select').addEventListener('change', (e) => {
-      if (e.target.value) {
-        loadProject(e.target.value);
-      }
+      if (e.target.value) loadProject(e.target.value);
     });
 
-    // Auto-save on blur (optional)
-    editor.on('blur', () => {
-      if (currentProjectId) {
-        saveCurrentProject(false);
-      }
-    });
+    if (editor) {
+      editor.on('blur', () => {
+        if (currentProjectId) saveCurrentProject(false);
+      });
+    }
   });
 })();
 

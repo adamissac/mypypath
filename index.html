@@ -8,46 +8,55 @@
     <link rel="icon" href="/assets/img/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/motion.css" />
     <script defer src="/assets/js/theme.js"></script>
-    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/icons.js"></script>
+    <script defer src="/assets/js/motion.js"></script>
+    <script defer src="/assets/js/layout.js"></script>
+    <script defer src="/assets/js/dropdowns.js"></script>
     <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/backgrounds.js"></script>
+    <script defer src="/assets/js/home.js"></script>
   </head>
-  <body class="page page-home">
+  <body class="page page-home" data-bg="aurora,constellation,noise,glow">
     <div id="page-transition" aria-hidden="true"></div>
 
     <header class="site-header">
       <div class="container nav">
-        <a class="brand" href="/">
-          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo">
+        <a class="brand route" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo" width="36" height="36">
           <span class="brand-text">PyPath</span>
         </a>
-        <nav class="primary-nav" aria-label="Primary">
-          <button class="mobile-toggle" aria-label="Open Menu" aria-expanded="false">
-            <span></span><span></span><span></span>
+        <nav class="primary-nav" aria-label="Primary" aria-expanded="false">
+          <button type="button" class="mobile-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-menu">
+            <span class="mobile-toggle-bar" aria-hidden="true"></span>
+            <span class="mobile-toggle-bar" aria-hidden="true"></span>
+            <span class="mobile-toggle-bar" aria-hidden="true"></span>
           </button>
-          <ul class="menu">
-            <li><a href="/" class="active">Home</a></li>
+          <ul class="menu" id="primary-menu">
+            <li><a href="/" class="active route">Home</a></li>
             <li class="has-dropdown">
-              <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Units</button>
-              <ul class="dropdown" role="menu">
-                <li role="none"><a role="menuitem" href="/units/unit-1.html">Unit 1</a></li>
-                <li role="none"><a role="menuitem" href="/units/unit-2.html">Unit 2</a></li>
-                <li role="none"><a role="menuitem" href="/units/unit-3.html">Unit 3</a></li>
-                <li role="none"><a role="menuitem" href="/units/unit-4.html">Unit 4</a></li>
-                <li role="none"><a role="menuitem" href="/units/unit-5.html">Unit 5</a></li>
-                <li role="none"><a role="menuitem" href="/units/unit-6.html">Unit 6</a></li>
-                <li role="none"><a role="menuitem" href="/units/unit-7.html">Unit 7</a></li>
-                <li role="none"><a role="menuitem" href="/units/unit-8.html">Unit 8</a></li>
-                <li role="none"><a role="menuitem" href="/units/unit-9.html">Unit 9</a></li>
-                <li role="none"><a role="menuitem" href="/units/unit-10.html">Unit 10</a></li>
+              <button type="button" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="units-dropdown">Units</button>
+              <ul class="dropdown" id="units-dropdown" role="menu">
+                <li role="none"><a role="menuitem" href="/units/unit-1.html" class="route">Unit 1</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-2.html" class="route">Unit 2</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-3.html" class="route">Unit 3</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-4.html" class="route">Unit 4</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-5.html" class="route">Unit 5</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-6.html" class="route">Unit 6</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-7.html" class="route">Unit 7</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-8.html" class="route">Unit 8</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-9.html" class="route">Unit 9</a></li>
+                <li role="none"><a role="menuitem" href="/units/unit-10.html" class="route">Unit 10</a></li>
               </ul>
             </li>
-            <li><a href="/sandbox.html">Sandbox</a></li>
-            <li><a href="/certifications.html">Certifications</a></li>
-            <li><a href="/about.html">About</a></li>
-            <li><a href="/settings.html">Settings</a></li>
+            <li><a href="/sandbox.html" class="route">Sandbox</a></li>
+            <li><a href="/certifications.html" class="route">Certifications</a></li>
+            <li><a href="/about.html" class="route">About</a></li>
+            <li><a href="/settings.html" class="route">Settings</a></li>
           </ul>
         </nav>
       </div>
@@ -59,32 +68,15 @@
     </header>
 
     <main>
-      <div class="mobile-warning-banner" id="mobile-warning">
-        <div class="container">
-          <div class="mobile-warning-content">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path d="M10 2C5.58 2 2 5.58 2 10C2 14.42 5.58 18 10 18C14.42 18 18 14.42 18 10C18 5.58 14.42 2 10 2ZM10 16C6.69 16 4 13.31 4 10C4 6.69 6.69 4 10 4C13.31 4 16 6.69 16 10C16 13.31 13.31 16 10 16Z" fill="currentColor"/>
-              <path d="M10 6C9.45 6 9 6.45 9 7V11C9 11.55 9.45 12 10 12C10.55 12 11 11.55 11 11V7C11 6.45 10.55 6 10 6ZM10 13C9.45 13 9 13.45 9 14C9 14.55 9.45 15 10 15C10.55 15 11 14.55 11 14C11 13.45 10.55 13 10 13Z" fill="currentColor"/>
-            </svg>
-            <p>
-              <strong>Mobile Notice:</strong> This website is not optimized for mobile devices. For the best experience, please use a desktop or tablet.
-            </p>
-            <button class="mobile-warning-close" aria-label="Dismiss warning" onclick="document.getElementById('mobile-warning').style.display='none'">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="announcement-banner">
+      <div class="announcement-banner" data-reveal="fade">
         <div class="container">
           <p>
             This platform was inspired by <a href="https://runestone.academy/ns/books/published/csawesome/index.html#" target="_blank" rel="noreferrer noopener">CSAwesome</a>.
           </p>
         </div>
       </div>
-      <section class="hero reveal-up">
+
+      <section class="hero">
         <div class="container">
           <div class="hero-grid">
             <div class="hero-copy">
@@ -92,9 +84,9 @@
                 <svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet">
                   <defs>
                     <linearGradient id="snakeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#0EA5E9" stop-opacity="0.4"/>
-                      <stop offset="50%" stop-color="#06B6D4" stop-opacity="0.4"/>
-                      <stop offset="100%" stop-color="#14B8A6" stop-opacity="0.4"/>
+                      <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.4"/>
+                      <stop offset="50%" stop-color="var(--accent-alt)" stop-opacity="0.4"/>
+                      <stop offset="100%" stop-color="var(--accent)" stop-opacity="0.4"/>
                     </linearGradient>
                   </defs>
                   <g fill="none" stroke="url(#snakeGrad)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
@@ -102,30 +94,40 @@
                   </g>
                   <circle cx="80" cy="50" r="6" fill="url(#snakeGrad)" opacity="0.6"/>
                   <circle cx="220" cy="130" r="5" fill="url(#snakeGrad)" opacity="0.6"/>
-                  <text x="50" y="160" font-family="monospace" font-size="12" fill="url(#snakeGrad)" opacity="0.5">def learn():</text>
                 </svg>
+                <span class="hero-code-line">def learn():</span>
               </div>
-              <h1 class="headline gradient-text">Learn Python with elegance, clarity, and momentum.</h1>
-              <p class="subhead">A modern curriculum designed to take you from zero to certification-ready with immersive animations and delightful interactions.</p>
-              <div class="cta">
+              <h1 class="headline gradient-text" data-reveal="up">
+                <span class="word" style="transition-delay:0ms">Learn</span>
+                <span class="word" style="transition-delay:60ms">Python</span>
+                <span class="word" style="transition-delay:120ms">with</span>
+                <span class="word" style="transition-delay:180ms">elegance,</span>
+                <span class="word" style="transition-delay:240ms">clarity,</span>
+                <span class="word" style="transition-delay:300ms">and</span>
+                <span class="word" style="transition-delay:360ms">momentum.</span>
+              </h1>
+              <p class="subhead" data-reveal="up" data-reveal-delay="420">A modern curriculum designed to take you from zero to certification-ready with immersive animations and delightful interactions.</p>
+              <div class="cta" data-reveal="up" data-reveal-delay="500">
                 <a class="btn btn-primary route" href="/units/unit-1.html">Start Unit 1</a>
                 <a class="btn btn-ghost route" href="/curriculum.html">Explore Curriculum</a>
               </div>
-              <div class="badges">
-                <span class="badge">10 Units</span>
-                <span class="badge">Hands-on</span>
-                <span class="badge">Certification-ready</span>
+              <div class="badges" data-reveal-stagger>
+                <span class="badge" data-reveal="scale"><span data-count-up="10">0</span> Units</span>
+                <span class="badge" data-reveal="scale">Hands-on</span>
+                <span class="badge" data-reveal="scale">Certification-ready</span>
               </div>
             </div>
-            <div class="hero-visual">
+            <div class="hero-visual" data-reveal="left" data-reveal-delay="200">
               <div class="orb orb-1"></div>
               <div class="orb orb-2"></div>
               <div class="screen floating">
                 <div class="screen-header">
                   <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                  <button type="button" class="copy-code-btn" data-copy-code=".hero-visual .screen code" aria-label="Copy code">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                  </button>
                 </div>
-                <pre class="code">
-<code>from datetime import datetime
+                <pre class="code"><code>from datetime import datetime
 
 def greet(name: str) -> str:
     return f"Hello, {name}!"
@@ -136,79 +138,77 @@ def times(n: int) -> list[int]:
 if __name__ == "__main__":
     print(greet("World"))
     print("Even numbers:", times(5))
-    print("Run at:", datetime.now().strftime("%H:%M:%S"))
-</code>
-                </pre>
+    print("Run at:", datetime.now().strftime("%H:%M:%S"))</code></pre>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <div class="divider reveal" aria-hidden="true">
+      <div class="divider section-shimmer" aria-hidden="true" data-reveal="fade">
         <svg viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0,30 C180,60 360,0 540,30 C720,60 900,0 1080,30 C1260,60 1440,30 1440,30 L1440,60 L0,60 Z" fill="currentColor" opacity="0.06"/></svg>
       </div>
 
-      <section class="section founders-cta reveal">
+      <section class="section founders-cta">
         <div class="container">
           <div class="founders-cta-content">
-            <h2 class="gradient-text founders-cta-title">Come, let's learn Python together!</h2>
-            <p class="founders-cta-subtitle">Meet the team behind PyPath</p>
-            <div class="founders-showcase">
-              <div class="founder-showcase-item">
+            <h2 class="gradient-text founders-cta-title" data-reveal="up">Come, let's learn Python together!</h2>
+            <p class="founders-cta-subtitle" data-reveal="up" data-reveal-delay="80">Meet the team behind PyPath</p>
+            <div class="founders-showcase" data-reveal-stagger>
+              <div class="founder-showcase-item" data-reveal="up">
                 <div class="founder-showcase-avatar">
-                  <img src="/assets/img/adam.jpg" alt="Adam" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                  <img src="/assets/img/adam.jpg" alt="Adam, Co-Founder" width="120" height="120" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                   <div class="founder-showcase-fallback" style="display:none;">A</div>
                 </div>
                 <div class="founder-showcase-name">Adam</div>
                 <div class="founder-showcase-role">Co-Founder</div>
               </div>
-              <div class="founder-showcase-item">
+              <div class="founder-showcase-item" data-reveal="up">
                 <div class="founder-showcase-avatar">
-                  <img src="/assets/img/ritesh.jpg" alt="Ritesh" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                  <img src="/assets/img/ritesh.jpg" alt="Ritesh, Co-Founder" width="120" height="120" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                   <div class="founder-showcase-fallback" style="display:none;">R</div>
                 </div>
                 <div class="founder-showcase-name">Ritesh</div>
                 <div class="founder-showcase-role">Co-Founder</div>
               </div>
-              <div class="founder-showcase-item">
+              <div class="founder-showcase-item" data-reveal="up">
                 <div class="founder-showcase-avatar">
-                  <img src="/assets/img/prahas.jpg" alt="Prahas" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                  <img src="/assets/img/prahas.jpg" alt="Prahas, Head of Curriculum" width="120" height="120" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                   <div class="founder-showcase-fallback" style="display:none;">P</div>
                 </div>
                 <div class="founder-showcase-name">Prahas</div>
                 <div class="founder-showcase-role">Head of Curriculum</div>
               </div>
             </div>
-            <a href="/about.html" class="btn btn-primary route" style="margin-top: 32px;">Learn More About Us</a>
+            <a href="/about.html" class="btn btn-primary route" style="margin-top: 32px;" data-reveal="up" data-reveal-delay="200">Learn More About Us</a>
           </div>
         </div>
       </section>
 
-      <div class="divider reveal" aria-hidden="true">
+      <div class="divider section-shimmer" aria-hidden="true" data-reveal="fade">
         <svg viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0,30 C180,60 360,0 540,30 C720,60 900,0 1080,30 C1260,60 1440,30 1440,30 L1440,60 L0,60 Z" fill="currentColor" opacity="0.06"/></svg>
       </div>
 
-      <section class="section features reveal">
+      <section class="section features">
         <div class="container">
-          <div class="features-grid stagger">
-            <div class="feature">
-              <div class="icon">Py</div>
+          <div class="features-grid" data-reveal-stagger>
+            <div class="feature feature-tilt" data-reveal="up">
+              <div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg></div>
               <h3 class="gradient-text">Modern Python</h3>
               <p>Type hints, tooling, and best practices throughout.</p>
             </div>
-            <div class="feature">
-              <div class="icon">UX</div>
+            <div class="feature feature-tilt" data-reveal="up">
+              <div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8L4 12l5.1 3.2L12 21l1.9-5.8L19 12l-5.1-3.2z"/></svg></div>
               <h3 class="gradient-text">Delightful UX</h3>
               <p>Smooth animations and microinteractions reinforce learning.</p>
             </div>
-            <div class="feature">
-              <div class="icon">DM</div>
+            <div class="feature feature-tilt" data-reveal="up">
+              <div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></div>
               <h3 class="gradient-text">Dark Mode</h3>
               <p>Beautiful in light or dark, with a persistent preference.</p>
             </div>
-            <div class="feature">
-              <div class="icon">CT</div>
+            <div class="feature feature-tilt" data-reveal="up">
+              <div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></div>
               <h3 class="gradient-text">Certification Track</h3>
               <p>Designed to align with common Python certification goals.</p>
             </div>
@@ -216,49 +216,52 @@ if __name__ == "__main__":
         </div>
       </section>
 
-      <section class="section reveal" id="testimonials">
+      <section class="section" id="testimonials">
         <div class="container">
           <div class="section-head">
-            <h2 class="gradient-text">What Learners Say</h2>
-            <p class="muted">Concise, motivating feedback from students and mentors.</p>
+            <h2 class="gradient-text" data-reveal="up">What Learners Say</h2>
+            <p class="muted" data-reveal="up" data-reveal-delay="80">Concise, motivating feedback from students and mentors.</p>
           </div>
-          <div class="testimonials stagger">
-            <article class="testimonial">
-              <div class="stars"></div>
+          <div class="testimonials" data-reveal-stagger>
+            <article class="testimonial" data-reveal="up">
+              <div class="stars" aria-hidden="true"></div>
               <p class="quote">"I learned Python in AP CSP and kept going here. The structure kept me motivated."</p>
-              <div class="who"><div class="avatar">A</div><div><strong>Akshay</strong><div class="role">AP CSP Student</div></div></div>
+              <div class="who">
+                <div class="avatar-monogram" aria-hidden="true">A</div>
+                <div><strong>Akshay</strong><div class="role">AP CSP Student</div></div>
+              </div>
             </article>
-            <article class="testimonial">
-              <div class="stars"></div>
+            <article class="testimonial" data-reveal="up">
+              <div class="stars" aria-hidden="true"></div>
               <p class="quote">"We used Python in AP CSP, and this site made it easy to learn beyond class."</p>
-              <div class="who"><div class="avatar">B</div><div><strong>Barath</strong><div class="role">AP CSP Student</div></div></div>
+              <div class="who">
+                <div class="avatar-monogram" aria-hidden="true">B</div>
+                <div><strong>Barath</strong><div class="role">AP CSP Student</div></div>
+              </div>
             </article>
           </div>
         </div>
       </section>
-
-      
     </main>
 
     <footer class="site-footer">
       <div class="container footer-grid">
         <div>
-          <a class="brand small" href="/">
-            <span class="logo small"></span>
+          <a class="brand small route" href="/">
+            <img src="/assets/img/pyPathLogo.png" alt="" class="logo small" width="28" height="28">
             <span class="brand-text">PyPath</span>
           </a>
-          <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
+          <p class="muted">&copy; <span id="year"></span> PyPath. All rights reserved.</p>
         </div>
         <nav aria-label="Footer">
           <ul class="footer-links">
-            <li><a href="/settings.html" class="route">Settings</a></li>
+            <li><a href="/curriculum.html" class="route">Curriculum</a></li>
             <li><a href="/certifications.html" class="route">Certifications</a></li>
+            <li><a href="/about.html" class="route">About</a></li>
+            <li><a href="/settings.html" class="route">Settings</a></li>
           </ul>
         </nav>
       </div>
     </footer>
   </body>
-  </html>
-
-
-
+</html>

@@ -8,22 +8,27 @@
     <link rel="icon" href="/assets/img/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/style.css" />
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+        <script defer src="/assets/js/pyodide-loader.js"></script>
     <script defer src="/assets/js/theme.js"></script>
-    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/icons.js"></script>
+    <script defer src="/assets/js/motion.js"></script>
+    <script defer src="/assets/js/layout.js"></script>
+    <script defer src="/assets/js/dropdowns.js"></script>
     <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/lesson-ui.js"></script>
     <script defer src="/assets/js/exercises.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
-    <script src="/assets/js/sandbox.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
   </head>
-  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+  <body class="page page-unit" data-bg="noise"><div id="page-transition" aria-hidden="true"></div>
     <header class="site-header">
       <div class="container nav">
         <a class="brand" href="/">
@@ -425,15 +430,17 @@ print("Third line")</textarea>
       <div class="container footer-grid">
         <div>
           <a class="brand small" href="/">
-            <span class="logo small"></span>
+            <img src="/assets/img/pyPathLogo.png" alt="" class="logo small" width="28" height="28">
             <span class="brand-text">PyPath</span>
           </a>
           <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
         </div>
         <nav aria-label="Footer">
           <ul class="footer-links">
+            <li><a href="/curriculum.html" class="route">Curriculum</a></li>
+            <li><a href="/certifications.html" class="route">Certifications</a></li>
+            <li><a href="/about.html" class="route">About</a></li>
             <li><a href="/settings.html" class="route">Settings</a></li>
-            <li><a href="/" class="route">Home</a></li>
           </ul>
         </nav>
       </div>
@@ -575,7 +582,12 @@ print("Third line")</textarea>
         }
 
         // Initialize Pyodide in the background
-        initPyodide();
+        if (window.Pyodide) {
+          window.Pyodide.scheduleWarmup().then(function (p) {
+            pyodide = p;
+            pyodideReady = true;
+          });
+        }
 
         // Store editors globally
         window.editors = {};
@@ -584,15 +596,9 @@ print("Third line")</textarea>
         window.runEditorCode = async function(editorId) {
           if (!pyodideReady) {
             const output = document.getElementById(`output-${editorId}`);
-            output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
-            await new Promise(resolve => {
-              const checkReady = setInterval(() => {
-                if (pyodideReady) {
-                  clearInterval(checkReady);
-                  resolve();
-                }
-              }, 100);
-            });
+            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
+            pyodide = await window.Pyodide.ensureReady();
+            pyodideReady = true;
           }
 
           const editor = window.editors[editorId];

@@ -8,22 +8,27 @@
     <link rel="icon" href="/assets/img/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/style.css" />
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+        <script defer src="/assets/js/pyodide-loader.js"></script>
     <script defer src="/assets/js/theme.js"></script>
-    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/icons.js"></script>
+    <script defer src="/assets/js/motion.js"></script>
+    <script defer src="/assets/js/layout.js"></script>
+    <script defer src="/assets/js/dropdowns.js"></script>
     <script defer src="/assets/js/main.js"></script>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/lesson-ui.js"></script>
     <script defer src="/assets/js/exercises.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
-    <script src="/assets/js/sandbox.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
   </head>
-  <body class="page page-unit"><div id="page-transition" aria-hidden="true"></div>
+  <body class="page page-unit" data-bg="noise"><div id="page-transition" aria-hidden="true"></div>
     <header class="site-header">
       <div class="container nav">
         <a class="brand" href="/">
@@ -96,7 +101,7 @@
             <h1 class="lesson-title">Raising and Customizing Exceptions</h1>
             <div class="lesson-overview" style="margin-top:8px;">
               <div class="lesson-head">
-                <div class="icon-circle" aria-hidden="true"><span>Py</span></div>
+                <div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg></div>
                 <h2 class="gradient-text" style="margin:0;">Overview</h2>
               </div>
               <p>Sometimes you'll need to trigger your own exceptions to signal errors in logic or input. You'll learn to use <code>raise</code> and define custom exception classes that make your code more robust and predictable, creating clear error communication.</p>
@@ -461,15 +466,17 @@ except FileError as e:
       <div class="container footer-grid">
         <div>
           <a class="brand small" href="/">
-            <span class="logo small"></span>
+            <img src="/assets/img/pyPathLogo.png" alt="" class="logo small" width="28" height="28">
             <span class="brand-text">PyPath</span>
           </a>
           <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
         </div>
         <nav aria-label="Footer">
           <ul class="footer-links">
+            <li><a href="/curriculum.html" class="route">Curriculum</a></li>
+            <li><a href="/certifications.html" class="route">Certifications</a></li>
+            <li><a href="/about.html" class="route">About</a></li>
             <li><a href="/settings.html" class="route">Settings</a></li>
-            <li><a href="/" class="route">Home</a></li>
           </ul>
         </nav>
       </div>

@@ -8,13 +8,19 @@
     <link rel="icon" href="/assets/img/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/motion.css" />
     <script defer src="/assets/js/theme.js"></script>
-    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/icons.js"></script>
+    <script defer src="/assets/js/motion.js"></script>
+    <script defer src="/assets/js/layout.js"></script>
+    <script defer src="/assets/js/dropdowns.js"></script>
     <script defer src="/assets/js/main.js"></script>
-  </head>
-  <body class="page page-certs"><div id="page-transition" aria-hidden="true"></div>
+    <script defer src="/assets/js/animations.js"></script>
+    <script defer src="/assets/js/backgrounds.js"></script>
+</head>
+  <body class="page page-certs" data-bg="aurora,noise"><div id="page-transition" aria-hidden="true"></div>
     <header class="site-header">
       <div class="container nav">
         <a class="brand" href="/">
@@ -57,8 +63,8 @@
           <h1 class="page-title">Certification hub</h1>
           <p class="page-subtitle">Explore potential certifications you can work toward by learning the skills taught on this website. Expand each card for mapped topics, time & difficulty, unit alignment, tips, and official links.</p>
 
-          <div class="tip" style="margin-top:12px;">
-            <div class="icon">Tip</div>
+          <div class="tip" style="margin-top:12px;" data-reveal="up">
+            <div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></div>
             <div>
               <strong>Tip</strong>
               <div class="muted">Pair this with the 10‑unit track; skim a cert guide first to identify weak areas, then target those units.</div>
@@ -67,7 +73,7 @@
 
           <div class="accordion" style="margin-top:14px;">
             <details class="accordion-item" open>
-              <summary class="accordion-header"><span class="cbadge">Py</span> PCAP — Certified Associate in Python</summary>
+              <summary class="accordion-header"><span class="cert-icon-lockup"><span class="icon-svg" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg></span><strong>PCAP</strong></span> — Certified Associate in Python</summary>
               <div class="accordion-content">
                 <div class="meta" style="margin-bottom:8px;">
                   <span class="pill"><span class="dot"></span> Est. time: 6–8 weeks</span>
@@ -94,7 +100,7 @@
             </details>
 
             <details class="accordion-item">
-              <summary class="accordion-header"><span class="cbadge">Py+</span> PCPP — Certified Professional in Python</summary>
+              <summary class="accordion-header"><span class="cert-icon-lockup"><span class="icon-svg" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></span><strong>PCPP</strong></span> — Certified Professional in Python</summary>
               <div class="accordion-content">
                 <div class="meta" style="margin-bottom:8px;">
                   <span class="pill"><span class="dot"></span> Est. time: 8–12 weeks</span>
@@ -118,7 +124,7 @@
             </details>
 
             <details class="accordion-item">
-              <summary class="accordion-header"><span class="cbadge">IT</span> CompTIA ITF+ — Programming Concepts</summary>
+              <summary class="accordion-header"><span class="cert-icon-lockup"><span class="icon-svg" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg></span><strong>ITF+</strong></span> CompTIA ITF+ — Programming Concepts</summary>
               <div class="accordion-content">
                 <div class="meta" style="margin-bottom:8px;">
                   <span class="pill"><span class="dot"></span> Est. time: 2–4 weeks</span>
@@ -132,7 +138,7 @@
             </details>
 
             <details class="accordion-item">
-              <summary class="accordion-header"><span class="cbadge">Jv</span> Java SE (adjacent) — Control Flow & OOP</summary>
+              <summary class="accordion-header"><span class="cert-icon-lockup"><span class="icon-svg" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg></span><strong>Java SE</strong></span> Java SE (adjacent) — Control Flow & OOP</summary>
               <div class="accordion-content">
                 <div class="meta" style="margin-bottom:8px;">
                   <span class="pill"><span class="dot"></span> Est. time: 6–8 weeks</span>
@@ -152,15 +158,17 @@
       <div class="container footer-grid">
         <div>
           <a class="brand small" href="/">
-            <span class="logo small"></span>
+            <img src="/assets/img/pyPathLogo.png" alt="" class="logo small" width="28" height="28">
             <span class="brand-text">PyPath</span>
           </a>
           <p class="muted">© <span id="year"></span> PyPath. All rights reserved.</p>
         </div>
         <nav aria-label="Footer">
           <ul class="footer-links">
+            <li><a href="/curriculum.html" class="route">Curriculum</a></li>
+            <li><a href="/certifications.html" class="route">Certifications</a></li>
+            <li><a href="/about.html" class="route">About</a></li>
             <li><a href="/settings.html" class="route">Settings</a></li>
-            <li><a href="/" class="route">Home</a></li>
           </ul>
         </nav>
       </div>
