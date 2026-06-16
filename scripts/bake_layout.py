@@ -311,7 +311,6 @@ def normalize_scripts(html: str, path: Path) -> str:
     html = re.sub(r'\s*<link rel="preconnect" href="https://fonts\.googleapis\.com"\s*/>\s*', '', html)
     html = re.sub(r'\s*<link rel="preconnect" href="https://fonts\.gstatic\.com" crossorigin\s*/>\s*', '', html)
     html = re.sub(r'\s*<link href="https://fonts\.googleapis\.com/css2\?[^"]+" rel="stylesheet"\s*/>\s*', '\n', html)
-    html = re.sub(r'<div id="page-transition"[^>]*></div>\s*', '', html)
     html = html.replace(' data-bg="aurora,noise"', '').replace(' data-bg="noise"', '')
 
     if 'core.js' not in html and 'motion.js' in html:
