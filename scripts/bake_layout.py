@@ -49,7 +49,7 @@ FOOTER = """    <footer class="site-footer">
           <div class="footer-col">
             <h4 class="footer-heading">Learn</h4>
             <ul class="footer-links">
-              <li><a href="/units/unit-1/what-is-python.html" class="route">Curriculum</a></li>
+              <li><a href="/curriculum.html" class="route">Curriculum</a></li>
               <li><a href="/sandbox.html" class="route">Sandbox</a></li>
               <li><a href="/certifications.html" class="route">Certifications</a></li>
             </ul>
@@ -231,7 +231,6 @@ def fix_unit_redirect(html: str, path: Path) -> str:
     if not m:
         return html
     num = int(m.group(1))
-    target = FIRST_LESSON[num]
     name = UNIT_NAMES[num - 1]
     html = re.sub(
         r'<meta name="description" content="[^"]*"',
@@ -239,19 +238,53 @@ def fix_unit_redirect(html: str, path: Path) -> str:
         html,
         count=1,
     )
-    redirect_block = f"""    <main>
+
+    # Build a real unit landing page (no placeholder redirect).
+    unit_dir = ROOT / 'units' / f'unit-{num}'
+    lesson_files = []
+    if unit_dir.exists():
+        lesson_files = sorted([p for p in unit_dir.glob('*.html') if p.is_file()], key=lambda p: p.name)
+
+    lesson_items = []
+    for i, p in enumerate(lesson_files, start=1):
+        # Extract a reasonable title from <title> if present.
+        content = p.read_text(encoding='utf-8', errors='ignore')
+        t = re.search(r'<title>\s*([^<]+?)\s*</title>', content)
+        raw = t.group(1).strip() if t else p.stem.replace('-', ' ').title()
+        # Titles look like: "Unit 1 • What Is Python • PyPath"
+        raw = re.sub(r'^Unit\s+\d+\s*•\s*', '', raw)
+        raw = re.sub(r'\s*•\s*PyPath\s*$', '', raw)
+        title = raw
+        href = '/' + p.relative_to(ROOT).as_posix()
+        lesson_items.append(f'<li><a class="route" href="{href}">{i}. {title}</a></li>')
+
+    lesson_list_html = '\n                '.join(lesson_items) if lesson_items else '<li><span class="muted">Lessons coming soon.</span></li>'
+    first = FIRST_LESSON[num]
+
+    unit_block = f"""    <main>
       <section class="section">
         <div class="container narrow">
-          <p class="muted">Redirecting to Unit {num}…</p>
-          <noscript>
-            <p><a class="btn btn-primary route" href="{target}">Start Unit {num}</a></p>
-          </noscript>
+          <p class="eyebrow">Unit {num}</p>
+          <h1 class="page-title">Unit {num}: {name}</h1>
+          <p class="muted">Work through the lessons below in order. Each lesson includes short explanations and runnable code.</p>
+          <div class="cta" style="margin-top: 18px;">
+            <a class="btn btn-primary route" href="{first}">Start Unit {num}</a>
+            <a class="btn btn-ghost route" href="/curriculum.html">Back to curriculum</a>
+          </div>
         </div>
       </section>
-      <meta http-equiv="refresh" content="0; url={target}" />
-      <link rel="canonical" href="{target}" />
+
+      <section class="section">
+        <div class="container narrow">
+          <h2>Lessons</h2>
+          <ol class="unit-lesson-list">
+                {lesson_list_html}
+          </ol>
+        </div>
+      </section>
     </main>"""
-    html = re.sub(r'<main>.*?</main>', redirect_block, html, count=1, flags=re.DOTALL)
+
+    html = re.sub(r'<main>.*?</main>', unit_block, html, count=1, flags=re.DOTALL)
     return html
 
 
@@ -280,11 +313,18 @@ def misc_fixes(html: str, path: Path) -> str:
             )
 
     if path.name == 'sandbox.html':
-        html = html.replace(
-            '<select id="project-select"',
-            '<label for="project-select" class="visually-hidden">Project</label>\n                  <select id="project-select"',
-            1,
+        # Ensure exactly one accessible label for the project select.
+        html = re.sub(
+            r'(?:\s*<label for="project-select" class="visually-hidden">Project</label>\s*)+',
+            '\n                  <label for="project-select" class="visually-hidden">Project</label>\n',
+            html,
         )
+        if 'for="project-select"' not in html:
+            html = html.replace(
+                '<select id="project-select"',
+                '<label for="project-select" class="visually-hidden">Project</label>\n                  <select id="project-select"',
+                1,
+            )
 
     if path.name == 'about.html':
         html = re.sub(r'(?<!/)assets/img/', '/assets/img/', html)
@@ -304,7 +344,8 @@ def normalize_scripts(html: str, path: Path) -> str:
     if path.name == 'index.html' and path.parent == ROOT:
         return html
 
-    for name in ('icons.js', 'layout.js', 'dropdowns.js', 'main.js', 'backgrounds.js', 'home.js'):
+    # Keep icons.js as the global icon system (used by sandbox + UI).
+    for name in ('layout.js', 'dropdowns.js', 'main.js', 'backgrounds.js', 'home.js'):
         html = re.sub(rf'\s*<script defer src="/assets/js/{re.escape(name)}"></script>\s*', '\n', html)
 
     html = re.sub(r'\s*<link rel="stylesheet" href="/assets/css/motion\.css"\s*/>\s*', '\n', html)
@@ -317,6 +358,14 @@ def normalize_scripts(html: str, path: Path) -> str:
         html = html.replace(
             '<script defer src="/assets/js/motion.js"></script>',
             '<script defer src="/assets/js/motion.js"></script>\n    <script defer src="/assets/js/core.js"></script>',
+            1,
+        )
+
+    # Ensure icons.js is available (sandbox + UI icons).
+    if 'icons.js' not in html and 'motion.js' in html:
+        html = html.replace(
+            '<script defer src="/assets/js/theme.js"></script>',
+            '<script defer src="/assets/js/theme.js"></script>\n    <script defer src="/assets/js/icons.js"></script>',
             1,
         )
 
