@@ -29,15 +29,18 @@
 }
 
 [data-theme="dark"] {
-  --bg: #0C0A09;
-  --bg-elevated: #1C1917;
-  --panel: #1C1917;
-  --text: #FAFAF9;
-  --text-strong: #FFFFFF;
-  --muted: #A8A29E;
-  --border: #292524;
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
-  --shadow-strong: 0 12px 40px rgba(0, 0, 0, 0.5);
+  /* Softer charcoal — not near-black */
+  --bg: #1e2229;
+  --bg-elevated: #282d38;
+  --panel: #313744;
+  --text: #e8eaef;
+  --text-strong: #f4f5f7;
+  --muted: #9aa3b2;
+  --border: #434a58;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  --shadow-strong: 0 12px 40px rgba(0, 0, 0, 0.28);
+  --warm: #d4956a;
+  --warm-soft: #c4845c;
 }
 
 body.page-home {
@@ -281,7 +284,23 @@ body.nav-open {
 }
 
 [data-theme="dark"] .nav-pill {
-  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 6%, transparent);
+  background: color-mix(in srgb, var(--bg-elevated) 85%, var(--panel));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 8%, transparent);
+}
+
+[data-theme="dark"] .page-home::before {
+  background:
+    radial-gradient(ellipse 80% 55% at 50% -10%, color-mix(in srgb, var(--primary) 14%, transparent), transparent),
+    radial-gradient(ellipse 50% 40% at 100% 80%, color-mix(in srgb, var(--warm) 10%, transparent), transparent),
+    radial-gradient(ellipse 45% 35% at 0% 70%, color-mix(in srgb, var(--accent) 8%, transparent), transparent);
+}
+
+[data-theme="dark"] .page-home .hero-symbol {
+  color: color-mix(in srgb, var(--text) 12%, transparent);
+}
+
+[data-theme="dark"] .site-header {
+  background: color-mix(in srgb, var(--panel) 92%, var(--bg));
 }
 
 .nav-pill .menu {
