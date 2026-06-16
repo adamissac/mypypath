@@ -44,7 +44,7 @@
     document.body.setAttribute('data-theme', theme);
     const event = new CustomEvent('themechange', { detail: { theme, source } });
     window.dispatchEvent(event);
-    setTimeout(() => document.documentElement.classList.remove('theme-transitioning'), 320);
+    setTimeout(() => document.documentElement.classList.remove('theme-transitioning'), 180);
   }
 
   function initThemeFromStorage() {

@@ -94,26 +94,10 @@
     });
   }
 
-  function initFeatureTilt() {
-    if (reduced() || !window.matchMedia('(pointer: fine)').matches) return;
-    document.querySelectorAll('.feature-tilt').forEach(function (card) {
-      card.addEventListener('mousemove', function (e) {
-        var rect = card.getBoundingClientRect();
-        var x = (e.clientX - rect.left) / rect.width - 0.5;
-        var y = (e.clientY - rect.top) / rect.height - 0.5;
-        card.style.transform = 'perspective(800px) rotateY(' + (x * 6) + 'deg) rotateX(' + (-y * 6) + 'deg) translateY(-4px)';
-      });
-      card.addEventListener('mouseleave', function () {
-        card.style.transform = '';
-      });
-    });
-  }
-
   document.addEventListener('DOMContentLoaded', function () {
     if (!document.body.classList.contains('page-home')) return;
     initHeroTypewriter();
     initHeroCodeReveal();
     initCopyButtons();
-    initFeatureTilt();
   });
 })();

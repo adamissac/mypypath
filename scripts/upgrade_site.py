@@ -10,9 +10,8 @@ STANDARD_HEAD = """    <link rel="stylesheet" href="/assets/css/motion.css" />
     <script defer src="/assets/js/icons.js"></script>
     <script defer src="/assets/js/motion.js"></script>
     <script defer src="/assets/js/layout.js"></script>
-    <script defer src="/assets/js/main.js"></script>
-    <script defer src="/assets/js/animations.js"></script>
-    <script defer src="/assets/js/backgrounds.js"></script>"""
+    <script defer src="/assets/js/dropdowns.js"></script>
+    <script defer src="/assets/js/main.js"></script>"""
 
 MOBILE_BANNER_RE = re.compile(
     r'\s*<div class="mobile-warning-banner"[^>]*>.*?</div>\s*',
