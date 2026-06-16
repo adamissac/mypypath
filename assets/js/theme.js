@@ -1,6 +1,6 @@
 (function() {
-  // mark JS-enabled for any CSS that depends on it
-  document.documentElement.classList.add('js');
+  // mark JS-enabled for progressive enhancement
+  document.documentElement.classList.add('js-enabled');
   const STORAGE_KEY = "pypath-theme"; // values: 'light' | 'dark' | 'system'
   const MOTION_KEY = "pypath-motion"; // values: 'on' | 'off'
   const ACCENT_KEY = "pypath-accent"; // hex color
@@ -38,11 +38,13 @@
   }
 
   function applyTheme(source) {
+    document.documentElement.classList.add('theme-transitioning');
     const theme = source === 'system' ? getSystemTheme() : source;
     document.documentElement.setAttribute('data-theme', theme);
     document.body.setAttribute('data-theme', theme);
     const event = new CustomEvent('themechange', { detail: { theme, source } });
     window.dispatchEvent(event);
+    setTimeout(() => document.documentElement.classList.remove('theme-transitioning'), 320);
   }
 
   function initThemeFromStorage() {
@@ -223,12 +225,10 @@
   function saveAccent(hex) { try { localStorage.setItem(ACCENT_KEY, hex); } catch {} }
   function loadAccent() { try { return localStorage.getItem(ACCENT_KEY); } catch { return null; } }
   function applyAccent(hex) {
-    const gradient = `linear-gradient(135deg, ${hex} 0%, ${hex}80 100%)`;
-    // set on both html and body so it wins over [data-theme="dark"] on either
     document.documentElement.style.setProperty('--primary', hex);
-    document.documentElement.style.setProperty('--gradient', gradient);
+    document.documentElement.style.setProperty('--gradient', hex);
     document.body && document.body.style && document.body.style.setProperty('--primary', hex);
-    document.body && document.body.style && document.body.style.setProperty('--gradient', gradient);
+    document.body && document.body.style && document.body.style.setProperty('--gradient', hex);
   }
 
   function saveFontScale(v) { try { localStorage.setItem(FONTSCALE_KEY, String(v)); } catch {} }
