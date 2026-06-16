@@ -6,6 +6,13 @@
     'from io import StringIO',
     'import sys',
     '',
+    'def _pypath_input(prompt=""):',
+    '    import js',
+    '    return js.prompt(prompt or "") or ""',
+    '',
+    'import builtins',
+    'builtins.input = _pypath_input',
+    '',
     'class OutputCapture:',
     '    def __init__(self):',
     '        self.buffer = StringIO()',
@@ -77,4 +84,10 @@
     ensureReady: ensureReady,
     scheduleWarmup: scheduleWarmup
   };
+
+  document.addEventListener('DOMContentLoaded', function () {
+    if (document.querySelector('.code-editor-small, [data-run-code], .run-code-btn, #code-editor')) {
+      scheduleWarmup();
+    }
+  });
 })();
