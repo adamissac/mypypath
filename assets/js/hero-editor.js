@@ -7,6 +7,13 @@
     '    print("▸" * i)'
   ].join('\n');
 
+  var KEYWORDS = [
+    'False', 'None', 'True', 'and', 'as', 'assert', 'async', 'await', 'break',
+    'class', 'continue', 'def', 'del', 'elif', 'else', 'except', 'finally',
+    'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda', 'nonlocal',
+    'not', 'or', 'pass', 'raise', 'return', 'try', 'while', 'with', 'yield'
+  ];
+
   function prefersReducedMotion() {
     return document.documentElement.classList.contains('reduced-motion') ||
       (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -17,6 +24,71 @@
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
+  }
+
+  function highlightPython(code) {
+    var out = '';
+    var i = 0;
+
+    function append(str) { out += str; }
+
+    while (i < code.length) {
+      var ch = code[i];
+      var rest = code.slice(i);
+
+      if (ch === '#') {
+        var end = code.indexOf('\n', i);
+        if (end === -1) end = code.length;
+        append('<span class="tok-comment">' + escapeHtml(code.slice(i, end)) + '</span>');
+        i = end;
+        continue;
+      }
+
+      if (ch === '"' || ch === "'") {
+        var q = ch;
+        var j = i + 1;
+        while (j < code.length) {
+          if (code[j] === '\\') { j += 2; continue; }
+          if (code[j] === q) { j++; break; }
+          j++;
+        }
+        append('<span class="tok-str">' + escapeHtml(code.slice(i, j)) + '</span>');
+        i = j;
+        continue;
+      }
+
+      if (/[0-9]/.test(ch)) {
+        var num = i;
+        while (num < code.length && /[0-9.]/.test(code[num])) num++;
+        append('<span class="tok-num">' + escapeHtml(code.slice(i, num)) + '</span>');
+        i = num;
+        continue;
+      }
+
+      if (/[A-Za-z_]/.test(ch)) {
+        var word = i;
+        while (word < code.length && /[A-Za-z0-9_]/.test(code[word])) word++;
+        var token = code.slice(i, word);
+        var nextNonSpace = code.slice(word).match(/^\s*(\S)/);
+        var isCall = nextNonSpace && nextNonSpace[1] === '(';
+        if (KEYWORDS.indexOf(token) !== -1) {
+          append('<span class="tok-kw">' + escapeHtml(token) + '</span>');
+        } else if (isCall) {
+          append('<span class="tok-fn">' + escapeHtml(token) + '</span>');
+        } else if (token === 'print') {
+          append('<span class="tok-builtin">' + escapeHtml(token) + '</span>');
+        } else {
+          append(escapeHtml(token));
+        }
+        i = word;
+        continue;
+      }
+
+      append(escapeHtml(ch));
+      i++;
+    }
+
+    return out;
   }
 
   function setOutput(el, html, animate) {
@@ -30,10 +102,9 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     var codeEl = document.getElementById('hero-editor-code');
+    var highlightEl = document.getElementById('hero-editor-highlight');
     var outputEl = document.getElementById('hero-editor-output');
     var runBtn = document.getElementById('hero-run-btn');
-    var caret = document.querySelector('.hero-live-caret');
-    var wrap = document.querySelector('.hero-live-code-wrap');
 
     if (!codeEl || !outputEl || !runBtn) return;
 
@@ -46,27 +117,25 @@
     }
 
     if (window.PyIcons) {
-      var icon = window.PyIcons.el('play', 16);
+      var icon = window.PyIcons.el('play', 15);
       runBtn.insertBefore(icon, runBtn.firstChild);
     }
 
-    function setCaretVisible(show) {
-      if (caret) caret.classList.toggle('is-hidden', !show);
+    function syncHighlight() {
+      if (!highlightEl) return;
+      var code = codeEl.value;
+      highlightEl.innerHTML = highlightPython(code) + '\n';
+      syncHeight();
     }
 
-    codeEl.addEventListener('focus', function () { setCaretVisible(false); });
-    codeEl.addEventListener('blur', function () {
-      setCaretVisible(!codeEl.value.trim() && document.activeElement !== codeEl);
-    });
-
-    if (wrap && caret && !prefersReducedMotion()) {
-      setCaretVisible(!codeEl.value.trim() && document.activeElement !== codeEl);
-      codeEl.addEventListener('input', function () {
-        setCaretVisible(!codeEl.value.trim() && document.activeElement !== codeEl);
-      });
-    } else if (caret) {
-      caret.classList.add('is-hidden');
+    function syncHeight() {
+      codeEl.style.height = 'auto';
+      var height = Math.max(codeEl.scrollHeight, 148);
+      codeEl.style.height = height + 'px';
     }
+
+    syncHighlight();
+    codeEl.addEventListener('input', syncHighlight);
 
     async function runCode() {
       var code = codeEl.value;
@@ -107,6 +176,15 @@
     runBtn.addEventListener('click', runCode);
 
     codeEl.addEventListener('keydown', function (e) {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        var start = codeEl.selectionStart;
+        var end = codeEl.selectionEnd;
+        codeEl.value = codeEl.value.slice(0, start) + '    ' + codeEl.value.slice(end);
+        codeEl.selectionStart = codeEl.selectionEnd = start + 4;
+        syncHighlight();
+        return;
+      }
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         e.preventDefault();
         runCode();

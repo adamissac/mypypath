@@ -91,24 +91,32 @@
           <div class="hero-live" data-reveal="up" data-reveal-delay="100">
             <div class="hero-live-editor">
               <div class="hero-live-toolbar">
-                <span class="hero-live-label">Python 3</span>
-                <button type="button" class="btn btn-primary btn-small" id="hero-run-btn" aria-label="Run Python code">
+                <div class="hero-live-file">
+                  <span class="hero-live-dot" aria-hidden="true"></span>
+                  <span class="hero-live-dot" aria-hidden="true"></span>
+                  <span class="hero-live-dot" aria-hidden="true"></span>
+                  <span class="hero-live-filename">lesson.py</span>
+                </div>
+                <button type="button" class="hero-live-run" id="hero-run-btn" aria-label="Run Python code (Ctrl or Command plus Enter)">
                   Run
                 </button>
               </div>
               <div class="hero-live-code-wrap">
+                <pre class="hero-live-highlight" aria-hidden="true"><code id="hero-editor-highlight"></code></pre>
                 <textarea
                   id="hero-editor-code"
                   class="hero-live-code"
                   spellcheck="false"
-                  rows="7"
+                  rows="6"
                   aria-label="Python code editor"
                 >for i in range(1, 6):
     print("▸" * i)</textarea>
-                <span class="hero-live-caret" aria-hidden="true"></span>
               </div>
-              <div class="hero-live-output" id="hero-editor-output" aria-live="polite">
-                <span class="hero-live-output-hint">Press Run to see output</span>
+              <div class="hero-live-output-wrap">
+                <span class="hero-live-output-label">Output</span>
+                <div class="hero-live-output" id="hero-editor-output" aria-live="polite">
+                  <span class="hero-live-output-hint">Press <kbd>Run</kbd> or <kbd>⌘</kbd><kbd>↵</kbd> to see output</span>
+                </div>
               </div>
             </div>
           </div>
