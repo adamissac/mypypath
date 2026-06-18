@@ -1,162 +1,117 @@
-# PyPath page inventory
+# PyPath — Site Inventory (v2)
 
-## Top-level
+**Generated:** 2026-06-18  
+**Stack:** Static multi-page HTML / CSS / vanilla JavaScript (no framework build at deploy time)  
+**Repo:** `/workspace`  
+**Live:** https://www.mypypath.com
 
-- `/` — `index.html`
-- `/curriculum.html` — `curriculum.html`
-- `/sandbox.html` — `sandbox.html`
-- `/certifications.html` — `certifications.html`
-- `/about.html` — `about.html`
-- `/settings.html` — `settings.html`
-- `/404.html` — `404.html` (styled not-found page)
-- `/learn.html` — `learn.html`
+---
+
+## Stack & shared UI
+
+| Layer | Mechanism |
+|-------|-----------|
+| **Pages** | 117 static `.html` files served from repo root (Vercel, `buildCommand: null`) |
+| **Design system** | `assets/css/pypath-fast.css` (tokens, motion, hero, nav, interior polish) + `assets/css/style.css` (lesson layouts, legacy) |
+| **Nav / footer** | Baked into every page via `scripts/bake_layout.py` (`HEADER` / `FOOTER` constants) |
+| **Runtime** | `assets/js/core.js` (nav, year, sidebar, settings export/reset), `assets/js/theme.js` (preferences) |
+| **Code runner** | `assets/js/pyodide-loader.js` (`Pyodide.runCode`) → used by `hero-editor.js`, `lesson-runner.js`, `sandbox.js` |
+| **Icons** | `assets/js/icons.js` (`PyIcons`) + inline SVG in HTML |
+
+### Design migration state
+
+| Area | CSS / components |
+|------|------------------|
+| **Homepage (new)** | `body.page-home`, `.hero--live`, hero editor in `hero-editor.js` |
+| **Interior pages** | Same stylesheets; body classes: `page-unit`, `page-curriculum`, `page-sandbox`, `page-about`, `page-certs`, `page-settings`, `page-404` |
+| **Lessons** | `layout-course`, baked rich nav, `lesson-runner.js`, CodeMirror theme `pypath` |
+
+---
+
+## Page counts
+
+| Category | Count |
+|----------|------:|
+| Top-level | 8 |
+| Unit landings | 10 |
+| Lessons | 99 |
+| **Total HTML** | **117** |
+
+---
+
+## Top-level routes
+
+| Route | File |
+|-------|------|
+| `/` | `index.html` |
+| `/curriculum.html` | `curriculum.html` |
+| `/sandbox.html` | `sandbox.html` |
+| `/certifications.html` | `certifications.html` |
+| `/about.html` | `about.html` |
+| `/settings.html` | `settings.html` |
+| `/404.html` | `404.html` |
+| `/learn.html` | `learn.html` (redirect → curriculum) |
+
+---
 
 ## Unit landings
 
-- `/units/unit-1.html` — `units/unit-1.html`
-- `/units/unit-2.html` — `units/unit-2.html`
-- `/units/unit-3.html` — `units/unit-3.html`
-- `/units/unit-4.html` — `units/unit-4.html`
-- `/units/unit-5.html` — `units/unit-5.html`
-- `/units/unit-6.html` — `units/unit-6.html`
-- `/units/unit-7.html` — `units/unit-7.html`
-- `/units/unit-8.html` — `units/unit-8.html`
-- `/units/unit-9.html` — `units/unit-9.html`
-- `/units/unit-10.html` — `units/unit-10.html`
+| Unit | File | Title |
+|------|------|-------|
+| 1 | `units/unit-1.html` | Foundations |
+| 2 | `units/unit-2.html` | Control Flow |
+| 3 | `units/unit-3.html` | Functions |
+| 4 | `units/unit-4.html` | Data Structures |
+| 5 | `units/unit-5.html` | Modules & Packages |
+| 6 | `units/unit-6.html` | OOP |
+| 7 | `units/unit-7.html` | Files & Errors |
+| 8 | `units/unit-8.html` | Testing |
+| 9 | `units/unit-9.html` | APIs |
+| 10 | `units/unit-10.html` | Certification Prep |
 
-## Lessons
+Unit landings list lessons in **pedagogical order** (from first-lesson sidebar), not alphabetical.
 
-### unit-1
+---
 
-- `/units/unit-1/arithmetic-expressions.html`
-- `/units/unit-1/comments-docs.html`
-- `/units/unit-1/first-program.html`
-- `/units/unit-1/installing-python-ide.html`
-- `/units/unit-1/syntax-indentation.html`
-- `/units/unit-1/type-io.html`
-- `/units/unit-1/variables-types.html`
-- `/units/unit-1/what-is-python.html`
+## Lessons by unit
 
-### unit-2
+| Unit | Lessons |
+|------|--------:|
+| 1 Foundations | 8 |
+| 2 Control Flow | 11 |
+| 3 Functions | 10 |
+| 4 Data Structures | 10 |
+| 5 Modules & Packages | 10 |
+| 6 OOP | 10 |
+| 7 Files & Errors | 10 |
+| 8 Testing | 10 |
+| 9 APIs | 10 |
+| 10 Certification Prep | 10 |
+| **Total** | **99** |
 
-- `/units/unit-2/boolean-logic-practice.html`
-- `/units/unit-2/comparison-logical-operators.html`
-- `/units/unit-2/for-loop.html`
-- `/units/unit-2/if-else-elif.html`
-- `/units/unit-2/if-statement.html`
-- `/units/unit-2/introduction-loops.html`
-- `/units/unit-2/loop-control-statements.html`
-- `/units/unit-2/nested-conditionals.html`
-- `/units/unit-2/practical-control-flow-examples.html`
-- `/units/unit-2/understanding-control-flow.html`
-- `/units/unit-2/while-loop.html`
+Lesson paths: `units/unit-N/<slug>.html` (see repo glob for full list).
 
-### unit-3
+---
 
-- `/units/unit-3/default-optional-parameters.html`
-- `/units/unit-3/defining-calling-functions.html`
-- `/units/unit-3/docstrings-documentation.html`
-- `/units/unit-3/lambda-functions.html`
-- `/units/unit-3/nested-helper-functions.html`
-- `/units/unit-3/parameters-arguments.html`
-- `/units/unit-3/practical-function-examples.html`
-- `/units/unit-3/return-statements.html`
-- `/units/unit-3/variable-scope-lifetime.html`
-- `/units/unit-3/what-are-functions.html`
+## Canonical link map
 
-### unit-4
+| Destination | Canonical URL |
+|-------------|---------------|
+| Curriculum overview | `/curriculum.html` |
+| Unit 1 start | `/units/unit-1/what-is-python.html` |
+| Unit N start | First lesson per unit (see `FIRST_LESSON` in `scripts/bake_layout.py`) |
+| Unit landing (optional hub) | `/units/unit-N.html` |
+| Sandbox | `/sandbox.html` |
+| Certifications | `/certifications.html` |
+| About / team | `/about.html` |
+| Settings | `/settings.html` |
+| Home curriculum anchor | `/#curriculum` on `index.html` |
 
-- `/units/unit-4/choosing-right-structure.html`
-- `/units/unit-4/copying-comparing-structures.html`
-- `/units/unit-4/dictionaries-key-value.html`
-- `/units/unit-4/dictionary-methods-iteration.html`
-- `/units/unit-4/indexing-slicing-lists.html`
-- `/units/unit-4/introduction-data-structures.html`
-- `/units/unit-4/lists-operations.html`
-- `/units/unit-4/nested-lists-2d.html`
-- `/units/unit-4/sets-unique-collections.html`
-- `/units/unit-4/tuples-immutable.html`
+---
 
-### unit-5
+## Dev scripts
 
-- `/units/unit-5/creating-your-own-modules.html`
-- `/units/unit-5/importing-builtin-modules.html`
-- `/units/unit-5/installing-external-packages.html`
-- `/units/unit-5/module-aliases-selective-imports.html`
-- `/units/unit-5/name-main-pattern.html`
-- `/units/unit-5/project-organization-best-practices.html`
-- `/units/unit-5/python-standard-library.html`
-- `/units/unit-5/virtual-environments.html`
-- `/units/unit-5/what-are-modules.html`
-- `/units/unit-5/working-with-packages.html`
-
-### unit-6
-
-- `/units/unit-6/class-variables-class-methods.html`
-- `/units/unit-6/creating-using-objects.html`
-- `/units/unit-6/defining-creating-classes.html`
-- `/units/unit-6/encapsulation-access-control.html`
-- `/units/unit-6/inheritance-subclasses.html`
-- `/units/unit-6/instance-variables-methods.html`
-- `/units/unit-6/introduction-oop-concepts.html`
-- `/units/unit-6/oop-real-projects.html`
-- `/units/unit-6/polymorphism-method-overriding.html`
-- `/units/unit-6/super-function.html`
-
-### unit-7
-
-- `/units/unit-7/file-error-handling-real-projects.html`
-- `/units/unit-7/introduction-file-handling.html`
-- `/units/unit-7/opening-closing-files.html`
-- `/units/unit-7/raising-customizing-exceptions.html`
-- `/units/unit-7/reading-data-from-files.html`
-- `/units/unit-7/try-except-blocks.html`
-- `/units/unit-7/understanding-errors-exceptions.html`
-- `/units/unit-7/with-statement-file-operations.html`
-- `/units/unit-7/working-with-file-paths.html`
-- `/units/unit-7/writing-data-to-files.html`
-
-### unit-8
-
-- `/units/unit-8/breakpoints-debuggers.html`
-- `/units/unit-8/common-types-errors.html`
-- `/units/unit-8/debugging-logical-runtime-errors.html`
-- `/units/unit-8/introduction-unittest.html`
-- `/units/unit-8/maintaining-code-quality.html`
-- `/units/unit-8/print-statements-debugging.html`
-- `/units/unit-8/test-driven-development.html`
-- `/units/unit-8/understanding-tracebacks.html`
-- `/units/unit-8/what-is-debugging.html`
-- `/units/unit-8/writing-running-tests.html`
-
-### unit-9
-
-- `/units/unit-9/apis-data-retrieval.html`
-- `/units/unit-9/applying-advanced-concepts.html`
-- `/units/unit-9/basic-automation-python.html`
-- `/units/unit-9/data-visualization-matplotlib.html`
-- `/units/unit-9/efficiency-big-o-basics.html`
-- `/units/unit-9/introduction-file-formats.html`
-- `/units/unit-9/introduction-json-data-parsing.html`
-- `/units/unit-9/recursion-problem-decomposition.html`
-- `/units/unit-9/working-with-dates-times.html`
-- `/units/unit-9/working-with-external-libraries.html`
-
-### unit-10
-
-- `/units/unit-10/adding-user-interaction.html`
-- `/units/unit-10/error-handling-testing-code.html`
-- `/units/unit-10/implementing-core-features.html`
-- `/units/unit-10/polishing-visuals-output-formatting.html`
-- `/units/unit-10/presenting-your-project.html`
-- `/units/unit-10/project-planning-brainstorming.html`
-- `/units/unit-10/reflection-next-steps.html`
-- `/units/unit-10/structuring-python-project.html`
-- `/units/unit-10/writing-documentation-comments.html`
-- `/units/unit-10/writing-project-proposal.html`
-
-## Counts
-
-- **Unit landing pages**: 10
-- **Lesson pages**: 99
-- **Total HTML pages**: 116
+| Script | Purpose |
+|--------|---------|
+| `scripts/bake_layout.py` | Rebake nav/footer, unit landings, lesson fixes |
+| `scripts/cleanup_lessons.py` | Remove duplicate inline Pyodide runners from lessons |
