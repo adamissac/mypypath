@@ -12,8 +12,7 @@
     <link rel="stylesheet" href="/assets/css/pypath-fast.css" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
-        <script defer src="/assets/js/pyodide-loader.js"></script>
+<script defer src="/assets/js/pyodide-loader.js"></script>
     <script defer src="/assets/js/theme.js"></script>
     <script defer src="/assets/js/icons.js"></script>
 <script defer src="/assets/js/motion.js"></script>
@@ -29,7 +28,7 @@
   <body class="page page-unit">
     <div id="page-transition" aria-hidden="true"></div>
 
-                            <header class="site-header">
+                                    <header class="site-header">
       <div class="header-accent" aria-hidden="true"></div>
       <div class="container header-inner">
         <a class="brand route" href="/">
@@ -193,13 +192,13 @@
                 
                   <div class="interactive-editor" data-editor-id="practice1">
                   <div class="editor-toolbar-small">
-                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
                     <button class="btn-reset" onclick="resetEditor('practice1', 'print(\"My name is Adam and I\\'m learning Python!\")')">Reset</button>
                     <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
                   </div>
                   <textarea class="code-editor-small" id="editor-practice1">print("My name is Adam and I'm learning Python!")</textarea>
                   <div class="editor-output" id="output-practice1">
-                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                    <div class="output-placeholder">Press Run to see output</div>
                   </div>
                 </div>
               </div>
@@ -306,14 +305,14 @@
                   
                   <div class="interactive-editor" data-editor-id="exercise1">
                     <div class="editor-toolbar-small">
-                      <button class="btn-run" onclick="runEditorCode('exercise1')">Run Code</button>
+                      <button class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
                       <button class="btn-reset" onclick="resetEditor('exercise1', 'print(\"Line 1\")\nprint(\"Line 2\")')">Reset</button>
                       <button class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
                     </div>
                     <textarea class="code-editor-small" id="editor-exercise1">print("Line 1")
 print("Line 2")</textarea>
                     <div class="editor-output" id="output-exercise1">
-                      <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                      <div class="output-placeholder">Press Run to see output</div>
                     </div>
                   </div>
                 </div>
@@ -335,7 +334,7 @@ print("Line 2")</textarea>
         </div>
       </section>
     </main>
-                                        <footer class="site-footer">
+                                                <footer class="site-footer">
       <div class="container">
         <div class="footer-grid">
           <div class="footer-brand">
@@ -364,240 +363,7 @@ print("Line 2")</textarea>
         </div>
       </div>
     </footer>
-    <script>
-      let pyodideInstance = null;
-      let pyodideReady = false;
-
-      async function initPyodide() {
-        if (pyodideReady) return;
-        try {
-          pyodideInstance = await loadPyodide({
-            indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/'
-          });
-          
-          pyodideInstance.runPython(`
-            import sys
-            from io import StringIO
-            
-            class OutputCapture:
-                def __init__(self):
-                    self.buffer = StringIO()
-                
-                def write(self, s):
-                    if s:
-                        self.buffer.write(str(s))
-                
-                def flush(self):
-                    pass
-                
-                def getvalue(self):
-                    return self.buffer.getvalue()
-                
-                def reset(self):
-                    from io import StringIO
-                    self.buffer = StringIO()
-            
-            stdout_capture = OutputCapture()
-            stderr_capture = OutputCapture()
-            sys.stdout = stdout_capture
-            sys.stderr = stderr_capture
-          `);
-          
-          pyodideReady = true;
-        } catch (error) {
-          console.error('Failed to load Pyodide:', error);
-        }
-      }
-
-      async function runEditorCode(editorId) {
-        if (!pyodideReady) {
-          await initPyodide();
-          if (!pyodideReady) {
-            document.getElementById(`output-${editorId}`).innerHTML = '<div class="output-error">Loading Python interpreter...</div>';
-            return;
-          }
-        }
-
-        const editor = window.editors && window.editors[editorId];
-        const code = editor ? editor.getValue() : (document.getElementById(`editor-${editorId}`)?.value || '');
-        const outputEl = document.getElementById(`output-${editorId}`);
-
-        if (!code.trim()) {
-          outputEl.innerHTML = '<div class="output-placeholder">No code to run. Write some Python code first!</div>';
-          return;
-        }
-
-        outputEl.innerHTML = '<div class="output-loading">Running code...</div>';
-
-        try {
-          pyodideInstance.runPython(`
-            stdout_capture.reset()
-            stderr_capture.reset()
-          `);
-
-          pyodideInstance.runPython(code);
-
-          const stdout = pyodideInstance.runPython('stdout_capture.getvalue()');
-          const stderr = pyodideInstance.runPython('stderr_capture.getvalue()');
-
-          let outputHTML = '';
-
-          if (stdout) {
-            outputHTML += `<div class="output-line"><span class="output-label">Output:</span><pre class="output-text">${escapeHtml(stdout)}</pre></div>`;
-          }
-
-          if (stderr) {
-            outputHTML += `<div class="output-line error"><span class="output-label">Error:</span><pre class="output-text">${escapeHtml(stderr)}</pre></div>`;
-          }
-
-          if (!stdout && !stderr) {
-            outputHTML = '<div class="output-placeholder">Code executed successfully (no output).</div>';
-          }
-
-          outputEl.innerHTML = outputHTML;
-
-        } catch (error) {
-          const errorMessage = error.toString();
-          outputEl.innerHTML = `<div class="output-line error"><span class="output-label">Error:</span><pre class="output-text">${escapeHtml(errorMessage)}</pre></div>`;
-        }
-      }
-
-      function resetEditor(editorId, defaultCode) {
-        if (window.editors && window.editors[editorId]) {
-          window.editors[editorId].setValue(defaultCode);
-          clearStorage('code', editorId);
-        } else {
-          const textarea = document.getElementById(`editor-${editorId}`);
-          if (textarea) {
-            textarea.value = defaultCode;
-            clearStorage('code', editorId);
-          }
-        }
-        document.getElementById(`output-${editorId}`).innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
-      }
-
-      function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-      }
-
-      // Save/Load functions for localStorage
-      function getStorageKey(type, id) {
-        const pagePath = window.location.pathname;
-        return `pypath-lesson-${pagePath}-${type}-${id}`;
-      }
-
-      function saveToStorage(type, id, value) {
-        try {
-          const key = getStorageKey(type, id);
-          localStorage.setItem(key, value);
-        } catch (e) {
-          console.warn('Failed to save to localStorage:', e);
-        }
-      }
-
-      function loadFromStorage(type, id) {
-        try {
-          const key = getStorageKey(type, id);
-          return localStorage.getItem(key);
-        } catch (e) {
-          console.warn('Failed to load from localStorage:', e);
-          return null;
-        }
-      }
-
-      function clearStorage(type, id) {
-        try {
-          const key = getStorageKey(type, id);
-          localStorage.removeItem(key);
-        } catch (e) {
-          console.warn('Failed to clear localStorage:', e);
-        }
-      }
-
-      function clearSaved(editorId) {
-        if (confirm('Clear your saved code for this editor? You can still reset to default.')) {
-          clearStorage('code', editorId);
-          if (window.editors && window.editors[editorId]) {
-            const defaultCode = editorId === 'practice1' 
-              ? 'print("My name is Adam and I\'m learning Python!")'
-              : 'print("Line 1")\nprint("Line 2")';
-            window.editors[editorId].setValue(defaultCode);
-          }
-        }
-      }
-
-      // Initialize CodeMirror editors
-      window.editors = {};
-      document.addEventListener('DOMContentLoaded', () => {
-        if (window.Pyodide) {
-          window.Pyodide.scheduleWarmup().then(function (p) {
-            pyodide = p;
-            pyodideReady = true;
-          });
-        }
-        
-        // Load saved reflection inputs
-        document.querySelectorAll('.reflection-input').forEach(textarea => {
-          const saved = loadFromStorage('reflection', textarea.id);
-          if (saved) {
-            textarea.value = saved;
-          }
-          
-          // Save on input
-          textarea.addEventListener('input', () => {
-            saveToStorage('reflection', textarea.id, textarea.value);
-          });
-          
-          // Add clear button
-          const clearBtn = document.createElement('button');
-          clearBtn.className = 'btn-clear-small';
-          clearBtn.textContent = 'Clear Saved';
-          clearBtn.type = 'button';
-          clearBtn.onclick = () => {
-            if (confirm('Clear your saved response?')) {
-              textarea.value = '';
-              clearStorage('reflection', textarea.id);
-            }
-          };
-          textarea.parentNode.insertBefore(clearBtn, textarea.nextSibling);
-        });
-        
-        // Wait a bit for DOM to be ready
-        setTimeout(() => {
-          const editorElements = document.querySelectorAll('.code-editor-small');
-          editorElements.forEach(textarea => {
-            const editorId = textarea.id.replace('editor-', '');
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            
-            // Load saved code
-            const savedCode = loadFromStorage('code', editorId);
-            const initialCode = savedCode || textarea.value;
-            
-            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
-              mode: 'python',
-              theme: isDark ? 'monokai' : 'default',
-              lineNumbers: true,
-              indentUnit: 4,
-              indentWithTabs: false,
-              lineWrapping: true,
-              matchBrackets: true,
-              autoCloseBrackets: true,
-              value: initialCode
-            });
-
-            window.editors[editorId].setSize(null, 150);
-            
-            // Save code on change
-            window.editors[editorId].on('change', () => {
-              const code = window.editors[editorId].getValue();
-              saveToStorage('code', editorId, code);
-            });
-          });
-        }, 100);
-      });
-    </script>
+    
   </body>
   </html>
 

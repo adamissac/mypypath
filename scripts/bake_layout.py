@@ -224,6 +224,27 @@ def replace_footer(html: str) -> str:
     )
 
 
+def lesson_order_for_unit(num: int) -> list[Path]:
+    """Pedagogical lesson order from the first lesson sidebar."""
+    first_href = FIRST_LESSON.get(num)
+    if not first_href:
+        return []
+    first_path = ROOT / first_href.lstrip('/')
+    if not first_path.exists():
+        return []
+    html = first_path.read_text(encoding='utf-8', errors='ignore')
+    sidebar = re.search(r'id="lesson-sidebar"[\s\S]*?</aside>', html)
+    if not sidebar:
+        return []
+    hrefs = re.findall(r'href="(/units/unit-\d+/[^"]+\.html)"', sidebar.group(0))
+    ordered = []
+    for href in hrefs:
+        p = ROOT / href.lstrip('/')
+        if p.exists():
+            ordered.append(p)
+    return ordered
+
+
 def fix_unit_redirect(html: str, path: Path) -> str:
     if page_kind(path) != 'unit_redirect':
         return html
@@ -241,8 +262,8 @@ def fix_unit_redirect(html: str, path: Path) -> str:
 
     # Build a real unit landing page (no placeholder redirect).
     unit_dir = ROOT / 'units' / f'unit-{num}'
-    lesson_files = []
-    if unit_dir.exists():
+    lesson_files = lesson_order_for_unit(num)
+    if not lesson_files and unit_dir.exists():
         lesson_files = sorted([p for p in unit_dir.glob('*.html') if p.is_file()], key=lambda p: p.name)
 
     lesson_items = []
@@ -346,6 +367,7 @@ def misc_fixes(html: str, path: Path) -> str:
     )
 
     if page_kind(path) == 'lesson':
+        html = html.replace('Unit 10 • Final Projects', 'Unit 10 • Certification Prep')
         html = html.replace(
             '<button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>',
             '<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>',
@@ -377,6 +399,12 @@ def normalize_scripts(html: str, path: Path) -> str:
     html = re.sub(r'\s*<link rel="preconnect" href="https://fonts\.gstatic\.com" crossorigin\s*/>\s*', '', html)
     html = re.sub(r'\s*<link href="https://fonts\.googleapis\.com/css2\?[^"]+" rel="stylesheet"\s*/>\s*', '\n', html)
     html = html.replace(' data-bg="aurora,noise"', '').replace(' data-bg="noise"', '')
+
+    html = re.sub(
+        r'\s*<link rel="stylesheet" href="https://cdnjs\.cloudflare\.com/ajax/libs/codemirror/5\.65\.2/theme/monokai\.min\.css"\s*/>\s*',
+        '\n',
+        html,
+    )
 
     if 'core.js' not in html and 'motion.js' in html:
         html = html.replace(

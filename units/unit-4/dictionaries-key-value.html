@@ -12,8 +12,7 @@
     <link rel="stylesheet" href="/assets/css/pypath-fast.css" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
-        <script defer src="/assets/js/pyodide-loader.js"></script>
+<script defer src="/assets/js/pyodide-loader.js"></script>
     <script defer src="/assets/js/theme.js"></script>
     <script defer src="/assets/js/icons.js"></script>
 <script defer src="/assets/js/motion.js"></script>
@@ -29,7 +28,7 @@
   <body class="page page-unit">
     <div id="page-transition" aria-hidden="true"></div>
 
-                            <header class="site-header">
+                                    <header class="site-header">
       <div class="header-accent" aria-hidden="true"></div>
       <div class="container header-inner">
         <a class="brand route" href="/">
@@ -200,7 +199,7 @@ print(student)  # Output: {'name': 'Alice', 'age': 20, 'grade': 'A'}</code></pre
                 
                 <div class="interactive-editor" data-editor-id="practice1">
                   <div class="editor-toolbar-small">
-                    <button class="btn-run" onclick="runEditorCode('practice1')">Run Code</button>
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
                     <button class="btn-reset" onclick="resetEditor('practice1', '# Create a dictionary\nperson = {\n    &quot;name&quot;: &quot;Bob&quot;,\n    &quot;age&quot;: 25,\n    &quot;city&quot;: &quot;New York&quot;\n}\n\nprint(f&quot;Person: {person}&quot;)')">Reset</button>
                     <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
                   </div>
@@ -213,7 +212,7 @@ person = {
 
 print(f"Person: {person}")</textarea>
                   <div class="editor-output" id="output-practice1">
-                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                    <div class="output-placeholder">Press Run to see output</div>
                   </div>
                 </div>
 
@@ -290,7 +289,7 @@ print(student)  # Output: {'name': 'Alice', 'age': 21, 'grade': 'A'}</code></pre
                 
                 <div class="interactive-editor" data-editor-id="practice2">
                   <div class="editor-toolbar-small">
-                    <button class="btn-run" onclick="runEditorCode('practice2')">Run Code</button>
+                    <button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
                     <button class="btn-reset" onclick="resetEditor('practice2', '# Create dictionary\nbook = {&quot;title&quot;: &quot;Python Guide&quot;, &quot;author&quot;: &quot;John&quot;}\n\n# Access values\nprint(f&quot;Title: {book[&quot;title&quot;]}&quot;)\nprint(f&quot;Author: {book[&quot;author&quot;]}&quot;)\n\n# Add new key\nbook[&quot;pages&quot;] = 300\nprint(f&quot;Updated: {book}&quot;)')">Reset</button>
                     <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
                   </div>
@@ -305,7 +304,7 @@ print(f"Author: {book['author']}")
 book["pages"] = 300
 print(f"Updated: {book}")</textarea>
                   <div class="editor-output" id="output-practice2">
-                    <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                    <div class="output-placeholder">Press Run to see output</div>
                   </div>
                 </div>
 
@@ -386,7 +385,7 @@ print(mixed_dict[(2, 3)])     # Output: coordinates</code></pre>
         </div>
       </section>
     </main>
-                                    <footer class="site-footer">
+                                            <footer class="site-footer">
       <div class="container">
         <div class="footer-grid">
           <div class="footer-brand">
@@ -416,357 +415,6 @@ print(mixed_dict[(2, 3)])     # Output: coordinates</code></pre>
       </div>
     </footer>
 
-    <script>
-      const exerciseSolutions = {
-        exercise1: {
-          solution: 'person = {"name": "Alice", "age": 25, "city": "Boston"}\nprint(f"Name: {person[\'name\']}")\nprint(f"Age: {person[\'age\']}")',
-          validator: function(code, output) {
-            const trimmed = code.trim();
-            
-            if (!trimmed.includes('person = {') || !trimmed.includes('"name"') || !trimmed.includes('"age"') || !trimmed.includes('"city"')) {
-              return {
-                correct: false,
-                message: 'You need to create a dictionary named person with keys "name", "age", and "city".',
-                hints: ['Create: person = {"name": "Alice", "age": 25, "city": "Boston"}', 'Use curly braces and colons']
-              };
-            }
-            
-            if (!trimmed.includes('person["name"]') && !trimmed.includes("person['name']")) {
-              return {
-                correct: false,
-                message: 'You need to access the name using person["name"] or person[\'name\'].',
-                hints: ['Use: person["name"]', 'This gets "Alice"']
-              };
-            }
-            
-            if (!trimmed.includes('person["age"]') && !trimmed.includes("person['age']")) {
-              return {
-                correct: false,
-                message: 'You need to access the age using person["age"] or person[\'age\'].',
-                hints: ['Use: person["age"]', 'This gets 25']
-              };
-            }
-            
-            if (output.error) {
-              return {
-                correct: false,
-                message: 'Your code has an error: ' + output.error,
-                hints: ['Check your syntax', 'Make sure curly braces and quotes are correct', 'Check key names']
-              };
-            }
-            
-            return {
-              correct: true,
-              message: 'Correct! You successfully created and accessed a dictionary.'
-            };
-          }
-        },
-        exercise2: {
-          solution: 'car = {"brand": "Toyota", "model": "Camry"}\ncar["year"] = 2020\ncar["model"] = "Corolla"\nprint(car)',
-          validator: function(code, output) {
-            const trimmed = code.trim();
-            
-            if (!trimmed.includes('car = {') || !trimmed.includes('"brand"') || !trimmed.includes('"model"')) {
-              return {
-                correct: false,
-                message: 'You need to create a dictionary named car with "brand": "Toyota" and "model": "Camry".',
-                hints: ['Create: car = {"brand": "Toyota", "model": "Camry"}', 'Use curly braces']
-              };
-            }
-            
-            if (!trimmed.includes('car["year"]') && !trimmed.includes("car['year']")) {
-              return {
-                correct: false,
-                message: 'You need to add a new key "year" with value 2020.',
-                hints: ['Use: car["year"] = 2020', 'This adds a new key-value pair']
-              };
-            }
-            
-            if (!trimmed.includes('car["model"]') || !trimmed.includes('"Corolla"')) {
-              return {
-                correct: false,
-                message: 'You need to change "model" to "Corolla".',
-                hints: ['Use: car["model"] = "Corolla"', 'This modifies the existing value']
-              };
-            }
-            
-            if (!trimmed.includes('print(car)')) {
-              return {
-                correct: false,
-                message: 'You need to print the final dictionary.',
-                hints: ['Use: print(car)', 'Print after modifications']
-              };
-            }
-            
-            if (output.error) {
-              return {
-                correct: false,
-                message: 'Your code has an error: ' + output.error,
-                hints: ['Check your syntax', 'Make sure quotes are correct', 'Check key names']
-              };
-            }
-            
-            const outputText = output.stdout || '';
-            if (!outputText.includes('Corolla') || !outputText.includes('2020') || outputText.includes('Camry')) {
-              return {
-                correct: false,
-                message: 'The final dictionary should have "model": "Corolla" and "year": 2020 (not "Camry").',
-                hints: ['Make sure you changed model to "Corolla"', 'Make sure you added year 2020']
-              };
-            }
-            
-            return {
-              correct: true,
-              message: 'Correct! You successfully modified a dictionary by adding and changing values.'
-            };
-          }
-        }
-      };
-
-      document.addEventListener('DOMContentLoaded', () => {
-        let pyodide;
-        let pyodideReady = false;
-
-        async function initPyodide() {
-          pyodide = await window.Pyodide.ensureReady();
-          pyodideReady = true;
-        }
-
-        if (window.Pyodide) {
-          window.Pyodide.scheduleWarmup().then(function (p) {
-            pyodide = p;
-            pyodideReady = true;
-          });
-        }
-        window.editors = {};
-
-        window.runEditorCode = async function(editorId) {
-          if (!pyodideReady) {
-            const output = document.getElementById(`output-${editorId}`);
-            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
-            pyodide = await window.Pyodide.ensureReady();
-            pyodideReady = true;
-          }
-
-          const editor = window.editors[editorId];
-          if (!editor) return;
-
-          const code = editor.getValue();
-          const output = document.getElementById(`output-${editorId}`);
-          output.innerHTML = '<div class="output-loading">Running...</div>';
-
-          try {
-            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
-            window.pyodide.runPython(code);
-            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
-            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
-            
-            if (stderr) {
-              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
-            } else if (stdout) {
-              output.innerHTML = `<pre>${stdout}</pre>`;
-            } else {
-              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
-            }
-          } catch (error) {
-            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
-          }
-        };
-
-        window.resetEditor = function(editorId, defaultCode) {
-          const editor = window.editors[editorId];
-          if (editor) {
-            editor.setValue(defaultCode);
-            const output = document.getElementById(`output-${editorId}`);
-            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
-          }
-        };
-
-        window.clearSaved = function(editorId) {
-          if (confirm('Clear your saved code?')) {
-            localStorage.removeItem(`code_${editorId}`);
-            const editor = window.editors[editorId];
-            if (editor) editor.setValue('');
-          }
-        };
-
-        window.checkExercise = async function(editorId) {
-          const pyodide = window.pyodide;
-          const pyodideReady = window.pyodideReady || false;
-          
-          if (!window.pyodideReady || !window.pyodide) {
-            const output = document.getElementById(`output-${editorId}`);
-            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
-            await window.Pyodide.ensureReady();
-            pyodide = window.pyodide;
-            pyodideReady = window.pyodideReady;
-          }
-
-          const editor = window.editors[editorId];
-          if (!editor) {
-            alert('Editor not found. Please refresh the page.');
-            return;
-          }
-
-          const code = editor.getValue().trim();
-          const feedbackEl = document.getElementById(`feedback-${editorId}`);
-          const outputEl = document.getElementById(`output-${editorId}`);
-
-          if (!feedbackEl || !outputEl) {
-            alert('Page elements not found. Please refresh the page.');
-            return;
-          }
-
-          if (!code) {
-            feedbackEl.className = 'exercise-feedback show incorrect';
-            feedbackEl.style.display = 'block';
-            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
-            return;
-          }
-
-          const exercise = exerciseSolutions[editorId];
-          if (!exercise) {
-            alert('Exercise validation not found for ' + editorId);
-            return;
-          }
-
-          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
-          let output = { stdout: '', stderr: '', error: null };
-          
-          try {
-            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
-            window.pyodide.runPython(code);
-            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
-            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
-            
-            output.stdout = stdout || '';
-            output.stderr = stderr || '';
-            
-            if (stderr) {
-              output.error = stderr;
-              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
-            } else if (stdout) {
-              outputEl.innerHTML = `<pre>${stdout}</pre>`;
-            } else {
-              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
-            }
-          } catch (error) {
-            output.error = error.toString();
-            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
-          }
-
-          const result = exercise.validator(code, output);
-          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
-          feedbackEl.style.display = 'block';
-          
-          if (result.correct) {
-            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
-          } else {
-            let hintsHtml = '';
-            if (result.hints && result.hints.length > 0) {
-              hintsHtml = '<ul>';
-              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
-              hintsHtml += '</ul>';
-            }
-            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
-          }
-        };
-
-        window.showSolution = function(editorId) {
-          const exercise = exerciseSolutions[editorId];
-          if (!exercise) {
-            alert('Solution not found.');
-            return;
-          }
-          const editor = window.editors[editorId];
-          if (editor) {
-            if (confirm('Show the solution? This will replace your current code.')) {
-              editor.setValue(exercise.solution);
-              const feedbackEl = document.getElementById(`feedback-${editorId}`);
-              feedbackEl.className = 'exercise-feedback';
-              feedbackEl.innerHTML = '';
-              feedbackEl.style.display = 'none';
-            }
-          }
-        };
-
-        window.resetExercise = function(editorId) {
-          const editor = window.editors[editorId];
-          if (editor) {
-            editor.setValue('');
-            const outputEl = document.getElementById(`output-${editorId}`);
-            const feedbackEl = document.getElementById(`feedback-${editorId}`);
-            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
-            feedbackEl.className = 'exercise-feedback';
-            feedbackEl.innerHTML = '';
-            feedbackEl.style.display = 'none';
-          }
-        };
-
-        function saveToStorage(type, id, value) {
-          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
-          localStorage.setItem(key, value);
-        }
-
-        function loadFromStorage(type, id) {
-          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
-          return localStorage.getItem(key);
-        }
-
-        function clearStorage(type, id) {
-          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
-          localStorage.removeItem(key);
-        }
-
-        setTimeout(() => {
-          document.querySelectorAll('.code-editor-small').forEach(textarea => {
-            const editorId = textarea.id.replace('editor-', '');
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            const isExercise = textarea.closest('[data-exercise-id]');
-            let initialCode = '';
-            if (isExercise) {
-              const savedCode = loadFromStorage('code', editorId);
-              initialCode = savedCode || textarea.value || '';
-            } else {
-              const savedCode = loadFromStorage('code', editorId);
-              initialCode = savedCode || textarea.value;
-            }
-            
-            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
-              mode: 'python',
-              theme: isDark ? 'monokai' : 'default',
-              lineNumbers: true,
-              indentUnit: 4,
-              indentWithTabs: false,
-              lineWrapping: true,
-              matchBrackets: true,
-              autoCloseBrackets: true,
-              value: initialCode
-            });
-
-            window.editors[editorId].setSize(null, 150);
-            window.editors[editorId].on('change', () => {
-              const code = window.editors[editorId].getValue();
-              saveToStorage('code', editorId, code);
-            });
-          });
-
-          document.querySelectorAll('.reflection-input').forEach(textarea => {
-            const saved = loadFromStorage('reflection', textarea.id);
-            if (saved) textarea.value = saved;
-            textarea.addEventListener('input', () => {
-              saveToStorage('reflection', textarea.id, textarea.value);
-            });
-          });
-        }, 100);
-
-        document.addEventListener('themechange', () => {
-          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-          Object.values(window.editors).forEach(editor => {
-            editor.setOption('theme', isDark ? 'monokai' : 'default');
-          });
-        });
-      });
-    </script>
+    
   </body>
 </html>
