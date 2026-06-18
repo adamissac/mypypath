@@ -56,7 +56,7 @@
 
     codeEl.addEventListener('focus', function () { setCaretVisible(false); });
     codeEl.addEventListener('blur', function () {
-      if (!codeEl.value.length) setCaretVisible(true);
+      setCaretVisible(!codeEl.value.trim() && document.activeElement !== codeEl);
     });
 
     if (wrap && caret && !prefersReducedMotion()) {
