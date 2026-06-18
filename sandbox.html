@@ -10,8 +10,7 @@
     <link rel="icon" href="/assets/img/favicon.svg" />
 <link rel="stylesheet" href="/assets/css/style.css" />
     <link rel="stylesheet" href="/assets/css/pypath-fast.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
         <script defer src="/assets/js/pyodide-loader.js"></script>
     <script defer src="/assets/js/theme.js"></script>
     <script defer src="/assets/js/icons.js"></script>
@@ -75,60 +74,60 @@
         </div>
       </div>
     </header>
-    <main>
-      <section class="section reveal-up">
-        <div class="container">
-          <div class="section-head">
-            <h1 class="page-title">Code Sandbox</h1>
-            <p class="page-subtitle">Create, save, and manage multiple Python projects in your personal sandbox.</p>
+    <main class="sandbox-page">
+      <div class="sandbox-shell">
+        <header class="sandbox-head" data-reveal="up">
+          <div class="sandbox-head-copy">
+            <p class="sandbox-eyebrow">Sandbox</p>
+            <h1 class="sandbox-title">Your Python playground</h1>
+            <p class="sandbox-lead">Create projects, run real Python in your browser, and save everything locally on this device.</p>
           </div>
-          
-          <div class="sandbox-layout">
-            <!-- Project Sidebar -->
-            <aside class="sandbox-sidebar">
-              <div class="sidebar-header">
-                <h3>Projects</h3>
-                <button class="btn btn-primary btn-small" id="new-project-btn">+ New</button>
-              </div>
-              <div class="projects-list" id="projects-list">
-                <!-- Projects will be loaded here -->
-              </div>
-            </aside>
+          <p class="sandbox-shortcuts muted" aria-label="Keyboard shortcuts">
+            <kbd>⌘</kbd><kbd>↵</kbd> run · <kbd>⌘</kbd><kbd>S</kbd> save
+          </p>
+        </header>
 
-            <!-- Main Editor Area -->
-            <section class="sandbox-main">
-              <div class="editor-toolbar">
-                <div class="toolbar-left">
-                  <label for="project-select" class="visually-hidden">Project</label>
-<select id="project-select" class="project-select">
-                    <option value="">Select a project...</option>
-                  </select>
-                  <span class="project-status" id="project-status"></span>
-                </div>
-                <div class="toolbar-right">
-                  <button class="btn btn-ghost btn-small" id="run-btn">Run</button>
-                  <button class="btn btn-ghost btn-small" id="save-btn">Save</button>
-                  <button class="btn btn-ghost btn-small" id="delete-btn">Delete</button>
-                </div>
-              </div>
-              
-              <div class="editor-container">
-                <textarea id="code-editor"></textarea>
-              </div>
+        <div class="sandbox-workspace" data-reveal="up" data-reveal-delay="60">
+          <aside class="sandbox-projects" aria-label="Projects">
+            <div class="sandbox-projects-head">
+              <h2 class="sandbox-projects-title">Projects</h2>
+              <button type="button" class="btn btn-primary btn-small" id="new-project-btn">New</button>
+            </div>
+            <div class="sandbox-projects-list" id="projects-list"></div>
+          </aside>
 
-              <div class="output-container">
-                <div class="output-header">
-                  <h4>Output</h4>
-                  <button class="btn btn-ghost btn-small" id="clear-output-btn">Clear</button>
-                </div>
-                <div class="output-content" id="output-content">
-                  <p class="muted">Run your code to see output here...</p>
-                </div>
+          <section class="sandbox-ide" aria-label="Code editor">
+            <div class="sandbox-ide-toolbar">
+              <div class="sandbox-ide-file">
+                <span class="sandbox-dot" aria-hidden="true"></span>
+                <span class="sandbox-dot" aria-hidden="true"></span>
+                <span class="sandbox-dot" aria-hidden="true"></span>
+                <span class="sandbox-filename" id="sandbox-filename">untitled.py</span>
+                <span class="project-status" id="project-status" aria-live="polite"></span>
               </div>
-            </section>
-          </div>
+              <div class="sandbox-ide-actions">
+                <button type="button" class="btn btn-primary sandbox-run-btn" id="run-btn">Run</button>
+                <button type="button" class="btn btn-ghost btn-small" id="save-btn">Save</button>
+                <button type="button" class="btn btn-ghost btn-small sandbox-delete-btn" id="delete-btn">Delete</button>
+              </div>
+            </div>
+
+            <div class="sandbox-editor-wrap editor-container">
+              <textarea id="code-editor" aria-label="Python code editor"></textarea>
+            </div>
+
+            <div class="sandbox-output-wrap output-container">
+              <div class="sandbox-output-head output-header">
+                <span class="sandbox-output-label">Output</span>
+                <button type="button" class="btn btn-ghost btn-small" id="clear-output-btn">Clear</button>
+              </div>
+              <div class="output-content" id="output-content" aria-live="polite">
+                <p class="output-placeholder muted">Press Run to see output</p>
+              </div>
+            </div>
+          </section>
         </div>
-      </section>
+      </div>
     </main>
                                     <footer class="site-footer">
       <div class="container">
