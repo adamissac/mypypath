@@ -18,10 +18,29 @@
     try { localStorage.removeItem(storageKey(type, id)); } catch (e) {}
   }
 
+  var OUTPUT_HINT = (window.Pyodide && window.Pyodide.OUTPUT_HINT) || 'Press Run to see output';
+
   async function ensurePyodide() {
     if (!window.Pyodide) throw new Error('Python runtime not available');
     await window.Pyodide.ensureReady();
     return window.pyodide;
+  }
+
+  function renderRunOutput(outputEl, result) {
+    if (result.error) {
+      var msg = result.error && result.error.toString ? result.error.toString() : String(result.error);
+      outputEl.innerHTML = '<div class="output-error">' + msg.replace(/\n/g, '<br>') + '</div>';
+      return;
+    }
+    if (result.stderr) {
+      outputEl.innerHTML = '<div class="output-error">' + result.stderr.replace(/\n/g, '<br>') + '</div>';
+      return;
+    }
+    if (result.stdout) {
+      outputEl.innerHTML = '<pre>' + result.stdout + '</pre>';
+      return;
+    }
+    outputEl.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
   }
 
   function getSolutions() {
@@ -45,20 +64,9 @@
     outputEl.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
 
     try {
-      await ensurePyodide();
       outputEl.innerHTML = '<div class="output-loading">Running...</div>';
-      window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
-      window.pyodide.runPython(code);
-      var stdout = window.pyodide.runPython('stdout_capture.getvalue()');
-      var stderr = window.pyodide.runPython('stderr_capture.getvalue()');
-
-      if (stderr) {
-        outputEl.innerHTML = '<div class="output-error">' + stderr.replace(/\n/g, '<br>') + '</div>';
-      } else if (stdout) {
-        outputEl.innerHTML = '<pre>' + stdout + '</pre>';
-      } else {
-        outputEl.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
-      }
+      var result = await window.Pyodide.runCode(code);
+      renderRunOutput(outputEl, result);
     } catch (error) {
       outputEl.innerHTML = '<div class="output-error">' + String(error).replace(/\n/g, '<br>') + '</div>';
     }
@@ -73,7 +81,7 @@
     }
     clearStorage('code', editorId);
     var output = document.getElementById('output-' + editorId);
-    if (output) output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+    if (output) output.innerHTML = '<div class="output-placeholder">' + OUTPUT_HINT + '</div>';
   };
 
   window.clearSaved = function (editorId) {
@@ -115,19 +123,15 @@
     var output = { stdout: '', stderr: '', error: null };
 
     try {
-      await ensurePyodide();
-      window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
-      window.pyodide.runPython(code);
-      output.stdout = window.pyodide.runPython('stdout_capture.getvalue()') || '';
-      output.stderr = window.pyodide.runPython('stderr_capture.getvalue()') || '';
-      if (output.stderr) {
+      var runResult = await window.Pyodide.runCode(code);
+      output.stdout = runResult.stdout || '';
+      output.stderr = runResult.stderr || '';
+      if (runResult.error) {
+        output.error = runResult.error.toString ? runResult.error.toString() : String(runResult.error);
+      } else if (output.stderr) {
         output.error = output.stderr;
-        outputEl.innerHTML = '<div class="output-error">' + output.stderr.replace(/\n/g, '<br>') + '</div>';
-      } else if (output.stdout) {
-        outputEl.innerHTML = '<pre>' + output.stdout + '</pre>';
-      } else {
-        outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
       }
+      renderRunOutput(outputEl, runResult);
     } catch (error) {
       output.error = String(error);
       outputEl.innerHTML = '<div class="output-error">' + output.error.replace(/\n/g, '<br>') + '</div>';
@@ -209,6 +213,11 @@
       window.editors[editorId].on('change', function () {
         saveToStorage('code', editorId, window.editors[editorId].getValue());
       });
+
+      window.editors[editorId].setOption('extraKeys', Object.assign({}, window.editors[editorId].getOption('extraKeys') || {}, {
+        'Ctrl-Enter': function () { window.runEditorCode(editorId); },
+        'Cmd-Enter': function () { window.runEditorCode(editorId); }
+      }));
     });
 
     document.querySelectorAll('.reflection-input').forEach(function (textarea) {

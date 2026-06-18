@@ -36,7 +36,17 @@
     var html = '';
     for (var i = 0; i < 10; i++) {
       var num = i + 1;
-      var href = '/units/unit-' + num + '.html';
+      var href = '/units/unit-' + num + '/';
+      if (num === 1) href = '/units/unit-1/what-is-python.html';
+      else if (num === 2) href = '/units/unit-2/understanding-control-flow.html';
+      else if (num === 3) href = '/units/unit-3/what-are-functions.html';
+      else if (num === 4) href = '/units/unit-4/introduction-data-structures.html';
+      else if (num === 5) href = '/units/unit-5/what-are-modules.html';
+      else if (num === 6) href = '/units/unit-6/introduction-oop-concepts.html';
+      else if (num === 7) href = '/units/unit-7/introduction-file-handling.html';
+      else if (num === 8) href = '/units/unit-8/what-is-debugging.html';
+      else if (num === 9) href = '/units/unit-9/recursion-problem-decomposition.html';
+      else if (num === 10) href = '/units/unit-10/project-planning-brainstorming.html';
       var active = current === num ? ' is-current' : '';
       html +=
         '<li role="none">' +
@@ -109,7 +119,7 @@
                 '</ul>' +
               '</div>' +
             '</nav>' +
-            '<a href="/units/unit-1.html" class="btn btn-primary header-cta route">Start learning</a>' +
+            '<a href="/units/unit-1/what-is-python.html" class="btn btn-primary header-cta route">Start learning</a>' +
           '</div>' +
         '</div>' +
         progress +
@@ -133,7 +143,7 @@
             '<div class="footer-col">' +
               '<h4 class="footer-heading">Learn</h4>' +
               '<ul class="footer-links">' +
-                '<li><a href="/units/unit-1.html" class="route">Curriculum</a></li>' +
+                '<li><a href="/curriculum.html" class="route">Curriculum</a></li>' +
                 '<li><a href="/sandbox.html" class="route">Sandbox</a></li>' +
                 '<li><a href="/certifications.html" class="route">Certifications</a></li>' +
               '</ul>' +
@@ -486,6 +496,28 @@
   window.PyUI = Object.assign({}, window.PyUI || {}, { showToast: showToast });
 
   function setupSettingsActions() {
+    var exportBtn = qs('#export-btn');
+    if (exportBtn) {
+      exportBtn.addEventListener('click', function () {
+        try {
+          var data = {};
+          Object.keys(localStorage).forEach(function (k) {
+            if (k.startsWith('pypath-')) data[k] = localStorage.getItem(k);
+          });
+          var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+          var url = URL.createObjectURL(blob);
+          var link = document.createElement('a');
+          link.href = url;
+          link.download = 'pypath-settings.json';
+          link.click();
+          URL.revokeObjectURL(url);
+          showToast('Settings exported');
+        } catch (e) {
+          showToast('Could not export settings');
+        }
+      });
+    }
+
     var resetBtn = qs('#reset-btn');
     if (resetBtn) {
       resetBtn.addEventListener('click', function () {
