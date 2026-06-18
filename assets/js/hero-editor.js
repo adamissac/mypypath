@@ -3,8 +3,13 @@
   'use strict';
 
   var DEFAULT_CODE = [
+    'total = 0',
+    '',
     'for i in range(1, 6):',
-    '    print("▸" * i)'
+    '    print("▸" * i)',
+    '    total += i',
+    '',
+    'print("Total markers:", total)'
   ].join('\n');
 
   var KEYWORDS = [
