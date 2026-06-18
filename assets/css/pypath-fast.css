@@ -686,7 +686,7 @@ body.nav-open::before {
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
   gap: clamp(32px, 5vw, 64px);
-  align-items: center;
+  align-items: start;
 }
 
 .page-home .hero-copy {
@@ -771,10 +771,15 @@ body.nav-open::before {
 .page-home .hero-panel {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  align-items: stretch;
 }
 
 .page-home .hero-terminal {
+  width: 100%;
+  box-sizing: border-box;
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid var(--border);
@@ -853,8 +858,10 @@ body.nav-open::before {
 
 .page-home .hero-metrics {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .page-home .hero-metric {
@@ -863,25 +870,27 @@ body.nav-open::before {
   align-items: center;
   justify-content: center;
   gap: 2px;
-  padding: 14px 10px;
-  border-radius: 12px;
+  min-width: 0;
+  padding: 10px 6px;
+  border-radius: 10px;
   border: 1px solid var(--border);
   background: color-mix(in srgb, var(--panel) 90%, var(--bg-elevated));
+  box-sizing: border-box;
 }
 
 .page-home .hero-metric strong {
-  font-size: 1.45rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--text-strong);
   line-height: 1.1;
 }
 
 .page-home .hero-metric span {
-  font-size: 0.78rem;
+  font-size: 0.68rem;
   color: var(--muted);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
 }
 
 .page-home .hero-credit {
