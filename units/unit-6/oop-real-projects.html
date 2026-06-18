@@ -12,8 +12,7 @@
     <link rel="stylesheet" href="/assets/css/pypath-fast.css" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" />
-        <script defer src="/assets/js/pyodide-loader.js"></script>
+<script defer src="/assets/js/pyodide-loader.js"></script>
     <script defer src="/assets/js/theme.js"></script>
     <script defer src="/assets/js/icons.js"></script>
 <script defer src="/assets/js/motion.js"></script>
@@ -29,7 +28,7 @@
   <body class="page page-unit">
     <div id="page-transition" aria-hidden="true"></div>
 
-                            <header class="site-header">
+                                    <header class="site-header">
       <div class="header-accent" aria-hidden="true"></div>
       <div class="container header-inner">
         <a class="brand route" href="/">
@@ -247,10 +246,10 @@ print(savings.deposit(200))
 print(savings.withdraw(300))
 print(f"Final balance: ${savings.get_balance()}")</textarea>
                   <div class="editor-controls">
-                    <button onclick="runEditorCode('banking')" class="btn btn-primary">Run Code</button>
+                    <button onclick="runEditorCode('banking')" class="btn btn-primary">Run</button>
                     <button onclick="resetEditor('banking', 'class BankAccount:\n    def __init__(self, account_number, balance=0):\n        self.__account_number = account_number\n        self.__balance = balance\n    \n    def deposit(self, amount):\n        if amount > 0:\n            self.__balance += amount\n            return f\"Deposited ${amount}. New balance: ${self.__balance}\"\n        return \"Invalid deposit amount\"\n    \n    def withdraw(self, amount):\n        if amount > 0 and amount <= self.__balance:\n            self.__balance -= amount\n            return f\"Withdrew ${amount}. New balance: ${self.__balance}\"\n        return \"Insufficient funds or invalid amount\"\n    \n    def get_balance(self):\n        return self.__balance\n\nsavings = BankAccount(\"SAV001\", 1000)\nprint(savings.deposit(200))\nprint(savings.withdraw(300))\nprint(f\"Final balance: ${savings.get_balance()}\")')" class="btn btn-ghost">Reset</button>
                   </div>
-                  <div id="output-banking" class="code-output">Click "Run Code" to see your output here</div>
+                  <div id="output-banking" class="code-output">Press Run to see output</div>
                 </div>
               </div>
 
@@ -394,10 +393,10 @@ while player1.is_alive() and player2.is_alive():
 winner = player1 if player1.is_alive() else player2
 print(f"{winner.name} wins!")</textarea>
                   <div class="editor-controls">
-                    <button onclick="runEditorCode('game')" class="btn btn-primary">Run Code</button>
+                    <button onclick="runEditorCode('game')" class="btn btn-primary">Run</button>
                     <button onclick="resetEditor('game', 'class Character:\n    def __init__(self, name, health=100):\n        self.name = name\n        self.health = health\n    \n    def attack(self):\n        return 10\n    \n    def take_damage(self, damage):\n        self.health -= damage\n        if self.health < 0:\n            self.health = 0\n    \n    def is_alive(self):\n        return self.health > 0\n\n# Create two characters and make them fight\nplayer1 = Character(\"Hero\", 100)\nplayer2 = Character(\"Enemy\", 80)\n\n# Simple battle loop\nwhile player1.is_alive() and player2.is_alive():\n    damage1 = player1.attack()\n    player2.take_damage(damage1)\n    print(f\"{player1.name} attacks {player2.name} for {damage1} damage!\")\n    \n    if player2.is_alive():\n        damage2 = player2.attack()\n        player1.take_damage(damage2)\n        print(f\"{player2.name} attacks {player1.name} for {damage2} damage!\")\n    \n    print(f\"{player1.name}: {player1.health} HP, {player2.name}: {player2.health} HP\\n\")\n\nwinner = player1 if player1.is_alive() else player2\nprint(f\"{winner.name} wins!\")')" class="btn btn-ghost">Reset</button>
                   </div>
-                  <div id="output-game" class="code-output">Click "Run Code" to see your output here</div>
+                  <div id="output-game" class="code-output">Press Run to see output</div>
                 </div>
               </div>
 
@@ -535,10 +534,10 @@ my_inventory.add_product(Product("Pen", 2.50, 20))
 my_inventory.list_products()
 print(f"\nTotal value: ${my_inventory.get_total_value():.2f}")</textarea>
                   <div class="editor-controls">
-                    <button onclick="runEditorCode('inventory')" class="btn btn-primary">Run Code</button>
+                    <button onclick="runEditorCode('inventory')" class="btn btn-primary">Run</button>
                     <button onclick="resetEditor('inventory', 'class Product:\n    def __init__(self, name, price, quantity=0):\n        self.name = name\n        self.price = price\n        self.quantity = quantity\n    \n    def get_value(self):\n        return self.price * self.quantity\n    \n    def __str__(self):\n        return f\"{self.name} - ${self.price:.2f} x {self.quantity}\"\n\nclass Inventory:\n    def __init__(self):\n        self.products = []\n    \n    def add_product(self, product):\n        self.products.append(product)\n    \n    def get_total_value(self):\n        return sum(p.get_value() for p in self.products)\n    \n    def list_products(self):\n        for product in self.products:\n            print(product)\n\n# Create inventory and add products\nmy_inventory = Inventory()\nmy_inventory.add_product(Product(\"Book\", 15.99, 5))\nmy_inventory.add_product(Product(\"Pen\", 2.50, 20))\n\nmy_inventory.list_products()\nprint(f\"\\nTotal value: ${my_inventory.get_total_value():.2f}\")')" class="btn btn-ghost">Reset</button>
                   </div>
-                  <div id="output-inventory" class="code-output">Click "Run Code" to see your output here</div>
+                  <div id="output-inventory" class="code-output">Press Run to see output</div>
                 </div>
               </div>
 
@@ -630,7 +629,7 @@ print(f"\nTotal value: ${my_inventory.get_total_value():.2f}")</textarea>
         </div>
       </section>
     </main>
-                                    <footer class="site-footer">
+                                            <footer class="site-footer">
       <div class="container">
         <div class="footer-grid">
           <div class="footer-brand">
@@ -660,8 +659,8 @@ print(f"\nTotal value: ${my_inventory.get_total_value():.2f}")</textarea>
       </div>
     </footer>
 
-    <script>
-      const exerciseSolutions = {
+        <script>
+      window.exerciseSolutions = {
         exercise1: {
           solution: 'class Book:\n    def __init__(self, title, author, isbn):\n        self.title = title\n        self.author = author\n        self.isbn = isbn\n    \n    def __str__(self):\n        return f"{self.title} by {self.author} (ISBN: {self.isbn})"\n\nclass Library:\n    def __init__(self):\n        self.__books = []  # Private attribute\n    \n    def add_book(self, book):\n        self.__books.append(book)\n        return f"Added {book.title} to library"\n    \n    def remove_book(self, isbn):\n        for i, book in enumerate(self.__books):\n            if book.isbn == isbn:\n                removed = self.__books.pop(i)\n                return f"Removed {removed.title} from library"\n        return "Book not found"\n    \n    def find_book(self, title):\n        for book in self.__books:\n            if book.title.lower() == title.lower():\n                return book\n        return None\n    \n    def list_books(self):\n        if not self.__books:\n            return "Library is empty"\n        result = "Library Books:\\n"\n        for book in self.__books:\n            result += f"  {book}\\n"\n        return result\n\nlibrary = Library()\nlibrary.add_book(Book("Python Basics", "John Doe", "123456"))\nlibrary.add_book(Book("Advanced Python", "Jane Smith", "789012"))\nprint(library.list_books())\nfound = library.find_book("Python Basics")\nif found:\n    print(f"Found: {found}")',
           validator: function(code, output) {
@@ -807,251 +806,6 @@ print(f"\nTotal value: ${my_inventory.get_total_value():.2f}")</textarea>
           }
         }
       };
-
-      document.addEventListener('DOMContentLoaded', () => {
-        let pyodide;
-        let pyodideReady = false;
-
-        async function initPyodide() {
-          pyodide = await window.Pyodide.ensureReady();
-          pyodideReady = true;
-        }
-
-        if (window.Pyodide) {
-          window.Pyodide.scheduleWarmup().then(function (p) {
-            pyodide = p;
-            pyodideReady = true;
-          });
-        }
-        window.editors = {};
-
-        window.runEditorCode = async function(editorId) {
-          if (!pyodideReady) {
-            const output = document.getElementById(`output-${editorId}`);
-            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
-            pyodide = await window.Pyodide.ensureReady();
-            pyodideReady = true;
-          }
-
-          const editor = window.editors[editorId];
-          if (!editor) return;
-
-          const code = editor.getValue();
-          const output = document.getElementById(`output-${editorId}`);
-          output.innerHTML = '<div class="output-loading">Running...</div>';
-
-          try {
-            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
-            window.pyodide.runPython(code);
-            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
-            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
-            
-            if (stderr) {
-              output.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
-            } else if (stdout) {
-              output.innerHTML = `<pre>${stdout}</pre>`;
-            } else {
-              output.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
-            }
-          } catch (error) {
-            output.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
-          }
-        };
-
-        window.resetEditor = function(editorId, defaultCode) {
-          const editor = window.editors[editorId];
-          if (editor) {
-            editor.setValue(defaultCode);
-            const output = document.getElementById(`output-${editorId}`);
-            output.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
-          }
-        };
-
-        window.clearSaved = function(editorId) {
-          if (confirm('Clear your saved code?')) {
-            localStorage.removeItem(`code_${editorId}`);
-            const editor = window.editors[editorId];
-            if (editor) editor.setValue('');
-          }
-        };
-
-        window.checkExercise = async function(editorId) {
-          const pyodide = window.pyodide;
-          const pyodideReady = window.pyodideReady || false;
-          
-          if (!window.pyodideReady || !window.pyodide) {
-            const output = document.getElementById(`output-${editorId}`);
-            if (output) output.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
-            await window.Pyodide.ensureReady();
-            pyodide = window.pyodide;
-            pyodideReady = window.pyodideReady;
-          }
-
-          const editor = window.editors[editorId];
-          if (!editor) {
-            alert('Editor not found. Please refresh the page.');
-            return;
-          }
-
-          const code = editor.getValue().trim();
-          const feedbackEl = document.getElementById(`feedback-${editorId}`);
-          const outputEl = document.getElementById(`output-${editorId}`);
-
-          if (!feedbackEl || !outputEl) {
-            alert('Page elements not found. Please refresh the page.');
-            return;
-          }
-
-          if (!code) {
-            feedbackEl.className = 'exercise-feedback show incorrect';
-            feedbackEl.style.display = 'block';
-            feedbackEl.innerHTML = '<h5>❌ Please write some code first!</h5>';
-            return;
-          }
-
-          const exercise = exerciseSolutions[editorId];
-          if (!exercise) {
-            alert('Exercise validation not found for ' + editorId);
-            return;
-          }
-
-          outputEl.innerHTML = '<div class="output-loading">Checking your code...</div>';
-          let output = { stdout: '', stderr: '', error: null };
-          
-          try {
-            window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
-            window.pyodide.runPython(code);
-            const stdout = window.pyodide.runPython('stdout_capture.getvalue()');
-            const stderr = window.pyodide.runPython('stderr_capture.getvalue()');
-            
-            output.stdout = stdout || '';
-            output.stderr = stderr || '';
-            
-            if (stderr) {
-              output.error = stderr;
-              outputEl.innerHTML = `<div class="output-error">${stderr.replace(/\n/g, '<br>')}</div>`;
-            } else if (stdout) {
-              outputEl.innerHTML = `<pre>${stdout}</pre>`;
-            } else {
-              outputEl.innerHTML = '<div class="output-placeholder">Code executed (no output)</div>';
-            }
-          } catch (error) {
-            output.error = error.toString();
-            outputEl.innerHTML = `<div class="output-error">${error.toString().replace(/\n/g, '<br>')}</div>`;
-          }
-
-          const result = exercise.validator(code, output);
-          feedbackEl.className = `exercise-feedback show ${result.correct ? 'correct' : 'incorrect'}`;
-          feedbackEl.style.display = 'block';
-          
-          if (result.correct) {
-            feedbackEl.innerHTML = `<h5>✅ Correct!</h5><p>${result.message}</p>`;
-          } else {
-            let hintsHtml = '';
-            if (result.hints && result.hints.length > 0) {
-              hintsHtml = '<ul>';
-              result.hints.forEach(hint => hintsHtml += `<li>${hint}</li>`);
-              hintsHtml += '</ul>';
-            }
-            feedbackEl.innerHTML = `<h5>❌ Not quite right</h5><p>${result.message}</p>${hintsHtml}`;
-          }
-        };
-
-        window.showSolution = function(editorId) {
-          const exercise = exerciseSolutions[editorId];
-          if (!exercise) {
-            alert('Solution not found.');
-            return;
-          }
-          const editor = window.editors[editorId];
-          if (editor) {
-            if (confirm('Show the solution? This will replace your current code.')) {
-              editor.setValue(exercise.solution);
-              const feedbackEl = document.getElementById(`feedback-${editorId}`);
-              feedbackEl.className = 'exercise-feedback';
-              feedbackEl.innerHTML = '';
-              feedbackEl.style.display = 'none';
-            }
-          }
-        };
-
-        window.resetExercise = function(editorId) {
-          const editor = window.editors[editorId];
-          if (editor) {
-            editor.setValue('');
-            const outputEl = document.getElementById(`output-${editorId}`);
-            const feedbackEl = document.getElementById(`feedback-${editorId}`);
-            outputEl.innerHTML = '<div class="output-placeholder">Write your code above and click "Check Answer" to verify it\'s correct.</div>';
-            feedbackEl.className = 'exercise-feedback';
-            feedbackEl.innerHTML = '';
-            feedbackEl.style.display = 'none';
-          }
-        };
-
-        function saveToStorage(type, id, value) {
-          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
-          localStorage.setItem(key, value);
-        }
-
-        function loadFromStorage(type, id) {
-          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
-          return localStorage.getItem(key);
-        }
-
-        function clearStorage(type, id) {
-          const key = type === 'code' ? `code_${id}` : `reflection_${id}`;
-          localStorage.removeItem(key);
-        }
-
-        setTimeout(() => {
-          document.querySelectorAll('.code-editor-small').forEach(textarea => {
-            const editorId = textarea.id.replace('editor-', '');
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            const isExercise = textarea.closest('[data-exercise-id]');
-            let initialCode = '';
-            if (isExercise) {
-              const savedCode = loadFromStorage('code', editorId);
-              initialCode = savedCode || textarea.value || '';
-            } else {
-              const savedCode = loadFromStorage('code', editorId);
-              initialCode = savedCode || textarea.value;
-            }
-            
-            window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
-              mode: 'python',
-              theme: isDark ? 'monokai' : 'default',
-              lineNumbers: true,
-              indentUnit: 4,
-              indentWithTabs: false,
-              lineWrapping: true,
-              matchBrackets: true,
-              autoCloseBrackets: true,
-              value: initialCode
-            });
-
-            window.editors[editorId].setSize(null, 150);
-            window.editors[editorId].on('change', () => {
-              const code = window.editors[editorId].getValue();
-              saveToStorage('code', editorId, code);
-            });
-          });
-
-          document.querySelectorAll('.reflection-input').forEach(textarea => {
-            const saved = loadFromStorage('reflection', textarea.id);
-            if (saved) textarea.value = saved;
-            textarea.addEventListener('input', () => {
-              saveToStorage('reflection', textarea.id, textarea.value);
-            });
-          });
-        }, 100);
-
-        document.addEventListener('themechange', () => {
-          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-          Object.values(window.editors).forEach(editor => {
-            editor.setOption('theme', isDark ? 'monokai' : 'default');
-          });
-        });
-      });
     </script>
   </body>
 </html>
