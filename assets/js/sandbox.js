@@ -1,386 +1,21 @@
-(function() {
+(function () {
   'use strict';
 
   const STORAGE_KEY = 'pypath-sandbox-projects';
+  const DEFAULT_CODE = `print("Welcome to the PyPath sandbox!")
+print("Write Python here and press Run.")
+
+for i in range(3):
+    print("  " * i + "▸" * (i + 1))`;
+
   let projects = [];
   let currentProjectId = null;
   let editor = null;
-  let pyodide = null;
-  let pyodideReady = false;
 
-  // Initialize CodeMirror editor
-  function initEditor() {
-    const textarea = document.getElementById('code-editor');
-    if (!textarea || !document.body.classList.contains('page-sandbox')) return;
-    
-    editor = CodeMirror.fromTextArea(textarea, {
-      mode: 'python',
-      theme: 'pypath',
-      lineNumbers: true,
-      indentUnit: 4,
-      indentWithTabs: false,
-      lineWrapping: true,
-      autofocus: true,
-      extraKeys: {
-        'Ctrl-S': function() { saveCurrentProject(true); return false; },
-        'Cmd-S': function() { saveCurrentProject(true); return false; },
-        'Ctrl-Enter': function() { runCode(); return false; },
-        'Cmd-Enter': function() { runCode(); return false; }
-      }
-    });
-
-    // Update theme when it changes
-    window.addEventListener('themechange', () => {
-      if (!editor) return;
-      editor.setOption('theme', 'pypath');
-      editor.refresh();
-    });
-
-    editor.on('change', () => {
-      markUnsaved();
-    });
-
-    // Set initial value
-    editor.setValue('# Select or create a project to get started...\n# Click "New" to create your first project!\n');
+  function $(id) {
+    return document.getElementById(id);
   }
 
-  // Load projects from localStorage
-  function loadProjects() {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        projects = JSON.parse(stored);
-      } else {
-        projects = [];
-      }
-    } catch (e) {
-      console.error('Error loading projects:', e);
-      projects = [];
-    }
-    renderProjects();
-  }
-
-  // Save projects to localStorage
-  function saveProjects() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-    } catch (e) {
-      console.error('Error saving projects:', e);
-      alert('Error saving projects. Storage may be full.');
-    }
-  }
-
-  // Render project list
-  function renderProjects() {
-    const list = document.getElementById('projects-list');
-    const select = document.getElementById('project-select');
-    
-    list.innerHTML = '';
-    select.innerHTML = '<option value="">Select a project...</option>';
-
-    if (projects.length === 0) {
-      list.innerHTML = '<p class="muted" style="padding: 20px; text-align: center;">No projects yet. Create one to get started!</p>';
-      return;
-    }
-
-    projects.forEach(project => {
-      // Add to sidebar list
-      const item = document.createElement('div');
-      item.className = `project-item ${project.id === currentProjectId ? 'active' : ''}`;
-      item.innerHTML = `
-        <div class="project-item-content">
-          <strong>${escapeHtml(project.name)}</strong>
-          <span class="project-meta">${formatDate(project.updated)}</span>
-        </div>
-      `;
-      item.addEventListener('click', () => loadProject(project.id));
-      list.appendChild(item);
-
-      // Add to select dropdown
-      const option = document.createElement('option');
-      option.value = project.id;
-      option.textContent = project.name;
-      if (project.id === currentProjectId) {
-        option.selected = true;
-      }
-      select.appendChild(option);
-    });
-  }
-
-  // Create new project
-  function createNewProject() {
-    const name = prompt('Enter project name:');
-    if (!name || !name.trim()) return;
-
-    const project = {
-      id: Date.now().toString(),
-      name: name.trim(),
-      code: '# Welcome to your new project!\n# Start coding here...\n\nprint("Hello, World!")',
-      created: new Date().toISOString(),
-      updated: new Date().toISOString()
-    };
-
-    projects.push(project);
-    saveProjects();
-    loadProject(project.id);
-    renderProjects();
-  }
-
-  // Load project
-  function loadProject(projectId) {
-    // Save current project if needed
-    if (currentProjectId) {
-      saveCurrentProject(false);
-    }
-
-    const project = projects.find(p => p.id === projectId);
-    if (!project) return;
-
-    currentProjectId = projectId;
-    editor.setValue(project.code);
-    editor.clearHistory();
-    updateProjectStatus('saved');
-    renderProjects();
-  }
-
-  // Save current project
-  function saveCurrentProject(showMessage = true) {
-    if (!currentProjectId) {
-      const name = prompt('Enter project name to save:');
-      if (!name || !name.trim()) return;
-
-      const project = {
-        id: Date.now().toString(),
-        name: name.trim(),
-        code: editor.getValue(),
-        created: new Date().toISOString(),
-        updated: new Date().toISOString()
-      };
-
-      projects.push(project);
-      currentProjectId = project.id;
-      saveProjects();
-      renderProjects();
-      updateProjectStatus('saved');
-      if (showMessage) {
-        if (window.PyUI && window.PyUI.showToast) window.PyUI.showToast('Project saved');
-        else showNotification('Project saved!');
-      }
-      return;
-    }
-
-    const project = projects.find(p => p.id === currentProjectId);
-    if (project) {
-      project.code = editor.getValue();
-      project.updated = new Date().toISOString();
-      saveProjects();
-      renderProjects();
-      updateProjectStatus('saved');
-      if (showMessage) {
-        if (window.PyUI && window.PyUI.showToast) window.PyUI.showToast('Project saved');
-        else showNotification('Project saved!');
-      }
-    }
-  }
-
-  // Delete current project
-  function deleteCurrentProject() {
-    if (!currentProjectId) {
-      alert('No project selected.');
-      return;
-    }
-
-    const project = projects.find(p => p.id === currentProjectId);
-    if (!project) return;
-
-    if (!confirm(`Are you sure you want to delete "${project.name}"? This cannot be undone.`)) {
-      return;
-    }
-
-    projects = projects.filter(p => p.id !== currentProjectId);
-    currentProjectId = null;
-    editor.setValue('# Select or create a project to get started...\n');
-    editor.clearHistory();
-    saveProjects();
-    renderProjects();
-    updateProjectStatus('');
-    if (window.PyUI && window.PyUI.showToast) window.PyUI.showToast('Project deleted');
-    else showNotification('Project deleted.');
-  }
-
-  // Initialize Pyodide
-  async function initPyodide() {
-    if (pyodideReady) return;
-    
-    const output = document.getElementById('output-content');
-    output.innerHTML = '<p class="muted">Loading Python interpreter...</p>';
-    
-    try {
-      pyodide = await loadPyodide({
-        indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/'
-      });
-      
-      // Capture stdout and stderr
-      pyodide.runPython(`
-        import sys
-        from io import StringIO
-        
-        class OutputCapture:
-            def __init__(self):
-                self.buffer = StringIO()
-            
-            def write(self, s):
-                if s:
-                    self.buffer.write(str(s))
-            
-            def flush(self):
-                pass
-            
-            def getvalue(self):
-                return self.buffer.getvalue()
-            
-            def reset(self):
-                from io import StringIO
-                self.buffer = StringIO()
-        
-        stdout_capture = OutputCapture()
-        stderr_capture = OutputCapture()
-        sys.stdout = stdout_capture
-        sys.stderr = stderr_capture
-      `);
-      
-      pyodideReady = true;
-      output.innerHTML = '<p class="muted">Python interpreter ready! Run your code to see output here...</p>';
-    } catch (error) {
-      output.innerHTML = `
-        <div class="output-line error">
-          <span class="output-label">Error:</span>
-          <span class="output-text">Failed to load Python interpreter: ${escapeHtml(error.message)}</span>
-        </div>
-      `;
-    }
-  }
-
-  // Run code using Pyodide
-  async function runCode() {
-    const runBtn = document.getElementById('run-btn');
-    if (runBtn) runBtn.classList.add('is-running');
-
-    if (!pyodideReady) {
-      await initPyodide();
-      if (!pyodideReady) {
-        if (runBtn) runBtn.classList.remove('is-running');
-        return;
-      }
-    }
-
-    const code = editor.getValue();
-    const output = document.getElementById('output-content');
-    
-    if (!code.trim()) {
-      output.innerHTML = '<p class="muted">No code to run. Write some Python code first!</p>';
-      if (runBtn) runBtn.classList.remove('is-running');
-      return;
-    }
-
-    output.classList.remove('is-revealing');
-    output.innerHTML = '<p class="muted">Running code...</p>';
-
-    try {
-      // Reset output buffers
-      pyodide.runPython(`
-        stdout_capture.reset()
-        stderr_capture.reset()
-      `);
-
-      // Execute the user's code
-      pyodide.runPython(code);
-
-      // Get captured output
-      const stdout = pyodide.runPython('stdout_capture.getvalue()');
-      const stderr = pyodide.runPython('stderr_capture.getvalue()');
-
-      let outputHTML = '';
-
-      if (stdout) {
-        outputHTML += `
-          <div class="output-line">
-            <span class="output-label">Output:</span>
-            <pre class="output-text">${escapeHtml(stdout)}</pre>
-          </div>
-        `;
-      }
-
-      if (stderr) {
-        outputHTML += `
-          <div class="output-line error">
-            <span class="output-label">Error:</span>
-            <pre class="output-text">${escapeHtml(stderr)}</pre>
-          </div>
-        `;
-      }
-
-      if (!stdout && !stderr) {
-        outputHTML = '<p class="muted">Code executed successfully (no output).</p>';
-      }
-
-      output.innerHTML = outputHTML;
-      output.classList.add('is-revealing');
-      output.scrollTop = output.scrollHeight;
-
-    } catch (error) {
-      const errorMessage = error.toString();
-      output.innerHTML = `
-        <div class="output-line error">
-          <span class="output-label">Error:</span>
-          <pre class="output-text">${escapeHtml(errorMessage)}</pre>
-        </div>
-      `;
-      output.classList.add('is-revealing');
-    } finally {
-      if (runBtn) runBtn.classList.remove('is-running');
-    }
-  }
-
-  // Update project status
-  function updateProjectStatus(status) {
-    const statusEl = document.getElementById('project-status');
-    if (status === 'saved') {
-      statusEl.textContent = '✓ Saved';
-      statusEl.className = 'project-status saved';
-    } else if (status === 'unsaved') {
-      statusEl.textContent = '● Unsaved';
-      statusEl.className = 'project-status unsaved';
-    } else {
-      statusEl.textContent = '';
-      statusEl.className = 'project-status';
-    }
-  }
-
-  // Mark as unsaved
-  function markUnsaved() {
-    if (currentProjectId) {
-      updateProjectStatus('unsaved');
-    }
-  }
-
-  // Clear output
-  function clearOutput() {
-    document.getElementById('output-content').innerHTML = '<p class="muted">Run your code to see output here...</p>';
-  }
-
-  // Show notification
-  function showNotification(message) {
-    // Simple notification - could be enhanced
-    const status = document.getElementById('project-status');
-    const original = status.textContent;
-    status.textContent = message;
-    setTimeout(() => {
-      status.textContent = original;
-    }, 2000);
-  }
-
-  // Utility functions
   function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
@@ -388,6 +23,7 @@
   }
 
   function formatDate(isoString) {
+    if (!isoString) return '';
     const date = new Date(isoString);
     const now = new Date();
     const diff = now - date;
@@ -396,23 +32,326 @@
     const days = Math.floor(diff / 86400000);
 
     if (minutes < 1) return 'Just now';
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    if (days < 7) return `${days}d ago`;
-    return date.toLocaleDateString();
+    if (minutes < 60) return minutes + 'm ago';
+    if (hours < 24) return hours + 'h ago';
+    if (days < 7) return days + 'd ago';
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   }
 
-  // Event listeners
+  function setFilename(name) {
+    const el = $('sandbox-filename');
+    if (el) el.textContent = name || 'untitled.py';
+  }
+
+  function updateProjectStatus(status) {
+    const statusEl = $('project-status');
+    if (!statusEl) return;
+    if (status === 'saved') {
+      statusEl.textContent = 'Saved';
+      statusEl.className = 'project-status saved';
+    } else if (status === 'unsaved') {
+      statusEl.textContent = 'Unsaved';
+      statusEl.className = 'project-status unsaved';
+    } else {
+      statusEl.textContent = '';
+      statusEl.className = 'project-status';
+    }
+  }
+
+  function loadProjects() {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      projects = stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      console.error('Error loading projects:', e);
+      projects = [];
+    }
+    renderProjects();
+  }
+
+  function saveProjects() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+    } catch (e) {
+      console.error('Error saving projects:', e);
+      alert('Could not save projects. Storage may be full.');
+    }
+  }
+
+  function renderProjects() {
+    const list = $('projects-list');
+    if (!list) return;
+    list.innerHTML = '';
+
+    if (!projects.length) {
+      const empty = document.createElement('p');
+      empty.className = 'sandbox-projects-empty';
+      empty.textContent = 'No saved projects yet. Run some code, then Save.';
+      list.appendChild(empty);
+      return;
+    }
+
+    projects.forEach((project) => {
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'project-item' + (project.id === currentProjectId ? ' active' : '');
+      item.innerHTML =
+        '<div class="project-item-content">' +
+        '<strong>' + escapeHtml(project.name) + '</strong>' +
+        '<span class="project-meta">' + formatDate(project.updated) + '</span>' +
+        '</div>';
+      item.addEventListener('click', () => loadProject(project.id));
+      list.appendChild(item);
+    });
+  }
+
+  function createNewProject() {
+    currentProjectId = null;
+    if (editor) {
+      editor.setValue(DEFAULT_CODE);
+      editor.clearHistory();
+      editor.focus();
+    }
+    setFilename('untitled.py');
+    updateProjectStatus('');
+    renderProjects();
+  }
+
+  function loadProject(projectId) {
+    if (currentProjectId) saveCurrentProject(false);
+
+    const project = projects.find((p) => p.id === projectId);
+    if (!project || !editor) return;
+
+    currentProjectId = projectId;
+    editor.setValue(project.code || '');
+    editor.clearHistory();
+    setFilename(project.name);
+    updateProjectStatus('saved');
+    renderProjects();
+  }
+
+  function saveCurrentProject(showMessage) {
+    const code = editor ? editor.getValue() : '';
+
+    if (!currentProjectId) {
+      const name = prompt('Project name:', 'my_script');
+      if (!name || !name.trim()) return;
+
+      const project = {
+        id: Date.now().toString(),
+        name: name.trim(),
+        code,
+        created: new Date().toISOString(),
+        updated: new Date().toISOString(),
+      };
+
+      projects.push(project);
+      currentProjectId = project.id;
+      saveProjects();
+      setFilename(project.name);
+      renderProjects();
+      updateProjectStatus('saved');
+      if (showMessage) notify('Project saved');
+      return;
+    }
+
+    const project = projects.find((p) => p.id === currentProjectId);
+    if (!project) return;
+
+    project.code = code;
+    project.updated = new Date().toISOString();
+    saveProjects();
+    setFilename(project.name);
+    renderProjects();
+    updateProjectStatus('saved');
+    if (showMessage) notify('Project saved');
+  }
+
+  function deleteCurrentProject() {
+    if (!currentProjectId) {
+      if (editor) editor.setValue(DEFAULT_CODE);
+      setFilename('untitled.py');
+      updateProjectStatus('');
+      clearOutput();
+      return;
+    }
+
+    const project = projects.find((p) => p.id === currentProjectId);
+    if (!project) return;
+
+    if (!confirm('Delete "' + project.name + '"? This cannot be undone.')) return;
+
+    projects = projects.filter((p) => p.id !== currentProjectId);
+    currentProjectId = null;
+    if (editor) {
+      editor.setValue(DEFAULT_CODE);
+      editor.clearHistory();
+    }
+    setFilename('untitled.py');
+    updateProjectStatus('');
+    saveProjects();
+    renderProjects();
+    clearOutput();
+    notify('Project deleted');
+  }
+
+  function markUnsaved() {
+    if (currentProjectId) updateProjectStatus('unsaved');
+  }
+
+  function clearOutput() {
+    const output = $('output-content');
+    if (!output) return;
+    output.classList.remove('is-revealing');
+    output.innerHTML = '<p class="output-placeholder muted">Press Run to see output</p>';
+  }
+
+  function notify(message) {
+    if (window.PyUI && window.PyUI.showToast) {
+      window.PyUI.showToast(message);
+      return;
+    }
+    const status = $('project-status');
+    if (!status) return;
+    const original = status.textContent;
+    const originalClass = status.className;
+    status.textContent = message;
+    setTimeout(() => {
+      status.textContent = original;
+      status.className = originalClass;
+    }, 2000);
+  }
+
+  async function ensurePyodide() {
+    if (!window.Pyodide || typeof window.Pyodide.ensureReady !== 'function') {
+      throw new Error('Python runtime unavailable');
+    }
+    await window.Pyodide.ensureReady();
+    return window.pyodide;
+  }
+
+  async function runCode() {
+    const runBtn = $('run-btn');
+    const output = $('output-content');
+    if (!editor || !output) return;
+
+    if (runBtn) runBtn.classList.add('is-running');
+
+    const code = editor.getValue();
+    if (!code.trim()) {
+      output.innerHTML = '<p class="output-placeholder muted">Write some Python code first.</p>';
+      if (runBtn) runBtn.classList.remove('is-running');
+      return;
+    }
+
+    output.classList.remove('is-revealing');
+    output.innerHTML = '<p class="output-placeholder muted">Running…</p>';
+
+    try {
+      const pyodide = await ensurePyodide();
+      pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+      pyodide.runPython(code);
+
+      const stdout = pyodide.runPython('stdout_capture.getvalue()') || '';
+      const stderr = pyodide.runPython('stderr_capture.getvalue()') || '';
+
+      let outputHTML = '';
+
+      if (stdout) {
+        outputHTML +=
+          '<div class="output-line">' +
+          '<span class="output-label">Output:</span>' +
+          '<pre class="output-text">' + escapeHtml(stdout) + '</pre>' +
+          '</div>';
+      }
+
+      if (stderr) {
+        outputHTML +=
+          '<div class="output-line error">' +
+          '<span class="output-label">Error:</span>' +
+          '<pre class="output-text">' + escapeHtml(stderr) + '</pre>' +
+          '</div>';
+      }
+
+      if (!stdout && !stderr) {
+        outputHTML = '<p class="output-placeholder muted">Code ran successfully (no output).</p>';
+      }
+
+      output.innerHTML = outputHTML;
+      output.classList.add('is-revealing');
+      output.scrollTop = output.scrollHeight;
+    } catch (error) {
+      const errorMessage = error && error.toString ? error.toString() : String(error);
+      output.innerHTML =
+        '<div class="output-line error">' +
+        '<span class="output-label">Error:</span>' +
+        '<pre class="output-text">' + escapeHtml(errorMessage) + '</pre>' +
+        '</div>';
+      output.classList.add('is-revealing');
+    } finally {
+      if (runBtn) runBtn.classList.remove('is-running');
+    }
+  }
+
+  function initEditor() {
+    const textarea = $('code-editor');
+    if (!textarea || !document.body.classList.contains('page-sandbox') || !window.CodeMirror) return;
+
+    editor = window.CodeMirror.fromTextArea(textarea, {
+      mode: 'python',
+      theme: 'pypath',
+      lineNumbers: true,
+      indentUnit: 4,
+      indentWithTabs: false,
+      lineWrapping: true,
+      autofocus: true,
+      extraKeys: {
+        Tab: (cm) => {
+          if (cm.somethingSelected()) cm.indentSelection('add');
+          else cm.replaceSelection('    ', 'end');
+        },
+        'Ctrl-S': () => {
+          saveCurrentProject(true);
+          return false;
+        },
+        'Cmd-S': () => {
+          saveCurrentProject(true);
+          return false;
+        },
+        'Ctrl-Enter': () => {
+          runCode();
+          return false;
+        },
+        'Cmd-Enter': () => {
+          runCode();
+          return false;
+        },
+      },
+    });
+
+    editor.setValue(DEFAULT_CODE);
+    setFilename('untitled.py');
+
+    window.addEventListener('themechange', () => {
+      if (!editor) return;
+      editor.setOption('theme', 'pypath');
+      editor.refresh();
+    });
+
+    editor.on('change', markUnsaved);
+  }
+
   function setupToolbarIcons() {
     if (!window.PyIcons) return;
     const map = {
       'run-btn': 'play',
       'save-btn': 'save',
       'delete-btn': 'trash',
-      'new-project-btn': 'plus'
+      'new-project-btn': 'plus',
     };
-    Object.keys(map).forEach(id => {
-      const btn = document.getElementById(id);
+    Object.keys(map).forEach((id) => {
+      const btn = $(id);
       if (!btn) return;
       const icon = window.PyIcons.el(map[id], 16);
       const label = btn.textContent.trim().replace(/^[^\w]+/, '').trim() || id;
@@ -425,28 +364,21 @@
     });
   }
 
-  document.addEventListener('DOMContentLoaded', async () => {
+  document.addEventListener('DOMContentLoaded', () => {
     if (!document.body.classList.contains('page-sandbox')) return;
 
     initEditor();
     loadProjects();
     setupToolbarIcons();
-    initPyodide();
 
-    document.getElementById('new-project-btn').addEventListener('click', createNewProject);
-    document.getElementById('save-btn').addEventListener('click', () => saveCurrentProject(true));
-    document.getElementById('delete-btn').addEventListener('click', deleteCurrentProject);
-    document.getElementById('run-btn').addEventListener('click', runCode);
-    document.getElementById('clear-output-btn').addEventListener('click', clearOutput);
-    document.getElementById('project-select').addEventListener('change', (e) => {
-      if (e.target.value) loadProject(e.target.value);
-    });
+    $('new-project-btn')?.addEventListener('click', createNewProject);
+    $('save-btn')?.addEventListener('click', () => saveCurrentProject(true));
+    $('delete-btn')?.addEventListener('click', deleteCurrentProject);
+    $('run-btn')?.addEventListener('click', runCode);
+    $('clear-output-btn')?.addEventListener('click', clearOutput);
 
-    if (editor) {
-      editor.on('blur', () => {
-        if (currentProjectId) saveCurrentProject(false);
-      });
+    if (window.Pyodide && typeof window.Pyodide.scheduleWarmup === 'function') {
+      window.Pyodide.scheduleWarmup();
     }
   });
 })();
-
