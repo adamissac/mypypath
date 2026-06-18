@@ -769,9 +769,10 @@ body.nav-open::before {
 }
 
 .page-home .hero-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(148px, 0.38fr);
+  gap: 12px;
+  align-items: stretch;
 }
 
 .page-home .hero-terminal {
@@ -780,6 +781,9 @@ body.nav-open::before {
   border: 1px solid var(--border);
   background: var(--panel);
   box-shadow: var(--shadow-strong);
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
 }
 
 .page-home .hero-terminal-bar {
@@ -811,10 +815,11 @@ body.nav-open::before {
 
 .page-home .hero-terminal-code {
   margin: 0;
-  padding: 18px 20px 14px;
+  padding: 22px 20px 18px;
+  flex: 1;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.88rem;
-  line-height: 1.55;
+  font-size: 0.92rem;
+  line-height: 1.6;
   color: var(--text);
   background: var(--panel);
   overflow-x: auto;
@@ -834,9 +839,9 @@ body.nav-open::before {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 20px 16px;
+  padding: 16px 20px 18px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   color: var(--muted);
   border-top: 1px dashed var(--border);
   background: color-mix(in srgb, var(--bg-elevated) 50%, var(--panel));
@@ -848,35 +853,40 @@ body.nav-open::before {
 }
 
 .page-home .hero-metrics {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 10px;
+  min-height: 100%;
 }
 
 .page-home .hero-metric {
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 14px 10px;
-  border-radius: 12px;
+  justify-content: center;
+  gap: 6px;
+  min-height: 84px;
+  padding: 18px 12px;
+  border-radius: 16px;
   border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--panel) 90%, var(--bg-elevated));
+  background: var(--panel);
+  box-shadow: var(--shadow-strong);
 }
 
 .page-home .hero-metric strong {
-  font-size: 1.45rem;
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
   font-weight: 700;
   color: var(--text-strong);
-  line-height: 1.1;
+  line-height: 1;
 }
 
 .page-home .hero-metric span {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   color: var(--muted);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
 }
 
 .page-home .hero-credit {
@@ -926,11 +936,27 @@ body.nav-open::before {
   .page-home .hero-points {
     align-items: center;
   }
+
+  .page-home .hero-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .page-home .hero-metrics {
+    flex-direction: row;
+  }
+
+  .page-home .hero-metric {
+    min-height: 120px;
+  }
 }
 
 @media (max-width: 480px) {
   .page-home .hero-metrics {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  .page-home .hero-metric {
+    min-height: 96px;
   }
 }
 
