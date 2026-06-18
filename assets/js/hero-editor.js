@@ -158,15 +158,15 @@
         await window.Pyodide.ensureReady();
 
         setOutput(outputEl, '<span class="hero-live-output-loading">Running…</span>', false);
-        window.pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
-        window.pyodide.runPython(code);
-        var stdout = window.pyodide.runPython('stdout_capture.getvalue()');
-        var stderr = window.pyodide.runPython('stderr_capture.getvalue()');
+        var result = await window.Pyodide.runCode(code);
 
-        if (stderr) {
-          setOutput(outputEl, '<pre class="hero-live-output-error">' + escapeHtml(stderr) + '</pre>', true);
-        } else if (stdout) {
-          setOutput(outputEl, '<pre class="hero-live-output-text">' + escapeHtml(stdout) + '</pre>', true);
+        if (result.error) {
+          var errMsg = result.error && result.error.toString ? result.error.toString() : String(result.error);
+          setOutput(outputEl, '<pre class="hero-live-output-error">' + escapeHtml(errMsg) + '</pre>', true);
+        } else if (result.stderr) {
+          setOutput(outputEl, '<pre class="hero-live-output-error">' + escapeHtml(result.stderr) + '</pre>', true);
+        } else if (result.stdout) {
+          setOutput(outputEl, '<pre class="hero-live-output-text">' + escapeHtml(result.stdout) + '</pre>', true);
         } else {
           setOutput(outputEl, '<span class="hero-live-output-hint">Finished — no output printed.</span>', true);
         }

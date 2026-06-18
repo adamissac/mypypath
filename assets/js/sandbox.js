@@ -251,32 +251,35 @@ for i in range(3):
     output.innerHTML = '<p class="output-placeholder muted">Running…</p>';
 
     try {
-      const pyodide = await ensurePyodide();
-      pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
-      pyodide.runPython(code);
-
-      const stdout = pyodide.runPython('stdout_capture.getvalue()') || '';
-      const stderr = pyodide.runPython('stderr_capture.getvalue()') || '';
-
+      const result = await window.Pyodide.runCode(code);
       let outputHTML = '';
 
-      if (stdout) {
+      if (result.stdout) {
         outputHTML +=
           '<div class="output-line">' +
           '<span class="output-label">Output:</span>' +
-          '<pre class="output-text">' + escapeHtml(stdout) + '</pre>' +
+          '<pre class="output-text">' + escapeHtml(result.stdout) + '</pre>' +
           '</div>';
       }
 
-      if (stderr) {
+      if (result.stderr) {
         outputHTML +=
           '<div class="output-line error">' +
           '<span class="output-label">Error:</span>' +
-          '<pre class="output-text">' + escapeHtml(stderr) + '</pre>' +
+          '<pre class="output-text">' + escapeHtml(result.stderr) + '</pre>' +
           '</div>';
       }
 
-      if (!stdout && !stderr) {
+      if (result.error) {
+        const msg = result.error && result.error.toString ? result.error.toString() : String(result.error);
+        outputHTML +=
+          '<div class="output-line error">' +
+          '<span class="output-label">Error:</span>' +
+          '<pre class="output-text">' + escapeHtml(msg) + '</pre>' +
+          '</div>';
+      }
+
+      if (!result.stdout && !result.stderr && !result.error) {
         outputHTML = '<p class="output-placeholder muted">Code ran successfully (no output).</p>';
       }
 
