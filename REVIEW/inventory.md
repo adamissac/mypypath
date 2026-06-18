@@ -8,6 +8,7 @@
 - `/certifications.html` — `certifications.html`
 - `/about.html` — `about.html`
 - `/settings.html` — `settings.html`
+- `/404.html` — `404.html` (styled not-found page)
 - `/learn.html` — `learn.html`
 
 ## Unit landings
