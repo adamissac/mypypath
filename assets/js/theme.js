@@ -35,6 +35,7 @@
     try { localStorage.setItem(MOTION_KEY, value); } catch {}
     document.documentElement.dataset.motion = value;
     document.body.dataset.motion = value;
+    document.documentElement.classList.toggle('reduced-motion', value === 'off');
   }
 
   function applyTheme(source) {
@@ -70,6 +71,33 @@
       const mq = window.matchMedia('(prefers-color-scheme: dark)');
       mq.addEventListener('change', () => applyTheme('system'));
     }
+  }
+
+  function enhanceSettingsA11y() {
+    const toggleLabels = {
+      'motion-toggle': 'Animated UI',
+      'tooltips-toggle': 'Tooltips',
+      'compact-toggle': 'Compact layout',
+      'focus-toggle': 'Focus mode',
+      'notifications-toggle': 'Progress notifications',
+      'autosave-toggle': 'Auto-save progress',
+      'shortcuts-toggle': 'Keyboard shortcuts',
+      'reminders-toggle': 'Study reminders',
+    };
+    Object.keys(toggleLabels).forEach((id) => {
+      const input = document.getElementById(id);
+      if (!input) return;
+      input.setAttribute('role', 'switch');
+      input.setAttribute('aria-checked', String(input.checked));
+      input.setAttribute('aria-label', toggleLabels[id]);
+      input.addEventListener('change', () => {
+        input.setAttribute('aria-checked', String(input.checked));
+      });
+    });
+
+    document.querySelectorAll('.segmented[role="group"]').forEach((group) => {
+      group.setAttribute('role', 'radiogroup');
+    });
   }
 
   function syncSettingsUI(source) {
@@ -126,6 +154,7 @@
 
     setupRadioSetting('codetheme', CODETHEME_KEY, applyCodeTheme);
     setupRadioSetting('sidebar', SIDEBAR_KEY, applySidebar);
+    enhanceSettingsA11y();
   }
 
   function setupToggleSetting(id, storageKey, applyFn) {
