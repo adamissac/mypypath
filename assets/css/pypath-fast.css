@@ -1748,19 +1748,29 @@ html.reduced-motion.page-from-nav main {
 
 /* ── About page ─────────────────────────────────────────── */
 .page-about main {
-  padding-bottom: clamp(56px, 8vh, 96px);
+  padding: 0;
 }
 
-.page-about .about-intro {
-  padding: clamp(56px, 9vh, 96px) 0 clamp(40px, 6vh, 64px);
+.page-about .about-page {
+  padding: clamp(40px, 7vh, 72px) clamp(20px, 4vw, 48px) clamp(48px, 8vh, 80px);
+  background:
+    radial-gradient(ellipse 90% 60% at 50% -20%, color-mix(in srgb, var(--primary) 8%, transparent), transparent),
+    var(--bg);
 }
 
-.page-about .about-intro-inner {
-  max-width: 38rem;
+.page-about .about-page-inner {
+  width: min(1280px, 100%);
+  margin: 0 auto;
+}
+
+.page-about .about-mission {
+  margin-bottom: clamp(36px, 5vw, 56px);
+  padding-bottom: clamp(28px, 4vw, 40px);
+  border-bottom: 1px solid var(--border);
 }
 
 .page-about .about-eyebrow {
-  margin: 0 0 12px;
+  margin: 0 0 14px;
   font-size: 0.76rem;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -1768,29 +1778,33 @@ html.reduced-motion.page-from-nav main {
   color: var(--primary-strong);
 }
 
+.page-about .about-mission-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(20px, 4vw, 48px);
+  align-items: end;
+}
+
 .page-about .about-mission-headline {
-  margin: 0 0 16px;
-  font-size: clamp(1.85rem, 4.2vw, 2.5rem);
-  line-height: 1.12;
-  letter-spacing: -0.03em;
+  margin: 0;
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
   color: var(--text-strong);
 }
 
 .page-about .about-mission-lead {
   margin: 0;
-  font-size: clamp(1.02rem, 1.5vw, 1.12rem);
+  max-width: 34ch;
+  font-size: clamp(1rem, 1.4vw, 1.1rem);
   line-height: 1.65;
   color: var(--muted);
-}
-
-.page-about .about-team {
-  padding: clamp(8px, 2vh, 24px) 0 clamp(48px, 7vh, 72px);
 }
 
 .page-about .about-team-row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(16px, 2.2vw, 24px);
+  gap: clamp(14px, 2vw, 22px);
   align-items: stretch;
 }
 
@@ -1799,8 +1813,8 @@ html.reduced-motion.page-from-nav main {
   flex-direction: column;
   align-items: center;
   height: 100%;
-  padding: 28px 22px 24px;
-  border-radius: 18px;
+  padding: clamp(22px, 2.5vw, 28px) clamp(18px, 2vw, 22px) clamp(20px, 2.2vw, 24px);
+  border-radius: 16px;
   border: 1px solid var(--border);
   background: var(--panel);
   box-shadow: var(--shadow);
@@ -1814,19 +1828,18 @@ html.reduced-motion.page-from-nav main {
 .page-about .team-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-strong);
-  border-color: color-mix(in srgb, var(--primary) 24%, var(--border));
+  border-color: color-mix(in srgb, var(--primary) 22%, var(--border));
 }
 
 .page-about .team-card-photo {
   flex-shrink: 0;
-  width: 128px;
-  height: 128px;
-  margin: 0 auto 20px;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 18px;
   padding: 3px;
   border-radius: 50%;
-  border: 2px solid var(--border);
+  border: 2px solid color-mix(in srgb, var(--primary) 18%, var(--border));
   background: var(--panel);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--border) 60%, transparent);
 }
 
 .page-about .team-card-photo img {
@@ -1835,7 +1848,7 @@ html.reduced-motion.page-from-nav main {
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  object-position: center 18%;
+  object-position: center 20%;
 }
 
 .page-about .team-card-body {
@@ -1849,7 +1862,7 @@ html.reduced-motion.page-from-nav main {
 
 .page-about .team-card-name {
   margin: 0 0 10px;
-  font-size: 1.2rem;
+  font-size: clamp(1.1rem, 1.5vw, 1.22rem);
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.02em;
@@ -1859,49 +1872,45 @@ html.reduced-motion.page-from-nav main {
 .page-about .team-card-role {
   display: inline-block;
   margin: 0 0 8px;
-  padding: 4px 12px;
+  padding: 4px 11px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--border));
-  background: color-mix(in srgb, var(--primary) 7%, var(--panel));
-  font-size: 0.74rem;
+  border: 1px solid color-mix(in srgb, var(--primary) 20%, var(--border));
+  background: color-mix(in srgb, var(--primary) 6%, var(--panel));
+  font-size: 0.72rem;
   font-weight: 600;
   line-height: 1.35;
-  letter-spacing: 0.01em;
   color: var(--primary-strong);
 }
 
 .page-about .team-card-school {
-  margin: 0 0 18px;
-  font-size: 0.78rem;
+  margin: 0 0 16px;
+  font-size: 0.76rem;
   line-height: 1.4;
-  color: color-mix(in srgb, var(--muted) 92%, transparent);
+  color: var(--muted);
 }
 
 .page-about .team-card-divider {
   width: 100%;
-  margin: 0 0 16px;
+  margin: 0 0 14px;
   border: none;
   border-top: 1px solid var(--border);
 }
 
 .page-about .team-card-bio {
   margin: 0;
-  font-size: 0.9rem;
-  line-height: 1.6;
+  font-size: 0.88rem;
+  line-height: 1.58;
   color: var(--text);
 }
 
 .page-about .about-contact {
-  padding-bottom: 16px;
-}
-
-.page-about .about-contact-inner {
-  padding-top: 32px;
+  margin-top: clamp(36px, 5vw, 52px);
+  padding-top: clamp(24px, 3vw, 32px);
   border-top: 1px solid var(--border);
 }
 
 .page-about .about-contact-title {
-  margin: 0 0 16px;
+  margin: 0 0 14px;
   font-size: 0.76rem;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -1914,37 +1923,45 @@ html.reduced-motion.page-from-nav main {
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(12px, 2vw, 24px);
 }
 
 .page-about .about-contact-list li {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 8px 14px;
-  font-size: 0.94rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 0.92rem;
   color: var(--text);
 }
 
 .page-about .about-contact-list strong {
-  min-width: 4.5rem;
   color: var(--text-strong);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 960px) {
+  .page-about .about-mission-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .page-about .about-mission-lead {
+    max-width: none;
+  }
+
   .page-about .about-team-row {
     grid-template-columns: 1fr;
-    max-width: 22rem;
-    margin: 0 auto;
+  }
+
+  .page-about .about-contact-list {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 640px) {
-  .page-about .about-intro-inner {
-    max-width: none;
-  }
-
-  .page-about .team-card {
-    padding: 24px 20px 22px;
+  .page-about .about-page {
+    padding-left: 16px;
+    padding-right: 16px;
   }
 }
