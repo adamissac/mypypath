@@ -2040,6 +2040,7 @@ html.reduced-motion.page-from-nav main {
   grid-template-columns: minmax(200px, 240px) minmax(0, 1fr);
   gap: clamp(14px, 2vw, 20px);
   min-height: min(72vh, 760px);
+  align-items: stretch;
 }
 
 .page-sandbox .sandbox-projects {
@@ -2137,6 +2138,7 @@ html.reduced-motion.page-from-nav main {
   display: flex;
   flex-direction: column;
   min-height: 0;
+  height: 100%;
   border-radius: 18px;
   border: 1px solid var(--border);
   background: var(--panel);
@@ -2229,7 +2231,9 @@ html.reduced-motion.page-from-nav main {
 
 .page-sandbox .sandbox-editor-wrap {
   flex: 1 1 auto;
-  min-height: 240px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   border: none !important;
   border-radius: 0 !important;
   box-shadow: none !important;
@@ -2237,7 +2241,8 @@ html.reduced-motion.page-from-nav main {
 }
 
 .page-sandbox .sandbox-editor-wrap .CodeMirror {
-  height: 100% !important;
+  flex: 1 1 auto;
+  height: auto !important;
   min-height: 240px;
   font-size: 14px;
 }
