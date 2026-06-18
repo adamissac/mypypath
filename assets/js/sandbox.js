@@ -12,11 +12,10 @@
   function initEditor() {
     const textarea = document.getElementById('code-editor');
     if (!textarea || !document.body.classList.contains('page-sandbox')) return;
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     
     editor = CodeMirror.fromTextArea(textarea, {
       mode: 'python',
-      theme: isDark ? 'monokai' : 'default',
+      theme: 'pypath',
       lineNumbers: true,
       indentUnit: 4,
       indentWithTabs: false,
@@ -32,8 +31,9 @@
 
     // Update theme when it changes
     window.addEventListener('themechange', () => {
-      const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'monokai' : 'default';
-      editor.setOption('theme', theme);
+      if (!editor) return;
+      editor.setOption('theme', 'pypath');
+      editor.refresh();
     });
 
     editor.on('change', () => {

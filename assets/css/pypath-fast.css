@@ -95,8 +95,148 @@ a:hover {
 pre.code,
 pre.code code,
 .page-home .screen pre.code {
+  background: #f8f9fa;
+  color: #212529;
+  border-color: var(--border);
+}
+
+[data-theme="dark"] pre.code,
+[data-theme="dark"] pre.code code,
+[data-theme="dark"] .page-home .screen pre.code {
+  background: #282d38;
+  color: #e8eaef;
+}
+
+/* ── CodeMirror — unified light/dark (pypath theme) ───── */
+.cm-s-pypath.CodeMirror {
+  background: #f8f9fa;
+  color: #1c1917;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.cm-s-pypath .CodeMirror-gutters {
+  background: #f1f3f5;
+  border-right: 1px solid var(--border);
+}
+
+.cm-s-pypath .CodeMirror-linenumber {
+  color: #78716c;
+}
+
+.cm-s-pypath .CodeMirror-cursor {
+  border-left-color: #1c1917;
+}
+
+.cm-s-pypath .CodeMirror-selected {
+  background: color-mix(in srgb, var(--primary) 22%, transparent);
+}
+
+.cm-s-pypath .CodeMirror-activeline-background {
+  background: color-mix(in srgb, var(--primary) 6%, #f8f9fa);
+}
+
+[data-theme="dark"] .cm-s-pypath.CodeMirror {
+  background: #282d38;
+  color: #e8eaef;
+}
+
+[data-theme="dark"] .cm-s-pypath .CodeMirror-gutters {
+  background: #1e2229;
+  border-right-color: #434a58;
+}
+
+[data-theme="dark"] .cm-s-pypath .CodeMirror-linenumber {
+  color: #9aa3b2;
+}
+
+[data-theme="dark"] .cm-s-pypath .CodeMirror-cursor {
+  border-left-color: #f4f5f7;
+}
+
+[data-theme="dark"] .cm-s-pypath .CodeMirror-selected {
+  background: rgba(59, 130, 246, 0.28);
+}
+
+[data-theme="dark"] .cm-s-pypath .CodeMirror-activeline-background {
+  background: color-mix(in srgb, var(--primary) 10%, #282d38);
+}
+
+.interactive-editor .CodeMirror,
+.editor-container .CodeMirror {
+  background: #f8f9fa;
+  color: #1c1917;
+}
+
+[data-theme="dark"] .interactive-editor .CodeMirror,
+[data-theme="dark"] .editor-container .CodeMirror {
+  background: #282d38;
+  color: #e8eaef;
+}
+
+.code-editor-small {
+  background: #f8f9fa;
+  color: #1c1917;
+}
+
+[data-theme="dark"] .code-editor-small {
+  background: #282d38;
+  color: #e8eaef;
+}
+
+.editor-output,
+.output-container {
   background: var(--bg-elevated);
   color: var(--text);
+}
+
+/* ── Sidebar collapse (body.sidebar-closed) ─────────────── */
+@media (min-width: 981px) {
+  body.sidebar-closed .course-sidebar {
+    transform: translateX(calc(-100% - 24px)) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  html[data-sidebar="always"] body.sidebar-closed .course-sidebar {
+    transform: translateX(calc(-100% - 24px)) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  body.sidebar-closed .layout-course {
+    grid-template-columns: minmax(0, 0fr) minmax(0, 1fr) !important;
+    gap: 0 !important;
+  }
+
+  html[data-sidebar="always"] body:not(.sidebar-closed) .course-sidebar {
+    display: block !important;
+    transform: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  html[data-sidebar="always"] body.sidebar-closed .layout-course {
+    grid-template-columns: minmax(0, 0fr) minmax(0, 1fr) !important;
+    gap: 0 !important;
+  }
+}
+
+@media (max-width: 980px) {
+  body:not(.sidebar-open) .course-sidebar {
+    transform: translateY(-120%) !important;
+    pointer-events: none !important;
+  }
+
+  body.sidebar-open .course-sidebar {
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+}
+
+html[data-sidebar="hidden"] body:not(.sidebar-open) .course-sidebar {
+  display: none !important;
 }
 
 /* ── Subtle static background (no JS, no animation) ─────── */
