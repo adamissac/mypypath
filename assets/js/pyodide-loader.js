@@ -80,9 +80,27 @@
     return ensureReady;
   }
 
+  function runCode(source) {
+    return ensureReady().then(function (pyodide) {
+      pyodide.runPython('stdout_capture.reset(); stderr_capture.reset()');
+      var result = { stdout: '', stderr: '', error: null };
+      try {
+        pyodide.runPython(source);
+      } catch (err) {
+        result.error = err;
+      }
+      result.stdout = pyodide.runPython('stdout_capture.getvalue()') || '';
+      result.stderr = pyodide.runPython('stderr_capture.getvalue()') || '';
+      return result;
+    });
+  }
+
   window.Pyodide = {
     ensureReady: ensureReady,
-    scheduleWarmup: scheduleWarmup
+    scheduleWarmup: scheduleWarmup,
+    runCode: runCode,
+    RUN_LABEL: 'Run',
+    OUTPUT_HINT: 'Press Run to see output'
   };
 
   document.addEventListener('DOMContentLoaded', function () {
