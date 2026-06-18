@@ -16,132 +16,55 @@
     <script defer src="/assets/js/core.js"></script>
 <script>
       document.addEventListener('DOMContentLoaded', function() {
-        // Adam's toggle - select the button that controls adam-details
-        const adamToggle = document.querySelector('button[aria-controls="adam-details"]');
-        const adamDetails = document.getElementById('adam-details');
-        const cofoundersLayout = document.querySelector('.cofounders-layout');
-        
-        if (adamToggle && adamDetails && cofoundersLayout) {
-          adamToggle.addEventListener('click', function() {
-            const isExpanded = adamToggle.getAttribute('aria-expanded') === 'true';
-            const arrow = adamToggle.querySelector('.dropdown-arrow');
-            
-            adamToggle.setAttribute('aria-expanded', !isExpanded);
-            adamDetails.style.display = isExpanded ? 'none' : 'block';
-            adamToggle.querySelector('span').textContent = isExpanded ? 'View Qualifications' : 'Hide Qualifications';
-            
-            // Toggle layout class to move Ritesh
-            // Also remove ritesh-details-expanded and prahas-details-expanded if they exist
-            if (isExpanded) {
-              cofoundersLayout.classList.remove('details-expanded');
-              cofoundersLayout.classList.remove('ritesh-details-expanded');
-              cofoundersLayout.classList.remove('prahas-details-expanded');
-              arrow.classList.remove('rotated');
-            } else {
-              cofoundersLayout.classList.add('details-expanded');
-              cofoundersLayout.classList.remove('ritesh-details-expanded');
-              cofoundersLayout.classList.remove('prahas-details-expanded');
-              arrow.classList.add('rotated');
-            }
+        const layout = document.querySelector('.cofounders-layout');
+        if (!layout) return;
+
+        const panels = [
+          { id: 'adam-details', layoutClass: 'details-expanded', buttons: 'button[aria-controls="adam-details"]' },
+          { id: 'ritesh-details-side', layoutClass: 'ritesh-details-expanded', buttons: 'button[aria-controls="ritesh-details-side"]' },
+          { id: 'prahas-details-side', layoutClass: 'prahas-details-expanded', buttons: 'button[aria-controls="prahas-details-side"]' },
+        ];
+
+        function setPanelOpen(panelCfg, open) {
+          const panel = document.getElementById(panelCfg.id);
+          if (!panel) return;
+          panel.style.display = open ? 'block' : 'none';
+          panel.style.maxHeight = open ? panel.scrollHeight + 'px' : null;
+          document.querySelectorAll(panelCfg.buttons).forEach(function(btn) {
+            btn.setAttribute('aria-expanded', String(open));
+            const label = btn.querySelector('span');
+            const arrow = btn.querySelector('.dropdown-arrow');
+            if (label) label.textContent = open ? 'Hide Qualifications' : 'View Qualifications';
+            if (arrow) arrow.classList.toggle('rotated', open);
           });
         }
-        
-        // Ritesh's toggle (side-by-side view)
-        const riteshToggleSide = document.querySelector('.ritesh-toggle-side');
-        const riteshDetailsSide = document.getElementById('ritesh-details-side');
-        
-        if (riteshToggleSide && riteshDetailsSide && cofoundersLayout) {
-          riteshToggleSide.addEventListener('click', function() {
-            const isExpanded = riteshToggleSide.getAttribute('aria-expanded') === 'true';
-            const arrow = riteshToggleSide.querySelector('.dropdown-arrow');
-            
-            riteshToggleSide.setAttribute('aria-expanded', !isExpanded);
-            
-            // Toggle layout class to hide other cards when Ritesh's details are shown
-            // Also remove details-expanded and prahas-details-expanded if they exist
-            if (isExpanded) {
-              cofoundersLayout.classList.remove('ritesh-details-expanded');
-              cofoundersLayout.classList.remove('details-expanded');
-              cofoundersLayout.classList.remove('prahas-details-expanded');
-              riteshDetailsSide.style.maxHeight = null;
-              riteshDetailsSide.style.display = 'none';
-              arrow.classList.remove('rotated');
-            } else {
-              cofoundersLayout.classList.add('ritesh-details-expanded');
-              cofoundersLayout.classList.remove('details-expanded');
-              cofoundersLayout.classList.remove('prahas-details-expanded');
-              riteshDetailsSide.style.display = 'block';
-              riteshDetailsSide.style.maxHeight = riteshDetailsSide.scrollHeight + 'px';
-              arrow.classList.add('rotated');
-            }
-            
-            riteshToggleSide.querySelector('span').textContent = isExpanded ? 'View Qualifications' : 'Hide Qualifications';
+
+        function closeAll() {
+          panels.forEach(function(cfg) {
+            layout.classList.remove(cfg.layoutClass);
+            setPanelOpen(cfg, false);
           });
         }
-        
-        // Ritesh's toggle (expanded view - when Adam's details are shown)
-        const riteshToggle = document.querySelector('.ritesh-toggle');
-        const riteshDetails = document.getElementById('ritesh-details');
-        
-        if (riteshToggle && riteshDetails) {
-          riteshToggle.addEventListener('click', function() {
-            const isExpanded = riteshToggle.getAttribute('aria-expanded') === 'true';
-            const arrow = riteshToggle.querySelector('.dropdown-arrow');
-            
-            riteshToggle.setAttribute('aria-expanded', !isExpanded);
-            
-            if (isExpanded) {
-              riteshDetails.style.maxHeight = null;
-              riteshDetails.style.display = 'none';
-              if (arrow) arrow.classList.remove('rotated');
-            } else {
-              riteshDetails.style.display = 'block';
-              riteshDetails.style.maxHeight = riteshDetails.scrollHeight + 'px';
-              if (arrow) arrow.classList.add('rotated');
-            }
-            
-            riteshToggle.querySelector('span').textContent = isExpanded ? 'View Qualifications' : 'Hide Qualifications';
+
+        panels.forEach(function(cfg) {
+          document.querySelectorAll(cfg.buttons).forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              const isOpen = btn.getAttribute('aria-expanded') === 'true';
+              closeAll();
+              if (!isOpen) {
+                layout.classList.add(cfg.layoutClass);
+                setPanelOpen(cfg, true);
+              }
+            });
           });
-        }
-        
-        // Prahas's toggle (side-by-side view)
-        const prahasToggleSide = document.querySelector('.prahas-toggle-side');
-        const prahasDetailsSide = document.getElementById('prahas-details-side');
-        
-        if (prahasToggleSide && prahasDetailsSide && cofoundersLayout) {
-          prahasToggleSide.addEventListener('click', function() {
-            const isExpanded = prahasToggleSide.getAttribute('aria-expanded') === 'true';
-            const arrow = prahasToggleSide.querySelector('.dropdown-arrow');
-            
-            prahasToggleSide.setAttribute('aria-expanded', !isExpanded);
-            
-            // Toggle layout class to hide other cards when Prahas's details are shown
-            if (isExpanded) {
-              cofoundersLayout.classList.remove('prahas-details-expanded');
-              cofoundersLayout.classList.remove('details-expanded');
-              cofoundersLayout.classList.remove('ritesh-details-expanded');
-              prahasDetailsSide.style.maxHeight = null;
-              prahasDetailsSide.style.display = 'none';
-              arrow.classList.remove('rotated');
-            } else {
-              cofoundersLayout.classList.add('prahas-details-expanded');
-              cofoundersLayout.classList.remove('details-expanded');
-              cofoundersLayout.classList.remove('ritesh-details-expanded');
-              prahasDetailsSide.style.display = 'block';
-              prahasDetailsSide.style.maxHeight = prahasDetailsSide.scrollHeight + 'px';
-              arrow.classList.add('rotated');
-            }
-            
-            prahasToggleSide.querySelector('span').textContent = isExpanded ? 'View Qualifications' : 'Hide Qualifications';
-          });
-        }
+        });
       });
     </script>
   </head>
   <body class="page page-about">
     <div id="page-transition" aria-hidden="true"></div>
 
-                        <header class="site-header">
+                            <header class="site-header">
       <div class="header-accent" aria-hidden="true"></div>
       <div class="container header-inner">
         <a class="brand route" href="/">
@@ -193,6 +116,7 @@
       </div>
     </header>
     <main>
+      <h1 class="visually-hidden">About PyPath</h1>
       <!-- Mission Statement -->
       <section class="section reveal">
         <div class="container">
@@ -420,9 +344,9 @@
                     <h4>AI-900: Azure AI Fundamentals</h4>
                     <p>AI concepts and Azure AI services</p>
                   </div>
+                </div>
               </div>
             </div>
-          </div>
             
             <div class="founder-details" id="adam-details" style="display: none;">
           <div class="features-grid about-grid">
@@ -531,7 +455,6 @@
               </div>
             </div>
             </div>
-            </div>
             
             <!-- Ritesh's Card (moves below when expanded) -->
             <div class="ritesh-card-expanded">
@@ -549,91 +472,12 @@
                 </div>
                 
                 <div class="details-toggle-wrapper">
-                  <button class="details-toggle ritesh-toggle" aria-expanded="false" aria-controls="ritesh-details">
+                  <button class="details-toggle ritesh-toggle ritesh-toggle-side" aria-expanded="false" aria-controls="ritesh-details-side">
                     <span>View Qualifications</span>
                     <svg class="dropdown-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                   </button>
-                </div>
-              </div>
-              
-              <!-- Ritesh's Details -->
-              <div class="ritesh-details" id="ritesh-details" style="display: none;">
-                <div class="features-grid about-grid">
-                  <div class="feature">
-                    <div class="about-header"><h3 style="margin:0">Experience</h3></div>
-                    <div class="stack-16">
-                      <div>
-                        <h4 style="margin:0">Software Development Intern — Maxeom</h4>
-                        <p class="muted" style="margin:4px 0 6px;">Built SQL queries and analytics dashboards for sales team.</p>
-                        <ul class="checklist">
-                          <li><span class="icon"></span> Wrote 15+ SQL queries to clean and join 120k rows for analytics.</li>
-                          <li><span class="icon"></span> Built 3 dashboards for the sales team; indexing cut weekly report runtime by 15%.</li>
-                        </ul>
-                      </div>
-                      <div>
-                        <h4 style="margin:10px 0 0;">Software & Business Development Intern — Punch Rewards</h4>
-                        <p class="muted" style="margin:4px 0 6px;">Developed front-end features for a restaurant rewards app.</p>
-                        <ul class="checklist">
-                          <li><span class="icon"></span> Shipped front-end features for restaurant rewards app.</li>
-                          <li><span class="icon"></span> Supported outreach to onboard 5+ businesses; beta app reached 200+ users.</li>
-                        </ul>
-                      </div>
-                      <div>
-                        <h4 style="margin:10px 0 0;">AI & ML Club — Vice President</h4>
-                        <p class="muted" style="margin:4px 0 6px;">Together with Adam, we lead a 70+ member club; running projects, hackathons, and workshops.</p>
-                        <ul class="checklist">
-                          <li><span class="icon"></span> Organized AI/ML workshops and competitions; built club curriculum and demo projects.</li>
-                          <li><span class="icon"></span> Led teams and live demos; created slides/code resources for meetings.</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="feature">
-                    <div class="about-header"><h3 style="margin:0">Projects</h3></div>
-                    <ul class="checklist">
-                      <li><span class="icon"></span> Car Price Predictor — Random Forest and Linear Regression on 10,000 records; mean error $1,100, R² 0.87.</li>
-                      <li><span class="icon"></span> Tesla Stock Forecaster — RNNs in TensorFlow; 62% trend accuracy, 2.1% MAPE.</li>
-                      <li><span class="icon"></span> Image Classification Model — CNN in Keras/TensorFlow; 90% test accuracy across 10 categories.</li>
-                      <li><span class="icon"></span> Pokémon Battle Predictor — Naïve Bayes and decision trees; 88% validation accuracy.</li>
-                    </ul>
-                    <div style="margin-top: 20px;">
-                      <h4 style="margin:16px 0 6px;">Python Tutor — Coding for a Change</h4>
-                      <p class="muted" style="margin:4px 0 6px;">Taught Python programming and problem-solving skills to students.</p>
-                      <ul class="checklist">
-                        <li><span class="icon"></span> Taught 15 students weekly online; led projects and coding lessons.</li>
-                        <li><span class="icon"></span> Built core Python and problem-solving skills through hands-on projects.</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Certifications Horizontal Box -->
-              <div class="certifications-box">
-                <h3 class="certifications-title">Certifications</h3>
-                <div class="certifications-grid">
-                  <div class="cert-item">
-                    <h4>IT Specialist - Python</h4>
-                    <p>Python programming proficiency</p>
-                  </div>
-                  <div class="cert-item">
-                    <h4>IT Specialist - Software Development</h4>
-                    <p>Core software development skills</p>
-                  </div>
-                  <div class="cert-item">
-                    <h4>IT Specialist - Data Analytics</h4>
-                    <p>Analyzing and visualizing data</p>
-                  </div>
-                  <div class="cert-item">
-                    <h4>AZ-900: Azure Fundamentals</h4>
-                    <p>Cloud concepts and Azure services</p>
-                  </div>
-                  <div class="cert-item">
-                    <h4>AI-900: Azure AI Fundamentals</h4>
-                    <p>AI concepts and Azure AI services</p>
-                  </div>
                 </div>
               </div>
             </div>
@@ -657,7 +501,7 @@
         </div>
       </section>
     </main>
-                                <footer class="site-footer">
+                                    <footer class="site-footer">
       <div class="container">
         <div class="footer-grid">
           <div class="footer-brand">
