@@ -549,7 +549,7 @@
       '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
       '<path d="m15 18-6-6 6-6"/></svg>';
 
-    var heading = sidebar.querySelector('h3');
+    var heading = sidebar.querySelector('.sidebar-unit-label') || sidebar.querySelector('h3');
     if (heading) {
       var head = document.createElement('div');
       head.className = 'sidebar-head';

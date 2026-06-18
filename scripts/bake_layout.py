@@ -296,14 +296,22 @@ def misc_fixes(html: str, path: Path) -> str:
     )
 
     html = html.replace('csawesome/index.html#"', 'csawesome/index.html"')
-    html = html.replace('href="/index.html#curriculum"', 'href="/#curriculum"')
+    html = html.replace('href="/index.html#curriculum"', 'href="/curriculum.html"')
+    html = html.replace('href="/#curriculum"', 'href="/curriculum.html"')
 
     if path.name == 'index.html':
+        if 'id="curriculum"' not in html:
+            html = re.sub(
+                r'(<section class="section features")',
+                r'<section class="section features" id="curriculum"',
+                html,
+                count=1,
+            )
+        # Collapse accidental duplicate id attributes from prior bakes.
         html = re.sub(
-            r'(<section class="section features")',
-            r'<section class="section features" id="curriculum"',
+            r'(<section class="section features" id="curriculum")(?: id="curriculum")+',
+            r'\1',
             html,
-            count=1,
         )
         if 'class="stars"' not in html and 'testimonial' in html:
             html = html.replace(
@@ -336,6 +344,22 @@ def misc_fixes(html: str, path: Path) -> str:
         r'<a class="btn \1 route" href="\2"',
         html,
     )
+
+    if page_kind(path) == 'lesson':
+        html = html.replace(
+            '<button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>',
+            '<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>',
+        )
+        html = re.sub(
+            r'<aside class="course-sidebar">\s*<h3>([^<]+)</h3>',
+            r'<aside class="course-sidebar" id="lesson-sidebar">\n            <p class="sidebar-unit-label">\1</p>',
+            html,
+            count=1,
+        )
+        html = html.replace(
+            '<div class="icon-circle" aria-hidden="true"><span>▶</span></div>',
+            '<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg></div>',
+        )
 
     return html
 
