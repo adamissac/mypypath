@@ -40,7 +40,9 @@ for i in range(3):
 
   function setFilename(name) {
     const el = $('sandbox-filename');
-    if (el) el.textContent = name || 'untitled.py';
+    if (!el) return;
+    const base = (name || 'untitled').replace(/\.py$/i, '');
+    el.textContent = base + '.py';
   }
 
   function updateProjectStatus(status) {
@@ -112,7 +114,7 @@ for i in range(3):
       editor.clearHistory();
       editor.focus();
     }
-    setFilename('untitled.py');
+    setFilename('untitled');
     updateProjectStatus('');
     renderProjects();
   }
@@ -171,7 +173,7 @@ for i in range(3):
   function deleteCurrentProject() {
     if (!currentProjectId) {
       if (editor) editor.setValue(DEFAULT_CODE);
-      setFilename('untitled.py');
+      setFilename('untitled');
       updateProjectStatus('');
       clearOutput();
       return;
@@ -188,7 +190,7 @@ for i in range(3):
       editor.setValue(DEFAULT_CODE);
       editor.clearHistory();
     }
-    setFilename('untitled.py');
+    setFilename('untitled');
     updateProjectStatus('');
     saveProjects();
     renderProjects();
@@ -296,7 +298,9 @@ for i in range(3):
 
   function initEditor() {
     const textarea = $('code-editor');
-    if (!textarea || !document.body.classList.contains('page-sandbox') || !window.CodeMirror) return;
+    if (!textarea || !document.body.classList.contains('page-sandbox')) return false;
+    if (!window.CodeMirror) return false;
+    if (editor) return true;
 
     editor = window.CodeMirror.fromTextArea(textarea, {
       mode: 'python',
@@ -331,7 +335,7 @@ for i in range(3):
     });
 
     editor.setValue(DEFAULT_CODE);
-    setFilename('untitled.py');
+    setFilename('untitled');
 
     window.addEventListener('themechange', () => {
       if (!editor) return;
@@ -340,6 +344,24 @@ for i in range(3):
     });
 
     editor.on('change', markUnsaved);
+
+    requestAnimationFrame(() => {
+      if (editor) editor.refresh();
+    });
+    window.addEventListener('resize', () => {
+      if (editor) editor.refresh();
+    });
+
+    return true;
+  }
+
+  function waitForEditor(attemptsLeft) {
+    if (initEditor()) return;
+    if (attemptsLeft <= 0) {
+      console.error('Sandbox: CodeMirror failed to load');
+      return;
+    }
+    setTimeout(() => waitForEditor(attemptsLeft - 1), 50);
   }
 
   function setupToolbarIcons() {
@@ -367,7 +389,7 @@ for i in range(3):
   document.addEventListener('DOMContentLoaded', () => {
     if (!document.body.classList.contains('page-sandbox')) return;
 
-    initEditor();
+    waitForEditor(40);
     loadProjects();
     setupToolbarIcons();
 
