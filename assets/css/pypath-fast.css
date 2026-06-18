@@ -1745,3 +1745,206 @@ html.reduced-motion.page-from-nav main {
   font-weight: 700;
   color: var(--text-strong);
 }
+
+/* ── About page ─────────────────────────────────────────── */
+.page-about main {
+  padding-bottom: clamp(56px, 8vh, 96px);
+}
+
+.page-about .about-intro {
+  padding: clamp(56px, 9vh, 96px) 0 clamp(40px, 6vh, 64px);
+}
+
+.page-about .about-intro-inner {
+  max-width: 38rem;
+}
+
+.page-about .about-eyebrow {
+  margin: 0 0 12px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--primary-strong);
+}
+
+.page-about .about-mission-headline {
+  margin: 0 0 16px;
+  font-size: clamp(1.85rem, 4.2vw, 2.5rem);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  color: var(--text-strong);
+}
+
+.page-about .about-mission-lead {
+  margin: 0;
+  font-size: clamp(1.02rem, 1.5vw, 1.12rem);
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.page-about .about-team {
+  padding: clamp(8px, 2vh, 24px) 0 clamp(48px, 7vh, 72px);
+}
+
+.page-about .about-team-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2.2vw, 24px);
+  align-items: stretch;
+}
+
+.page-about .team-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  padding: 28px 22px 24px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  text-align: center;
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) ease,
+    border-color var(--dur-base) ease;
+}
+
+.page-about .team-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-strong);
+  border-color: color-mix(in srgb, var(--primary) 24%, var(--border));
+}
+
+.page-about .team-card-photo {
+  flex-shrink: 0;
+  width: 128px;
+  height: 128px;
+  margin: 0 auto 20px;
+  padding: 3px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--panel);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--border) 60%, transparent);
+}
+
+.page-about .team-card-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center 18%;
+}
+
+.page-about .team-card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+}
+
+.page-about .team-card-name {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+}
+
+.page-about .team-card-role {
+  display: inline-block;
+  margin: 0 0 8px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--border));
+  background: color-mix(in srgb, var(--primary) 7%, var(--panel));
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  color: var(--primary-strong);
+}
+
+.page-about .team-card-school {
+  margin: 0 0 18px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--muted) 92%, transparent);
+}
+
+.page-about .team-card-divider {
+  width: 100%;
+  margin: 0 0 16px;
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
+.page-about .team-card-bio {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.page-about .about-contact {
+  padding-bottom: 16px;
+}
+
+.page-about .about-contact-inner {
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+
+.page-about .about-contact-title {
+  margin: 0 0 16px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.page-about .about-contact-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+
+.page-about .about-contact-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 14px;
+  font-size: 0.94rem;
+  color: var(--text);
+}
+
+.page-about .about-contact-list strong {
+  min-width: 4.5rem;
+  color: var(--text-strong);
+}
+
+@media (max-width: 900px) {
+  .page-about .about-team-row {
+    grid-template-columns: 1fr;
+    max-width: 22rem;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-about .about-intro-inner {
+    max-width: none;
+  }
+
+  .page-about .team-card {
+    padding: 24px 20px 22px;
+  }
+}
