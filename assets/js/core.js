@@ -526,6 +526,10 @@
         btn.textContent = open ? 'Hide lesson menu' : 'Show lesson menu';
       }
     });
+    var reopenBtn = document.querySelector('.sidebar-reopen-btn');
+    if (reopenBtn && !SIDEBAR_MQ.matches) {
+      reopenBtn.hidden = open;
+    }
   }
 
   function toggleSidebar() {
@@ -546,8 +550,8 @@
     collapseBtn.setAttribute('aria-label', 'Hide lesson menu');
     collapseBtn.setAttribute('aria-expanded', 'true');
     collapseBtn.innerHTML =
-      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
-      '<path d="m15 18-6-6 6-6"/></svg>';
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M15 18 9 12l6-6"/><path d="M4 6v12"/></svg>';
 
     var heading = sidebar.querySelector('.sidebar-unit-label') || sidebar.querySelector('h3');
     if (heading) {
@@ -560,16 +564,17 @@
       sidebar.insertBefore(collapseBtn, sidebar.firstChild);
     }
 
-    if (!layout.querySelector('.sidebar-reopen-btn')) {
+    if (!document.querySelector('.sidebar-reopen-btn')) {
       var reopenBtn = document.createElement('button');
       reopenBtn.type = 'button';
       reopenBtn.className = 'sidebar-reopen-btn';
       reopenBtn.setAttribute('data-sidebar-toggle', '');
       reopenBtn.setAttribute('aria-label', 'Show lesson menu');
       reopenBtn.setAttribute('aria-expanded', 'false');
+      reopenBtn.hidden = true;
       reopenBtn.innerHTML =
-        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">' +
-        '<path d="m9 18 6-6-6-6"/></svg>' +
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+        '<path d="M9 18l6-6-6-6"/><path d="M20 6v12"/></svg>' +
         '<span>Lessons</span>';
       document.body.appendChild(reopenBtn);
     }

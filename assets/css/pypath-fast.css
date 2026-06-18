@@ -1193,32 +1193,163 @@ html.reduced-motion .page-home .hero-live-output.is-active {
   background: var(--primary);
 }
 
+/* ── Lesson sidebar collapse / reopen ───────────────────── */
+.sidebar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-head .sidebar-unit-label {
+  margin: 0 !important;
+  padding-bottom: 0 !important;
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-collapse-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease,
+    color var(--dur-fast) ease,
+    transform var(--dur-fast) ease;
+}
+
+.sidebar-collapse-btn:hover {
+  color: var(--primary-strong);
+  border-color: color-mix(in srgb, var(--primary) 35%, var(--border));
+  background: color-mix(in srgb, var(--primary) 8%, var(--panel));
+}
+
+.sidebar-collapse-btn:active {
+  transform: scale(0.96);
+}
+
+.sidebar-reopen-btn {
+  position: fixed;
+  left: max(14px, env(safe-area-inset-left));
+  top: calc(var(--header-height, 63px) + 14px);
+  z-index: 45;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px 9px 11px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel);
+  box-shadow: var(--shadow-strong);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease,
+    color var(--dur-fast) ease,
+    transform var(--dur-fast) ease,
+    box-shadow var(--dur-fast) ease;
+}
+
+.sidebar-reopen-btn:hover {
+  color: var(--primary-strong);
+  border-color: color-mix(in srgb, var(--primary) 35%, var(--border));
+  box-shadow: var(--shadow-strong);
+}
+
+.sidebar-reopen-btn:active {
+  transform: scale(0.98);
+}
+
+.sidebar-reopen-btn[hidden] {
+  display: none !important;
+}
+
+@media (min-width: 981px) {
+  .course-sidebar {
+    transition: transform 0.28s var(--ease-out), opacity 0.28s ease;
+  }
+}
+
+@media (max-width: 980px) {
+  .sidebar-reopen-btn {
+    display: none !important;
+  }
+
+  .sidebar-toggle-btn {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 8px 14px;
+    border: 1px solid var(--border) !important;
+    border-radius: 10px !important;
+    background: var(--panel);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .sidebar-toggle-btn::before {
+    content: "";
+    width: 16px;
+    height: 16px;
+    background: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18l6-6-6-6'/%3E%3Cpath d='M20 6v12'/%3E%3C/svg%3E") center / contain no-repeat;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18l6-6-6-6'/%3E%3Cpath d='M20 6v12'/%3E%3C/svg%3E") center / contain no-repeat;
+    opacity: 0.75;
+  }
+}
+
 /* ── Lesson nav ─────────────────────────────────────────── */
 .page-unit .lesson-nav {
-  position: sticky !important;
-  bottom: 0 !important;
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
+  display: flex !important;
+  flex-wrap: wrap;
+  justify-content: space-between !important;
+  align-items: center !important;
   gap: 12px !important;
-  margin-top: 40px !important;
-  padding: 16px 0 20px !important;
-  background: var(--bg) !important;
+  margin-top: 48px !important;
+  padding: 20px 0 calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  background: transparent !important;
   border-top: 1px solid var(--border) !important;
-  z-index: 25 !important;
+  position: static !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 .page-unit .lesson-nav > span:empty {
   display: none !important;
 }
 
-.page-unit .lesson-nav .btn-ghost { grid-column: 1; }
-.page-unit .lesson-nav .btn-primary { grid-column: 2; }
-.page-unit .lesson-nav:not(:has(.btn-ghost)) .btn-primary { grid-column: 2; }
+.page-unit .lesson-nav:not(:has(.btn-ghost)) {
+  justify-content: flex-end !important;
+}
+
+.page-unit .lesson-nav:not(:has(.btn-primary)) {
+  justify-content: flex-start !important;
+}
 
 .page-unit .lesson-actions {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 12px !important;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 10px !important;
   margin-top: 20px !important;
   padding-top: 20px !important;
   border-top: 1px solid var(--border) !important;
@@ -1226,24 +1357,31 @@ html.reduced-motion .page-home .hero-live-output.is-active {
 
 .page-unit .lesson-actions .btn,
 .page-unit .lesson-nav .btn {
-  width: 100% !important;
+  width: auto !important;
   max-width: none !important;
   flex: none !important;
-  min-height: 48px;
+  min-height: 40px !important;
+  padding: 0 18px !important;
   margin: 0 !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  border-radius: 10px !important;
+}
+
+.page-unit .lesson-nav .btn-primary::after,
+.page-unit .lesson-nav .btn-ghost::before {
+  content: none !important;
 }
 
 @media (max-width: 640px) {
-  .lesson-actions,
-  .lesson-nav,
-  .page-unit .lesson-actions,
   .page-unit .lesson-nav {
-    grid-template-columns: 1fr !important;
+    gap: 10px !important;
   }
 
-  .lesson-actions .btn-primary,
-  .lesson-nav .btn-primary {
-    grid-column: 1 !important;
+  .page-unit .lesson-nav .btn {
+    min-height: 38px !important;
+    padding: 0 14px !important;
+    font-size: 0.86rem !important;
   }
 }
 
@@ -1321,7 +1459,7 @@ html.reduced-motion .page-home .hero-live-output.is-active {
 
 @media (max-width: 980px) {
   .page-unit .lesson-nav {
-    grid-template-columns: 1fr 1fr !important;
+    justify-content: space-between !important;
   }
 }
 
@@ -1419,36 +1557,6 @@ a.route:active,
 .lesson-nav .btn:active {
   opacity: 0.82;
   transform: scale(0.98);
-}
-
-/* Lesson next/prev — easier to hit, stays visible */
-.page-unit .lesson-nav {
-  position: sticky !important;
-  bottom: 0 !important;
-  margin-left: calc(-1 * var(--lesson-gutter, 0px));
-  margin-right: calc(-1 * var(--lesson-gutter, 0px));
-  padding: 14px 0 calc(14px + env(safe-area-inset-bottom, 0px)) !important;
-  background: color-mix(in srgb, var(--bg) 88%, transparent) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 -8px 24px color-mix(in srgb, var(--text) 6%, transparent);
-}
-
-.page-unit .lesson-nav .btn {
-  min-height: 52px !important;
-  font-size: 1rem !important;
-  font-weight: 700 !important;
-  border-radius: 14px !important;
-}
-
-.page-unit .lesson-nav .btn-primary::after {
-  content: " →";
-  font-weight: 700;
-}
-
-.page-unit .lesson-nav .btn-ghost::before {
-  content: "← ";
-  font-weight: 700;
 }
 
 .course-sidebar a {
