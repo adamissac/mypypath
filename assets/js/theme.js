@@ -45,6 +45,7 @@
     document.body.setAttribute('data-theme', theme);
     const event = new CustomEvent('themechange', { detail: { theme, source } });
     window.dispatchEvent(event);
+    updateCodeThemes();
     setTimeout(() => document.documentElement.classList.remove('theme-transitioning'), 180);
   }
 
@@ -222,28 +223,26 @@
   }
 
   function updateCodeThemes() {
-    const setting = loadSetting(CODETHEME_KEY) || 'auto';
-    const codeTheme = setting === 'auto' ? (getSystemTheme() === 'dark' ? 'dark' : 'light') : setting;
+    const siteTheme = document.documentElement.getAttribute('data-theme') || 'light';
     document.querySelectorAll('pre.code').forEach(el => {
-      el.dataset.theme = codeTheme;
+      el.dataset.theme = siteTheme;
     });
   }
 
   // Update code themes when system theme changes in auto mode
   window.addEventListener('themechange', () => {
-    const setting = loadSetting(CODETHEME_KEY) || 'auto';
-    if (setting === 'auto') updateCodeThemes();
+    updateCodeThemes();
   });
 
   function applySidebar(v) {
     document.documentElement.dataset.sidebar = v;
-    const courseLayout = document.querySelector('.layout-course');
-    if (courseLayout) {
-      if (v === 'hidden') {
-        courseLayout.classList.add('sidebar-closed');
-      } else {
-        courseLayout.classList.remove('sidebar-closed');
-      }
+    if (v === 'hidden') {
+      document.body.classList.add('sidebar-closed');
+      try { localStorage.setItem('pypath-sidebar-closed', '1'); } catch {}
+    } else if (v === 'always') {
+      document.body.classList.remove('sidebar-closed');
+      document.body.classList.remove('sidebar-open');
+      try { localStorage.setItem('pypath-sidebar-closed', '0'); } catch {}
     }
   }
 

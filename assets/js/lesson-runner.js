@@ -189,14 +189,13 @@
       var editorId = textarea.id.replace('editor-', '');
       if (window.editors[editorId]) return;
 
-      var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
       var isExercise = textarea.closest('[data-exercise-id]');
       var saved = loadFromStorage('code', editorId);
       var initial = isExercise ? (saved || '') : (saved || textarea.value || '');
 
       window.editors[editorId] = CodeMirror.fromTextArea(textarea, {
         mode: 'python',
-        theme: isDark ? 'monokai' : 'default',
+        theme: 'pypath',
         lineNumbers: true,
         indentUnit: 4,
         indentWithTabs: false,
@@ -228,9 +227,9 @@
     initEditors();
 
     document.addEventListener('themechange', function () {
-      var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
       Object.keys(window.editors || {}).forEach(function (id) {
-        window.editors[id].setOption('theme', isDark ? 'monokai' : 'default');
+        window.editors[id].setOption('theme', 'pypath');
+        window.editors[id].refresh();
       });
     });
   });
