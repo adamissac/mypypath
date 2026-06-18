@@ -86,7 +86,7 @@
   };
 
   document.addEventListener('DOMContentLoaded', function () {
-    if (document.querySelector('.code-editor-small, [data-run-code], .run-code-btn, #code-editor')) {
+    if (document.querySelector('.code-editor-small, [data-run-code], .run-code-btn, #code-editor, #hero-editor-code')) {
       scheduleWarmup();
     }
   });
