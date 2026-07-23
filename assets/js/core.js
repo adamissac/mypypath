@@ -665,7 +665,9 @@
     banner.setAttribute('role', 'region');
     banner.setAttribute('aria-label', 'Site credit');
     banner.innerHTML =
-      '<p class="inspire-banner__text">Inspired by C.S. Awesome</p>' +
+      '<p class="inspire-banner__text">Inspired by ' +
+        '<a class="inspire-banner__link" href="https://runestone.academy/ns/books/published/csawesome/index.html" target="_blank" rel="noopener noreferrer">C.S. Awesome</a>' +
+      '</p>' +
       '<button type="button" class="inspire-banner__close" data-inspire-dismiss aria-label="Dismiss banner">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">' +
           '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>' +
