@@ -121,12 +121,22 @@ body.page:not(.page-home) > .site-footer {
 }
 
 /* ── Header / top bar ───────────────────────────────────── */
+:root {
+  --header-bar: 72px;
+}
+
 .site-header {
   background: color-mix(in srgb, var(--pp-mist) 88%, transparent);
   backdrop-filter: blur(14px) saturate(1.15);
   -webkit-backdrop-filter: blur(14px) saturate(1.15);
   border-bottom: 1px solid color-mix(in srgb, var(--pp-ink) 8%, transparent);
   box-shadow: none;
+}
+
+.header-inner {
+  min-height: var(--header-bar);
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .site-header.is-scrolled {
@@ -143,10 +153,10 @@ body.page:not(.page-home) > .site-footer {
 .site-header .brand {
   font-family: var(--pp-display);
   font-weight: 750;
-  font-size: 1.12rem;
+  font-size: 1.18rem;
   letter-spacing: -0.04em;
   color: var(--pp-ink);
-  gap: 0.55rem;
+  gap: 0.6rem;
 }
 
 .site-header .brand-text {
@@ -154,14 +164,17 @@ body.page:not(.page-home) > .site-footer {
 }
 
 .site-header .brand .logo {
-  border-radius: 9px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
 }
 
 .nav-pill {
   background: color-mix(in srgb, var(--pp-fog) 70%, transparent);
   border: 1px solid color-mix(in srgb, var(--pp-ink) 7%, transparent);
-  border-radius: 14px;
+  border-radius: 16px;
   box-shadow: none;
+  padding: 5px;
 }
 
 [data-theme="dark"] .nav-pill {
@@ -169,12 +182,21 @@ body.page:not(.page-home) > .site-footer {
   border-color: var(--pp-border);
 }
 
+.nav-pill .menu {
+  gap: 3px;
+}
+
 .nav-pill .menu a,
 .nav-pill .dd-trigger {
   font-family: var(--pp-body);
   font-weight: 550;
+  font-size: 0.92rem;
   color: var(--pp-muted);
-  border-radius: 10px;
+  border-radius: 11px;
+  padding: 0.55rem 0.9rem;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .nav-pill .menu a:hover,
@@ -202,6 +224,9 @@ body.page:not(.page-home) > .site-footer {
   color: var(--pp-mist) !important;
   font-family: var(--pp-body);
   font-weight: 650;
+  font-size: 0.92rem !important;
+  padding: 11px 20px !important;
+  min-height: 44px;
   box-shadow: none !important;
 }
 
@@ -215,6 +240,11 @@ body.page:not(.page-home) > .site-footer {
 [data-theme="dark"] .btn.btn-primary.header-cta {
   background: var(--pp-line) !important;
   color: #04202c !important;
+}
+
+.mobile-toggle {
+  min-width: 44px;
+  min-height: 44px;
 }
 
 /* ── Buttons (sitewide) ─────────────────────────────────── */
