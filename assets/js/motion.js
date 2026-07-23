@@ -223,9 +223,15 @@
     });
 
     brand.addEventListener('click', function (e) {
-      // Don't steal middle/right click or modifier opens
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-      if (spinning) return;
+      if (spinning) {
+        e.preventDefault();
+        return;
+      }
+      // On home, play the spin instead of reloading "/"
+      if (document.body.classList.contains('page-home')) {
+        e.preventDefault();
+      }
       spinning = true;
       logo.classList.add('is-spinning');
       logo.style.transform = '';
@@ -248,7 +254,7 @@
     var ticking = false;
     function update() {
       ticking = false;
-      var y = window.scrollY || 0;
+      var y = window.scrollY || document.scrollingElement.scrollTop || 0;
       if (topo) topo.style.transform = 'translate3d(0,' + (y * 0.12).toFixed(1) + 'px,0)';
       if (trail) trail.style.transform = 'translate3d(0,' + (y * -0.06).toFixed(1) + 'px,0)';
     }
@@ -262,6 +268,11 @@
       },
       { passive: true }
     );
+    document.body.addEventListener('scroll', function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    }, { passive: true });
     update();
   }
 
@@ -276,6 +287,30 @@
     if (map) map.classList.add('path-map--alive');
   }
 
+  /* About page — light up story stops as they enter view */
+  function initAboutTrail() {
+    var stops = document.querySelectorAll('[data-about-stop]');
+    if (!stops.length) return;
+
+    if (prefersReduced()) {
+      stops.forEach(function (el) { el.classList.add('is-visible'); });
+      return;
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      stops.forEach(function (el) { el.classList.add('is-visible'); });
+      return;
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) entry.target.classList.add('is-visible');
+      });
+    }, { threshold: 0.45, rootMargin: '0px 0px -8% 0px' });
+
+    stops.forEach(function (el) { io.observe(el); });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     migrateLegacyReveals();
     staggerContainers();
@@ -286,5 +321,6 @@
     initSmoothAnchors();
     initLogoMotion();
     initHomeParallax();
+    initAboutTrail();
   });
 })();
