@@ -162,7 +162,6 @@
   function autoEnhanceReveals() {
     var pairs = [
       ['.units-grid', '.unit-card', 'up'],
-      ['.about-team-row', '.team-card', 'up'],
       ['.home-practice__grid', '.home-practice__copy, .hero-live', 'up'],
       ['.home-people', '.home-section__head, .home-person', 'up'],
       ['.home-endcta', '.home-endcta__inner', 'up'],
