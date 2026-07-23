@@ -40,3 +40,9 @@ cd /Users/adami/Documents/python-website
 python3 -m http.server 8080
 # Open http://localhost:8080
 ```
+
+## Docs & licensing (2026-07)
+
+- Added root README with local static-server preview steps
+- Fixed outdated paths in DEPLOYMENT.md
+- Added MIT LICENSE
