@@ -431,6 +431,32 @@ html.reduced-motion.js-enabled [data-reveal] {
   color: var(--pp-line-deep);
 }
 
+/* ── Global content gutters (tighter than legacy 40/60/80) ─ */
+main .container,
+.section .container,
+.site-footer .container {
+  padding-left: clamp(1.15rem, 2.4vw, 2rem);
+  padding-right: clamp(1.15rem, 2.4vw, 2rem);
+}
+
+@media (min-width: 1400px) {
+  main .container,
+  .section .container,
+  .site-footer .container {
+    padding-left: clamp(1.35rem, 2.2vw, 2.25rem);
+    padding-right: clamp(1.35rem, 2.2vw, 2.25rem);
+  }
+}
+
+@media (min-width: 1600px) {
+  main .container,
+  .section .container,
+  .site-footer .container {
+    padding-left: 2.25rem;
+    padding-right: 2.25rem;
+  }
+}
+
 /* ── Curriculum / unit cards ────────────────────────────── */
 .page-curriculum .section,
 .page-curriculum main > .section {
@@ -492,12 +518,13 @@ html.reduced-motion.js-enabled [data-reveal] {
 .page-unit .layout-course {
   display: grid !important;
   grid-template-columns: 248px minmax(0, 1fr) !important;
-  gap: 1.25rem !important;
+  gap: 1.1rem !important;
   align-items: start;
   width: 100% !important;
   max-width: none !important;
   margin: 0 !important;
-  padding: 0 1.25rem 1.5rem 0.75rem !important;
+  /* Keep modest edge padding — content column fills the rest */
+  padding: 0 clamp(1.1rem, 2vw, 1.75rem) 1.5rem 0.85rem !important;
 }
 
 .page-unit .course-sidebar {
@@ -526,7 +553,7 @@ html.reduced-motion.js-enabled [data-reveal] {
   body.sidebar-closed .page-unit .layout-course {
     grid-template-columns: 0 minmax(0, 1fr) !important;
     gap: 0 !important;
-    padding-left: 1.25rem !important;
+    padding-left: clamp(1.1rem, 2vw, 1.75rem) !important;
   }
 
   body.sidebar-closed .page-unit .course-sidebar {
@@ -570,8 +597,23 @@ html.reduced-motion.js-enabled [data-reveal] {
 .page-unit .course-main {
   background: transparent;
   min-width: 0;
+  width: 100%;
   padding: 0;
-  max-width: 52rem;
+  max-width: none;
+}
+
+.page-unit .course-main .lesson-content,
+.page-unit .course-main .lesson-overview,
+.page-unit .course-main .content-section,
+.page-unit .course-main .interactive-editor,
+.page-unit .course-main .editor-container {
+  width: 100%;
+  max-width: none;
+}
+
+.page-unit .course-main .CodeMirror,
+.page-unit .course-main .cm-s-pypath.CodeMirror {
+  width: 100% !important;
 }
 
 /* Readable lesson type — body font, not display Syne */
@@ -717,7 +759,7 @@ html.reduced-motion.js-enabled [data-reveal] {
 .page-about .about-page {
   position: relative;
   overflow: hidden;
-  padding: clamp(2rem, 5vh, 3.5rem) clamp(1.25rem, 4vw, 2.5rem) clamp(3rem, 8vh, 5rem);
+  padding: clamp(2rem, 5vh, 3.5rem) clamp(1.15rem, 2.4vw, 2.25rem) clamp(3rem, 8vh, 5rem);
   background:
     radial-gradient(ellipse 90% 60% at 50% -20%, color-mix(in srgb, var(--pp-line) 14%, transparent), transparent),
     var(--pp-paper);
@@ -755,8 +797,10 @@ html.reduced-motion.js-enabled [data-reveal] {
 .page-about .about-page-inner {
   position: relative;
   z-index: 1;
-  width: min(920px, 100%);
-  margin: 0 auto;
+  /* Fill the about-page padding gutter — no extra narrowing */
+  width: 100%;
+  max-width: none;
+  margin: 0;
 }
 
 .page-about .about-eyebrow {
@@ -981,11 +1025,25 @@ html.reduced-motion .page-about .about-topo path {
   stroke-dashoffset: 0;
 }
 
+/* Full-bleed main content — avoid legacy fixed shells */
+.page-sandbox .sandbox-shell {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
 /* ── Sandbox / certs / settings — light polish ──────────── */
 .page-sandbox main,
 .page-settings main,
-body.page-certifications main {
+body.page-certifications main,
+.page-certs main {
   background: transparent;
+}
+
+.page-sandbox .sandbox-page {
+  padding-left: clamp(1.15rem, 2.4vw, 2.25rem);
+  padding-right: clamp(1.15rem, 2.4vw, 2.25rem);
 }
 
 .page-sandbox .sandbox-shell,
