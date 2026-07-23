@@ -305,34 +305,44 @@ body.page-home {
   }
 }
 
-/* Decorative path stub in hero — starts the trail metaphor */
+/* Decorative path stub in hero — fills open space beside the brand */
 .home-hero__trail-start {
   position: absolute;
-  right: max(0px, calc((100% - 1120px) / 2 - 1rem));
-  bottom: 12%;
-  width: min(38vw, 380px);
+  right: clamp(0rem, 1.5vw, 1rem);
+  top: clamp(4.25rem, 9vh, 7rem);
+  bottom: auto;
+  width: clamp(520px, 58vw, 820px);
   height: auto;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.85;
+  opacity: 0.92;
   animation: home-rise 1s 0.15s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
 }
 
 .home-hero__trail-start path {
   fill: none;
   stroke: var(--home-line);
-  stroke-width: 3.5;
+  stroke-width: 4;
   stroke-linecap: round;
-  stroke-dasharray: 12 14;
-  animation: home-dash-drift 18s linear infinite;
+  stroke-dasharray: 14 16;
+  animation: home-dash-drift 22s linear infinite;
 }
 
-.home-hero__trail-start circle {
+.home-hero__trail-start-dot {
   fill: var(--home-mark);
 }
 
+.home-hero__trail-start-dot--mid {
+  fill: color-mix(in srgb, var(--home-line) 70%, var(--home-mark));
+  opacity: 0.85;
+}
+
+.home-hero__trail-start-dot--end {
+  fill: var(--home-line-deep);
+}
+
 @keyframes home-dash-drift {
-  to { stroke-dashoffset: -260; }
+  to { stroke-dashoffset: -320; }
 }
 
 @media (max-width: 720px) {
@@ -349,11 +359,11 @@ body.page-home {
   }
 
   .home-hero__trail-start {
-    width: 52vw;
-    opacity: 0.45;
-    bottom: auto;
-    top: 12%;
+    width: min(92vw, 480px);
     right: -6%;
+    top: auto;
+    bottom: 2%;
+    opacity: 0.55;
   }
 
   .home-hero__copy {
