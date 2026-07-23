@@ -976,6 +976,13 @@ main .container,
   max-width: none !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
+  /* Layout wrapper only — don't clip the page heading in a card */
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
 }
 
 /* ── Sandbox / certs / settings — light polish ──────────── */
@@ -987,11 +994,25 @@ body.page-certifications main,
 }
 
 .page-sandbox .sandbox-page {
-  padding-left: clamp(1.5rem, 4.5vw, 3.5rem);
-  padding-right: clamp(1.5rem, 4.5vw, 3.5rem);
+  padding: clamp(1.75rem, 4vh, 2.75rem) clamp(1.5rem, 4.5vw, 3.5rem) clamp(2.5rem, 5vh, 3.5rem);
+  overflow: visible;
 }
 
-.page-sandbox .sandbox-shell,
+.page-sandbox .sandbox-head,
+.page-sandbox .sandbox-head[data-reveal] {
+  overflow: visible;
+}
+
+.page-sandbox .sandbox-eyebrow {
+  line-height: 1.45;
+  padding-top: 0.1em;
+}
+
+.page-sandbox .sandbox-title {
+  line-height: 1.2;
+  overflow: visible;
+}
+
 .page-settings .settings-card,
 .cert-card {
   border-radius: 16px;
@@ -1000,7 +1021,6 @@ body.page-certifications main,
   box-shadow: none;
 }
 
-[data-theme="dark"] .page-sandbox .sandbox-shell,
 [data-theme="dark"] .page-settings .settings-card,
 [data-theme="dark"] .cert-card,
 [data-theme="dark"] .page-about .team-card {
