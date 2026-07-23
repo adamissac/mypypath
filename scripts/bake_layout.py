@@ -395,9 +395,7 @@ def normalize_scripts(html: str, path: Path) -> str:
         html = re.sub(rf'\s*<script defer src="/assets/js/{re.escape(name)}"></script>\s*', '\n', html)
 
     html = re.sub(r'\s*<link rel="stylesheet" href="/assets/css/motion\.css"\s*/>\s*', '\n', html)
-    html = re.sub(r'\s*<link rel="preconnect" href="https://fonts\.googleapis\.com"\s*/>\s*', '', html)
-    html = re.sub(r'\s*<link rel="preconnect" href="https://fonts\.gstatic\.com" crossorigin\s*/>\s*', '', html)
-    html = re.sub(r'\s*<link href="https://fonts\.googleapis\.com/css2\?[^"]+" rel="stylesheet"\s*/>\s*', '\n', html)
+    # Fonts + theme are part of the trail look — keep/ensure them in normalize_head
     html = html.replace(' data-bg="aurora,noise"', '').replace(' data-bg="noise"', '')
 
     html = re.sub(
@@ -438,6 +436,23 @@ def normalize_head(html: str) -> str:
         html = html.replace(
             '<link rel="stylesheet" href="/assets/css/style.css" />',
             '<link rel="stylesheet" href="/assets/css/style.css" />\n    <link rel="stylesheet" href="/assets/css/pypath-fast.css" />',
+            1,
+        )
+    if 'Plus+Jakarta+Sans' not in html and 'style.css' in html:
+        fonts = (
+            '    <link rel="preconnect" href="https://fonts.googleapis.com" />\n'
+            '    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />\n'
+            '    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />\n'
+        )
+        html = html.replace(
+            '<link rel="stylesheet" href="/assets/css/style.css" />',
+            fonts + '    <link rel="stylesheet" href="/assets/css/style.css" />',
+            1,
+        )
+    if 'pypath-theme.css' not in html and 'pypath-fast.css' in html:
+        html = html.replace(
+            '<link rel="stylesheet" href="/assets/css/pypath-fast.css" />',
+            '<link rel="stylesheet" href="/assets/css/pypath-fast.css" />\n    <link rel="stylesheet" href="/assets/css/pypath-theme.css" />',
             1,
         )
     return html
