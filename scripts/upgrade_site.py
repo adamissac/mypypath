@@ -41,7 +41,7 @@ def body_bg(path: Path) -> str:
         return 'aurora,noise'
     if len(rel.parts) >= 3 and rel.parts[0] == 'units' and rel.parts[1].startswith('unit-') and rel.suffix == '.html' and rel.parts[1] != rel.name:
         return 'noise'
-    if path.name in ('sandbox.html', 'certifications.html', 'curriculum.html'):
+    if path.name in ('sandbox.html', 'curriculum.html'):
         return 'aurora,noise'
     return 'noise'
 
@@ -100,12 +100,11 @@ def process(path: Path) -> bool:
     html = re.sub(
         r'<ul class="footer-links">\s*'
         r'<li><a href="/settings\.html"[^>]*>Settings</a></li>\s*'
-        r'(?:<li><a href="/certifications\.html"[^>]*>Certifications</a></li>\s*)?'
         r'(?:<li><a href="/"[^>]*>Home</a></li>\s*)?'
         r'</ul>',
         '<ul class="footer-links">\n'
         '            <li><a href="/curriculum.html" class="route">Curriculum</a></li>\n'
-        '            <li><a href="/certifications.html" class="route">Certifications</a></li>\n'
+        '            <li><a href="/sandbox.html" class="route">Sandbox</a></li>\n'
         '            <li><a href="/settings.html" class="route">Settings</a></li>\n'
         '          </ul>',
         html,

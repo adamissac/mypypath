@@ -46,8 +46,6 @@
 | `/` | `index.html` |
 | `/curriculum.html` | `curriculum.html` |
 | `/sandbox.html` | `sandbox.html` |
-| `/certifications.html` | `certifications.html` |
-| `/about.html` | `about.html` |
 | `/settings.html` | `settings.html` |
 | `/404.html` | `404.html` |
 | `/learn.html` | `learn.html` (redirect → curriculum) |
