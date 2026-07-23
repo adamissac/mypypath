@@ -70,7 +70,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6,
-.headline, .lesson-title, .page-title,
+.headline, .page-title,
 .brand-text, .founder-showcase-name,
 .section-head h2, .feature h3,
 .about-mission-headline, .team-card-name,
@@ -111,7 +111,11 @@ body.page:not(.page-home)::before {
   opacity: 0.9;
 }
 
-body.page:not(.page-home) > * {
+/* Keep chrome above the atmosphere — do NOT restyle every body child
+   (that broke position:fixed on .sidebar-reopen-btn). */
+body.page:not(.page-home) > .site-header,
+body.page:not(.page-home) > main,
+body.page:not(.page-home) > .site-footer {
   position: relative;
   z-index: 1;
 }
@@ -332,60 +336,196 @@ body.page:not(.page-home) > * {
   background: var(--pp-paper);
 }
 
-.layout-course {
-  gap: 0;
+.page-unit .layout-course {
+  display: grid;
+  grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+  gap: clamp(1.25rem, 2.5vw, 2rem);
+  align-items: start;
+  width: min(1180px, calc(100% - 2rem));
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0.25rem 0 2rem;
 }
 
-.course-sidebar {
-  background: color-mix(in srgb, var(--pp-mist) 92%, transparent);
-  border-right: 1px solid color-mix(in srgb, var(--pp-ink) 8%, transparent);
+@media (min-width: 1400px) {
+  .page-unit .layout-course {
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 2rem;
+    width: min(1220px, calc(100% - 2.5rem));
+  }
 }
 
-.course-sidebar .sidebar-title,
-.course-sidebar h2,
-.course-sidebar .unit-label {
-  font-family: var(--pp-display);
-  letter-spacing: -0.02em;
+.page-unit .course-sidebar {
+  position: sticky;
+  top: calc(var(--header-height, 60px) + 12px);
+  align-self: start;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 14px 12px 16px;
+  background: color-mix(in srgb, #fff 92%, var(--pp-fog));
+  border: 1px solid color-mix(in srgb, var(--pp-ink) 9%, transparent);
+  border-radius: 16px;
+  box-shadow: none;
+  max-height: calc(100vh - var(--header-height, 60px) - 28px);
+  overflow-y: auto;
 }
 
-.course-sidebar a {
+[data-theme="dark"] .page-unit .course-sidebar {
+  background: var(--panel);
+  border-color: var(--pp-border);
+}
+
+.page-unit .course-sidebar .sidebar-title,
+.page-unit .course-sidebar h2,
+.page-unit .course-sidebar h3,
+.page-unit .course-sidebar .unit-label,
+.page-unit .sidebar-unit-label {
+  font-family: var(--pp-body);
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--pp-muted);
+}
+
+.page-unit .course-sidebar a {
   border-radius: 10px;
+  font-family: var(--pp-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.35;
+  padding: 0.55rem 0.7rem;
 }
 
-.course-sidebar a.active,
-.course-sidebar a[aria-current="page"] {
+.page-unit .course-sidebar a.active,
+.page-unit .course-sidebar a[aria-current="page"] {
   background: color-mix(in srgb, var(--pp-line) 14%, transparent);
   color: var(--pp-line-deep);
   font-weight: 650;
 }
 
-.course-main {
+.page-unit .course-main {
   background: transparent;
+  min-width: 0;
+  padding: 0 0.15rem;
 }
 
-.lesson-title {
-  font-size: clamp(1.75rem, 3vw, 2.35rem);
-  letter-spacing: -0.035em;
-  line-height: 1.12;
+/* Readable lesson type — body font, not display Syne */
+.page-unit .lesson-title,
+.page-unit .lesson-content h2,
+.page-unit .lesson-content h3,
+.page-unit .lesson-overview h2,
+.page-unit .gradient-text,
+.page-unit .content-section h2,
+.page-unit .content-section h3,
+.page-unit .info-card h4 {
+  font-family: var(--pp-body) !important;
+  letter-spacing: -0.02em;
+  color: var(--pp-ink) !important;
+  background: none !important;
+  -webkit-text-fill-color: unset !important;
 }
 
-.lesson-overview,
-.info-card,
-.feature-card,
-.content-section {
+.page-unit .lesson-title {
+  font-size: clamp(1.45rem, 2.4vw, 1.95rem);
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0.35rem 0 1rem;
+  max-width: 36em;
+}
+
+.page-unit .lesson-content h2,
+.page-unit .content-section h2,
+.page-unit .lesson-overview h2 {
+  font-size: clamp(1.15rem, 1.6vw, 1.35rem);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0 0 0.75rem;
+}
+
+.page-unit .lesson-content h3,
+.page-unit .content-section h3 {
+  font-size: 1.05rem;
+  font-weight: 650;
+  line-height: 1.35;
+  margin: 1.35rem 0 0.55rem;
+  color: var(--pp-ink-soft) !important;
+}
+
+.page-unit .lesson-content p,
+.page-unit .content-section p,
+.page-unit .lesson-overview p {
+  font-family: var(--pp-body);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--pp-ink-soft);
+  max-width: 62ch;
+}
+
+.page-unit .eyebrow {
+  font-family: var(--pp-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pp-muted);
+}
+
+.page-unit .lesson-overview,
+.page-unit .info-card,
+.page-unit .feature-card,
+.page-unit .content-section {
   border-radius: 14px;
-  border-color: color-mix(in srgb, var(--pp-ink) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pp-ink) 8%, transparent);
+  background: color-mix(in srgb, #fff 94%, var(--pp-fog));
+  box-shadow: none;
 }
 
-.lesson-nav .btn,
-.lesson-actions .btn {
+.page-unit .content-section {
+  padding: 1.25rem 1.35rem 1.4rem;
+  margin-bottom: 1rem;
+}
+
+.page-unit .lesson-overview {
+  padding: 1.15rem 1.25rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.page-unit .lesson-nav .btn,
+.page-unit .lesson-actions .btn {
   border-radius: 12px;
 }
 
-.btn-run,
-.btn-check {
+.page-unit .btn-run,
+.page-unit .btn-check {
   border-radius: 10px;
   font-family: var(--pp-body);
+}
+
+/* Reopen control must stay fixed and above the header stack */
+.sidebar-reopen-btn {
+  position: fixed !important;
+  left: max(14px, env(safe-area-inset-left)) !important;
+  top: calc(var(--header-height, 63px) + 14px) !important;
+  z-index: 60 !important;
+}
+
+@media (max-width: 980px) {
+  .page-unit .layout-course {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    width: min(100% - 1.5rem, 900px);
+  }
+
+  .page-unit .course-sidebar {
+    position: fixed;
+    top: calc(var(--header-height, 60px) + 8px);
+    left: 12px;
+    right: 12px;
+    z-index: 40;
+    max-height: min(70vh, 520px);
+  }
 }
 
 /* Code panels: keep readable, soft shell */
