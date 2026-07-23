@@ -52,12 +52,6 @@ FOOTER = """    <footer class="site-footer">
               <li><a href="/curriculum.html" class="route">Curriculum</a></li>
               <li><a href="/sandbox.html" class="route">Sandbox</a></li>
               <li><a href="/certifications.html" class="route">Certifications</a></li>
-            </ul>
-          </div>
-          <div class="footer-col">
-            <h4 class="footer-heading">About</h4>
-            <ul class="footer-links">
-              <li><a href="/about.html" class="route">Team</a></li>
               <li><a href="/settings.html" class="route">Settings</a></li>
             </ul>
           </div>
@@ -79,8 +73,6 @@ def nav_active(path: Path, pattern: str) -> bool:
         return path.name == 'sandbox.html'
     if pattern == 'certs':
         return path.name == 'certifications.html'
-    if pattern == 'about':
-        return path.name == 'about.html'
     if pattern == 'settings':
         return path.name == 'settings.html'
     if pattern == 'units':
@@ -110,7 +102,6 @@ def header_html(path: Path, show_progress: bool) -> str:
     home_a = ' active' if nav_active(path, 'home') else ''
     sandbox_a = ' active' if nav_active(path, 'sandbox') else ''
     certs_a = ' active' if nav_active(path, 'certs') else ''
-    about_a = ' active' if nav_active(path, 'about') else ''
     settings_a = ' active' if nav_active(path, 'settings') else ''
     units_btn = ' aria-current="page"' if nav_active(path, 'units') else ''
 
@@ -156,7 +147,6 @@ def header_html(path: Path, show_progress: bool) -> str:
               </li>
               <li><a href="/sandbox.html" class="route{sandbox_a}">Sandbox</a></li>
               <li><a href="/certifications.html" class="route{certs_a}">Certifications</a></li>
-              <li><a href="/about.html" class="route{about_a}">About</a></li>
               <li><a href="/settings.html" class="route{settings_a}">Settings</a></li>
               </ul>
             </div>
@@ -354,10 +344,6 @@ def misc_fixes(html: str, path: Path) -> str:
                 '<label for="project-select" class="visually-hidden">Project</label>\n                  <select id="project-select"',
                 1,
             )
-
-    if path.name == 'about.html':
-        html = re.sub(r'(?<!/)assets/img/', '/assets/img/', html)
-        html = re.sub(r'href="(?!/)assets/', 'href="/assets/', html)
 
     # Smooth nav: route class on lesson next/prev and in-content CTAs
     html = re.sub(

@@ -23,7 +23,6 @@ correct_nav = '''          <ul class="menu">
             </li>
             <li><a href="/sandbox.html">Sandbox</a></li>
             <li><a href="/certifications.html">Certifications</a></li>
-            <li><a href="/about.html">About</a></li>
             <li><a href="/settings.html">Settings</a></li>
           </ul>'''
 
