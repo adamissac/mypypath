@@ -164,11 +164,11 @@
       ['.units-grid', '.unit-card', 'up'],
       ['.about-team-row', '.team-card', 'up'],
       ['.home-practice__grid', '.home-practice__copy, .hero-live', 'up'],
-      ['.home-people', '.home-section__head, .home-person, .home-people__link', 'up'],
+      ['.home-people', '.home-section__head, .home-person', 'up'],
       ['.home-endcta', '.home-endcta__inner', 'up'],
       ['.path-journey__intro', null, 'up'],
       ['.page-unit .lesson-content', '.content-section', 'up'],
-      ['.page-curriculum .section-head, .page-about .about-mission', null, 'up']
+      ['.page-curriculum .section-head', null, 'up']
     ];
 
     pairs.forEach(function (pair) {
