@@ -287,30 +287,6 @@
     if (map) map.classList.add('path-map--alive');
   }
 
-  /* About page — light up story stops as they enter view */
-  function initAboutTrail() {
-    var stops = document.querySelectorAll('[data-about-stop]');
-    if (!stops.length) return;
-
-    if (prefersReduced()) {
-      stops.forEach(function (el) { el.classList.add('is-visible'); });
-      return;
-    }
-
-    if (!('IntersectionObserver' in window)) {
-      stops.forEach(function (el) { el.classList.add('is-visible'); });
-      return;
-    }
-
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) entry.target.classList.add('is-visible');
-      });
-    }, { threshold: 0.45, rootMargin: '0px 0px -8% 0px' });
-
-    stops.forEach(function (el) { io.observe(el); });
-  }
-
   document.addEventListener('DOMContentLoaded', function () {
     migrateLegacyReveals();
     staggerContainers();
@@ -321,6 +297,5 @@
     initSmoothAnchors();
     initLogoMotion();
     initHomeParallax();
-    initAboutTrail();
   });
 })();
