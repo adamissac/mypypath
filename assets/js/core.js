@@ -652,6 +652,59 @@
     });
   }
 
+  function initInspireBanner() {
+    var STORAGE_KEY = 'pypath-inspire-banner-dismissed';
+    try {
+      if (localStorage.getItem(STORAGE_KEY) === '1') return;
+    } catch (err) {}
+
+    if (qs('.inspire-banner')) return;
+
+    var banner = document.createElement('div');
+    banner.className = 'inspire-banner';
+    banner.setAttribute('role', 'region');
+    banner.setAttribute('aria-label', 'Site credit');
+    banner.innerHTML =
+      '<p class="inspire-banner__text">Inspired by C.S. Awesome</p>' +
+      '<button type="button" class="inspire-banner__close" data-inspire-dismiss aria-label="Dismiss banner">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">' +
+          '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>' +
+        '</svg>' +
+      '</button>';
+
+    document.body.insertBefore(banner, document.body.firstChild);
+
+    function show() {
+      document.body.classList.add('has-inspire-banner');
+      requestAnimationFrame(function () {
+        banner.classList.add('is-visible');
+      });
+    }
+
+    function dismiss() {
+      try { localStorage.setItem(STORAGE_KEY, '1'); } catch (err) {}
+      banner.classList.remove('is-visible');
+      banner.classList.add('is-hiding');
+      document.body.classList.remove('has-inspire-banner');
+      var reduce = prefersReducedMotion();
+      window.setTimeout(function () {
+        if (banner.parentNode) banner.parentNode.removeChild(banner);
+      }, reduce ? 0 : 480);
+    }
+
+    var closeBtn = qs('[data-inspire-dismiss]', banner);
+    if (closeBtn) closeBtn.addEventListener('click', dismiss);
+
+    document.addEventListener('keydown', function onKey(e) {
+      if (e.key !== 'Escape') return;
+      if (!document.body.classList.contains('has-inspire-banner')) return;
+      dismiss();
+      document.removeEventListener('keydown', onKey);
+    });
+
+    show();
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     currentYear();
     navInteractions();
@@ -662,6 +715,7 @@
     setupSettingsActions();
     initSidebarToggle();
     initNavigation();
+    initInspireBanner();
   });
 
   function prefersReducedMotion() {
