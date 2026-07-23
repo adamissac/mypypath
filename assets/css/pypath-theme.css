@@ -1,0 +1,490 @@
+/* ═══════════════════════════════════════════════════════════
+   PyPath site theme — matches the landing trail aesthetic
+   Loads after style.css + pypath-fast.css on every page.
+   Keep it clean: shared tokens, chrome, and page polish only.
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --pp-ink: #071820;
+  --pp-ink-soft: #0d2a38;
+  --pp-fog: #e6f3f7;
+  --pp-mist: #f3fafc;
+  --pp-paper: #f7fbfd;
+  --pp-line: #0ea5e9;
+  --pp-line-deep: #0284c7;
+  --pp-mark: #14b8a6;
+  --pp-muted: #4a6570;
+  --pp-border: #d4e3ea;
+  --pp-display: "Syne", ui-sans-serif, system-ui, sans-serif;
+  --pp-body: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+
+  /* Remap legacy tokens so the whole site picks up the trail palette */
+  --bg: var(--pp-paper);
+  --bg-elevated: var(--pp-fog);
+  --panel: #ffffff;
+  --text: var(--pp-ink-soft);
+  --text-strong: var(--pp-ink);
+  --muted: var(--pp-muted);
+  --border: var(--pp-border);
+  --primary: var(--pp-line);
+  --primary-strong: var(--pp-line-deep);
+  --accent: var(--pp-mark);
+  --accent-alt: #0ea5e9;
+  --shadow: 0 4px 20px rgba(7, 24, 32, 0.06);
+  --shadow-strong: 0 12px 36px rgba(7, 24, 32, 0.1);
+  --warm: #5eead4;
+  --warm-soft: #99f6e4;
+}
+
+[data-theme="dark"] {
+  --pp-ink: #e8f4f8;
+  --pp-ink-soft: #b8d4de;
+  --pp-fog: #121c24;
+  --pp-mist: #0c141a;
+  --pp-paper: #0f181f;
+  --pp-line: #38bdf8;
+  --pp-line-deep: #0ea5e9;
+  --pp-mark: #5eead4;
+  --pp-muted: #8aa3ae;
+  --pp-border: #2a3a45;
+
+  --bg: var(--pp-paper);
+  --bg-elevated: #152028;
+  --panel: #152028;
+  --text: var(--pp-ink-soft);
+  --text-strong: var(--pp-ink);
+  --muted: var(--pp-muted);
+  --border: var(--pp-border);
+  --primary: var(--pp-line);
+  --primary-strong: #7dd3fc;
+  --accent: var(--pp-mark);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.28);
+  --shadow-strong: 0 12px 36px rgba(0, 0, 0, 0.36);
+}
+
+/* ── Type ───────────────────────────────────────────────── */
+body {
+  font-family: var(--pp-body);
+  background: var(--pp-paper);
+  color: var(--pp-ink-soft);
+}
+
+h1, h2, h3, h4, h5, h6,
+.headline, .lesson-title, .page-title,
+.brand-text, .founder-showcase-name,
+.section-head h2, .feature h3,
+.about-mission-headline, .team-card-name,
+.unit-card h3, .cofounder-name {
+  font-family: var(--pp-display);
+  color: var(--pp-ink);
+  letter-spacing: -0.03em;
+}
+
+/* Kill gradient text everywhere — solid ink only */
+.gradient-text,
+.lesson-content h2,
+.lesson-content h2.gradient-text,
+.content-section h2,
+.cofounder-name {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: unset !important;
+  color: var(--pp-ink) !important;
+}
+
+.lesson-content h2 {
+  font-family: var(--pp-display);
+  letter-spacing: -0.03em;
+}
+
+/* Soft page atmosphere (subtle, not noisy) */
+body.page:not(.page-home)::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(90% 55% at 85% -10%, color-mix(in srgb, var(--pp-line) 14%, transparent), transparent 55%),
+    radial-gradient(70% 45% at 0% 100%, color-mix(in srgb, var(--pp-mark) 10%, transparent), transparent 50%);
+  opacity: 0.9;
+}
+
+body.page:not(.page-home) > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Header / top bar ───────────────────────────────────── */
+.site-header {
+  background: color-mix(in srgb, var(--pp-mist) 88%, transparent);
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  border-bottom: 1px solid color-mix(in srgb, var(--pp-ink) 8%, transparent);
+  box-shadow: none;
+}
+
+.site-header.is-scrolled {
+  background: color-mix(in srgb, var(--pp-mist) 94%, transparent);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--pp-ink) 6%, transparent);
+}
+
+[data-theme="dark"] .site-header,
+[data-theme="dark"] .site-header.is-scrolled {
+  background: color-mix(in srgb, var(--pp-paper) 90%, transparent);
+  border-bottom-color: var(--pp-border);
+}
+
+.site-header .brand {
+  font-family: var(--pp-display);
+  font-weight: 750;
+  font-size: 1.12rem;
+  letter-spacing: -0.04em;
+  color: var(--pp-ink);
+  gap: 0.55rem;
+}
+
+.site-header .brand-text {
+  color: var(--pp-ink);
+}
+
+.site-header .brand .logo {
+  border-radius: 9px;
+}
+
+.nav-pill {
+  background: color-mix(in srgb, var(--pp-fog) 70%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pp-ink) 7%, transparent);
+  border-radius: 14px;
+  box-shadow: none;
+}
+
+[data-theme="dark"] .nav-pill {
+  background: color-mix(in srgb, var(--pp-fog) 55%, transparent);
+  border-color: var(--pp-border);
+}
+
+.nav-pill .menu a,
+.nav-pill .dd-trigger {
+  font-family: var(--pp-body);
+  font-weight: 550;
+  color: var(--pp-muted);
+  border-radius: 10px;
+}
+
+.nav-pill .menu a:hover,
+.nav-pill .dd-trigger:hover {
+  color: var(--pp-ink);
+  background: color-mix(in srgb, var(--pp-line) 10%, transparent);
+}
+
+.nav-pill .menu a.active {
+  color: var(--pp-ink);
+  background: #fff;
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--pp-ink) 6%, transparent);
+}
+
+[data-theme="dark"] .nav-pill .menu a.active {
+  background: var(--panel);
+  color: var(--pp-ink);
+}
+
+.header-cta,
+.btn.btn-primary.header-cta {
+  border-radius: 12px !important;
+  border-width: 0 !important;
+  background: var(--pp-ink) !important;
+  color: var(--pp-mist) !important;
+  font-family: var(--pp-body);
+  font-weight: 650;
+  box-shadow: none !important;
+}
+
+.header-cta:hover,
+.btn.btn-primary.header-cta:hover {
+  background: var(--pp-ink-soft) !important;
+  color: var(--pp-mist) !important;
+}
+
+[data-theme="dark"] .header-cta,
+[data-theme="dark"] .btn.btn-primary.header-cta {
+  background: var(--pp-line) !important;
+  color: #04202c !important;
+}
+
+/* ── Buttons (sitewide) ─────────────────────────────────── */
+.btn {
+  font-family: var(--pp-body);
+  border-radius: 12px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.btn-primary {
+  background: var(--pp-ink);
+  border-color: var(--pp-ink);
+  color: var(--pp-mist);
+}
+
+.btn-primary:hover {
+  background: var(--pp-ink-soft);
+  border-color: var(--pp-ink-soft);
+  color: var(--pp-mist);
+}
+
+[data-theme="dark"] .btn-primary {
+  background: var(--pp-line);
+  border-color: var(--pp-line);
+  color: #04202c;
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--pp-ink) 16%, transparent);
+  color: var(--pp-ink);
+}
+
+.btn-ghost:hover {
+  border-color: color-mix(in srgb, var(--pp-line) 50%, transparent);
+  color: var(--pp-line-deep);
+}
+
+/* ── Footer ─────────────────────────────────────────────── */
+.site-footer {
+  background: var(--pp-mist);
+  border-top: 1px solid color-mix(in srgb, var(--pp-ink) 8%, transparent);
+}
+
+.site-footer .brand-text {
+  font-family: var(--pp-display);
+  font-weight: 700;
+  color: var(--pp-ink);
+}
+
+.footer-heading {
+  font-family: var(--pp-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--pp-ink);
+}
+
+.footer-tagline,
+.footer-links a {
+  color: var(--pp-muted);
+}
+
+.footer-links a:hover {
+  color: var(--pp-line-deep);
+}
+
+/* ── Curriculum / unit cards ────────────────────────────── */
+.page-curriculum .section,
+.page-curriculum main > .section {
+  background: transparent;
+}
+
+.page-title,
+.section-head h1,
+.section-head h2 {
+  font-family: var(--pp-display);
+}
+
+.unit-card {
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--pp-ink) 8%, transparent);
+  background: color-mix(in srgb, #fff 88%, var(--pp-fog));
+  box-shadow: none;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.unit-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--pp-line) 40%, transparent);
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--pp-ink) 7%, transparent);
+}
+
+.unit-ribbon {
+  background: color-mix(in srgb, var(--pp-line) 16%, transparent);
+  color: var(--pp-line-deep);
+  font-family: var(--pp-display);
+  font-weight: 750;
+  border-radius: 10px;
+}
+
+.unit-card h3 {
+  letter-spacing: -0.03em;
+}
+
+.unit-card .pill {
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--pp-fog) 80%, transparent);
+  border: 0;
+  color: var(--pp-muted);
+}
+
+[data-theme="dark"] .unit-card {
+  background: var(--panel);
+}
+
+/* ── Lesson / course layout ─────────────────────────────── */
+.page-unit {
+  background: var(--pp-paper);
+}
+
+.layout-course {
+  gap: 0;
+}
+
+.course-sidebar {
+  background: color-mix(in srgb, var(--pp-mist) 92%, transparent);
+  border-right: 1px solid color-mix(in srgb, var(--pp-ink) 8%, transparent);
+}
+
+.course-sidebar .sidebar-title,
+.course-sidebar h2,
+.course-sidebar .unit-label {
+  font-family: var(--pp-display);
+  letter-spacing: -0.02em;
+}
+
+.course-sidebar a {
+  border-radius: 10px;
+}
+
+.course-sidebar a.active,
+.course-sidebar a[aria-current="page"] {
+  background: color-mix(in srgb, var(--pp-line) 14%, transparent);
+  color: var(--pp-line-deep);
+  font-weight: 650;
+}
+
+.course-main {
+  background: transparent;
+}
+
+.lesson-title {
+  font-size: clamp(1.75rem, 3vw, 2.35rem);
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+}
+
+.lesson-overview,
+.info-card,
+.feature-card,
+.content-section {
+  border-radius: 14px;
+  border-color: color-mix(in srgb, var(--pp-ink) 8%, transparent);
+}
+
+.lesson-nav .btn,
+.lesson-actions .btn {
+  border-radius: 12px;
+}
+
+.btn-run,
+.btn-check {
+  border-radius: 10px;
+  font-family: var(--pp-body);
+}
+
+/* Code panels: keep readable, soft shell */
+.page-unit .CodeMirror,
+.cm-s-pypath.CodeMirror {
+  border-radius: 12px;
+}
+
+/* ── About ──────────────────────────────────────────────── */
+.page-about .about-page {
+  background:
+    radial-gradient(ellipse 90% 60% at 50% -20%, color-mix(in srgb, var(--pp-line) 12%, transparent), transparent),
+    var(--pp-paper);
+}
+
+.page-about .about-eyebrow {
+  color: var(--pp-line-deep);
+  font-family: var(--pp-body);
+  font-weight: 700;
+}
+
+.page-about .about-mission-headline {
+  font-family: var(--pp-display);
+  letter-spacing: -0.04em;
+}
+
+.page-about .about-team-row {
+  grid-template-columns: minmax(0, 420px);
+  justify-content: center;
+}
+
+.page-about .team-card {
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--pp-ink) 8%, transparent);
+  background: color-mix(in srgb, #fff 90%, var(--pp-fog));
+  box-shadow: none;
+}
+
+.page-about .team-card:hover {
+  transform: none;
+  border-color: color-mix(in srgb, var(--pp-line) 35%, transparent);
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--pp-ink) 7%, transparent);
+}
+
+.page-about .team-card-photo img {
+  border: 3px solid color-mix(in srgb, var(--pp-line) 35%, transparent);
+}
+
+.page-about .team-card-role {
+  color: var(--pp-line-deep);
+}
+
+.page-about .about-contact-title {
+  font-family: var(--pp-display);
+}
+
+/* ── Sandbox / certs / settings — light polish ──────────── */
+.page-sandbox main,
+.page-settings main,
+body.page-certifications main {
+  background: transparent;
+}
+
+.page-sandbox .sandbox-shell,
+.page-settings .settings-card,
+.cert-card {
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--pp-ink) 8%, transparent);
+  background: color-mix(in srgb, #fff 90%, var(--pp-fog));
+  box-shadow: none;
+}
+
+[data-theme="dark"] .page-sandbox .sandbox-shell,
+[data-theme="dark"] .page-settings .settings-card,
+[data-theme="dark"] .cert-card,
+[data-theme="dark"] .page-about .team-card {
+  background: var(--panel);
+}
+
+/* Dropdown panels */
+.dd-panel {
+  border-radius: 14px;
+  border-color: color-mix(in srgb, var(--pp-ink) 10%, transparent);
+  box-shadow: 0 16px 40px color-mix(in srgb, var(--pp-ink) 10%, transparent);
+}
+
+.dd-item__num {
+  background: color-mix(in srgb, var(--pp-line) 14%, transparent);
+  color: var(--pp-line-deep);
+  font-family: var(--pp-display);
+  font-weight: 700;
+  border-radius: 8px;
+}
+
+.dd-item:hover {
+  background: color-mix(in srgb, var(--pp-line) 8%, transparent);
+}
+
+/* 404 */
+.page-404 h1 {
+  font-family: var(--pp-display);
+}
