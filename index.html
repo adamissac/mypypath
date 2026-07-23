@@ -6,20 +6,26 @@
     <script src="/assets/js/theme-init.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>PyPath | Learn Python the Modern Way</title>
-    <meta name="description" content="A modern Python learning platform with interactive lessons and certification prep." />
+    <meta name="description" content="Follow the PyPath — a 10-unit trail from your first program to certification, with interactive lessons that run in your browser." />
     <link rel="icon" href="/assets/img/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/style.css" />
     <link rel="stylesheet" href="/assets/css/pypath-fast.css" />
-    <script defer src="/assets/js/theme.js"></script>
+    <link rel="stylesheet" href="/assets/css/pypath-theme.css" />
+    <link rel="stylesheet" href="/assets/css/home-path.css" />
+<script defer src="/assets/js/theme.js"></script>
     <script defer src="/assets/js/motion.js"></script>
     <script defer src="/assets/js/pyodide-loader.js"></script>
     <script defer src="/assets/js/icons.js"></script>
     <script defer src="/assets/js/hero-editor.js"></script>
+    <script defer src="/assets/js/path-trail.js"></script>
     <script defer src="/assets/js/core.js"></script>
   </head>
   <body class="page page-home">
     <div id="page-transition" aria-hidden="true"></div>
-                                        <header class="site-header">
+    <header class="site-header">
       <div class="header-accent" aria-hidden="true"></div>
       <div class="container header-inner">
         <a class="brand route" href="/">
@@ -61,7 +67,6 @@
               </li>
               <li><a href="/sandbox.html" class="route">Sandbox</a></li>
               <li><a href="/certifications.html" class="route">Certifications</a></li>
-              <li><a href="/about.html" class="route">About</a></li>
               <li><a href="/settings.html" class="route">Settings</a></li>
               </ul>
             </div>
@@ -69,34 +74,261 @@
           <a href="/units/unit-1/what-is-python.html" class="btn btn-primary header-cta route">Start learning</a>
         </div>
       </div>
-      <div class="header-progress"><div class="container"><div class="progress-global" aria-label="Course progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="bar"></div></div></div></div>
     </header>
 
     <main>
-      <section class="hero hero--live" aria-label="Introduction">
-        <div class="container hero-split">
-          <div class="hero-copy">
-            <h1 class="hero-title" data-reveal="up">Learn Python.<br>Get certified.</h1>
-            <p class="hero-lead" data-reveal="up" data-reveal-delay="60">
-              Write real code in your browser — structured lessons from your first program to certification prep.
+      <!-- ── Hero: brand first ─────────────────────────────── -->
+      <section class="home-hero" aria-label="Introduction">
+        <div class="home-hero__bg" aria-hidden="true">
+          <svg class="home-hero__topo" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <path d="M-20,140 C180,80 320,220 520,160 S820,40 1100,120 1280,200 1220,260" />
+            <path d="M-40,240 C160,180 360,300 560,240 S880,140 1120,210 1300,300 1240,360" />
+            <path d="M-30,360 C200,300 380,430 600,360 S900,250 1140,330 1320,420 1260,480" />
+            <path d="M-50,480 C140,420 340,540 540,470 S860,360 1100,450 1290,540 1230,600" />
+            <path d="M-20,600 C220,540 400,680 620,600 S940,500 1160,580 1340,670 1280,720" />
+            <path d="M40,80 C260,40 420,140 640,90 S960,10 1180,70" />
+          </svg>
+        </div>
+
+        <svg class="home-hero__trail-start" viewBox="0 0 420 220" aria-hidden="true">
+          <path d="M20,180 C80,160 90,80 160,70 S260,120 300,60 S380,20 410,40" />
+          <circle cx="20" cy="180" r="7" />
+        </svg>
+
+        <div class="home-hero__content">
+          <h1 class="home-brand"><span>PyPath</span></h1>
+          <div class="home-hero__copy">
+            <p class="home-hero__headline">A winding trail through Python — ten stops, one destination.</p>
+            <p class="home-hero__lead">
+              Write real code in your browser. Scroll the path below to walk every unit from foundations to certification.
             </p>
-            <div class="hero-actions" data-reveal="up" data-reveal-delay="120">
-              <a class="btn btn-primary route" href="/units/unit-1/what-is-python.html">Start learning</a>
-              <a class="btn btn-ghost route" href="/curriculum.html">Browse the curriculum</a>
+            <div class="home-cta-row">
+              <a class="btn-path btn-path--primary route" href="/units/unit-1/what-is-python.html">Start at Unit 1</a>
+              <a class="btn-path btn-path--ghost" href="#the-path">See the path</a>
             </div>
-            <p class="hero-footnote" data-reveal="fade" data-reveal-delay="180">
-              PCAP · ITF+ · 10 units · runs in your browser · nothing to install
+            <p class="home-hero__scrollhint">
+              <span class="home-hero__scrollhint-line" aria-hidden="true"></span>
+              Scroll to draw the trail
             </p>
           </div>
+        </div>
+      </section>
 
-          <div class="hero-live" data-reveal="up" data-reveal-delay="100">
+      <!-- ── The Path: SVG trail map ───────────────────────── -->
+      <section class="path-journey" id="the-path" data-path-journey aria-label="Curriculum path">
+        <div class="path-journey__intro">
+          <h2>The path</h2>
+          <p>Ten units as stops on one line. As you scroll, the trail draws itself — and each stop lights up when the line arrives.</p>
+        </div>
+
+        <div class="path-journey__track">
+          <div class="path-journey__sticky">
+            <div class="path-journey__map" aria-hidden="true">
+              <svg class="path-map" viewBox="0 0 640 560" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                  <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#0284c7" />
+                    <stop offset="55%" stop-color="#0ea5e9" />
+                    <stop offset="100%" stop-color="#38bdf8" />
+                  </linearGradient>
+                </defs>
+
+                <!-- soft grid -->
+                <g class="path-map__grid" opacity="0.7">
+                  <path d="M40 40 H600 M40 120 H600 M40 200 H600 M40 280 H600 M40 360 H600 M40 440 H600 M40 520 H600" />
+                  <path d="M80 20 V540 M160 20 V540 M240 20 V540 M320 20 V540 M400 20 V540 M480 20 V540 M560 20 V540" />
+                </g>
+
+                <!-- base + draw share the same winding metro/trail route -->
+                <path
+                  class="path-map__base"
+                  pathLength="1"
+                  d="M 72 72
+                     C 150 72 150 150 230 150
+                     S 310 72 390 72
+                     S 500 150 500 210
+                     S 420 290 340 290
+                     S 220 230 160 290
+                     S 160 390 240 390
+                     S 360 450 440 390
+                     S 560 330 560 420
+                     S 480 500 400 500"
+                />
+                <path
+                  class="path-map__draw"
+                  pathLength="1"
+                  d="M 72 72
+                     C 150 72 150 150 230 150
+                     S 310 72 390 72
+                     S 500 150 500 210
+                     S 420 290 340 290
+                     S 220 230 160 290
+                     S 160 390 240 390
+                     S 360 450 440 390
+                     S 560 330 560 420
+                     S 480 500 400 500"
+                />
+
+                <!-- stops: coordinates sampled along the route -->
+                <g class="g-stop" data-stop data-stop-index="0">
+                  <circle class="path-stop-dot" cx="72" cy="72" r="14" />
+                  <text class="path-stop-num" x="72" y="72">1</text>
+                  <text class="path-stop-label" x="96" y="56">Foundations</text>
+                </g>
+                <g class="g-stop" data-stop data-stop-index="1">
+                  <circle class="path-stop-dot" cx="230" cy="150" r="14" />
+                  <text class="path-stop-num" x="230" y="150">2</text>
+                  <text class="path-stop-label" x="248" y="178">Control Flow</text>
+                </g>
+                <g class="g-stop" data-stop data-stop-index="2">
+                  <circle class="path-stop-dot" cx="390" cy="72" r="14" />
+                  <text class="path-stop-num" x="390" y="72">3</text>
+                  <text class="path-stop-label" x="414" y="56">Functions</text>
+                </g>
+                <g class="g-stop" data-stop data-stop-index="3">
+                  <circle class="path-stop-dot" cx="500" cy="210" r="14" />
+                  <text class="path-stop-num" x="500" y="210">4</text>
+                  <text class="path-stop-label" x="420" y="230" text-anchor="end">Data Structures</text>
+                </g>
+                <g class="g-stop" data-stop data-stop-index="4">
+                  <circle class="path-stop-dot" cx="340" cy="290" r="14" />
+                  <text class="path-stop-num" x="340" y="290">5</text>
+                  <text class="path-stop-label" x="358" y="268">Modules</text>
+                </g>
+                <g class="g-stop" data-stop data-stop-index="5">
+                  <circle class="path-stop-dot" cx="160" cy="290" r="14" />
+                  <text class="path-stop-num" x="160" y="290">6</text>
+                  <text class="path-stop-label" x="90" y="268">OOP</text>
+                </g>
+                <g class="g-stop" data-stop data-stop-index="6">
+                  <circle class="path-stop-dot" cx="240" cy="390" r="14" />
+                  <text class="path-stop-num" x="240" y="390">7</text>
+                  <text class="path-stop-label" x="258" y="418">Files &amp; Errors</text>
+                </g>
+                <g class="g-stop" data-stop data-stop-index="7">
+                  <circle class="path-stop-dot" cx="440" cy="390" r="14" />
+                  <text class="path-stop-num" x="440" y="390">8</text>
+                  <text class="path-stop-label" x="458" y="372">Testing</text>
+                </g>
+                <g class="g-stop" data-stop data-stop-index="8">
+                  <circle class="path-stop-dot" cx="560" cy="420" r="14" />
+                  <text class="path-stop-num" x="560" y="420">9</text>
+                  <text class="path-stop-label" x="480" y="448" text-anchor="end">APIs</text>
+                </g>
+                <g class="g-stop" data-stop data-stop-index="9">
+                  <circle class="path-stop-dot" cx="400" cy="500" r="14" />
+                  <text class="path-stop-num" x="400" y="500">10</text>
+                  <text class="path-stop-label" x="418" y="522">Certification</text>
+                </g>
+
+                <!-- traveler head that follows the stroke -->
+                <g class="path-head" transform="translate(72,72)">
+                  <circle class="path-head__ring" r="16" />
+                  <circle class="path-head__core" r="6" />
+                </g>
+              </svg>
+            </div>
+
+            <aside class="path-panel" aria-live="polite">
+              <p class="path-panel__kicker">Now on the trail</p>
+              <div class="path-panel__progress" aria-hidden="true"><span></span></div>
+              <div class="path-panel__stage">
+                <article class="path-stop-card is-active" data-stop-card data-stop-index="0">
+                  <div class="path-stop-card__num">1</div>
+                  <h3>Foundations</h3>
+                  <p>Syntax, variables, and I/O — your first real programs.</p>
+                  <div class="path-stop-card__meta"><span>1–2 hrs</span><span>Beginner</span></div>
+                  <a class="btn-path btn-path--primary route" href="/units/unit-1/what-is-python.html">Open Unit 1</a>
+                </article>
+                <article class="path-stop-card" data-stop-card data-stop-index="1">
+                  <div class="path-stop-card__num">2</div>
+                  <h3>Control Flow</h3>
+                  <p>Conditionals, loops, and the logic that steers every program.</p>
+                  <div class="path-stop-card__meta"><span>2–3 hrs</span><span>Beginner</span></div>
+                  <a class="btn-path btn-path--primary route" href="/units/unit-2/understanding-control-flow.html">Open Unit 2</a>
+                </article>
+                <article class="path-stop-card" data-stop-card data-stop-index="2">
+                  <div class="path-stop-card__num">3</div>
+                  <h3>Functions</h3>
+                  <p>Parameters, returns, and scope — write code you can reuse.</p>
+                  <div class="path-stop-card__meta"><span>2–3 hrs</span><span>Beginner</span></div>
+                  <a class="btn-path btn-path--primary route" href="/units/unit-3/what-are-functions.html">Open Unit 3</a>
+                </article>
+                <article class="path-stop-card" data-stop-card data-stop-index="3">
+                  <div class="path-stop-card__num">4</div>
+                  <h3>Data Structures</h3>
+                  <p>Lists, dicts, sets, and tuples — organize information with intent.</p>
+                  <div class="path-stop-card__meta"><span>2–3 hrs</span><span>Beginner</span></div>
+                  <a class="btn-path btn-path--primary route" href="/units/unit-4/introduction-data-structures.html">Open Unit 4</a>
+                </article>
+                <article class="path-stop-card" data-stop-card data-stop-index="4">
+                  <div class="path-stop-card__num">5</div>
+                  <h3>Modules &amp; Packages</h3>
+                  <p>Imports, project structure, and code you can share across files.</p>
+                  <div class="path-stop-card__meta"><span>1–2 hrs</span><span>Beginner</span></div>
+                  <a class="btn-path btn-path--primary route" href="/units/unit-5/what-are-modules.html">Open Unit 5</a>
+                </article>
+                <article class="path-stop-card" data-stop-card data-stop-index="5">
+                  <div class="path-stop-card__num">6</div>
+                  <h3>Object-Oriented Python</h3>
+                  <p>Classes, objects, and methods — model the world in code.</p>
+                  <div class="path-stop-card__meta"><span>2–4 hrs</span><span>Intermediate</span></div>
+                  <a class="btn-path btn-path--primary route" href="/units/unit-6/introduction-oop-concepts.html">Open Unit 6</a>
+                </article>
+                <article class="path-stop-card" data-stop-card data-stop-index="6">
+                  <div class="path-stop-card__num">7</div>
+                  <h3>Files &amp; Errors</h3>
+                  <p>File I/O and exceptions — handle the messy real world calmly.</p>
+                  <div class="path-stop-card__meta"><span>2 hrs</span><span>Intermediate</span></div>
+                  <a class="btn-path btn-path--primary route" href="/units/unit-7/introduction-file-handling.html">Open Unit 7</a>
+                </article>
+                <article class="path-stop-card" data-stop-card data-stop-index="7">
+                  <div class="path-stop-card__num">8</div>
+                  <h3>Testing</h3>
+                  <p>Assertions, pytest habits, and confidence that your code holds.</p>
+                  <div class="path-stop-card__meta"><span>1–2 hrs</span><span>Intermediate</span></div>
+                  <a class="btn-path btn-path--primary route" href="/units/unit-8/what-is-debugging.html">Open Unit 8</a>
+                </article>
+                <article class="path-stop-card" data-stop-card data-stop-index="8">
+                  <div class="path-stop-card__num">9</div>
+                  <h3>APIs</h3>
+                  <p>HTTP, JSON, and pulling live data into your programs.</p>
+                  <div class="path-stop-card__meta"><span>2–3 hrs</span><span>Intermediate</span></div>
+                  <a class="btn-path btn-path--primary route" href="/units/unit-9/recursion-problem-decomposition.html">Open Unit 9</a>
+                </article>
+                <article class="path-stop-card" data-stop-card data-stop-index="9">
+                  <div class="path-stop-card__num">10</div>
+                  <h3>Certification Prep</h3>
+                  <p>Review, practice, and polish — PCAP and ITF+ ready.</p>
+                  <div class="path-stop-card__meta"><span>2–4 hrs</span><span>All levels</span></div>
+                  <a class="btn-path btn-path--primary route" href="/units/unit-10/project-planning-brainstorming.html">Open Unit 10</a>
+                </article>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Practice: browser Python ──────────────────────── -->
+      <section class="home-section home-practice" aria-label="Interactive practice">
+        <div class="home-practice__grid">
+          <div class="home-practice__copy">
+            <h2>Run Python where you learn it</h2>
+            <p>No install, no setup. Lessons ship with a live editor — try a snippet, see the output, keep moving.</p>
+            <div class="home-cta-row">
+              <a class="btn-path btn-path--primary route" href="/sandbox.html">Open the sandbox</a>
+              <a class="btn-path btn-path--ghost route" href="/curriculum.html">Full curriculum</a>
+            </div>
+          </div>
+
+          <div class="hero-live" data-reveal="up">
             <div class="hero-live-editor">
               <div class="hero-live-toolbar">
                 <div class="hero-live-file">
                   <span class="hero-live-dot" aria-hidden="true"></span>
                   <span class="hero-live-dot" aria-hidden="true"></span>
                   <span class="hero-live-dot" aria-hidden="true"></span>
-                  <span class="hero-live-filename">lesson.py</span>
+                  <span class="hero-live-filename">trail.py</span>
                 </div>
                 <button type="button" class="hero-live-run" id="hero-run-btn" aria-label="Run Python code (Ctrl or Command plus Enter)">
                   Run
@@ -110,13 +342,12 @@
                   spellcheck="false"
                   rows="6"
                   aria-label="Python code editor"
-                >total = 0
+                >stops = ["Foundations", "Control Flow", "Functions"]
 
-for i in range(1, 6):
-    print("▸" * i)
-    total += i
+for i, name in enumerate(stops, start=1):
+    print(f"Stop {i}: {name}")
 
-print("Total markers:", total)</textarea>
+print("Trailhead marked. Keep scrolling.")</textarea>
               </div>
               <div class="hero-live-output-wrap">
                 <span class="hero-live-output-label">Output</span>
@@ -129,103 +360,36 @@ print("Total markers:", total)</textarea>
         </div>
       </section>
 
-      <section class="section features" id="curriculum">
-        <div class="container">
-          <div class="section-head" data-reveal="up">
-            <h2>Everything you need to learn Python</h2>
-            <p class="muted">Clear lessons, real code, and a path from beginner to certification-ready.</p>
-          </div>
-          <div class="features-grid" data-reveal-stagger>
-            <div class="feature" data-reveal="up">
-              <div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg></div>
-              <h3>Modern Python</h3>
-              <p>Type hints, tooling, and best practices throughout every unit.</p>
-            </div>
-            <div class="feature" data-reveal="up">
-              <div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3-1.9 5.8L4 12l5.1 3.2L12 21l1.9-5.8L19 12l-5.1-3.2z"/></svg></div>
-              <h3>Interactive lessons</h3>
-              <p>Run code in the browser and practice with hands-on exercises.</p>
-            </div>
-            <div class="feature" data-reveal="up">
-              <div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></div>
-              <h3>Dark mode</h3>
-              <p>Comfortable reading in light or dark — your preference is saved.</p>
-            </div>
-            <div class="feature" data-reveal="up">
-              <div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></div>
-              <h3>Certification track</h3>
-              <p>Curriculum aligned with PCAP and common Python certification goals.</p>
-            </div>
+      <!-- ── Founder ─────────────────────────────────────────── -->
+      <section class="home-section home-people" aria-label="Founder">
+        <div class="home-section__head">
+          <h2>Built by a student, for students</h2>
+          <p>A free path from first program to certification prep — made by someone still on the trail.</p>
+        </div>
+
+        <div class="home-people__grid home-people__grid--solo">
+          <div class="home-person">
+            <img src="/assets/img/adam.jpg" alt="Adam Issac" width="96" height="96" loading="lazy">
+            <p class="home-person__name">Adam Issac</p>
+            <p class="home-person__role">Founder</p>
           </div>
         </div>
       </section>
 
-      <section class="section founders-cta">
-        <div class="container">
-          <div class="founders-cta-content">
-            <h2 class="founders-cta-title" data-reveal="up">Built by students, for students</h2>
-            <p class="founders-cta-subtitle" data-reveal="up" data-reveal-delay="60">Meet the team behind PyPath</p>
-            <div class="founders-showcase" data-reveal-stagger>
-              <div class="founder-showcase-item" data-reveal="scale">
-                <div class="founder-showcase-avatar">
-                  <img src="/assets/img/adam.jpg" alt="Adam Issac" width="120" height="120" loading="lazy">
-                </div>
-                <div class="founder-showcase-name">Adam</div>
-                <div class="founder-showcase-role">Co-Founder</div>
-              </div>
-              <div class="founder-showcase-item" data-reveal="scale">
-                <div class="founder-showcase-avatar">
-                  <img src="/assets/img/ritesh.jpg" alt="Ritesh Konakanchi" width="120" height="120" loading="lazy">
-                </div>
-                <div class="founder-showcase-name">Ritesh</div>
-                <div class="founder-showcase-role">Co-Founder</div>
-              </div>
-              <div class="founder-showcase-item" data-reveal="scale">
-                <div class="founder-showcase-avatar">
-                  <img src="/assets/img/prahas.jpg" alt="Prahas Visikamalla" width="120" height="120" loading="lazy">
-                </div>
-                <div class="founder-showcase-name">Prahas</div>
-                <div class="founder-showcase-role">Head of Curriculum</div>
-              </div>
-            </div>
-            <a href="/about.html" class="btn btn-ghost route" style="margin-top: 32px;" data-reveal="up" data-reveal-delay="120">Meet the team</a>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="testimonials">
-        <div class="container">
-          <div class="section-head" data-reveal="up">
-            <h2>What learners are saying</h2>
-            <p class="muted">Concise, motivating feedback from students.</p>
-          </div>
-          <div class="testimonials" data-reveal-stagger>
-            <article class="testimonial" data-reveal="up">
-              <div class="stars" aria-hidden="true">★★★★★</div>
-              <p class="quote">"I learned Python in AP CSP and kept going here. The structure kept me motivated."</p>
-              <div class="who">
-                <div class="avatar-monogram" aria-hidden="true">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 21a7 7 0 0 0-14 0"/><circle cx="12" cy="7" r="4"/></svg>
-                </div>
-                <div><strong>Akshay</strong><div class="role">AP CSP Student</div></div>
-              </div>
-            </article>
-            <article class="testimonial" data-reveal="up">
-              <div class="stars" aria-hidden="true">★★★★★</div>
-              <p class="quote">"We used Python in AP CSP, and this site made it easy to learn beyond class."</p>
-              <div class="who">
-                <div class="avatar-monogram" aria-hidden="true">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 21a7 7 0 0 0-14 0"/><circle cx="12" cy="7" r="4"/></svg>
-                </div>
-                <div><strong>Barath</strong><div class="role">AP CSP Student</div></div>
-              </div>
-            </article>
+      <!-- ── End CTA ───────────────────────────────────────── -->
+      <section class="home-endcta" aria-label="Get started">
+        <div class="home-endcta__inner">
+          <h2>Ready to walk the path?</h2>
+          <p>Ten units. Browser-native Python. Nothing to install — just start at the trailhead.</p>
+          <div class="home-cta-row">
+            <a class="btn-path btn-path--primary route" href="/units/unit-1/what-is-python.html">Start learning</a>
+            <a class="btn-path btn-path--ghost route" href="/certifications.html">Certification track</a>
           </div>
         </div>
       </section>
     </main>
 
-                                            <footer class="site-footer">
+    <footer class="site-footer">
       <div class="container">
         <div class="footer-grid">
           <div class="footer-brand">
@@ -242,12 +406,6 @@ print("Total markers:", total)</textarea>
               <li><a href="/curriculum.html" class="route">Curriculum</a></li>
               <li><a href="/sandbox.html" class="route">Sandbox</a></li>
               <li><a href="/certifications.html" class="route">Certifications</a></li>
-            </ul>
-          </div>
-          <div class="footer-col">
-            <h4 class="footer-heading">About</h4>
-            <ul class="footer-links">
-              <li><a href="/about.html" class="route">Team</a></li>
               <li><a href="/settings.html" class="route">Settings</a></li>
             </ul>
           </div>
