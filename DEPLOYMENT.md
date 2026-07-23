@@ -6,7 +6,7 @@
 
 1. Go to [GitHub.com](https://github.com) and sign in
 2. Click the "+" icon → "New repository"
-3. Name it (e.g., "pypath-website")
+3. Name it (e.g., "mypypath")
 4. **Don't** initialize with README, .gitignore, or license
 5. Click "Create repository"
 
@@ -15,10 +15,10 @@
 Run these commands in your terminal:
 
 ```bash
-cd /Users/adami/Documents/python-website
+cd /path/to/mypypath
 
 # Add GitHub remote (replace YOUR_USERNAME and REPO_NAME)
-git remote add origin https://github.com/YOUR_USERNAME/REPO_NAME.git
+git remote add origin https://github.com/adamissac/mypypath.git
 
 # Push to GitHub
 git branch -M main
@@ -52,7 +52,7 @@ npm i -g vercel
 vercel login
 
 # Deploy (from your project directory)
-cd /Users/adami/Documents/python-website
+cd /path/to/mypypath
 vercel
 
 # Follow the prompts:
@@ -138,7 +138,7 @@ vercel
 Whenever you make changes:
 
 ```bash
-cd /Users/adami/Documents/python-website
+cd /path/to/mypypath
 git add .
 git commit -m "Your commit message"
 git push
