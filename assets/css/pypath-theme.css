@@ -169,6 +169,102 @@ body.page:not(.page-home) > .site-footer {
   border-radius: 10px;
 }
 
+/* 3D logo — tilt + click spin (driven by motion.js) */
+.site-header .brand.brand--motion {
+  perspective: 480px;
+}
+
+.site-header .brand .logo.logo--3d {
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 220ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+    filter 220ms ease;
+  filter: drop-shadow(0 2px 4px color-mix(in srgb, var(--pp-ink) 12%, transparent));
+}
+
+.site-header .brand:hover .logo.logo--3d:not(.is-spinning) {
+  filter: drop-shadow(0 6px 10px color-mix(in srgb, var(--pp-line) 28%, transparent));
+}
+
+.site-header .brand .logo.logo--3d.is-spinning {
+  animation: pp-logo-spin 0.9s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+
+@keyframes pp-logo-spin {
+  0% {
+    transform: perspective(420px) rotateY(0deg) translateZ(0);
+  }
+  45% {
+    transform: perspective(420px) rotateY(200deg) translateZ(14px) scale(1.06);
+  }
+  100% {
+    transform: perspective(420px) rotateY(360deg) translateZ(0) scale(1);
+  }
+}
+
+html.reduced-motion .site-header .brand .logo.logo--3d,
+html.reduced-motion .site-header .brand .logo.logo--3d.is-spinning {
+  animation: none !important;
+  transform: none !important;
+  filter: none;
+}
+
+/* Richer scroll reveals */
+.js-enabled [data-reveal] {
+  opacity: 0;
+  transition:
+    transform 520ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+    opacity 480ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+    filter 520ms ease;
+  will-change: transform, opacity;
+}
+
+.js-enabled [data-reveal="up"],
+.js-enabled [data-reveal=""] {
+  transform: translateY(22px);
+  filter: blur(2px);
+}
+
+.js-enabled [data-reveal="fade"] {
+  transform: none;
+  opacity: 0;
+  filter: none;
+}
+
+.js-enabled [data-reveal="scale"] {
+  transform: scale(0.96) translateY(10px);
+  filter: blur(1px);
+}
+
+.js-enabled [data-reveal="left"] {
+  transform: translateX(-22px);
+  filter: blur(1px);
+}
+
+.js-enabled [data-reveal="right"] {
+  transform: translateX(22px);
+  filter: blur(1px);
+}
+
+.js-enabled [data-reveal].is-visible {
+  transform: none;
+  opacity: 1;
+  filter: none;
+}
+
+html.reduced-motion.js-enabled [data-reveal] {
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+  transition: none !important;
+}
+
+.unit-card[data-reveal],
+.team-card[data-reveal],
+.content-section[data-reveal] {
+  transition-duration: 560ms;
+}
+
 .nav-pill {
   background: color-mix(in srgb, var(--pp-fog) 70%, transparent);
   border: 1px solid color-mix(in srgb, var(--pp-ink) 7%, transparent);

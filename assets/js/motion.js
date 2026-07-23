@@ -158,11 +158,133 @@
     });
   }
 
+  /* Auto-tag common blocks so scroll reveals work sitewide without per-page markup */
+  function autoEnhanceReveals() {
+    var pairs = [
+      ['.units-grid', '.unit-card', 'up'],
+      ['.about-team-row', '.team-card', 'up'],
+      ['.home-practice__grid', '.home-practice__copy, .hero-live', 'up'],
+      ['.home-people', '.home-section__head, .home-person, .home-people__link', 'up'],
+      ['.home-endcta', '.home-endcta__inner', 'up'],
+      ['.path-journey__intro', null, 'up'],
+      ['.page-unit .lesson-content', '.content-section', 'up'],
+      ['.page-curriculum .section-head, .page-about .about-mission', null, 'up']
+    ];
+
+    pairs.forEach(function (pair) {
+      var rootSel = pair[0];
+      var childSel = pair[1];
+      var dir = pair[2];
+      document.querySelectorAll(rootSel).forEach(function (root) {
+        if (childSel) {
+          root.setAttribute('data-reveal-stagger', '');
+          Array.from(root.querySelectorAll(childSel)).forEach(function (el, i) {
+            if (el.hasAttribute('data-reveal')) return;
+            el.setAttribute('data-reveal', dir);
+            if (!el.hasAttribute('data-reveal-delay')) {
+              el.setAttribute('data-reveal-delay', String(Math.min(i * 70, 420)));
+            }
+          });
+        } else if (!root.hasAttribute('data-reveal')) {
+          root.setAttribute('data-reveal', dir);
+        }
+      });
+    });
+  }
+
+  /* Header logo — gentle 3D tilt on pointer, one spin on click */
+  function initLogoMotion() {
+    var brand = document.querySelector('.site-header .brand');
+    if (!brand) return;
+    var logo = brand.querySelector('.logo');
+    if (!logo) return;
+
+    brand.classList.add('brand--motion');
+    logo.classList.add('logo--3d');
+
+    if (prefersReduced()) return;
+
+    var spinning = false;
+
+    brand.addEventListener('pointermove', function (e) {
+      if (spinning) return;
+      var rect = brand.getBoundingClientRect();
+      var px = (e.clientX - rect.left) / Math.max(rect.width, 1);
+      var py = (e.clientY - rect.top) / Math.max(rect.height, 1);
+      var rotY = (px - 0.5) * 28;
+      var rotX = (0.5 - py) * 18;
+      logo.style.transform =
+        'perspective(420px) rotateX(' + rotX.toFixed(2) + 'deg) rotateY(' + rotY.toFixed(2) + 'deg) translateZ(6px)';
+    });
+
+    brand.addEventListener('pointerleave', function () {
+      if (spinning) return;
+      logo.style.transform = '';
+    });
+
+    brand.addEventListener('click', function (e) {
+      // Don't steal middle/right click or modifier opens
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      if (spinning) return;
+      spinning = true;
+      logo.classList.add('is-spinning');
+      logo.style.transform = '';
+      window.setTimeout(function () {
+        logo.classList.remove('is-spinning');
+        spinning = false;
+      }, 900);
+    });
+  }
+
+  /* Home atmosphere — soft scroll parallax on topo + trail stub */
+  function initHomeParallax() {
+    if (prefersReduced()) return;
+    if (!document.body.classList.contains('page-home')) return;
+
+    var topo = document.querySelector('.home-hero__topo');
+    var trail = document.querySelector('.home-hero__trail-start');
+    if (!topo && !trail) return;
+
+    var ticking = false;
+    function update() {
+      ticking = false;
+      var y = window.scrollY || 0;
+      if (topo) topo.style.transform = 'translate3d(0,' + (y * 0.12).toFixed(1) + 'px,0)';
+      if (trail) trail.style.transform = 'translate3d(0,' + (y * -0.06).toFixed(1) + 'px,0)';
+    }
+
+    window.addEventListener(
+      'scroll',
+      function () {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(update);
+      },
+      { passive: true }
+    );
+    update();
+  }
+
+  /* Path section — fade intro + gentle map lift as it enters */
+  function initPathPresence() {
+    if (prefersReduced()) return;
+    var journey = document.querySelector('[data-path-journey]');
+    if (!journey) return;
+    var map = journey.querySelector('.path-journey__map');
+    var intro = journey.querySelector('.path-journey__intro');
+    if (intro && !intro.hasAttribute('data-reveal')) intro.setAttribute('data-reveal', 'up');
+    if (map) map.classList.add('path-map--alive');
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     migrateLegacyReveals();
     staggerContainers();
+    autoEnhanceReveals();
+    initPathPresence();
     initReveal();
     initCountUp();
     initSmoothAnchors();
+    initLogoMotion();
+    initHomeParallax();
   });
 })();
