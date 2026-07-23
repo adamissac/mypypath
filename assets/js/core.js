@@ -86,7 +86,6 @@
     var homeActive = isActive(/^\/$|\/index\.html$/) ? ' active' : '';
     var sandboxActive = isActive(/sandbox\.html$/) ? ' active' : '';
     var certsActive = isActive(/certifications\.html$/) ? ' active' : '';
-    var aboutActive = isActive(/about\.html$/) ? ' active' : '';
     var settingsActive = isActive(/settings\.html$/) ? ' active' : '';
 
     var progress = showProgress
@@ -114,7 +113,6 @@
                   unitsDropdown() +
                   '<li><a href="/sandbox.html" class="route' + sandboxActive + '">Sandbox</a></li>' +
                   '<li><a href="/certifications.html" class="route' + certsActive + '">Certifications</a></li>' +
-                  '<li><a href="/about.html" class="route' + aboutActive + '">About</a></li>' +
                   '<li><a href="/settings.html" class="route' + settingsActive + '">Settings</a></li>' +
                 '</ul>' +
               '</div>' +
@@ -146,12 +144,6 @@
                 '<li><a href="/curriculum.html" class="route">Curriculum</a></li>' +
                 '<li><a href="/sandbox.html" class="route">Sandbox</a></li>' +
                 '<li><a href="/certifications.html" class="route">Certifications</a></li>' +
-              '</ul>' +
-            '</div>' +
-            '<div class="footer-col">' +
-              '<h4 class="footer-heading">About</h4>' +
-              '<ul class="footer-links">' +
-                '<li><a href="/about.html" class="route">Team</a></li>' +
                 '<li><a href="/settings.html" class="route">Settings</a></li>' +
               '</ul>' +
             '</div>' +
