@@ -22,7 +22,6 @@ correct_nav = '''          <ul class="menu">
               </ul>
             </li>
             <li><a href="/sandbox.html">Sandbox</a></li>
-            <li><a href="/certifications.html">Certifications</a></li>
             <li><a href="/settings.html">Settings</a></li>
           </ul>'''
 
@@ -98,8 +97,13 @@ def fix_navigation(file_path):
         # Match from <ul class="menu"> to </ul> before </nav>
         pattern = r'(<ul class="menu">.*?</ul>)(\s*</nav>)'
         
-        # Check if file needs fixing (doesn't have Certifications or About)
-        if 'Certifications' in content and 'About' in content:
+        # Skip if nav already matches the canonical menu (Home + Units + Sandbox + Settings)
+        if (
+            '<a href="/sandbox.html">Sandbox</a>' in content
+            and '<a href="/settings.html">Settings</a>' in content
+            and 'Certifications' not in content
+            and 'About' not in content
+        ):
             print(f"✓ {file_path} already has complete navigation")
             return False
         
