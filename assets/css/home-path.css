@@ -226,7 +226,15 @@ body.page-home {
   width: min(1360px, calc(100% - clamp(3rem, 8vw, 7rem)));
   margin: 0 auto;
   display: grid;
-  gap: clamp(2rem, 5vw, 3.5rem);
+  grid-template-columns: minmax(0, 1fr) minmax(0, min(48%, 520px));
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+}
+
+.home-hero__intro {
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 2.75rem);
+  min-width: 0;
 }
 
 .home-brand {
@@ -247,6 +255,102 @@ body.page-home {
 .home-hero__copy {
   max-width: 34rem;
   animation: home-rise 0.9s 0.12s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+
+/* ── The Summit (hero companion) ─────────────────────────── */
+.home-summit {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  aspect-ratio: 4 / 5;
+  contain: layout paint;
+  pointer-events: auto;
+  touch-action: none;
+  animation: home-rise 1s 0.18s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+
+.home-summit__fallback,
+.home-summit__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.home-summit__fallback {
+  position: absolute;
+  inset: 0;
+}
+
+.home-summit__canvas {
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+}
+
+.home-summit__canvas:active {
+  cursor: grabbing;
+}
+
+.home-summit.is-enhanced .home-summit__fallback[hidden] {
+  display: none;
+}
+
+/* Static SVG paints from theme tokens only */
+.home-summit__ground {
+  fill: color-mix(in srgb, var(--home-fog) 70%, transparent);
+}
+
+.home-summit__mountain polygon {
+  stroke: color-mix(in srgb, var(--home-ink) 22%, transparent);
+  stroke-width: 0.8;
+  stroke-linejoin: round;
+}
+
+.home-summit__mountain polygon:nth-child(odd) {
+  fill: color-mix(in srgb, var(--home-ink) 78%, var(--home-fog));
+}
+
+.home-summit__mountain polygon:nth-child(even) {
+  fill: color-mix(in srgb, var(--home-ink) 58%, var(--home-mist));
+}
+
+.home-summit__mountain polygon:nth-child(3n) {
+  fill: color-mix(in srgb, var(--home-ink-soft) 70%, var(--home-fog));
+}
+
+.home-summit__trail {
+  stroke: var(--home-line);
+  stroke-width: 2.4;
+  opacity: 0.95;
+}
+
+.home-summit__trail--far {
+  stroke: var(--home-line-deep);
+  stroke-width: 1.6;
+  opacity: 0.28;
+}
+
+.home-summit__stops circle {
+  fill: var(--home-mark);
+}
+
+.home-summit__stops text {
+  fill: var(--home-paper);
+  font-size: 7px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.home-summit__flag line {
+  stroke: var(--home-muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.home-summit__flag polygon {
+  fill: var(--home-line-deep);
 }
 
 .home-hero__headline {
@@ -305,7 +409,8 @@ body.page-home {
   }
 }
 
-/* Decorative path stub in hero — starts the trail metaphor */
+/* Decorative path stub in hero — starts the trail metaphor.
+   Hidden when The Summit occupies the right column (≥768px). */
 .home-hero__trail-start {
   position: absolute;
   right: max(0px, calc((100% - 1120px) / 2 - 1rem));
@@ -316,6 +421,13 @@ body.page-home {
   pointer-events: none;
   opacity: 0.85;
   animation: home-rise 1s 0.15s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+
+@media (min-width: 768px) {
+  .home-hero__trail-start {
+    opacity: 0;
+    visibility: hidden;
+  }
 }
 
 .home-hero__trail-start path {
@@ -335,13 +447,50 @@ body.page-home {
   to { stroke-dashoffset: -260; }
 }
 
-@media (max-width: 720px) {
+/* Tablet: Summit may drop below copy if the row would crowd CTAs */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .home-hero__content {
+    grid-template-columns: minmax(0, 1fr) minmax(0, min(42%, 380px));
+    gap: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .home-summit {
+    max-width: 380px;
+    aspect-ratio: 1 / 1;
+  }
+}
+
+@media (max-width: 900px) and (min-width: 768px) {
+  .home-hero__content {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
+  .home-summit {
+    width: min(52%, 320px);
+    max-width: 320px;
+    margin-left: 0;
+    order: 2;
+  }
+
+  .home-hero__intro {
+    order: 1;
+    width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
   .home-hero {
     align-items: flex-start;
     overflow: visible;
     min-height: auto;
     padding-top: clamp(1.5rem, 4vh, 2.5rem);
     padding-bottom: clamp(2rem, 6vh, 3rem);
+  }
+
+  .home-hero__content {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
 
   .home-brand {
@@ -351,11 +500,39 @@ body.page-home {
   .home-hero__trail-start {
     width: 52vw;
     opacity: 0.45;
+    visibility: visible;
     bottom: auto;
     top: 12%;
     right: -6%;
   }
 
+  .home-hero__copy {
+    max-width: none;
+  }
+
+  /* Prefer CTAs above the fold: modest Summit under the intro block */
+  .home-summit {
+    width: min(56vw, 220px);
+    max-width: 220px;
+    margin: 0.25rem 0 0;
+    aspect-ratio: 1 / 1;
+    order: 2;
+  }
+
+  .home-hero__intro {
+    order: 1;
+  }
+
+  /* Very short viewports: hide Summit so CTAs stay above the fold */
+  @media (max-height: 640px) {
+    .home-summit {
+      display: none;
+    }
+  }
+}
+
+/* Legacy alias kept for older breakpoints referenced elsewhere */
+@media (max-width: 720px) {
   .home-hero__copy {
     max-width: none;
   }
@@ -743,6 +920,7 @@ html.reduced-motion .path-journey.is-active .path-map--alive {
   .home-hero__scrollhint,
   .home-hero__trail-start,
   .home-hero__scrollhint-line,
+  .home-summit,
   .path-head__ring {
     animation: none !important;
   }
