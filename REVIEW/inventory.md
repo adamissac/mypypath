@@ -23,7 +23,7 @@
 | Area | CSS / components |
 |------|------------------|
 | **Homepage (new)** | `body.page-home`, `.hero--live`, hero editor in `hero-editor.js` |
-| **Interior pages** | Same stylesheets; body classes: `page-unit`, `page-curriculum`, `page-sandbox`, `page-about`, `page-certs`, `page-settings`, `page-404` |
+| **Interior pages** | Same stylesheets; body classes: `page-unit`, `page-curriculum`, `page-sandbox`, `page-about`, `page-settings`, `page-404` |
 | **Lessons** | `layout-course`, baked rich nav, `lesson-runner.js`, CodeMirror theme `pypath` |
 
 ---
@@ -46,7 +46,6 @@
 | `/` | `index.html` |
 | `/curriculum.html` | `curriculum.html` |
 | `/sandbox.html` | `sandbox.html` |
-| `/certifications.html` | `certifications.html` |
 | `/about.html` | `about.html` |
 | `/settings.html` | `settings.html` |
 | `/404.html` | `404.html` |
@@ -67,7 +66,7 @@
 | 7 | `units/unit-7.html` | Files & Errors |
 | 8 | `units/unit-8.html` | Testing |
 | 9 | `units/unit-9.html` | APIs |
-| 10 | `units/unit-10.html` | Certification Prep |
+| 10 | `units/unit-10.html` | Capstone Project |
 
 Unit landings list lessons in **pedagogical order** (from first-lesson sidebar), not alphabetical.
 
@@ -86,7 +85,7 @@ Unit landings list lessons in **pedagogical order** (from first-lesson sidebar),
 | 7 Files & Errors | 10 |
 | 8 Testing | 10 |
 | 9 APIs | 10 |
-| 10 Certification Prep | 10 |
+| 10 Capstone Project | 10 |
 | **Total** | **99** |
 
 Lesson paths: `units/unit-N/<slug>.html` (see repo glob for full list).
@@ -102,8 +101,7 @@ Lesson paths: `units/unit-N/<slug>.html` (see repo glob for full list).
 | Unit N start | First lesson per unit (see `FIRST_LESSON` in `scripts/bake_layout.py`) |
 | Unit landing (optional hub) | `/units/unit-N.html` |
 | Sandbox | `/sandbox.html` |
-| Certifications | `/certifications.html` |
-| About / team | `/about.html` |
+| Certifications | About / team | `/about.html` |
 | Settings | `/settings.html` |
 | Home curriculum anchor | `/#curriculum` on `index.html` |
 
