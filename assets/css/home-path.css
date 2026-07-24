@@ -159,10 +159,12 @@ body.page-home {
 .home-hero {
   position: relative;
   min-height: calc(100vh - var(--header-height, 60px));
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 0.88fr) minmax(280px, 1.22fr);
   align-items: center;
+  column-gap: clamp(0.25rem, 1.5vw, 1.25rem);
   overflow: hidden;
-  padding: clamp(2rem, 6vh, 4rem) 0 clamp(2.5rem, 7vh, 4.5rem);
+  padding: clamp(2rem, 6vh, 4rem) clamp(1.25rem, 4vw, 3.5rem);
   isolation: isolate;
 }
 
@@ -170,6 +172,8 @@ body.page-home {
   position: absolute;
   inset: 0;
   z-index: 0;
+  grid-column: 1 / -1;
+  grid-row: 1;
   background:
     radial-gradient(120% 80% at 78% 18%, color-mix(in srgb, var(--home-line) 28%, transparent), transparent 55%),
     radial-gradient(90% 70% at 12% 88%, color-mix(in srgb, var(--home-mark) 22%, transparent), transparent 50%),
@@ -222,11 +226,15 @@ body.page-home {
 
 .home-hero__content {
   position: relative;
-  z-index: 1;
-  width: min(1360px, calc(100% - clamp(3rem, 8vw, 7rem)));
-  margin: 0 auto;
+  z-index: 2;
+  grid-column: 1;
+  grid-row: 1;
+  width: 100%;
+  max-width: 40rem;
+  margin: 0;
   display: grid;
-  gap: clamp(2rem, 5vw, 3.5rem);
+  gap: clamp(1.6rem, 4vw, 2.75rem);
+  justify-self: start;
 }
 
 .home-brand {
@@ -305,39 +313,102 @@ body.page-home {
   }
 }
 
-/* Decorative path stub in hero — starts the trail metaphor */
+/* Decorative climbing path in hero — fills open space beside the brand */
 .home-hero__trail-start {
-  position: absolute;
-  right: max(0px, calc((100% - 1120px) / 2 - 1rem));
-  bottom: 12%;
-  width: min(38vw, 380px);
-  height: auto;
-  z-index: 0;
+  position: relative;
+  grid-column: 2;
+  grid-row: 1;
+  z-index: 1;
+  justify-self: stretch;
+  align-self: center;
+  width: 100%;
+  height: min(78vh, 720px);
+  max-width: none;
+  margin: 0 0 0 -1.5rem;
   pointer-events: none;
-  opacity: 0.85;
-  animation: home-rise 1s 0.15s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
+  opacity: 1;
+  overflow: visible;
+  animation: home-trail-in 1s 0.15s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
 }
 
-.home-hero__trail-start path {
+@keyframes home-trail-in {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.home-hero__trail-start-line {
   fill: none;
-  stroke: var(--home-line);
-  stroke-width: 3.5;
+  stroke: var(--home-line-deep);
+  stroke-width: 5;
   stroke-linecap: round;
-  stroke-dasharray: 12 14;
-  animation: home-dash-drift 18s linear infinite;
+  stroke-linejoin: round;
+  stroke-dasharray: 15 17;
+  animation: home-dash-drift 22s linear infinite;
 }
 
-.home-hero__trail-start circle {
+.home-hero__trail-start-dot {
   fill: var(--home-mark);
 }
 
+.home-hero__trail-start-dot--mid {
+  fill: color-mix(in srgb, var(--home-line) 70%, var(--home-mark));
+  opacity: 0.9;
+}
+
+.home-hero__trail-start-dot--end {
+  fill: var(--home-line-deep);
+}
+
+.home-hero__trail-flag-pole {
+  stroke: var(--home-ink);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+}
+
+.home-hero__trail-flag-cloth {
+  fill: var(--home-line-deep);
+  transform-origin: 0px -42px;
+  animation: home-flag-wave 2.8s ease-in-out infinite;
+}
+
 @keyframes home-dash-drift {
-  to { stroke-dashoffset: -260; }
+  to { stroke-dashoffset: -320; }
+}
+
+@keyframes home-flag-wave {
+  0%, 100% { transform: skewY(0deg) scaleX(1); }
+  50% { transform: skewY(-4deg) scaleX(1.04); }
+}
+
+@media (max-width: 1100px) {
+  .home-hero {
+    grid-template-columns: minmax(0, 0.95fr) minmax(220px, 1.05fr);
+  }
+
+  .home-hero__trail-start {
+    height: min(68vh, 580px);
+    margin-left: -0.75rem;
+    opacity: 0.92;
+  }
+}
+
+@media (max-width: 980px) {
+  .home-hero__trail-start {
+    height: min(60vh, 480px);
+    opacity: 0.78;
+  }
 }
 
 @media (max-width: 720px) {
   .home-hero {
-    align-items: flex-start;
+    grid-template-columns: 1fr;
+    align-items: start;
     overflow: visible;
     min-height: auto;
     padding-top: clamp(1.5rem, 4vh, 2.5rem);
@@ -348,16 +419,21 @@ body.page-home {
     font-size: clamp(3.2rem, 18vw, 4.5rem);
   }
 
-  .home-hero__trail-start {
-    width: 52vw;
-    opacity: 0.45;
-    bottom: auto;
-    top: 12%;
-    right: -6%;
+  .home-hero__content {
+    max-width: none;
   }
 
-  .home-hero__copy {
-    max-width: none;
+  .home-hero__trail-start {
+    position: absolute;
+    grid-column: 1;
+    right: -4%;
+    left: auto;
+    top: 12%;
+    width: min(46vw, 210px);
+    height: min(52vh, 360px);
+    opacity: 0.34;
+    animation: none;
+    justify-self: end;
   }
 }
 
@@ -743,6 +819,8 @@ html.reduced-motion .path-journey.is-active .path-map--alive {
   .home-hero__scrollhint,
   .home-hero__trail-start,
   .home-hero__scrollhint-line,
+  .home-hero__trail-start-line,
+  .home-hero__trail-flag-cloth,
   .path-head__ring {
     animation: none !important;
   }
