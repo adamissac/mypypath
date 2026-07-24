@@ -21,7 +21,6 @@
     <script defer src="/assets/js/icons.js"></script>
     <script defer src="/assets/js/hero-editor.js"></script>
     <script defer src="/assets/js/path-trail.js"></script>
-    <script defer src="/assets/js/summit.js?v=ref2"></script>
     <script defer src="/assets/js/core.js"></script>
   </head>
   <body class="page page-home">
@@ -115,73 +114,17 @@
             </div>
           </div>
 
-          <div
-            class="home-summit"
-            data-summit
-            role="img"
-            aria-label="A mountain trail with ten stops leading to the summit"
-          >
-            <!-- No-JS / pre-enhance fallback: one composed frame of The Summit -->
-            <svg
-              class="home-summit__fallback"
-              viewBox="0 0 400 480"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-              focusable="false"
-            >
-              <ellipse class="home-summit__ground" cx="200" cy="418" rx="155" ry="32" />
-              <!-- Clean low-poly peak + shoulder (matches canvas silhouette) -->
-              <g class="home-summit__mountain">
-                <polygon class="home-summit__lit" points="200,42 112,200 200,178" />
-                <polygon class="home-summit__mid" points="200,42 200,178 272,195" />
-                <polygon class="home-summit__shadow" points="200,42 272,195 318,185" />
-                <polygon class="home-summit__lit" points="112,200 70,340 200,300" />
-                <polygon class="home-summit__mid" points="112,200 200,178 200,300" />
-                <polygon class="home-summit__shadow" points="200,178 272,195 200,300" />
-                <polygon class="home-summit__shadow" points="272,195 318,185 330,320 200,300" />
-                <polygon class="home-summit__lit" points="70,340 48,410 200,372" />
-                <polygon class="home-summit__mid" points="70,340 200,300 200,372" />
-                <polygon class="home-summit__shadow" points="200,300 330,320 200,372" />
-                <polygon class="home-summit__mid" points="48,410 200,372 200,418 62,418" />
-                <polygon class="home-summit__shadow" points="200,372 330,320 348,410 200,418" />
-              </g>
-              <!-- Far trail hint (near-invisible) -->
-              <path
-                class="home-summit__trail home-summit__trail--far"
-                d="M300,390 C320,340 300,290 250,260 S160,210 170,150"
-                fill="none"
-                stroke-dasharray="5 9"
-                stroke-linecap="round"
-              />
-              <!-- Near trail: trailhead → peak -->
-              <path
-                class="home-summit__trail"
-                d="M78,400 C120,375 155,365 200,350 S290,330 305,285 S275,235 220,215 S145,195 158,150 S185,95 200,55"
-                fill="none"
-                stroke-dasharray="7 9"
-                stroke-linecap="round"
-              />
-              <!-- Trailhead marker -->
-              <circle class="home-summit__trailhead" cx="78" cy="400" r="7" />
-              <!-- Stops 1–9 along trail; stop 10 at peak / flag base -->
-              <g class="home-summit__stops">
-                <circle cx="100" cy="388" r="6" /><text x="100" y="392" text-anchor="middle">1</text>
-                <circle cx="145" cy="368" r="6" /><text x="145" y="372" text-anchor="middle">2</text>
-                <circle cx="195" cy="352" r="6" /><text x="195" y="356" text-anchor="middle">3</text>
-                <circle cx="250" cy="340" r="6" /><text x="250" y="344" text-anchor="middle">4</text>
-                <circle cx="295" cy="300" r="6" /><text x="295" y="304" text-anchor="middle">5</text>
-                <circle cx="270" cy="245" r="6" /><text x="270" y="249" text-anchor="middle">6</text>
-                <circle cx="215" cy="215" r="6" /><text x="215" y="219" text-anchor="middle">7</text>
-                <circle cx="160" cy="175" r="6" /><text x="160" y="179" text-anchor="middle">8</text>
-                <circle cx="175" cy="115" r="6" /><text x="175" y="119" text-anchor="middle">9</text>
-                <circle cx="200" cy="48" r="7" /><text x="200" y="52" text-anchor="middle">10</text>
-              </g>
-              <!-- Summit flag planted on peak -->
-              <g class="home-summit__flag">
-                <line x1="200" y1="42" x2="200" y2="8" />
-                <polygon points="200,8 248,22 200,34" />
-              </g>
-            </svg>
+          <div class="home-summit">
+            <!-- Static Summit graphic — no canvas, no animation -->
+            <img
+              class="home-summit__art"
+              src="assets/img/summit.png"
+              width="1024"
+              height="1024"
+              alt="The Summit: a mountain trail with ten unit stops leading to a flag at the peak"
+              decoding="async"
+            />
+          </div>
           </div>
         </div>
       </section>

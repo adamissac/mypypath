@@ -265,105 +265,23 @@ body.page-home {
   animation: home-rise 0.9s 0.12s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
 }
 
-/* ── The Summit (hero companion) ─────────────────────────── */
+/* ── The Summit (hero companion) — static SVG image ──────── */
 .home-summit {
   position: relative;
   z-index: 1;
   width: 100%;
   max-width: 520px;
   margin: 0 auto;
-  aspect-ratio: 4 / 5;
   contain: layout paint;
-  pointer-events: auto;
-  touch-action: none;
   animation: home-rise 1s 0.18s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
 }
 
-.home-summit__fallback,
-.home-summit__canvas {
+.home-summit__art {
   display: block;
   width: 100%;
-  height: 100%;
-}
-
-.home-summit__fallback {
-  position: absolute;
-  inset: 0;
-}
-
-.home-summit__canvas {
-  position: absolute;
-  inset: 0;
-  cursor: grab;
-}
-
-.home-summit__canvas:active {
-  cursor: grabbing;
-}
-
-.home-summit.is-enhanced .home-summit__fallback[hidden] {
-  display: none;
-}
-
-/* Static SVG paints from theme tokens only */
-.home-summit__ground {
-  fill: color-mix(in srgb, var(--home-fog) 78%, var(--home-muted));
-  opacity: 0.85;
-}
-
-.home-summit__mountain polygon {
-  stroke: color-mix(in srgb, var(--home-ink) 10%, transparent);
-  stroke-width: 0.5;
-  stroke-linejoin: round;
-}
-
-.home-summit__mountain polygon.home-summit__lit {
-  fill: color-mix(in srgb, var(--home-ink) 55%, var(--home-fog));
-}
-
-.home-summit__mountain polygon.home-summit__mid {
-  fill: color-mix(in srgb, var(--home-ink) 72%, var(--home-mist));
-}
-
-.home-summit__mountain polygon.home-summit__shadow {
-  fill: color-mix(in srgb, var(--home-ink) 92%, var(--home-fog));
-}
-
-.home-summit__trail {
-  stroke: var(--home-line);
-  stroke-width: 2.6;
-  opacity: 0.95;
-}
-
-.home-summit__trail--far {
-  stroke: var(--home-line-deep);
-  stroke-width: 1.2;
-  opacity: 0.07;
-}
-
-.home-summit__trailhead {
-  fill: var(--home-mark);
-}
-
-.home-summit__stops circle {
-  fill: var(--home-mark);
-}
-
-.home-summit__stops text {
-  fill: var(--home-paper);
-  font-size: 10px;
-  font-weight: 700;
-  pointer-events: none;
-}
-
-.home-summit__flag line {
-  stroke: var(--home-muted);
-  stroke-width: 2.4;
-  stroke-linecap: round;
-}
-
-.home-summit__flag polygon {
-  fill: var(--home-line-deep);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
 }
 
 .home-hero__headline {
