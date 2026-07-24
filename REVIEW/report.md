@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Footer spacing fix
 
 **Branch:** `cursor/footer-spacing-15a6`
@@ -10,3 +11,20 @@ In `assets/css/pypath-theme.css`, make `.site-footer .container` full-width and 
 
 ## Result
 Footer content start aligns with header content start (36px at 1440px width).
+=======
+# Remove Certifications
+
+**Branch:** `adami/remove-certifications-15a6`
+
+## Removed
+- `certifications.html` page
+- Certifications nav tab (header) and footer link on every page
+- Home “Certification track” CTA (replaced with curriculum)
+- Unit 10 “View Certifications” CTAs
+- Certifications-only CSS
+- Unit 10 title renamed **Certification Prep → Capstone Project** (nav, curriculum, path map)
+
+## Verify
+- `/certifications.html` → 404
+- Primary nav: Home, Units, Sandbox, Settings (no Certifications)
+>>>>>>> origin/adami/remove-certifications-15a6

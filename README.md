@@ -1,6 +1,6 @@
 # MyPyPath
 
-Personalized academic and career guidance site with interactive Python lessons, certifications overview, curriculum pages, and a sandbox. Static HTML/CSS/JS — no build step required.
+Personalized academic and career guidance site with interactive Python lessons, curriculum pages, and a sandbox. Static HTML/CSS/JS — no build step required.
 
 ## Quick start
 
@@ -20,7 +20,6 @@ Or deploy the repo root as a static site (Vercel config is in `vercel.json`).
 | `index.html` | Home |
 | `curriculum.html` / `units/` | Course units |
 | `sandbox.html` | In-browser practice |
-| `certifications.html` | Cert guidance |
 | `assets/` | CSS, JS, images |
 | `lesson-format-kit/` | Portable lesson layout kit |
 | `DEPLOYMENT.md` | Deploy to Vercel |
