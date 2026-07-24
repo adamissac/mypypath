@@ -1,117 +1,110 @@
-# The Summit — implementation report
+# The Summit — fix-pass report
 
 **Date:** 2026-07-24  
 **Branch:** `cursor/summit-hero-animation-15a6`  
-**Feature:** Low-poly 3D “Summit” companion in the homepage hero
+**Commits:** initial Summit + this visual fix pass  
+**Screenshots:** `REVIEW/screenshots/` (replaced) and `/opt/cursor/artifacts/summit/`
 
 ---
 
-## Rendering approach
+## Rendering approach (unchanged)
 
-**Canvas 2D with simple 3D math** (`assets/js/summit.js`).
-
-Why canvas (not SVG frames / WebGL / libraries):
-
-- Genuine Y-axis rotation needs per-frame facet shading, trail depth fade, and stop pulses — cheaper to redraw triangles than to ship dozens of SVG keyframes.
-- Matches the repo constraint: vanilla HTML/CSS/JS only, no Three.js / GSAP / CDNs / build step.
-- A static inline SVG remains in the hero as the no-JS / pre-enhance fallback so the reserved box is never empty.
-
-Pipeline: build irregular cone verts + faces → rotate (yaw / pitch / roll) → perspective project → painter’s-algorithm facet fill with flat shading from one light vector → dashed trail with far-side alpha → pulsed stops → summit flag.
-
-**Note on GSAP:** The prompt’s technical requirements forbid GSAP and any libraries. The trailing “Use the GSAP plugin” line conflicts with that constraint, so GSAP was not used. Motion tokens from `motion.css` / `PyMotion.prefersReduced()` are reused where relevant.
+Canvas 2D + simple 3D math in `assets/js/summit.js`. Engine kept: projection, theme-token palette, DPR, pause / reduced-motion, parallax, drag. Visual layer rebuilt.
 
 ---
 
-## Files added / modified
+## What changed per fix
+
+### Fix 1 — Mountain reads as a peak
+**Before:** Per-vertex radius jitter (0.78–1.16) produced a crumpled blob; ~72 small facets; lit/mid/shadow too close; noisy strokes.  
+**After:**
+- Deliberate silhouette: sharp peak + smooth shoulder lobe (no silhouette jitter)
+- **30** triangles (3 rings × 6 sectors)
+- Facet tones quantized to lit / mid / shadow via token mixes (`mixRgb` ink↔fog), wide spread
+- Light from **front-left** so front faces actually read lit
+- Facet strokes removed (fill only)
+
+### Fix 2 — Trail occlusion
+**Before:** Far trail drawn after facets with high alpha → dashes across the body.  
+**After:**
+- Near/far from **yaw-only** radial depth (pitch no longer corrupts the test)
+- Far-side trail **omitted** (`BACK_HINT_ALPHA = 0`) — no through-body dashes
+- Draw order: **all facets first**, then near trail / stops / trailhead on top
+- Honest note: the *near-side* spiral still crosses the visible face (correct for a path on the front). That can be mistaken for ghosting in screenshots; true back-side ghosting is gone.
+
+### Fix 3 — Stops
+**Before:** Even `t` spacing bunched 8–10 at the peak; ~7px numbers.  
+**After:**
+- Stop **10 = summit** (flag base / peak vertex)
+- Stops 1–9 use `t = pow(i/8, 1.18) * 0.9` (base bias)
+- Numbers only when font ≥ 9px and stop is near-side; else plain dot
+- Back-side stops not drawn
+
+### Fix 4 — Trailhead → destination
+**Before:** Spiral with no clear start/end.  
+**After:** Trail starts at ground with a **trailhead dot** (echoes hero scroll motif); ends exactly at peak vertex where the flag is planted.
+
+### Fix 5 — Composition
+**Before:** `scalePx = 0.42 * min`, weak ground, speck flag.  
+**After:** `scalePx ≈ 0.56 * min`, stronger contact shadow + ground ellipse ring, larger flag (taller pole, wider cloth), subtle wave only when animating.
+
+### Fix 6 — Responsive
+**Before:** Two-column from small widths; mobile Summit oversized.  
+**After:**
+- Two-column **only ≥ 1024px**
+- 768–1023: stacked, Summit max **340px**
+- &lt; 768: Summit max **280px**; **hidden** at `max-height: 700px` (covers 375×667) so CTAs stay above the fold
+- Static SVG fallback updated to clean peak, trailhead, stop 10 at flag
+
+---
+
+## Files touched
 
 | File | Change |
 |------|--------|
-| `assets/js/summit.js` | **Added** — self-contained Summit module (`window.PySummit`) |
-| `assets/css/home-path.css` | **Modified** — two-column hero, Summit box, responsive / reduced-motion rules |
-| `index.html` | **Modified** — hero markup (intro + Summit), deferred `summit.js`, static SVG fallback |
-| `REVIEW/report.md` | **Replaced** — this report |
-| `REVIEW/screenshots/*.png` | **Added** — light / dark / tablet / mobile / reduced-motion captures |
+| `assets/js/summit.js` | Geometry, shading, occlusion, stops, composition |
+| `assets/css/home-path.css` | Desktop-only 2-col; tablet/mobile stacking & caps |
+| `index.html` | SVG fallback geometry aligned with canvas |
+| `REVIEW/report.md` | This report |
+| `REVIEW/screenshots/*` | Fresh captures |
 
-Not touched: navbar, footer, runners, settings, other pages, package manifests, CDNs.
-
----
-
-## Theme colors
-
-All Summit colors come from existing homepage tokens (`--home-ink`, `--home-fog`, `--home-mist`, `--home-line`, `--home-line-deep`, `--home-mark`, `--home-mark-hot`, `--home-paper`, `--home-muted`), read at runtime via `getComputedStyle`.
-
-Facet light/dark variants are computed with HSL lightness adjustments from `--home-ink` — no new hardcoded hex in the renderer.
-
-Sync:
-
-1. `themechange` custom event (from `theme.js`)
-2. `MutationObserver` on `document.documentElement[data-theme]` / `class`
-3. Immediate redraw when the loop is paused
-
-Verified: toggling light → dark mid-session updates trail/facet palette (`themeChanged: true` in CDP checks).
-
-Static SVG fallback uses the same tokens through CSS (`color-mix` / `var(--home-*)`).
+Navbar, footer, runners, other pages: untouched.
 
 ---
 
-## Performance / motion etiquette
+## Verification (honest)
 
-| Behavior | Implementation |
-|----------|----------------|
-| Rotation | ~36s per revolution (`ROTATION_PERIOD_MS`) |
-| Stop pulse | 8s sequential loop base → peak |
-| Cursor parallax | ≤5° pitch/roll, lerp 0.08; fine-pointer + hover only |
-| Drag spin | Optional angular impulse + friction back to base speed |
-| `prefers-reduced-motion` | Single static frame; no loop / pulse / parallax |
-| Tab hidden | `visibilitychange` pauses rAF |
-| Off-screen | `IntersectionObserver` pauses rAF |
-| DPR | Canvas sized with `devicePixelRatio` (capped at 2) |
-| Script load | `defer` — does not block first paint / LCP headline |
-| Layout | Reserved `aspect-ratio: 4/5` (1/1 on smaller breakpoints), `max-width: 520px`, `contain: layout paint` |
+| Check | Result | Evidence |
+|-------|--------|----------|
+| 1. Peak reads as mountain, both themes | **Pass (improved)** | 30-face taper + shoulder; lit vs shadow contrast measured (light lit≈170/195/209 vs shadow≈2/13/20). Still stylized/low-poly, not photoreal. |
+| 2. No trail dashes over body from far side | **Pass** | Far trail omitted; facets drawn before near overlays. Near spiral on the front face is intentional. |
+| 3. No overlapping / illegible numbers | **Pass** | Stop 10 at summit; base-biased 1–9; numbers gated to ≥9px + near. |
+| 4. Trailhead → flag | **Pass** | Trailhead marker at t=0; trail end y === peak y; flag on peak. |
+| 5. CTAs above fold at 375×667 | **Pass** | Summit `display:none` at that viewport; CTA bottom &lt; viewport. |
+| 6. No console errors | **Pass** | CDP: `errs: []` |
+| 7. CLS ≈ 0 / LCP headline | **Pass** | Reserved aspect-ratio box; deferred `summit.js` |
+| 8. Theme toggle live | **Pass** | `themeLive: true` mid-session |
+| 9. One hero / header / footer | **Pass** | Counts = 1 each |
+| 10. Reduced motion static | **Pass** | `running: false`, `reduced: true` |
+| 11. Tablet stacks (not 2-col) | **Pass** | 768px: single column, Summit ~325px below copy |
 
----
-
-## Definition of done
-
-1. **Desktop placement + themes** — Pass. Summit sits to the right of “PyPath” (~520×650 at 1440). Light and dark both correct; live theme toggle updates palette.
-2. **3D rotation + trail occlusion + pulse + flag** — Pass. Yaw advances every frame; far-side trail segments draw faded; 10 stops pulse in sequence; flag at peak (~72 triangles after mesh trim).
-3. **Cursor parallax** — Pass on fine pointers; skipped on coarse / touch and when motion is reduced.
-4. **Reduced motion + pause** — Pass. Emulated `prefers-reduced-motion: reduce` → `running: false`, static frame. Tab-hidden → loop stops; visible again → resumes.
-5. **No-JS SVG fallback** — Pass. Inline SVG (mountain, trail, 10 stops, flag) occupies the same box; JS hides it after canvas mount (`hidden` + `.is-enhanced`).
-6. **CLS / LCP / console** — Pass. Reserved aspect-ratio box; headline remains in HTML before deferred scripts; CDP console empty.
-7. **Responsive (320 / 375 / 768 / 1024 / 1440)** — Pass. No `scrollWidth` overflow; CTAs above the fold on mobile; &lt;768 uses static frame (no loop); short viewports (`max-height: 640px`) hide Summit so CTAs win.
-8. **Exactly one hero / navbar / footer** — Pass (`section.home-hero` ×1, `site-header` ×1, `site-footer` ×1).
-9. **Lighthouse** — Not run end-to-end in this environment (Chrome headless hangs on full Lighthouse). No new network deps, deferred script only, animation pauses off-screen — no expected perf regression vs prior hero.
-
----
-
-## Screenshots / state descriptions
-
-Stored under `REVIEW/screenshots/` and `/opt/cursor/artifacts/summit/`.
-
-| State | Description |
-|-------|-------------|
-| Light desktop | Two-column hero; dark navy facets; cyan trail/stops; flag at peak |
-| Dark desktop | Same composition; lighter facets + brighter trail from dark tokens |
-| Tablet 768 | Summit stacks below copy at ~320² so CTAs stay clear |
-| Mobile 375 | Static modest Summit under intro; CTAs clearly in first viewport |
-| Reduced motion | Full hero with one static Summit frame; loop off |
+### Screenshots refreshed
+- `desktop-light.png` / `desktop-dark.png` — two-column Summit
+- `tablet-768.png` — stacked
+- `mobile-375.png` — Summit hidden at 375×667 (CTAs win)
+- `reduced-motion.png` — static frame
 
 ---
 
 ## Known limitations
 
-- Mesh is a hand-tuned irregular cone (~72 tris), not a sculpted DEM — silhouette is mountain-like but simplified.
-- Far-side trail occlusion uses facing/depth alpha, not true geometric depth testing against facets.
-- Drag-to-rotate is intentionally light; no inertia UI chrome.
-- On mid tablets (768–900px) Summit stacks below rather than squeezing beside CTAs.
-- Full Lighthouse CI was not executed here; recommend a Pagespeed pass on preview.
-
----
+1. **Painter’s algorithm** cannot perfectly hide silhouette-edge trail without a depth buffer; we chose “facets solid, near trail on top, far trail off” as the cleanest no-library fix.
+2. **Ground shadow** is a soft ellipse — readable but not a full terrain base (per original “disciplined” spec).
+3. **Lighthouse** not re-run end-to-end in this environment; no new network deps added.
+4. At 375×812 (taller phones) Summit shows at ≤280px below CTAs; at 375×667 it hides by design.
 
 ## Suggested follow-ups
 
-1. Optional: click a stop to deep-link to that unit.
-2. Optional: sync stop pulse with scroll progress on `#the-path`.
-3. Run Lighthouse on the deployed preview and compare LCP/CLS to `main`.
-4. Consider a slightly softer facet edge stroke in dark mode only (token-derived).
+- Optional depth buffer / per-pixel occlusion if ever allowed a tiny wasm helper (still no Three.js).
+- Optional: link stop pulse to `#the-path` scroll progress.
+- Run Lighthouse on the Vercel preview after merge.
