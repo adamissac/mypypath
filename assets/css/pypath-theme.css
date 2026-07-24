@@ -467,27 +467,51 @@ body.page-certs main > .section,
 
 /* ── Global content gutters ─────────────────────────────── */
 main .container,
-.section .container,
-.site-footer .container {
+.section .container {
   padding-left: clamp(1.5rem, 4.5vw, 3.5rem);
   padding-right: clamp(1.5rem, 4.5vw, 3.5rem);
 }
 
+/*
+  Footer was stuck in the narrow .container box (min 1120px + heavy side
+  padding), so the copyright / tagline sat with huge empty left/right gaps.
+  Match the header: full-width container + the same side gutters.
+*/
+.site-footer .container {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 24px;
+  padding-right: 24px;
+  box-sizing: border-box;
+}
+
 @media (min-width: 1400px) {
   main .container,
-  .section .container,
-  .site-footer .container {
+  .section .container {
     padding-left: clamp(2rem, 5vw, 4rem);
     padding-right: clamp(2rem, 5vw, 4rem);
+  }
+
+  .site-footer .container {
+    padding-left: 36px;
+    padding-right: 36px;
   }
 }
 
 @media (min-width: 1600px) {
   main .container,
-  .section .container,
-  .site-footer .container {
+  .section .container {
     padding-left: 4rem;
     padding-right: 4rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .site-footer .container {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
   }
 }
 
