@@ -226,7 +226,23 @@ body.page-home {
   width: min(1360px, calc(100% - clamp(3rem, 8vw, 7rem)));
   margin: 0 auto;
   display: grid;
-  gap: clamp(2rem, 5vw, 3.5rem);
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+/* Two-column Summit layout — desktop only (≥1024px) */
+@media (min-width: 1024px) {
+  .home-hero__content {
+    grid-template-columns: minmax(0, 1fr) minmax(0, min(48%, 520px));
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+  }
+}
+
+.home-hero__intro {
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 2.75rem);
+  min-width: 0;
 }
 
 .home-brand {
@@ -247,6 +263,26 @@ body.page-home {
 .home-hero__copy {
   max-width: 34rem;
   animation: home-rise 0.9s 0.12s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+
+/* ── The Summit (hero companion) — static SVG image ──────── */
+.home-summit {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  contain: layout paint;
+  animation: home-rise 1s 0.18s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+
+.home-summit__art {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  background: transparent;
 }
 
 .home-hero__headline {
@@ -305,7 +341,8 @@ body.page-home {
   }
 }
 
-/* Decorative path stub in hero — starts the trail metaphor */
+/* Decorative path stub in hero — starts the trail metaphor.
+   Hidden when The Summit is in the layout (≥768px). */
 .home-hero__trail-start {
   position: absolute;
   right: max(0px, calc((100% - 1120px) / 2 - 1rem));
@@ -316,6 +353,13 @@ body.page-home {
   pointer-events: none;
   opacity: 0.85;
   animation: home-rise 1s 0.15s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+
+@media (min-width: 768px) {
+  .home-hero__trail-start {
+    opacity: 0;
+    visibility: hidden;
+  }
 }
 
 .home-hero__trail-start path {
@@ -335,13 +379,39 @@ body.page-home {
   to { stroke-dashoffset: -260; }
 }
 
-@media (max-width: 720px) {
+/* Tablet 768–1023: stack Summit below headline (never two-column) */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .home-hero__content {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
+  .home-hero__intro {
+    order: 1;
+    width: 100%;
+  }
+
+  .home-summit {
+    order: 2;
+    width: min(48%, 340px);
+    max-width: 340px;
+    margin: 0.5rem 0 0;
+    aspect-ratio: 1 / 1;
+  }
+}
+
+@media (max-width: 767px) {
   .home-hero {
     align-items: flex-start;
     overflow: visible;
     min-height: auto;
     padding-top: clamp(1.5rem, 4vh, 2.5rem);
     padding-bottom: clamp(2rem, 6vh, 3rem);
+  }
+
+  .home-hero__content {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .home-brand {
@@ -351,11 +421,38 @@ body.page-home {
   .home-hero__trail-start {
     width: 52vw;
     opacity: 0.45;
+    visibility: visible;
     bottom: auto;
     top: 12%;
     right: -6%;
   }
 
+  .home-hero__copy {
+    max-width: none;
+  }
+
+  .home-hero__intro {
+    order: 1;
+  }
+
+  /* Cap Summit; CTAs above the fold win — hide if viewport is short */
+  .home-summit {
+    order: 2;
+    width: min(58vw, 280px);
+    max-width: 280px;
+    margin: 0.15rem 0 0;
+    aspect-ratio: 1 / 1;
+  }
+
+  @media (max-height: 700px) {
+    .home-summit {
+      display: none;
+    }
+  }
+}
+
+/* Legacy alias kept for older breakpoints referenced elsewhere */
+@media (max-width: 720px) {
   .home-hero__copy {
     max-width: none;
   }
@@ -743,6 +840,7 @@ html.reduced-motion .path-journey.is-active .path-map--alive {
   .home-hero__scrollhint,
   .home-hero__trail-start,
   .home-hero__scrollhint-line,
+  .home-summit,
   .path-head__ring {
     animation: none !important;
   }
