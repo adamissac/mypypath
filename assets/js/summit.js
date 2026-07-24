@@ -15,7 +15,7 @@
   var PARALLAX_LERP = 0.08;
   var DRAG_FRICTION = 0.94;
   var BASE_ANGULAR_VEL = (Math.PI * 2) / ROTATION_PERIOD_MS;
-  var STOP_BIAS = 1.18; // redistribute stops 1–9 toward the base
+  var STOP_BIAS = 1.35; // stronger base bias — less clustering near peak
   var BACK_HINT_ALPHA = 0; // omit far-side trail — no ghosting over body
 
   var TOKEN_KEYS = [
@@ -174,14 +174,15 @@
 
     // Wide lit / mid / shadow from tokens — obvious light side in both themes
     var facetLit = darkTheme
-      ? mixRgb(ink, fog, 0.18)
-      : mixRgb(ink, fog, 0.72);
+      ? mixRgb(ink, fog, 0.15)
+      : mixRgb(ink, fog, 0.68);
     var facetMid = darkTheme
-      ? mixRgb(ink, mist, 0.32)
-      : mixRgb(ink, mist, 0.38);
+      ? mixRgb(ink, mist, 0.28)
+      : mixRgb(ink, mist, 0.4);
+    // Keep shadow readable navy — never crushed black
     var facetShadow = darkTheme
-      ? mixRgb(ink, mist, 0.5)
-      : adjustLightness(ink, -0.18);
+      ? mixRgb(ink, mist, 0.42)
+      : mixRgb(ink, mist, 0.12);
 
     return {
       facetLit: facetLit,
@@ -287,7 +288,7 @@
         // Smooth shoulder lobe (sub-ridge) — no random silhouette jitter
         var lobe = Math.max(0, Math.cos(ang - shoulderDir));
         lobe = lobe * lobe;
-        var shoulder = 1 + 0.38 * lobe * Math.min(1, t * 1.15);
+        var shoulder = 1 + 0.22 * lobe * Math.min(1, t * 1.1);
         var rx = baseR * shoulder;
         var rz = baseR * shoulder * 0.86;
         var yJitter = (hash(r * 13 + s * 2.7) - 0.5) * 0.02 * t;
@@ -316,21 +317,34 @@
   }
 
   /**
-   * Spiral trail: ground trailhead → peak (flag base). ~2.25 turns.
+   * Spiral trail: ground trailhead → peak. ~1.75 turns.
+   * Radius matches mountain taper and sits slightly inset so projections
+   * land on front facets (needed for silhouette clipping).
    */
-  function trailPointAt(t) {
-    var turns = 2.25;
-    var y = -0.85 + t * (1.0 - -0.85);
-    var radius = 1.12 * (1 - t * 0.9) + 0.04;
-    var ang = t * turns * Math.PI * 2 - Math.PI * 0.45;
+  function mountainRadiusAt(y, ang) {
+    // Match buildMountain ring profile (peak y=1 → base y=-0.85)
+    var t = (1.0 - y) / (1.0 - -0.85);
+    t = Math.max(0, Math.min(1, t));
+    var baseR = 0.04 + t * 1.08;
     var shoulderDir = -0.65;
     var lobe = Math.max(0, Math.cos(ang - shoulderDir));
     lobe = lobe * lobe;
-    var shoulder = 1 + 0.22 * lobe * (1 - t);
-    var rx = radius * shoulder * 1.015;
-    var rz = radius * shoulder * 0.86 * 1.015;
+    var shoulder = 1 + 0.22 * lobe * t;
     return {
-      p: v3(Math.cos(ang) * rx, y, Math.sin(ang) * rz),
+      rx: baseR * shoulder,
+      rz: baseR * shoulder * 0.86
+    };
+  }
+
+  function trailPointAt(t) {
+    // Climbing spiral (~1.15 turns). With default yaw ≈ -0.35 most of the
+    // path sits on the front; back portions are gated by frontScore.
+    var y = -0.82 + t * (1.0 - -0.82);
+    var ang = -1.6 + t * Math.PI * 2 * 1.2;
+    var rad = mountainRadiusAt(y, ang);
+    var inset = 0.98;
+    return {
+      p: v3(Math.cos(ang) * rad.rx * inset, y, Math.sin(ang) * rad.rz * inset),
       ang: ang,
       t: t
     };
@@ -360,7 +374,7 @@
       // Bias toward base so upper stops don't bunch
       var u = Math.pow(i / (STOP_COUNT - 2), STOP_BIAS);
       // Keep stop 9 short of the peak so stop 10 owns the summit
-      var t = u * 0.9;
+      var t = u * 0.82; // leave more room below summit for stop 10
       var idx = Math.round(t * (trail.length - 1));
       idx = Math.max(0, Math.min(trail.length - 2, idx));
       stops.push({
@@ -397,11 +411,11 @@
     this.ctx = null;
     this.palette = null;
     this.mountain = buildMountain();
-    this.trail = buildTrail(120);
+    this.trail = buildTrail(160);
     this.stops = sampleStops(this.trail, this.mountain.peak);
     this.light = normalize(v3(-0.65, 0.55, -0.5)); // from front-left so front faces read lit
 
-    this.yaw = -0.55;
+    this.yaw = -0.35;
     this.pitch = 0.18;
     this.roll = 0;
     this.targetPitch = 0.18;
@@ -641,15 +655,35 @@
   };
 
   /**
-   * Near-side test using yaw-only radial depth (pitch must not contaminate).
-   * Outward XZ radial after yaw: z < 0 faces the camera.
+   * Front-facing score in [-1,1]: +1 = fully toward camera (yaw-only).
    */
-  Summit.prototype.isNearSidePoint = function (localP, yaw) {
+  Summit.prototype.frontScore = function (localP, yaw) {
     var cosY = Math.cos(yaw);
     var sinY = Math.sin(yaw);
-    var zYaw = -localP.x * sinY + localP.z * cosY;
-    return zYaw < -0.02;
+    var x1 = localP.x * cosY + localP.z * sinY;
+    var z1 = -localP.x * sinY + localP.z * cosY;
+    var r = Math.sqrt(localP.x * localP.x + localP.z * localP.z) || 1;
+    // Toward camera means negative z after yaw
+    return -z1 / r;
   };
+
+  function pointInTri2D(px, py, ax, ay, bx, by, cx, cy) {
+    var v0x = cx - ax;
+    var v0y = cy - ay;
+    var v1x = bx - ax;
+    var v1y = by - ay;
+    var v2x = px - ax;
+    var v2y = py - ay;
+    var dot00 = v0x * v0x + v0y * v0y;
+    var dot01 = v0x * v1x + v0y * v1y;
+    var dot02 = v0x * v2x + v0y * v2y;
+    var dot11 = v1x * v1x + v1y * v1y;
+    var dot12 = v1x * v2x + v1y * v2y;
+    var inv = 1 / (dot00 * dot11 - dot01 * dot01 || 1);
+    var u = (dot11 * dot02 - dot01 * dot12) * inv;
+    var v = (dot00 * dot12 - dot01 * dot02) * inv;
+    return u >= -0.02 && v >= -0.02 && u + v <= 1.04;
+  }
 
   Summit.prototype.drawFrame = function (pulsePhase) {
     var ctx = this.ctx;
@@ -660,35 +694,31 @@
     var pal = this.palette || buildPalette(readTokens(document.querySelector('.page-home')));
     ctx.clearRect(0, 0, w, h);
 
+    // Fit full mountain + ground + flag with margin (critical at ~220px)
     var cx = w * 0.5;
-    var cy = h * 0.54;
-    var scalePx = Math.min(w, h) * 0.56;
-    var perspective = 3.2;
+    var cy = h * 0.5;
+    var scalePx = Math.min(w, h) * 0.42;
+    var perspective = 3.4;
     var yaw = this.yaw;
     var pitch = this.pitch;
     var roll = this.roll;
 
-    // Contact shadow — seat the mountain
+    // Ground seat
     ctx.save();
-    ctx.translate(cx, cy + scalePx * 0.78);
-    ctx.scale(1, 0.22);
-    var grd = ctx.createRadialGradient(0, 0, 2, 0, 0, scalePx * 1.25);
-    grd.addColorStop(0, cssColor(pal.groundEdge, pal.darkTheme ? 0.75 : 0.58));
-    grd.addColorStop(0.35, cssColor(pal.ground, pal.darkTheme ? 0.7 : 0.75));
+    ctx.translate(cx, cy + scalePx * 0.92);
+    ctx.scale(1, 0.26);
+    var grd = ctx.createRadialGradient(0, 0, 2, 0, 0, scalePx * 1.35);
+    grd.addColorStop(0, cssColor(pal.groundEdge, pal.darkTheme ? 0.7 : 0.5));
+    grd.addColorStop(0.4, cssColor(pal.ground, pal.darkTheme ? 0.65 : 0.7));
     grd.addColorStop(1, cssColor(pal.ground, 0));
     ctx.fillStyle = grd;
     ctx.beginPath();
-    ctx.arc(0, 0, scalePx * 1.25, 0, Math.PI * 2);
+    ctx.arc(0, 0, scalePx * 1.35, 0, Math.PI * 2);
     ctx.fill();
-    ctx.restore();
-    // Thin ground ellipse ring for a clear seat
-    ctx.save();
-    ctx.translate(cx, cy + scalePx * 0.78);
-    ctx.scale(1, 0.22);
     ctx.beginPath();
-    ctx.arc(0, 0, scalePx * 0.95, 0, Math.PI * 2);
-    ctx.strokeStyle = cssColor(pal.groundEdge, pal.darkTheme ? 0.35 : 0.28);
-    ctx.lineWidth = 2.5;
+    ctx.arc(0, 0, scalePx * 1.05, 0, Math.PI * 2);
+    ctx.strokeStyle = cssColor(pal.groundEdge, pal.darkTheme ? 0.4 : 0.3);
+    ctx.lineWidth = 2;
     ctx.stroke();
     ctx.restore();
 
@@ -702,7 +732,8 @@
       });
     }
 
-    var drawList = [];
+    var frontTris = [];
+    var facets = [];
     var faces = this.mountain.faces;
     for (var f = 0; f < faces.length; f++) {
       var face = faces[f];
@@ -710,88 +741,23 @@
       var b = tv[face[1]];
       var c = tv[face[2]];
       var n = normalize(cross(sub(b.world, a.world), sub(c.world, a.world)));
-      if (n.z > 0.04) continue;
+      if (n.z > 0.02) continue;
       var shade = Math.max(0, Math.min(1, (dot(n, this.light) + 1) * 0.5));
       var mid = avg3(a.world, b.world, c.world);
-      drawList.push({
-        kind: 'facet',
-        z: mid.z,
+      var tri = {
         a: a.screen,
         b: b.screen,
         c: c.screen,
+        z: mid.z,
         tone: facetTone(shade, pal)
-      });
+      };
+      facets.push(tri);
+      frontTris.push(tri);
     }
 
-    var trailScreen = [];
-    for (var ti = 0; ti < this.trail.length; ti++) {
-      var tr = this.trail[ti];
-      var tw = transformPoint(tr.p, yaw, pitch, roll);
-      var ts = project(tw, cx, cy, scalePx, perspective);
-      var near = this.isNearSidePoint(tr.p, yaw);
-      trailScreen.push({
-        x: ts.x,
-        y: ts.y,
-        z: tw.z,
-        w: ts.w,
-        near: near,
-        t: tr.t
-      });
-    }
-
-    // Far-side trail omitted entirely (no through-body ghosting)
-
-    // Near trail only — both endpoints near (no body cross-over)
-    for (var si = 1; si < trailScreen.length; si++) {
-      var sa = trailScreen[si - 1];
-      var sb = trailScreen[si];
-      if (!sa.near || !sb.near) continue;
-      drawList.push({
-        kind: 'seg',
-        z: (sa.z + sb.z) * 0.5 - 0.002,
-        a: sa,
-        b: sb
-      });
-    }
-
-    var head = trailScreen[0];
-    if (head) {
-      drawList.push({
-        kind: 'trailhead',
-        z: head.z - 0.05,
-        x: head.x,
-        y: head.y,
-        w: head.w || 1
-      });
-    }
-
-    var activeStop = this.animateEnabled
-      ? Math.floor(pulsePhase * STOP_COUNT) % STOP_COUNT
-      : -1;
-    for (var sti = 0; sti < this.stops.length; sti++) {
-      var stop = this.stops[sti];
-      var sw = transformPoint(stop.p, yaw, pitch, roll);
-      var ss = project(sw, cx, cy, scalePx, perspective);
-      var sNear = stop.isSummit || this.isNearSidePoint(stop.p, yaw);
-      if (!sNear) continue;
-      drawList.push({
-        kind: 'stop',
-        z: sw.z - 0.003,
-        x: ss.x,
-        y: ss.y,
-        w: ss.w,
-        index: sti,
-        isPulse: sti === activeStop,
-        isLit: this.animateEnabled ? sti <= activeStop : true,
-        isSummit: stop.isSummit
-      });
-    }
-
-    // Pass 1: mountain facets only (painter-sorted) — solid occlusion base
-    var facetsOnly = drawList.filter(function (it) { return it.kind === 'facet'; });
-    facetsOnly.sort(function (u, v) { return u.z - v.z; });
-    for (var di = 0; di < facetsOnly.length; di++) {
-      var facet = facetsOnly[di];
+    facets.sort(function (u, v) { return u.z - v.z; });
+    for (var fi = 0; fi < facets.length; fi++) {
+      var facet = facets[fi];
       ctx.beginPath();
       ctx.moveTo(facet.a.x, facet.a.y);
       ctx.lineTo(facet.b.x, facet.b.y);
@@ -799,71 +765,147 @@
       ctx.closePath();
       ctx.fillStyle = cssColor(facet.tone, 1);
       ctx.fill();
+      // Seal sub-pixel gaps between facets (same tone — not a wireframe)
+      ctx.strokeStyle = cssColor(facet.tone, 1);
+      ctx.lineWidth = 1;
+      ctx.stroke();
     }
 
-    // Pass 2: near-side trail / trailhead / stops ON TOP of solid mountain
-    // Far trail never drawn — eliminates through-body ghosting
-    var overlays = drawList.filter(function (it) { return it.kind !== 'facet'; });
-    overlays.sort(function (u, v) { return u.z - v.z; });
-    for (var oi = 0; oi < overlays.length; oi++) {
-      var item = overlays[oi];
-      if (item.kind === 'seg') {
-        ctx.beginPath();
-        ctx.moveTo(item.a.x, item.a.y);
-        ctx.lineTo(item.b.x, item.b.y);
-        ctx.setLineDash([6, 8]);
-        ctx.strokeStyle = cssColor(pal.trail, 0.96);
-        ctx.lineWidth = 2.6;
-        ctx.lineCap = 'round';
-        ctx.stroke();
-        ctx.setLineDash([]);
-      } else if (item.kind === 'trailhead') {
-        var hr = 7 * (item.w || 1);
-        ctx.beginPath();
-        ctx.arc(item.x, item.y, hr, 0, Math.PI * 2);
-        ctx.fillStyle = cssColor(pal.stop, 1);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(item.x, item.y, hr * 0.35, 0, Math.PI * 2);
-        ctx.fillStyle = cssColor(pal.paper, 1);
-        ctx.fill();
-      } else if (item.kind === 'stop') {
-        var radius = (item.isPulse ? 6.5 : item.isLit ? 5.2 : 4) * item.w;
-        if (item.isSummit) radius = Math.max(radius, 6 * item.w);
-        ctx.beginPath();
-        ctx.arc(item.x, item.y, radius, 0, Math.PI * 2);
-        ctx.fillStyle = cssColor(item.isPulse ? pal.stopHot : pal.stop, 0.98);
-        ctx.fill();
-        if (item.isPulse) {
+    function onFrontSilhouette(sx, sy) {
+      for (var k = 0; k < frontTris.length; k++) {
+        var t = frontTris[k];
+        if (pointInTri2D(sx, sy, t.a.x, t.a.y, t.b.x, t.b.y, t.c.x, t.c.y)) return true;
+      }
+      return false;
+    }
+
+    // Peak screen Y — reject trail that floats above the summit (except final approach)
+    var peakScreen = project(transformPoint(this.mountain.peak, yaw, pitch, roll), cx, cy, scalePx, perspective);
+
+    var trailScreen = [];
+    for (var ti = 0; ti < this.trail.length; ti++) {
+      var tr = this.trail[ti];
+      var tw = transformPoint(tr.p, yaw, pitch, roll);
+      var ts = project(tw, cx, cy, scalePx, perspective);
+      var score = this.frontScore(tr.p, yaw);
+      // Front-hemisphere only — no silhouette kill (that erased the path).
+      // Hide points that float above the peak tip in screen space.
+      var abovePeak = ts.y < peakScreen.y - 6;
+      var visible = score > 0.08 && (tr.t > 0.88 || !abovePeak);
+      trailScreen.push({
+        x: ts.x,
+        y: ts.y,
+        z: tw.z,
+        w: ts.w,
+        t: tr.t,
+        visible: visible,
+        score: score
+      });
+    }
+
+    // Trail as continuous dashed runs (breaks only when path goes behind)
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.setLineDash([6, 8]);
+    ctx.strokeStyle = cssColor(pal.trail, 0.95);
+    ctx.lineWidth = Math.max(2, scalePx * 0.014);
+    var drawing = false;
+    ctx.beginPath();
+    for (var si = 0; si < trailScreen.length; si++) {
+      var pt = trailScreen[si];
+      if (!pt.visible) {
+        if (drawing) {
+          ctx.stroke();
           ctx.beginPath();
-          ctx.arc(item.x, item.y, radius * 2.1, 0, Math.PI * 2);
-          ctx.fillStyle = cssColor(pal.stopHot, 0.15);
-          ctx.fill();
+          drawing = false;
         }
-        var fontPx = Math.round(Math.max(radius * 1.65, 10));
-        if (fontPx >= 9 && radius >= 4.8) {
-          ctx.fillStyle = cssColor(pal.paper, 0.98);
-          ctx.font = '700 ' + fontPx + 'px ui-sans-serif, system-ui, sans-serif';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(String(item.index + 1), item.x, item.y + 0.5);
+        continue;
+      }
+      if (!drawing) {
+        ctx.moveTo(pt.x, pt.y);
+        drawing = true;
+      } else {
+        ctx.lineTo(pt.x, pt.y);
+      }
+    }
+    if (drawing) ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Trailhead
+    var head = trailScreen[0];
+    if (head && head.visible) {
+      var hr = Math.max(4.5, scalePx * 0.028);
+      ctx.beginPath();
+      ctx.arc(head.x, head.y, hr, 0, Math.PI * 2);
+      ctx.fillStyle = cssColor(pal.stop, 1);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(head.x, head.y, hr * 0.35, 0, Math.PI * 2);
+      ctx.fillStyle = cssColor(pal.paper, 1);
+      ctx.fill();
+    }
+
+    // Stops
+    var activeStop = this.animateEnabled
+      ? Math.floor(pulsePhase * STOP_COUNT) % STOP_COUNT
+      : -1;
+    for (var sti = 0; sti < this.stops.length; sti++) {
+      var stop = this.stops[sti];
+      var sw = transformPoint(stop.p, yaw, pitch, roll);
+      var ss = project(sw, cx, cy, scalePx, perspective);
+      var sScore = stop.isSummit ? 1 : this.frontScore(stop.p, yaw);
+      var sFront = sScore > 0.08;
+      if (!stop.isSummit && !sFront) continue;
+      if (!stop.isSummit && ss.y < peakScreen.y - 6) continue;
+      // Drop floaters that land far outside the mountain screen bounds
+      if (!stop.isSummit) {
+        var maxX = 0;
+        for (var bi = 0; bi < frontTris.length; bi++) {
+          var ft = frontTris[bi];
+          maxX = Math.max(maxX, Math.abs(ft.a.x - cx), Math.abs(ft.b.x - cx), Math.abs(ft.c.x - cx));
         }
+        if (Math.abs(ss.x - cx) > maxX * 1.08) continue;
+      }
+
+      var radius = (sti === activeStop ? 5.5 : 4.5) * Math.max(0.85, ss.w);
+      radius = Math.max(radius, scalePx * 0.022);
+      if (stop.isSummit) radius = Math.max(radius, scalePx * 0.026);
+
+      ctx.beginPath();
+      ctx.arc(ss.x, ss.y, radius, 0, Math.PI * 2);
+      ctx.fillStyle = cssColor(sti === activeStop ? pal.stopHot : pal.stop, 0.98);
+      ctx.fill();
+      if (sti === activeStop) {
+        ctx.beginPath();
+        ctx.arc(ss.x, ss.y, radius * 2, 0, Math.PI * 2);
+        ctx.fillStyle = cssColor(pal.stopHot, 0.14);
+        ctx.fill();
+      }
+
+      // Skip number on summit (flag marks destination) and when too small
+      var fontPx = Math.round(Math.max(9, radius * 1.55));
+      if (!stop.isSummit && fontPx >= 9 && sFront) {
+        ctx.fillStyle = cssColor(pal.paper, 0.98);
+        ctx.font = '700 ' + fontPx + 'px ui-sans-serif, system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(String(sti + 1), ss.x, ss.y + 0.5);
       }
     }
 
-    // Flag planted on peak — larger, drawn last
+    // Flag on peak
     var peak = this.mountain.peak;
-    var wave = this.animateEnabled ? Math.sin((pulsePhase || 0) * Math.PI * 2) * 0.04 : 0;
+    var wave = this.animateEnabled ? Math.sin((pulsePhase || 0) * Math.PI * 2) * 0.035 : 0;
     var flagBase = transformPoint(peak, yaw, pitch, roll);
-    var flagTop = transformPoint(v3(peak.x, peak.y + 0.5, peak.z), yaw, pitch, roll);
+    var flagTop = transformPoint(v3(peak.x, peak.y + 0.38, peak.z), yaw, pitch, roll);
     var flagTip = transformPoint(
-      v3(peak.x + 0.42 + wave, peak.y + 0.4, peak.z + 0.02),
+      v3(peak.x + 0.32 + wave, peak.y + 0.3, peak.z + 0.02),
       yaw,
       pitch,
       roll
     );
     var flagMid = transformPoint(
-      v3(peak.x + 0.42 - wave * 0.35, peak.y + 0.22, peak.z),
+      v3(peak.x + 0.32 - wave * 0.3, peak.y + 0.16, peak.z),
       yaw,
       pitch,
       roll
@@ -877,7 +919,7 @@
     ctx.moveTo(pb.x, pb.y);
     ctx.lineTo(pt.x, pt.y);
     ctx.strokeStyle = cssColor(pal.flagPole, 0.98);
-    ctx.lineWidth = 3;
+    ctx.lineWidth = Math.max(2, scalePx * 0.012);
     ctx.lineCap = 'round';
     ctx.stroke();
 
