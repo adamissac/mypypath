@@ -337,12 +337,15 @@
   }
 
   function trailPointAt(t) {
-    // Climbing spiral (~1.15 turns). With default yaw ≈ -0.35 most of the
-    // path sits on the front; back portions are gated by frontScore.
-    var y = -0.82 + t * (1.0 - -0.82);
-    var ang = -1.6 + t * Math.PI * 2 * 1.2;
+    // Reference look: S-curve draped on the FRONT face (left→right→left→peak).
+    // Angle stays in the camera-facing sector at default yaw so stops 1–10
+    // are all visible in the resting pose — like the brand graphic.
+    var y = -0.8 + t * (1.0 - -0.8);
+    // ~1.1 oscillations across the front, damping toward the peak
+    var swing = Math.sin(t * Math.PI * 2.15) * (1.05 - 0.4 * t);
+    var ang = -1.55 + swing;
     var rad = mountainRadiusAt(y, ang);
-    var inset = 0.98;
+    var inset = 0.99;
     return {
       p: v3(Math.cos(ang) * rad.rx * inset, y, Math.sin(ang) * rad.rz * inset),
       ang: ang,
@@ -370,13 +373,12 @@
    */
   function sampleStops(trail, peak) {
     var stops = [];
+    // Place stops 1–9 along the front S-curve with mild base bias
     for (var i = 0; i < STOP_COUNT - 1; i++) {
-      // Bias toward base so upper stops don't bunch
-      var u = Math.pow(i / (STOP_COUNT - 2), STOP_BIAS);
-      // Keep stop 9 short of the peak so stop 10 owns the summit
-      var t = u * 0.82; // leave more room below summit for stop 10
+      var u = Math.pow(i / (STOP_COUNT - 2), 1.12);
+      var t = 0.04 + u * 0.86; // keep clear of trailhead + summit
       var idx = Math.round(t * (trail.length - 1));
-      idx = Math.max(0, Math.min(trail.length - 2, idx));
+      idx = Math.max(1, Math.min(trail.length - 2, idx));
       stops.push({
         p: trail[idx].p,
         ang: trail[idx].ang,
@@ -385,9 +387,10 @@
         isSummit: false
       });
     }
+    // Stop 10 = summit / flag base
     stops.push({
       p: peak,
-      ang: 0,
+      ang: trail[trail.length - 1].ang,
       t: 1,
       index: STOP_COUNT - 1,
       isSummit: true
@@ -413,12 +416,12 @@
     this.mountain = buildMountain();
     this.trail = buildTrail(160);
     this.stops = sampleStops(this.trail, this.mountain.peak);
-    this.light = normalize(v3(-0.65, 0.55, -0.5)); // from front-left so front faces read lit
+    this.light = normalize(v3(-0.75, 0.4, -0.35)); // left-lit / right-shadow like reference
 
-    this.yaw = -0.35;
-    this.pitch = 0.18;
+    this.yaw = 0.15;
+    this.pitch = 0.12;
     this.roll = 0;
-    this.targetPitch = 0.18;
+    this.targetPitch = 0.12;
     this.targetRoll = 0;
     this.angularVel = BASE_ANGULAR_VEL;
     this.userSpin = 0;
@@ -547,7 +550,7 @@
     this.refreshMotionFlags();
     this.bindPointer();
     if (!this.parallaxEnabled) {
-      this.targetPitch = 0.18;
+      this.targetPitch = 0.12;
       this.targetRoll = 0;
     }
     this.syncLoop();
@@ -593,7 +596,7 @@
     var ny = ((e.clientY - rect.top) / rect.height) * 2 - 1;
     var max = (PARALLAX_MAX_DEG * Math.PI) / 180;
     this.targetRoll = -nx * max;
-    this.targetPitch = 0.18 + ny * max * 0.65;
+    this.targetPitch = 0.12 + ny * max * 0.65;
 
     if (this.dragging) {
       var dx = e.clientX - this.lastPointerX;
@@ -605,7 +608,7 @@
 
   Summit.prototype.onPointerLeave = function () {
     if (!this.parallaxEnabled) return;
-    this.targetPitch = 0.18;
+    this.targetPitch = 0.12;
     this.targetRoll = 0;
     this.dragging = false;
   };
@@ -696,8 +699,8 @@
 
     // Fit full mountain + ground + flag with margin (critical at ~220px)
     var cx = w * 0.5;
-    var cy = h * 0.5;
-    var scalePx = Math.min(w, h) * 0.42;
+    var cy = h * 0.52;
+    var scalePx = Math.min(w, h) * 0.44;
     var perspective = 3.4;
     var yaw = this.yaw;
     var pitch = this.pitch;
@@ -788,10 +791,9 @@
       var tw = transformPoint(tr.p, yaw, pitch, roll);
       var ts = project(tw, cx, cy, scalePx, perspective);
       var score = this.frontScore(tr.p, yaw);
-      // Front-hemisphere only — no silhouette kill (that erased the path).
-      // Hide points that float above the peak tip in screen space.
-      var abovePeak = ts.y < peakScreen.y - 6;
-      var visible = score > 0.08 && (tr.t > 0.88 || !abovePeak);
+      // Hide only clearly-back points (during rotation). Resting S-curve stays up.
+      var abovePeak = ts.y < peakScreen.y - 8;
+      var visible = score > -0.05 && (tr.t > 0.9 || !abovePeak);
       trailScreen.push({
         x: ts.x,
         y: ts.y,
@@ -854,18 +856,8 @@
       var sw = transformPoint(stop.p, yaw, pitch, roll);
       var ss = project(sw, cx, cy, scalePx, perspective);
       var sScore = stop.isSummit ? 1 : this.frontScore(stop.p, yaw);
-      var sFront = sScore > 0.08;
-      if (!stop.isSummit && !sFront) continue;
-      if (!stop.isSummit && ss.y < peakScreen.y - 6) continue;
-      // Drop floaters that land far outside the mountain screen bounds
-      if (!stop.isSummit) {
-        var maxX = 0;
-        for (var bi = 0; bi < frontTris.length; bi++) {
-          var ft = frontTris[bi];
-          maxX = Math.max(maxX, Math.abs(ft.a.x - cx), Math.abs(ft.b.x - cx), Math.abs(ft.c.x - cx));
-        }
-        if (Math.abs(ss.x - cx) > maxX * 1.08) continue;
-      }
+      if (!stop.isSummit && sScore < -0.05) continue;
+      if (!stop.isSummit && ss.y < peakScreen.y - 8) continue;
 
       var radius = (sti === activeStop ? 5.5 : 4.5) * Math.max(0.85, ss.w);
       radius = Math.max(radius, scalePx * 0.022);
@@ -882,9 +874,9 @@
         ctx.fill();
       }
 
-      // Skip number on summit (flag marks destination) and when too small
-      var fontPx = Math.round(Math.max(9, radius * 1.55));
-      if (!stop.isSummit && fontPx >= 9 && sFront) {
+      var fontPx = Math.round(Math.max(9, radius * 1.6));
+      var sFront = sScore > -0.05;
+      if (fontPx >= 9 && sFront) {
         ctx.fillStyle = cssColor(pal.paper, 0.98);
         ctx.font = '700 ' + fontPx + 'px ui-sans-serif, system-ui, sans-serif';
         ctx.textAlign = 'center';
