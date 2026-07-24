@@ -9,12 +9,14 @@
 
   var NS = 'PySummit';
   var STOP_COUNT = 10;
-  var ROTATION_PERIOD_MS = 36000; // ~one revolution / 36s
+  var ROTATION_PERIOD_MS = 36000;
   var PULSE_PERIOD_MS = 8000;
   var PARALLAX_MAX_DEG = 5;
   var PARALLAX_LERP = 0.08;
   var DRAG_FRICTION = 0.94;
   var BASE_ANGULAR_VEL = (Math.PI * 2) / ROTATION_PERIOD_MS;
+  var STOP_BIAS = 1.18; // redistribute stops 1–9 toward the base
+  var BACK_HINT_ALPHA = 0.07; // residual far-side trail (≤ 0.08)
 
   var TOKEN_KEYS = [
     '--home-ink',
@@ -126,7 +128,7 @@
 
   function adjustLightness(rgb, delta) {
     var hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
-    var l = Math.max(0.05, Math.min(0.92, hsl.l + delta));
+    var l = Math.max(0.04, Math.min(0.94, hsl.l + delta));
     var out = hslToRgb(hsl.h, hsl.s, l);
     out.a = rgb.a != null ? rgb.a : 1;
     return out;
@@ -158,11 +160,16 @@
     var muted = tokens['--home-muted'];
     var paper = tokens['--home-paper'];
 
+    // Widen lit/mid/shadow spread so light direction reads at a glance
+    var paperL = rgbToHsl(paper.r, paper.g, paper.b).l;
+    var darkTheme = paperL < 0.35;
+    var litDelta = darkTheme ? 0.34 : 0.3;
+    var shadowDelta = darkTheme ? -0.32 : -0.28;
+
     return {
-      facetBase: ink,
-      facetLight: adjustLightness(ink, 0.18),
-      facetDark: adjustLightness(ink, -0.16),
-      facetMid: adjustLightness(ink, 0.04),
+      facetLit: adjustLightness(ink, litDelta),
+      facetMid: adjustLightness(ink, darkTheme ? 0.06 : 0.02),
+      facetShadow: adjustLightness(ink, shadowDelta),
       trail: line,
       trailDeep: lineDeep,
       stop: mark,
@@ -172,7 +179,8 @@
       ground: fog,
       groundEdge: muted,
       mist: mist,
-      paper: paper
+      paper: paper,
+      darkTheme: darkTheme
     };
   }
 
@@ -180,10 +188,6 @@
 
   function v3(x, y, z) {
     return { x: x, y: y, z: z };
-  }
-
-  function add(a, b) {
-    return v3(a.x + b.x, a.y + b.y, a.z + b.z);
   }
 
   function sub(a, b) {
@@ -211,7 +215,6 @@
     return v3((a.x + b.x + c.x) / 3, (a.y + b.y + c.y) / 3, (a.z + b.z + c.z) / 3);
   }
 
-  /** Rotate around Y, then X (pitch), then Z (roll) — camera-ish order. */
   function transformPoint(p, yaw, pitch, roll) {
     var cosY = Math.cos(yaw);
     var sinY = Math.sin(yaw);
@@ -235,51 +238,52 @@
     return { x: cx + p.x * scalePx * w, y: cy - p.y * scalePx * w, w: w, z: p.z };
   }
 
-  /* Deterministic pseudo-noise for irregular silhouette */
+  /** Deterministic noise — interior only; never used on silhouette radius. */
   function hash(n) {
     var x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
     return x - Math.floor(x);
   }
 
   /**
-   * Build a low-poly irregular cone (~50–70 triangles).
-   * Y up; peak near y=1, base near y=-0.85.
+   * Clean mountain: dominant peak + one smooth shoulder lobe.
+   * rings=3 × sectors=6 → 30 triangles (within 30–45).
+   * Silhouette radii are smooth & monotonic in angle — no zigzag jitter.
    */
   function buildMountain() {
-    // Target ~50–70 facets (spec: roughly 30–80 triangles)
-    var rings = 5;
-    var sectors = 8;
-    var peak = v3(0.02, 1.05, -0.01);
+    var rings = 3;
+    var sectors = 6;
+    var peak = v3(0, 1.08, 0);
     var verts = [peak];
     var faces = [];
+    var shoulderDir = -0.55; // radians — lower right shoulder in default view
 
-    for (var r = 1; r <= rings; r++) {
-      var t = r / rings;
-      var y = 1.05 - t * 1.9;
-      var radius = 0.12 + t * 0.95;
+    // Ring heights & base radii (taper: peak → base)
+    var ringY = [0.52, -0.05, -0.88];
+    var ringR = [0.28, 0.62, 0.98];
+
+    for (var r = 0; r < rings; r++) {
+      var t = (r + 1) / rings; // 0→1 down the mountain
+      var y = ringY[r];
+      var baseR = ringR[r];
       for (var s = 0; s < sectors; s++) {
         var ang = (s / sectors) * Math.PI * 2;
-        var jitter = 0.78 + hash(r * 17 + s * 3.1) * 0.38;
-        var rr = radius * jitter;
-        var bump = (hash(s * 9.3 + r) - 0.5) * 0.08 * t;
-        verts.push(
-          v3(
-            Math.cos(ang) * rr + bump,
-            y + (hash(r + s * 0.7) - 0.5) * 0.06 * t,
-            Math.sin(ang) * rr - bump * 0.5
-          )
-        );
+        // Smooth shoulder lobe — no random silhouette jitter
+        var lobe = Math.max(0, Math.cos(ang - shoulderDir));
+        lobe = lobe * lobe; // soften
+        var shoulder = 1 + 0.2 * lobe * t;
+        // Slight oval so it isn't a perfect cone
+        var rx = baseR * shoulder;
+        var rz = baseR * shoulder * 0.9;
+        // Tiny vertical interior noise only (does not affect outline radius)
+        var yJitter = (hash(r * 13 + s * 2.7) - 0.5) * 0.03 * t;
+        verts.push(v3(Math.cos(ang) * rx, y + yJitter, Math.sin(ang) * rz));
       }
     }
 
-    // Peak ring faces
     for (var s0 = 0; s0 < sectors; s0++) {
-      var a = 1 + s0;
-      var b = 1 + ((s0 + 1) % sectors);
-      faces.push([0, a, b]);
+      faces.push([0, 1 + s0, 1 + ((s0 + 1) % sectors)]);
     }
 
-    // Ring quads as two triangles
     for (var ring = 0; ring < rings - 1; ring++) {
       var baseA = 1 + ring * sectors;
       var baseB = 1 + (ring + 1) * sectors;
@@ -293,41 +297,82 @@
       }
     }
 
-    return { verts: verts, faces: faces, peak: peak };
+    return { verts: verts, faces: faces, peak: peak, faceCount: faces.length };
   }
 
-  /** Spiral trail: ~2.25 turns from base to peak. */
+  /**
+   * Spiral trail: ground trailhead → peak (flag base). ~2.25 turns.
+   * Radius hugs the mountain taper so the path sits on the surface.
+   */
+  function trailPointAt(t) {
+    var turns = 2.25;
+    var y = -0.88 + t * (1.08 - -0.88);
+    // Match mountain radius profile roughly
+    var radius = 0.98 * (1 - t * 0.9) + 0.04;
+    var ang = t * turns * Math.PI * 2 - Math.PI * 0.4;
+    var shoulderDir = -0.55;
+    var lobe = Math.max(0, Math.cos(ang - shoulderDir));
+    lobe = lobe * lobe;
+    var shoulder = 1 + 0.12 * lobe * (1 - t);
+    var rx = radius * shoulder * 1.04;
+    var rz = radius * shoulder * 0.94 * 1.04;
+    return {
+      p: v3(Math.cos(ang) * rx, y, Math.sin(ang) * rz),
+      ang: ang,
+      t: t
+    };
+  }
+
   function buildTrail(samples) {
     var pts = [];
-    var turns = 2.25;
     for (var i = 0; i < samples; i++) {
-      var t = i / (samples - 1); // 0 base → 1 peak
-      var y = -0.78 + t * 1.78;
-      var radius = 0.95 * (1 - t * 0.88) + 0.06;
-      var ang = t * turns * Math.PI * 2 - Math.PI * 0.35;
-      // Slight outward offset so trail sits on surface
-      pts.push({
-        p: v3(Math.cos(ang) * radius * 1.02, y, Math.sin(ang) * radius * 1.02),
-        ang: ang,
-        t: t
-      });
+      pts.push(trailPointAt(i / (samples - 1)));
     }
+    // Force exact endpoints: ground start + peak
+    pts[0] = trailPointAt(0);
+    pts[pts.length - 1] = {
+      p: v3(0, 1.08, 0),
+      ang: pts[pts.length - 1].ang,
+      t: 1
+    };
     return pts;
   }
 
-  function sampleStops(trail) {
+  /**
+   * Stops 1–9 along trail with base bias; stop 10 = summit (flag base / peak).
+   */
+  function sampleStops(trail, peak) {
     var stops = [];
-    for (var i = 0; i < STOP_COUNT; i++) {
-      var t = STOP_COUNT === 1 ? 0 : i / (STOP_COUNT - 1);
+    for (var i = 0; i < STOP_COUNT - 1; i++) {
+      // Bias toward base so upper stops don't bunch
+      var u = Math.pow(i / (STOP_COUNT - 2), STOP_BIAS);
+      // Keep stop 9 short of the peak so stop 10 owns the summit
+      var t = u * 0.9;
       var idx = Math.round(t * (trail.length - 1));
+      idx = Math.max(0, Math.min(trail.length - 2, idx));
       stops.push({
         p: trail[idx].p,
         ang: trail[idx].ang,
-        t: t,
-        index: i
+        t: trail[idx].t,
+        index: i,
+        isSummit: false
       });
     }
+    stops.push({
+      p: peak,
+      ang: 0,
+      t: 1,
+      index: STOP_COUNT - 1,
+      isSummit: true
+    });
     return stops;
+  }
+
+  function facetTone(shade, pal) {
+    // Hard quantize into 3 readable tones
+    if (shade >= 0.58) return pal.facetLit;
+    if (shade <= 0.4) return pal.facetShadow;
+    return pal.facetMid;
   }
 
   /* ── Instance ─────────────────────────────────────────── */
@@ -339,9 +384,9 @@
     this.ctx = null;
     this.palette = null;
     this.mountain = buildMountain();
-    this.trail = buildTrail(96);
-    this.stops = sampleStops(this.trail);
-    this.light = normalize(v3(-0.45, 0.85, 0.35));
+    this.trail = buildTrail(120);
+    this.stops = sampleStops(this.trail, this.mountain.peak);
+    this.light = normalize(v3(-0.55, 0.75, 0.4));
 
     this.yaw = -0.55;
     this.pitch = 0.18;
@@ -445,7 +490,6 @@
 
     this.reduced = !!reduced;
     var wideEnough = !(window.matchMedia && window.matchMedia('(max-width: 767px)').matches);
-    // Spec: <768px — no animation loop; static fallback / modest static frame
     this.animateEnabled = !this.reduced && wideEnough;
     this.parallaxEnabled =
       this.animateEnabled &&
@@ -583,6 +627,14 @@
     this.raf = requestAnimationFrame(this._tick);
   };
 
+  /**
+   * Facing toward camera: positive = near side of spiral.
+   * Uses radial direction in XZ after yaw.
+   */
+  Summit.prototype.pointFacing = function (ang, yaw) {
+    return Math.sin(ang + yaw);
+  };
+
   Summit.prototype.drawFrame = function (pulsePhase) {
     var ctx = this.ctx;
     var w = this.cssW;
@@ -592,28 +644,30 @@
     var pal = this.palette || buildPalette(readTokens(document.querySelector('.page-home')));
     ctx.clearRect(0, 0, w, h);
 
+    // Fill the 4:5 box confidently (~18% larger than prior 0.42)
     var cx = w * 0.5;
-    var cy = h * 0.58;
-    var scalePx = Math.min(w, h) * 0.42;
+    var cy = h * 0.55;
+    var scalePx = Math.min(w, h) * 0.5;
     var perspective = 3.2;
     var yaw = this.yaw;
     var pitch = this.pitch;
     var roll = this.roll;
 
-    // Ground ellipse (seats the mountain)
+    // Stronger ground contact shadow
     ctx.save();
-    ctx.translate(cx, cy + scalePx * 0.72);
-    ctx.scale(1, 0.28);
-    var grd = ctx.createRadialGradient(0, 0, 4, 0, 0, scalePx * 1.05);
-    grd.addColorStop(0, cssColor(pal.ground, 0.55));
+    ctx.translate(cx, cy + scalePx * 0.78);
+    ctx.scale(1, 0.26);
+    var grd = ctx.createRadialGradient(0, 0, 2, 0, 0, scalePx * 1.15);
+    grd.addColorStop(0, cssColor(pal.groundEdge, pal.darkTheme ? 0.45 : 0.35));
+    grd.addColorStop(0.45, cssColor(pal.ground, pal.darkTheme ? 0.5 : 0.55));
     grd.addColorStop(1, cssColor(pal.ground, 0));
     ctx.fillStyle = grd;
     ctx.beginPath();
-    ctx.arc(0, 0, scalePx * 1.05, 0, Math.PI * 2);
+    ctx.arc(0, 0, scalePx * 1.15, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
 
-    // Transform & project mountain verts
+    // Transform mountain verts
     var tv = [];
     var verts = this.mountain.verts;
     for (var i = 0; i < verts.length; i++) {
@@ -624,8 +678,8 @@
       });
     }
 
-    // Facets with flat shading + painter sort
-    var facets = [];
+    // Painter list: facets + near trail segs + stops (sorted by z)
+    var drawList = [];
     var faces = this.mountain.faces;
     for (var f = 0; f < faces.length; f++) {
       var face = faces[f];
@@ -633,111 +687,184 @@
       var b = tv[face[1]];
       var c = tv[face[2]];
       var n = normalize(cross(sub(b.world, a.world), sub(c.world, a.world)));
-      // Back-face cull (normals pointing roughly away from camera +Z toward viewer: -Z camera)
-      if (n.z > 0.08) continue;
+      if (n.z > 0.06) continue; // back-face cull
       var shade = Math.max(0, Math.min(1, (dot(n, this.light) + 1) * 0.5));
       var mid = avg3(a.world, b.world, c.world);
-      facets.push({
+      drawList.push({
+        kind: 'facet',
+        z: mid.z,
         a: a.screen,
         b: b.screen,
         c: c.screen,
-        z: mid.z,
-        shade: shade
+        tone: facetTone(shade, pal)
       });
     }
-    facets.sort(function (u, v) {
-      return u.z - v.z;
-    });
 
-    for (var fi = 0; fi < facets.length; fi++) {
-      var facet = facets[fi];
-      var col;
-      if (facet.shade > 0.62) col = pal.facetLight;
-      else if (facet.shade < 0.38) col = pal.facetDark;
-      else col = pal.facetMid;
-      // Blend toward base by shade for smoother flats
-      var mix = facet.shade;
-      var rr = Math.round(col.r * (0.55 + mix * 0.45) + pal.facetBase.r * (0.2 - mix * 0.1));
-      var gg = Math.round(col.g * (0.55 + mix * 0.45) + pal.facetBase.g * (0.2 - mix * 0.1));
-      var bb = Math.round(col.b * (0.55 + mix * 0.45) + pal.facetBase.b * (0.2 - mix * 0.1));
-      ctx.beginPath();
-      ctx.moveTo(facet.a.x, facet.a.y);
-      ctx.lineTo(facet.b.x, facet.b.y);
-      ctx.lineTo(facet.c.x, facet.c.y);
-      ctx.closePath();
-      ctx.fillStyle = 'rgb(' + rr + ',' + gg + ',' + bb + ')';
-      ctx.fill();
-      ctx.strokeStyle = cssColor(pal.facetDark, 0.18);
-      ctx.lineWidth = 0.6;
-      ctx.stroke();
-    }
-
-    // Trail — dashed, with far-side fade based on facing (world z / radial)
+    // Trail samples
     var trailScreen = [];
     for (var ti = 0; ti < this.trail.length; ti++) {
       var tr = this.trail[ti];
       var tw = transformPoint(tr.p, yaw, pitch, roll);
       var ts = project(tw, cx, cy, scalePx, perspective);
-      // Facing: positive local radial · camera-forward after yaw ≈ -sin/cos of ang+yaw
-      var facing = Math.sin(tr.ang + yaw);
-      // After our Y rotation, points with negative world.z tend to be farther
-      var depthFade = 0.5 + 0.5 * Math.max(-1, Math.min(1, -tw.z * 1.1));
-      var faceFade = 0.22 + 0.78 * Math.max(0, Math.min(1, (facing + 0.35) / 1.35));
-      var alpha = Math.min(depthFade, faceFade);
-      trailScreen.push({ x: ts.x, y: ts.y, z: tw.z, alpha: alpha, t: tr.t });
+      var facing = this.pointFacing(tr.ang, yaw);
+      var near = facing > 0.05;
+      trailScreen.push({
+        x: ts.x,
+        y: ts.y,
+        z: tw.z,
+        facing: facing,
+        near: near,
+        t: tr.t
+      });
     }
 
-    // Draw trail in two passes: far (faded) then near
-    this.drawTrailPass(ctx, trailScreen, true, pal);
-    this.drawTrailPass(ctx, trailScreen, false, pal);
+    // Far-side hint pass FIRST (α ≤ 0.08), never over the body later
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.setLineDash([5, 8]);
+    for (var fi = 1; fi < trailScreen.length; fi++) {
+      var fa = trailScreen[fi - 1];
+      var fb = trailScreen[fi];
+      if (fa.near || fb.near) continue;
+      ctx.beginPath();
+      ctx.moveTo(fa.x, fa.y);
+      ctx.lineTo(fb.x, fb.y);
+      ctx.strokeStyle = cssColor(pal.trailDeep, BACK_HINT_ALPHA);
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
 
-    // Stops
+    // Near trail segments → painter list
+    for (var si = 1; si < trailScreen.length; si++) {
+      var sa = trailScreen[si - 1];
+      var sb = trailScreen[si];
+      if (!sa.near && !sb.near) continue;
+      // If either end is back, skip — prevents dashes crossing the body
+      if (!sa.near || !sb.near) continue;
+      drawList.push({
+        kind: 'seg',
+        z: (sa.z + sb.z) * 0.5,
+        a: sa,
+        b: sb
+      });
+    }
+
+    // Trailhead marker at path start (ground)
+    var head = trailScreen[0];
+    if (head) {
+      drawList.push({
+        kind: 'trailhead',
+        z: head.z - 0.01,
+        x: head.x,
+        y: head.y,
+        w: head.w || 1,
+        near: head.near
+      });
+    }
+
+    // Stops → painter list
     var activeStop = this.animateEnabled
       ? Math.floor(pulsePhase * STOP_COUNT) % STOP_COUNT
       : -1;
-    for (var si = 0; si < this.stops.length; si++) {
-      var stop = this.stops[si];
+    for (var sti = 0; sti < this.stops.length; sti++) {
+      var stop = this.stops[sti];
       var sw = transformPoint(stop.p, yaw, pitch, roll);
       var ss = project(sw, cx, cy, scalePx, perspective);
-      var sFacing = Math.sin(stop.ang + yaw);
-      var sAlpha = 0.25 + 0.75 * Math.max(0, Math.min(1, (sFacing + 0.4) / 1.4));
-      var isPulse = si === activeStop;
-      var isLit = this.animateEnabled ? si <= activeStop : true;
-      var radius = (isPulse ? 5.5 : isLit ? 4.2 : 3.2) * ss.w;
-      ctx.beginPath();
-      ctx.arc(ss.x, ss.y, radius, 0, Math.PI * 2);
-      ctx.fillStyle = cssColor(isPulse ? pal.stopHot : pal.stop, isLit ? sAlpha : sAlpha * 0.45);
-      ctx.fill();
-      if (isPulse) {
+      var sFacing = stop.isSummit ? 1 : this.pointFacing(stop.ang, yaw);
+      var sNear = stop.isSummit || sFacing > 0.08;
+      // Skip back-side stops entirely (no ghost markers over the body)
+      if (!sNear) continue;
+      drawList.push({
+        kind: 'stop',
+        z: sw.z,
+        x: ss.x,
+        y: ss.y,
+        w: ss.w,
+        index: sti,
+        isPulse: sti === activeStop,
+        isLit: this.animateEnabled ? sti <= activeStop : true,
+        isSummit: stop.isSummit
+      });
+    }
+
+    // Far → near
+    drawList.sort(function (u, v) {
+      return u.z - v.z;
+    });
+
+    for (var di = 0; di < drawList.length; di++) {
+      var item = drawList[di];
+      if (item.kind === 'facet') {
         ctx.beginPath();
-        ctx.arc(ss.x, ss.y, radius * 2.2, 0, Math.PI * 2);
-        ctx.fillStyle = cssColor(pal.stopHot, 0.18 * sAlpha);
+        ctx.moveTo(item.a.x, item.a.y);
+        ctx.lineTo(item.b.x, item.b.y);
+        ctx.lineTo(item.c.x, item.c.y);
+        ctx.closePath();
+        ctx.fillStyle = cssColor(item.tone, 1);
         ctx.fill();
-      }
-      // Tiny number if large enough
-      if (ss.w > 0.85 && radius > 3.5 && sAlpha > 0.45) {
+        // Soft edge only — avoid noisy wireframe
+        ctx.strokeStyle = cssColor(pal.facetShadow, 0.06);
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      } else if (item.kind === 'seg') {
+        ctx.beginPath();
+        ctx.moveTo(item.a.x, item.a.y);
+        ctx.lineTo(item.b.x, item.b.y);
+        ctx.setLineDash([6, 8]);
+        ctx.strokeStyle = cssColor(pal.trail, 0.95);
+        ctx.lineWidth = 2.4;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        ctx.setLineDash([]);
+      } else if (item.kind === 'trailhead') {
+        var hr = 5.5 * (item.w || 1);
+        ctx.beginPath();
+        ctx.arc(item.x, item.y, hr, 0, Math.PI * 2);
+        ctx.fillStyle = cssColor(pal.stop, 0.95);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(item.x, item.y, hr * 0.4, 0, Math.PI * 2);
         ctx.fillStyle = cssColor(pal.paper, 0.95);
-        ctx.font = '600 ' + Math.max(7, Math.round(radius * 1.5)) + 'px ui-sans-serif, system-ui, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(String(si + 1), ss.x, ss.y + 0.5);
+        ctx.fill();
+      } else if (item.kind === 'stop') {
+        var radius = (item.isPulse ? 6.2 : item.isLit ? 5 : 3.8) * item.w;
+        if (item.isSummit) radius = Math.max(radius, 5.5 * item.w);
+        ctx.beginPath();
+        ctx.arc(item.x, item.y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = cssColor(item.isPulse ? pal.stopHot : pal.stop, 0.95);
+        ctx.fill();
+        if (item.isPulse) {
+          ctx.beginPath();
+          ctx.arc(item.x, item.y, radius * 2.1, 0, Math.PI * 2);
+          ctx.fillStyle = cssColor(pal.stopHot, 0.16);
+          ctx.fill();
+        }
+        // Numbers only when ≥ 9px and near (already filtered)
+        var fontPx = Math.round(Math.max(radius * 1.55, 9));
+        if (fontPx >= 9 && radius >= 4.5) {
+          ctx.fillStyle = cssColor(pal.paper, 0.96);
+          ctx.font = '700 ' + fontPx + 'px ui-sans-serif, system-ui, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(String(item.index + 1), item.x, item.y + 0.5);
+        }
       }
     }
 
-    // Summit flag
-    var peakW = transformPoint(this.mountain.peak, yaw, pitch, roll);
-    // Nudge flag slightly above peak
-    var flagBase = transformPoint(v3(this.mountain.peak.x, this.mountain.peak.y + 0.02, this.mountain.peak.z), yaw, pitch, roll);
-    var flagTop = transformPoint(v3(this.mountain.peak.x, this.mountain.peak.y + 0.22, this.mountain.peak.z), yaw, pitch, roll);
-    var wave = this.animateEnabled ? Math.sin((pulsePhase || 0) * Math.PI * 2) * 0.04 : 0;
+    // Summit flag — planted exactly on peak, drawn last
+    var peak = this.mountain.peak;
+    var wave = this.animateEnabled ? Math.sin((pulsePhase || 0) * Math.PI * 2) * 0.035 : 0;
+    var flagBase = transformPoint(peak, yaw, pitch, roll);
+    var flagTop = transformPoint(v3(peak.x, peak.y + 0.34, peak.z), yaw, pitch, roll);
     var flagTip = transformPoint(
-      v3(this.mountain.peak.x + 0.18 + wave, this.mountain.peak.y + 0.18, this.mountain.peak.z + 0.02),
+      v3(peak.x + 0.28 + wave, peak.y + 0.28, peak.z + 0.02),
       yaw,
       pitch,
       roll
     );
     var flagMid = transformPoint(
-      v3(this.mountain.peak.x + 0.18 - wave * 0.5, this.mountain.peak.y + 0.1, this.mountain.peak.z),
+      v3(peak.x + 0.28 - wave * 0.4, peak.y + 0.16, peak.z),
       yaw,
       pitch,
       roll
@@ -750,8 +877,8 @@
     ctx.beginPath();
     ctx.moveTo(pb.x, pb.y);
     ctx.lineTo(pt.x, pt.y);
-    ctx.strokeStyle = cssColor(pal.flagPole, 0.9);
-    ctx.lineWidth = 1.6;
+    ctx.strokeStyle = cssColor(pal.flagPole, 0.95);
+    ctx.lineWidth = 2.2;
     ctx.lineCap = 'round';
     ctx.stroke();
 
@@ -760,28 +887,8 @@
     ctx.lineTo(pTip.x, pTip.y);
     ctx.lineTo(pMid.x, pMid.y);
     ctx.closePath();
-    ctx.fillStyle = cssColor(pal.flag, 0.95);
+    ctx.fillStyle = cssColor(pal.flag, 0.98);
     ctx.fill();
-  };
-
-  Summit.prototype.drawTrailPass = function (ctx, trailScreen, farPass, pal) {
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.setLineDash([5, 7]);
-    for (var i = 1; i < trailScreen.length; i++) {
-      var a = trailScreen[i - 1];
-      var b = trailScreen[i];
-      var alpha = Math.min(a.alpha, b.alpha);
-      var isFar = alpha < 0.55;
-      if (farPass !== isFar) continue;
-      ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      ctx.lineTo(b.x, b.y);
-      ctx.strokeStyle = cssColor(farPass ? pal.trailDeep : pal.trail, farPass ? alpha * 0.35 : alpha * 0.95);
-      ctx.lineWidth = farPass ? 1.4 : 2.2;
-      ctx.stroke();
-    }
-    ctx.setLineDash([]);
   };
 
   Summit.prototype.destroy = function () {
