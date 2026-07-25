@@ -413,5 +413,112 @@ print(mixed_dict[(2, 3)])     # Output: coordinates</code></pre>
     </footer>
 
     
+      <script>
+      window.exerciseSolutions = {
+        exercise1: {
+          solution: 'person = {"name": "Alice", "age": 25, "city": "Boston"}\nprint(f"Name: {person[\'name\']}")\nprint(f"Age: {person[\'age\']}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('person = {') || !trimmed.includes('"name"') || !trimmed.includes('"age"') || !trimmed.includes('"city"')) {
+              return {
+                correct: false,
+                message: 'You need to create a dictionary named person with keys "name", "age", and "city".',
+                hints: ['Create: person = {"name": "Alice", "age": 25, "city": "Boston"}', 'Use curly braces and colons']
+              };
+            }
+            
+            if (!trimmed.includes('person["name"]') && !trimmed.includes("person['name']")) {
+              return {
+                correct: false,
+                message: 'You need to access the name using person["name"] or person[\'name\'].',
+                hints: ['Use: person["name"]', 'This gets "Alice"']
+              };
+            }
+            
+            if (!trimmed.includes('person["age"]') && !trimmed.includes("person['age']")) {
+              return {
+                correct: false,
+                message: 'You need to access the age using person["age"] or person[\'age\'].',
+                hints: ['Use: person["age"]', 'This gets 25']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure curly braces and quotes are correct', 'Check key names']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created and accessed a dictionary.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'car = {"brand": "Toyota", "model": "Camry"}\ncar["year"] = 2020\ncar["model"] = "Corolla"\nprint(car)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('car = {') || !trimmed.includes('"brand"') || !trimmed.includes('"model"')) {
+              return {
+                correct: false,
+                message: 'You need to create a dictionary named car with "brand": "Toyota" and "model": "Camry".',
+                hints: ['Create: car = {"brand": "Toyota", "model": "Camry"}', 'Use curly braces']
+              };
+            }
+            
+            if (!trimmed.includes('car["year"]') && !trimmed.includes("car['year']")) {
+              return {
+                correct: false,
+                message: 'You need to add a new key "year" with value 2020.',
+                hints: ['Use: car["year"] = 2020', 'This adds a new key-value pair']
+              };
+            }
+            
+            if (!trimmed.includes('car["model"]') || !trimmed.includes('"Corolla"')) {
+              return {
+                correct: false,
+                message: 'You need to change "model" to "Corolla".',
+                hints: ['Use: car["model"] = "Corolla"', 'This modifies the existing value']
+              };
+            }
+            
+            if (!trimmed.includes('print(car)')) {
+              return {
+                correct: false,
+                message: 'You need to print the final dictionary.',
+                hints: ['Use: print(car)', 'Print after modifications']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure quotes are correct', 'Check key names']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('Corolla') || !outputText.includes('2020') || outputText.includes('Camry')) {
+              return {
+                correct: false,
+                message: 'The final dictionary should have "model": "Corolla" and "year": 2020 (not "Camry").',
+                hints: ['Make sure you changed model to "Corolla"', 'Make sure you added year 2020']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully modified a dictionary by adding and changing values.'
+            };
+          }
+        }
+      };
+    </script>
   </body>
 </html>
