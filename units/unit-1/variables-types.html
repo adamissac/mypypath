@@ -219,7 +219,7 @@ price = 19.99</code></pre>
                 <div class="interactive-editor" data-editor-id="practice1">
                   <div class="editor-toolbar-small">
                     <button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
-                    <button class="btn-reset" onclick="resetEditor('practice1', 'name = "Python"\nage = 10\nprint(name)\nprint(age)')">Reset</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'name = &quot;Python&quot;\nage = 10\nprint(name)\nprint(age)')">Reset</button>
                     <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
                   </div>
                   <textarea class="code-editor-small" id="editor-practice1">name = "Python"
@@ -287,7 +287,7 @@ z = "Hello"  # Python knows this is a string</code></pre>
                 <div class="interactive-editor" data-editor-id="practice2">
                   <div class="editor-toolbar-small">
                     <button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
-                    <button class="btn-reset" onclick="resetEditor('practice2', 'my_int = 42\nmy_float = 3.14\nmy_string = "Hello"\nmy_bool = True\n\nprint(my_int)\nprint(my_float)\nprint(my_string)\nprint(my_bool)')">Reset</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'my_int = 42\nmy_float = 3.14\nmy_string = &quot;Hello&quot;\nmy_bool = True\n\nprint(my_int)\nprint(my_float)\nprint(my_string)\nprint(my_bool)')">Reset</button>
                     <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
                   </div>
                   <textarea class="code-editor-small" id="editor-practice2">my_int = 42
@@ -390,7 +390,7 @@ print(age)  # Prints 26</code></pre>
                 <div class="interactive-editor" data-editor-id="practice3">
                   <div class="editor-toolbar-small">
                     <button class="btn-run" onclick="runEditorCode('practice3')">Run</button>
-                    <button class="btn-reset" onclick="resetEditor('practice3', 'length = 5\nwidth = 3\narea = length * width\nprint("Area:", area)')">Reset</button>
+                    <button class="btn-reset" onclick="resetEditor('practice3', 'length = 5\nwidth = 3\narea = length * width\nprint(&quot;Area:&quot;, area)')">Reset</button>
                     <button class="btn-clear" onclick="clearSaved('practice3')" title="Clear saved code">Clear Saved</button>
                   </div>
                   <textarea class="code-editor-small" id="editor-practice3">length = 5
@@ -481,16 +481,10 @@ print("Area:", area)</textarea>
     <script>
       window.exerciseSolutions = {
         exercise1: {
-          solution: 'my_int = 42
-my_float = 3.14
-my_string = "Hello"
-print(my_int)
-print(my_float)
-print(my_string)',
+          solution: 'my_int = 42\nmy_float = 3.14\nmy_string = "Hello"\nprint(my_int)\nprint(my_float)\nprint(my_string)',
           validator: function(code, output) {
             const trimmed = code.trim();
-            const lines = trimmed.split('
-').filter(l => l.trim().length > 0);
+            const lines = trimmed.split('\n').filter(l => l.trim().length > 0);
             
             // Check for variable assignments
             const assignments = lines.filter(line => line.includes('=') && !line.trim().startsWith('#'));
@@ -537,10 +531,7 @@ print(my_string)',
           }
         },
         exercise2: {
-          solution: 'price = 15.50
-quantity = 4
-total = price * quantity
-print(total)',
+          solution: 'price = 15.50\nquantity = 4\ntotal = price * quantity\nprint(total)',
           validator: function(code, output) {
             const trimmed = code.trim();
             

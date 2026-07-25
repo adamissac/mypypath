@@ -327,7 +327,7 @@ else:                           # Level 0: Outer else (0 spaces)
                 <div class="interactive-editor" data-editor-id="practice2">
                   <div class="editor-toolbar-small">
                     <button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
-                    <button class="btn-reset" onclick="resetEditor('practice2', 'temperature = 85\nis_summer = True\nif temperature > 80:\n    print(&quot;It\\'s hot!&quot;)\n    if is_summer:\n        print(&quot;Perfect for swimming!&quot;)\n    else:\n        print(&quot;Unusual for this season.&quot;)\nelse:\n    print(&quot;It\\'s not too hot.&quot;)')">Reset</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'temperature = 85\nis_summer = True\nif temperature > 80:\n    print(&quot;It\\\'s hot!&quot;)\n    if is_summer:\n        print(&quot;Perfect for swimming!&quot;)\n    else:\n        print(&quot;Unusual for this season.&quot;)\nelse:\n    print(&quot;It\\\'s not too hot.&quot;)')">Reset</button>
                     <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
                   </div>
                   <textarea class="code-editor-small" id="editor-practice2">temperature = 85
@@ -494,11 +494,7 @@ if age >= 18 and has_license:
     <script>
       window.exerciseSolutions = {
         exercise1: {
-          solution: 'age = 20
-has_license = True
-if age >= 18:
-    if has_license:
-        print("You can drive!")',
+          solution: 'age = 20\nhas_license = True\nif age >= 18:\n    if has_license:\n        print("You can drive!")',
           validator: function(code, output) {
             const trimmed = code.trim();
             
@@ -530,8 +526,7 @@ if age >= 18:
             }
             
             // Check for nested if (looking for if inside if)
-            const lines = trimmed.split('
-');
+            const lines = trimmed.split('\n');
             let hasOuterIf = false;
             let hasNestedIf = false;
             for (let i = 0; i < lines.length; i++) {
@@ -596,13 +591,7 @@ if age >= 18:
           }
         },
         exercise2: {
-          solution: 'temperature = 85
-is_summer = True
-if temperature > 80:
-    if is_summer:
-        print("Perfect for swimming!")
-    else:
-        print("Unusual heat for this season.")',
+          solution: 'temperature = 85\nis_summer = True\nif temperature > 80:\n    if is_summer:\n        print("Perfect for swimming!")\n    else:\n        print("Unusual heat for this season.")',
           validator: function(code, output) {
             const trimmed = code.trim();
             
@@ -634,8 +623,7 @@ if temperature > 80:
             }
             
             // Check for nested if-else
-            const lines = trimmed.split('
-');
+            const lines = trimmed.split('\n');
             let hasNestedIf = false;
             let hasNestedElse = false;
             for (let i = 0; i < lines.length; i++) {

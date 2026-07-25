@@ -65,6 +65,62 @@
     });
   }
 
+  function tabTargets(tab, arg) {
+    var onclick = tab.getAttribute('onclick') || '';
+    return (
+      onclick.indexOf("('" + arg + "')") !== -1 ||
+      onclick.indexOf('("' + arg + '")') !== -1 ||
+      tab.getAttribute('data-os') === arg ||
+      tab.getAttribute('data-terminal') === arg
+    );
+  }
+
+  function switchTabGroup(options) {
+    var targetId = options.targetId;
+    var tabArg = options.tabArg || targetId;
+    var panel = document.getElementById(targetId);
+    if (!panel) return;
+
+    var root = panel.closest(options.rootSelector) || document;
+    var tabs = root.querySelectorAll(options.tabSelector);
+    var panels = root.querySelectorAll(options.panelSelector);
+
+    panels.forEach(function (el) {
+      el.classList.toggle('active', el === panel || el.id === targetId);
+    });
+
+    tabs.forEach(function (tab) {
+      var isActive = tabTargets(tab, tabArg);
+      tab.classList.toggle('active', isActive);
+      if (tab.hasAttribute('aria-selected')) {
+        tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      }
+    });
+  }
+
+  // Used by Windows/Mac install + terminal instruction tabs in unit lessons.
+  window.switchOS = function (os) {
+    if (!os) return;
+    switchTabGroup({
+      targetId: os + '-instructions',
+      tabArg: os,
+      rootSelector: '.installation-steps',
+      tabSelector: '.os-tab',
+      panelSelector: '.os-instructions'
+    });
+  };
+
+  window.switchTerminal = function (terminalId) {
+    if (!terminalId) return;
+    switchTabGroup({
+      targetId: terminalId,
+      tabArg: terminalId,
+      rootSelector: '.terminal-guide',
+      tabSelector: '.terminal-tab',
+      panelSelector: '.terminal-instructions'
+    });
+  };
+
   document.addEventListener('DOMContentLoaded', function () {
     initReadingProgress();
     initCopySnippets();
