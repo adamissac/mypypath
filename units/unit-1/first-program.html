@@ -222,7 +222,7 @@
                 <div class="interactive-editor" data-editor-id="practice1">
                   <div class="editor-toolbar-small">
                     <button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
-                    <button class="btn-reset" onclick="resetEditor('practice1', 'print("Hello, World!")')">Reset</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'print(&quot;Hello, World!&quot;)')">Reset</button>
                     <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
                   </div>
                   <textarea class="code-editor-small" id="editor-practice1">print("Hello, World!")</textarea>
@@ -331,7 +331,7 @@
                 <div class="interactive-editor" data-editor-id="practice2">
                   <div class="editor-toolbar-small">
                     <button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
-                    <button class="btn-reset" onclick="resetEditor('practice2', 'print("First line")\nprint("Second line")\nprint("Third line")')">Reset</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'print(&quot;First line&quot;)\nprint(&quot;Second line&quot;)\nprint(&quot;Third line&quot;)')">Reset</button>
                     <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
                   </div>
                   <textarea class="code-editor-small" id="editor-practice2">print("First line")
@@ -505,13 +505,10 @@ print("Third line")</textarea>
           }
         },
         exercise2: {
-          solution: 'print("Line 1")
-print("Line 2")
-print("Line 3")',
+          solution: 'print("Line 1")\nprint("Line 2")\nprint("Line 3")',
           validator: function(code, output) {
             const trimmed = code.trim();
-            const lines = trimmed.split('
-').filter(line => line.trim().length > 0);
+            const lines = trimmed.split('\n').filter(line => line.trim().length > 0);
             
             // Check if there are at least 3 print statements
             const printCount = (trimmed.match(/print\(/g) || []).length;
@@ -550,8 +547,7 @@ print("Line 3")',
             }
             
             // Check if output has at least 3 lines
-            const outputLines = output.stdout ? output.stdout.trim().split('
-').filter(l => l.trim().length > 0) : [];
+            const outputLines = output.stdout ? output.stdout.trim().split('\n').filter(l => l.trim().length > 0) : [];
             if (outputLines.length < 3) {
               return {
                 correct: false,

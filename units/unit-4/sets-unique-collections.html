@@ -424,5 +424,129 @@ print("grape" in fruits)   # Output: False</code></pre>
     </footer>
 
     
+      <script>
+      window.exerciseSolutions = {
+        exercise1: {
+          solution: 'colors = {"red", "green", "blue"}\ncolors.add("yellow")\ncolors.remove("green")\nprint(colors)',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('colors = {') || !trimmed.includes('"red"') || !trimmed.includes('"green"') || !trimmed.includes('"blue"')) {
+              return {
+                correct: false,
+                message: 'You need to create a set named colors with {"red", "green", "blue"}.',
+                hints: ['Create: colors = {"red", "green", "blue"}', 'Use curly braces']
+              };
+            }
+            
+            if (!trimmed.includes('.add("yellow")')) {
+              return {
+                correct: false,
+                message: 'You need to add "yellow" using add() method.',
+                hints: ['Use: colors.add("yellow")', 'add() adds a single item']
+              };
+            }
+            
+            if (!trimmed.includes('.remove("green")')) {
+              return {
+                correct: false,
+                message: 'You need to remove "green" using remove() method.',
+                hints: ['Use: colors.remove("green")', 'remove() removes an item']
+              };
+            }
+            
+            if (!trimmed.includes('print(colors)')) {
+              return {
+                correct: false,
+                message: 'You need to print the final set.',
+                hints: ['Use: print(colors)', 'Print after modifications']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure quotes are correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('red') || !outputText.includes('blue') || !outputText.includes('yellow') || outputText.includes('green')) {
+              return {
+                correct: false,
+                message: 'The final set should contain red, blue, and yellow (not green).',
+                hints: ['Make sure you added yellow', 'Make sure you removed green']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created and modified a set.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'set1 = {1, 2, 3, 4}\nset2 = {3, 4, 5, 6}\nintersection = set1 & set2\nunion = set1 | set2\nprint(f"Intersection: {intersection}")\nprint(f"Union: {union}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('set1 = {1, 2, 3, 4}') || !trimmed.includes('set2 = {3, 4, 5, 6}')) {
+              return {
+                correct: false,
+                message: 'You need to create set1 = {1, 2, 3, 4} and set2 = {3, 4, 5, 6}.',
+                hints: ['Create: set1 = {1, 2, 3, 4}', 'Create: set2 = {3, 4, 5, 6}']
+              };
+            }
+            
+            if (!trimmed.includes('&') && !trimmed.includes('.intersection(')) {
+              return {
+                correct: false,
+                message: 'You need to find the intersection using & or intersection() method.',
+                hints: ['Use: set1 & set2', 'Or: set1.intersection(set2)', 'Intersection is {3, 4}']
+              };
+            }
+            
+            if (!trimmed.includes('|') && !trimmed.includes('.union(')) {
+              return {
+                correct: false,
+                message: 'You need to find the union using | or union() method.',
+                hints: ['Use: set1 | set2', 'Or: set1.union(set2)', 'Union is {1, 2, 3, 4, 5, 6}']
+              };
+            }
+            
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print both the intersection and union.',
+                hints: ['Print the intersection', 'Print the union']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure set operations are correct']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('3') || !outputText.includes('4')) {
+              return {
+                correct: false,
+                message: 'The intersection should contain 3 and 4.',
+                hints: ['Check your intersection operation', 'Make sure you printed it']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully performed set operations.'
+            };
+          }
+        }
+      };
+    </script>
   </body>
 </html>

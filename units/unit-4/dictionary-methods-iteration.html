@@ -433,5 +433,112 @@ if "city" not in student:
     </footer>
 
     
+      <script>
+      window.exerciseSolutions = {
+        exercise1: {
+          solution: 'inventory = {"apples": 10, "bananas": 5, "oranges": 8}\napples = inventory.get("apples")\ngrapes = inventory.get("grapes", 0)\nprint(f"Apples: {apples}")\nprint(f"Grapes: {grapes}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('inventory = {') || !trimmed.includes('"apples"') || !trimmed.includes('"bananas"') || !trimmed.includes('"oranges"')) {
+              return {
+                correct: false,
+                message: 'You need to create a dictionary named inventory with "apples": 10, "bananas": 5, "oranges": 8.',
+                hints: ['Create: inventory = {"apples": 10, "bananas": 5, "oranges": 8}', 'Use curly braces']
+              };
+            }
+            
+            if (!trimmed.includes('.get("apples")')) {
+              return {
+                correct: false,
+                message: 'You need to use get() method to get the value for "apples".',
+                hints: ['Use: inventory.get("apples")', 'This returns 10']
+              };
+            }
+            
+            if (!trimmed.includes('.get("grapes", 0)') && !trimmed.includes('.get("grapes",0)')) {
+              return {
+                correct: false,
+                message: 'You need to use get() with default value 0 for "grapes".',
+                hints: ['Use: inventory.get("grapes", 0)', 'This returns 0 since grapes doesn\'t exist']
+              };
+            }
+            
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print both values.',
+                hints: ['Print the apples value', 'Print the grapes value']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure quotes are correct']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully used the get() method with and without default values.'
+            };
+          }
+        },
+        exercise2: {
+          solution: 'scores = {"Alice": 85, "Bob": 92, "Charlie": 78}\nfor name, score in scores.items():\n    print(f"{name}: {score}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('scores = {') || !trimmed.includes('"Alice"') || !trimmed.includes('"Bob"') || !trimmed.includes('"Charlie"')) {
+              return {
+                correct: false,
+                message: 'You need to create a dictionary named scores with "Alice": 85, "Bob": 92, "Charlie": 78.',
+                hints: ['Create: scores = {"Alice": 85, "Bob": 92, "Charlie": 78}', 'Use curly braces']
+              };
+            }
+            
+            if (!trimmed.includes('.items()') || !trimmed.match(/for\s+\w+,\s*\w+\s+in\s+scores\.items\(\)/)) {
+              return {
+                correct: false,
+                message: 'You need to use items() method to iterate through key-value pairs.',
+                hints: ['Use: for name, score in scores.items():', 'This gives you both key and value']
+              };
+            }
+            
+            if (!trimmed.includes('print')) {
+              return {
+                correct: false,
+                message: 'You need to print each name and score.',
+                hints: ['Print inside the loop', 'Format: "Name: Score"']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure the loop is properly indented', 'Check quotes']
+              };
+            }
+            
+            const outputText = output.stdout || '';
+            if (!outputText.includes('Alice') || !outputText.includes('Bob') || !outputText.includes('Charlie')) {
+              return {
+                correct: false,
+                message: 'Your output should include all three names: Alice, Bob, and Charlie.',
+                hints: ['Make sure you loop through all items', 'Check your print statement']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully iterated through a dictionary using items().'
+            };
+          }
+        }
+      };
+    </script>
   </body>
 </html>

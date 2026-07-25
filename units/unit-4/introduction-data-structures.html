@@ -429,5 +429,111 @@ print(f"Set: {unique_numbers}")</textarea>
     </footer>
 
     
+      <script>
+      window.exerciseSolutions = {
+        exercise1: {
+          solution: '# List\ncolors = ["red", "blue", "green"]\nprint(f"List: {colors}")\n\n# Tuple\ncoordinates = (10, 20)\nprint(f"Tuple: {coordinates}")\n\n# Dictionary\nperson = {"name": "Alice", "age": 25}\nprint(f"Dictionary: {person}")\n\n# Set\nnumbers = {1, 2, 3, 3, 4, 5}\nprint(f"Set: {numbers}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('[') || !trimmed.includes(']')) {
+              return {
+                correct: false,
+                message: 'You need to create a list using square brackets [].',
+                hints: ['Create: colors = ["red", "blue", "green"]', 'Use square brackets for lists']
+              };
+            }
+            
+            if (!trimmed.includes('(') || !trimmed.includes(')')) {
+              return {
+                correct: false,
+                message: 'You need to create a tuple using parentheses ().',
+                hints: ['Create: coordinates = (10, 20)', 'Use parentheses for tuples']
+              };
+            }
+            
+            if (!trimmed.includes('{') || !trimmed.includes(':')) {
+              return {
+                correct: false,
+                message: 'You need to create a dictionary using curly braces with colons.',
+                hints: ['Create: person = {"name": "Alice", "age": 25}', 'Use curly braces with colons for dictionaries']
+              };
+            }
+            
+            if (!trimmed.match(/\{[^:]*\}/)) {
+              return {
+                correct: false,
+                message: 'You need to create a set using curly braces without colons.',
+                hints: ['Create: numbers = {1, 2, 3, 3, 4, 5}', 'Use curly braces without colons for sets']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure all brackets and parentheses match', 'Check your quotes']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created all four types of data structures.'
+            };
+          }
+        },
+        exercise2: {
+          solution: '# List\nfruits = ["apple", "banana", "orange"]\nprint(f"List: {fruits}")\n\n# Tuple\ncoordinates = (5, 10)\nprint(f"Tuple: {coordinates}")\n\n# Dictionary\nlocation = {"city": "New York"}\nprint(f"Dictionary: {location}")\n\n# Set\nnumbers = {1, 2, 2, 3}\nprint(f"Set: {numbers}")',
+          validator: function(code, output) {
+            const trimmed = code.trim();
+            
+            if (!trimmed.includes('fruits') || !trimmed.includes('[')) {
+              return {
+                correct: false,
+                message: 'You need to create a list named fruits with three fruits.',
+                hints: ['Create: fruits = ["apple", "banana", "orange"]', 'Use square brackets']
+              };
+            }
+            
+            if (!trimmed.includes('coordinates') || !trimmed.includes('(')) {
+              return {
+                correct: false,
+                message: 'You need to create a tuple named coordinates with two numbers.',
+                hints: ['Create: coordinates = (5, 10)', 'Use parentheses']
+              };
+            }
+            
+            if (!trimmed.includes('city') || !trimmed.includes('New York') || !trimmed.includes(':')) {
+              return {
+                correct: false,
+                message: 'You need to create a dictionary with "city" mapped to "New York".',
+                hints: ['Create: location = {"city": "New York"}', 'Use curly braces with colons']
+              };
+            }
+            
+            if (!trimmed.includes('{') || !trimmed.match(/\{[^:]*2.*2/)) {
+              return {
+                correct: false,
+                message: 'You need to create a set with numbers including duplicates (1, 2, 2, 3).',
+                hints: ['Create: numbers = {1, 2, 2, 3}', 'Use curly braces without colons', 'Include duplicates - the set will remove them']
+              };
+            }
+            
+            if (output.error) {
+              return {
+                correct: false,
+                message: 'Your code has an error: ' + output.error,
+                hints: ['Check your syntax', 'Make sure all brackets match', 'Check your quotes']
+              };
+            }
+            
+            return {
+              correct: true,
+              message: 'Correct! You successfully created and identified all four data structure types.'
+            };
+          }
+        }
+      };
+    </script>
   </body>
 </html>
