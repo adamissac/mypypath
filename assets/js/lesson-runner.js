@@ -18,7 +18,98 @@
     try { localStorage.removeItem(storageKey(type, id)); } catch (e) {}
   }
 
+  // Default practice-editor source, captured before CodeMirror replaces textareas.
+  window.editorDefaults = window.editorDefaults || {};
+
   var OUTPUT_HINT = (window.Pyodide && window.Pyodide.OUTPUT_HINT) || 'Press Run to see output';
+
+  function editorIdFromButton(btn) {
+    var root = btn.closest('[data-editor-id], [data-exercise-id]');
+    if (!root) return null;
+    return root.getAttribute('data-editor-id') || root.getAttribute('data-exercise-id');
+  }
+
+  function decodeJsStringBody(body) {
+    return String(body || '')
+      .replace(/\\n/g, '\n')
+      .replace(/\\t/g, '\t')
+      .replace(/\\'/g, "'")
+      .replace(/\\"/g, '"')
+      .replace(/\\\\/g, '\\');
+  }
+
+  function defaultCodeFor(editorId, btn) {
+    if (window.editorDefaults[editorId] != null && window.editorDefaults[editorId] !== '') {
+      return window.editorDefaults[editorId];
+    }
+    var oc = (btn && btn.getAttribute('onclick')) || '';
+    var m = oc.match(/^resetEditor\(\s*['"]([^'"]+)['"]\s*,\s*'([\s\S]*)'\s*\)$/);
+    if (m) return decodeJsStringBody(m[2]);
+    var ta = document.getElementById('editor-' + editorId);
+    return ta ? ta.value : '';
+  }
+
+  function bindLessonButtons() {
+    function idFromOnclick(btn, fnName) {
+      var oc = btn.getAttribute('onclick') || '';
+      var re = new RegExp('^' + fnName + '\\(\\s*[\\\'"]([^\\\'"]+)[\\\'"]');
+      var m = oc.trim().match(re);
+      if (m) return m[1];
+      return editorIdFromButton(btn);
+    }
+
+    function markBound(btn) {
+      if (btn.getAttribute('data-lesson-bound') === '1') return false;
+      btn.setAttribute('data-lesson-bound', '1');
+      return true;
+    }
+
+    // Bind by onclick text and standard classes so nonstandard button classes still work.
+    document.querySelectorAll('button[onclick*="checkExercise("], .btn-check').forEach(function (btn) {
+      var id = idFromOnclick(btn, 'checkExercise') || editorIdFromButton(btn);
+      if (!id || !markBound(btn)) return;
+      btn.removeAttribute('onclick');
+      btn.addEventListener('click', function () { window.checkExercise(id); });
+    });
+
+    document.querySelectorAll('button[onclick*="showSolution("], .btn-solution').forEach(function (btn) {
+      var id = idFromOnclick(btn, 'showSolution') || editorIdFromButton(btn);
+      if (!id || !markBound(btn)) return;
+      btn.removeAttribute('onclick');
+      btn.addEventListener('click', function () { window.showSolution(id); });
+    });
+
+    document.querySelectorAll('button[onclick*="runEditorCode("], .btn-run').forEach(function (btn) {
+      var id = idFromOnclick(btn, 'runEditorCode') || editorIdFromButton(btn);
+      if (!id || !markBound(btn)) return;
+      btn.removeAttribute('onclick');
+      btn.addEventListener('click', function () { window.runEditorCode(id); });
+    });
+
+    document.querySelectorAll('button[onclick*="clearSaved("], .btn-clear').forEach(function (btn) {
+      var id = idFromOnclick(btn, 'clearSaved') || editorIdFromButton(btn);
+      if (!id || !markBound(btn)) return;
+      btn.removeAttribute('onclick');
+      btn.addEventListener('click', function () { window.clearSaved(id); });
+    });
+
+    document.querySelectorAll(
+      'button[onclick*="resetExercise("], button[onclick*="resetEditor("], .btn-reset'
+    ).forEach(function (btn) {
+      var oc = btn.getAttribute('onclick') || '';
+      var isExerciseReset = /resetExercise\s*\(/.test(oc) ||
+        (!/resetEditor\s*\(/.test(oc) && !!btn.closest('[data-exercise-id]'));
+      var id = idFromOnclick(btn, isExerciseReset ? 'resetExercise' : 'resetEditor') || editorIdFromButton(btn);
+      if (!id || !markBound(btn)) return;
+      var practiceDefault = isExerciseReset ? '' : defaultCodeFor(id, btn);
+      btn.removeAttribute('onclick');
+      if (isExerciseReset) {
+        btn.addEventListener('click', function () { window.resetExercise(id); });
+      } else {
+        btn.addEventListener('click', function () { window.resetEditor(id, practiceDefault); });
+      }
+    });
+  }
 
   async function ensurePyodide() {
     if (!window.Pyodide) throw new Error('Python runtime not available');
@@ -142,7 +233,8 @@
     feedbackEl.style.display = 'block';
 
     if (result.correct) {
-      feedbackEl.innerHTML = '<h5>Correct!</h5><p>' + result.message + '</p>';
+      var okMsg = String(result.message || '').replace(/^\s*Correct!\s*/i, '');
+      feedbackEl.innerHTML = '<h5>Correct!</h5>' + (okMsg ? '<p>' + okMsg + '</p>' : '');
     } else {
       var hintsHtml = '';
       if (result.hints && result.hints.length) {
@@ -194,6 +286,9 @@
       if (window.editors[editorId]) return;
 
       var isExercise = textarea.closest('[data-exercise-id]');
+      if (!isExercise && window.editorDefaults[editorId] == null) {
+        window.editorDefaults[editorId] = textarea.value || '';
+      }
       var saved = loadFromStorage('code', editorId);
       var initial = isExercise ? (saved || '') : (saved || textarea.value || '');
 
@@ -233,6 +328,16 @@
     if (!document.querySelector('.code-editor-small')) return;
 
     if (window.Pyodide) window.Pyodide.scheduleWarmup();
+    // Capture defaults before CodeMirror replaces textareas, then bind buttons
+    // with addEventListener so Check/Show/Run/Reset keep working even if an
+    // onclick attribute was corrupted by nested quotes.
+    document.querySelectorAll('.code-editor-small').forEach(function (textarea) {
+      var editorId = textarea.id.replace('editor-', '');
+      if (!textarea.closest('[data-exercise-id]') && window.editorDefaults[editorId] == null) {
+        window.editorDefaults[editorId] = textarea.value || '';
+      }
+    });
+    bindLessonButtons();
     initEditors();
 
     document.addEventListener('themechange', function () {
