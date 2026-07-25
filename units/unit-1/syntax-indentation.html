@@ -255,7 +255,7 @@ print("End")             # No indentation (level 0)</code></pre>
                 <div class="interactive-editor" data-editor-id="practice1">
                   <div class="editor-toolbar-small">
                     <button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
-                    <button class="btn-reset" onclick="resetEditor('practice1', 'print("Start")\nif True:\n    print("Inside if")\n    print("Still inside")\nprint("End")')">Reset</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', 'print(&quot;Start&quot;)\nif True:\n    print(&quot;Inside if&quot;)\n    print(&quot;Still inside&quot;)\nprint(&quot;End&quot;)')">Reset</button>
                     <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
                   </div>
                   <textarea class="code-editor-small" id="editor-practice1">print("Start")
@@ -363,7 +363,7 @@ print("This will cause an error")  # Not indented!</code></pre>
                 <div class="interactive-editor" data-editor-id="practice2">
                   <div class="editor-toolbar-small">
                     <button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
-                    <button class="btn-reset" onclick="resetEditor('practice2', 'if True:\nprint("Fix the indentation!")')">Reset</button>
+                    <button class="btn-reset" onclick="resetEditor('practice2', 'if True:\nprint(&quot;Fix the indentation!&quot;)')">Reset</button>
                     <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
                   </div>
                   <textarea class="code-editor-small" id="editor-practice2">if True:
@@ -477,12 +477,10 @@ print("Hello")</textarea>
     <script>
       window.exerciseSolutions = {
         exercise1: {
-          solution: 'if True:
-    print("Hello")',
+          solution: 'if True:\n    print("Hello")',
           validator: function(code, output) {
             const trimmed = code.trim();
-            const lines = trimmed.split('
-');
+            const lines = trimmed.split('\n');
             
             // Check if it has an if statement
             if (!trimmed.includes('if')) {
@@ -554,14 +552,10 @@ print("Hello")</textarea>
           }
         },
         exercise2: {
-          solution: 'print("Start")
-if True:
-    print("Middle")
-print("End")',
+          solution: 'print("Start")\nif True:\n    print("Middle")\nprint("End")',
           validator: function(code, output) {
             const trimmed = code.trim();
-            const lines = trimmed.split('
-').filter(l => l.trim().length > 0);
+            const lines = trimmed.split('\n').filter(l => l.trim().length > 0);
             
             // Check for all three print statements
             const printCount = (trimmed.match(/print\(/g) || []).length;
