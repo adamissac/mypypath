@@ -4,8 +4,7 @@
   var REDUCED_QUERY = '(prefers-reduced-motion: reduce)';
 
   function prefersReduced() {
-    if (window.matchMedia && window.matchMedia(REDUCED_QUERY).matches) return true;
-    return document.body && document.body.dataset.motion === 'off';
+    return !!(window.matchMedia && window.matchMedia(REDUCED_QUERY).matches);
   }
 
   window.PyMotion = {
