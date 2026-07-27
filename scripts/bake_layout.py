@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 UNIT_NAMES = [
     'Foundations', 'Control Flow', 'Functions', 'Data Structures',
-    'Modules & Packages', 'OOP', 'Files & Errors', 'Testing', 'APIs', 'Certification Prep',
+    'Modules & Packages', 'OOP', 'Files & Errors', 'Testing', 'Advanced Topics', 'Capstone Project',
 ]
 
 FIRST_LESSON = {
@@ -43,7 +43,7 @@ FOOTER = """    <footer class="site-footer">
               <img src="/assets/img/pyPathLogo.png" alt="" class="logo small" width="28" height="28">
               <span class="brand-text">PyPath</span>
             </a>
-            <p class="footer-tagline">Learn Python with clarity — free, structured lessons from foundations to certification.</p>
+            <p class="footer-tagline">Learn Python with clarity — free, structured lessons from foundations to real projects.</p>
             <p class="footer-copy muted">&copy; <span id="year"></span> PyPath</p>
           </div>
           <div class="footer-col">
@@ -353,7 +353,7 @@ def misc_fixes(html: str, path: Path) -> str:
     )
 
     if page_kind(path) == 'lesson':
-        html = html.replace('Unit 10 • Final Projects', 'Unit 10 • Certification Prep')
+        html = html.replace('Unit 10 • Final Projects', 'Unit 10 • Capstone Project')
         html = html.replace(
             '<button class="sidebar-toggle-btn" data-sidebar-toggle>Toggle menu</button>',
             '<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>',
