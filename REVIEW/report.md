@@ -16,7 +16,8 @@ Footer `.container` is full-width with the same side gutters as the header (24px
 
 ## Header mountain logo idle-spin
 - Files changed: 114 HTML pages + `assets/css/pypath-theme.css` + `assets/js/core.js`
-- New class / keyframe: `.logo-spin-wrap`, `@keyframes pp-logo-idle-rotate` (16s linear infinite)
+- New class / keyframe: `.logo-spin-wrap`, `@keyframes pp-logo-idle-rotate` (12s linear infinite)
 - Ambient spin lives on a wrapper so it does not collide with `motion.js` pointer-tilt / click-flip on `.logo`
+- Hover no longer pauses the idle spin (only click-flip via `:has(.is-spinning)` does)
 - Left alone: footer `logo small`, `lesson-format-kit/`
 - Dead-code note: `assets/js/layout.js` is orphaned (never script-loaded); `core.js` `headerHtml()` / `footerHtml()` are defined but never called — consider wiring one up or deleting both later
