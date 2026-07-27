@@ -232,6 +232,41 @@ html.reduced-motion .site-header .brand .logo.logo--3d.is-spinning {
   filter: none;
 }
 
+/* Ambient idle rotation for the header mountain mark.
+   Lives on a WRAPPER, not .logo itself, so it never collides with the
+   pointer-tilt / click-flip transform that motion.js writes on .logo. */
+.site-header .brand .logo-spin-wrap {
+  display: inline-block;
+  line-height: 0; /* no extra inline-box whitespace under the icon */
+  animation: pp-logo-idle-rotate 16s linear infinite;
+  /* pyPathLogo.png's artwork sits ~57% down its canvas, not 50% —
+     this keeps the peak spinning in place instead of visibly orbiting. */
+  transform-origin: 50% 57%;
+}
+
+@keyframes pp-logo-idle-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Let the hover-tilt / click-flip own the motion in the moment, instead of
+   layering on top of the ambient spin. Drop this rule if you'd rather have
+   both run at once. */
+.site-header .brand:hover .logo-spin-wrap,
+.site-header .brand .logo-spin-wrap:has(.is-spinning) {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header .brand .logo-spin-wrap {
+    animation: none;
+  }
+}
+
+html.reduced-motion .site-header .brand .logo-spin-wrap {
+  animation: none;
+}
+
 /* Richer scroll reveals — override the flat fast.css defaults */
 .js-enabled [data-reveal] {
   opacity: 0 !important;
