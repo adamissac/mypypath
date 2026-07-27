@@ -2,6 +2,8 @@
 
 Personalized academic and career guidance site with interactive Python lessons, curriculum pages, and a sandbox. Static HTML/CSS/JS — no build step required.
 
+**Live site:** https://www.mypypath.com
+
 ## Quick start
 
 ```bash
@@ -26,4 +28,15 @@ Or deploy the repo root as a static site (Vercel config is in `vercel.json`).
 
 ## Scripts
 
-Utility scripts under `scripts/` help with layout baking, navigation fixes, and page upgrades. Prefer editing shared assets in `assets/` so changes apply site-wide.
+| Script | Purpose |
+|--------|---------|
+| `scripts/bake_layout.py` | Bake shared header/footer into HTML pages |
+| `scripts/check_links.py` | Verify local links resolve (used in CI) |
+| `scripts/generate_sitemap.py` | Regenerate `sitemap.xml` after adding pages |
+| `scripts/cleanup_lessons.py` | Lesson HTML cleanup utilities |
+
+Prefer editing shared assets in `assets/` so changes apply site-wide.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
