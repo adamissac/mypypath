@@ -23,6 +23,12 @@
 
   var OUTPUT_HINT = (window.Pyodide && window.Pyodide.OUTPUT_HINT) || 'Press Run to see output';
 
+  function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
   function editorIdFromButton(btn) {
     var root = btn.closest('[data-editor-id], [data-exercise-id]');
     if (!root) return null;
@@ -120,15 +126,15 @@
   function renderRunOutput(outputEl, result) {
     if (result.error) {
       var msg = result.error && result.error.toString ? result.error.toString() : String(result.error);
-      outputEl.innerHTML = '<div class="output-error">' + msg.replace(/\n/g, '<br>') + '</div>';
+      outputEl.innerHTML = '<div class="output-error">' + escapeHtml(msg).replace(/\n/g, '<br>') + '</div>';
       return;
     }
     if (result.stderr) {
-      outputEl.innerHTML = '<div class="output-error">' + result.stderr.replace(/\n/g, '<br>') + '</div>';
+      outputEl.innerHTML = '<div class="output-error">' + escapeHtml(result.stderr).replace(/\n/g, '<br>') + '</div>';
       return;
     }
     if (result.stdout) {
-      outputEl.innerHTML = '<pre>' + result.stdout + '</pre>';
+      outputEl.innerHTML = '<pre>' + escapeHtml(result.stdout) + '</pre>';
       return;
     }
     outputEl.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
@@ -159,7 +165,7 @@
       var result = await window.Pyodide.runCode(code);
       renderRunOutput(outputEl, result);
     } catch (error) {
-      outputEl.innerHTML = '<div class="output-error">' + String(error).replace(/\n/g, '<br>') + '</div>';
+      outputEl.innerHTML = '<div class="output-error">' + escapeHtml(String(error)).replace(/\n/g, '<br>') + '</div>';
     }
   };
 
@@ -225,7 +231,7 @@
       renderRunOutput(outputEl, runResult);
     } catch (error) {
       output.error = String(error);
-      outputEl.innerHTML = '<div class="output-error">' + output.error.replace(/\n/g, '<br>') + '</div>';
+      outputEl.innerHTML = '<div class="output-error">' + escapeHtml(output.error).replace(/\n/g, '<br>') + '</div>';
     }
 
     var result = exercise.validator(code, output);
@@ -234,13 +240,13 @@
 
     if (result.correct) {
       var okMsg = String(result.message || '').replace(/^\s*Correct!\s*/i, '');
-      feedbackEl.innerHTML = '<h5>Correct!</h5>' + (okMsg ? '<p>' + okMsg + '</p>' : '');
+      feedbackEl.innerHTML = '<h5>Correct!</h5>' + (okMsg ? '<p>' + escapeHtml(okMsg) + '</p>' : '');
     } else {
       var hintsHtml = '';
       if (result.hints && result.hints.length) {
-        hintsHtml = '<ul>' + result.hints.map(function (h) { return '<li>' + h + '</li>'; }).join('') + '</ul>';
+        hintsHtml = '<ul>' + result.hints.map(function (h) { return '<li>' + escapeHtml(h) + '</li>'; }).join('') + '</ul>';
       }
-      feedbackEl.innerHTML = '<h5>Not quite right</h5><p>' + result.message + '</p>' + hintsHtml;
+      feedbackEl.innerHTML = '<h5>Not quite right</h5><p>' + escapeHtml(result.message) + '</p>' + hintsHtml;
     }
   };
 
