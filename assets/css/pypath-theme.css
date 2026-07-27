@@ -238,7 +238,7 @@ html.reduced-motion .site-header .brand .logo.logo--3d.is-spinning {
 .site-header .brand .logo-spin-wrap {
   display: inline-block;
   line-height: 0; /* no extra inline-box whitespace under the icon */
-  animation: pp-logo-idle-rotate 16s linear infinite;
+  animation: pp-logo-idle-rotate 12s linear infinite;
   /* pyPathLogo.png's artwork sits ~57% down its canvas, not 50% —
      this keeps the peak spinning in place instead of visibly orbiting. */
   transform-origin: 50% 57%;
@@ -249,10 +249,8 @@ html.reduced-motion .site-header .brand .logo.logo--3d.is-spinning {
   to   { transform: rotate(360deg); }
 }
 
-/* Let the hover-tilt / click-flip own the motion in the moment, instead of
-   layering on top of the ambient spin. Drop this rule if you'd rather have
-   both run at once. */
-.site-header .brand:hover .logo-spin-wrap,
+/* Pause only during the click-flip so tilt + idle spin can compose on hover.
+   (Hover-pause made the mark look broken — mousing over to check it froze it.) */
 .site-header .brand .logo-spin-wrap:has(.is-spinning) {
   animation-play-state: paused;
 }
