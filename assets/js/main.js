@@ -79,7 +79,7 @@
       var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
       function apply() {
         document.documentElement.style.scrollBehavior =
-          (mq.matches || document.body.dataset.motion === 'off') ? 'auto' : 'smooth';
+          mq.matches ? 'auto' : 'smooth';
       }
       mq.addEventListener('change', apply);
       apply();
