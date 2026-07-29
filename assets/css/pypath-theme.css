@@ -129,7 +129,9 @@ body.page:not(.page-home) > .site-footer {
   --inspire-banner-h: 0px;
 }
 
-/* Attribution banner — slides in above the fixed header */
+/* Attribution banner — slides in above the fixed header.
+   Use fixed deep blues (not theme --pp-line tokens): in dark mode those
+   tokens become pale sky cyan and white/light text disappears into them. */
 .inspire-banner {
   position: fixed;
   top: 0;
@@ -141,14 +143,9 @@ body.page:not(.page-home) > .site-footer {
   align-items: center;
   justify-content: center;
   padding: 0 2.75rem;
-  background:
-    linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--pp-line-deep) 92%, #0369a1),
-      color-mix(in srgb, var(--pp-line) 88%, var(--pp-line-deep))
-    );
-  color: #f7fbfe;
-  box-shadow: 0 6px 18px color-mix(in srgb, var(--pp-ink) 12%, transparent);
+  background: linear-gradient(90deg, #075985 0%, #0369a1 55%, #0284c7 100%);
+  color: #ffffff;
+  box-shadow: 0 6px 18px rgba(3, 40, 70, 0.28);
   transform: translateY(-110%);
   transition: transform 0.48s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
@@ -172,19 +169,22 @@ body.page:not(.page-home) > .site-footer {
   letter-spacing: -0.02em;
   line-height: 1.2;
   text-align: center;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(3, 40, 70, 0.35);
 }
 
 .inspire-banner__link {
-  color: inherit;
+  color: #ffffff !important; /* beat global `a { color: var(--primary) }` */
   text-decoration: underline;
   text-decoration-thickness: 1.5px;
   text-underline-offset: 0.18em;
-  text-decoration-color: color-mix(in srgb, #fff 55%, transparent);
+  text-decoration-color: rgba(255, 255, 255, 0.7);
   transition: text-decoration-color 160ms ease, opacity 160ms ease;
 }
 
 .inspire-banner__link:hover {
-  text-decoration-color: #fff;
+  color: #ffffff !important;
+  text-decoration-color: #ffffff;
   opacity: 0.95;
 }
 
@@ -205,8 +205,8 @@ body.page:not(.page-home) > .site-footer {
   place-items: center;
   border: 0;
   border-radius: 8px;
-  background: color-mix(in srgb, #fff 14%, transparent);
-  color: inherit;
+  background: color-mix(in srgb, #fff 18%, transparent);
+  color: #ffffff;
   cursor: pointer;
   transition: background 160ms ease, transform 160ms ease;
 }
