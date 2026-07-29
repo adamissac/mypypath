@@ -126,6 +126,128 @@ body.page:not(.page-home) > .site-footer {
   --header-progress: 0px;
   /* Match measured fixed header (bar + chrome) so content sits flush beneath it */
   --header-height: 76px;
+  --inspire-banner-h: 0px;
+}
+
+/* Attribution banner — slides in above the fixed header */
+.inspire-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  height: 2.625rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2.75rem;
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--pp-line-deep) 92%, #0369a1),
+      color-mix(in srgb, var(--pp-line) 88%, var(--pp-line-deep))
+    );
+  color: #f7fbfe;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--pp-ink) 12%, transparent);
+  transform: translateY(-110%);
+  transition: transform 0.48s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.inspire-banner.is-visible {
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.inspire-banner.is-hiding {
+  transform: translateY(-110%);
+  pointer-events: none;
+}
+
+.inspire-banner__text {
+  margin: 0;
+  font-family: var(--pp-display);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.inspire-banner__link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: color-mix(in srgb, #fff 55%, transparent);
+  transition: text-decoration-color 160ms ease, opacity 160ms ease;
+}
+
+.inspire-banner__link:hover {
+  text-decoration-color: #fff;
+  opacity: 0.95;
+}
+
+.inspire-banner__link:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.inspire-banner__close {
+  position: absolute;
+  right: 0.65rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2rem;
+  height: 2rem;
+  display: inline-grid;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  background: color-mix(in srgb, #fff 14%, transparent);
+  color: inherit;
+  cursor: pointer;
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.inspire-banner__close:hover {
+  background: color-mix(in srgb, #fff 24%, transparent);
+}
+
+.inspire-banner__close:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.inspire-banner__close svg {
+  width: 14px;
+  height: 14px;
+}
+
+body.has-inspire-banner {
+  --inspire-banner-h: 2.625rem;
+  --header-height: calc(76px + var(--inspire-banner-h));
+}
+
+body.has-inspire-banner .site-header {
+  top: var(--inspire-banner-h) !important;
+  transition: top 0.48s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html.reduced-motion .inspire-banner,
+html.reduced-motion body.has-inspire-banner .site-header {
+  transition: none;
+}
+
+@media (max-width: 520px) {
+  .inspire-banner {
+    padding: 0 2.5rem;
+  }
+
+  .inspire-banner__text {
+    font-size: 0.84rem;
+  }
 }
 
 /* Document scrollport so sticky sidebars track correctly on every page */
