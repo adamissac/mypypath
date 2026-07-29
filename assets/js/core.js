@@ -96,7 +96,7 @@
         '<div class="header-accent" aria-hidden="true"></div>' +
         '<div class="container header-inner">' +
           '<a class="brand route" href="/">' +
-            '<img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo" width="36" height="36">' +
+            '<span class="logo-spin-wrap"><img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo" width="36" height="36"></span>' +
             '<span class="brand-text">PyPath</span>' +
           '</a>' +
           '<div class="header-actions">' +
@@ -418,7 +418,7 @@
       var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
       function apply() {
         document.documentElement.style.scrollBehavior =
-          (mq.matches || document.body.dataset.motion === 'off') ? 'auto' : 'smooth';
+          mq.matches ? 'auto' : 'smooth';
       }
       mq.addEventListener('change', apply);
       apply();
