@@ -297,13 +297,40 @@ def fix_unit_redirect(html: str, path: Path) -> str:
 def misc_fixes(html: str, path: Path) -> str:
     html = re.sub(
         r'<nav class="primary-nav" aria-label="Primary"(?: aria-expanded="[^"]*")?>',
-        '<nav class="primary-nav" aria-label="Primary" aria-expanded="false">',
+        '<nav class="primary-nav" aria-label="Primary">',
         html,
     )
+
+    # Skip link for keyboard users
+    if 'class="skip-link"' not in html:
+        html = re.sub(
+            r'(<body[^>]*>)',
+            r'\1\n    <a class="skip-link" href="#main-content">Skip to main content</a>',
+            html,
+            count=1,
+        )
+    html = re.sub(r'<main(\s|>)', r'<main id="main-content"\1', html, count=1)
+    html = html.replace('<main id="main-content" id="main-content"', '<main id="main-content"')
 
     html = html.replace('csawesome/index.html#"', 'csawesome/index.html"')
     html = html.replace('href="/index.html#curriculum"', 'href="/curriculum.html"')
     html = html.replace('href="/#curriculum"', 'href="/curriculum.html"')
+
+    # Lesson pages: ensure a useful meta description exists
+    if page_kind(path) == 'lesson' and 'meta name="description"' not in html:
+        m_unit = re.search(r'units/unit-(\d+)/', path.as_posix())
+        t = re.search(r'<title>\s*([^<]+?)\s*</title>', html)
+        raw = t.group(1).strip() if t else path.stem.replace('-', ' ').title()
+        raw = re.sub(r'^Unit\s+\d+\s*[•\-—]\s*', '', raw)
+        raw = re.sub(r'\s*[•\-—]\s*PyPath\s*$', '', raw)
+        unit_num = m_unit.group(1) if m_unit else '?'
+        desc = f'Unit {unit_num} • {raw} — Learn Python with interactive examples and exercises on PyPath.'
+        html = re.sub(
+            r'(<title>\s*[^<]+?\s*</title>)',
+            rf'\1\n    <meta name="description" content="{desc}" />',
+            html,
+            count=1,
+        )
 
     if path.name == 'index.html':
         if 'id="curriculum"' not in html:
