@@ -51,7 +51,6 @@ FOOTER = """    <footer class="site-footer">
             <ul class="footer-links">
               <li><a href="/curriculum.html" class="route">Curriculum</a></li>
               <li><a href="/sandbox.html" class="route">Sandbox</a></li>
-              <li><a href="/certifications.html" class="route">Certifications</a></li>
               <li><a href="/settings.html" class="route">Settings</a></li>
             </ul>
           </div>
@@ -71,8 +70,6 @@ def nav_active(path: Path, pattern: str) -> bool:
         return path.name == 'index.html' and path.parent == ROOT
     if pattern == 'sandbox':
         return path.name == 'sandbox.html'
-    if pattern == 'certs':
-        return path.name == 'certifications.html'
     if pattern == 'settings':
         return path.name == 'settings.html'
     if pattern == 'units':
@@ -101,7 +98,6 @@ def header_html(path: Path, show_progress: bool) -> str:
     cu = current_unit_from_path(path)
     home_a = ' active' if nav_active(path, 'home') else ''
     sandbox_a = ' active' if nav_active(path, 'sandbox') else ''
-    certs_a = ' active' if nav_active(path, 'certs') else ''
     settings_a = ' active' if nav_active(path, 'settings') else ''
     units_btn = ' aria-current="page"' if nav_active(path, 'units') else ''
 
@@ -146,7 +142,6 @@ def header_html(path: Path, show_progress: bool) -> str:
                 </div>
               </li>
               <li><a href="/sandbox.html" class="route{sandbox_a}">Sandbox</a></li>
-              <li><a href="/certifications.html" class="route{certs_a}">Certifications</a></li>
               <li><a href="/settings.html" class="route{settings_a}">Settings</a></li>
               </ul>
             </div>
