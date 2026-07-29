@@ -105,7 +105,7 @@ def process(path: Path) -> bool:
         r'</ul>',
         '<ul class="footer-links">\n'
         '            <li><a href="/curriculum.html" class="route">Curriculum</a></li>\n'
-        '            <li><a href="/certifications.html" class="route">Certifications</a></li>\n'
+        '            <li><a href="/sandbox.html" class="route">Sandbox</a></li>\n'
         '            <li><a href="/settings.html" class="route">Settings</a></li>\n'
         '          </ul>',
         html,

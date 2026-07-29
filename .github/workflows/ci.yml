@@ -16,8 +16,10 @@ jobs:
           python-version: "3.12"
       - name: Check local HTML links
         run: python scripts/check_links.py
-      - name: Verify bake layout branding
+      - name: Verify no Certifications footguns
         run: |
           grep -q "Capstone Project" scripts/bake_layout.py
           ! grep -q "Certification Prep" scripts/bake_layout.py
           ! grep -q certifications.html scripts/bake_layout.py
+          ! grep -q certifications.html fix_navigation.py
+          ! grep -q 'certifications.html" class="route">Certifications' scripts/upgrade_site.py
