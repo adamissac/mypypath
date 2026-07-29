@@ -27,3 +27,7 @@ Footer `.container` is full-width with the same side gutters as the header (24px
 - Removed placeholder / low-value settings: accent color, tooltips, focus mode, progress notifications, auto-save, keyboard shortcuts, study reminders
 - Kept: theme, font size, compact layout, code editor theme, lesson sidebar, export/reset
 - `theme.js` now clears legacy `pypath-motion` on load; motion respects OS `prefers-reduced-motion` only
+
+## Inspire banner contrast
+- Fixed “Inspired by C.S. Awesome” readability: banner used theme `--pp-line` tokens that go pale in dark mode, washing out the text
+- Locked deep blue gradient (`#075985` → `#0284c7`) and forced white text/link so it stays readable in light and dark
