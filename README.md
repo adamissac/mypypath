@@ -1,6 +1,6 @@
 # MyPyPath
 
-Personalized academic and career guidance site with interactive Python lessons, curriculum pages, and a sandbox. Static HTML/CSS/JS â€” no build step required.
+Personalized academic and career guidance site with interactive Python lessons, curriculum pages, and a sandbox. Static HTML/CSS/JS Ã¢â‚¬â€ no build step required.
 
 **Live site:** https://www.mypypath.com
 
@@ -39,6 +39,10 @@ Prefer editing shared assets in `assets/` so changes apply site-wide.
 
 ## License
 
-MIT â€” see [LICENSE](LICENSE).
+MIT Ã¢â‚¬â€ see [LICENSE](LICENSE).
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for local validation steps.
+## Troubleshooting
+
+- Run `py -3 scripts/check_links.py` and `py -3 scripts/check_meta.py` before deploying.
+- After editing shared layout, run `py -3 scripts/bake_layout.py` and commit regenerated HTML.
