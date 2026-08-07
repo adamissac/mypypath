@@ -1,6 +1,7 @@
 /* Summit 3D — replaces the static hero mountain (summit.png) with a
-   slowly rotating low-poly 3D mountain: faceted slopes, winding dashed
-   trail, numbered stops 1-10, and a flag on the peak.
+   slowly rotating low-poly 3D scene: a craggy main peak with a jagged
+   snowline, two rocky shoulder peaks, pine trees on the base, drifting
+   clouds, a winding dashed trail, numbered stops 1-10, and a summit flag.
 
    Progressive enhancement: the <img> stays for no-JS, reduced-motion,
    WebGL-less browsers, or if three.js fails to load. */
@@ -8,7 +9,8 @@
   'use strict';
 
   var THREE_SRC = '/assets/vendor/three.min.js';
-  var TURN_SECONDS = 36; // one full rotation — slow, ambient
+  var TURN_SECONDS = 36;  // mountain: one full rotation
+  var CLOUD_SECONDS = 70; // clouds drift slower for parallax
 
   function prefersReduced() {
     if (window.PyMotion && typeof window.PyMotion.prefersReduced === 'function') {
@@ -59,7 +61,7 @@
     return tex;
   }
 
-  /* Point on the mountain flank: radius shrinks linearly toward the peak */
+  /* Point on the main flank: radius shrinks linearly toward the peak */
   function trailPoint(t, baseRadius, height, turns, offset) {
     var angle = -Math.PI * 0.62 + t * turns * Math.PI * 2;
     var r = baseRadius * (1 - t * 0.96) + (offset || 0);
@@ -70,71 +72,164 @@
     );
   }
 
+  /* Continuous pseudo-noise from angle + height ratio. Deterministic in
+     its inputs, so shared cone-seam vertices displace identically and
+     the surface never cracks. */
+  function crag(a, h) {
+    return (
+      Math.sin(a * 3.1 + h * 5.2) * 0.45 +
+      Math.sin(a * 5.7 + 1.3 - h * 2.1) * 0.33 +
+      Math.sin(a * 9.3 + h * 11.0) * 0.22
+    );
+  }
+
+  /* Build one craggy peak; classify each face as rock or snow and append
+     it (with per-face colors) into the shared geometry buffers. */
+  function addPeak(buf, opts) {
+    var geo = new THREE.ConeGeometry(opts.radius, opts.height, opts.radialSegs, opts.heightSegs);
+    geo.translate(0, opts.height / 2, 0);
+    geo = geo.toNonIndexed();
+    var pos = geo.attributes.position;
+
+    var v = new THREE.Vector3();
+    for (var i = 0; i < pos.count; i++) {
+      v.set(pos.getX(i), pos.getY(i), pos.getZ(i));
+      var h = v.y / opts.height;
+      if (h > 0.004 && h < 0.996) {
+        var a = Math.atan2(v.z, v.x);
+        // strongest crags mid-slope; base ring and tip stay clean
+        var envelope = Math.sin(Math.PI * Math.min(h * 1.25, 1)) * (1 - h * 0.35);
+        var ridge = 1 + crag(a, h) * 0.16 * envelope;
+        v.x *= ridge;
+        v.z *= ridge;
+        v.y += crag(a + 2.4, h * 1.7) * 0.09 * envelope * opts.height * 0.33;
+      }
+      pos.setXYZ(i,
+        v.x + opts.x, v.y + (opts.y || 0), v.z + opts.z);
+    }
+
+    var rockDeep = new THREE.Color('#16334f');
+    var rockMid = new THREE.Color('#4f7ea8');
+    var rockHigh = new THREE.Color('#7fa3c4');
+    var snowLow = new THREE.Color('#cddcec');
+    var snowHigh = new THREE.Color('#f4f8fd');
+    var face = new THREE.Color();
+
+    for (var f = 0; f < pos.count; f += 3) {
+      var cy = (pos.getY(f) + pos.getY(f + 1) + pos.getY(f + 2)) / 3 - (opts.y || 0);
+      var cx = (pos.getX(f) + pos.getX(f + 1) + pos.getX(f + 2)) / 3 - opts.x;
+      var cz = (pos.getZ(f) + pos.getZ(f + 1) + pos.getZ(f + 2)) / 3 - opts.z;
+      var ca = Math.atan2(cz, cx);
+
+      // jagged absolute snowline shared by every peak
+      var snowY = buf.snowY + Math.sin(ca * 3.3 + 2.0) * 0.17 + Math.sin(ca * 7.1) * 0.1;
+      var isSnow = cy > snowY;
+
+      var t = Math.min(Math.max(cy / opts.height, 0), 1);
+      if (isSnow) {
+        face.copy(snowLow).lerp(snowHigh, Math.min((cy - snowY) / 0.9, 1));
+        face.offsetHSL(0, 0, (Math.random() - 0.5) * 0.045);
+      } else if (t < 0.5) {
+        face.copy(rockDeep).lerp(rockMid, t / 0.5);
+        face.offsetHSL(0, (Math.random() - 0.5) * 0.05, (Math.random() - 0.5) * 0.085);
+      } else {
+        face.copy(rockMid).lerp(rockHigh, (t - 0.5) / 0.5);
+        face.offsetHSL(0, (Math.random() - 0.5) * 0.05, (Math.random() - 0.5) * 0.085);
+      }
+
+      var target = isSnow ? buf.snow : buf.rock;
+      for (var k = 0; k < 3; k++) {
+        target.pos.push(pos.getX(f + k), pos.getY(f + k), pos.getZ(f + k));
+        target.col.push(face.r, face.g, face.b);
+      }
+    }
+  }
+
+  function meshFromBuffer(part, material) {
+    var g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(part.pos, 3));
+    g.setAttribute('color', new THREE.Float32BufferAttribute(part.col, 3));
+    g.computeVertexNormals();
+    return new THREE.Mesh(g, material);
+  }
+
+  function addTree(group, angle, dist, scale) {
+    var x = Math.cos(angle) * dist;
+    var z = Math.sin(angle) * dist;
+    var trunk = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.022, 0.03, 0.09, 5),
+      new THREE.MeshStandardMaterial({ color: '#5d4433', flatShading: true })
+    );
+    trunk.position.set(x, 0.045 * scale, z);
+    trunk.scale.setScalar(scale);
+    group.add(trunk);
+
+    var foliage = new THREE.MeshStandardMaterial({ color: '#2f6b57', flatShading: true, roughness: 0.9 });
+    var lower = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.17, 6), foliage);
+    lower.position.set(x, (0.09 + 0.085) * scale, z);
+    lower.scale.setScalar(scale);
+    group.add(lower);
+    var upper = new THREE.Mesh(new THREE.ConeGeometry(0.072, 0.14, 6), foliage);
+    upper.position.set(x, (0.09 + 0.16) * scale, z);
+    upper.scale.setScalar(scale);
+    group.add(upper);
+  }
+
+  function addCloud(cloudGroup, angle, dist, y, scale) {
+    var mat = new THREE.MeshStandardMaterial({
+      color: '#ffffff',
+      flatShading: true,
+      roughness: 1,
+      transparent: true,
+      opacity: 0.92
+    });
+    var cloud = new THREE.Group();
+    var lobes = [
+      [0, 0, 0, 0.16],
+      [0.17, -0.02, 0.03, 0.12],
+      [-0.16, -0.03, -0.02, 0.11],
+      [0.04, 0.05, -0.06, 0.1]
+    ];
+    for (var i = 0; i < lobes.length; i++) {
+      var m = new THREE.Mesh(new THREE.IcosahedronGeometry(lobes[i][3], 0), mat);
+      m.position.set(lobes[i][0], lobes[i][1], lobes[i][2]);
+      cloud.add(m);
+    }
+    cloud.position.set(Math.cos(angle) * dist, y, Math.sin(angle) * dist);
+    cloud.scale.set(scale, scale * 0.62, scale);
+    cloud.userData.baseY = y;
+    cloudGroup.add(cloud);
+    return cloud;
+  }
+
   function buildMountain(group) {
     var HEIGHT = 3.0;
     var RADIUS = 1.9;
 
-    /* Faceted cone — jittered vertices + per-face colors for the
-       low-poly look of the original art */
-    var geo = new THREE.ConeGeometry(RADIUS, HEIGHT, 9, 5);
-    geo.translate(0, HEIGHT / 2, 0);
-    geo = geo.toNonIndexed();
+    var buf = {
+      snowY: HEIGHT * 0.62,
+      rock: { pos: [], col: [] },
+      snow: { pos: [], col: [] }
+    };
 
-    var pos = geo.attributes.position;
-    var jitter = {};
-    for (var i = 0; i < pos.count; i++) {
-      var x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
-      if (y > 0.01 && y < HEIGHT - 0.01) {
-        var key = x.toFixed(3) + ',' + y.toFixed(3) + ',' + z.toFixed(3);
-        if (!(key in jitter)) {
-          jitter[key] = {
-            r: 1 + (Math.random() - 0.5) * 0.16,
-            y: (Math.random() - 0.5) * 0.14
-          };
-        }
-        var j = jitter[key];
-        pos.setX(i, x * j.r);
-        pos.setZ(i, z * j.r);
-        pos.setY(i, y + j.y);
-      }
-    }
+    /* Main peak + two rocky shoulder peaks for a craggier silhouette.
+       Shoulders stay under the snowline and clear of the trail's spiral. */
+    addPeak(buf, { radius: RADIUS, height: HEIGHT, radialSegs: 11, heightSegs: 6, x: 0, z: 0 });
+    addPeak(buf, { radius: 0.82, height: 1.32, radialSegs: 7, heightSegs: 3, x: Math.cos(2.4) * 1.12, z: Math.sin(2.4) * 1.12 });
+    addPeak(buf, { radius: 0.68, height: 0.95, radialSegs: 6, heightSegs: 3, x: Math.cos(5.3) * 1.28, z: Math.sin(5.3) * 1.28 });
 
-    /* Face colors: deep navy at the base to pale ice-blue near the
-       snow line, with slight per-face variation */
-    var base = new THREE.Color('#1d3f5e');
-    var mid = new THREE.Color('#5b82a6');
-    var snow = new THREE.Color('#dbe7f3');
-    var colors = new Float32Array(pos.count * 3);
-    var face = new THREE.Color();
-    for (var f = 0; f < pos.count; f += 3) {
-      var cy = (pos.getY(f) + pos.getY(f + 1) + pos.getY(f + 2)) / 3;
-      var t = Math.min(Math.max(cy / HEIGHT, 0), 1);
-      if (t < 0.55) {
-        face.copy(base).lerp(mid, t / 0.55);
-      } else {
-        face.copy(mid).lerp(snow, (t - 0.55) / 0.45);
-      }
-      var v = (Math.random() - 0.5) * 0.07;
-      face.offsetHSL(0, 0, v);
-      for (var k = 0; k < 3; k++) {
-        colors[(f + k) * 3] = face.r;
-        colors[(f + k) * 3 + 1] = face.g;
-        colors[(f + k) * 3 + 2] = face.b;
-      }
-    }
-    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-    geo.computeVertexNormals();
-
-    var mountain = new THREE.Mesh(
-      geo,
-      new THREE.MeshStandardMaterial({
-        vertexColors: true,
-        flatShading: true,
-        roughness: 0.85,
-        metalness: 0.05
-      })
-    );
-    group.add(mountain);
+    group.add(meshFromBuffer(buf.rock, new THREE.MeshStandardMaterial({
+      vertexColors: true,
+      flatShading: true,
+      roughness: 0.88,
+      metalness: 0.04
+    })));
+    group.add(meshFromBuffer(buf.snow, new THREE.MeshStandardMaterial({
+      vertexColors: true,
+      flatShading: true,
+      roughness: 0.55,
+      metalness: 0.0
+    })));
 
     /* Ground disc, echoing the pale ellipse under the original art */
     var disc = new THREE.Mesh(
@@ -145,7 +240,14 @@
     disc.position.y = -0.02;
     group.add(disc);
 
-    /* Winding dashed trail up the flank */
+    /* Pines scattered on the apron between the shoulders and the rim */
+    var treeSpots = [0.3, 0.9, 1.6, 2.9, 3.5, 4.1, 4.8, 5.6, 6.0];
+    for (var ti = 0; ti < treeSpots.length; ti++) {
+      addTree(group, treeSpots[ti] + Math.sin(ti * 7.3) * 0.15,
+        2.08 + (ti % 3) * 0.15, 0.85 + ((ti * 37) % 10) / 22);
+    }
+
+    /* Winding dashed trail up the main flank */
     var TURNS = 2.2;
     var pts = [];
     for (var s = 0; s <= 160; s++) {
@@ -203,6 +305,17 @@
     return { height: HEIGHT };
   }
 
+  function buildClouds(scene) {
+    var cloudGroup = new THREE.Group();
+    scene.add(cloudGroup);
+    var clouds = [
+      addCloud(cloudGroup, 0.8, 2.15, 2.25, 1.0),
+      addCloud(cloudGroup, 2.9, 2.3, 1.7, 0.8),
+      addCloud(cloudGroup, 4.9, 2.05, 2.6, 0.65)
+    ];
+    return { group: cloudGroup, clouds: clouds };
+  }
+
   function init() {
     var host = document.querySelector('.home-summit');
     var img = host && host.querySelector('.home-summit__art');
@@ -212,12 +325,14 @@
     var group = new THREE.Group();
     scene.add(group);
     var dims = buildMountain(group);
+    var sky = buildClouds(scene);
 
-    scene.add(new THREE.AmbientLight('#ffffff', 0.75));
-    var sun = new THREE.DirectionalLight('#ffffff', 1.1);
+    scene.add(new THREE.AmbientLight('#ffffff', 0.62));
+    scene.add(new THREE.HemisphereLight('#dcecff', '#31506e', 0.5));
+    var sun = new THREE.DirectionalLight('#fff4e0', 1.15);
     sun.position.set(4, 6, 3);
     scene.add(sun);
-    var fill = new THREE.DirectionalLight('#bcd7ef', 0.35);
+    var fill = new THREE.DirectionalLight('#9fc3e8', 0.4);
     fill.position.set(-4, 2, -2);
     scene.add(fill);
 
@@ -252,12 +367,19 @@
     var onScreen = true;
     var rafId = null;
     var last = null;
+    var elapsed = 0;
 
     function frame(now) {
       rafId = null;
       if (last !== null) {
         var dt = Math.min((now - last) / 1000, 0.1);
+        elapsed += dt;
         group.rotation.y += dt * (Math.PI * 2) / TURN_SECONDS;
+        sky.group.rotation.y += dt * (Math.PI * 2) / CLOUD_SECONDS;
+        for (var i = 0; i < sky.clouds.length; i++) {
+          sky.clouds[i].position.y =
+            sky.clouds[i].userData.baseY + Math.sin(elapsed * 0.45 + i * 2.1) * 0.06;
+        }
       }
       last = now;
       renderer.render(scene, camera);
