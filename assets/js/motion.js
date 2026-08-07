@@ -165,7 +165,8 @@
       ['.home-people', '.home-section__head, .home-person', 'up'],
       ['.home-endcta', '.home-endcta__inner', 'up'],
       ['.path-journey__intro', null, 'up'],
-      ['.page-unit .lesson-content', '.content-section', 'up'],
+      /* '.page-unit .lesson-content' pair removed — lesson reading
+         content must not animate (students scroll it to read). */
       ['.page-curriculum .section-head', null, 'up']
     ];
 
@@ -285,7 +286,105 @@
     if (map) map.classList.add('path-map--alive');
   }
 
+  /* First-visit terminal boot intro + entrance choreography trigger.
+     The inline gate script in index.html sets pp-wait/pp-boot before
+     first paint; this builds and plays the overlay (pp-boot) or starts
+     the choreography immediately (pp-wait only). Pages without those
+     classes (every non-home page, reduced motion, JS-off) are untouched. */
+  function initBootIntro() {
+    var root = document.documentElement;
+
+    function go() {
+      if (!root.classList.contains('pp-go')) root.classList.add('pp-go');
+    }
+
+    if (!root.classList.contains('pp-boot')) {
+      if (root.classList.contains('pp-wait')) requestAnimationFrame(go);
+      return;
+    }
+
+    try { localStorage.setItem('pp_boot_seen', '1'); } catch (e) {}
+
+    var overlay = document.createElement('div');
+    overlay.className = 'pp-boot-overlay';
+    overlay.setAttribute('aria-hidden', 'true');
+    var term = document.createElement('pre');
+    term.className = 'pp-boot-term';
+    var line1 = document.createElement('span');
+    line1.innerHTML = '<span class="pp-boot-prompt">$ </span><span class="pp-boot-cmd"></span>';
+    var caret = document.createElement('span');
+    caret.className = 'pp-boot-caret';
+    var line2 = document.createElement('span');
+    var line3 = document.createElement('span');
+    term.appendChild(line1);
+    term.appendChild(caret);
+    term.appendChild(line2);
+    term.appendChild(line3);
+    overlay.appendChild(term);
+    document.body.appendChild(overlay);
+
+    var CMD = 'python3 pypath.py';
+    var cmdEl = line1.querySelector('.pp-boot-cmd');
+    var timers = [];
+    var finished = false;
+
+    function later(fn, ms) { timers.push(window.setTimeout(fn, ms)); }
+
+    function exit(fast) {
+      if (finished) return;
+      finished = true;
+      timers.forEach(window.clearTimeout);
+      window.removeEventListener('pointerdown', skip, true);
+      window.removeEventListener('keydown', skip, true);
+      window.removeEventListener('wheel', skip, true);
+      window.removeEventListener('touchstart', skip, true);
+      /* Drop the pre-paint cover first (hidden behind the opaque
+         overlay, so the swap is invisible), then wipe the overlay
+         up and start the choreography underneath. */
+      root.classList.remove('pp-boot');
+      go();
+      overlay.classList.add('pp-boot-exit');
+      window.setTimeout(function () {
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      }, fast ? 200 : 320);
+    }
+
+    function skip() { exit(true); }
+
+    window.addEventListener('pointerdown', skip, true);
+    window.addEventListener('keydown', skip, true);
+    window.addEventListener('wheel', skip, { capture: true, passive: true });
+    window.addEventListener('touchstart', skip, { capture: true, passive: true });
+
+    /* Type the command (input is typed; output just prints — like a
+       real terminal). Budget: ~480ms type + ~320ms progress + 100ms
+       ready + 120ms hold + 280ms wipe ≈ 1.3s. */
+    var i = 0;
+    function typeChar() {
+      if (finished) return;
+      cmdEl.textContent = CMD.slice(0, i + 1);
+      i++;
+      if (i < CMD.length) later(typeChar, 26);
+      else later(progress, 90);
+    }
+
+    var step = 0;
+    function progress() {
+      if (finished) return;
+      step++;
+      line2.textContent = '\nLoading units [' + '#'.repeat(step) + '.'.repeat(10 - step) + '] ' + step + '/10';
+      if (step < 10) later(progress, 30);
+      else later(function () {
+        line3.innerHTML = '\n<span class="pp-boot-ok">✓ ready</span>';
+        later(function () { exit(false); }, 140);
+      }, 90);
+    }
+
+    later(typeChar, 120);
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
+    initBootIntro();
     migrateLegacyReveals();
     staggerContainers();
     autoEnhanceReveals();

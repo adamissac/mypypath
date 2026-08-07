@@ -119,6 +119,7 @@
 
     if (window.Pyodide) {
       window.Pyodide.scheduleWarmup();
+      if (window.Pyodide.attachBootPanel) window.Pyodide.attachBootPanel(outputEl);
     }
 
     if (window.PyIcons) {
@@ -151,10 +152,15 @@
 
       runBtn.disabled = true;
       runBtn.setAttribute('aria-busy', 'true');
-      setOutput(outputEl, '<span class="hero-live-output-loading">Loading Python…</span>', false);
 
       try {
         if (!window.Pyodide) throw new Error('Python runtime unavailable');
+        // While the runtime is still booting, the boot console owns the
+        // panel — leave its real-event lines in place instead of
+        // overwriting them with a generic loading message.
+        if (!window.pyodideReady && window.Pyodide.attachBootPanel) {
+          window.Pyodide.attachBootPanel(outputEl);
+        }
         await window.Pyodide.ensureReady();
 
         setOutput(outputEl, '<span class="hero-live-output-loading">Running…</span>', false);
