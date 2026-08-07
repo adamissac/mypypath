@@ -1416,3 +1416,95 @@ main .container,
 @media (prefers-reduced-motion: reduce) {
   .pp-boot-console .pp-boot-caret { display: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   Cool pass — signature motion moments (owner-requested upgrade)
+   Still transform/opacity only; everything gated on motion pref.
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: no-preference) {
+
+  /* Brand shine — a light sweep crosses "PyPath" after the entrance,
+     then again every few seconds. Gradient uses the page's own ink
+     and line tokens, clipped to the letterforms. */
+  html.pp-go body.page-home .home-brand span {
+    background: linear-gradient(
+      105deg,
+      var(--home-ink, var(--pp-ink)) 0%,
+      var(--home-ink, var(--pp-ink)) 40%,
+      var(--home-line, var(--pp-line)) 50%,
+      var(--home-ink, var(--pp-ink)) 60%,
+      var(--home-ink, var(--pp-ink)) 100%
+    );
+    background-size: 300% 100%;
+    background-position: 110% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: pp-brand-shine 5.5s ease-in-out 1.3s infinite;
+  }
+
+  @keyframes pp-brand-shine {
+    0% { background-position: 110% 0; }
+    22% { background-position: -60% 0; }
+    100% { background-position: -60% 0; }
+  }
+
+  /* Summit art — slow levitation, like the mountain is breathing.
+     Lives on the inner img so it composes with the container's
+     entrance fade. */
+  body.page-home .home-summit__art {
+    animation: pp-float 7s ease-in-out 1.6s infinite;
+  }
+
+  @keyframes pp-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-9px); }
+  }
+
+  /* Trail stops — springier arrival pop. home-path.css loads after
+     this sheet, so the extra .path-map ancestor is required to win
+     over its flatter path-stop-pop. Settles at the same 1.18
+     steady-state scale the lit dot already uses. */
+  .path-map .g-stop.is-lit .path-stop-dot {
+    animation: pp-stop-spring 560ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes pp-stop-spring {
+    0% { transform: scale(0.6); }
+    55% { transform: scale(1.5); }
+    100% { transform: scale(1.18); }
+  }
+
+  /* Primary buttons — a light streak sweeps across on hover. */
+  .btn-path--primary,
+  .btn.btn-primary {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-path--primary::after,
+  .btn.btn-primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      105deg,
+      transparent 38%,
+      rgba(255, 255, 255, 0.32) 50%,
+      transparent 62%
+    );
+    transform: translateX(-130%);
+  }
+
+  .btn-path--primary:hover::after,
+  .btn.btn-primary:hover::after {
+    animation: pp-btn-shine 650ms ease;
+  }
+
+  @keyframes pp-btn-shine {
+    to { transform: translateX(130%); }
+  }
+}

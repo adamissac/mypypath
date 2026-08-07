@@ -7,20 +7,16 @@
     <script>
       /* Boot-intro gate — must run before first paint. Sets:
          pp-wait  → entrance choreography pending (motion allowed)
-         pp-boot  → first-visit terminal overlay will play (cover painted via CSS)
-         Reduced-motion users skip both; the intro is marked seen so it never plays. */
+         pp-boot  → terminal overlay plays (cover painted via CSS)
+         The intro plays on every visit (site owner's call); any click,
+         key, or scroll skips it. Reduced-motion users skip both. */
       (function () {
         try {
           var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-          if (reduce) {
-            try { localStorage.setItem('pp_boot_seen', '1'); } catch (e) {}
-            return;
-          }
+          if (reduce) return;
           var root = document.documentElement;
           root.classList.add('pp-wait');
-          var seen = null;
-          try { seen = localStorage.getItem('pp_boot_seen'); } catch (e) { seen = '1'; }
-          if (!seen) root.classList.add('pp-boot');
+          root.classList.add('pp-boot');
           /* Watchdog: if motion.js never lands, force the page visible. */
           window.setTimeout(function () {
             if (root.classList.contains('pp-go')) return;
@@ -28,7 +24,7 @@
             root.classList.add('pp-go');
             var ov = document.querySelector('.pp-boot-overlay');
             if (ov && ov.parentNode) ov.parentNode.removeChild(ov);
-          }, 3500);
+          }, 5500);
         } catch (e) { /* no classes added — page renders statically */ }
       })();
     </script>
