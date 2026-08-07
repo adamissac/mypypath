@@ -4,6 +4,39 @@
   <head>
     <meta charset="utf-8" />
     <script src="/assets/js/theme-init.js"></script>
+    <script>
+      /* Boot-intro gate — must run before first paint. Sets:
+         pp-wait  → entrance choreography pending (motion allowed)
+         pp-boot  → terminal overlay plays (cover painted via CSS)
+         The intro plays on fresh opens and reloads, but NOT when the
+         visitor arrives by clicking an internal link (core.js marks
+         those with sessionStorage 'pypath-nav', cleared after entry —
+         this script runs before the clear) or via back/forward. Any
+         click, key, or scroll skips it. Reduced-motion users skip both. */
+      (function () {
+        try {
+          var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          if (reduce) return;
+          var root = document.documentElement;
+          root.classList.add('pp-wait');
+          var entry = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || null;
+          var navType = entry ? entry.type : 'navigate';
+          var fromLink = false;
+          try { fromLink = sessionStorage.getItem('pypath-nav') === '1'; } catch (e) {}
+          if (navType === 'reload' || (navType === 'navigate' && !fromLink)) {
+            root.classList.add('pp-boot');
+          }
+          /* Watchdog: if motion.js never lands, force the page visible. */
+          window.setTimeout(function () {
+            if (root.classList.contains('pp-go')) return;
+            root.classList.remove('pp-boot');
+            root.classList.add('pp-go');
+            var ov = document.querySelector('.pp-boot-overlay');
+            if (ov && ov.parentNode) ov.parentNode.removeChild(ov);
+          }, 5500);
+        } catch (e) { /* no classes added — page renders statically */ }
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>PyPath | Learn Python the Modern Way</title>
     <meta name="description" content="Follow the PyPath — a 10-unit trail from your first program to real projects, with interactive lessons that run in your browser." />
