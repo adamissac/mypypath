@@ -158,9 +158,13 @@
       return;
     }
 
-    outputEl.innerHTML = '<div class="output-loading">Loading Python interpreter...</div>';
-
     try {
+      // Boot console owns the panel while the runtime loads; only show
+      // "Running..." once Python is actually ready to execute.
+      if (!window.pyodideReady && window.Pyodide && window.Pyodide.attachBootPanel) {
+        window.Pyodide.attachBootPanel(outputEl);
+        await window.Pyodide.ensureReady();
+      }
       outputEl.innerHTML = '<div class="output-loading">Running...</div>';
       var result = await window.Pyodide.runCode(code);
       renderRunOutput(outputEl, result);
@@ -333,7 +337,16 @@
   document.addEventListener('DOMContentLoaded', function () {
     if (!document.querySelector('.code-editor-small')) return;
 
-    if (window.Pyodide) window.Pyodide.scheduleWarmup();
+    if (window.Pyodide) {
+      window.Pyodide.scheduleWarmup();
+      // Practice runners get the boot console; exercise panels keep
+      // their "Check Answer" hint (different copy, different action).
+      if (window.Pyodide.attachBootPanel) {
+        document.querySelectorAll('.editor-output').forEach(function (el) {
+          if (!el.closest('[data-exercise-id]')) window.Pyodide.attachBootPanel(el);
+        });
+      }
+    }
     // Capture defaults before CodeMirror replaces textareas, then bind buttons
     // with addEventListener so Check/Show/Run/Reset keep working even if an
     // onclick attribute was corrupted by nested quotes.
