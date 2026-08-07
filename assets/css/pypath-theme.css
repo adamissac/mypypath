@@ -1509,3 +1509,36 @@ main .container,
     to { transform: translateX(130%); }
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   Lesson layout — one shared width for cards and copy
+
+   The lesson grid was explicitly uncapped (max-width: none), so on a
+   wide monitor the cards grew to the full viewport while paragraphs
+   stayed pinned at 62ch. The result was a very large, mostly empty
+   card with its text crumpled into the top-left corner, and headings
+   (which had no cap) visibly out of line with the paragraphs under
+   them. Cap the column rather than the text, so both share a width.
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (min-width: 981px) {
+  .page-unit .layout-course {
+    max-width: 1280px !important;
+    margin-inline: auto !important;
+  }
+
+  /* Collapsing the sidebar hands the whole 1280px to one column;
+     keep the measure readable and centered instead of full-bleed. */
+  .page-unit .course-main {
+    max-width: 920px;
+    margin-inline: auto;
+  }
+}
+
+/* Copy fills its card instead of stopping short at 62ch. The column
+   cap above is what now keeps the line length readable. */
+.page-unit .lesson-content p,
+.page-unit .content-section p,
+.page-unit .lesson-overview p {
+  max-width: none;
+}
