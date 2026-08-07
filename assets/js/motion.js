@@ -165,7 +165,8 @@
       ['.home-people', '.home-section__head, .home-person', 'up'],
       ['.home-endcta', '.home-endcta__inner', 'up'],
       ['.path-journey__intro', null, 'up'],
-      ['.page-unit .lesson-content', '.content-section', 'up'],
+      /* '.page-unit .lesson-content' pair removed — lesson reading
+         content must not animate (students scroll it to read). */
       ['.page-curriculum .section-head', null, 'up']
     ];
 
@@ -229,6 +230,14 @@
       // On home, play the spin instead of reloading "/"
       if (document.body.classList.contains('page-home')) {
         e.preventDefault();
+        // core.js's capture-phase click handler has already shown the
+        // page-transition film + nav progress expecting a navigation
+        // that now won't happen — clear them or they stay stuck.
+        var pt = document.getElementById('page-transition');
+        if (pt) pt.classList.remove('is-active');
+        var np = document.getElementById('nav-progress');
+        if (np) np.classList.remove('is-visible', 'is-active');
+        try { sessionStorage.removeItem('pypath-nav'); } catch (err) {}
       }
       spinning = true;
       logo.classList.add('is-spinning');
@@ -285,7 +294,120 @@
     if (map) map.classList.add('path-map--alive');
   }
 
+  /* First-visit terminal boot intro + entrance choreography trigger.
+     The inline gate script in index.html sets pp-wait/pp-boot before
+     first paint; this builds and plays the overlay (pp-boot) or starts
+     the choreography immediately (pp-wait only). Pages without those
+     classes (every non-home page, reduced motion, JS-off) are untouched. */
+  function initBootIntro() {
+    var root = document.documentElement;
+
+    function go() {
+      if (!root.classList.contains('pp-go')) root.classList.add('pp-go');
+    }
+
+    if (!root.classList.contains('pp-boot')) {
+      if (root.classList.contains('pp-wait')) requestAnimationFrame(go);
+      return;
+    }
+
+    var overlay = document.createElement('div');
+    overlay.className = 'pp-boot-overlay';
+    overlay.setAttribute('aria-hidden', 'true');
+    var term = document.createElement('pre');
+    term.className = 'pp-boot-term';
+    var line1 = document.createElement('span');
+    line1.innerHTML = '<span class="pp-boot-prompt">$ </span><span class="pp-boot-cmd"></span>';
+    var caret = document.createElement('span');
+    caret.className = 'pp-boot-caret';
+    var lineBanner = document.createElement('span');
+    var line2 = document.createElement('span');
+    var lineCompile = document.createElement('span');
+    var line3 = document.createElement('span');
+    term.appendChild(line1);
+    term.appendChild(caret);
+    term.appendChild(lineBanner);
+    term.appendChild(line2);
+    term.appendChild(lineCompile);
+    term.appendChild(line3);
+    overlay.appendChild(term);
+    document.body.appendChild(overlay);
+
+    var CMD = 'python3 pypath.py';
+    var cmdEl = line1.querySelector('.pp-boot-cmd');
+    var timers = [];
+    var finished = false;
+
+    function later(fn, ms) { timers.push(window.setTimeout(fn, ms)); }
+
+    function exit(fast) {
+      if (finished) return;
+      finished = true;
+      timers.forEach(window.clearTimeout);
+      window.removeEventListener('pointerdown', skip, true);
+      window.removeEventListener('keydown', skip, true);
+      window.removeEventListener('wheel', skip, true);
+      window.removeEventListener('touchstart', skip, true);
+      /* Drop the pre-paint cover first (hidden behind the opaque
+         overlay, so the swap is invisible), then wipe the overlay
+         up and start the choreography underneath. */
+      root.classList.remove('pp-boot');
+      go();
+      overlay.classList.add('pp-boot-exit');
+      window.setTimeout(function () {
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      }, fast ? 200 : 320);
+    }
+
+    function skip() { exit(true); }
+
+    window.addEventListener('pointerdown', skip, true);
+    window.addEventListener('keydown', skip, true);
+    window.addEventListener('wheel', skip, { capture: true, passive: true });
+    window.addEventListener('touchstart', skip, { capture: true, passive: true });
+
+    /* Type the command (input is typed; output just prints — like a
+       real terminal). Deliberately unhurried: ~510ms type + banner +
+       ~550ms progress + compile + ready + 380ms hold + 320ms wipe
+       ≈ 2.9s. Any input skips straight to the page. */
+    var i = 0;
+    function typeChar() {
+      if (finished) return;
+      cmdEl.textContent = CMD.slice(0, i + 1);
+      i++;
+      if (i < CMD.length) later(typeChar, 30);
+      else later(banner, 140);
+    }
+
+    function banner() {
+      if (finished) return;
+      lineBanner.textContent = '\nPyPath 1.0 (trailhead) — ten stops, one destination';
+      later(progress, 260);
+    }
+
+    var step = 0;
+    function progress() {
+      if (finished) return;
+      step++;
+      line2.textContent = '\nLoading units [' + '#'.repeat(step) + '.'.repeat(10 - step) + '] ' + step + '/10';
+      if (step < 10) later(progress, 55);
+      else later(compile, 180);
+    }
+
+    function compile() {
+      if (finished) return;
+      lineCompile.innerHTML = '\nDrawing trail map ... <span class="pp-boot-ok">✓</span>';
+      later(function () {
+        line3.innerHTML = '\n<span class="pp-boot-ok">✓ ready — welcome to the trail</span>';
+        later(function () { exit(false); }, 380);
+      }, 240);
+    }
+
+    later(typeChar, 140);
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
+    initBootIntro();
     migrateLegacyReveals();
     staggerContainers();
     autoEnhanceReveals();
