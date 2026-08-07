@@ -1523,20 +1523,17 @@ main .container,
 
 @media (min-width: 981px) {
   .page-unit .layout-course {
-    max-width: 1280px !important;
+    /* Fluid: the lesson uses most of the window, with a modest gutter
+       rather than a narrow centred column. The ceiling only engages on
+       very wide displays, so laptops are effectively full-width. */
+    max-width: 2000px !important;
     margin-inline: auto !important;
-  }
-
-  /* Collapsing the sidebar hands the whole 1280px to one column;
-     keep the measure readable and centered instead of full-bleed. */
-  .page-unit .course-main {
-    max-width: 920px;
-    margin-inline: auto;
+    padding-inline: clamp(1.5rem, 3.5vw, 4rem) !important;
   }
 }
 
 /* Copy fills its card instead of stopping short at 62ch. The column
-   cap above is what now keeps the line length readable. */
+   width is what now sets line length. */
 .page-unit .lesson-content p,
 .page-unit .content-section p,
 .page-unit .lesson-overview p {
