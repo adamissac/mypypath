@@ -1231,3 +1231,188 @@ main .container,
 .page-404 h1 {
   font-family: var(--pp-display);
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   Boot intro + entrance choreography + Pyodide boot console
+   (branch claude/boot-and-motion — all effects transform/opacity
+   only, gated on prefers-reduced-motion)
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: no-preference) {
+
+  /* ── First-visit terminal boot overlay (homepage only) ────────
+     html.pp-boot is set pre-paint by the inline gate script; the
+     body::before cover guarantees zero flash of page content
+     before motion.js injects the overlay. Terminal always uses the
+     dark palette values — a terminal is dark in either site theme. */
+  html.pp-boot body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: #0c131a;
+    z-index: 9998;
+  }
+
+  .pp-boot-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0c131a;
+    transition: transform 280ms cubic-bezier(0.55, 0, 0.3, 1), opacity 280ms ease;
+  }
+
+  .pp-boot-overlay.pp-boot-exit {
+    transform: translateY(-100%);
+    opacity: 0.6;
+  }
+
+  .pp-boot-term {
+    margin: 0;
+    min-width: min(420px, 86vw);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: clamp(0.85rem, 1.6vw, 1rem);
+    line-height: 1.9;
+    color: #b7d4e4;
+    white-space: pre-wrap;
+  }
+
+  .pp-boot-term .pp-boot-prompt { color: #89a8ba; }
+  .pp-boot-term .pp-boot-cmd { color: #e8f4fb; }
+  .pp-boot-term .pp-boot-ok { color: #38bdf8; }
+
+  .pp-boot-caret {
+    display: inline-block;
+    width: 0.6em;
+    height: 1.05em;
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    background: #38bdf8;
+    animation: pp-caret-blink 820ms steps(1) infinite;
+  }
+
+  /* ── Entrance choreography (homepage) ─────────────────────────
+     Hidden only while html.pp-wait is set (inline script, motion
+     allowed); html.pp-go starts the sequence. Both classes gone
+     (JS off) → everything renders statically. Total ≤ 900ms.
+     Deliberately does NOT touch .brand/.logo (logo tilt/flip owns
+     those) or the .path-journey trail section. */
+  html.pp-wait body.page-home .site-header,
+  html.pp-wait body.page-home .home-brand,
+  html.pp-wait body.page-home .home-hero__headline,
+  html.pp-wait body.page-home .home-hero__lead,
+  html.pp-wait body.page-home .home-hero__intro .home-cta-row .btn-path,
+  html.pp-wait body.page-home .home-hero__scrollhint,
+  html.pp-wait body.page-home .home-summit {
+    opacity: 0;
+  }
+
+  html.pp-go body.page-home .site-header {
+    animation: pp-enter-drop 360ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) 0ms both;
+  }
+  html.pp-go body.page-home .home-brand {
+    animation: pp-enter-rise 420ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) 80ms both;
+  }
+  html.pp-go body.page-home .home-hero__headline {
+    animation: pp-enter-rise 420ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) 160ms both;
+  }
+  html.pp-go body.page-home .home-hero__lead {
+    animation: pp-enter-rise 420ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) 240ms both;
+  }
+  html.pp-go body.page-home .home-summit {
+    animation: pp-enter-fade 500ms ease-out 220ms both;
+  }
+  html.pp-go body.page-home .home-hero__intro .home-cta-row .btn-path {
+    animation: pp-enter-pop 260ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) 320ms both;
+  }
+  html.pp-go body.page-home .home-hero__intro .home-cta-row .btn-path:nth-child(2) {
+    animation-delay: 360ms;
+  }
+  html.pp-go body.page-home .home-hero__scrollhint {
+    animation: pp-enter-fade 380ms ease-out 440ms both;
+  }
+
+  /* ── Micro-interactions (Feature 4 additions) ─────────────────
+     Card hover lift already exists (.unit-card:hover); buttons get
+     a gentle press state. */
+  .btn-path:active,
+  .btn:active,
+  .hero-live-run:active {
+    transform: translateY(1px) scale(0.985);
+  }
+}
+
+@keyframes pp-caret-blink {
+  50% { opacity: 0; }
+}
+
+@keyframes pp-enter-drop {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes pp-enter-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes pp-enter-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pp-enter-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ── Pyodide boot console (all code runners) ────────────────────
+   Lines are appended by pyodide-loader.js on real load events.
+   Inherits each panel's background; accents use theme tokens so it
+   reads correctly in light and dark panels alike. Outside the
+   reduced-motion gate: the lines themselves must always render —
+   only the type-in animation and caret blink are motion. */
+.pp-boot-console {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85em;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.pp-boot-console .pp-line { display: block; }
+.pp-boot-console .pp-ok { color: var(--pp-line, #0ea5e9); }
+.pp-boot-console .pp-ready { color: var(--pp-line-deep, #0284c7); }
+.pp-boot-console .pp-err { color: #d64545; }
+
+.pp-boot-retry {
+  margin-top: 6px;
+  padding: 4px 12px;
+  font: inherit;
+  font-size: 0.9em;
+  color: var(--pp-line-deep, #0284c7);
+  background: transparent;
+  border: 1px solid var(--pp-border, #d0e4ef);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.pp-boot-retry:hover {
+  border-color: var(--pp-line, #0ea5e9);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pp-boot-console .pp-line {
+    animation: pp-enter-fade 240ms ease-out both;
+  }
+  .pp-boot-console .pp-boot-caret {
+    background: var(--pp-line, #0ea5e9);
+  }
+}
+
+/* Reduced motion: no caret, lines appear instantly */
+@media (prefers-reduced-motion: reduce) {
+  .pp-boot-console .pp-boot-caret { display: none; }
+}
