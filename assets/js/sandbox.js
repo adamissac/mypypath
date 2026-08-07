@@ -248,9 +248,15 @@ for i in range(3):
     }
 
     output.classList.remove('is-revealing');
-    output.innerHTML = '<p class="output-placeholder muted">Running…</p>';
 
     try {
+      // While Pyodide is still booting, the boot console shows honest
+      // progress in the panel; "Running…" only once it's truly running.
+      if (!window.pyodideReady && window.Pyodide && window.Pyodide.attachBootPanel) {
+        window.Pyodide.attachBootPanel(output);
+        await ensurePyodide();
+      }
+      output.innerHTML = '<p class="output-placeholder muted">Running…</p>';
       const result = await window.Pyodide.runCode(code);
       let outputHTML = '';
 
@@ -404,6 +410,10 @@ for i in range(3):
 
     if (window.Pyodide && typeof window.Pyodide.scheduleWarmup === 'function') {
       window.Pyodide.scheduleWarmup();
+      if (window.Pyodide.attachBootPanel) {
+        const output = $('output-content');
+        if (output) window.Pyodide.attachBootPanel(output);
+      }
     }
   });
 })();
