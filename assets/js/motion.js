@@ -230,6 +230,14 @@
       // On home, play the spin instead of reloading "/"
       if (document.body.classList.contains('page-home')) {
         e.preventDefault();
+        // core.js's capture-phase click handler has already shown the
+        // page-transition film + nav progress expecting a navigation
+        // that now won't happen — clear them or they stay stuck.
+        var pt = document.getElementById('page-transition');
+        if (pt) pt.classList.remove('is-active');
+        var np = document.getElementById('nav-progress');
+        if (np) np.classList.remove('is-visible', 'is-active');
+        try { sessionStorage.removeItem('pypath-nav'); } catch (err) {}
       }
       spinning = true;
       logo.classList.add('is-spinning');

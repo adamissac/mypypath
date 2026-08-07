@@ -8,15 +8,24 @@
       /* Boot-intro gate — must run before first paint. Sets:
          pp-wait  → entrance choreography pending (motion allowed)
          pp-boot  → terminal overlay plays (cover painted via CSS)
-         The intro plays on every visit (site owner's call); any click,
-         key, or scroll skips it. Reduced-motion users skip both. */
+         The intro plays on fresh opens and reloads, but NOT when the
+         visitor arrives by clicking an internal link (core.js marks
+         those with sessionStorage 'pypath-nav', cleared after entry —
+         this script runs before the clear) or via back/forward. Any
+         click, key, or scroll skips it. Reduced-motion users skip both. */
       (function () {
         try {
           var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
           if (reduce) return;
           var root = document.documentElement;
           root.classList.add('pp-wait');
-          root.classList.add('pp-boot');
+          var entry = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || null;
+          var navType = entry ? entry.type : 'navigate';
+          var fromLink = false;
+          try { fromLink = sessionStorage.getItem('pypath-nav') === '1'; } catch (e) {}
+          if (navType === 'reload' || (navType === 'navigate' && !fromLink)) {
+            root.classList.add('pp-boot');
+          }
           /* Watchdog: if motion.js never lands, force the page visible. */
           window.setTimeout(function () {
             if (root.classList.contains('pp-go')) return;

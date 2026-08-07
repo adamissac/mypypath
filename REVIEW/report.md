@@ -8,6 +8,11 @@ Per the site owner, overriding parts of the original brief:
 - **Cool-animations pack** (all CSS, motion-pref gated): animated light sweep across the "PyPath" brand text every ~5.5s (gradient clipped to the letterforms); summit mountain slowly floats (±9px, 7s); trail stop dots pop with a springy overshoot when the drawn line reaches them; primary buttons get a light-streak sweep on hover.
 - Verified: 15/15 checks (every-visit overlay, ~3.3s duration, skip, shine/float/spring applied, reduced-motion, mobile, zero console errors). Screenshots refreshed.
 
+## v3 — boot gate by arrival type + stuck gray-film fix (2026-08-07, third pass)
+
+- **Boot plays on fresh opens and reloads only** — not when arriving via an internal link (Home tab, logo from another page, footer links) or back/forward. Detection: Navigation Timing `type` + core.js's existing `pypath-nav` sessionStorage marker, read in the inline gate before core.js clears it. Verified all five paths: fresh open ✓ boot, reload ✓ boot, Home-tab click ✗ no boot (choreography still runs), back button ✗ no boot, reload-after-nav ✓ boot.
+- **Fixed a pre-existing bug** (reproduced on unmodified `main`): clicking the header logo on the homepage left `#page-transition` stuck at opacity 0.35 — a gray film over the whole page. Cause: core.js's *capture-phase* click handler shows the transition film before motion.js's logo handler `preventDefault`s the navigation to play the spin, so the film's hide path (a page load) never came. motion.js now clears the film + nav progress when it swallows that click.
+
 ---
 
 Branch: `claude/boot-and-motion` · Date: 2026-08-07
