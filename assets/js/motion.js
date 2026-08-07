@@ -303,8 +303,6 @@
       return;
     }
 
-    try { localStorage.setItem('pp_boot_seen', '1'); } catch (e) {}
-
     var overlay = document.createElement('div');
     overlay.className = 'pp-boot-overlay';
     overlay.setAttribute('aria-hidden', 'true');
@@ -314,11 +312,15 @@
     line1.innerHTML = '<span class="pp-boot-prompt">$ </span><span class="pp-boot-cmd"></span>';
     var caret = document.createElement('span');
     caret.className = 'pp-boot-caret';
+    var lineBanner = document.createElement('span');
     var line2 = document.createElement('span');
+    var lineCompile = document.createElement('span');
     var line3 = document.createElement('span');
     term.appendChild(line1);
     term.appendChild(caret);
+    term.appendChild(lineBanner);
     term.appendChild(line2);
+    term.appendChild(lineCompile);
     term.appendChild(line3);
     overlay.appendChild(term);
     document.body.appendChild(overlay);
@@ -357,15 +359,22 @@
     window.addEventListener('touchstart', skip, { capture: true, passive: true });
 
     /* Type the command (input is typed; output just prints — like a
-       real terminal). Budget: ~480ms type + ~320ms progress + 100ms
-       ready + 120ms hold + 280ms wipe ≈ 1.3s. */
+       real terminal). Deliberately unhurried: ~510ms type + banner +
+       ~550ms progress + compile + ready + 380ms hold + 320ms wipe
+       ≈ 2.9s. Any input skips straight to the page. */
     var i = 0;
     function typeChar() {
       if (finished) return;
       cmdEl.textContent = CMD.slice(0, i + 1);
       i++;
-      if (i < CMD.length) later(typeChar, 26);
-      else later(progress, 90);
+      if (i < CMD.length) later(typeChar, 30);
+      else later(banner, 140);
+    }
+
+    function banner() {
+      if (finished) return;
+      lineBanner.textContent = '\nPyPath 1.0 (trailhead) — ten stops, one destination';
+      later(progress, 260);
     }
 
     var step = 0;
@@ -373,14 +382,20 @@
       if (finished) return;
       step++;
       line2.textContent = '\nLoading units [' + '#'.repeat(step) + '.'.repeat(10 - step) + '] ' + step + '/10';
-      if (step < 10) later(progress, 30);
-      else later(function () {
-        line3.innerHTML = '\n<span class="pp-boot-ok">✓ ready</span>';
-        later(function () { exit(false); }, 140);
-      }, 90);
+      if (step < 10) later(progress, 55);
+      else later(compile, 180);
     }
 
-    later(typeChar, 120);
+    function compile() {
+      if (finished) return;
+      lineCompile.innerHTML = '\nDrawing trail map ... <span class="pp-boot-ok">✓</span>';
+      later(function () {
+        line3.innerHTML = '\n<span class="pp-boot-ok">✓ ready — welcome to the trail</span>';
+        later(function () { exit(false); }, 380);
+      }, 240);
+    }
+
+    later(typeChar, 140);
   }
 
   document.addEventListener('DOMContentLoaded', function () {

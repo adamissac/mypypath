@@ -1,5 +1,15 @@
 # Boot sequence + Pyodide loader + motion pass — report
 
+## v2 — owner-requested changes (2026-08-07, second pass)
+
+Per the site owner, overriding parts of the original brief:
+
+- **Boot intro plays on every visit** (localStorage gate removed) and is longer on purpose: `$ python3 pypath.py` → `PyPath 1.0 (trailhead) — ten stops, one destination` → unit progress bar → `Drawing trail map ... ✓` → `✓ ready — welcome to the trail`. ~3.3s total, still skippable by any click/key/scroll, still skipped under reduced motion. Watchdog moved to 5.5s.
+- **Cool-animations pack** (all CSS, motion-pref gated): animated light sweep across the "PyPath" brand text every ~5.5s (gradient clipped to the letterforms); summit mountain slowly floats (±9px, 7s); trail stop dots pop with a springy overshoot when the drawn line reaches them; primary buttons get a light-streak sweep on hover.
+- Verified: 15/15 checks (every-visit overlay, ~3.3s duration, skip, shine/float/spring applied, reduced-motion, mobile, zero console errors). Screenshots refreshed.
+
+---
+
 Branch: `claude/boot-and-motion` · Date: 2026-08-07
 (Previous report content — merged site updates — lives in git history at `9892a6d`.)
 Recon findings: see [recon.md](recon.md). Screenshots: [screenshots/](screenshots/).
