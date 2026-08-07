@@ -1240,3 +1240,118 @@ html.reduced-motion .path-map__draw {
 .page-home .site-footer {
   border-top: 1px solid color-mix(in srgb, var(--home-ink) 8%, transparent);
 }
+
+/* ═══════════════════════════════════════════════════════════
+   HOME FLAIR — small ambient touches, deliberately restrained
+   ═══════════════════════════════════════════════════════════ */
+
+/* (The hero title shine already exists — pp-brand-shine in
+   pypath-theme.css's cool pass — so it is not duplicated here.) */
+
+/* 1 ─ Primary CTA: one quick sheen sweep on hover, tactile press */
+.page-home .btn-path--primary {
+  position: relative;
+  overflow: hidden;
+}
+
+.page-home .btn-path--primary::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 45%;
+  background: linear-gradient(100deg,
+    transparent, rgba(255, 255, 255, 0.32), transparent);
+  transform: skewX(-18deg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.page-home .btn-path--primary:hover::after {
+  animation: pp-btn-sheen 640ms ease;
+}
+
+.page-home .btn-path:active {
+  transform: translateY(0) scale(0.97);
+}
+
+@keyframes pp-btn-sheen {
+  from { left: -60%; opacity: 1; }
+  to { left: 130%; opacity: 1; }
+}
+
+/* 3 ─ Live editor card: a faint glow slowly orbits the border.
+       Browsers without @property just show a static soft arc. */
+@property --pp-ring {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.page-home .home-practice .hero-live-editor {
+  position: relative;
+}
+
+.page-home .home-practice .hero-live-editor::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(from var(--pp-ring),
+    transparent 0turn,
+    transparent 0.6turn,
+    color-mix(in srgb, var(--home-mark) 80%, transparent) 0.8turn,
+    transparent 0.98turn);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: pp-ring-orbit 10s linear infinite;
+  pointer-events: none;
+  z-index: 2;
+}
+
+@keyframes pp-ring-orbit {
+  to { --pp-ring: 1turn; }
+}
+
+/* 4 ─ End CTA: the existing gradients get a slow aurora drift */
+.page-home .home-endcta::before {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  background:
+    radial-gradient(45% 55% at 70% 25%,
+      color-mix(in srgb, var(--home-mark-hot) 24%, transparent), transparent 65%),
+    radial-gradient(40% 60% at 25% 75%,
+      color-mix(in srgb, var(--home-line) 20%, transparent), transparent 60%);
+  animation: pp-endcta-aurora 16s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.page-home .home-endcta__inner {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes pp-endcta-aurora {
+  from { transform: translate3d(-4%, -2%, 0) rotate(-2deg); }
+  to { transform: translate3d(4%, 3%, 0) rotate(2deg); }
+}
+
+/* Flair sits out respectfully when motion is reduced */
+@media (prefers-reduced-motion: reduce) {
+  .page-home .btn-path--primary:hover::after,
+  .page-home .home-practice .hero-live-editor::before,
+  .page-home .home-endcta::before {
+    animation: none;
+  }
+}
+
+html.reduced-motion .page-home .btn-path--primary:hover::after,
+html.reduced-motion .page-home .home-practice .hero-live-editor::before,
+html.reduced-motion .page-home .home-endcta::before {
+  animation: none;
+}
