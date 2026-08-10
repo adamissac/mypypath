@@ -100,7 +100,7 @@
             '<span class="brand-text">PyPath</span>' +
           '</a>' +
           '<div class="header-actions">' +
-            '<nav class="primary-nav" aria-label="Primary" aria-expanded="false">' +
+            '<nav class="primary-nav" aria-label="Primary">' +
               '<button type="button" class="mobile-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-menu">' +
                 '<span class="mobile-toggle-bar" aria-hidden="true"></span>' +
                 '<span class="mobile-toggle-bar" aria-hidden="true"></span>' +
@@ -361,15 +361,18 @@
     var nav = qs('.primary-nav');
     var toggle = qs('.mobile-toggle', nav);
     var menu = qs('#primary-menu', nav);
+    /* Open state lives on .primary-nav.is-open (CSS hook) and on the
+       toggle button's aria-expanded (the a11y contract). It must not go
+       on the <nav> itself — aria-expanded is not valid on a landmark. */
     function closeMobile() {
       if (!nav) return;
-      nav.setAttribute('aria-expanded', 'false');
+      nav.classList.remove('is-open');
       if (toggle) toggle.setAttribute('aria-expanded', 'false');
       document.body.classList.remove('nav-open');
     }
 
     function openMobile() {
-      nav.setAttribute('aria-expanded', 'true');
+      nav.classList.add('is-open');
       if (toggle) toggle.setAttribute('aria-expanded', 'true');
       document.body.classList.add('nav-open');
       var focusables = getFocusables(menu);
@@ -378,8 +381,7 @@
 
     if (toggle && nav) {
       toggle.addEventListener('click', function () {
-        var expanded = nav.getAttribute('aria-expanded') === 'true';
-        if (expanded) closeMobile();
+        if (nav.classList.contains('is-open')) closeMobile();
         else openMobile();
       });
     }
@@ -809,7 +811,7 @@
       if (window.PyDropdowns) window.PyDropdowns.closeAll(null);
       document.body.classList.remove('nav-open');
       var nav = qs('.primary-nav');
-      if (nav) nav.setAttribute('aria-expanded', 'false');
+      if (nav) nav.classList.remove('is-open');
       var toggle = qs('.mobile-toggle', nav);
       if (toggle) toggle.setAttribute('aria-expanded', 'false');
 

@@ -7,9 +7,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
+# Must match the unit titles the pages actually ship (units/unit-N.html
+# <title> and .page-title) and the homepage trail stop labels.
 UNIT_NAMES = [
     'Foundations', 'Control Flow', 'Functions', 'Data Structures',
-    'Modules & Packages', 'OOP', 'Files & Errors', 'Testing', 'Advanced Topics', 'Capstone Project',
+    'Modules & Packages', 'OOP', 'Files & Errors', 'Testing', 'APIs', 'Capstone Project',
 ]
 
 FIRST_LESSON = {
@@ -102,6 +104,10 @@ def header_html(path: Path, show_progress: bool) -> str:
     sandbox_a = ' active' if nav_active(path, 'sandbox') else ''
     settings_a = ' active' if nav_active(path, 'settings') else ''
     units_btn = ' aria-current="page"' if nav_active(path, 'units') else ''
+    # data-unit paints the current stop number into the Units trigger, so
+    # the nav says which unit you are in without being opened.
+    if cu:
+        units_btn += f' data-unit="{cu}"'
 
     progress = ''
     if show_progress:
@@ -116,11 +122,11 @@ def header_html(path: Path, show_progress: bool) -> str:
       <div class="header-accent" aria-hidden="true"></div>
       <div class="container header-inner">
         <a class="brand route" href="/">
-          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo" width="36" height="36">
+          <span class="logo-spin-wrap"><img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo" width="36" height="36"></span>
           <span class="brand-text">PyPath</span>
         </a>
         <div class="header-actions">
-          <nav class="primary-nav" aria-label="Primary" aria-expanded="false">
+          <nav class="primary-nav" aria-label="Primary">
             <button type="button" class="mobile-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-menu">
               <span class="mobile-toggle-bar" aria-hidden="true"></span>
               <span class="mobile-toggle-bar" aria-hidden="true"></span>
@@ -192,9 +198,11 @@ def replace_header(html: str, path: Path) -> str:
     kind = page_kind(path)
     show_progress = kind == 'home'
     new_header = header_html(path, show_progress)
+    # header_html() carries its own leading indent, so swallow whatever
+    # indent is already there — otherwise every run adds another level.
     return re.sub(
-        r'<header class="site-header">.*?</header>',
-        new_header,
+        r'[ \t]*<header class="site-header">.*?</header>',
+        lambda _m: new_header,
         html,
         count=1,
         flags=re.DOTALL,
@@ -202,9 +210,10 @@ def replace_header(html: str, path: Path) -> str:
 
 
 def replace_footer(html: str) -> str:
+    # Same indent-swallowing rule as replace_header().
     return re.sub(
-        r'<footer class="site-footer">.*?</footer>',
-        FOOTER,
+        r'[ \t]*<footer class="site-footer">.*?</footer>',
+        lambda _m: FOOTER,
         html,
         count=1,
         flags=re.DOTALL,
