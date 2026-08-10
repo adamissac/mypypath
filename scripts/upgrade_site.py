@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
-"""Bulk-update PyPath HTML pages for motion upgrade."""
+"""Bulk-update PyPath HTML pages for motion upgrade.
+
+SUPERSEDED by scripts/bake_layout.py, which is now the canonical way to
+write header/footer/script tags into pages. Kept for history; the asset
+references below were pruned when motion.css, layout.js, dropdowns.js,
+main.js, backgrounds.js and home.js were deleted as unreferenced.
+"""
 import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-STANDARD_HEAD = """    <link rel="stylesheet" href="/assets/css/motion.css" />
-    <script defer src="/assets/js/theme.js"></script>
+STANDARD_HEAD = """    <script defer src="/assets/js/theme.js"></script>
     <script defer src="/assets/js/icons.js"></script>
-    <script defer src="/assets/js/motion.js"></script>
-    <script defer src="/assets/js/layout.js"></script>
-    <script defer src="/assets/js/dropdowns.js"></script>
-    <script defer src="/assets/js/main.js"></script>"""
+    <script defer src="/assets/js/motion.js"></script>"""
 
 MOBILE_BANNER_RE = re.compile(
     r'\s*<div class="mobile-warning-banner"[^>]*>.*?</div>\s*',
@@ -66,12 +68,6 @@ def process(path: Path) -> bool:
 
     html = html.replace('<script src="/assets/js/sandbox.js"></script>\n', '')
     html = html.replace('<script defer src="/assets/js/sandbox.js"></script>\n', '')
-
-    if 'motion.css' not in html:
-        html = html.replace(
-            '<link rel="stylesheet" href="/assets/css/style.css" />',
-            '<link rel="stylesheet" href="/assets/css/style.css" />\n' + STANDARD_HEAD.split('\n')[0],
-        )
 
     if 'motion.js' not in html:
         extra = ''

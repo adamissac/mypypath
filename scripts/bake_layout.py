@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """Bake canonical header/footer into all HTML pages (no runtime DOM surgery)."""
+from __future__ import annotations
+
 import re
 from pathlib import Path
 
