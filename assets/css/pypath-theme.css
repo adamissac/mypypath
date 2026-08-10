@@ -19,6 +19,39 @@
   --pp-display: "Syne", ui-sans-serif, system-ui, sans-serif;
   --pp-body: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
 
+  /* ── Motion ──────────────────────────────────────────────
+     Four speeds, each with a job, so timings stop being ad hoc:
+       tap    state flips you should not perceive as animation
+       fast   hover and press feedback
+       base   things entering or leaving the page
+       slow   deliberate, once-per-scroll reveals
+     --ease-out is the house curve (decelerate, no overshoot).
+     --ease-spring is reserved for the few "landed" moments —
+     a correct answer, a completed unit — and nothing else. */
+  --dur-tap: 90ms;
+  --dur-fast: 150ms;
+  --dur-base: 280ms;
+  --dur-slow: 500ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --lift-sm: -2px;
+  --lift-md: -4px;
+
+  /* ── Radius ──────────────────────────────────────────────
+     Contour lines are smooth curves; nothing on the trail is
+     a hard corner. Scales with the size of the surface. */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 22px;
+  --r-pill: 999px;
+
+  /* ── Focus ───────────────────────────────────────────────
+     One ring for every focusable thing, old or new. */
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--pp-line) 45%, transparent);
+  --focus-ring-offset: 2px;
+
   /* Remap legacy tokens so the whole site picks up the trail palette */
   --bg: var(--pp-paper);
   --bg-elevated: var(--pp-fog);
@@ -1538,4 +1571,206 @@ main .container,
 .page-unit .content-section p,
 .page-unit .lesson-overview p {
   max-width: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Phase 1 — chrome interactions + the global reduced-motion floor
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Focus ───────────────────────────────────────────────────────
+   One visible ring on everything focusable. :focus-visible keeps it
+   off mouse clicks, and the ring is drawn with box-shadow so it
+   follows border-radius instead of boxing round corners. */
+.site-header a:focus-visible,
+.site-header button:focus-visible,
+.site-footer a:focus-visible,
+.nav-pill .menu a:focus-visible,
+.dd-trigger:focus-visible,
+.dd-item:focus-visible,
+.mobile-toggle:focus-visible,
+.btn:focus-visible,
+.btn-path:focus-visible,
+.skip-link:focus-visible {
+  outline: 2px solid transparent; /* keeps a ring in forced-colors mode */
+  outline-offset: var(--focus-ring-offset);
+  box-shadow: var(--focus-ring);
+  border-radius: var(--r-sm);
+}
+
+/* ── Nav items ───────────────────────────────────────────────────
+   A contour line grows under the hovered item, left to right, like a
+   route being drawn. The active item keeps its line at full width. */
+.nav-pill .menu > li > a,
+.nav-pill .menu > li > .dd-trigger {
+  position: relative;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-tap) var(--ease-out);
+}
+
+.nav-pill .menu > li > a::after,
+.nav-pill .menu > li > .dd-trigger::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 4px;
+  height: 2px;
+  border-radius: var(--r-pill);
+  background: var(--pp-line);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.nav-pill .menu > li > a:hover::after,
+.nav-pill .menu > li > .dd-trigger:hover::after,
+.nav-pill .menu > li > a:focus-visible::after,
+.nav-pill .menu > li > .dd-trigger:focus-visible::after,
+.nav-pill .menu > li > a.active::after,
+.nav-pill .menu > li > .dd-trigger[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
+.nav-pill .menu > li > a:active,
+.nav-pill .menu > li > .dd-trigger:active {
+  transform: translateY(1px);
+}
+
+/* ── Active unit ─────────────────────────────────────────────────
+   On a lesson page the Units trigger carries the unit you are in, so
+   the nav answers "where am I on the trail?" without opening it.
+   The number is written by core.js as data-unit. */
+.dd-trigger[data-unit]::before {
+  content: attr(data-unit);
+  display: inline-grid;
+  place-items: center;
+  width: 1.35em;
+  height: 1.35em;
+  margin-right: 0.45em;
+  border-radius: var(--r-pill);
+  /* ink-on-paper rather than white-on-sky: white on --pp-line is only
+     2.8:1. The ink/paper pair inverts correctly in dark mode and reads
+     as a stamped survey mark, which suits the map language better. */
+  background: var(--pp-ink);
+  color: var(--pp-paper);
+  font-size: 0.75em;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* Current lesson's unit inside the open panel */
+.dd-item.is-current {
+  background: color-mix(in srgb, var(--pp-line) 10%, transparent);
+}
+
+.dd-item.is-current .dd-item__num {
+  background: var(--pp-line);
+  color: #fff;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────
+   Lift on hover, settle on press. Small enough to feel like the
+   surface responding rather than an animation playing. */
+.btn,
+.btn-path {
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.btn:hover,
+.btn-path:hover {
+  transform: translateY(var(--lift-sm));
+}
+
+.btn:active,
+.btn-path:active {
+  transform: translateY(0) scale(0.985);
+  transition-duration: var(--dur-tap);
+}
+
+.btn-primary:hover,
+.btn-path--primary:hover {
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--pp-line) 30%, transparent);
+}
+
+/* ── Cards ───────────────────────────────────────────────────────
+   Same lift language as buttons, one step larger. */
+.unit-card,
+.feature-card,
+.settings-card {
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+
+.unit-card:hover,
+.feature-card:hover,
+.settings-card:hover {
+  transform: translateY(var(--lift-md));
+  box-shadow: var(--shadow-strong);
+  border-color: color-mix(in srgb, var(--pp-line) 35%, var(--pp-border));
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Reduced motion — the floor for the whole site.
+   Last rule in the last stylesheet, so it wins over everything,
+   including style.css's seven unguarded @keyframes.
+
+   This removes *motion*, not feedback: colour, box-shadow and
+   border-color changes are left alone so hover and focus still
+   read. Anything that must keep animating (a genuine loading
+   indicator) opts back out below.
+   ═══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Transform-based motion is the part that causes trouble; kill the
+     offsets outright rather than snapping them instantly. */
+  .btn:hover,
+  .btn-path:hover,
+  .btn:active,
+  .btn-path:active,
+  .unit-card:hover,
+  .feature-card:hover,
+  .settings-card:hover,
+  .nav-pill .menu > li > a:active,
+  .nav-pill .menu > li > .dd-trigger:active {
+    transform: none !important;
+  }
+
+  /* Underlines still mark hover and the current page — they just
+     appear instead of drawing. */
+  .nav-pill .menu > li > a::after,
+  .nav-pill .menu > li > .dd-trigger::after {
+    transition: none !important;
+  }
+
+  /* Ambient drift has no informational content: stop it entirely. */
+  .home-hero__topo,
+  .home-hero__bg,
+  .header-accent {
+    animation: none !important;
+  }
+
+  /* A spinner that stops spinning stops meaning "working", so the
+     boot caret is the one thing allowed to keep moving. */
+  .pp-boot-caret {
+    animation-duration: 1s !important;
+    animation-iteration-count: infinite !important;
+  }
 }
