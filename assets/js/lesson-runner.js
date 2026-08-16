@@ -7,15 +7,15 @@
   }
 
   function saveToStorage(type, id, value) {
-    window.ProgressStore.setItem(storageKey(type, id), value);
+    if (window.ProgressStore) window.ProgressStore.setItem(storageKey(type, id), value);
   }
 
   function loadFromStorage(type, id) {
-    return window.ProgressStore.getItem(storageKey(type, id));
+    return window.ProgressStore ? window.ProgressStore.getItem(storageKey(type, id)) : null;
   }
 
   function clearStorage(type, id) {
-    window.ProgressStore.removeItem(storageKey(type, id));
+    if (window.ProgressStore) window.ProgressStore.removeItem(storageKey(type, id));
   }
 
   // Default practice-editor source, captured before CodeMirror replaces textareas.
