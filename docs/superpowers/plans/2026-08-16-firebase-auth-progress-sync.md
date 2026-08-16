@@ -665,6 +665,7 @@ Configuration plus the rules that are the actual authorization boundary. Rules s
 - Create: `firebase.json`
 - Create: `.firebaserc`
 - Test: `tests/rules/firestore-rules.test.js`
+- Modify: `vitest.config.js`
 
 **Interfaces:**
 - Consumes: nothing
@@ -676,6 +677,38 @@ Configuration plus the rules that are the actual authorization boundary. Rules s
 3. Authentication → Settings → Authorized domains → add `mypypath.com`, `www.mypypath.com`. `localhost` is present by default.
 4. Firestore Database → Create database → **production mode** (rules from this task replace the defaults).
 5. Project settings → Your apps → Web app → copy the config object.
+
+- [ ] **Step 0: Keep the rules suite out of the default test run**
+
+`vitest.config.js` from Task 0 uses `include: ['tests/**/*.test.js']`, which matches `tests/rules/` at any depth. The rules tests need a live Firestore emulator, so leaving them in the default run would make bare `npm test` fail for anyone without one. They already have their own `test:rules` script that wraps them in `firebase emulators:exec`.
+
+Change `vitest.config.js` to:
+
+```js
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    environment: 'jsdom',
+    include: ['tests/**/*.test.js'],
+    // Rules tests need a live Firestore emulator. Run them via `npm run test:rules`.
+    exclude: ['node_modules/**', 'tests/rules/**'],
+  },
+});
+```
+
+`exclude` replaces Vitest's defaults rather than extending them, which is why `node_modules/**` is listed explicitly.
+
+Because `test:rules` invokes `vitest run tests/rules` with an explicit path, and an explicit path argument still respects `exclude`, also change the `test:rules` script in `package.json` to pass a config override:
+
+```json
+"test:rules": "firebase emulators:exec --only firestore \"vitest run tests/rules --exclude node_modules/**\""
+```
+
+Verify both halves before continuing:
+
+Run: `npm test`
+Expected: PASS, and the output must NOT list any file under `tests/rules/`.
 
 - [ ] **Step 1: Write the failing rules tests**
 
