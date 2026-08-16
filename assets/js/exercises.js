@@ -140,12 +140,12 @@
 
   function saveAnswer(exerciseId, answer) {
     const pagePath = getCurrentPagePath();
-    window.ProgressStore.setItem(`exercise_${pagePath}_${exerciseId}`, answer);
+    if (window.ProgressStore) window.ProgressStore.setItem(`exercise_${pagePath}_${exerciseId}`, answer);
   }
 
   function loadAnswer(exerciseId) {
     const pagePath = getCurrentPagePath();
-    return window.ProgressStore.getItem(`exercise_${pagePath}_${exerciseId}`) || '';
+    return (window.ProgressStore ? window.ProgressStore.getItem(`exercise_${pagePath}_${exerciseId}`) : null) || '';
   }
 
   function showSavedIndicator(button) {
