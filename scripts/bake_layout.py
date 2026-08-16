@@ -429,6 +429,17 @@ def normalize_scripts(html: str, path: Path) -> str:
             1,
         )
 
+    # Progress store must load before core.js / exercises.js / lesson-runner.js,
+    # all of which call window.ProgressStore.
+    if 'storage-keys.js' not in html and 'motion.js' in html:
+        html = html.replace(
+            '<script defer src="/assets/js/motion.js"></script>',
+            '<script defer src="/assets/js/storage-keys.js"></script>\n'
+            '    <script defer src="/assets/js/progress-store.js"></script>\n'
+            '    <script defer src="/assets/js/motion.js"></script>',
+            1,
+        )
+
     kind = page_kind(path)
     if kind == 'lesson' and 'lesson-runner.js' not in html and 'exercises.js' in html:
         html = html.replace(

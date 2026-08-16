@@ -140,23 +140,12 @@
 
   function saveAnswer(exerciseId, answer) {
     const pagePath = getCurrentPagePath();
-    const key = `exercise_${pagePath}_${exerciseId}`;
-    try {
-      localStorage.setItem(key, answer);
-    } catch (e) {
-      console.warn('Could not save answer:', e);
-    }
+    window.ProgressStore.setItem(`exercise_${pagePath}_${exerciseId}`, answer);
   }
 
   function loadAnswer(exerciseId) {
     const pagePath = getCurrentPagePath();
-    const key = `exercise_${pagePath}_${exerciseId}`;
-    try {
-      return localStorage.getItem(key) || '';
-    } catch (e) {
-      console.warn('Could not load answer:', e);
-      return '';
-    }
+    return window.ProgressStore.getItem(`exercise_${pagePath}_${exerciseId}`) || '';
   }
 
   function showSavedIndicator(button) {
