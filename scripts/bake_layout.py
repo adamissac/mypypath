@@ -398,6 +398,8 @@ def normalize_scripts(html: str, path: Path) -> str:
     if path.name == 'index.html' and path.parent == ROOT:
         return html
 
+    # main.js was deleted (2026-08-16); it stays in this strip list so any
+    # stale script tag in an un-baked page is still removed.
     # Keep icons.js as the global icon system (used by sandbox + UI).
     for name in ('layout.js', 'dropdowns.js', 'main.js', 'backgrounds.js', 'home.js'):
         html = re.sub(rf'\s*<script defer src="/assets/js/{re.escape(name)}"></script>\s*', '\n', html)
