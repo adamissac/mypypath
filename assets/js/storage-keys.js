@@ -17,8 +17,12 @@
     return SYNC_PATTERNS.some(function (re) { return re.test(key); });
   }
 
+  // `/` is illegal in a Firestore document id. Escape underscores first so the
+  // mapping stays injective: without this, a literal `__` in a lesson filename
+  // would be indistinguishable from an encoded `/`, and two different lessons
+  // could collide onto one document.
   function toDocId(key) {
-    return String(key).replace(/\//g, '__');
+    return String(key).replace(/_/g, '_5F').replace(/\//g, '__');
   }
 
   window.PyPathKeys = {
