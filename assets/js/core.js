@@ -426,10 +426,10 @@
   }
 
   function getCompletedUnits() {
-    try { return JSON.parse(localStorage.getItem('pypath-completed-units') || '[]'); } catch { return []; }
+    return window.ProgressStore.getCompletedUnits();
   }
   function setCompletedUnits(list) {
-    try { localStorage.setItem('pypath-completed-units', JSON.stringify(Array.from(new Set(list)))); } catch {}
+    window.ProgressStore.setCompletedUnits(list);
   }
   function markUnitCompletedFromPage() {
     var match = location.pathname.match(/units\/unit-(\d+)\.html$/);
