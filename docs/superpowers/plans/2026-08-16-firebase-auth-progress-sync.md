@@ -4,7 +4,7 @@
 
 **Goal:** Add optional Firebase accounts so learners sync unit progress and saved lesson code across devices, with a progress dashboard, while guests keep today's fully-local experience unchanged.
 
-**Architecture:** A new `progress-store.js` becomes the single owner of learner state, presenting a synchronous read API backed by an in-memory cache hydrated from `localStorage`. Writes go local-first, then debounce-push to Firestore when signed in. `auth.js` wraps Firebase Auth and broadcasts a `pypath:auth` DOM event so no UI file imports Firebase directly. The site stays static with no build step for production — Node is a dev/test dependency only.
+**Architecture:** A new `progress-store.js` becomes the single owner of learner state, presenting a synchronous read API over `localStorage` (read-through, no in-memory cache — there is nothing to invalidate). Writes go local-first, then debounce-push to Firestore when signed in. Because `localStorage` records no modification time, the store keeps its own non-syncable `pypath-progress-stamps` side-car so merges can compare real timestamps instead of assuming remote is newer. `auth.js` wraps Firebase Auth and broadcasts a `pypath:auth` DOM event so no UI file imports Firebase directly. The site stays static with no build step for production — Node is a dev/test dependency only.
 
 **Tech Stack:** Vanilla ES5-style IIFE JS (matching the existing codebase), Firebase Auth + Firestore via pinned gstatic ESM, Vitest + `@firebase/rules-unit-testing` for tests, Firebase Emulator Suite for local Auth/Firestore.
 
@@ -29,8 +29,13 @@ Established by reading the current code. Task 3 depends on this being exact.
 | `pypath-completed-units` | `core.js:432` | **Yes** |
 | `pypath-lesson-<pathname>-<type>-<id>` | `lesson-runner.js:6,10` | **Yes** |
 | `exercise_<pathname>_<exerciseId>` | `exercises.js:143,145` | **Yes** |
+| `pypath-progress-stamps` | `progress-store.js` | No — side-car write times, device-local by design |
 | `pypath-theme` | `theme.js:4` | No — device-local |
 | `pypath-fontscale` | `theme.js:5` | No — device-local |
+| `pypath-compact` | `theme.js:6` | No — device-local |
+| `pypath-codetheme` | `theme.js:7` | No — device-local |
+| `pypath-sidebar` | `theme.js:8` | No — device-local |
+| `pypath-motion` | `theme.js:9` | No — legacy, cleared on load |
 | `pypath-sidebar-closed` | `core.js:540` | No — device-local |
 | `pypath-inspire-banner-dismissed` | `core.js:653` | No — device-local |
 | `pypath-sandbox-projects` | `sandbox.js:4` | No — out of scope |
@@ -338,8 +343,13 @@ The central refactor. This task ships the store with **no Firebase at all** — 
   - `getItem(key: string) -> string | null`
   - `setItem(key: string, value: string) -> void`
   - `removeItem(key: string) -> void`
-  - `snapshot() -> { [key: string]: string }` — every syncable key currently held
-  - `_setRemoteAdapter(adapter | null) -> void` — Task 5 injects the Firestore writer here; `null` means local-only
+  - `snapshot() -> { [key: string]: { content: string, updatedAt: number } }` — every syncable key currently held, with its local write time (`0` if written before stamping existed)
+  - `applyRemote(key, value, updatedAt?) -> void` — write a server-sourced value locally WITHOUT echoing it back to the adapter; records `updatedAt` verbatim when given
+  - `_setRemoteAdapter(adapter | null) -> void` — Task 5 injects the Firestore writer here; `null` means local-only. The adapter may expose `push(key, value)` and `remove(key)`; `remove` is optional.
+
+Every successful local write also dispatches `pypath:progress` on `document` with `detail: { key }`, so UI can re-render after a merge instead of guessing with a timer.
+
+**As-built note:** this task shipped, then a whole-branch review added the stamps side-car, `applyRemote`, the `pypath:progress` event, the `adapter.remove` split, a degraded mode for when `storage-keys.js` fails to load, unit-range validation, and a fix routing Settings Export/Reset through the store. The signatures above are as-built. Read `assets/js/progress-store.js` before writing Task 5.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -1223,13 +1233,14 @@ async function mergeOnSignIn(uid) {
   allKeys.delete(KEYS.COMPLETED_UNITS_KEY);
 
   for (const key of allKeys) {
-    const localVal = localSnapshot[key];
-    const local = localVal === undefined
-      ? null
-      : { content: localVal, updatedAt: 0 };
-    const winner = MERGE.pickNewer(local, remoteByKey.get(key) || null);
-    if (winner && winner.content !== localVal) {
-      STORE.setItem(key, winner.content);
+    const localEntry = localSnapshot[key] || null;
+    const remoteEntry = remoteByKey.get(key) || null;
+    const winner = MERGE.pickNewer(localEntry, remoteEntry);
+    if (winner && winner !== localEntry) {
+      // applyRemote, NOT setItem: setItem would push this value straight back
+      // to Firestore, overwriting the server's real updatedAt with "now" and
+      // doubling write billing on every sign-in.
+      STORE.applyRemote(key, winner.content, winner.updatedAt);
     }
   }
 }
@@ -1262,11 +1273,30 @@ document.addEventListener('pypath:auth', async (e) => {
 });
 ```
 
-Note on `local.updatedAt = 0`: `localStorage` carries no timestamp, so on a
-first sign-in any remote document wins over a local one. That is correct — a
-remote document can only exist if this account already saved from some device,
-whereas an untimestamped local value may be a stale leftover. Once signed in,
-every write timestamps through the adapter.
+**Timestamps are real, not assumed.** An earlier draft of this plan stamped every
+local value `updatedAt: 0`, which made remote win every conflict. That was
+backwards and would have destroyed learner work: someone who works for an hour
+while signed out — or while `sync.js` merely fails to load behind an ad blocker —
+signs back in and has that hour overwritten by stale remote data, gone from both
+sides. The store now keeps its own `pypath-progress-stamps` side-car, so
+`snapshot()` returns a genuine `updatedAt` per key. `0` survives only as the
+fallback for data written before stamping existed, where it is the honest answer.
+
+**Two bugs to avoid in `flush()`**, both found by review of this plan text:
+
+- It clears `pending` before its `await`s and evaluates `Date.now()` *after* them,
+  so a push arriving mid-flush starts a second concurrent flush and timestamps can
+  invert against write order. Add a reentrancy guard and capture the timestamp
+  before awaiting.
+- A single shared `timer` reset by every push, with no maximum wait, means a burst
+  of typing in one editor indefinitely postpones another editor's pending write —
+  and `lesson-runner.js` saves on every keystroke. Add a max-wait ceiling.
+
+**`pypath-completed-units` is written once per unit, ever.** Unlike lesson code,
+there is no next keystroke to re-queue a failed push. If the flush fails while
+offline, that unit never reaches Firestore until the next sign-in merge repairs
+it. Re-push `snapshot()` on `online` and `visibilitychange` so this is
+self-healing.
 
 - [ ] **Step 7: Add the modules to the baker**
 
@@ -1757,11 +1787,15 @@ Same page shell as the Task 6 pages, with:
 
   document.addEventListener('DOMContentLoaded', render);
 
-  // Re-render after sign-in, because the merge may have added units.
   document.addEventListener('pypath:auth', function (e) {
     document.getElementById('progress-guest').hidden = !!e.detail.user;
-    setTimeout(render, 100);
   });
+
+  // Re-render when the store actually changes. Do NOT guess with a timer: the
+  // sign-in merge awaits two network round trips before it writes, so any fixed
+  // delay loses the race and this page — whose whole purpose is showing
+  // post-merge progress — would render pre-merge state.
+  document.addEventListener('pypath:progress', render);
 })();
 ```
 
