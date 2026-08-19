@@ -3,11 +3,13 @@
   'use strict';
 
   var COMPLETED_UNITS_KEY = 'pypath-completed-units';
+  var COMPLETED_AT_KEY = 'pypath-completed-at';
 
   // Allowlist, deliberately. A new pypath-* key must not sync until it is
   // added here on purpose.
   var SYNC_PATTERNS = [
     /^pypath-completed-units$/,
+    /^pypath-completed-at$/,
     /^pypath-lesson-.+/,
     /^exercise_.+/
   ];
@@ -27,6 +29,7 @@
 
   window.PyPathKeys = {
     COMPLETED_UNITS_KEY: COMPLETED_UNITS_KEY,
+    COMPLETED_AT_KEY: COMPLETED_AT_KEY,
     isSyncable: isSyncable,
     toDocId: toDocId
   };

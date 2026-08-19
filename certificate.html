@@ -5,8 +5,8 @@
     <script src="/assets/js/theme-init.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>My progress • PyPath</title>
-    <meta name="description" content="Track how far you have walked the PyPath curriculum, unit by unit." />
+    <title>Certificate • PyPath</title>
+    <meta name="description" content="Claim your PyPath certificate of completion after finishing all ten units and the capstone project." />
     <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
     <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="/assets/css/pypath-theme.css" />
     <link rel="stylesheet" href="/assets/css/auth.css" />
     <link rel="stylesheet" href="/assets/css/gate.css" />
-    <link rel="stylesheet" href="/assets/css/progress.css" />
+    <link rel="stylesheet" href="/assets/css/certificate.css" />
 
 <script defer src="/assets/js/theme.js"></script>
     <script defer src="/assets/js/icons.js"></script>
@@ -26,13 +26,14 @@
     <script defer src="/assets/js/merge.js"></script>
     <script defer src="/assets/js/username.js"></script>
     <script defer src="/assets/js/gate.js"></script>
+    <script defer src="/assets/js/certificate.js"></script>
     <script defer src="/assets/js/motion.js"></script>
     <script defer src="/assets/js/core.js"></script>
     <script type="module" src="/assets/js/auth.js"></script>
     <script type="module" src="/assets/js/sync.js"></script>
     <script type="module" src="/assets/js/auth-ui.js"></script>
 </head>
-  <body class="page page-progress">
+  <body class="page page-certificate">
     <a class="skip-link" href="#main-content">Skip to main content</a>
     <div id="page-transition" aria-hidden="true"></div>
 
@@ -99,29 +100,105 @@
         </div>
       </div>
     </header>
-    <main id="main-content" class="container progress-page">
-      <h1>My progress</h1>
+    <main id="main-content" class="container cert-page">
 
-      <div id="progress-guest" hidden>
-        <p>You are browsing as a guest. Your progress is saved on this device only.
-           <a href="/signup.html" class="route">Create an account</a> to sync it everywhere.</p>
+      <div data-cert-state="guest" hidden>
+        <h1>Your certificate</h1>
+        <p class="cert-intro">The certificate is printed with the name on your
+          account, so you need to be signed in to claim it.
+          <a href="/login.html?next=%2Fcertificate.html" class="route">Sign in</a>
+          or <a href="/signup.html?next=%2Fcertificate.html" class="route">create a free account</a>.</p>
       </div>
 
-      <section id="progress-body">
-        <p class="progress-headline"><span id="progress-count">0</span> of 10 units complete</p>
-        <div class="progress-global" role="progressbar" aria-label="Course progress"
-             aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-          <div class="bar"></div>
-        </div>
-        <ul class="progress-units" id="progress-units"></ul>
-        <p><a class="btn btn-primary route" id="progress-resume" href="/units/unit-1.html">Resume</a></p>
+      <div data-cert-state="incomplete" hidden>
+        <h1>Your certificate</h1>
+        <p class="cert-intro">The certificate unlocks once all ten units are
+          complete, including the capstone project in Unit 10. You have finished
+          <strong data-cert-count>0</strong> of 10 — still to go:
+          <strong data-cert-remaining></strong>.</p>
+        <p><a class="btn btn-primary route" href="/progress.html">See your progress</a></p>
+      </div>
 
-        <div class="lesson-finish" id="progress-certificate" hidden>
-          <h2>All ten units complete</h2>
-          <p>You reached the summit. Your certificate is ready to print or save as a PDF.</p>
-          <a class="btn btn-primary route" href="/certificate.html">Get your certificate</a>
+      <div data-cert-state="ready" hidden>
+        <h1>Your certificate</h1>
+        <p class="cert-intro">You walked the whole trail. Print this or save it as
+          a PDF — the name comes from your account, so update it on your
+          <a href="/account.html" class="route">account page</a> first if it is not
+          how you want it to read.</p>
+
+        <div class="cert-actions">
+          <button type="button" class="btn btn-primary" data-cert-print>Print / Save as PDF</button>
+          <a class="btn btn-ghost route" href="/progress.html">Back to progress</a>
         </div>
-      </section>
+        <p class="cert-hint">Tip: in the print dialog choose <strong>Landscape</strong>
+          and enable background graphics for the full design.</p>
+
+        <div class="cert">
+          <svg class="cert-topo" viewBox="0 0 1656 944" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <g fill="none" stroke="#cfe3f2" stroke-width="1.4" opacity="0.5">
+              <path d="M-20 170 C 240 90, 470 250, 760 150 S 1250 60, 1700 190"/>
+              <path d="M-20 300 C 260 220, 500 380, 800 280 S 1290 190, 1700 320"/>
+              <path d="M-20 470 C 250 390, 520 550, 820 450 S 1300 360, 1700 490"/>
+              <path d="M-20 650 C 240 570, 500 730, 800 630 S 1280 540, 1700 670"/>
+              <path d="M-20 820 C 250 740, 520 900, 820 800 S 1300 710, 1700 840"/>
+            </g>
+          </svg>
+
+          <svg class="cert-peak" viewBox="0 0 760 620" aria-hidden="true" focusable="false">
+            <polygon points="380,60 760,620 0,620" fill="#dce9f5"/>
+            <polygon points="430,95 760,620 250,620" fill="#b9d3e9"/>
+            <polygon points="470,150 760,620 430,620" fill="#7ea8cc"/>
+            <polygon points="380,60 470,150 430,95" fill="#f4f9fd"/>
+            <path d="M120 585 C 250 560, 300 470, 420 455 S 560 400, 585 300 S 520 215, 470 190 S 425 140, 415 92"
+                  fill="none" stroke="#1f8fe0" stroke-width="5" stroke-dasharray="14 12" stroke-linecap="round"/>
+            <g fill="#1f8fe0">
+              <circle cx="120" cy="585" r="7"/>
+              <circle cx="205" cy="572" r="15"/><circle cx="300" cy="545" r="15"/>
+              <circle cx="392" cy="512" r="15"/><circle cx="470" cy="455" r="15"/>
+              <circle cx="560" cy="382" r="15"/><circle cx="585" cy="288" r="15"/>
+              <circle cx="512" cy="215" r="15"/><circle cx="463" cy="172" r="15"/>
+              <circle cx="432" cy="120" r="15"/><circle cx="415" cy="60" r="16"/>
+            </g>
+            <g fill="#fff" font-family="Inter, sans-serif" font-size="15" font-weight="700" text-anchor="middle">
+              <text x="205" y="577">1</text><text x="300" y="550">2</text>
+              <text x="392" y="517">3</text><text x="470" y="460">4</text>
+              <text x="560" y="387">5</text><text x="585" y="293">6</text>
+              <text x="512" y="220">7</text><text x="463" y="177">8</text>
+              <text x="432" y="125">9</text><text x="415" y="65">10</text>
+            </g>
+            <path d="M415 44 L415 8 L470 20 L415 32 Z" fill="#1f8fe0"/>
+          </svg>
+
+          <div class="cert-body">
+            <p class="cert-wordmark">PyPath</p>
+            <h2 class="cert-title">Certificate of Completion</h2>
+            <div class="cert-divider" aria-hidden="true"><span></span><i></i><span></span></div>
+            <p class="cert-lead">This certificate is proudly presented to</p>
+            <p class="cert-name" data-cert-name>Your Full Name</p>
+            <div class="cert-namerule" aria-hidden="true"><i></i><span></span><i></i></div>
+            <p class="cert-for">for successfully completing all ten units of</p>
+            <p class="cert-course">The PyPath Python Course</p>
+            <p class="cert-tagline">and reaching the summit of the PyPath learning trail.</p>
+            <div class="cert-meta" aria-hidden="true">
+              <span></span>
+              <em class="cert-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2"/>
+                  <path d="M16 2v4M8 2v4M3 10h18"/>
+                </svg>
+              </em>
+              <span></span>
+            </div>
+            <p class="cert-metalabel">Completion date</p>
+            <p class="cert-date" data-cert-date></p>
+            <p class="cert-dots" aria-hidden="true">•••</p>
+            <p class="cert-signer">PyPath Team</p>
+            <p class="cert-disclaimer">This certificate recognizes course completion and is not an accredited credential.</p>
+          </div>
+        </div>
+      </div>
+
     </main>
     <footer class="site-footer">
       <div class="container">

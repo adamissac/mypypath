@@ -1,0 +1,170 @@
+/* PyPath — end-of-course certificate.
+
+   The certificate itself is deliberately locked to a light palette in both
+   themes: it is a document meant to be printed and shared, not a UI surface. */
+
+.cert-page { padding-block: 32px 64px; }
+
+.cert-intro { max-width: 62ch; margin-bottom: 28px; }
+.cert-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 24px 0 8px; }
+.cert-hint { font-size: 0.9rem; color: var(--muted, #5b7c92); }
+
+/* ---------- the certificate ---------- */
+
+.cert {
+  --cert-navy: #12395e;
+  --cert-navy-soft: #2c5f88;
+  --cert-blue: #1f8fe0;
+  --cert-ground: #f2f7fc;
+  --cert-rule: #bcd6ea;
+
+  position: relative;
+  container-type: inline-size;
+  aspect-ratio: 1656 / 944;
+  width: 100%;
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--cert-ground);
+  color: var(--cert-navy);
+  box-shadow: 0 18px 48px rgba(16, 51, 82, 0.16);
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+/* Inner hairline frame with corner brackets, as on the printed original. */
+.cert::before {
+  content: "";
+  position: absolute;
+  inset: 1.6cqw;
+  border: 1px solid var(--cert-rule);
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+.cert-topo { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cert-peak { position: absolute; right: 0; bottom: 0; width: 38%; height: auto; }
+
+.cert-body {
+  position: relative;
+  width: 72%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3cqw 2.6cqw;
+  gap: 0.45cqw;
+}
+
+.cert-wordmark {
+  font-family: Syne, Inter, sans-serif;
+  font-weight: 800;
+  font-size: 3.1cqw;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin: 0 0 0.3cqw;
+}
+
+.cert-title {
+  font-family: Syne, Inter, sans-serif;
+  font-weight: 800;
+  font-size: 2.45cqw;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.cert-divider {
+  display: flex;
+  align-items: center;
+  gap: 1cqw;
+  width: 48%;
+  margin: 0.5cqw 0;
+}
+.cert-divider span { flex: 1; height: 1px; background: var(--cert-rule); }
+.cert-divider i { width: 0.7cqw; height: 0.7cqw; border-radius: 50%; background: var(--cert-blue); }
+
+.cert-lead { font-size: 1.3cqw; color: var(--cert-navy-soft); margin: 0; }
+
+.cert-name {
+  font-family: Syne, Inter, sans-serif;
+  font-weight: 800;
+  font-size: 4.1cqw;
+  line-height: 1.06;
+  letter-spacing: 0.005em;
+  margin: 0.2cqw 0 0;
+  text-transform: uppercase;
+  /* Long names shrink rather than wrap out of the frame. */
+  overflow-wrap: anywhere;
+}
+
+.cert-namerule {
+  display: flex;
+  align-items: center;
+  gap: 0.8cqw;
+  width: 74%;
+  margin: 0.7cqw 0 0.8cqw;
+}
+.cert-namerule span { flex: 1; height: 2px; background: var(--cert-blue); }
+.cert-namerule i { width: 0.6cqw; height: 0.6cqw; border-radius: 50%; background: var(--cert-blue); }
+
+.cert-for { font-size: 1.2cqw; color: var(--cert-navy-soft); margin: 0; }
+.cert-course {
+  font-family: Syne, Inter, sans-serif;
+  font-weight: 700;
+  font-size: 2.4cqw;
+  margin: 0.3cqw 0;
+}
+.cert-tagline { font-size: 1.2cqw; color: var(--cert-navy-soft); margin: 0; }
+
+.cert-meta { display: flex; align-items: center; gap: 1cqw; width: 40%; margin-top: 1cqw; }
+.cert-meta span { flex: 1; height: 1px; background: var(--cert-rule); }
+.cert-badge {
+  width: 2.6cqw; height: 2.6cqw; flex: none;
+  border: 1.5px solid var(--cert-blue); border-radius: 50%;
+  display: grid; place-items: center; color: var(--cert-blue);
+}
+.cert-badge svg { width: 55%; height: 55%; }
+
+.cert-metalabel {
+  font-size: 0.9cqw;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cert-blue);
+  font-weight: 600;
+  margin: 0.6cqw 0 0.15cqw;
+}
+.cert-date { font-size: 1.55cqw; font-weight: 600; margin: 0; }
+.cert-dots { letter-spacing: 0.35em; color: var(--cert-rule); font-size: 1cqw; margin: 0.2cqw 0; }
+.cert-signer { font-family: Syne, Inter, sans-serif; font-weight: 700; font-size: 1.6cqw; margin: 0; }
+.cert-disclaimer { font-size: 0.82cqw; color: var(--cert-navy-soft); margin: 0.7cqw 0 0; opacity: 0.85; }
+
+/* ---------- print ---------- */
+
+@page { size: landscape; margin: 10mm; }
+
+@media print {
+  .site-header, .site-footer, .skip-link, .inspire-banner,
+  .cert-intro, .cert-actions, .cert-hint, #page-transition,
+  [data-cert-state="guest"], [data-cert-state="incomplete"] { display: none !important; }
+
+  html, body { background: #fff !important; }
+  .cert-page { padding: 0 !important; }
+  main.container { max-width: none !important; padding: 0 !important; margin: 0 !important; }
+
+  .cert {
+    box-shadow: none;
+    border-radius: 0;
+    width: 100%;
+    /* Let the sheet decide the height so nothing spills to a second page. */
+    aspect-ratio: 1656 / 944;
+    break-inside: avoid;
+  }
+}
+
+@media (max-width: 640px) {
+  .cert-body { width: 74%; padding: 3cqw 2cqw; }
+}

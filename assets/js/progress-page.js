@@ -45,6 +45,9 @@
       list.appendChild(li);
     }
 
+    var cert = document.getElementById('progress-certificate');
+    if (cert) cert.hidden = completed.length !== TOTAL_UNITS;
+
     var resume = document.getElementById('progress-resume');
     if (resume) {
       var target = firstIncomplete === null ? TOTAL_UNITS : firstIncomplete;
