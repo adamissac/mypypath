@@ -486,6 +486,16 @@ def normalize_scripts(html: str, path: Path) -> str:
             1,
         )
 
+    # gate.js is a classic global like merge.js and must be defined before
+    # core.js runs. It no-ops on every page that is not a unit surface.
+    if 'assets/js/gate.js' not in html and 'merge.js' in html:
+        html = html.replace(
+            '<script defer src="/assets/js/merge.js"></script>',
+            '<script defer src="/assets/js/merge.js"></script>\n'
+            '    <script defer src="/assets/js/gate.js"></script>',
+            1,
+        )
+
     kind = page_kind(path)
     if kind == 'lesson' and 'lesson-runner.js' not in html and 'exercises.js' in html:
         html = html.replace(
@@ -522,6 +532,14 @@ def normalize_head(html: str) -> str:
             '<link rel="stylesheet" href="/assets/css/pypath-theme.css" />',
             '<link rel="stylesheet" href="/assets/css/pypath-theme.css" />\n'
             '    <link rel="stylesheet" href="/assets/css/auth.css" />',
+            1,
+        )
+
+    if 'assets/css/gate.css' not in html and 'auth.css' in html:
+        html = html.replace(
+            '<link rel="stylesheet" href="/assets/css/auth.css" />',
+            '<link rel="stylesheet" href="/assets/css/auth.css" />\n'
+            '    <link rel="stylesheet" href="/assets/css/gate.css" />',
             1,
         )
 
