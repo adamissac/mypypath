@@ -191,7 +191,9 @@ def replace_header(html: str, path: Path) -> str:
     show_progress = kind == 'home'
     new_header = header_html(path, show_progress)
     return re.sub(
-        r'<header class="site-header">.*?</header>',
+        # Leading whitespace is part of the match: the replacement carries its
+        # own indentation, so leaving it out re-indents the page on every run.
+        r'[ \t]*<header class="site-header">.*?</header>',
         new_header,
         html,
         count=1,
@@ -201,7 +203,7 @@ def replace_header(html: str, path: Path) -> str:
 
 def replace_footer(html: str) -> str:
     return re.sub(
-        r'<footer class="site-footer">.*?</footer>',
+        r'[ \t]*<footer class="site-footer">.*?</footer>',
         FOOTER,
         html,
         count=1,
@@ -437,6 +439,26 @@ def normalize_scripts(html: str, path: Path) -> str:
             '<script defer src="/assets/js/storage-keys.js"></script>\n'
             '    <script defer src="/assets/js/progress-store.js"></script>\n'
             '    <script defer src="/assets/js/motion.js"></script>',
+            1,
+        )
+
+    # merge.js is a plain global consumed by sync.js; auth + sync are ES modules
+    # (the Firebase SDK requires it) and load after the progress store, which
+    # they install an adapter into.
+    if 'assets/js/merge.js' not in html and 'progress-store.js' in html:
+        html = html.replace(
+            '<script defer src="/assets/js/progress-store.js"></script>',
+            '<script defer src="/assets/js/progress-store.js"></script>\n'
+            '    <script defer src="/assets/js/merge.js"></script>',
+            1,
+        )
+
+    if 'assets/js/auth.js' not in html and 'core.js' in html:
+        html = html.replace(
+            '<script defer src="/assets/js/core.js"></script>',
+            '<script defer src="/assets/js/core.js"></script>\n'
+            '    <script type="module" src="/assets/js/auth.js"></script>\n'
+            '    <script type="module" src="/assets/js/sync.js"></script>',
             1,
         )
 
