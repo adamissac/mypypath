@@ -1,0 +1,58 @@
+/* PyPath — lesson progress chip and the soft unit lock notice. */
+
+.lesson-progress-chip {
+  display: inline-block;
+  margin: 4px 0 12px;
+  padding: 4px 12px;
+  border: 1px solid var(--border, #cfe3f2);
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--muted, #5b7c92);
+  background: var(--surface, #f4f9fd);
+}
+
+.lesson-progress-chip.is-complete {
+  color: #0b6b3a;
+  border-color: #9ad3b4;
+  background: #e8f7ef;
+}
+
+:root[data-theme="dark"] .lesson-progress-chip.is-complete,
+:root:not([data-theme="light"]) .lesson-progress-chip.is-complete {
+  color: #7ee2ab;
+  border-color: #1f6b45;
+  background: rgba(16, 78, 51, 0.35);
+}
+
+.unit-locked-notice {
+  margin: 20px 0 28px;
+  padding: 20px 22px;
+  border: 1px solid #f0d08a;
+  border-left: 4px solid #e0a72e;
+  border-radius: 12px;
+  background: rgba(224, 167, 46, 0.09);
+}
+
+.unit-locked-notice__title {
+  margin: 0 0 6px;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.unit-locked-notice p { margin: 0 0 10px; }
+.unit-locked-notice p:last-child { margin-bottom: 0; }
+
+/* A locked unit stays clickable under the soft lock, but reads as not-yet-open. */
+.unit-card.locked,
+.dd-panel a.locked {
+  opacity: 0.55;
+}
+.unit-card.locked::after,
+.dd-panel a.locked::after {
+  content: " · locked";
+  font-size: 0.8em;
+  color: var(--muted, #5b7c92);
+  letter-spacing: 0.02em;
+}

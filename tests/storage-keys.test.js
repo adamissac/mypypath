@@ -16,6 +16,17 @@ describe('isSyncable', () => {
     expect(window.PyPathKeys.COMPLETED_AT_KEY).toBe('pypath-completed-at');
   });
 
+  it('accepts the lesson progress map', () => {
+    expect(window.PyPathKeys.isSyncable('pypath-progress-lessons')).toBe(true);
+    expect(window.PyPathKeys.LESSON_PROGRESS_KEY).toBe('pypath-progress-lessons');
+  });
+
+  it('keeps the lesson progress map out of the saved-code namespace', () => {
+    // pypath-lesson-* is saved editor contents; the progress map must not
+    // look like a lesson code document.
+    expect(window.PyPathKeys.LESSON_PROGRESS_KEY.startsWith('pypath-lesson-')).toBe(false);
+  });
+
   it('accepts lesson code keys', () => {
     expect(
       window.PyPathKeys.isSyncable('pypath-lesson-/units/unit-1/first-program.html-editor-1')
