@@ -102,10 +102,14 @@
       <h1>Create your account</h1>
       <p class="auth-note">Your progress on this device carries over automatically.</p>
       <form id="signup-form" class="auth-form" novalidate>
-        <label for="signup-username">Username</label>
-        <input id="signup-username" type="text" autocomplete="username"
-               minlength="3" maxlength="20" required aria-describedby="signup-username-hint">
-        <p class="auth-hint" id="signup-username-hint">3-20 characters: letters, numbers, underscores. This is the name other learners see.</p>
+        <label for="signup-first-name">First name</label>
+        <input id="signup-first-name" type="text" autocomplete="given-name"
+               maxlength="40" required aria-describedby="signup-name-hint">
+
+        <label for="signup-last-name">Last name</label>
+        <input id="signup-last-name" type="text" autocomplete="family-name"
+               maxlength="40" required aria-describedby="signup-name-hint">
+        <p class="auth-hint" id="signup-name-hint">Your first and last name. This is the name other learners see.</p>
 
         <label for="signup-email">Email</label>
         <input id="signup-email" type="email" autocomplete="email" required>
@@ -152,17 +156,20 @@
       import { signUpWithEmail, signInWithGoogle, signInWithGitHub }
         from '/assets/js/auth.js';
       import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
-      const { doc, getDoc, setDoc } =
+      const { doc, setDoc } =
         await import(`https://www.gstatic.com/firebasejs/${SDK_VERSION}/firebase-firestore.js`);
       const { updateProfile } =
         await import(`https://www.gstatic.com/firebasejs/${SDK_VERSION}/firebase-auth.js`);
 
-      // Uniqueness is the document id in `usernames`, so a collision is just a
-      // failed create. The rules deny update, which makes the claim atomic --
-      // two people submitting the same name at once cannot both win.
-      async function claimUsername(uid, name) {
-        await setDoc(doc(db, 'usernames/' + name), { uid: uid, createdAt: Date.now() });
-        await setDoc(doc(db, 'users/' + uid), { username: name, updatedAt: Date.now() }, { merge: true });
+      // Real names are not unique -- two learners may both be "Ada Lovelace".
+      // Email is the unique login identifier, so the name is stored as a plain
+      // profile field with no reservation step.
+      async function saveName(uid, first, last, full) {
+        await setDoc(
+          doc(db, 'users/' + uid),
+          { firstName: first, lastName: last, displayName: full, updatedAt: Date.now() },
+          { merge: true }
+        );
       }
 
       const err = document.getElementById('signup-error');
@@ -188,23 +195,17 @@
       document.getElementById('signup-form').addEventListener('submit', async (ev) => {
         ev.preventDefault();
         err.hidden = true;
-        const rawName = document.getElementById('signup-username').value;
-        const check = window.PyPathUsername.validate(rawName);
+        const rawFirst = document.getElementById('signup-first-name').value;
+        const rawLast = document.getElementById('signup-last-name').value;
+        const check = window.PyPathUsername.validate(rawFirst, rawLast);
         if (!check.ok) {
           err.hidden = false;
           err.textContent = check.error;
           return;
         }
-        const name = window.PyPathUsername.normalize(rawName);
-
-        try {
-          const taken = await getDoc(doc(db, 'usernames/' + name));
-          if (taken.exists()) {
-            err.hidden = false;
-            err.textContent = 'That username is already taken.';
-            return;
-          }
-        } catch (e) { /* offline: let the claim below be the real check */ }
+        const first = window.PyPathUsername.normalizePart(rawFirst);
+        const last = window.PyPathUsername.normalizePart(rawLast);
+        const name = window.PyPathUsername.format(first, last);
 
         try {
           const user = await signUpWithEmail(
@@ -212,12 +213,12 @@
             document.getElementById('signup-password').value
           );
           try {
-            await claimUsername(user.uid, name);
+            await saveName(user.uid, first, last, name);
             await updateProfile(user, { displayName: name });
           } catch (e) {
-            // The account exists either way; losing the race for the name must
-            // not strand the learner on this page with no account and no error.
-            window.PyUI && window.PyUI.showToast('Signed up, but that username was just taken - pick another on your account page');
+            // The account exists either way; a failed profile write must not
+            // strand the learner on this page with no account and no error.
+            window.PyUI && window.PyUI.showToast('Signed up, but your name did not save - set it on your account page');
           }
           window.PyUI && window.PyUI.showToast('Check your email to verify your address');
           done();
