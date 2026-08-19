@@ -175,7 +175,11 @@
       const err = document.getElementById('signup-error');
       function fail(e) {
         err.hidden = false;
-        if (e && e.code === 'auth/email-already-in-use') {
+        if (e && e.code === 'auth/invalid-email') {
+          // The form is novalidate, so a malformed address reaches Firebase and
+          // must not surface as the generic failure. Wording matches login.html.
+          err.textContent = 'That does not look like an email address.';
+        } else if (e && e.code === 'auth/email-already-in-use') {
           err.textContent = 'That email already has an account. Try signing in.';
         } else if (e && e.code === 'auth/weak-password') {
           err.textContent = 'Please choose a password of at least 8 characters.';
