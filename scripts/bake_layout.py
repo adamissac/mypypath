@@ -146,6 +146,7 @@ def header_html(path: Path, show_progress: bool) -> str:
               </ul>
             </div>
           </nav>
+          <div class="header-end">
           <a href="/units/unit-1/what-is-python.html" class="btn btn-primary header-cta route">Start learning</a>
           <div class="account-menu" data-account-menu>
             <a href="/login.html" class="btn btn-ghost account-signin route" data-account-signin>Sign in</a>
@@ -157,6 +158,7 @@ def header_html(path: Path, show_progress: bool) -> str:
               <a href="/account.html" class="route" role="menuitem">Account</a>
               <button type="button" data-account-signout role="menuitem">Sign out</button>
             </div>
+          </div>
           </div>
         </div>
       </div>
