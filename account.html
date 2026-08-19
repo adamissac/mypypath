@@ -108,10 +108,14 @@
 
       <div id="account-signed-in" hidden>
         <form id="account-form" class="auth-form">
-          <label for="account-name">Username</label>
-          <input id="account-name" type="text" autocomplete="username"
-                 minlength="3" maxlength="20" aria-describedby="account-name-hint">
-          <p class="auth-hint" id="account-name-hint">3-20 characters: letters, numbers, underscores.</p>
+          <label for="account-first-name">First name</label>
+          <input id="account-first-name" type="text" autocomplete="given-name"
+                 maxlength="40" aria-describedby="account-name-hint">
+
+          <label for="account-last-name">Last name</label>
+          <input id="account-last-name" type="text" autocomplete="family-name"
+                 maxlength="40" aria-describedby="account-name-hint">
+          <p class="auth-hint" id="account-name-hint">Your first and last name. This is the name other learners see.</p>
           <button type="submit" class="btn btn-primary">Save</button>
           <p class="auth-error" id="account-error" role="alert" hidden></p>
         </form>
@@ -144,15 +148,42 @@
     <script type="module">
       import { signOutUser } from '/assets/js/auth.js';
       import { auth, db, SDK_VERSION } from '/assets/js/firebase-config.js';
-      const { doc, getDoc, setDoc, deleteDoc } =
+      const { doc, getDoc, setDoc } =
         await import(`https://www.gstatic.com/firebasejs/${SDK_VERSION}/firebase-firestore.js`);
       const { updateProfile } =
         await import(`https://www.gstatic.com/firebasejs/${SDK_VERSION}/firebase-auth.js`);
 
       const guest = document.getElementById('account-guest');
       const signedIn = document.getElementById('account-signed-in');
-          let uid = null;
+      const firstInput = document.getElementById('account-first-name');
+      const lastInput = document.getElementById('account-last-name');
+      let uid = null;
       let currentName = '';
+
+      // Accounts created before the name split only have a combined
+      // displayName, so fall back to splitting it at the first space -- that
+      // keeps multi-word family names ("van Beethoven") intact.
+      function splitDisplayName(full) {
+        const parts = String(full || '').trim().split(/\s+/);
+        if (parts.length < 2) return { first: parts[0] || '', last: '' };
+        return { first: parts[0], last: parts.slice(1).join(' ') };
+      }
+
+      async function fillNameFields(user) {
+        const fallback = splitDisplayName(user.displayName);
+        let first = fallback.first;
+        let last = fallback.last;
+        try {
+          const snap = await getDoc(doc(db, 'users/' + user.uid));
+          const data = snap.exists() ? snap.data() : null;
+          if (data && (data.firstName || data.lastName)) {
+            first = data.firstName || '';
+            last = data.lastName || '';
+          }
+        } catch (e) { /* offline: the displayName split is a fine fallback */ }
+        firstInput.value = first;
+        lastInput.value = last;
+      }
 
       document.addEventListener('pypath:auth', (e) => {
         const user = e.detail.user;
@@ -162,7 +193,7 @@
         if (user) {
           document.getElementById('account-email').textContent = user.email || '';
           currentName = user.displayName || '';
-          document.getElementById('account-name').value = currentName;
+          fillNameFields(user);
         }
       });
 
@@ -172,37 +203,30 @@
         const accountErr = document.getElementById('account-error');
         accountErr.hidden = true;
 
-        const raw = document.getElementById('account-name').value;
-        const check = window.PyPathUsername.validate(raw);
+        const check = window.PyPathUsername.validate(firstInput.value, lastInput.value);
         if (!check.ok) {
           accountErr.hidden = false;
           accountErr.textContent = check.error;
           return;
         }
-        const name = window.PyPathUsername.normalize(raw);
+        const first = window.PyPathUsername.normalizePart(firstInput.value);
+        const last = window.PyPathUsername.normalizePart(lastInput.value);
+        const name = window.PyPathUsername.format(first, last);
         if (name === currentName) return;
 
         try {
-          const taken = await getDoc(doc(db, 'usernames/' + name));
-          if (taken.exists()) {
-            accountErr.hidden = false;
-            accountErr.textContent = 'That username is already taken.';
-            return;
-          }
-          // Claim first. If this fails the old name is still ours, which is the
-          // safe direction to fail in.
-          await setDoc(doc(db, 'usernames/' + name), { uid: uid, createdAt: Date.now() });
-          await setDoc(doc(db, `users/${uid}`), { username: name, updatedAt: Date.now() }, { merge: true });
+          await setDoc(
+            doc(db, `users/${uid}`),
+            { firstName: first, lastName: last, displayName: name, updatedAt: Date.now() },
+            { merge: true }
+          );
           if (auth.currentUser) await updateProfile(auth.currentUser, { displayName: name });
-          if (currentName && currentName !== name) {
-            try { await deleteDoc(doc(db, 'usernames/' + currentName)); } catch (e) { /* orphan is harmless */ }
-          }
           currentName = name;
           document.dispatchEvent(new CustomEvent('pypath:auth', { detail: { user: auth.currentUser } }));
           window.PyUI && window.PyUI.showToast('Saved');
         } catch (e) {
           accountErr.hidden = false;
-          accountErr.textContent = 'Could not save that username. Try another.';
+          accountErr.textContent = 'Could not save your name. Please try again.';
         }
       });
 

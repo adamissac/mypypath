@@ -6,9 +6,8 @@ beforeAll(() => {
 });
 
 describe('constants', () => {
-  it('exposes MIN and MAX', () => {
-    expect(window.PyPathUsername.MIN).toBe(3);
-    expect(window.PyPathUsername.MAX).toBe(20);
+  it('exposes the length cap', () => {
+    expect(window.PyPathUsername.MAX_PART).toBe(40);
   });
 
   it('exposes the reserved list', () => {
@@ -19,167 +18,192 @@ describe('constants', () => {
   });
 });
 
-describe('normalize', () => {
-  it('lowercases mixed case', () => {
-    expect(window.PyPathUsername.normalize('AdaLovelace')).toBe('adalovelace');
-  });
-
+describe('normalizePart', () => {
   it('trims surrounding whitespace', () => {
-    expect(window.PyPathUsername.normalize('   ada   ')).toBe('ada');
+    expect(window.PyPathUsername.normalizePart('   Ada   ')).toBe('Ada');
   });
 
-  it('trims and lowercases together', () => {
-    expect(window.PyPathUsername.normalize('\t  Ada_99 \n')).toBe('ada_99');
+  it('collapses interior whitespace', () => {
+    expect(window.PyPathUsername.normalizePart('van    Beethoven')).toBe('van Beethoven');
   });
 
-  it('returns empty string for null', () => {
-    expect(window.PyPathUsername.normalize(null)).toBe('');
+  it('collapses tabs and newlines', () => {
+    expect(window.PyPathUsername.normalizePart('\t Ada \n Lovelace ')).toBe('Ada Lovelace');
   });
 
-  it('returns empty string for undefined', () => {
-    expect(window.PyPathUsername.normalize(undefined)).toBe('');
+  it('preserves capitalization exactly', () => {
+    expect(window.PyPathUsername.normalizePart('McDonald')).toBe('McDonald');
+    expect(window.PyPathUsername.normalizePart('van Beethoven')).toBe('van Beethoven');
+    expect(window.PyPathUsername.normalizePart('LOVELACE')).toBe('LOVELACE');
   });
 
-  it('returns empty string for a number', () => {
-    expect(window.PyPathUsername.normalize(42)).toBe('');
+  it('returns empty string for non-strings', () => {
+    expect(window.PyPathUsername.normalizePart(null)).toBe('');
+    expect(window.PyPathUsername.normalizePart(undefined)).toBe('');
+    expect(window.PyPathUsername.normalizePart(42)).toBe('');
+    expect(window.PyPathUsername.normalizePart({})).toBe('');
+  });
+});
+
+describe('format', () => {
+  it('joins first and last with a single space', () => {
+    expect(window.PyPathUsername.format('Ada', 'Lovelace')).toBe('Ada Lovelace');
   });
 
-  it('returns empty string for an object', () => {
-    expect(window.PyPathUsername.normalize({})).toBe('');
+  it('trims each part before joining', () => {
+    expect(window.PyPathUsername.format('  Vihaan ', ' Krishna ')).toBe('Vihaan Krishna');
+  });
+
+  it('keeps a multi-word family name intact', () => {
+    expect(window.PyPathUsername.format('Ludwig', 'van Beethoven')).toBe('Ludwig van Beethoven');
+  });
+
+  it('does not title-case', () => {
+    expect(window.PyPathUsername.format('Ronald', 'McDonald')).toBe('Ronald McDonald');
+    expect(window.PyPathUsername.format('ada', 'lovelace')).toBe('ada lovelace');
+  });
+
+  it('returns empty string when either part is missing', () => {
+    expect(window.PyPathUsername.format('', 'Lovelace')).toBe('');
+    expect(window.PyPathUsername.format('Ada', '')).toBe('');
+    expect(window.PyPathUsername.format(null, undefined)).toBe('');
   });
 });
 
 describe('validate', () => {
-  it('accepts a plain valid name', () => {
-    expect(window.PyPathUsername.validate('ada')).toEqual({ ok: true, error: null });
+  it('accepts a plain first and last name', () => {
+    expect(window.PyPathUsername.validate('Ada', 'Lovelace')).toEqual({ ok: true, error: null });
   });
 
-  it('accepts digits and an interior underscore', () => {
-    expect(window.PyPathUsername.validate('ada_99')).toEqual({ ok: true, error: null });
+  it('accepts a name that only becomes valid after trimming', () => {
+    expect(window.PyPathUsername.validate('  Ada  ', ' Lovelace ')).toEqual({ ok: true, error: null });
   });
 
-  it('accepts a name that only becomes valid after normalizing', () => {
-    expect(window.PyPathUsername.validate('  Ada_Lovelace9 ')).toEqual({ ok: true, error: null });
+  it('accepts accented letters', () => {
+    expect(window.PyPathUsername.validate('Ana Sofía', 'García').ok).toBe(true);
+    expect(window.PyPathUsername.validate('Zoë', 'Müller').ok).toBe(true);
   });
 
-  it('rejects an empty string', () => {
-    expect(window.PyPathUsername.validate('')).toEqual({ ok: false, error: 'Pick a username.' });
+  it('accepts non-Latin scripts', () => {
+    expect(window.PyPathUsername.validate('妍', '李').ok).toBe(true);
+    expect(window.PyPathUsername.validate('Дмитрий', 'Иванов').ok).toBe(true);
   });
 
-  it('rejects whitespace only', () => {
-    expect(window.PyPathUsername.validate('   ')).toEqual({ ok: false, error: 'Pick a username.' });
+  it('accepts hyphens and apostrophes', () => {
+    expect(window.PyPathUsername.validate('Anne-Marie', "O'Brien").ok).toBe(true);
+    expect(window.PyPathUsername.validate('Anne-Marie', 'O’Brien').ok).toBe(true);
   });
 
-  it('rejects null', () => {
-    expect(window.PyPathUsername.validate(null)).toEqual({ ok: false, error: 'Pick a username.' });
+  it('accepts a multi-word family name', () => {
+    expect(window.PyPathUsername.validate('Ludwig', 'van Beethoven').ok).toBe(true);
   });
 
-  it('rejects undefined', () => {
-    expect(window.PyPathUsername.validate(undefined)).toEqual({ ok: false, error: 'Pick a username.' });
+  it('accepts an initial with a period', () => {
+    expect(window.PyPathUsername.validate('J. Robert', 'Oppenheimer').ok).toBe(true);
   });
 
-  it('rejects a number', () => {
-    expect(window.PyPathUsername.validate(12345)).toEqual({ ok: false, error: 'Pick a username.' });
+  it('rejects a missing first name', () => {
+    expect(window.PyPathUsername.validate('', 'Lovelace')).toEqual({
+      ok: false, error: 'Enter your first name.'
+    });
+    expect(window.PyPathUsername.validate('   ', 'Lovelace').error).toBe('Enter your first name.');
   });
 
-  it('rejects 2 characters as too short', () => {
-    expect(window.PyPathUsername.validate('ab')).toEqual({
-      ok: false, error: 'Usernames are at least 3 characters.'
+  it('rejects a missing last name', () => {
+    expect(window.PyPathUsername.validate('Ada', '')).toEqual({
+      ok: false, error: 'Enter your last name.'
+    });
+    expect(window.PyPathUsername.validate('Ada', '  ').error).toBe('Enter your last name.');
+  });
+
+  it('rejects non-string parts', () => {
+    expect(window.PyPathUsername.validate(null, undefined).error).toBe('Enter your first name.');
+    expect(window.PyPathUsername.validate(42, 7).error).toBe('Enter your first name.');
+  });
+
+  it('accepts exactly 40 characters per part', () => {
+    expect(window.PyPathUsername.validate('a'.repeat(40), 'b'.repeat(40)).ok).toBe(true);
+  });
+
+  it('rejects 41 characters in the first name', () => {
+    expect(window.PyPathUsername.validate('a'.repeat(41), 'Lovelace')).toEqual({
+      ok: false, error: 'First name is at most 40 characters.'
     });
   });
 
-  it('accepts exactly 3 characters', () => {
-    expect(window.PyPathUsername.validate('abc').ok).toBe(true);
-  });
-
-  it('accepts exactly 20 characters', () => {
-    expect(window.PyPathUsername.validate('a'.repeat(20)).ok).toBe(true);
-  });
-
-  it('rejects 21 characters as too long', () => {
-    expect(window.PyPathUsername.validate('a'.repeat(21))).toEqual({
-      ok: false, error: 'Usernames are at most 20 characters.'
+  it('rejects 41 characters in the last name', () => {
+    expect(window.PyPathUsername.validate('Ada', 'b'.repeat(41))).toEqual({
+      ok: false, error: 'Last name is at most 40 characters.'
     });
   });
 
-  it('rejects a hyphen', () => {
-    expect(window.PyPathUsername.validate('ada-lovelace')).toEqual({
-      ok: false, error: 'Use letters, numbers, and underscores only.'
+  it('rejects digits', () => {
+    expect(window.PyPathUsername.validate('Ada2', 'Lovelace')).toEqual({
+      ok: false, error: 'Names use letters, spaces, hyphens, and apostrophes only.'
     });
   });
 
-  it('rejects interior whitespace', () => {
-    expect(window.PyPathUsername.validate('ada lovelace')).toEqual({
-      ok: false, error: 'Use letters, numbers, and underscores only.'
-    });
+  it('rejects underscores, which the old handle format allowed', () => {
+    expect(window.PyPathUsername.validate('ada_99', 'lovelace').error)
+      .toBe('Names use letters, spaces, hyphens, and apostrophes only.');
   });
 
   it('rejects punctuation and symbols', () => {
-    expect(window.PyPathUsername.validate('ada!').error)
-      .toBe('Use letters, numbers, and underscores only.');
-    expect(window.PyPathUsername.validate('ada@home').error)
-      .toBe('Use letters, numbers, and underscores only.');
-    expect(window.PyPathUsername.validate('adá').error)
-      .toBe('Use letters, numbers, and underscores only.');
+    expect(window.PyPathUsername.validate('Ada!', 'Lovelace').error)
+      .toBe('Names use letters, spaces, hyphens, and apostrophes only.');
+    expect(window.PyPathUsername.validate('Ada@home', 'Lovelace').error)
+      .toBe('Names use letters, spaces, hyphens, and apostrophes only.');
   });
 
-  it('rejects a leading underscore', () => {
-    expect(window.PyPathUsername.validate('_ada')).toEqual({
-      ok: false, error: 'Usernames cannot start or end with an underscore.'
+  it('rejects a part that does not start with a letter', () => {
+    expect(window.PyPathUsername.validate("'Ada", 'Lovelace').error)
+      .toBe('Names use letters, spaces, hyphens, and apostrophes only.');
+    expect(window.PyPathUsername.validate('-Ada', 'Lovelace').error)
+      .toBe('Names use letters, spaces, hyphens, and apostrophes only.');
+  });
+
+  it('bounds the joined name through the per-part caps', () => {
+    const longest = window.PyPathUsername.format('a'.repeat(40), 'b'.repeat(40));
+    expect(longest.length).toBe(81);
+    expect(window.PyPathUsername.validate('a'.repeat(40), 'b'.repeat(40) + 'c').error)
+      .toBe('Last name is at most 40 characters.');
+  });
+
+  it('rejects a reserved first name', () => {
+    expect(window.PyPathUsername.validate('Admin', 'Smith')).toEqual({
+      ok: false, error: 'That name is reserved.'
     });
   });
 
-  it('rejects a trailing underscore', () => {
-    expect(window.PyPathUsername.validate('ada_')).toEqual({
-      ok: false, error: 'Usernames cannot start or end with an underscore.'
-    });
-  });
-
-  it('rejects underscores on both ends', () => {
-    expect(window.PyPathUsername.validate('_ada_')).toEqual({
-      ok: false, error: 'Usernames cannot start or end with an underscore.'
-    });
-  });
-
-  it('rejects a reserved name', () => {
-    expect(window.PyPathUsername.validate('admin')).toEqual({
-      ok: false, error: 'That username is reserved.'
+  it('rejects a reserved last name', () => {
+    expect(window.PyPathUsername.validate('Jane', 'PyPath')).toEqual({
+      ok: false, error: 'That name is reserved.'
     });
   });
 
   it('rejects reserved names case-insensitively', () => {
-    expect(window.PyPathUsername.validate('ADMIN')).toEqual({
-      ok: false, error: 'That username is reserved.'
-    });
-    expect(window.PyPathUsername.validate('  PyPath ')).toEqual({
-      ok: false, error: 'That username is reserved.'
-    });
+    expect(window.PyPathUsername.validate('ADMIN', 'Smith').error).toBe('That name is reserved.');
+    expect(window.PyPathUsername.validate('  root  ', 'Smith').error).toBe('That name is reserved.');
   });
 
-  it('rejects every listed reserved name', () => {
+  it('rejects every listed reserved name in either position', () => {
     window.PyPathUsername.RESERVED.forEach(function (name) {
-      expect(window.PyPathUsername.validate(name).error).toBe('That username is reserved.');
+      expect(window.PyPathUsername.validate(name, 'Smith').error).toBe('That name is reserved.');
+      expect(window.PyPathUsername.validate('Jane', name).error).toBe('That name is reserved.');
     });
   });
 
-  it('reports the first failure in order: empty before length', () => {
-    expect(window.PyPathUsername.validate('  ').error).toBe('Pick a username.');
+  it('reports missing parts before length', () => {
+    expect(window.PyPathUsername.validate('', 'b'.repeat(41)).error).toBe('Enter your first name.');
   });
 
   it('reports length before charset', () => {
-    expect(window.PyPathUsername.validate('a-').error)
-      .toBe('Usernames are at least 3 characters.');
-    expect(window.PyPathUsername.validate('a-'.repeat(11)).error)
-      .toBe('Usernames are at most 20 characters.');
+    expect(window.PyPathUsername.validate('1'.repeat(41), 'Lovelace').error)
+      .toBe('First name is at most 40 characters.');
   });
 
-  it('reports charset before underscore edges', () => {
-    expect(window.PyPathUsername.validate('_ada-b').error)
-      .toBe('Use letters, numbers, and underscores only.');
-  });
-
-  it('reports underscore edges before reserved', () => {
-    expect(window.PyPathUsername.validate('_admin_').error)
-      .toBe('Usernames cannot start or end with an underscore.');
+  it('reports charset before reserved', () => {
+    expect(window.PyPathUsername.validate('admin9', 'Smith').error)
+      .toBe('Names use letters, spaces, hyphens, and apostrophes only.');
   });
 });
