@@ -44,7 +44,7 @@ FOOTER = """    <footer class="site-footer">
               <span class="brand-text">PyPath</span>
             </a>
             <p class="footer-tagline">Learn Python with clarity — free, structured lessons from foundations to real projects.</p>
-            <p class="footer-copy muted">&copy; <span id="year"></span> PyPath</p>
+            <p class="footer-copy muted">&copy; <span id="year"></span> PyPath &middot; <a href="/privacy.html" class="route">Privacy</a></p>
           </div>
           <div class="footer-col">
             <h4 class="footer-heading">Learn</h4>
@@ -146,7 +146,21 @@ def header_html(path: Path, show_progress: bool) -> str:
               </ul>
             </div>
           </nav>
+          <div class="header-end">
           <a href="/units/unit-1/what-is-python.html" class="btn btn-primary header-cta route">Start learning</a>
+          <div class="account-menu" data-account-menu>
+            <a href="/login.html" class="btn btn-ghost account-signin route" data-account-signin>Sign in</a>
+            <button type="button" class="account-avatar" data-account-avatar hidden aria-haspopup="menu" aria-expanded="false">
+              <img src="/assets/img/placeholder-avatar.svg" alt="" width="28" height="28" data-account-photo>
+              <span class="account-username" data-account-username></span>
+            </button>
+            <div class="account-panel" data-account-panel role="menu" hidden>
+              <a href="/progress.html" class="route" role="menuitem">My progress</a>
+              <a href="/account.html" class="route" role="menuitem">Account</a>
+              <button type="button" data-account-signout role="menuitem">Sign out</button>
+            </div>
+          </div>
+          </div>
         </div>
       </div>
 {progress}    </header>"""
@@ -191,7 +205,9 @@ def replace_header(html: str, path: Path) -> str:
     show_progress = kind == 'home'
     new_header = header_html(path, show_progress)
     return re.sub(
-        r'<header class="site-header">.*?</header>',
+        # Leading whitespace is part of the match: the replacement carries its
+        # own indentation, so leaving it out re-indents the page on every run.
+        r'[ \t]*<header class="site-header">.*?</header>',
         new_header,
         html,
         count=1,
@@ -201,7 +217,7 @@ def replace_header(html: str, path: Path) -> str:
 
 def replace_footer(html: str) -> str:
     return re.sub(
-        r'<footer class="site-footer">.*?</footer>',
+        r'[ \t]*<footer class="site-footer">.*?</footer>',
         FOOTER,
         html,
         count=1,
@@ -398,6 +414,8 @@ def normalize_scripts(html: str, path: Path) -> str:
     if path.name == 'index.html' and path.parent == ROOT:
         return html
 
+    # main.js was deleted (2026-08-16); it stays in this strip list so any
+    # stale script tag in an un-baked page is still removed.
     # Keep icons.js as the global icon system (used by sandbox + UI).
     for name in ('layout.js', 'dropdowns.js', 'main.js', 'backgrounds.js', 'home.js'):
         html = re.sub(rf'\s*<script defer src="/assets/js/{re.escape(name)}"></script>\s*', '\n', html)
@@ -424,6 +442,66 @@ def normalize_scripts(html: str, path: Path) -> str:
         html = html.replace(
             '<script defer src="/assets/js/theme.js"></script>',
             '<script defer src="/assets/js/theme.js"></script>\n    <script defer src="/assets/js/icons.js"></script>',
+            1,
+        )
+
+    # Progress store must load before core.js / exercises.js / lesson-runner.js,
+    # all of which call window.ProgressStore.
+    if 'storage-keys.js' not in html and 'motion.js' in html:
+        html = html.replace(
+            '<script defer src="/assets/js/motion.js"></script>',
+            '<script defer src="/assets/js/storage-keys.js"></script>\n'
+            '    <script defer src="/assets/js/progress-store.js"></script>\n'
+            '    <script defer src="/assets/js/motion.js"></script>',
+            1,
+        )
+
+    # merge.js is a plain global consumed by sync.js; auth + sync are ES modules
+    # (the Firebase SDK requires it) and load after the progress store, which
+    # they install an adapter into.
+    if 'assets/js/merge.js' not in html and 'progress-store.js' in html:
+        html = html.replace(
+            '<script defer src="/assets/js/progress-store.js"></script>',
+            '<script defer src="/assets/js/progress-store.js"></script>\n'
+            '    <script defer src="/assets/js/merge.js"></script>',
+            1,
+        )
+
+    if 'assets/js/auth.js' not in html and 'core.js' in html:
+        html = html.replace(
+            '<script defer src="/assets/js/core.js"></script>',
+            '<script defer src="/assets/js/core.js"></script>\n'
+            '    <script type="module" src="/assets/js/auth.js"></script>\n'
+            '    <script type="module" src="/assets/js/sync.js"></script>\n'
+            '    <script type="module" src="/assets/js/auth-ui.js"></script>',
+            1,
+        )
+
+    # Separate guard from the auth.js block above: pages baked before auth-ui.js
+    # existed already have auth.js, so a combined guard would skip them forever.
+    if 'assets/js/auth-ui.js' not in html and 'assets/js/sync.js' in html:
+        html = html.replace(
+            '<script type="module" src="/assets/js/sync.js"></script>',
+            '<script type="module" src="/assets/js/sync.js"></script>\n'
+            '    <script type="module" src="/assets/js/auth-ui.js"></script>',
+            1,
+        )
+
+    if 'assets/js/username.js' not in html and 'merge.js' in html:
+        html = html.replace(
+            '<script defer src="/assets/js/merge.js"></script>',
+            '<script defer src="/assets/js/merge.js"></script>\n'
+            '    <script defer src="/assets/js/username.js"></script>',
+            1,
+        )
+
+    # gate.js is a classic global like merge.js and must be defined before
+    # core.js runs. It no-ops on every page that is not a unit surface.
+    if 'assets/js/gate.js' not in html and 'merge.js' in html:
+        html = html.replace(
+            '<script defer src="/assets/js/merge.js"></script>',
+            '<script defer src="/assets/js/merge.js"></script>\n'
+            '    <script defer src="/assets/js/gate.js"></script>',
             1,
         )
 
@@ -457,6 +535,23 @@ def normalize_head(html: str) -> str:
             fonts + '    <link rel="stylesheet" href="/assets/css/style.css" />',
             1,
         )
+    # auth.css styles the header account menu, so every page needs it.
+    if 'assets/css/auth.css' not in html and 'pypath-theme.css' in html:
+        html = html.replace(
+            '<link rel="stylesheet" href="/assets/css/pypath-theme.css" />',
+            '<link rel="stylesheet" href="/assets/css/pypath-theme.css" />\n'
+            '    <link rel="stylesheet" href="/assets/css/auth.css" />',
+            1,
+        )
+
+    if 'assets/css/gate.css' not in html and 'auth.css' in html:
+        html = html.replace(
+            '<link rel="stylesheet" href="/assets/css/auth.css" />',
+            '<link rel="stylesheet" href="/assets/css/auth.css" />\n'
+            '    <link rel="stylesheet" href="/assets/css/gate.css" />',
+            1,
+        )
+
     if 'pypath-theme.css' not in html and 'pypath-fast.css' in html:
         html = html.replace(
             '<link rel="stylesheet" href="/assets/css/pypath-fast.css" />',

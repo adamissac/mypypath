@@ -426,10 +426,10 @@
   }
 
   function getCompletedUnits() {
-    try { return JSON.parse(localStorage.getItem('pypath-completed-units') || '[]'); } catch { return []; }
+    return window.ProgressStore ? window.ProgressStore.getCompletedUnits() : [];
   }
   function setCompletedUnits(list) {
-    try { localStorage.setItem('pypath-completed-units', JSON.stringify(Array.from(new Set(list)))); } catch {}
+    if (window.ProgressStore) window.ProgressStore.setCompletedUnits(list);
   }
   function markUnitCompletedFromPage() {
     var match = location.pathname.match(/units\/unit-(\d+)\.html$/);
@@ -484,6 +484,11 @@
 
   window.PyUI = Object.assign({}, window.PyUI || {}, { showToast: showToast });
 
+  function isBackupKey(k) {
+    var syncable = window.PyPathKeys && window.PyPathKeys.isSyncable(k);
+    return k.startsWith('pypath-') || !!syncable;
+  }
+
   function setupSettingsActions() {
     var exportBtn = qs('#export-btn');
     if (exportBtn) {
@@ -491,7 +496,7 @@
         try {
           var data = {};
           Object.keys(localStorage).forEach(function (k) {
-            if (k.startsWith('pypath-')) data[k] = localStorage.getItem(k);
+            if (isBackupKey(k)) data[k] = localStorage.getItem(k);
           });
           var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
           var url = URL.createObjectURL(blob);
@@ -510,11 +515,20 @@
     var resetBtn = qs('#reset-btn');
     if (resetBtn) {
       resetBtn.addEventListener('click', function () {
+        var confirmed = window.confirm(
+          'This permanently deletes your saved progress, lesson code, and sandbox projects on this device. This cannot be undone. Continue?'
+        );
+        if (!confirmed) return;
         try {
           Object.keys(localStorage).forEach(function (k) {
-            if (k.startsWith('pypath-')) localStorage.removeItem(k);
+            if (!isBackupKey(k)) return;
+            if (window.PyPathKeys && window.PyPathKeys.isSyncable(k) && window.ProgressStore) {
+              window.ProgressStore.removeItem(k);
+            } else {
+              localStorage.removeItem(k);
+            }
           });
-        } catch {}
+        } catch (e) {}
         showToast('Preferences reset');
         setTimeout(function () { location.reload(); }, 400);
       });

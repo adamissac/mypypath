@@ -116,7 +116,28 @@ vercel
 3. Test all pages and functionality
 4. Check mobile responsiveness
 
+## Step 5: Deploy Firebase (accounts and progress sync)
+
+Accounts, progress sync, and usernames run on Firebase project `mypypath`. The web
+config in `assets/js/firebase-config.js` is public by design — access control lives
+in `firestore.rules`, not in the config.
+
+Deploy the security rules whenever `firestore.rules` changes:
+
+```bash
+npx firebase deploy --only firestore:rules
+```
+
+**Authorized Domains.** In the Firebase console under *Authentication → Settings →
+Authorized domains*, add every production domain (`mypypath.com`, `www.mypypath.com`,
+and the `*.vercel.app` domain if you sign in there). Any domain missing from that
+list fails every sign-in attempt with `auth/unauthorized-domain`, even though the
+rest of the site loads normally.
+
 ## Troubleshooting
+
+### Sign-in Fails With `auth/unauthorized-domain`?
+- The domain serving the page is not in the Firebase Authorized Domains list. Add it.
 
 ### DNS Not Working?
 - Wait up to 24-48 hours for full DNS propagation
