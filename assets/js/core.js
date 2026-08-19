@@ -442,6 +442,20 @@
       showToast('Marked Unit ' + unitNum + ' as completed');
     }
   }
+  // The certificate prints the date the learner actually finished, so stamp it
+  // the first time all ten units are done and never move it afterwards.
+  function stampCourseCompletion() {
+    var store = window.ProgressStore;
+    if (!store) return;
+    // getCompletedUnits() already dedupes and range-filters to 1..10, so a
+    // length of 10 is exactly "every unit done". Checked here rather than via
+    // PyPathCertificate because that module only loads on certificate.html.
+    if (store.getCompletedUnits().length !== 10) return;
+    var key = window.PyPathKeys ? window.PyPathKeys.COMPLETED_AT_KEY : 'pypath-completed-at';
+    if (store.getItem(key)) return;
+    store.setItem(key, String(Date.now()));
+  }
+
   function updateGlobalProgress() {
     var completed = getCompletedUnits();
     var percent = Math.round((completed.length / 10) * 100);
@@ -724,6 +738,7 @@
     stickyHeader();
     reducedMotionRespect();
     markUnitCompletedFromPage();
+    stampCourseCompletion();
     updateGlobalProgress();
     setupSettingsActions();
     initSidebarToggle();

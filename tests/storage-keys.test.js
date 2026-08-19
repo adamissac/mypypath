@@ -11,6 +11,11 @@ describe('isSyncable', () => {
     expect(window.PyPathKeys.isSyncable('pypath-completed-units')).toBe(true);
   });
 
+  it('accepts the course completion date', () => {
+    expect(window.PyPathKeys.isSyncable('pypath-completed-at')).toBe(true);
+    expect(window.PyPathKeys.COMPLETED_AT_KEY).toBe('pypath-completed-at');
+  });
+
   it('accepts lesson code keys', () => {
     expect(
       window.PyPathKeys.isSyncable('pypath-lesson-/units/unit-1/first-program.html-editor-1')
