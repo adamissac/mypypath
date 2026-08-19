@@ -166,6 +166,16 @@ def header_html(path: Path, show_progress: bool) -> str:
 {progress}    </header>"""
 
 
+# Directories that are not part of the site. node_modules matters most: baking
+# into it rewrites dependency files -- it injected the site header into
+# firebase-tools' login templates before this guard existed.
+SKIP_DIRS = {'.git', 'node_modules', 'lesson-format-kit', 'REVIEW', 'docs', 'tests'}
+
+
+def skipped(path: Path) -> bool:
+    return any(part in SKIP_DIRS for part in path.parts)
+
+
 def page_kind(path: Path) -> str:
     if path.name == 'index.html' and path.parent == ROOT:
         return 'home'
@@ -579,7 +589,7 @@ def process(path: Path) -> bool:
 
 
 def main():
-    count = sum(1 for p in ROOT.rglob('*.html') if process(p))
+    count = sum(1 for p in ROOT.rglob('*.html') if not skipped(p) and process(p))
     print(f'Baked layout into {count} HTML files.')
 
 
