@@ -7,8 +7,8 @@ export const SDK_VERSION = '11.1.0';
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 
 const { initializeApp } = await import(`${BASE}/firebase-app.js`);
-const { getAuth } = await import(`${BASE}/firebase-auth.js`);
-const { initializeFirestore, persistentLocalCache } =
+const { getAuth, connectAuthEmulator } = await import(`${BASE}/firebase-auth.js`);
+const { initializeFirestore, persistentLocalCache, connectFirestoreEmulator } =
   await import(`${BASE}/firebase-firestore.js`);
 
 const firebaseConfig = {
@@ -29,3 +29,13 @@ export const auth = getAuth(app);
 export const db = initializeFirestore(app, {
   localCache: persistentLocalCache(),
 });
+
+// Local development talks to the emulators, never to the live project, so a
+// test sign-up never creates a real user or writes real documents. Ports match
+// firebase.json.
+const LOCAL_HOSTS = ['localhost', '127.0.0.1', '[::1]'];
+if (LOCAL_HOSTS.includes(location.hostname)) {
+  connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
+  connectFirestoreEmulator(db, '127.0.0.1', 8081);
+  console.info('[pypath] Firebase emulators connected (auth 9099, firestore 8081)');
+}
