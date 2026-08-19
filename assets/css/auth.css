@@ -47,3 +47,26 @@
 /* A class selector beats the user-agent [hidden] rule, so display: grid above
    would otherwise keep the menu on screen for everyone, signed in or not. */
 .account-menu [hidden] { display: none; }
+
+.account-avatar {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+}
+
+.account-username {
+  font-size: .9rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--text, #0f172a);
+  max-width: 9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-username:empty { display: none; }
+
+@media (max-width: 700px) {
+  .account-username { display: none; }
+}

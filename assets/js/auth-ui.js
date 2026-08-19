@@ -8,11 +8,18 @@ if (menu) {
   const photo = menu.querySelector('[data-account-photo]');
   const panel = menu.querySelector('[data-account-panel]');
 
+  const nameChip = menu.querySelector('[data-account-username]');
+
   document.addEventListener('pypath:auth', (e) => {
     const user = e.detail.user;
     signin.hidden = !!user;
     avatar.hidden = !user;
     if (user && user.photoURL) photo.src = user.photoURL;
+    if (nameChip) {
+      // displayName is the username. Never fall back to the email here: the
+      // header is visible over anyone's shoulder.
+      nameChip.textContent = user && user.displayName ? user.displayName : '';
+    }
     if (!user) {
       panel.hidden = true;
       avatar.setAttribute('aria-expanded', 'false');

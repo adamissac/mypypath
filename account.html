@@ -23,6 +23,7 @@
 <script defer src="/assets/js/storage-keys.js"></script>
     <script defer src="/assets/js/progress-store.js"></script>
     <script defer src="/assets/js/merge.js"></script>
+    <script defer src="/assets/js/username.js"></script>
     <script defer src="/assets/js/gate.js"></script>
     <script defer src="/assets/js/motion.js"></script>
     <script defer src="/assets/js/core.js"></script>
@@ -85,6 +86,7 @@
             <a href="/login.html" class="btn btn-ghost account-signin route" data-account-signin>Sign in</a>
             <button type="button" class="account-avatar" data-account-avatar hidden aria-haspopup="menu" aria-expanded="false">
               <img src="/assets/img/placeholder-avatar.svg" alt="" width="28" height="28" data-account-photo>
+              <span class="account-username" data-account-username></span>
             </button>
             <div class="account-panel" data-account-panel role="menu" hidden>
               <a href="/progress.html" class="route" role="menuitem">My progress</a>
@@ -106,9 +108,12 @@
 
       <div id="account-signed-in" hidden>
         <form id="account-form" class="auth-form">
-          <label for="account-name">Display name</label>
-          <input id="account-name" type="text" autocomplete="name">
+          <label for="account-name">Username</label>
+          <input id="account-name" type="text" autocomplete="username"
+                 minlength="3" maxlength="20" aria-describedby="account-name-hint">
+          <p class="auth-hint" id="account-name-hint">3-20 characters: letters, numbers, underscores.</p>
           <button type="submit" class="btn btn-primary">Save</button>
+          <p class="auth-error" id="account-error" role="alert" hidden></p>
         </form>
         <p>Signed in as <span id="account-email"></span></p>
         <button type="button" class="btn btn-ghost" id="account-signout">Sign out</button>
@@ -138,13 +143,16 @@
     </footer>
     <script type="module">
       import { signOutUser } from '/assets/js/auth.js';
-      import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
-      const { doc, setDoc } =
+      import { auth, db, SDK_VERSION } from '/assets/js/firebase-config.js';
+      const { doc, getDoc, setDoc, deleteDoc } =
         await import(`https://www.gstatic.com/firebasejs/${SDK_VERSION}/firebase-firestore.js`);
+      const { updateProfile } =
+        await import(`https://www.gstatic.com/firebasejs/${SDK_VERSION}/firebase-auth.js`);
 
       const guest = document.getElementById('account-guest');
       const signedIn = document.getElementById('account-signed-in');
-      let uid = null;
+          let uid = null;
+      let currentName = '';
 
       document.addEventListener('pypath:auth', (e) => {
         const user = e.detail.user;
@@ -153,21 +161,48 @@
         signedIn.hidden = !user;
         if (user) {
           document.getElementById('account-email').textContent = user.email || '';
-          document.getElementById('account-name').value = user.displayName || '';
+          currentName = user.displayName || '';
+          document.getElementById('account-name').value = currentName;
         }
       });
 
       document.getElementById('account-form').addEventListener('submit', async (ev) => {
         ev.preventDefault();
         if (!uid) return;
+        const accountErr = document.getElementById('account-error');
+        accountErr.hidden = true;
+
+        const raw = document.getElementById('account-name').value;
+        const check = window.PyPathUsername.validate(raw);
+        if (!check.ok) {
+          accountErr.hidden = false;
+          accountErr.textContent = check.error;
+          return;
+        }
+        const name = window.PyPathUsername.normalize(raw);
+        if (name === currentName) return;
+
         try {
-          await setDoc(doc(db, `users/${uid}`), {
-            displayName: document.getElementById('account-name').value,
-            updatedAt: Date.now(),
-          }, { merge: true });
+          const taken = await getDoc(doc(db, 'usernames/' + name));
+          if (taken.exists()) {
+            accountErr.hidden = false;
+            accountErr.textContent = 'That username is already taken.';
+            return;
+          }
+          // Claim first. If this fails the old name is still ours, which is the
+          // safe direction to fail in.
+          await setDoc(doc(db, 'usernames/' + name), { uid: uid, createdAt: Date.now() });
+          await setDoc(doc(db, `users/${uid}`), { username: name, updatedAt: Date.now() }, { merge: true });
+          if (auth.currentUser) await updateProfile(auth.currentUser, { displayName: name });
+          if (currentName && currentName !== name) {
+            try { await deleteDoc(doc(db, 'usernames/' + currentName)); } catch (e) { /* orphan is harmless */ }
+          }
+          currentName = name;
+          document.dispatchEvent(new CustomEvent('pypath:auth', { detail: { user: auth.currentUser } }));
           window.PyUI && window.PyUI.showToast('Saved');
         } catch (e) {
-          window.PyUI && window.PyUI.showToast('Could not save right now');
+          accountErr.hidden = false;
+          accountErr.textContent = 'Could not save that username. Try another.';
         }
       });
 
