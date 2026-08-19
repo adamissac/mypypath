@@ -52,11 +52,28 @@ export async function signOutUser() {
   await signOut(auth);
 }
 
+let reloadedOnce = false;
+
 onAuthStateChanged(auth, (next) => {
   user = next;
   document.dispatchEvent(
     new CustomEvent('pypath:auth', { detail: { user: next } })
   );
+
+  // The SDK restores the user from IndexedDB, and that cached copy can predate
+  // a displayName set on another page -- the header would then show no username
+  // until something else refreshed it. Reload once and re-announce.
+  if (next && !next.displayName && !reloadedOnce) {
+    reloadedOnce = true;
+    next.reload().then(() => {
+      if (auth.currentUser && auth.currentUser.displayName) {
+        user = auth.currentUser;
+        document.dispatchEvent(
+          new CustomEvent('pypath:auth', { detail: { user: auth.currentUser } })
+        );
+      }
+    }).catch(() => {});
+  }
 });
 
 // A failed auth bootstrap must never take a lesson page down.

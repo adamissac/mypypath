@@ -152,6 +152,7 @@ def header_html(path: Path, show_progress: bool) -> str:
             <a href="/login.html" class="btn btn-ghost account-signin route" data-account-signin>Sign in</a>
             <button type="button" class="account-avatar" data-account-avatar hidden aria-haspopup="menu" aria-expanded="false">
               <img src="/assets/img/placeholder-avatar.svg" alt="" width="28" height="28" data-account-photo>
+              <span class="account-username" data-account-username></span>
             </button>
             <div class="account-panel" data-account-panel role="menu" hidden>
               <a href="/progress.html" class="route" role="menuitem">My progress</a>
@@ -483,6 +484,14 @@ def normalize_scripts(html: str, path: Path) -> str:
             '<script type="module" src="/assets/js/sync.js"></script>',
             '<script type="module" src="/assets/js/sync.js"></script>\n'
             '    <script type="module" src="/assets/js/auth-ui.js"></script>',
+            1,
+        )
+
+    if 'assets/js/username.js' not in html and 'merge.js' in html:
+        html = html.replace(
+            '<script defer src="/assets/js/merge.js"></script>',
+            '<script defer src="/assets/js/merge.js"></script>\n'
+            '    <script defer src="/assets/js/username.js"></script>',
             1,
         )
 
