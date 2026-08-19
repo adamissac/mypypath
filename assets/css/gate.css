@@ -1,0 +1,68 @@
+/* PyPath — content gate visuals. See gate.js for the state machine. */
+
+/* No flash of gated lesson text before auth resolves. */
+html[data-gate="pending"] main { visibility: hidden; }
+
+html[data-gate="locked"] main > *:not([data-gate-paywall]) {
+  filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.gate-paywall {
+  max-width: 34rem;
+  margin: 3rem auto;
+  padding: 2rem;
+  text-align: center;
+  color: var(--text, #0f172a);
+  background: var(--panel, #fff);
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .9rem;
+  box-shadow: var(--shadow-strong, 0 12px 32px rgb(0 0 0 / .10));
+}
+
+.gate-paywall h2 {
+  margin-top: 0;
+  color: var(--text-strong, #020617);
+}
+
+.gate-paywall p { color: var(--muted, #475569); }
+
+.gate-paywall__actions {
+  display: flex;
+  gap: .75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1.25rem;
+}
+
+.is-gate-locked { position: relative; }
+
+.is-gate-locked::after {
+  content: "🔒 Account required";
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+  font-size: .75rem;
+  padding: .15rem .5rem;
+  border-radius: 999px;
+  color: var(--muted, #475569);
+  background: var(--bg-elevated, #f2f2f5);
+  border: 1px solid var(--border, #cbd5e1);
+}
+
+/* The panel floats over blurred lesson text; on dark surfaces a drop shadow
+   alone does not separate it, so lift the surface and firm up the edge. */
+[data-theme="dark"] .gate-paywall {
+  background: var(--bg-elevated, #282d38);
+  border-color: var(--border, #434a58);
+  box-shadow: var(--shadow-strong, 0 12px 32px rgb(0 0 0 / .5));
+}
+
+[data-theme="dark"] .is-gate-locked::after {
+  background: var(--panel, #313744);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-gate="locked"] main > *:not([data-gate-paywall]) { filter: none; opacity: .35; }
+}

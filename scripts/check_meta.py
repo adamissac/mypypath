@@ -5,7 +5,7 @@ import re, sys
 from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 META_RE = re.compile(r'<meta\s+name=["\']description["\']\s+content=["\'][^"\']+["\']', re.I)
-SKIP = {".git", "lesson-format-kit"}
+SKIP = {".git", "node_modules", "lesson-format-kit"}
 
 def main() -> int:
     missing = []

@@ -25,3 +25,22 @@ jobs:
           ! grep -q 'certifications.html" class="route">Certifications' scripts/upgrade_site.py
       - name: Check meta descriptions
         run: python scripts/check_meta.py
+
+  js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      # The Firestore emulator is a Java process.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - run: npm ci
+      - name: Unit tests
+        run: npm test
+      - name: Firestore rules tests
+        run: npm run test:rules
