@@ -5,8 +5,8 @@
     <script src="/assets/js/theme-init.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Sandbox • PyPath</title>
-    <meta name="description" content="Python code sandbox with built-in IDE for creating and managing multiple projects." />
+    <title>Create your account • PyPath</title>
+    <meta name="description" content="Create a free PyPath account to save your Python progress and sync it across devices." />
     <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
     <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -17,9 +17,7 @@
     <link rel="stylesheet" href="/assets/css/pypath-theme.css" />
     <link rel="stylesheet" href="/assets/css/auth.css" />
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
-        <script defer src="/assets/js/pyodide-loader.js"></script>
-    <script defer src="/assets/js/theme.js"></script>
+<script defer src="/assets/js/theme.js"></script>
     <script defer src="/assets/js/icons.js"></script>
 <script defer src="/assets/js/storage-keys.js"></script>
     <script defer src="/assets/js/progress-store.js"></script>
@@ -29,11 +27,8 @@
     <script type="module" src="/assets/js/auth.js"></script>
     <script type="module" src="/assets/js/sync.js"></script>
     <script type="module" src="/assets/js/auth-ui.js"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
-    <script defer src="/assets/js/sandbox.js"></script>
-  </head>
-  <body class="page page-sandbox">
+</head>
+  <body class="page page-auth page-signup">
     <a class="skip-link" href="#main-content">Skip to main content</a>
     <div id="page-transition" aria-hidden="true"></div>
 
@@ -77,7 +72,7 @@
                   </ul>
                 </div>
               </li>
-              <li><a href="/sandbox.html" class="route active">Sandbox</a></li>
+              <li><a href="/sandbox.html" class="route">Sandbox</a></li>
               <li><a href="/settings.html" class="route">Settings</a></li>
               </ul>
             </div>
@@ -97,60 +92,28 @@
         </div>
       </div>
     </header>
-    <main id="main-content" class="sandbox-page">
-      <div class="sandbox-shell">
-        <header class="sandbox-head" data-reveal="up">
-          <div class="sandbox-head-copy">
-            <p class="sandbox-eyebrow">Sandbox</p>
-            <h1 class="sandbox-title">Your Python playground</h1>
-            <p class="sandbox-lead">Create projects, run real Python in your browser, and save everything locally on this device.</p>
-          </div>
-          <p class="sandbox-shortcuts muted" aria-label="Keyboard shortcuts">
-            <kbd>⌘</kbd><kbd>↵</kbd> run · <kbd>⌘</kbd><kbd>S</kbd> save
-          </p>
-        </header>
+    <main id="main-content" class="container auth-page">
+      <h1>Create your account</h1>
+      <p class="auth-note">Your progress on this device carries over automatically.</p>
+      <form id="signup-form" class="auth-form" novalidate>
+        <label for="signup-email">Email</label>
+        <input id="signup-email" type="email" autocomplete="email" required>
 
-        <div class="sandbox-workspace" data-reveal="up" data-reveal-delay="60">
-          <aside class="sandbox-projects" aria-label="Projects">
-            <div class="sandbox-projects-head">
-              <h2 class="sandbox-projects-title">Projects</h2>
-              <button type="button" class="btn btn-primary btn-small" id="new-project-btn">New</button>
-            </div>
-            <div class="sandbox-projects-list" id="projects-list"></div>
-          </aside>
+        <label for="signup-password">Password</label>
+        <input id="signup-password" type="password" autocomplete="new-password"
+               minlength="8" required aria-describedby="signup-hint">
+        <p class="auth-hint" id="signup-hint">At least 8 characters.</p>
 
-          <section class="sandbox-ide" aria-label="Code editor">
-            <div class="sandbox-ide-toolbar">
-              <div class="sandbox-ide-file">
-                <span class="sandbox-dot" aria-hidden="true"></span>
-                <span class="sandbox-dot" aria-hidden="true"></span>
-                <span class="sandbox-dot" aria-hidden="true"></span>
-                <span class="sandbox-filename" id="sandbox-filename">untitled.py</span>
-                <span class="project-status" id="project-status" aria-live="polite"></span>
-              </div>
-              <div class="sandbox-ide-actions">
-                <button type="button" class="btn btn-primary sandbox-run-btn" id="run-btn">Run</button>
-                <button type="button" class="btn btn-ghost btn-small" id="save-btn">Save</button>
-                <button type="button" class="btn btn-ghost btn-small sandbox-delete-btn" id="delete-btn">Delete</button>
-              </div>
-            </div>
+        <button type="submit" class="btn btn-primary">Create account</button>
+        <p class="auth-error" id="signup-error" role="alert" hidden></p>
+      </form>
 
-            <div class="sandbox-editor-wrap editor-container">
-              <textarea id="code-editor" aria-label="Python code editor"></textarea>
-            </div>
-
-            <div class="sandbox-output-wrap output-container">
-              <div class="sandbox-output-head output-header">
-                <span class="sandbox-output-label">Output</span>
-                <button type="button" class="btn btn-ghost btn-small" id="clear-output-btn">Clear</button>
-              </div>
-              <div class="output-content" id="output-content" aria-live="polite">
-                <p class="output-placeholder muted">Press Run to see output</p>
-              </div>
-            </div>
-          </section>
-        </div>
+      <div class="auth-providers">
+        <button type="button" class="btn btn-ghost" id="signup-google">Continue with Google</button>
+        <button type="button" class="btn btn-ghost" id="signup-github">Continue with GitHub</button>
       </div>
+
+      <p>Already have an account? <a href="/login.html" class="route">Sign in</a></p>
     </main>
     <footer class="site-footer">
       <div class="container">
@@ -174,6 +137,43 @@
         </div>
       </div>
     </footer>
+    <script type="module">
+      import { signUpWithEmail, signInWithGoogle, signInWithGitHub }
+        from '/assets/js/auth.js';
+
+      const err = document.getElementById('signup-error');
+      function fail(e) {
+        err.hidden = false;
+        if (e && e.code === 'auth/email-already-in-use') {
+          err.textContent = 'That email already has an account. Try signing in.';
+        } else if (e && e.code === 'auth/weak-password') {
+          err.textContent = 'Please choose a password of at least 8 characters.';
+        } else {
+          err.textContent = 'Could not create the account. Please try again.';
+        }
+      }
+      function done() { window.location.href = '/progress.html'; }
+
+      document.getElementById('signup-form').addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        err.hidden = true;
+        try {
+          await signUpWithEmail(
+            document.getElementById('signup-email').value,
+            document.getElementById('signup-password').value
+          );
+          window.PyUI && window.PyUI.showToast('Check your email to verify your address');
+          done();
+        } catch (e) { fail(e); }
+      });
+
+      document.getElementById('signup-google')
+        .addEventListener('click', async () => { try { await signInWithGoogle(); done(); } catch (e) { fail(e); } });
+      document.getElementById('signup-github')
+        .addEventListener('click', async () => { try { await signInWithGitHub(); done(); } catch (e) { fail(e); } });
+    </script>
   </body>
-</html>
+  </html>
+
+
 

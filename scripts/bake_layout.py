@@ -147,6 +147,17 @@ def header_html(path: Path, show_progress: bool) -> str:
             </div>
           </nav>
           <a href="/units/unit-1/what-is-python.html" class="btn btn-primary header-cta route">Start learning</a>
+          <div class="account-menu" data-account-menu>
+            <a href="/login.html" class="btn btn-ghost account-signin route" data-account-signin>Sign in</a>
+            <button type="button" class="account-avatar" data-account-avatar hidden aria-haspopup="menu" aria-expanded="false">
+              <img src="/assets/img/placeholder-avatar.svg" alt="" width="28" height="28" data-account-photo>
+            </button>
+            <div class="account-panel" data-account-panel role="menu" hidden>
+              <a href="/progress.html" class="route" role="menuitem">My progress</a>
+              <a href="/account.html" class="route" role="menuitem">Account</a>
+              <button type="button" data-account-signout role="menuitem">Sign out</button>
+            </div>
+          </div>
         </div>
       </div>
 {progress}    </header>"""
@@ -458,7 +469,18 @@ def normalize_scripts(html: str, path: Path) -> str:
             '<script defer src="/assets/js/core.js"></script>',
             '<script defer src="/assets/js/core.js"></script>\n'
             '    <script type="module" src="/assets/js/auth.js"></script>\n'
-            '    <script type="module" src="/assets/js/sync.js"></script>',
+            '    <script type="module" src="/assets/js/sync.js"></script>\n'
+            '    <script type="module" src="/assets/js/auth-ui.js"></script>',
+            1,
+        )
+
+    # Separate guard from the auth.js block above: pages baked before auth-ui.js
+    # existed already have auth.js, so a combined guard would skip them forever.
+    if 'assets/js/auth-ui.js' not in html and 'assets/js/sync.js' in html:
+        html = html.replace(
+            '<script type="module" src="/assets/js/sync.js"></script>',
+            '<script type="module" src="/assets/js/sync.js"></script>\n'
+            '    <script type="module" src="/assets/js/auth-ui.js"></script>',
             1,
         )
 
@@ -492,6 +514,15 @@ def normalize_head(html: str) -> str:
             fonts + '    <link rel="stylesheet" href="/assets/css/style.css" />',
             1,
         )
+    # auth.css styles the header account menu, so every page needs it.
+    if 'assets/css/auth.css' not in html and 'pypath-theme.css' in html:
+        html = html.replace(
+            '<link rel="stylesheet" href="/assets/css/pypath-theme.css" />',
+            '<link rel="stylesheet" href="/assets/css/pypath-theme.css" />\n'
+            '    <link rel="stylesheet" href="/assets/css/auth.css" />',
+            1,
+        )
+
     if 'pypath-theme.css' not in html and 'pypath-fast.css' in html:
         html = html.replace(
             '<link rel="stylesheet" href="/assets/css/pypath-fast.css" />',
