@@ -428,20 +428,6 @@
   function getCompletedUnits() {
     return window.ProgressStore ? window.ProgressStore.getCompletedUnits() : [];
   }
-  function setCompletedUnits(list) {
-    if (window.ProgressStore) window.ProgressStore.setCompletedUnits(list);
-  }
-  function markUnitCompletedFromPage() {
-    var match = location.pathname.match(/units\/unit-(\d+)\.html$/);
-    if (!match) return;
-    var unitNum = Number(match[1]);
-    var completed = getCompletedUnits();
-    if (!completed.includes(unitNum)) {
-      completed.push(unitNum);
-      setCompletedUnits(completed);
-      showToast('Marked Unit ' + unitNum + ' as completed');
-    }
-  }
   // The certificate prints the date the learner actually finished, so stamp it
   // the first time all ten units are done and never move it afterwards.
   function stampCourseCompletion() {
@@ -737,7 +723,6 @@
     navInteractions();
     stickyHeader();
     reducedMotionRespect();
-    markUnitCompletedFromPage();
     stampCourseCompletion();
     updateGlobalProgress();
     setupSettingsActions();

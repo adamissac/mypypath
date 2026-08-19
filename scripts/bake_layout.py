@@ -523,6 +523,35 @@ def normalize_scripts(html: str, path: Path) -> str:
             1,
         )
 
+    # curriculum.js is the unit -> lesson map the unit lock reads. It is a plain
+    # global and must be defined before lesson-progress.js.
+    if 'assets/js/curriculum.js' not in html and 'gate.js' in html:
+        html = html.replace(
+            '<script defer src="/assets/js/gate.js"></script>',
+            '<script defer src="/assets/js/gate.js"></script>\n'
+            '    <script defer src="/assets/js/curriculum.js"></script>',
+            1,
+        )
+
+    # lesson-progress.js wraps window.runEditorCode and window.checkExercise, so
+    # on lesson pages it has to load after lesson-runner.js defines them. On unit
+    # overview pages there is no runner and it only paints the lock notice.
+    if 'assets/js/lesson-progress.js' not in html:
+        if 'lesson-runner.js' in html:
+            html = html.replace(
+                '<script defer src="/assets/js/lesson-runner.js"></script>',
+                '<script defer src="/assets/js/lesson-runner.js"></script>\n'
+                '    <script defer src="/assets/js/lesson-progress.js"></script>',
+                1,
+            )
+        elif 'assets/js/curriculum.js' in html:
+            html = html.replace(
+                '<script defer src="/assets/js/curriculum.js"></script>',
+                '<script defer src="/assets/js/curriculum.js"></script>\n'
+                '    <script defer src="/assets/js/lesson-progress.js"></script>',
+                1,
+            )
+
     return html
 
 
@@ -559,6 +588,14 @@ def normalize_head(html: str) -> str:
             '<link rel="stylesheet" href="/assets/css/auth.css" />',
             '<link rel="stylesheet" href="/assets/css/auth.css" />\n'
             '    <link rel="stylesheet" href="/assets/css/gate.css" />',
+            1,
+        )
+
+    if 'assets/css/lesson-progress.css' not in html and 'gate.css' in html:
+        html = html.replace(
+            '<link rel="stylesheet" href="/assets/css/gate.css" />',
+            '<link rel="stylesheet" href="/assets/css/gate.css" />\n'
+            '    <link rel="stylesheet" href="/assets/css/lesson-progress.css" />',
             1,
         )
 
