@@ -1,0 +1,73 @@
+/* PyPath — the /progress.html dashboard. Linked only from that page. */
+
+.progress-page { max-width: 44rem; padding-block: 2.5rem 4rem; }
+
+.progress-page #progress-guest p {
+  padding: .85rem 1rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .6rem;
+  background: var(--bg-elevated, #f1f5f9);
+  color: var(--muted, #475569);
+}
+
+.progress-headline {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: .5rem;
+}
+
+.progress-page .progress-global {
+  height: .55rem;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--bg-elevated, #e2e8f0);
+  border: 1px solid var(--border, #cbd5e1);
+}
+
+.progress-page .progress-global .bar {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent, #38bdf8);
+  transition: width .35s ease;
+}
+
+.progress-units {
+  list-style: none;
+  margin: 1.75rem 0;
+  padding: 0;
+  display: grid;
+  gap: .5rem;
+}
+
+.progress-unit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .7rem .9rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .55rem;
+  background: var(--panel, #fff);
+}
+
+.progress-unit a { font-weight: 600; text-decoration: none; }
+.progress-unit a:hover { text-decoration: underline; }
+
+.progress-unit__status {
+  font-size: .85rem;
+  color: var(--muted, #475569);
+  white-space: nowrap;
+}
+
+.progress-unit.completed {
+  border-color: color-mix(in srgb, var(--accent, #38bdf8) 45%, var(--border, #cbd5e1));
+}
+
+.progress-unit.completed .progress-unit__status {
+  color: var(--accent, #38bdf8);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-page .progress-global .bar { transition: none; }
+}

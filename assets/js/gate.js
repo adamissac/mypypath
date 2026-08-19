@@ -62,7 +62,10 @@
       // Header nav and footer link lists are not cards. Badging them would put
       // a lock on every unit in the dropdown menu on every page.
       if (a.closest('header, nav, footer')) return;
-      var card = a.closest('.unit-card, .curriculum-card, article') || a;
+      // Only cards carry the badge. A bare link in a list has nowhere to put an
+      // absolutely positioned badge without landing on top of the text.
+      var card = a.closest('.unit-card, .curriculum-card, article');
+      if (!card) return;
       card.classList.toggle('is-gate-locked', isLocked(unitFromPath(a.getAttribute('href')), signedIn));
     });
   }
