@@ -1834,7 +1834,7 @@ git commit -m "feat: add progress dashboard page"
 - Consumes: everything above
 - Produces: nothing
 
-- [ ] **Step 1: Add a Node job to CI**
+- [x] **Step 1: Add a Node job to CI**
 
 Append to `.github/workflows/ci.yml`:
 
@@ -1854,28 +1854,28 @@ Append to `.github/workflows/ci.yml`:
         run: npx firebase emulators:exec --only firestore "npx vitest run tests/rules"
 ```
 
-- [ ] **Step 2: Write `privacy.html`**
+- [x] **Step 2: Write `privacy.html`**
 
 Public signup collects email addresses, so a policy is warranted. Use the standard page shell with a `<main>` covering: what is stored (email, display name, avatar URL, completed units, saved lesson code), who processes it (Google Firebase), that device preferences never leave the browser, how to delete an account, and a contact address.
 
-- [ ] **Step 3: Link the policy from the footer**
+- [x] **Step 3: Link the policy from the footer**
 
 In `scripts/bake_layout.py`, add a `<a href="/privacy.html" class="route">Privacy</a>` link to the `FOOTER` string at line 38, then re-bake.
 
-- [ ] **Step 4: Document deployment**
+- [x] **Step 4: Document deployment**
 
 Add to `DEPLOYMENT.md`: rules deploy with `npx firebase deploy --only firestore:rules`, and the Authorized Domains list in the Firebase console must include the production domains or every sign-in on production fails with `auth/unauthorized-domain`.
 
-- [ ] **Step 5: Document local development**
+- [x] **Step 5: Document local development**
 
 Add to `README.md` a section covering `npm install`, `npm test`, `npx firebase emulators:start --only auth,firestore`, and the fact that `assets/js/firebase-config.js` holds public configuration rather than secrets.
 
-- [ ] **Step 6: Run everything**
+- [x] **Step 6: Run everything**
 
 Run: `npm test && python scripts/check_links.py && python scripts/check_meta.py && npx firebase emulators:exec --only firestore "npx vitest run tests/rules"`
 Expected: all PASS.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add -A

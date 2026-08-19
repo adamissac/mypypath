@@ -15,6 +15,24 @@ Open http://localhost:8080
 
 Or deploy the repo root as a static site (Vercel config is in `vercel.json`).
 
+## Local development
+
+The site is static, but accounts, progress sync, and the test suite need Node:
+
+```bash
+npm install                 # test tooling + firebase-tools
+npm test                    # unit tests (vitest, jsdom)
+npm run test:rules          # Firestore rules tests (starts the emulator; needs Java)
+
+# Auth + Firestore emulators for working on account features locally
+npx firebase emulators:start --only auth,firestore
+```
+
+`assets/js/firebase-config.js` holds the Firebase **web config**, not secrets. That
+config is public by design: access control lives in `firestore.rules`, and sign-in is
+limited to the Authorized Domains list in the Firebase console. Served from
+`localhost`, the app connects to the emulators instead of production.
+
 ## Layout
 
 | Path | Purpose |
