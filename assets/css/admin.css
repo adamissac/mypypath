@@ -195,6 +195,40 @@
 
 .admin-pill--yes { background: #d4f0dc; color: #14532d; }
 .admin-pill--no  { background: var(--bg-elevated); opacity: 0.75; }
+.admin-pill--wait { background: #fceccd; color: #6b4300; }
+/* Declined reads as a deliberate "not yet" rather than an error: warm instead
+   of red, because the teacher can reverse it from the same cell. */
+.admin-pill--declined { background: #f7dcd3; color: #7c2d12; }
+
+.admin-cell-cert {
+  white-space: nowrap;
+}
+
+.admin-cert {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* A pending row gets the accent rail rather than a filled colour: loud enough
+   to find while scanning, quiet enough that a class where everyone has just
+   finished does not look like a wall of warnings. */
+.admin-table tbody tr.admin-row--pending td {
+  background: var(--bg-elevated);
+}
+
+.admin-table tbody tr.admin-row--pending td:first-child {
+  box-shadow: inset 0.2rem 0 0 var(--accent);
+}
+
+.admin-stat--alert {
+  border-color: var(--accent);
+}
+
+.admin-stat--alert dd {
+  color: var(--accent);
+}
 
 .admin-empty {
   padding: 2rem 1rem;
@@ -216,6 +250,8 @@
 
 [data-theme='dark'] .admin-tag { background: #5a4212; color: #f6d5a8; }
 [data-theme='dark'] .admin-pill--yes { background: #143622; color: #a9e8c1; }
+[data-theme='dark'] .admin-pill--wait { background: #5a4212; color: #f6d5a8; }
+[data-theme='dark'] .admin-pill--declined { background: #4a2118; color: #f0bda9; }
 
 /* Role picker on signup, and the classroom panels. */
 .role-picker {

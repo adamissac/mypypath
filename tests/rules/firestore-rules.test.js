@@ -373,3 +373,186 @@ describe('teacher roster', () => {
     await assertSucceeds(getDoc(doc(db, 'roster/pupil')));
   });
 });
+describe('certificate approval', () => {
+  beforeAll(async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore();
+      await setDoc(doc(db, 'roster/grad'), {
+        teacherUid: TEACHER, joinCode: CODE, displayName: 'Gil', unitsCompleted: 10,
+      });
+      await setDoc(doc(db, 'roster/declined'), {
+        teacherUid: TEACHER, joinCode: CODE, displayName: 'Dana', unitsCompleted: 10,
+      });
+      await setDoc(doc(db, 'roster/theirs'), {
+        teacherUid: OTHER_TEACHER, joinCode: OTHER_CODE, displayName: 'Gus', unitsCompleted: 10,
+      });
+    });
+  });
+
+  it('lets a student ask their teacher for a certificate', async () => {
+    const db = env.authenticatedContext('grad').firestore();
+    await assertSucceeds(
+      setDoc(doc(db, 'roster/grad'),
+        { certificateRequestedAt: Date.now(), updatedAt: Date.now() }, { merge: true })
+    );
+  });
+
+  // The one that matters. Without the guard, the owner-update rule would let
+  // any student hand themselves the certificate their teacher was asked to
+  // withhold, and the approval queue would be decoration.
+  it('denies a student approving themselves', async () => {
+    const db = env.authenticatedContext('grad').firestore();
+    await assertFails(
+      setDoc(doc(db, 'roster/grad'), { certificateApproved: true }, { merge: true })
+    );
+    await assertFails(
+      updateDoc(doc(db, 'roster/grad'),
+        { certificateApproved: true, certificateDecidedAt: Date.now() })
+    );
+  });
+
+  // Approving is not the only way to fake a verdict: a decision timestamp with
+  // no decision behind it would still be a student writing the teacher's half
+  // of the record.
+  it('denies a student stamping the decision timestamp', async () => {
+    const db = env.authenticatedContext('grad').firestore();
+    await assertFails(
+      setDoc(doc(db, 'roster/grad'), { certificateDecidedAt: Date.now() }, { merge: true })
+    );
+  });
+
+  // A student with no roster document yet would otherwise be able to walk in
+  // pre-approved, since there is no prior value for an update rule to compare
+  // against.
+  it('denies a student seeding an approval at create time', async () => {
+    const db = env.authenticatedContext('fresh').firestore();
+    await assertFails(
+      setDoc(doc(db, 'roster/fresh'),
+        { teacherUid: TEACHER, joinCode: CODE, certificateApproved: true })
+    );
+    await assertSucceeds(
+      setDoc(doc(db, 'roster/fresh'), { teacherUid: TEACHER, joinCode: CODE })
+    );
+  });
+
+  it('lets a teacher approve their own student', async () => {
+    const db = env.authenticatedContext(TEACHER).firestore();
+    await assertSucceeds(
+      updateDoc(doc(db, 'roster/grad'), {
+        certificateApproved: true, certificateDecidedAt: Date.now(), updatedAt: Date.now(),
+      })
+    );
+  });
+
+  // Declining is a real answer, not the absence of one, so it has to be as
+  // writable as approving -- a teacher who cannot record a "no" would leave the
+  // student unable to tell "not looked at" from "looked at and held back".
+  it('lets a teacher decline their own student', async () => {
+    const db = env.authenticatedContext(TEACHER).firestore();
+    await assertSucceeds(
+      updateDoc(doc(db, 'roster/declined'), {
+        certificateApproved: false, certificateDecidedAt: Date.now(), updatedAt: Date.now(),
+      })
+    );
+  });
+
+  it('lets a teacher change their mind afterwards', async () => {
+    const db = env.authenticatedContext(TEACHER).firestore();
+    await assertSucceeds(
+      updateDoc(doc(db, 'roster/declined'), {
+        certificateApproved: true, certificateDecidedAt: Date.now(), updatedAt: Date.now(),
+      })
+    );
+  });
+
+  it('denies a teacher approving a student who is not theirs', async () => {
+    const db = env.authenticatedContext(TEACHER).firestore();
+    await assertFails(
+      updateDoc(doc(db, 'roster/theirs'), {
+        certificateApproved: true, certificateDecidedAt: Date.now(), updatedAt: Date.now(),
+      })
+    );
+  });
+
+  it('denies a stranger approving anyone', async () => {
+    const db = env.authenticatedContext('mallory').firestore();
+    await assertFails(
+      updateDoc(doc(db, 'roster/grad'), {
+        certificateApproved: true, certificateDecidedAt: Date.now(), updatedAt: Date.now(),
+      })
+    );
+  });
+
+  // Grading is the second cross-account write there is, and like removal it
+  // must not become cover for editing the rest of a student's record. The
+  // values have to differ from what is stored: the rules compare against the
+  // existing document, so rewriting a field with its own value changes nothing
+  // and is correctly not treated as an edit.
+  it('denies a teacher editing progress or a name while grading', async () => {
+    const db = env.authenticatedContext(TEACHER).firestore();
+    await assertFails(
+      updateDoc(doc(db, 'roster/grad'), {
+        certificateApproved: true, unitsCompleted: 1, updatedAt: Date.now(),
+      })
+    );
+    await assertFails(
+      updateDoc(doc(db, 'roster/grad'), {
+        certificateApproved: true, displayName: 'Renamed', updatedAt: Date.now(),
+      })
+    );
+  });
+
+  // The request is the student's word that they finished. A teacher who could
+  // write it could enter someone in the queue who never asked.
+  it('denies a teacher forging the request timestamp', async () => {
+    const db = env.authenticatedContext(TEACHER).firestore();
+    await assertFails(
+      updateDoc(doc(db, 'roster/grad'),
+        { certificateRequestedAt: Date.now(), updatedAt: Date.now() })
+    );
+  });
+
+  // A string here reads as "not approved" to the client gate, which would leave
+  // the student waiting forever on an approval that was actually granted.
+  it('denies a verdict that is not a boolean', async () => {
+    const db = env.authenticatedContext(TEACHER).firestore();
+    await assertFails(
+      updateDoc(doc(db, 'roster/grad'),
+        { certificateApproved: 'true', certificateDecidedAt: Date.now() })
+    );
+  });
+
+  // The guard on the student's own writes compares against what is stored, not
+  // the whole post-write document. Checking the latter would lock an approved
+  // student out of their own roster entry, because every progress mirror they
+  // send afterwards still carries the approval along with it.
+  it('lets an approved student keep mirroring progress', async () => {
+    const db = env.authenticatedContext('grad').firestore();
+    await assertSucceeds(
+      setDoc(doc(db, 'roster/grad'),
+        { unitsCompleted: 10, totalSeconds: 900, updatedAt: Date.now() }, { merge: true })
+    );
+  });
+
+  it('lets an approved student still leave their class', async () => {
+    const db = env.authenticatedContext('grad').firestore();
+    await assertSucceeds(
+      updateDoc(doc(db, 'roster/grad'),
+        { teacherUid: deleteField(), joinCode: deleteField(), updatedAt: Date.now() })
+    );
+  });
+
+  // The grading path sits alongside removal; adding it must not have taken
+  // removal away.
+  it('still lets a teacher drop their own student', async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), 'roster/dropme2'),
+        { teacherUid: TEACHER, joinCode: CODE, displayName: 'Del', certificateApproved: true });
+    });
+    const db = env.authenticatedContext(TEACHER).firestore();
+    await assertSucceeds(
+      updateDoc(doc(db, 'roster/dropme2'),
+        { teacherUid: deleteField(), joinCode: deleteField(), updatedAt: Date.now() })
+    );
+  });
+});

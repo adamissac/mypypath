@@ -88,6 +88,21 @@ export async function joinClass(uid, rawCode) {
   return resolved;
 }
 
+// The learner's half of the certificate handshake. A learner in a class does
+// not get the certificate the moment they finish; the timestamp written here
+// is what puts them in their teacher's approval queue. The verdict fields are
+// the teacher's to write and the rules refuse them from this side, so there is
+// no way to shortcut past the queue by asking louder.
+export async function requestCertificate(uid) {
+  const now = Date.now();
+  await setDoc(
+    doc(db, `roster/${uid}`),
+    { certificateRequestedAt: now, updatedAt: now },
+    { merge: true }
+  );
+  return now;
+}
+
 export async function leaveClass(uid) {
   setTeacher(null);
   await updateDoc(doc(db, `roster/${uid}`), {
