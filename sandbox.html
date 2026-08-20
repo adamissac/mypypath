@@ -88,6 +88,7 @@
                 </div>
               </li>
               <li><a href="/sandbox.html" class="route active">Sandbox</a></li>
+              <li data-account-classroom hidden><a href="/classroom.html" class="route">Classroom</a></li>
               <li><a href="/settings.html" class="route">Settings</a></li>
               </ul>
             </div>
@@ -144,7 +145,26 @@
               </div>
               <div class="sandbox-ide-actions">
                 <button type="button" class="btn btn-primary sandbox-run-btn" id="run-btn">Run</button>
-                <button type="button" class="btn btn-ghost btn-small" id="save-btn">Save</button>
+                <div class="sandbox-save-group">
+                  <button type="button" class="btn btn-ghost btn-small sandbox-save-btn" id="save-btn">Save</button>
+                  <div class="dd sandbox-export-dd" data-dd>
+                    <button type="button" class="btn btn-ghost btn-small dd-trigger sandbox-export-trigger" id="export-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="export-panel">
+                      <span class="visually-hidden">Save and export options</span>
+                      <svg class="dd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="dd-panel sandbox-export-panel" id="export-panel" role="menu" aria-labelledby="export-btn" hidden>
+                      <div class="dd-panel__head">
+                        <span class="dd-panel__label">Save &amp; export</span>
+                      </div>
+                      <ul class="sandbox-export-list">
+                        <li role="none"><button type="button" role="menuitem" class="sandbox-export-item" id="export-copy-btn">Save a copy as new project…</button></li>
+                        <li role="none"><button type="button" role="menuitem" class="sandbox-export-item" id="export-py-btn">Download .py</button></li>
+                        <li role="none"><button type="button" role="menuitem" class="sandbox-export-item" id="export-txt-btn">Download .txt</button></li>
+                        <li role="none"><button type="button" role="menuitem" class="sandbox-export-item" id="export-pdf-btn">Export PDF (print)…</button></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
                 <button type="button" class="btn btn-ghost btn-small sandbox-delete-btn" id="delete-btn">Delete</button>
               </div>
             </div>

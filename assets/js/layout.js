@@ -74,6 +74,7 @@
   function headerHtml(showProgress) {
     var homeActive = isActive(/^\/$|\/index\.html$/) ? ' active' : '';
     var sandboxActive = isActive(/sandbox\.html$/) ? ' active' : '';
+    var classroomActive = isActive(/classroom\.html$/) ? ' active' : '';
     var settingsActive = isActive(/settings\.html$/) ? ' active' : '';
 
     var progress = showProgress
@@ -97,6 +98,9 @@
               '<li><a href="/" class="route' + homeActive + '">Home</a></li>' +
               unitsDropdown() +
               '<li><a href="/sandbox.html" class="route' + sandboxActive + '">Sandbox</a></li>' +
+              // Ships hidden and stays hidden until role-nav.js confirms a teacher,
+              // so a guest never sees a tab pointing at a page they cannot open.
+              '<li data-account-classroom hidden><a href="/classroom.html" class="route' + classroomActive + '">Classroom</a></li>' +
               '<li><a href="/settings.html" class="route' + settingsActive + '">Settings</a></li>' +
             '</ul>' +
           '</nav>' +
