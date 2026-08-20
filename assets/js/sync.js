@@ -13,9 +13,53 @@ const DEBOUNCE_MS = 1500;
 // Ceiling so a burst of typing in one editor cannot postpone another editor's
 // pending write forever. lesson-runner.js saves on every keystroke.
 const MAX_WAIT_MS = 8000;
+const TOTAL_UNITS = 10;
 
 function toast(message) {
   if (window.PyUI && window.PyUI.showToast) window.PyUI.showToast(message);
+}
+
+// A flat mirror of progress on the user document itself. The source of truth
+// stays in state/progress; this copy exists so the admin roster is one query
+// over `users` instead of a per-learner round trip.
+function summary(units, now) {
+  const list = Array.isArray(units) ? units : [];
+  // certificate.js owns this rule, but it is only loaded on certificate.html,
+  // and sync.js runs everywhere. Prefer the real implementation when it is
+  // present and fall back to the same 1..TOTAL_UNITS check otherwise.
+  const CERT = window.PyPathCertificate;
+  const complete = CERT
+    ? CERT.isCourseComplete(list)
+    : list.length >= TOTAL_UNITS &&
+      Array.from({ length: TOTAL_UNITS }, (_, i) => i + 1)
+        .every((u) => list.map(Number).includes(u));
+  return {
+    completedUnits: list,
+    unitsCompleted: list.length,
+    hasCertificate: complete,
+    progressUpdatedAt: now,
+  };
+}
+
+// Everything the roster needs to identify a learner. Written on every sign-in,
+// so accounts created before this shipped fill themselves in the next time
+// their owner logs in — there is no backfill path from the client, because
+// listing Auth users needs the Admin SDK.
+function identity(user) {
+  const created = Date.parse(user.metadata?.creationTime || '');
+  const provider = (user.providerData || [])
+    .map((p) => p && p.providerId)
+    .filter(Boolean);
+  return {
+    email: user.email || '',
+    emailVerified: !!user.emailVerified,
+    displayName: user.displayName || '',
+    photoURL: user.photoURL || '',
+    providers: provider,
+    createdAt: Number.isFinite(created) ? created : null,
+    lastLoginAt: Date.now(),
+    updatedAt: Date.now(),
+  };
 }
 
 function makeAdapter(uid) {
@@ -50,11 +94,13 @@ function makeAdapter(uid) {
           if (entry.deleted) {
             await deleteDoc(doc(db, `users/${uid}/code/${KEYS.toDocId(key)}`));
           } else if (key === KEYS.COMPLETED_UNITS_KEY) {
+            const units = JSON.parse(entry.value || '[]');
             await setDoc(
               doc(db, `users/${uid}/state/progress`),
-              { completedUnits: JSON.parse(entry.value || '[]'), updatedAt: now },
+              { completedUnits: units, updatedAt: now },
               { merge: true }
             );
+            await setDoc(doc(db, `users/${uid}`), summary(units, now), { merge: true });
           } else {
             await setDoc(doc(db, `users/${uid}/code/${KEYS.toDocId(key)}`), {
               localKey: key,
@@ -161,16 +207,14 @@ document.addEventListener('pypath:auth', async (e) => {
   STORE._setRemoteAdapter(adapter);
 
   try {
+    await setDoc(doc(db, `users/${user.uid}`), identity(user), { merge: true });
+    await mergeOnSignIn(user.uid);
+    // mergeOnSignIn may have unioned in units this device did not know about.
     await setDoc(
       doc(db, `users/${user.uid}`),
-      {
-        displayName: user.displayName || '',
-        photoURL: user.photoURL || '',
-        updatedAt: Date.now(),
-      },
+      summary(STORE.getCompletedUnits(), Date.now()),
       { merge: true }
     );
-    await mergeOnSignIn(user.uid);
   } catch (err) {
     toast('Working offline; progress is saved on this device');
   }

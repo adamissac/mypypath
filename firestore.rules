@@ -3,17 +3,42 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Staff who may read the admin dashboard at /admin.html.
+    //
+    // Uids, not emails: a uid is immutable, but an account's email address can
+    // be changed by its owner, so an email allowlist would follow whoever
+    // controls the address rather than staying with the person.
+    //
+    // Keep this list identical to ADMIN_UIDS in assets/js/admin-access.js.
+    // That client copy only decides what to render; this copy is what actually
+    // enforces access.
+    function isAdmin() {
+      return request.auth != null && request.auth.uid in [
+        'qwf4tTlGi3W1Vse6Za0RT8sVDz02',
+        'SJMr8717NFNORxruQIxM3jIM1Sr2',
+        'q05xHtWt12QDvbWG4ZluhvpUw3W2'
+      ];
+    }
+
     function isOwner(uid) {
       return request.auth != null && request.auth.uid == uid;
     }
 
     match /users/{uid} {
-      allow read, write: if isOwner(uid);
+      // `read` covers get and list, so an admin can query the whole collection
+      // to build the roster. Admins never write: the dashboard is read-only and
+      // nothing on it should be able to edit a learner's record.
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if isOwner(uid);
 
       match /state/{docId} {
-        allow read, write: if isOwner(uid);
+        allow read: if isOwner(uid) || isAdmin();
+        allow write: if isOwner(uid);
       }
 
+      // Deliberately owner-only, with no admin exception. The dashboard reports
+      // how far someone got and how long they spent; it has no reason to read
+      // the Python they wrote, and staff should not be able to.
       match /code/{docId} {
         allow read, delete: if isOwner(uid);
         allow create, update: if isOwner(uid)
