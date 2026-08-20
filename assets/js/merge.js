@@ -16,8 +16,34 @@
     return (local.updatedAt > remote.updatedAt) ? local : remote;
   }
 
+  // How long a device may go on trusting the reconciliation it already did.
+  //
+  // sync.js merges local and remote state when pypath:auth fires -- but that
+  // fires on every page load, not only on a real sign-in, and the merge reads
+  // the learner's entire code collection: one Firestore read per saved editor.
+  // Ungated, a learner deep in the course paid a few hundred reads to open each
+  // lesson. Once per window instead, plus whenever a backgrounded tab comes
+  // back stale, keeps cross-device pickup and cuts reads by well over 90%.
+  var RESYNC_AFTER_MS = 15 * 60 * 1000;
+
+  function needsFullSync(lastSyncedAt, now, ttl) {
+    var last = Number(lastSyncedAt);
+    var span = Number(ttl);
+    if (!isFinite(span) || span < 0) span = RESYNC_AFTER_MS;
+    // Never synced on this device, or a stamp that will not parse.
+    if (!isFinite(last) || last <= 0) return true;
+    var age = Number(now) - last;
+    // A stamp in the future means the clock moved backwards -- a timezone
+    // change, an NTP correction, a device with a flat battery. Trusting it
+    // would strand the learner unsynced for however long the skew lasts.
+    if (!isFinite(age) || age < 0) return true;
+    return age >= span;
+  }
+
   window.PyPathMerge = {
+    RESYNC_AFTER_MS: RESYNC_AFTER_MS,
     mergeCompletedUnits: mergeCompletedUnits,
-    pickNewer: pickNewer
+    pickNewer: pickNewer,
+    needsFullSync: needsFullSync
   };
 })();

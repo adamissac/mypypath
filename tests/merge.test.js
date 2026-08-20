@@ -58,3 +58,56 @@ describe('pickNewer', () => {
     expect(window.PyPathMerge.pickNewer(local, remote).content).toBe('R');
   });
 });
+
+describe('needsFullSync', () => {
+  const N = (...args) => window.PyPathMerge.needsFullSync(...args);
+  const TTL = 1000;
+
+  it('syncs when this device has never synced', () => {
+    expect(N(0, 5000, TTL)).toBe(true);
+    expect(N(null, 5000, TTL)).toBe(true);
+    expect(N(undefined, 5000, TTL)).toBe(true);
+  });
+
+  // The stamp comes out of sessionStorage as a string, and anything could be
+  // sitting under that key.
+  it('syncs when the stamp will not parse', () => {
+    expect(N('', 5000, TTL)).toBe(true);
+    expect(N('soon', 5000, TTL)).toBe(true);
+    expect(N(NaN, 5000, TTL)).toBe(true);
+  });
+
+  it('reads a numeric string stamp', () => {
+    expect(N('4500', 5000, TTL)).toBe(false);
+    expect(N('3000', 5000, TTL)).toBe(true);
+  });
+
+  it('holds off inside the window', () => {
+    expect(N(5000, 5001, TTL)).toBe(false);
+    expect(N(5000, 5999, TTL)).toBe(false);
+  });
+
+  it('syncs once the window has elapsed', () => {
+    expect(N(5000, 6000, TTL)).toBe(true);
+    expect(N(5000, 60000, TTL)).toBe(true);
+  });
+
+  // A stamp in the future means the clock moved backwards. Trusting it would
+  // strand the learner unsynced for as long as the skew lasts.
+  it('syncs when the stamp is in the future', () => {
+    expect(N(9000, 5000, TTL)).toBe(true);
+  });
+
+  it('falls back to the default window when the ttl is junk', () => {
+    const d = window.PyPathMerge.RESYNC_AFTER_MS;
+    expect(N(5000, 5000 + d - 1, 'soon')).toBe(false);
+    expect(N(5000, 5000 + d, 'soon')).toBe(true);
+    expect(N(5000, 5000 + d, -1)).toBe(true);
+  });
+
+  it('ships a window measured in minutes, not seconds or hours', () => {
+    const d = window.PyPathMerge.RESYNC_AFTER_MS;
+    expect(d).toBeGreaterThanOrEqual(60 * 1000);
+    expect(d).toBeLessThanOrEqual(60 * 60 * 1000);
+  });
+});
