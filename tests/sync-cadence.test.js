@@ -55,6 +55,84 @@ describe('sync.js reconciliation cadence', () => {
   it('does not let two reconciliations overlap', () => {
     expect(sync).toMatch(/if \(syncing\) return;/);
   });
+
+  // lesson-runner.js writes the editor on every CodeMirror change, so this
+  // debounce is the only thing between typing and a write per keystroke.
+  it('debounces editor writes in seconds, not milliseconds', () => {
+    const debounce = Number(/const DEBOUNCE_MS = (\d+);/.exec(sync)[1]);
+    const ceiling = Number(/const MAX_WAIT_MS = (\d+);/.exec(sync)[1]);
+    expect(debounce).toBeGreaterThanOrEqual(3000);
+    expect(ceiling).toBeGreaterThanOrEqual(debounce);
+    // Past this the cloud copy is far enough behind to be worth a conversation.
+    expect(ceiling).toBeLessThanOrEqual(60000);
+  });
+});
+
+describe('sync.js code collection reads', () => {
+  // The largest read on the site: one document per saved editor, a few hundred
+  // for a learner near the end of the course.
+  it('asks only for documents written since the last look', () => {
+    expect(sync).toContain("where('updatedAt', '>', since)");
+    expect(sync).toContain('MERGE.FULL_SCAN_AFTER_MS');
+  });
+
+  it('still scans the whole collection on a schedule', () => {
+    // An incremental query never returns a deleted document, so without this a
+    // deletion made on another device would never reach this browser.
+    expect(sync).toMatch(/const full = !lastSeen \|\| MERGE\.needsFullSync\(/);
+    expect(sync).toContain('full ? codeRef : query(codeRef');
+  });
+
+  it('leaves room for a writing device whose clock runs behind', () => {
+    expect(sync).toContain('CLOCK_SKEW_MS');
+    expect(sync).toMatch(/const since = Math\.max\(0, lastSeen - CLOCK_SKEW_MS\)/);
+  });
+
+  // Moving the floor after a read that never happened would skip whatever was
+  // written while this device was offline.
+  it('moves the floor only after a read that landed', () => {
+    expect(sync).toMatch(/if \(read\) \{\s*writeStamp\(CODE_SEEN_PREFIX/);
+    expect(sync).toMatch(/if \(full\) writeStamp\(CODE_SCAN_PREFIX/);
+  });
+
+  // Session-scoped would mean re-reading the whole collection in every new tab,
+  // which is the cost this exists to avoid.
+  it('keeps the code stamps on the device, not the session', () => {
+    const block = sync.slice(sync.indexOf('function readStamp'), sync.indexOf('function toast'));
+    expect(block).toContain('localStorage.getItem');
+    expect(block).not.toContain('sessionStorage');
+  });
+});
+
+describe('activity.js write cadence', () => {
+  let core;
+
+  beforeAll(() => {
+    core = fs.readFileSync('assets/js/activity-core.js', 'utf8');
+    new Function(core).call(window);
+  });
+
+  // Two or three document writes per flush, so this constant was the single
+  // largest write cost on the platform.
+  it('flushes accrued time in minutes, not once a minute', () => {
+    const ms = window.PyPathActivity.FLUSH_MS;
+    expect(ms).toBeGreaterThanOrEqual(3 * 60000);
+    // Long enough and "Last active" on the dashboards stops meaning anything.
+    expect(ms).toBeLessThanOrEqual(15 * 60000);
+  });
+
+  it('still banks time far more often than it writes it', () => {
+    expect(window.PyPathActivity.TICK_MS).toBeLessThan(window.PyPathActivity.FLUSH_MS);
+  });
+
+  // The whole reason a longer flush window costs nothing: unwritten seconds
+  // are on disk, and the tab going away forces a flush.
+  it('parks unwritten time on the device and flushes when the tab goes', () => {
+    const activity = fs.readFileSync('assets/js/activity.js', 'utf8');
+    expect(activity).toContain('savePending(uid, pendingSeconds)');
+    expect(activity).toMatch(/pagehide[\s\S]{0,120}flush\(\)/);
+    expect(activity).toMatch(/visibilitychange[\s\S]{0,320}flush\(\)/);
+  });
 });
 
 describe('class-state.js teacher cache', () => {

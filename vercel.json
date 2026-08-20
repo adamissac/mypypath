@@ -28,6 +28,26 @@
           "value": "camera=(), microphone=(), geolocation=()"
         }
       ]
+    },
+    {
+      "//": "Images are replaced by adding a file under a new name, never by editing one in place, so they can be cached hard. Without this Vercel serves everything must-revalidate and every page view re-checks every asset.",
+      "source": "/assets/img/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "//": "Scripts and stylesheets ARE edited in place and keep their names, so immutable would strand a browser on whatever it saw before the last deploy. An hour of cache with a day of stale-while-revalidate serves the old file instantly and picks up the new one in the background. Content-hashed filenames would let this be immutable too.",
+      "source": "/assets/(js|css)/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, stale-while-revalidate=86400"
+        }
+      ]
     }
   ]
 }

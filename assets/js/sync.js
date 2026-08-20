@@ -5,17 +5,45 @@ import { currentTeacher, loadFor } from '/assets/js/class-state.js';
 import { summarizeUnitTests, UNIT_TESTS_KEY } from '/assets/js/unit-test-summary.js';
 
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
-const { doc, getDoc, setDoc, collection, getDocs, deleteDoc } =
+const { doc, getDoc, setDoc, collection, getDocs, deleteDoc, query, where } =
   await import(`${BASE}/firebase-firestore.js`);
 
 const KEYS = window.PyPathKeys;
 const MERGE = window.PyPathMerge;
 const STORE = window.ProgressStore;
-const DEBOUNCE_MS = 1500;
+// lesson-runner.js saves the editor contents on every CodeMirror change, so
+// this debounce is what stands between a learner typing and one Firestore
+// write per keystroke. At 1.5s with an 8s ceiling, continuous typing still
+// forced a write every eight seconds; five and thirty cost a quarter of that.
+//
+// The local copy is written synchronously either way. This only decides how
+// far behind the cloud copy may fall, which matters solely if the device dies
+// mid-lesson.
+const DEBOUNCE_MS = 5000;
 // Ceiling so a burst of typing in one editor cannot postpone another editor's
-// pending write forever. lesson-runner.js saves on every keystroke.
-const MAX_WAIT_MS = 8000;
+// pending write forever.
+const MAX_WAIT_MS = 30000;
 const TOTAL_UNITS = 10;
+
+// How far back the incremental code query reaches past its own floor, to cover
+// a writing device whose clock runs behind ours.
+const CLOCK_SKEW_MS = 5 * 60000;
+
+// Device-level, not session-level like the reconciliation stamp: what has
+// already been pulled onto this machine stays pulled after the tab closes, and
+// re-reading it in a new tab would be the very cost this avoids.
+const CODE_SEEN_PREFIX = 'pypath-code-seen:';
+const CODE_SCAN_PREFIX = 'pypath-code-scanned:';
+
+function readStamp(prefix, uid) {
+  try { return Number(localStorage.getItem(prefix + uid)) || 0; }
+  catch (e) { return 0; }
+}
+
+function writeStamp(prefix, uid, value) {
+  try { localStorage.setItem(prefix + uid, String(value)); }
+  catch (e) {}
+}
 
 function toast(message) {
   if (window.PyUI && window.PyUI.showToast) window.PyUI.showToast(message);
@@ -194,14 +222,45 @@ async function reconcileWithRemote(uid) {
   STORE.setCompletedUnits(mergedUnits);
 
   // 2. Code documents — newest updatedAt wins, per key.
+  //
+  // This collection holds one document per saved editor and reflection, so it
+  // is the largest read on the site: a learner near the end of the course has
+  // a few hundred of them, and reading all of them back to find the handful
+  // that changed is most of what this function costs. Ask for the changed ones
+  // instead, and fall back to the whole collection on a schedule.
+  const now = Date.now();
+  const lastSeen = readStamp(CODE_SEEN_PREFIX, uid);
+  const lastFull = readStamp(CODE_SCAN_PREFIX, uid);
+  // An incremental query only returns documents that were written, so one that
+  // was deleted on another device would linger in this browser's copy forever.
+  // A periodic full scan is what collects them. A device that has never synced
+  // has no floor to ask from, so its first read is full too.
+  const full = !lastSeen || MERGE.needsFullSync(lastFull, now, MERGE.FULL_SCAN_AFTER_MS);
+
   const remoteByKey = new Map();
+  let read = false;
   try {
-    const codeSnap = await getDocs(collection(db, `users/${uid}/code`));
+    const codeRef = collection(db, `users/${uid}/code`);
+    // updatedAt is stamped with the writing device's own clock, so a device
+    // running slow could write a document that is already older than our floor
+    // by the time we ask. The margin is what stops that work being skipped.
+    const since = Math.max(0, lastSeen - CLOCK_SKEW_MS);
+    const codeSnap = await getDocs(
+      full ? codeRef : query(codeRef, where('updatedAt', '>', since))
+    );
     codeSnap.forEach((d) => {
       const data = d.data();
       if (data.localKey) remoteByKey.set(data.localKey, data);
     });
+    read = true;
   } catch (e) { /* offline */ }
+
+  // Only a read that landed moves the floor. Otherwise an offline attempt would
+  // mark work as seen that was never looked at.
+  if (read) {
+    writeStamp(CODE_SEEN_PREFIX, uid, now);
+    if (full) writeStamp(CODE_SCAN_PREFIX, uid, now);
+  }
 
   const allKeys = new Set([
     ...Object.keys(localSnapshot),

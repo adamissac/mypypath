@@ -12,7 +12,17 @@
 
   var TICK_MS = 5000;        // resolution of the counter
   var IDLE_MS = 5 * 60000;   // no input for this long = not studying
-  var FLUSH_MS = 60000;      // how often accrued time goes to Firestore
+
+  // How often accrued time goes to Firestore. Each flush is two or three
+  // document writes, so at one a minute a learner studying for an hour cost
+  // well over a hundred writes a day on time tracking alone -- more than
+  // everything else they did put together. Five minutes costs a fifth of that
+  // and only makes "Last active" up to five minutes stale on the dashboards.
+  //
+  // Nothing is lost by flushing less often: accrued seconds are parked in
+  // localStorage under PENDING_KEY on every tick and retried, and both
+  // visibilitychange and pagehide force a flush before the tab goes away.
+  var FLUSH_MS = 5 * 60000;
   var PENDING_KEY = 'pypath-activity-pending';
 
   // A tick that claims more than this much elapsed time came from a sleeping
