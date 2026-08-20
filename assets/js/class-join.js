@@ -4,6 +4,8 @@
    with no query. The rules deny `list` on that collection, so codes cannot be
    harvested by walking it. */
 import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
+import { setTeacher } from '/assets/js/class-state.js';
+import { currentUser } from '/assets/js/auth.js';
 
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const { doc, getDoc, setDoc, deleteDoc, updateDoc, deleteField } =
@@ -24,6 +26,14 @@ export class JoinError extends Error {
 
 export async function readProfile(uid) {
   const snap = await getDoc(doc(db, `users/${uid}`));
+  return snap.exists() ? snap.data() : {};
+}
+
+// Class membership and the progress a teacher may see. Separate from the
+// account record on purpose: a teacher can read this collection, so an email
+// address must never land in it.
+export async function readRoster(uid) {
+  const snap = await getDoc(doc(db, `roster/${uid}`));
   return snap.exists() ? snap.data() : {};
 }
 
@@ -53,22 +63,34 @@ export async function joinClass(uid, rawCode) {
   // teacherUid and joinCode go in one write: the rules check that the code
   // presented actually maps to the teacher claimed, and a split write would
   // leave a moment where the claim has no proof behind it.
+  // Seeded with the name and progress the learner already has, so a teacher
+  // sees a real row the moment someone joins rather than a blank one that
+  // fills itself in whenever they next finish a unit.
+  const user = currentUser();
+  const units = window.ProgressStore ? window.ProgressStore.getCompletedUnits() : [];
   await setDoc(
-    doc(db, `users/${uid}`),
+    doc(db, `roster/${uid}`),
     {
-      role: 'student',
       teacherUid: resolved.teacherUid,
       joinCode: resolved.code,
       joinedClassAt: Date.now(),
+      displayName: (user && user.displayName) || '',
+      completedUnits: units,
+      unitsCompleted: units.length,
       updatedAt: Date.now(),
     },
     { merge: true }
   );
+  // The role itself is part of the account record, not the roster.
+  await setDoc(doc(db, `users/${uid}`), { role: 'student', updatedAt: Date.now() },
+    { merge: true });
+  setTeacher(resolved.teacherUid);
   return resolved;
 }
 
 export async function leaveClass(uid) {
-  await updateDoc(doc(db, `users/${uid}`), {
+  setTeacher(null);
+  await updateDoc(doc(db, `roster/${uid}`), {
     teacherUid: deleteField(),
     joinCode: deleteField(),
     updatedAt: Date.now(),
@@ -79,7 +101,7 @@ export async function leaveClass(uid) {
 // one cross-account write and nothing else, and only when the fields cleared
 // are exactly these.
 export async function removeStudent(studentUid) {
-  await updateDoc(doc(db, `users/${studentUid}`), {
+  await updateDoc(doc(db, `roster/${studentUid}`), {
     teacherUid: deleteField(),
     joinCode: deleteField(),
     updatedAt: Date.now(),

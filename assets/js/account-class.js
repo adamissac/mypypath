@@ -6,7 +6,7 @@
    check against, which is the useful half anyway. */
 import { currentUser } from '/assets/js/auth.js';
 import {
-  readProfile, joinClass, leaveClass, ensureJoinCode, setRole,
+  readProfile, readRoster, joinClass, leaveClass, ensureJoinCode, setRole,
 } from '/assets/js/class-join.js';
 
 const ROLES = window.PyPathRoles;
@@ -48,7 +48,14 @@ if (section) {
   }
 
   async function refresh() {
-    profile = await readProfile(uid);
+    // Two documents: the account record holds the role, the roster holds the
+    // class. They are separate so a teacher reading the roster never touches
+    // the account record.
+    const [account, roster] = await Promise.all([readProfile(uid), readRoster(uid)]);
+    profile = Object.assign({}, account, {
+      teacherUid: roster.teacherUid || '',
+      joinCode: roster.joinCode || account.joinCode || '',
+    });
     render();
   }
 

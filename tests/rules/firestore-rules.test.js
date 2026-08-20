@@ -158,8 +158,12 @@ describe('classroom join codes', () => {
       const db = ctx.firestore();
       await setDoc(doc(db, `joinCodes/${CODE}`), { teacherUid: TEACHER, createdAt: 1 });
       await setDoc(doc(db, `joinCodes/${OTHER_CODE}`), { teacherUid: OTHER_TEACHER, createdAt: 1 });
-      await setDoc(doc(db, 'users/pupil'), { teacherUid: TEACHER, joinCode: CODE, email: 'p@x.com' });
+      await setDoc(doc(db, 'roster/pupil'), {
+        teacherUid: TEACHER, joinCode: CODE, displayName: 'Pat', unitsCompleted: 2,
+      });
+      await setDoc(doc(db, 'users/pupil'), { email: 'p@x.com', displayName: 'Pat' });
       await setDoc(doc(db, 'users/loner'), { email: 'l@x.com' });
+      await setDoc(doc(db, 'roster/loner'), { displayName: 'Lee' });
     });
   });
 
@@ -202,11 +206,14 @@ describe('classroom join codes', () => {
     );
   });
 
-  it('lets a teacher retire their own code but not another teacher\'s', async () => {
-    const mine = env.authenticatedContext(TEACHER).firestore();
-    const theirs = env.authenticatedContext(TEACHER).firestore();
-    await assertFails(deleteDoc(doc(theirs, `joinCodes/${OTHER_CODE}`)));
-    await assertSucceeds(deleteDoc(doc(mine, 'joinCodes/NEWCOD')));
+  it("denies retiring another teacher's code", async () => {
+    const db = env.authenticatedContext(TEACHER).firestore();
+    await assertFails(deleteDoc(doc(db, `joinCodes/${OTHER_CODE}`)));
+  });
+
+  it('lets a teacher retire their own code', async () => {
+    const db = env.authenticatedContext(TEACHER).firestore();
+    await assertSucceeds(deleteDoc(doc(db, 'joinCodes/NEWCOD')));
   });
 });
 
@@ -214,8 +221,8 @@ describe('joining a class', () => {
   it('lets a learner join with a code that matches the teacher claimed', async () => {
     const db = env.authenticatedContext('joiner').firestore();
     await assertSucceeds(
-      setDoc(doc(db, 'users/joiner'),
-        { role: 'student', teacherUid: TEACHER, joinCode: CODE }, { merge: true })
+      setDoc(doc(db, 'roster/joiner'),
+        { teacherUid: TEACHER, joinCode: CODE, displayName: 'Jo' }, { merge: true })
     );
   });
 
@@ -224,14 +231,14 @@ describe('joining a class', () => {
   it('denies claiming a teacher without presenting their code', async () => {
     const db = env.authenticatedContext('sneak').firestore();
     await assertFails(
-      setDoc(doc(db, 'users/sneak'), { teacherUid: TEACHER }, { merge: true })
+      setDoc(doc(db, 'roster/sneak'), { teacherUid: TEACHER }, { merge: true })
     );
   });
 
   it("denies claiming a teacher with another teacher's code", async () => {
     const db = env.authenticatedContext('sneak').firestore();
     await assertFails(
-      setDoc(doc(db, 'users/sneak'),
+      setDoc(doc(db, 'roster/sneak'),
         { teacherUid: TEACHER, joinCode: OTHER_CODE }, { merge: true })
     );
   });
@@ -239,55 +246,74 @@ describe('joining a class', () => {
   it('denies claiming a teacher with a code that does not exist', async () => {
     const db = env.authenticatedContext('sneak').firestore();
     await assertFails(
-      setDoc(doc(db, 'users/sneak'),
+      setDoc(doc(db, 'roster/sneak'),
         { teacherUid: TEACHER, joinCode: 'NOPE99' }, { merge: true })
     );
   });
 
   // Ordinary progress writes must not have to re-prove class membership, or
   // every save would cost an extra document read.
-  it('lets a student keep saving progress without re-presenting the code', async () => {
+  it('lets a student keep mirroring progress without re-presenting the code', async () => {
     const db = env.authenticatedContext('pupil').firestore();
     await assertSucceeds(
-      setDoc(doc(db, 'users/pupil'), { unitsCompleted: 3, totalSeconds: 60 }, { merge: true })
+      setDoc(doc(db, 'roster/pupil'), { unitsCompleted: 3, totalSeconds: 60 }, { merge: true })
+    );
+  });
+
+  // The roster is what a teacher reads, so it must not be able to hold contact
+  // details even if a future writer tries to put them there.
+  it('refuses to store an email address on a roster document', async () => {
+    const db = env.authenticatedContext('pupil').firestore();
+    await assertFails(
+      setDoc(doc(db, 'roster/pupil'), { email: 'p@x.com' }, { merge: true })
+    );
+    await assertFails(
+      setDoc(doc(db, 'roster/pupil'), { photoURL: 'https://x/y.png' }, { merge: true })
     );
   });
 
   it('lets a student leave their class', async () => {
     const db = env.authenticatedContext('joiner').firestore();
     await assertSucceeds(
-      updateDoc(doc(db, 'users/joiner'),
+      updateDoc(doc(db, 'roster/joiner'),
         { teacherUid: deleteField(), joinCode: deleteField(), updatedAt: Date.now() })
     );
   });
 });
 
 describe('teacher roster', () => {
-  it('lets a teacher read their own student', async () => {
+  // The reason this collection exists at all.
+  it("denies a teacher their student's account record, and the email on it", async () => {
     const db = env.authenticatedContext(TEACHER).firestore();
-    await assertSucceeds(getDoc(doc(db, 'users/pupil')));
+    await assertFails(getDoc(doc(db, 'users/pupil')));
+    await assertFails(getDocs(query(collection(db, 'users'), where('teacherUid', '==', TEACHER))));
+  });
+
+  it('lets a teacher read their own student roster entry', async () => {
+    const db = env.authenticatedContext(TEACHER).firestore();
+    await assertSucceeds(getDoc(doc(db, 'roster/pupil')));
   });
 
   it('lets a teacher query their roster', async () => {
     const db = env.authenticatedContext(TEACHER).firestore();
     await assertSucceeds(
-      getDocs(query(collection(db, 'users'), where('teacherUid', '==', TEACHER)))
+      getDocs(query(collection(db, 'roster'), where('teacherUid', '==', TEACHER)))
     );
   });
 
-  it('denies a teacher the whole users collection', async () => {
+  it('denies a teacher the whole roster collection', async () => {
     const db = env.authenticatedContext(TEACHER).firestore();
-    await assertFails(getDocs(collection(db, 'users')));
+    await assertFails(getDocs(collection(db, 'roster')));
   });
 
   it("denies a teacher another teacher's student", async () => {
     const db = env.authenticatedContext(OTHER_TEACHER).firestore();
-    await assertFails(getDoc(doc(db, 'users/pupil')));
+    await assertFails(getDoc(doc(db, 'roster/pupil')));
   });
 
   it('denies a teacher a learner who is in no class', async () => {
     const db = env.authenticatedContext(TEACHER).firestore();
-    await assertFails(getDoc(doc(db, 'users/loner')));
+    await assertFails(getDoc(doc(db, 'roster/loner')));
   });
 
   // The dashboards report progress, not the Python a learner wrote.
@@ -296,45 +322,54 @@ describe('teacher roster', () => {
     await assertFails(getDoc(doc(db, 'users/pupil/code/lesson__a')));
   });
 
+  it("denies a teacher their student's progress documents", async () => {
+    const db = env.authenticatedContext(TEACHER).firestore();
+    await assertFails(getDoc(doc(db, 'users/pupil/state/progress')));
+  });
+
   it('lets a teacher drop their own student', async () => {
     await env.withSecurityRulesDisabled(async (ctx) => {
-      await setDoc(doc(ctx.firestore(), 'users/dropme'),
-        { teacherUid: TEACHER, joinCode: CODE, email: 'd@x.com' });
+      await setDoc(doc(ctx.firestore(), 'roster/dropme'),
+        { teacherUid: TEACHER, joinCode: CODE, displayName: 'Dee' });
     });
     const db = env.authenticatedContext(TEACHER).firestore();
     await assertSucceeds(
-      updateDoc(doc(db, 'users/dropme'),
+      updateDoc(doc(db, 'roster/dropme'),
         { teacherUid: deleteField(), joinCode: deleteField(), updatedAt: Date.now() })
     );
   });
 
   // Removal is the only cross-account write there is. It must not become a
   // foothold for editing anything else on a student's record.
-  it("denies a teacher editing anything else on a student's record", async () => {
+  it("denies a teacher editing anything else on a student's roster entry", async () => {
     const db = env.authenticatedContext(TEACHER).firestore();
+    await assertFails(updateDoc(doc(db, 'roster/pupil'), { displayName: 'Renamed' }));
     await assertFails(
-      updateDoc(doc(db, 'users/pupil'), { email: 'hacked@x.com' })
-    );
-    await assertFails(
-      updateDoc(doc(db, 'users/pupil'), { unitsCompleted: 10, hasCertificate: true })
+      updateDoc(doc(db, 'roster/pupil'), { unitsCompleted: 10, hasCertificate: true })
     );
   });
 
   it('denies a teacher moving a student to a different class', async () => {
     const db = env.authenticatedContext(TEACHER).firestore();
     await assertFails(
-      updateDoc(doc(db, 'users/pupil'),
+      updateDoc(doc(db, 'roster/pupil'),
         { teacherUid: OTHER_TEACHER, joinCode: OTHER_CODE, updatedAt: Date.now() })
     );
   });
 
-  it('denies a teacher deleting a student record', async () => {
+  it('denies a teacher deleting a roster entry', async () => {
     const db = env.authenticatedContext(TEACHER).firestore();
-    await assertFails(deleteDoc(doc(db, 'users/pupil')));
+    await assertFails(deleteDoc(doc(db, 'roster/pupil')));
   });
 
   it('denies one student reading another', async () => {
     const db = env.authenticatedContext('pupil').firestore();
+    await assertFails(getDoc(doc(db, 'roster/loner')));
     await assertFails(getDoc(doc(db, 'users/loner')));
+  });
+
+  it('lets staff read a roster entry', async () => {
+    const db = env.authenticatedContext('qwf4tTlGi3W1Vse6Za0RT8sVDz02').firestore();
+    await assertSucceeds(getDoc(doc(db, 'roster/pupil')));
   });
 });

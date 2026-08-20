@@ -51,14 +51,38 @@ service cloud.firestore {
         && resource.data.teacherUid == request.auth.uid;
     }
 
+    // A learner's own record: who they are, what they agreed to, and a mirror
+    // of their progress for the staff dashboard. Email lives here, which is
+    // exactly why a teacher has no read on it -- see the roster below.
     match /users/{uid} {
-      // The teacher of this learner, established by resource.data.teacherUid on
-      // the document being read. That works for get and for list alike, so a
-      // teacher's roster query needs no per-document lookup.
-      // resource is null when the document does not exist, and dereferencing it
-      // makes the rule error rather than return false. Both deny the request,
-      // but an errored rule hides which condition actually failed.
-      function isTheirTeacher() {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if isOwner(uid);
+
+      match /state/{docId} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow write: if isOwner(uid);
+      }
+
+      // Deliberately owner-only, with no admin or teacher exception. The
+      // dashboards report how far someone got and how long they spent; they
+      // have no reason to read the Python a learner wrote, and neither staff
+      // nor a teacher should be able to.
+      match /code/{docId} {
+        allow read, delete: if isOwner(uid);
+        allow create, update: if isOwner(uid)
+          && request.resource.data.content is string
+          && request.resource.data.content.size() <= 102400;
+      }
+    }
+    // What a teacher is allowed to see about their students, and nothing else.
+    //
+    // This collection exists so that "a teacher can see their class" does not
+    // have to mean "a teacher can read their students' account records". The
+    // roster carries progress and time; contact details are refused outright
+    // below, so no future writer can quietly reintroduce an email address by
+    // adding it to a summary object.
+    match /roster/{uid} {
+      function theirTeacher() {
         return signedIn()
           && resource != null
           && resource.data.get('teacherUid', '') == request.auth.uid;
@@ -85,41 +109,31 @@ service cloud.firestore {
           .affectedKeys().hasAny(['teacherUid', 'joinCode']);
       }
 
+      // Enforced, not merely avoided in the client. A teacher reads these
+      // documents, so anything stored here is something a teacher can see.
+      function noContactDetails() {
+        return !request.resource.data.keys().hasAny(['email', 'photoURL']);
+      }
+
       // The one write a teacher may make to someone else's document: dropping
       // a student from their own class. It may touch nothing but the class
       // fields, and it may only clear them, never point them somewhere else.
       function removingOwnStudent() {
-        return isTheirTeacher()
+        return theirTeacher()
           && request.resource.data.diff(resource.data)
              .affectedKeys().hasOnly(['teacherUid', 'joinCode', 'updatedAt'])
           && !('teacherUid' in request.resource.data);
       }
 
-      // `read` covers get and list, so an admin can query the whole collection
-      // and a teacher can query their own roster. Neither can write, apart from
-      // the single removal case above.
-      allow read: if isOwner(uid) || isAdmin() || isTheirTeacher();
+      // `read` covers get and list, so a teacher's roster query needs no
+      // per-document lookup.
+      allow read: if isOwner(uid) || isAdmin() || theirTeacher();
 
-      allow create: if isOwner(uid) && joinIsProven();
-      allow update: if (isOwner(uid) && (classUnchanged() || joinIsProven()))
+      allow create: if isOwner(uid) && joinIsProven() && noContactDetails();
+      allow update: if (isOwner(uid) && (classUnchanged() || joinIsProven())
+                        && noContactDetails())
         || removingOwnStudent();
       allow delete: if isOwner(uid);
-
-      match /state/{docId} {
-        allow read: if isOwner(uid) || isAdmin();
-        allow write: if isOwner(uid);
-      }
-
-      // Deliberately owner-only, with no admin or teacher exception. The
-      // dashboards report how far someone got and how long they spent; they
-      // have no reason to read the Python a learner wrote, and neither staff
-      // nor a teacher should be able to.
-      match /code/{docId} {
-        allow read, delete: if isOwner(uid);
-        allow create, update: if isOwner(uid)
-          && request.resource.data.content is string
-          && request.resource.data.content.size() <= 102400;
-      }
     }
   }
 }
