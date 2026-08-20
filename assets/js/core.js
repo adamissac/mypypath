@@ -490,6 +490,11 @@
   }
 
   function setupSettingsActions() {
+    // Scoped to the settings page. core.js runs everywhere, and #export-btn is
+    // a generic enough id that another page can claim it in good faith; when
+    // the sandbox did, its menu caret silently downloaded a settings backup.
+    if (!document.body || !document.body.classList.contains('page-settings')) return;
+
     var exportBtn = qs('#export-btn');
     if (exportBtn) {
       exportBtn.addEventListener('click', function () {
