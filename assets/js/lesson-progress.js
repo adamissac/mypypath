@@ -382,6 +382,24 @@
     host.insertAdjacentElement('afterend', chip);
   }
 
+  // <main> has no gutters of its own — the page's .container is what carries
+  // them — so anything dropped straight into it sits flush against the window
+  // edge. Every banner painted here goes through this wrapper instead.
+  function prependNotice(box) {
+    var main = document.querySelector('main');
+    if (!main) return;
+    var wrap = document.createElement('div');
+    wrap.className = 'main-notice-wrap';
+    wrap.appendChild(box);
+    main.insertBefore(wrap, main.firstChild);
+  }
+
+  function removeNotice(box) {
+    if (!box) return;
+    var wrap = box.closest('.main-notice-wrap');
+    (wrap || box).remove();
+  }
+
   // Soft lock: the content stays readable, but the learner is told plainly that
   // this unit is not open yet and where to go instead.
   function insertLockNotice() {
@@ -389,8 +407,7 @@
     if (isUnitUnlocked(unit, completedUnits(), teaching())) {
       // The role can resolve after the notice has already been painted, so
       // this clears one that a teacher should never have seen.
-      var stale = document.querySelector('.unit-locked-notice');
-      if (stale) stale.remove();
+      removeNotice(document.querySelector('.unit-locked-notice'));
       return;
     }
     if (document.querySelector('.unit-locked-notice')) return;
@@ -416,14 +433,7 @@
           ? '<p><a class="btn btn-primary route" href="' + next + '">Go to the next Unit ' + prev + ' lesson</a></p>'
           : '<p><a class="btn btn-primary route" href="/units/unit-' + prev + '.html">Back to Unit ' + prev + '</a></p>');
 
-    // <main> has no gutters of its own — the page's .container supplies them —
-    // so the notice needs a wrapper or it sits flush against the window edge.
-    var wrap = document.createElement('div');
-    wrap.className = 'unit-locked-notice-wrap';
-    wrap.appendChild(box);
-
-    var main = document.querySelector('main');
-    if (main) main.insertBefore(wrap, main.firstChild);
+    prependNotice(box);
   }
 
   // The end of unit test links on the unit pages and the curriculum are real
@@ -538,7 +548,7 @@
   function paintTeacherBanner() {
     var existing = document.querySelector('.teacher-view-note');
     if (!teaching() || !(isLessonPage() || isUnitPage())) {
-      if (existing) existing.remove();
+      removeNotice(existing);
       return;
     }
     if (existing) return;
@@ -553,8 +563,7 @@
       '<a class="route" href="/classroom.html">Open your classroom</a> to see how ' +
       'your students are doing.</p>';
 
-    var main = document.querySelector('main');
-    if (main) main.insertBefore(box, main.firstChild);
+    prependNotice(box);
   }
 
   function repaint() {
