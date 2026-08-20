@@ -110,4 +110,15 @@ describe('needsFullSync', () => {
     expect(d).toBeGreaterThanOrEqual(60 * 1000);
     expect(d).toBeLessThanOrEqual(60 * 60 * 1000);
   });
+
+  // The same rule times the full scan of the code collection, on a much longer
+  // leash: it is the only thing that ever notices a document deleted on
+  // another device, so it must not be so rare that a deletion survives a week.
+  it('drives the full code scan on a much longer window', () => {
+    const full = window.PyPathMerge.FULL_SCAN_AFTER_MS;
+    expect(full).toBeGreaterThan(window.PyPathMerge.RESYNC_AFTER_MS);
+    expect(full).toBeLessThanOrEqual(7 * 24 * 60 * 60 * 1000);
+    expect(N(1000, 1000 + full - 1, full)).toBe(false);
+    expect(N(1000, 1000 + full, full)).toBe(true);
+  });
 });

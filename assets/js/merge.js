@@ -26,6 +26,14 @@
   // back stale, keeps cross-device pickup and cuts reads by well over 90%.
   var RESYNC_AFTER_MS = 15 * 60 * 1000;
 
+  // How long a device may reconcile incrementally -- asking only for documents
+  // written since it last looked -- before it owes a read of the whole code
+  // collection. An incremental query returns only documents that were written,
+  // so a document deleted on another device is invisible to it; the full scan
+  // is what eventually notices. A day is far more often than a learner deletes
+  // saved work, and rare enough to be a rounding error on the bill.
+  var FULL_SCAN_AFTER_MS = 24 * 60 * 60 * 1000;
+
   function needsFullSync(lastSyncedAt, now, ttl) {
     var last = Number(lastSyncedAt);
     var span = Number(ttl);
@@ -42,6 +50,7 @@
 
   window.PyPathMerge = {
     RESYNC_AFTER_MS: RESYNC_AFTER_MS,
+    FULL_SCAN_AFTER_MS: FULL_SCAN_AFTER_MS,
     mergeCompletedUnits: mergeCompletedUnits,
     pickNewer: pickNewer,
     needsFullSync: needsFullSync
