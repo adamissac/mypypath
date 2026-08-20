@@ -98,9 +98,14 @@
   // Unit 1 is always open. Every later unit needs the one before it finished.
   // completedUnits is the existing pypath-completed-units list, so units a
   // learner earned under the old visit-based rule stay unlocked.
-  function isUnitUnlocked(unit, completedUnits) {
+  //
+  // A teacher has the whole course open. The lock exists to keep a learner
+  // moving in order; a teacher previewing unit 7 for tomorrow's class is not a
+  // learner, and making them grind unit 1 first would be absurd.
+  function isUnitUnlocked(unit, completedUnits, teaching) {
     var n = Number(unit);
     if (!Number.isInteger(n) || n < 1) return false;
+    if (teaching === true) return true;
     if (n === 1) return true;
     return (completedUnits || []).map(Number).indexOf(n - 1) !== -1;
   }
@@ -177,6 +182,17 @@
 
   function isLessonPage() {
     return /^\/units\/unit-\d+\/[^/]+\.html$/.test(path);
+  }
+
+  function isUnitPage() {
+    return /^\/units\/unit-\d+\.html$/.test(path);
+  }
+
+  // Read afresh on every call rather than captured once: role-nav.js resolves
+  // the role from Firestore after this file has already run.
+  function teaching() {
+    var R = window.PyPathRoles;
+    return !!(R && R.teachingNow());
   }
 
   // Required item ids, read from the page itself so no manifest can drift.
@@ -264,12 +280,97 @@
   function paintProgress() {
     var chip = document.querySelector('[data-lesson-progress]');
     if (!chip) return;
+    // A teacher has no learner progress worth counting, and "0 of 6 done" on
+    // every lesson they open reads as homework they owe.
+    chip.hidden = teaching();
     var done = doneIds().filter(function (id) { return required.indexOf(id) !== -1; });
     var passed = lessonPassed(required, done);
     chip.textContent = passed
       ? 'Lesson complete'
       : done.length + ' of ' + required.length + ' done';
     chip.classList.toggle('is-complete', passed);
+  }
+
+  // ---------- lesson check-off ----------
+
+  // Every lesson link on a unit page carries the learner's own state: a tick
+  // once the lesson has passed, a dot once it has been started. Painted from
+  // the same map the lesson pages write, so finishing a sublesson checks it off
+  // the moment the learner comes back to the unit -- and, because
+  // ProgressStore emits pypath:progress on every write, the instant a sync from
+  // another device lands too.
+  function isLessonHref(href) {
+    return /^\/units\/unit-\d+\/[^/]+\.html$/.test(String(href || ''));
+  }
+
+  function lessonState(entry) {
+    if (!entry) return '';
+    if (entry.passed) return 'done';
+    return entry.done.length ? 'started' : '';
+  }
+
+  function markLessonLink(a, state) {
+    var li = a.closest('li') || a;
+    li.classList.toggle('is-lesson-done', state === 'done');
+    li.classList.toggle('is-lesson-started', state === 'started');
+
+    var mark = a.querySelector('[data-lesson-check]');
+    if (!state) {
+      if (mark) mark.remove();
+      return;
+    }
+    if (!mark) {
+      mark = document.createElement('span');
+      mark.setAttribute('data-lesson-check', '');
+      mark.setAttribute('role', 'img');
+      a.appendChild(mark);
+    }
+    mark.className = 'lesson-check lesson-check--' + state;
+    mark.setAttribute('aria-label', state === 'done' ? 'Complete' : 'Started');
+    mark.textContent = state === 'done' ? '✓' : '•';
+  }
+
+  function paintLessonSummary(list, total, done) {
+    var chip = document.querySelector('[data-unit-lesson-summary]');
+    // Nothing to count, or a teacher looking at a class's curriculum rather
+    // than their own progress.
+    if (!total || teaching()) {
+      if (chip) chip.remove();
+      return;
+    }
+    if (!chip) {
+      chip = document.createElement('p');
+      chip.className = 'unit-lesson-summary';
+      chip.setAttribute('data-unit-lesson-summary', '');
+      list.insertAdjacentElement('beforebegin', chip);
+    }
+    chip.textContent = done === total
+      ? 'All ' + total + ' lessons complete.'
+      : done + ' of ' + total + ' lessons complete.';
+    chip.classList.toggle('is-complete', done === total);
+  }
+
+  function paintLessonList() {
+    var lists = document.querySelectorAll('.unit-lesson-list');
+    if (!lists.length) return;
+
+    var map = readMap();
+    var teacher = teaching();
+    var total = 0;
+    var done = 0;
+
+    Array.prototype.forEach.call(lists, function (list) {
+      Array.prototype.forEach.call(list.querySelectorAll('a[href]'), function (a) {
+        var href = a.getAttribute('href');
+        if (!isLessonHref(href)) return;
+        total++;
+        var state = lessonState(map[href]);
+        if (state === 'done') done++;
+        markLessonLink(a, teacher ? '' : state);
+      });
+    });
+
+    paintLessonSummary(lists[0], total, done);
   }
 
   function insertChip() {
@@ -285,7 +386,13 @@
   // this unit is not open yet and where to go instead.
   function insertLockNotice() {
     if (!curriculum || !unit) return;
-    if (isUnitUnlocked(unit, completedUnits())) return;
+    if (isUnitUnlocked(unit, completedUnits(), teaching())) {
+      // The role can resolve after the notice has already been painted, so
+      // this clears one that a teacher should never have seen.
+      var stale = document.querySelector('.unit-locked-notice');
+      if (stale) stale.remove();
+      return;
+    }
     if (document.querySelector('.unit-locked-notice')) return;
 
     var prev = unit - 1;
@@ -420,15 +527,51 @@
     }, true);
   }
 
+  // Says out loud what the missing lock notice already implies: this account is
+  // reading the course as a teacher, not working through it.
+  function paintTeacherBanner() {
+    var existing = document.querySelector('.teacher-view-note');
+    if (!teaching() || !(isLessonPage() || isUnitPage())) {
+      if (existing) existing.remove();
+      return;
+    }
+    if (existing) return;
+
+    var box = document.createElement('div');
+    box.className = 'teacher-view-note';
+    box.setAttribute('role', 'note');
+    box.innerHTML =
+      '<p class="teacher-view-note__title">Teacher view</p>' +
+      '<p>Every unit and lesson is open to you, and nothing you do here is ' +
+      'graded or counted as progress. ' +
+      '<a class="route" href="/classroom.html">Open your classroom</a> to see how ' +
+      'your students are doing.</p>';
+
+    var main = document.querySelector('main');
+    if (main) main.insertBefore(box, main.firstChild);
+  }
+
+  function repaint() {
+    if (isLessonPage()) paintProgress();
+    insertLockNotice();
+    paintTeacherBanner();
+    paintLessonList();
+    paintTestEntries();
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     if (isLessonPage()) {
       required = requiredItems();
       insertChip();
-      paintProgress();
       wrapGlobals();
       watchReflections();
     }
-    insertLockNotice();
-    paintTestEntries();
+    repaint();
   });
+
+  // A write from this page, a value arriving from another device through
+  // sync.js, or the role finally resolving -- all three change what the ticks
+  // and the lock notice should say.
+  document.addEventListener('pypath:progress', repaint);
+  document.addEventListener('pypath:role', repaint);
 })();

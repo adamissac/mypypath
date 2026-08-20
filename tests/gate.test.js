@@ -45,6 +45,18 @@ describe('isLocked', () => {
     expect(window.PyPathGate.isLocked(null, false)).toBe(false);
   });
 
+  it('never locks anything for a teacher', () => {
+    expect(window.PyPathGate.isLocked(3, false, true)).toBe(false);
+    expect(window.PyPathGate.isLocked(10, false, true)).toBe(false);
+  });
+
+  // Anything short of an explicit true is not a teacher; a truthy stray value
+  // must not be able to open the paywall.
+  it('only an explicit true counts as teaching', () => {
+    expect(window.PyPathGate.isLocked(3, false, 'teacher')).toBe(true);
+    expect(window.PyPathGate.isLocked(3, false, undefined)).toBe(true);
+  });
+
   it('reads the boundary from FREE_UNITS rather than a literal', () => {
     const free = window.PyPathGate.FREE_UNITS;
     expect(window.PyPathGate.isLocked(free, false)).toBe(false);
@@ -88,6 +100,7 @@ describe('page behavior on a gated unit page', () => {
   afterEach(() => {
     vi.useRealTimers();
     history.pushState({}, '', '/');
+    sessionStorage.clear();
   });
 
   it('starts pending so no lesson text flashes', () => {
@@ -132,6 +145,31 @@ describe('page behavior on a gated unit page', () => {
     // auth.js imports the SDK from gstatic.com; an ad blocker or a dead network
     // means the event never fires. A permanent paywall would be the worse bug.
     vi.advanceTimersByTime(3000);
+    expect(document.documentElement.dataset.gate).toBe('open');
+    expect(document.querySelector('[data-gate-paywall]')).toBeNull();
+  });
+
+  // role-nav.js resolves the role from Firestore after auth has already
+  // settled, so a teacher's first paint can be a paywall. It must not stay one.
+  it('lifts the paywall when the role arrives after auth', () => {
+    vi.useFakeTimers();
+    new Function(fs.readFileSync('assets/js/roles.js', 'utf8')).call(window);
+    bootOnUnit('/units/unit-5.html');
+    document.dispatchEvent(new CustomEvent('pypath:auth', { detail: { user: null } }));
+    expect(document.documentElement.dataset.gate).toBe('locked');
+
+    window.PyPathRoles.rememberRole('teacher');
+    document.dispatchEvent(new CustomEvent('pypath:role', { detail: { role: 'teacher' } }));
+    expect(document.documentElement.dataset.gate).toBe('open');
+    expect(document.querySelector('[data-gate-paywall]')).toBeNull();
+  });
+
+  it('never paywalls a unit for a session already known to be a teacher', () => {
+    vi.useFakeTimers();
+    new Function(fs.readFileSync('assets/js/roles.js', 'utf8')).call(window);
+    window.PyPathRoles.rememberRole('teacher');
+    bootOnUnit('/units/unit-9.html');
+    document.dispatchEvent(new CustomEvent('pypath:auth', { detail: { user: null } }));
     expect(document.documentElement.dataset.gate).toBe('open');
     expect(document.querySelector('[data-gate-paywall]')).toBeNull();
   });

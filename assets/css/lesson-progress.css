@@ -100,3 +100,72 @@
 .ut-link__unit {
   font-weight: 700;
 }
+
+/* Lesson check-off on a unit page. */
+.lesson-check {
+  margin-left: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.15em;
+  height: 1.15em;
+  border-radius: 999px;
+  font-size: 0.85em;
+  line-height: 1;
+  vertical-align: baseline;
+}
+
+.lesson-check--done {
+  color: #0b6b3a;
+  background: #d9f2e4;
+}
+
+.lesson-check--started {
+  color: var(--muted, #5b7c92);
+  background: rgba(91, 124, 146, 0.16);
+}
+
+.unit-lesson-list li.is-lesson-done > a {
+  color: #0b6b3a;
+}
+
+:root[data-theme="dark"] .lesson-check--done,
+:root:not([data-theme="light"]) .lesson-check--done {
+  color: #7ee2ab;
+  background: rgba(16, 78, 51, 0.55);
+}
+
+:root[data-theme="dark"] .unit-lesson-list li.is-lesson-done > a,
+:root:not([data-theme="light"]) .unit-lesson-list li.is-lesson-done > a {
+  color: #7ee2ab;
+}
+
+.unit-lesson-summary {
+  margin: 14px 0 0;
+  color: var(--muted, #5b7c92);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.unit-lesson-summary.is-complete {
+  color: var(--ok, #1f9d55);
+}
+
+/* Teacher view banner. Deliberately not the amber of .unit-locked-notice --
+   nothing here is a warning, it is a statement of which view you are in. */
+.teacher-view-note {
+  margin: 20px 0 28px;
+  padding: 18px 22px;
+  border: 1px solid var(--border, #cfe3f2);
+  border-left: 4px solid var(--accent, #2f7ea8);
+  border-radius: 12px;
+  background: var(--surface, rgba(47, 126, 168, 0.07));
+}
+
+.teacher-view-note__title {
+  margin: 0 0 6px;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.teacher-view-note p { margin: 0; }

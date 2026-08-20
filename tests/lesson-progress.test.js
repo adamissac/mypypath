@@ -1,5 +1,34 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, beforeEach, afterAll } from 'vitest';
 import fs from 'node:fs';
+
+const SRC = fs.readFileSync('assets/js/lesson-progress.js', 'utf8');
+
+// The page half needs the manifest, the store, and the session role. Loading
+// each one is idempotent, so a suite that boots more than once is safe.
+function loadDeps() {
+  ['storage-keys', 'progress-store', 'roles', 'curriculum'].forEach((name) => {
+    new Function(fs.readFileSync(`assets/js/${name}.js`, 'utf8')).call(window);
+  });
+}
+
+// `path` and `unit` are captured when the file runs, so the URL has to be set
+// before booting, never after.
+function bootAt(pathname, html) {
+  history.pushState({}, '', pathname);
+  document.body.innerHTML = html;
+  new Function(SRC).call(window);
+  document.dispatchEvent(new Event('DOMContentLoaded'));
+}
+
+function progressArrived() {
+  document.dispatchEvent(
+    new CustomEvent('pypath:progress', { detail: { key: 'pypath-progress-lessons' } })
+  );
+}
+
+function seedLessons(map) {
+  localStorage.setItem('pypath-progress-lessons', JSON.stringify(map));
+}
 
 beforeAll(() => {
   // The page-wiring half is guarded on a lesson URL, so loading the file in
@@ -158,6 +187,25 @@ describe('isUnitUnlocked', () => {
       expect(P().isUnitUnlocked(v, [1, 2, 3])).toBe(false);
     });
   });
+
+  // A teacher previewing unit 7 for tomorrow's class is not a learner working
+  // through the course in order.
+  it('opens every unit for a teacher', () => {
+    for (let u = 1; u <= 10; u++) {
+      expect(P().isUnitUnlocked(u, [], true)).toBe(true);
+    }
+  });
+
+  it('still rejects junk unit numbers for a teacher', () => {
+    [0, -1, null, 'two'].forEach((v) => {
+      expect(P().isUnitUnlocked(v, [], true)).toBe(false);
+    });
+  });
+
+  it('only an explicit true counts as teaching', () => {
+    expect(P().isUnitUnlocked(5, [], 'teacher')).toBe(false);
+    expect(P().isUnitUnlocked(5, [], undefined)).toBe(false);
+  });
 });
 
 describe('nextUnfinished', () => {
@@ -215,5 +263,193 @@ describe('curriculum manifest', () => {
         expect(p.startsWith(`/units/unit-${u}/`)).toBe(true);
       });
     }
+  });
+});
+
+describe('lesson check-off on a unit page', () => {
+  const A = '/units/unit-1/what-is-python.html';
+  const B = '/units/unit-1/installing-python-ide.html';
+  const C = '/units/unit-1/first-program.html';
+
+  const LIST = `<main><h2>Lessons</h2><ol class="unit-lesson-list">
+      <li><a class="route" href="${A}">1. What is Python</a></li>
+      <li><a class="route" href="${B}">2. Installing Python</a></li>
+      <li><a class="route" href="${C}">3. Your first program</a></li>
+    </ol></main>`;
+
+  const items = () => Array.from(document.querySelectorAll('.unit-lesson-list li'));
+  const mark = (n) => items()[n].querySelector('[data-lesson-check]');
+  const summary = () => document.querySelector('[data-unit-lesson-summary]');
+
+  beforeAll(() => {
+    loadDeps();
+    localStorage.clear();
+    sessionStorage.clear();
+    bootAt('/units/unit-1.html', LIST);
+  });
+
+  beforeEach(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+    document.body.innerHTML = LIST;
+  });
+
+  afterAll(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+    history.pushState({}, '', '/');
+  });
+
+  it('ticks a passed lesson, dots a started one, leaves an untouched one bare', () => {
+    seedLessons({
+      [A]: { done: ['x'], passed: true },
+      [B]: { done: ['x'], passed: false }
+    });
+    progressArrived();
+
+    expect(items()[0].classList.contains('is-lesson-done')).toBe(true);
+    expect(mark(0).textContent).toBe('✓');
+    expect(mark(0).getAttribute('aria-label')).toBe('Complete');
+
+    expect(items()[1].classList.contains('is-lesson-started')).toBe(true);
+    expect(mark(1).textContent).toBe('•');
+
+    expect(items()[2].classList.contains('is-lesson-done')).toBe(false);
+    expect(mark(2)).toBeNull();
+  });
+
+  it('counts the finished lessons in the summary', () => {
+    seedLessons({ [A]: { done: ['x'], passed: true } });
+    progressArrived();
+    expect(summary().textContent).toBe('1 of 3 lessons complete.');
+    expect(summary().classList.contains('is-complete')).toBe(false);
+  });
+
+  it('says so when the whole unit is done', () => {
+    seedLessons({
+      [A]: { done: ['x'], passed: true },
+      [B]: { done: ['x'], passed: true },
+      [C]: { done: ['x'], passed: true }
+    });
+    progressArrived();
+    expect(summary().textContent).toBe('All 3 lessons complete.');
+    expect(summary().classList.contains('is-complete')).toBe(true);
+  });
+
+  // The point of listening to pypath:progress: a lesson finished on a phone
+  // shows up ticked here without a reload.
+  it('re-paints when progress lands from a sync', () => {
+    progressArrived();
+    expect(mark(0)).toBeNull();
+
+    seedLessons({ [A]: { done: ['x'], passed: true } });
+    progressArrived();
+    expect(mark(0).textContent).toBe('✓');
+  });
+
+  it('keeps exactly one mark per lesson across repeated paints', () => {
+    seedLessons({ [A]: { done: ['x'], passed: true } });
+    progressArrived();
+    progressArrived();
+    progressArrived();
+    expect(items()[0].querySelectorAll('[data-lesson-check]').length).toBe(1);
+  });
+
+  it('drops the mark again if the progress goes away', () => {
+    seedLessons({ [A]: { done: ['x'], passed: true } });
+    progressArrived();
+    expect(mark(0)).not.toBeNull();
+
+    seedLessons({});
+    progressArrived();
+    expect(mark(0)).toBeNull();
+    expect(items()[0].classList.contains('is-lesson-done')).toBe(false);
+  });
+
+  it('ignores links that are not lessons', () => {
+    document.body.innerHTML = `<main><ol class="unit-lesson-list">
+        <li><a href="/units/unit-1.html">Back to the unit</a></li>
+        <li><a href="/curriculum.html">Curriculum</a></li>
+      </ol></main>`;
+    progressArrived();
+    expect(document.querySelectorAll('[data-lesson-check]').length).toBe(0);
+    expect(summary()).toBeNull();
+  });
+});
+
+describe('teacher view', () => {
+  const LOCKED_UNIT = '/units/unit-5.html';
+  const LESSON = '/units/unit-5/what-are-modules.html';
+
+  const HTML = `<main><h2>Lessons</h2><ol class="unit-lesson-list">
+      <li><a class="route" href="${LESSON}">1. What are modules</a></li>
+    </ol></main>`;
+
+  const notice = () => document.querySelector('.unit-locked-notice');
+  const banner = () => document.querySelector('.teacher-view-note');
+
+  function becomeTeacher() {
+    window.PyPathRoles.rememberRole('teacher');
+    document.dispatchEvent(new CustomEvent('pypath:role', { detail: { role: 'teacher' } }));
+  }
+
+  beforeAll(() => {
+    loadDeps();
+  });
+
+  beforeEach(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+  });
+
+  afterAll(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+    history.pushState({}, '', '/');
+  });
+
+  it('still locks unit 5 for a learner who has not earned it', () => {
+    bootAt(LOCKED_UNIT, HTML);
+    expect(notice()).not.toBeNull();
+    expect(banner()).toBeNull();
+  });
+
+  it('opens the unit and says so once the role resolves', () => {
+    bootAt(LOCKED_UNIT, HTML);
+    expect(notice()).not.toBeNull();
+
+    becomeTeacher();
+    expect(notice()).toBeNull();
+    expect(banner()).not.toBeNull();
+    expect(banner().textContent).toContain('Teacher view');
+    expect(banner().querySelector('a').getAttribute('href')).toBe('/classroom.html');
+  });
+
+  it('never paints the lock for a session already known to be a teacher', () => {
+    window.PyPathRoles.rememberRole('teacher');
+    bootAt(LOCKED_UNIT, HTML);
+    expect(notice()).toBeNull();
+    expect(banner()).not.toBeNull();
+  });
+
+  // A teacher has no learner progress, so ticks and counts would be noise at
+  // best and a wrong report on their class at worst.
+  it('shows a teacher no learner check-offs or counts', () => {
+    seedLessons({ [LESSON]: { done: ['x'], passed: true } });
+    window.PyPathRoles.rememberRole('teacher');
+    bootAt(LOCKED_UNIT, HTML);
+    expect(document.querySelectorAll('[data-lesson-check]').length).toBe(0);
+    expect(document.querySelector('[data-unit-lesson-summary]')).toBeNull();
+  });
+
+  it('takes the banner down again if the account is not a teacher', () => {
+    window.PyPathRoles.rememberRole('teacher');
+    bootAt(LOCKED_UNIT, HTML);
+    expect(banner()).not.toBeNull();
+
+    window.PyPathRoles.rememberRole('student');
+    document.dispatchEvent(new CustomEvent('pypath:role', { detail: { role: 'student' } }));
+    expect(banner()).toBeNull();
+    expect(notice()).not.toBeNull();
   });
 });

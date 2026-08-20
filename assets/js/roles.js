@@ -1,8 +1,11 @@
-/* PyPath — account roles and classroom join codes: pure rules, no I/O.
+/* PyPath — account roles and classroom join codes.
 
    Two roles. `student` is the default; a student with no teacher attached
    behaves exactly as a personal account did before roles existed. `teacher`
-   owns a join code and a roster. */
+   owns a join code and a roster, and is never held behind a learner gate.
+
+   Everything above the session-role section is pure rules with no I/O, so it
+   can be loaded straight into a test with new Function(src).call(window). */
 (function () {
   'use strict';
 
@@ -28,6 +31,10 @@
   function normalizeRole(value) {
     if (value === 'personal') return DEFAULT_ROLE;
     return isRole(value) ? value : DEFAULT_ROLE;
+  }
+
+  function isTeacher(value) {
+    return normalizeRole(value) === 'teacher';
   }
 
   // Typed codes arrive with stray spaces, hyphens, and lowercase. Normalize
@@ -83,17 +90,63 @@
     return { ok: true, code: code, error: null };
   }
 
+  // ---------- session role ----------
+
+  // The role lives in Firestore, which no classic script can read synchronously
+  // on load. gate.js and lesson-progress.js both have to decide whether to lock
+  // content before the first paint, so role-nav.js writes the resolved role here
+  // and they read it back.
+  //
+  // Cached without the uid, unlike the per-account cache in role-nav.js: the
+  // readers run before auth has told anyone who is signed in. That makes it a
+  // hint rather than an authority, and the worst a stale value can do is open a
+  // unit early for the few milliseconds until role-nav.js announces the real
+  // role -- it can never lock a learner out of something they had earned.
+  var SESSION_KEY = 'pypath-role';
+
+  function paintRoleAttr(role) {
+    try {
+      if (typeof document !== 'undefined' && document.documentElement) {
+        document.documentElement.dataset.role = role;
+      }
+    } catch (e) {}
+  }
+
+  function rememberRole(value) {
+    var role = normalizeRole(value);
+    try { sessionStorage.setItem(SESSION_KEY, role); } catch (e) {}
+    paintRoleAttr(role);
+    return role;
+  }
+
+  function lastKnownRole() {
+    try { return normalizeRole(sessionStorage.getItem(SESSION_KEY)); }
+    catch (e) { return DEFAULT_ROLE; }
+  }
+
+  function teachingNow() {
+    return isTeacher(lastKnownRole());
+  }
+
   window.PyPathRoles = {
     ROLES: ROLES,
     DEFAULT_ROLE: DEFAULT_ROLE,
     CODE_LENGTH: CODE_LENGTH,
     CODE_ALPHABET: CODE_ALPHABET,
+    SESSION_KEY: SESSION_KEY,
     isRole: isRole,
     normalizeRole: normalizeRole,
+    isTeacher: isTeacher,
     normalizeCode: normalizeCode,
     isValidCode: isValidCode,
     generateCode: generateCode,
     cryptoRandom: cryptoRandom,
-    validateJoin: validateJoin
+    validateJoin: validateJoin,
+    rememberRole: rememberRole,
+    lastKnownRole: lastKnownRole,
+    teachingNow: teachingNow
   };
+
+  // So CSS can style a teacher's view without waiting on a round trip.
+  paintRoleAttr(lastKnownRole());
 })();

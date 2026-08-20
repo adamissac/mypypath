@@ -494,6 +494,14 @@ body.nav-open::before {
   display: none !important;
 }
 
+/* Same hazard, anywhere on the site: role-nav.js hides role-gated markup with
+   the [hidden] attribute, and any author `display` on the element would show it
+   to the wrong role. */
+[data-teacher-only][hidden],
+[data-student-only][hidden] {
+  display: none !important;
+}
+
 .primary-nav a,
 .primary-nav .dd-trigger {
   position: relative;

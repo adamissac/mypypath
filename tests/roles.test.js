@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, beforeEach } from 'vitest';
 import fs from 'node:fs';
 
 let R;
@@ -153,5 +153,57 @@ describe('signup.html wiring', () => {
 
   it('loads roles.js', () => {
     expect(signup).toContain('/assets/js/roles.js');
+  });
+});
+
+describe('isTeacher', () => {
+  it('is true only for the teacher role', () => {
+    expect(R.isTeacher('teacher')).toBe(true);
+    expect(R.isTeacher('student')).toBe(false);
+  });
+
+  it('normalizes before deciding, so no legacy value reads as a teacher', () => {
+    ['personal', '', null, undefined, 'TEACHER', 'admin', 42].forEach((v) => {
+      expect(R.isTeacher(v)).toBe(false);
+    });
+  });
+});
+
+describe('session role', () => {
+  beforeEach(() => {
+    sessionStorage.clear();
+    delete document.documentElement.dataset.role;
+  });
+
+  it('defaults to student when nothing has been remembered', () => {
+    expect(R.lastKnownRole()).toBe('student');
+    expect(R.teachingNow()).toBe(false);
+  });
+
+  it('round-trips a remembered role', () => {
+    expect(R.rememberRole('teacher')).toBe('teacher');
+    expect(R.lastKnownRole()).toBe('teacher');
+    expect(R.teachingNow()).toBe(true);
+  });
+
+  it('stamps the role onto the document for CSS', () => {
+    R.rememberRole('teacher');
+    expect(document.documentElement.dataset.role).toBe('teacher');
+    R.rememberRole('student');
+    expect(document.documentElement.dataset.role).toBe('student');
+  });
+
+  // The gating scripts read this before auth resolves; a junk value there must
+  // fall back to the strictest role, not the most permissive one.
+  it('normalizes whatever it finds in storage', () => {
+    sessionStorage.setItem(R.SESSION_KEY, 'headmaster');
+    expect(R.lastKnownRole()).toBe('student');
+    sessionStorage.setItem(R.SESSION_KEY, 'personal');
+    expect(R.lastKnownRole()).toBe('student');
+  });
+
+  it('normalizes on the way in as well', () => {
+    expect(R.rememberRole('headmaster')).toBe('student');
+    expect(sessionStorage.getItem(R.SESSION_KEY)).toBe('student');
   });
 });
