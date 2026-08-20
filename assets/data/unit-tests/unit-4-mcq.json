@@ -1,0 +1,682 @@
+[
+  {
+    "id": "u4-m01",
+    "kind": "vocab",
+    "prompt": "What is a data structure?",
+    "choices": [
+      "A container that holds several pieces of related data together.",
+      "A single value stored in one variable.",
+      "A rule that decides what type a variable is allowed to hold.",
+      "A file that stores the output of a program."
+    ],
+    "answer": 0,
+    "explain": "A plain variable holds one value, while a data structure groups many values so you can work with them as one collection."
+  },
+  {
+    "id": "u4-m02",
+    "kind": "vocab",
+    "prompt": "Which built-in Python structure is ordered, changeable, and allows duplicate items?",
+    "choices": [
+      "A tuple",
+      "A set",
+      "A dictionary",
+      "A list"
+    ],
+    "answer": 3,
+    "explain": "Lists keep items in the order you put them, can be changed after creation, and happily hold the same value more than once."
+  },
+  {
+    "id": "u4-m03",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "fruits = [\"apple\", \"banana\"]\nfruits.append(\"orange\")\nprint(fruits)",
+    "choices": [
+      "['apple', 'banana', 'orange']",
+      "['orange', 'apple', 'banana']",
+      "['apple', 'banana']",
+      "It raises an error because append returns a new list"
+    ],
+    "answer": 0,
+    "explain": "append adds the item to the end of the list and changes the list in place."
+  },
+  {
+    "id": "u4-m04",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "numbers = [3, 1, 4, 1, 5]\nnumbers.sort()\nprint(numbers)",
+    "choices": [
+      "[3, 1, 4, 1, 5]",
+      "[1, 1, 3, 4, 5]",
+      "[5, 4, 3, 1, 1]",
+      "None"
+    ],
+    "answer": 1,
+    "explain": "sort() rearranges the list itself into ascending order, so printing the list afterwards shows the sorted values."
+  },
+  {
+    "id": "u4-m05",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "items = [\"a\", \"b\", \"a\", \"c\"]\nitems.remove(\"a\")\nprint(items)",
+    "choices": [
+      "['b', 'c']",
+      "['a', 'b', 'c']",
+      "['b', 'a', 'c']",
+      "['b', 'c', 'a']"
+    ],
+    "answer": 2,
+    "explain": "remove() deletes only the first item that matches, so the second \"a\" is left in place."
+  },
+  {
+    "id": "u4-m06",
+    "kind": "code",
+    "prompt": "What two lines does this program print?",
+    "code": "fruits = [\"apple\", \"banana\", \"orange\"]\nlast = fruits.pop()\nprint(last)\nprint(fruits)",
+    "choices": [
+      "apple then ['banana', 'orange']",
+      "['apple', 'banana'] then orange",
+      "orange then ['apple', 'banana', 'orange']",
+      "orange then ['apple', 'banana']"
+    ],
+    "answer": 3,
+    "explain": "With no index given, pop() removes the last item and hands it back, so the list is left one item shorter."
+  },
+  {
+    "id": "u4-m07",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "numbers = [1, 2, 3]\nresult = numbers.append(4)\nprint(result)",
+    "choices": [
+      "[1, 2, 3, 4]",
+      "4",
+      "[1, 2, 3]",
+      "None"
+    ],
+    "answer": 3,
+    "explain": "append changes the list in place and returns nothing, so result holds None."
+  },
+  {
+    "id": "u4-m08",
+    "kind": "vocab",
+    "prompt": "Which list method tells you how many times a value appears in the list?",
+    "choices": [
+      "index()",
+      "count()",
+      "len()",
+      "total()"
+    ],
+    "answer": 1,
+    "explain": "count() returns how many times a value appears, while index() returns the position of the first match."
+  },
+  {
+    "id": "u4-m09",
+    "kind": "vocab",
+    "prompt": "What does the append() method do to a list?",
+    "choices": [
+      "It adds one item to the end of the list and changes the list itself.",
+      "It adds one item to the front of the list.",
+      "It returns a new list with the item added and leaves the original alone.",
+      "It joins two lists together into one longer list."
+    ],
+    "answer": 0,
+    "explain": "append works on the list you call it on, so there is nothing to assign back to the variable."
+  },
+  {
+    "id": "u4-m10",
+    "kind": "vocab",
+    "prompt": "In the slice my_list[start:end], which items do you get?",
+    "choices": [
+      "Every item from start to end, including the item at end.",
+      "Every item from start up to but not including the item at end.",
+      "Every item except the ones at start and end.",
+      "Only the two items at start and end."
+    ],
+    "answer": 1,
+    "explain": "The end index is where the slice stops, so it is never included in the result."
+  },
+  {
+    "id": "u4-m11",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "numbers = [0, 1, 2, 3, 4, 5]\nprint(numbers[1:4])",
+    "choices": [
+      "[1, 2, 3, 4]",
+      "[0, 1, 2, 3]",
+      "[1, 2, 3]",
+      "[2, 3, 4]"
+    ],
+    "answer": 2,
+    "explain": "The slice starts at index 1 and stops before index 4, giving indices 1, 2 and 3."
+  },
+  {
+    "id": "u4-m12",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "letters = [\"a\", \"b\", \"c\", \"d\", \"e\"]\nprint(letters[-2:])",
+    "choices": [
+      "['d', 'e']",
+      "['a', 'b']",
+      "['e', 'd']",
+      "['c', 'd', 'e']"
+    ],
+    "answer": 0,
+    "explain": "Starting at index -2 and running to the end gives the last two items, still in their original order."
+  },
+  {
+    "id": "u4-m13",
+    "kind": "vocab",
+    "prompt": "What does the index -1 refer to in a list?",
+    "choices": [
+      "The position just before the first item, which does not exist.",
+      "The length of the list minus one.",
+      "The last item in the list.",
+      "Nothing, because list indices cannot be negative."
+    ],
+    "answer": 2,
+    "explain": "Negative indices count backwards from the end, so -1 is the last item and -2 is the one before it."
+  },
+  {
+    "id": "u4-m14",
+    "kind": "code",
+    "prompt": "What happens when this code runs?",
+    "code": "fruits = [\"apple\", \"banana\", \"orange\"]\nprint(fruits[3])",
+    "choices": [
+      "It prints orange",
+      "It prints None",
+      "It prints an empty line",
+      "Python raises an IndexError because there is no index 3"
+    ],
+    "answer": 3,
+    "explain": "The three items sit at indices 0, 1 and 2, so index 3 is past the end of the list."
+  },
+  {
+    "id": "u4-m15",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "numbers = [10, 20, 30]\nnumbers[1] = 99\nprint(numbers)",
+    "choices": [
+      "[10, 20, 30, 99]",
+      "[99, 20, 30]",
+      "[10, 99, 30]",
+      "It raises an error because lists cannot be changed"
+    ],
+    "answer": 2,
+    "explain": "Assigning to an index replaces the item already at that position, and index 1 is the second item."
+  },
+  {
+    "id": "u4-m16",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "numbers = [0, 1, 2, 3, 4, 5]\nprint(numbers[::2])",
+    "choices": [
+      "[0, 2, 4]",
+      "[1, 3, 5]",
+      "[0, 1]",
+      "[2, 4]"
+    ],
+    "answer": 0,
+    "explain": "The third number in a slice is the step, so a step of 2 takes every second item starting at the beginning."
+  },
+  {
+    "id": "u4-m17",
+    "kind": "vocab",
+    "prompt": "What is a nested list?",
+    "choices": [
+      "A list that has been sorted into groups.",
+      "A list whose items are themselves lists.",
+      "A list that cannot be changed after it is created.",
+      "A list that is stored inside a dictionary."
+    ],
+    "answer": 1,
+    "explain": "Putting lists inside a list gives you rows and columns, which is how a grid or table is represented."
+  },
+  {
+    "id": "u4-m18",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "matrix = [[1, 2, 3], [4, 5, 6]]\nprint(matrix[1][2])",
+    "choices": [
+      "3",
+      "5",
+      "2",
+      "6"
+    ],
+    "answer": 3,
+    "explain": "The first index picks row 1, which is [4, 5, 6], and the second index picks item 2 of that row."
+  },
+  {
+    "id": "u4-m19",
+    "kind": "vocab",
+    "prompt": "What does it mean to say that lists are mutable?",
+    "choices": [
+      "Their items can be added, removed or changed after the list is created.",
+      "They can hold only one type of data at a time.",
+      "They are automatically kept in sorted order.",
+      "They are copied every time you assign them to a new name."
+    ],
+    "answer": 0,
+    "explain": "Mutable means changeable, which is why methods like append and sort can alter a list you already have."
+  },
+  {
+    "id": "u4-m20",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "matrix = [[1, 2, 3], [4, 5, 6]]\nmatrix[0][1] = 99\nprint(matrix)",
+    "choices": [
+      "[[1, 2, 3], [99, 5, 6]]",
+      "[[99, 2, 3], [4, 5, 6]]",
+      "It raises an error because nested lists cannot be changed",
+      "[[1, 99, 3], [4, 5, 6]]"
+    ],
+    "answer": 3,
+    "explain": "matrix[0][1] means row 0, column 1, so the 2 in the first row is replaced by 99."
+  },
+  {
+    "id": "u4-m21",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "matrix = [[1, 2], [3, 4]]\ntotal = 0\nfor row in matrix:\n    for number in row:\n        total = total + number\nprint(total)",
+    "choices": [
+      "10",
+      "7",
+      "4",
+      "3"
+    ],
+    "answer": 0,
+    "explain": "The outer loop walks the rows and the inner loop walks the numbers inside each row, so every value is added."
+  },
+  {
+    "id": "u4-m22",
+    "kind": "vocab",
+    "prompt": "What does it mean to say a tuple is immutable?",
+    "choices": [
+      "Its items can be changed but no new items can be added.",
+      "It can only hold one type of data.",
+      "Once it is created, its items cannot be changed, added or removed.",
+      "It stops existing as soon as the function that made it finishes."
+    ],
+    "answer": 2,
+    "explain": "A tuple is fixed once built, which is what makes it safe for data that should never be modified."
+  },
+  {
+    "id": "u4-m23",
+    "kind": "code",
+    "prompt": "What happens when this code runs?",
+    "code": "my_tuple = (1, 2, 3)\nmy_tuple[0] = 10\nprint(my_tuple)",
+    "choices": [
+      "It prints (10, 2, 3)",
+      "It prints (1, 2, 3)",
+      "Python raises a TypeError because tuples cannot be changed",
+      "It prints [10, 2, 3]"
+    ],
+    "answer": 2,
+    "explain": "Tuples are immutable, so assigning to one of their positions is not allowed."
+  },
+  {
+    "id": "u4-m24",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "value = (42)\nprint(type(value))",
+    "choices": [
+      "<class 'tuple'>",
+      "<class 'int'>",
+      "<class 'list'>",
+      "It raises an error"
+    ],
+    "answer": 1,
+    "explain": "The comma is what makes a tuple, not the parentheses, so (42) is just the number 42 in brackets."
+  },
+  {
+    "id": "u4-m25",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "point = 5, 10\nprint(point)",
+    "choices": [
+      "5 10",
+      "(5, 10)",
+      "[5, 10]",
+      "It raises an error because the parentheses are missing"
+    ],
+    "answer": 1,
+    "explain": "A comma between values builds a tuple even without parentheses, and Python shows tuples with brackets when printing."
+  },
+  {
+    "id": "u4-m26",
+    "kind": "vocab",
+    "prompt": "Why can a tuple be used as a dictionary key when a list cannot?",
+    "choices": [
+      "Tuples are shorter than lists.",
+      "Tuples can only hold numbers.",
+      "Lists are not allowed inside dictionaries at all.",
+      "Keys must be immutable, and a tuple cannot change while a list can."
+    ],
+    "answer": 3,
+    "explain": "A dictionary relies on its keys staying the same, so only immutable values such as strings, numbers and tuples are allowed."
+  },
+  {
+    "id": "u4-m27",
+    "kind": "vocab",
+    "prompt": "What is a dictionary in Python?",
+    "choices": [
+      "A collection of key and value pairs where each value is found by its key.",
+      "A list that keeps its items in alphabetical order.",
+      "A collection of unique items with no order.",
+      "A fixed sequence of items that cannot be changed."
+    ],
+    "answer": 0,
+    "explain": "You look things up in a dictionary by a meaningful key instead of by a numeric position."
+  },
+  {
+    "id": "u4-m28",
+    "kind": "code",
+    "prompt": "What happens when this code runs?",
+    "code": "student = {\"name\": \"Alice\", \"age\": 20}\nprint(student[\"city\"])",
+    "choices": [
+      "It prints None",
+      "It prints an empty line",
+      "Python raises a KeyError because the key does not exist",
+      "It prints city"
+    ],
+    "answer": 2,
+    "explain": "Square bracket access needs the key to be there already, otherwise Python raises a KeyError."
+  },
+  {
+    "id": "u4-m29",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "student = {\"name\": \"Alice\", \"age\": 20}\nstudent[\"age\"] = 21\nstudent[\"grade\"] = \"A\"\nprint(student)",
+    "choices": [
+      "{'name': 'Alice', 'age': 20, 'grade': 'A'}",
+      "{'name': 'Alice', 'age': 21}",
+      "{'name': 'Alice', 'age': 21, 'grade': 'A'}",
+      "It raises an error because grade was not already a key"
+    ],
+    "answer": 2,
+    "explain": "Assigning to an existing key replaces its value, and assigning to a new key adds that pair to the dictionary."
+  },
+  {
+    "id": "u4-m30",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "student = {\"name\": \"Alice\", \"age\": 20}\nprint(student.get(\"city\", \"Unknown\"))",
+    "choices": [
+      "None",
+      "Unknown",
+      "city",
+      "It raises a KeyError"
+    ],
+    "answer": 1,
+    "explain": "The second argument to get() is the value returned when the key is missing."
+  },
+  {
+    "id": "u4-m31",
+    "kind": "vocab",
+    "prompt": "When a key is missing, how does student.get(\"city\") differ from student[\"city\"]?",
+    "choices": [
+      "get() raises a KeyError while the square brackets return None.",
+      "They behave in exactly the same way.",
+      "get() returns None while the square brackets raise a KeyError.",
+      "get() adds the key with the value None while the square brackets do nothing."
+    ],
+    "answer": 2,
+    "explain": "get() is the safe option because it never raises an error for a key that is not there."
+  },
+  {
+    "id": "u4-m32",
+    "kind": "code",
+    "prompt": "What two lines does this program print?",
+    "code": "student = {\"name\": \"Alice\", \"age\": 20, \"grade\": \"A\"}\nage = student.pop(\"age\")\nprint(age)\nprint(student)",
+    "choices": [
+      "20 then {'name': 'Alice', 'grade': 'A'}",
+      "age then {'name': 'Alice', 'grade': 'A'}",
+      "20 then {'name': 'Alice', 'age': 20, 'grade': 'A'}",
+      "None then {'name': 'Alice', 'grade': 'A'}"
+    ],
+    "answer": 0,
+    "explain": "pop() does two jobs at once: it returns the value and removes the pair from the dictionary."
+  },
+  {
+    "id": "u4-m33",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "student = {\"name\": \"Alice\", \"age\": 20}\nstudent.update({\"age\": 21, \"city\": \"Boston\"})\nprint(student)",
+    "choices": [
+      "{'name': 'Alice', 'age': 20, 'city': 'Boston'}",
+      "{'age': 21, 'city': 'Boston'}",
+      "It raises an error because age already exists",
+      "{'name': 'Alice', 'age': 21, 'city': 'Boston'}"
+    ],
+    "answer": 3,
+    "explain": "update() overwrites keys that already exist and adds the ones that do not."
+  },
+  {
+    "id": "u4-m34",
+    "kind": "code",
+    "prompt": "What two lines does this program print?",
+    "code": "prices = {\"apple\": 0.5, \"banana\": 0.3}\nfor item in prices:\n    print(item)",
+    "choices": [
+      "0.5 then 0.3",
+      "('apple', 0.5) then ('banana', 0.3)",
+      "apple: 0.5 then banana: 0.3",
+      "apple then banana"
+    ],
+    "answer": 3,
+    "explain": "Looping over a dictionary directly gives you its keys, so you need values() or items() to reach the values."
+  },
+  {
+    "id": "u4-m35",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "scores = {\"Alice\": 85, \"Bob\": 92}\nprint(85 in scores)",
+    "choices": [
+      "True",
+      "False",
+      "It raises a TypeError",
+      "Alice"
+    ],
+    "answer": 1,
+    "explain": "The in keyword checks the keys of a dictionary, and 85 is a value rather than a key."
+  },
+  {
+    "id": "u4-m36",
+    "kind": "vocab",
+    "prompt": "What does each step of a loop over my_dict.items() give you?",
+    "choices": [
+      "Only the keys.",
+      "Only the values.",
+      "A key and its value together as a pair.",
+      "The position number of each entry."
+    ],
+    "answer": 2,
+    "explain": "items() hands back key and value pairs, which is why you usually unpack them into two loop variables."
+  },
+  {
+    "id": "u4-m37",
+    "kind": "vocab",
+    "prompt": "Which description fits a set?",
+    "choices": [
+      "An ordered collection where duplicates are allowed.",
+      "An unordered collection that stores each item only once.",
+      "A collection of key and value pairs.",
+      "A fixed sequence that cannot be changed."
+    ],
+    "answer": 1,
+    "explain": "Sets drop duplicates automatically and do not keep the order you added items in."
+  },
+  {
+    "id": "u4-m38",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "numbers = set([3, 1, 2, 2, 3])\nprint(len(numbers))",
+    "choices": [
+      "5",
+      "2",
+      "3",
+      "It raises an error because the list has duplicates"
+    ],
+    "answer": 2,
+    "explain": "Converting the list to a set throws the repeats away, leaving only 1, 2 and 3."
+  },
+  {
+    "id": "u4-m39",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "set1 = {1, 2, 3, 4}\nset2 = {3, 4, 5, 6}\nprint(set1 & set2)",
+    "choices": [
+      "{3, 4}",
+      "{1, 2}",
+      "{1, 2, 3, 4, 5, 6}",
+      "{5, 6}"
+    ],
+    "answer": 0,
+    "explain": "The & operator gives the intersection, which is the items found in both sets."
+  },
+  {
+    "id": "u4-m40",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "set1 = {1, 2, 3, 4}\nset2 = {3, 4, 5, 6}\nprint(set1 - set2)",
+    "choices": [
+      "{1, 2}",
+      "{5, 6}",
+      "{3, 4}",
+      "{1, 2, 5, 6}"
+    ],
+    "answer": 0,
+    "explain": "The difference keeps the items that are in the first set but not in the second."
+  },
+  {
+    "id": "u4-m41",
+    "kind": "vocab",
+    "prompt": "What happens when you use add() to put an item into a set that already contains it?",
+    "choices": [
+      "Python raises an error about a duplicate.",
+      "The set now holds that item twice.",
+      "The older copy is removed and the new one takes its place at the end.",
+      "The set is unchanged, because sets only ever store one copy of a value."
+    ],
+    "answer": 3,
+    "explain": "Sets keep every value at most once, so adding something that is already there does nothing."
+  },
+  {
+    "id": "u4-m42",
+    "kind": "vocab",
+    "prompt": "What is the difference between remove() and discard() on a set?",
+    "choices": [
+      "remove() takes an index while discard() takes a value.",
+      "remove() raises an error if the item is missing while discard() does not.",
+      "discard() raises an error if the item is missing while remove() does not.",
+      "remove() empties the whole set while discard() takes out one item."
+    ],
+    "answer": 1,
+    "explain": "discard() is the safe choice when you are not sure whether the item is in the set."
+  },
+  {
+    "id": "u4-m43",
+    "kind": "vocab",
+    "prompt": "How do you create an empty set?",
+    "choices": [
+      "empty = {}",
+      "empty = []",
+      "empty = ()",
+      "empty = set()"
+    ],
+    "answer": 3,
+    "explain": "Empty curly braces make an empty dictionary, so you have to call set() to get an empty set."
+  },
+  {
+    "id": "u4-m44",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "original = [1, 2, 3]\nreference = original\nreference.append(4)\nprint(original)",
+    "choices": [
+      "[1, 2, 3]",
+      "[1, 2, 3, 4]",
+      "[4]",
+      "It raises an error"
+    ],
+    "answer": 1,
+    "explain": "Assignment makes a second name for the same list, so a change through one name is visible through the other."
+  },
+  {
+    "id": "u4-m45",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "original = [1, 2, 3]\ncopy_list = original.copy()\ncopy_list.append(4)\nprint(original)",
+    "choices": [
+      "[1, 2, 3, 4]",
+      "[4, 1, 2, 3]",
+      "None",
+      "[1, 2, 3]"
+    ],
+    "answer": 3,
+    "explain": "copy() builds a separate list object, so appending to the copy leaves the original untouched."
+  },
+  {
+    "id": "u4-m46",
+    "kind": "vocab",
+    "prompt": "When list1 is a list, what does the line list2 = list1 do?",
+    "choices": [
+      "It makes list2 a second name for the same list object.",
+      "It makes an independent copy of the list.",
+      "It copies only the first item of the list.",
+      "It makes list2 an empty list of the same length."
+    ],
+    "answer": 0,
+    "explain": "Variables are labels pointing at objects, so plain assignment adds a label rather than creating a new list."
+  },
+  {
+    "id": "u4-m47",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "original = [[1, 2], [3, 4]]\nshallow = original.copy()\nshallow[0].append(5)\nprint(original)",
+    "choices": [
+      "[[1, 2], [3, 4]]",
+      "[[1, 2, 5], [3, 4]]",
+      "[[1, 2], [3, 4], 5]",
+      "It raises an error"
+    ],
+    "answer": 1,
+    "explain": "A shallow copy makes a new outer list but the inner lists are still shared, so changing one is seen by both."
+  },
+  {
+    "id": "u4-m48",
+    "kind": "vocab",
+    "prompt": "When do you need copy.deepcopy() instead of a plain copy()?",
+    "choices": [
+      "When the list has more than one hundred items.",
+      "When the list contains only numbers.",
+      "When the list contains other lists that must also be independent.",
+      "When you want the copy to stay linked to the original."
+    ],
+    "answer": 2,
+    "explain": "deepcopy() copies the nested objects too, which is the only way to make a fully independent structure."
+  },
+  {
+    "id": "u4-m49",
+    "kind": "code",
+    "prompt": "What two lines does this program print?",
+    "code": "list1 = [1, 2, 3]\nlist2 = [1, 2, 3]\nprint(list1 == list2)\nprint(list1 is list2)",
+    "choices": [
+      "True then True",
+      "True then False",
+      "False then True",
+      "False then False"
+    ],
+    "answer": 1,
+    "explain": "The two lists hold equal values so == is True, but they are separate objects so is returns False."
+  },
+  {
+    "id": "u4-m50",
+    "kind": "vocab",
+    "prompt": "You need to store an x and a y coordinate that must never change. Which structure fits best?",
+    "choices": [
+      "A list",
+      "A set",
+      "A dictionary",
+      "A tuple"
+    ],
+    "answer": 3,
+    "explain": "A tuple keeps the pair in order and its immutability guarantees the coordinate cannot be altered later."
+  }
+]

@@ -1,0 +1,314 @@
+[
+ {
+  "id": "u9-f1",
+  "title": "Fibonacci by recursion",
+  "prompt": "Write a function named fib that takes a whole number n that is zero or larger and returns the nth Fibonacci number, counting from fib(0) which is 0 and fib(1) which is 1. Every later value is the sum of the two before it, so fib(7) is 13. Write it recursively, with the base cases first. Return the number, do not print it.",
+  "starter": "def fib(n):\n    # your code here\n    pass\n",
+  "entry": "fib",
+  "cases": [
+   {
+    "args": [
+     7
+    ],
+    "expect": 13
+   },
+   {
+    "args": [
+     2
+    ],
+    "expect": 1
+   },
+   {
+    "args": [
+     10
+    ],
+    "expect": 55
+   },
+   {
+    "args": [
+     15
+    ],
+    "expect": 610
+   },
+   {
+    "args": [
+     0
+    ],
+    "expect": 0,
+    "hidden": true
+   },
+   {
+    "args": [
+     1
+    ],
+    "expect": 1,
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u9-f2",
+  "title": "Flatten a nested list",
+  "prompt": "Write a function named flatten that takes nested, a list that may hold numbers and other lists nested to any depth, and returns a single flat list holding every number in the order they appear. Solve it with recursion, calling the function again on any item that is itself a list. An empty list gives an empty list. Return the list, do not print it.",
+  "starter": "def flatten(nested):\n    # your code here\n    pass\n",
+  "entry": "flatten",
+  "cases": [
+   {
+    "args": [
+     [
+      1,
+      [
+       2,
+       3
+      ]
+     ]
+    ],
+    "expect": [
+     1,
+     2,
+     3
+    ]
+   },
+   {
+    "args": [
+     [
+      1,
+      [
+       2,
+       [
+        3
+       ]
+      ]
+     ]
+    ],
+    "expect": [
+     1,
+     2,
+     3
+    ]
+   },
+   {
+    "args": [
+     [
+      1,
+      2
+     ]
+    ],
+    "expect": [
+     1,
+     2
+    ]
+   },
+   {
+    "args": [
+     [
+      [
+       1
+      ],
+      [
+       2
+      ],
+      [
+       3,
+       [
+        4,
+        [
+         5
+        ]
+       ]
+      ]
+     ]
+    ],
+    "expect": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   },
+   {
+    "args": [
+     []
+    ],
+    "expect": [],
+    "hidden": true
+   },
+   {
+    "args": [
+     [
+      [],
+      [
+       []
+      ],
+      1
+     ]
+    ],
+    "expect": [
+     1
+    ],
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u9-f3",
+  "title": "Top scorer from JSON",
+  "prompt": "Write a function named top_scorer that takes json_text, a string holding JSON for a list of objects, each with a \"name\" key and a \"score\" key. Parse it with the json module from the standard library and return the name belonging to the highest score. When two names tie for the highest score, return the one that appears first in the list. When the list is empty, return the empty string. Return the name, do not print it.",
+  "starter": "def top_scorer(json_text):\n    # your code here\n    pass\n",
+  "entry": "top_scorer",
+  "cases": [
+   {
+    "args": [
+     "[{\"name\": \"Ann\", \"score\": 12}, {\"name\": \"Bo\", \"score\": 30}]"
+    ],
+    "expect": "Bo"
+   },
+   {
+    "args": [
+     "[{\"name\": \"Cy\", \"score\": 5}]"
+    ],
+    "expect": "Cy"
+   },
+   {
+    "args": [
+     "[{\"name\": \"Dee\", \"score\": 7}, {\"name\": \"Eli\", \"score\": 7}]"
+    ],
+    "expect": "Dee"
+   },
+   {
+    "args": [
+     "[{\"name\": \"Fay\", \"score\": -3}, {\"name\": \"Gus\", \"score\": -1}]"
+    ],
+    "expect": "Gus"
+   },
+   {
+    "args": [
+     "[]"
+    ],
+    "expect": "",
+    "hidden": true
+   },
+   {
+    "args": [
+     "[{\"name\": \"Hal\", \"score\": 0}, {\"name\": \"Ivy\", \"score\": 0}, {\"name\": \"Jo\", \"score\": 1}]"
+    ],
+    "expect": "Jo",
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u9-f4",
+  "title": "Days between two dates",
+  "prompt": "Write a function named days_between that takes two strings, start and end, each a date written as YYYY-MM-DD, and returns the whole number of days from the start date to the end date. Use the datetime module from the standard library. The answer is 0 when the dates are the same and negative when the end date comes first. Return the number, do not print it.",
+  "starter": "def days_between(start, end):\n    # your code here\n    pass\n",
+  "entry": "days_between",
+  "cases": [
+   {
+    "args": [
+     "2024-01-01",
+     "2024-01-31"
+    ],
+    "expect": 30
+   },
+   {
+    "args": [
+     "2024-03-01",
+     "2024-03-01"
+    ],
+    "expect": 0
+   },
+   {
+    "args": [
+     "2024-02-28",
+     "2024-03-01"
+    ],
+    "expect": 2
+   },
+   {
+    "args": [
+     "2023-01-01",
+     "2023-12-31"
+    ],
+    "expect": 364
+   },
+   {
+    "args": [
+     "2024-12-31",
+     "2024-01-01"
+    ],
+    "expect": -365,
+    "hidden": true
+   },
+   {
+    "args": [
+     "2023-02-28",
+     "2023-03-01"
+    ],
+    "expect": 1,
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u9-f5",
+  "title": "Totals from CSV text",
+  "prompt": "Write a function named csv_totals that takes text, a string holding CSV data whose first line is the header \"name,amount\" and whose later lines each hold a name, a comma, and a whole number. It returns a dictionary adding up the amounts for each name. Skip the header line and skip any blank line. Text with only a header gives an empty dictionary. The grader runs in a browser and has no filesystem, so the CSV arrives as this string rather than as a file you open. Return the dictionary, do not print it.",
+  "starter": "def csv_totals(text):\n    # your code here\n    pass\n",
+  "entry": "csv_totals",
+  "cases": [
+   {
+    "args": [
+     "name,amount\na,3\nb,4\na,5"
+    ],
+    "expect": {
+     "a": 8,
+     "b": 4
+    }
+   },
+   {
+    "args": [
+     "name,amount\nsolo,10"
+    ],
+    "expect": {
+     "solo": 10
+    }
+   },
+   {
+    "args": [
+     "name,amount\nx,1\nx,1\nx,1"
+    ],
+    "expect": {
+     "x": 3
+    }
+   },
+   {
+    "args": [
+     "name,amount\nfood,20\nfuel,35\nfood,5"
+    ],
+    "expect": {
+     "food": 25,
+     "fuel": 35
+    }
+   },
+   {
+    "args": [
+     "name,amount"
+    ],
+    "expect": {},
+    "hidden": true
+   },
+   {
+    "args": [
+     "name,amount\n\na,2\n\nb,-2\n"
+    ],
+    "expect": {
+     "a": 2,
+     "b": -2
+    },
+    "hidden": true
+   }
+  ]
+ }
+]

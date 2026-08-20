@@ -1,0 +1,682 @@
+[
+  {
+    "id": "u9-m01",
+    "kind": "vocab",
+    "prompt": "What is JSON?",
+    "choices": [
+      "A Python library for drawing charts",
+      "A text format for exchanging structured data between programs",
+      "A database that stores Python objects on disk",
+      "A compressed binary format used only by web browsers"
+    ],
+    "answer": 1,
+    "explain": "JSON is plain text that any language can read, which is why almost every web API returns it."
+  },
+  {
+    "id": "u9-m02",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import json\n\nraw = '{\"name\": \"Ada\", \"age\": 36}'\ndata = json.loads(raw)\nprint(type(data))",
+    "choices": [
+      "<class 'str'>",
+      "<class 'list'>",
+      "<class 'json'>",
+      "<class 'dict'>"
+    ],
+    "answer": 3,
+    "explain": "A JSON object becomes a Python dictionary, so you can index it with data[\"name\"] straight away."
+  },
+  {
+    "id": "u9-m03",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import json\n\ndata = json.loads('[10, 20, 30]')\nprint(data[1] + 5)",
+    "choices": [
+      "25",
+      "205",
+      "It raises a TypeError because the values are strings",
+      "It raises a KeyError"
+    ],
+    "answer": 0,
+    "explain": "A JSON array becomes a Python list and its numbers stay numbers, so the addition works."
+  },
+  {
+    "id": "u9-m04",
+    "kind": "vocab",
+    "prompt": "What is the difference between json.load and json.loads?",
+    "choices": [
+      "json.load reads from a string, json.loads reads from a list of strings",
+      "json.load parses one object, json.loads parses many objects at once",
+      "json.load reads from an open file, json.loads reads from a string",
+      "json.load is for reading, json.loads is for writing"
+    ],
+    "answer": 2,
+    "explain": "The s stands for string. The same pairing applies to json.dump and json.dumps."
+  },
+  {
+    "id": "u9-m05",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import json\n\nprint(json.dumps({\"active\": True, \"score\": None}))",
+    "choices": [
+      "{\"active\": True, \"score\": None}",
+      "{'active': true, 'score': null}",
+      "It raises a TypeError because None cannot be written as JSON",
+      "{\"active\": true, \"score\": null}"
+    ],
+    "answer": 3,
+    "explain": "JSON spells its booleans in lower case and writes an absent value as null, and json.dumps converts for you."
+  },
+  {
+    "id": "u9-m06",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import json\n\ndata = json.loads('{\"score\": null}')\nprint(data[\"score\"] is None)",
+    "choices": [
+      "False",
+      "True",
+      "null",
+      "It raises a ValueError because null is not valid Python"
+    ],
+    "answer": 1,
+    "explain": "JSON null is parsed into Python None, so the identity check is True."
+  },
+  {
+    "id": "u9-m07",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import json\n\nraw = '{\"students\": [{\"name\": \"Ada\", \"grades\": [85, 90]}]}'\ndata = json.loads(raw)\nprint(data[\"students\"][0][\"grades\"][1])",
+    "choices": [
+      "85",
+      "[85, 90]",
+      "90",
+      "It raises a KeyError because grades is nested too deeply"
+    ],
+    "answer": 2,
+    "explain": "Nested JSON becomes nested dictionaries and lists, so each bracket steps one level down."
+  },
+  {
+    "id": "u9-m08",
+    "kind": "code",
+    "prompt": "What happens when this program runs?",
+    "code": "import json\n\ndata = json.loads(\"{'name': 'Ada'}\")\nprint(data)",
+    "choices": [
+      "It raises a json.JSONDecodeError",
+      "It prints {'name': 'Ada'}",
+      "It prints {\"name\": \"Ada\"}",
+      "It raises a SyntaxError"
+    ],
+    "answer": 0,
+    "explain": "JSON requires double quotes around its keys and strings, so single quoted text is not valid JSON."
+  },
+  {
+    "id": "u9-m09",
+    "kind": "vocab",
+    "prompt": "Why pass indent=2 to json.dump when saving a file?",
+    "choices": [
+      "It writes the JSON across several lines so a person can read it",
+      "It limits each line of the file to two characters",
+      "It makes the file smaller on disk",
+      "It is required, because json.dump will not run without it"
+    ],
+    "answer": 0,
+    "explain": "Indenting costs a few extra bytes and buys a file you can open and read yourself."
+  },
+  {
+    "id": "u9-m10",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import json\n\ntext = json.dumps({1: \"one\"})\nback = json.loads(text)\nprint(list(back.keys()))",
+    "choices": [
+      "[1]",
+      "['one']",
+      "['1']",
+      "It raises a TypeError because JSON keys must be strings"
+    ],
+    "answer": 2,
+    "explain": "JSON keys are always strings, so the integer key is converted on the way out and comes back as the string \"1\"."
+  },
+  {
+    "id": "u9-m11",
+    "kind": "vocab",
+    "prompt": "When is CSV a better choice than JSON?",
+    "choices": [
+      "When the data has objects nested inside other objects",
+      "When you need to keep the difference between numbers and text",
+      "When the file has to be read by a web API",
+      "When the data is a simple table of rows and columns"
+    ],
+    "answer": 3,
+    "explain": "CSV suits flat tables. Anything nested, or anything where types matter, belongs in JSON."
+  },
+  {
+    "id": "u9-m12",
+    "kind": "code",
+    "prompt": "The file people.csv holds the header name,age and then the row Ada,36. What happens?",
+    "code": "import csv\n\nwith open(\"people.csv\", \"r\") as f:\n    reader = csv.reader(f)\n    header = next(reader)\n    row = next(reader)\n\nprint(row[1] + 1)",
+    "choices": [
+      "It prints 37",
+      "It raises a TypeError, because row[1] is the string \"36\"",
+      "It prints 361",
+      "It raises an IndexError"
+    ],
+    "answer": 1,
+    "explain": "csv.reader gives every field back as a string, so you must call int() before doing arithmetic."
+  },
+  {
+    "id": "u9-m13",
+    "kind": "code",
+    "prompt": "The file people.csv holds the header name,age and then rows for Ada and Bo. What does this print?",
+    "code": "import csv\n\nwith open(\"people.csv\", \"r\") as f:\n    reader = csv.DictReader(f)\n    for row in reader:\n        print(row[\"name\"])",
+    "choices": [
+      "name then Ada then Bo",
+      "Ada then Bo",
+      "0 then 1",
+      "It raises a KeyError because name is not an index"
+    ],
+    "answer": 1,
+    "explain": "DictReader treats the first line as column names and gives each later row as a dictionary, so the header is not repeated as data."
+  },
+  {
+    "id": "u9-m14",
+    "kind": "vocab",
+    "prompt": "What is an API?",
+    "choices": [
+      "A defined way for one program to request data or actions from another",
+      "A file format for storing data on disk",
+      "A Python module for drawing charts",
+      "A program that checks your code for errors"
+    ],
+    "answer": 0,
+    "explain": "You send a request to the address the API documents and it sends structured data back, usually as JSON."
+  },
+  {
+    "id": "u9-m15",
+    "kind": "code",
+    "prompt": "A request came back with status_code 404. What does this print?",
+    "code": "if status_code == 200:\n    print(\"Success\")\nelif status_code == 404:\n    print(\"Resource not found!\")\nelif status_code == 500:\n    print(\"Server error occurred!\")\nelse:\n    print(\"Unexpected status code\")",
+    "choices": [
+      "Success",
+      "Server error occurred!",
+      "Resource not found!",
+      "Unexpected status code"
+    ],
+    "answer": 2,
+    "explain": "404 means the address was reached but there is nothing there, so the second branch runs and the rest are skipped."
+  },
+  {
+    "id": "u9-m16",
+    "kind": "vocab",
+    "prompt": "An API returns the status code 200. What does that mean?",
+    "choices": [
+      "The request was accepted but the data is still being prepared",
+      "The address was wrong and nothing was found",
+      "Something went wrong on the server",
+      "The request succeeded and the response holds the data you asked for"
+    ],
+    "answer": 3,
+    "explain": "200 is the plain success code. 404 means not found and 500 means the server itself failed."
+  },
+  {
+    "id": "u9-m17",
+    "kind": "vocab",
+    "prompt": "What does response.raise_for_status() do?",
+    "choices": [
+      "It raises an exception if the status code shows the request failed",
+      "It prints the status code and carries on",
+      "It retries the request until it succeeds",
+      "It converts the response body into a dictionary"
+    ],
+    "answer": 0,
+    "explain": "It turns a bad status code into an exception, so a try block can handle failure in one place."
+  },
+  {
+    "id": "u9-m18",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "from datetime import datetime\n\nstart = datetime(2024, 1, 1)\nend = datetime(2024, 1, 15)\nprint((end - start).days)",
+    "choices": [
+      "15",
+      "13",
+      "It raises a TypeError because two datetimes cannot be subtracted",
+      "14"
+    ],
+    "answer": 3,
+    "explain": "Subtracting two datetimes gives a timedelta, and from the 1st to the 15th is 14 whole days."
+  },
+  {
+    "id": "u9-m19",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "from datetime import datetime\n\nmoment = datetime(2024, 3, 9, 14, 5, 30)\nprint(moment.strftime(\"%Y-%m-%d\"))",
+    "choices": [
+      "2024-3-9",
+      "2024-03-09",
+      "09-03-2024",
+      "2024-03-09 14:05:30"
+    ],
+    "answer": 1,
+    "explain": "strftime builds a string from the codes you give it, and %m and %d always pad to two digits."
+  },
+  {
+    "id": "u9-m20",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "from datetime import datetime\n\nstamp = datetime(2023, 12, 25, 9, 5)\nprint(stamp.strftime(\"%B %d at %H:%M\"))",
+    "choices": [
+      "Dec 25 at 9:05",
+      "12 25 at 09:05",
+      "December 25 at 09:05",
+      "Monday 25 at 09:05"
+    ],
+    "answer": 2,
+    "explain": "%B gives the full month name, %d and %H and %M all pad to two digits, and anything outside a code is copied through unchanged."
+  },
+  {
+    "id": "u9-m21",
+    "kind": "vocab",
+    "prompt": "What is the difference between strftime and strptime?",
+    "choices": [
+      "strftime turns a string into a date, strptime turns a date into a string",
+      "strftime works on dates, strptime works on times",
+      "strftime turns a date into a string, strptime turns a string into a date",
+      "strftime formats for printing, strptime formats for saving to a file"
+    ],
+    "answer": 2,
+    "explain": "The f is for format and the p is for parse, and both take the same table of codes such as %Y and %d."
+  },
+  {
+    "id": "u9-m22",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "from datetime import datetime\n\nparsed = datetime.strptime(\"15/03/2024\", \"%d/%m/%Y\")\nprint(parsed.month, parsed.year)",
+    "choices": [
+      "3 2024",
+      "15 2024",
+      "03 2024",
+      "It raises a ValueError because the string is not in year first order"
+    ],
+    "answer": 0,
+    "explain": "The format string says the day comes first, so 15 is the day and 3 is the month."
+  },
+  {
+    "id": "u9-m23",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "from datetime import datetime, timedelta\n\nstart = datetime(2024, 1, 20)\nprint(start + timedelta(days=30))",
+    "choices": [
+      "2024-02-20 00:00:00",
+      "2024-02-18 00:00:00",
+      "2024-01-50 00:00:00",
+      "2024-02-19 00:00:00"
+    ],
+    "answer": 3,
+    "explain": "Adding a timedelta rolls over the month correctly: 11 days finish January and the other 19 land on 19 February."
+  },
+  {
+    "id": "u9-m24",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "from datetime import date\n\nprint((date(2024, 3, 1) - date(2024, 2, 1)).days)",
+    "choices": [
+      "28",
+      "29",
+      "30",
+      "31"
+    ],
+    "answer": 1,
+    "explain": "2024 is a leap year, so February has 29 days and the gap between the two first days is 29."
+  },
+  {
+    "id": "u9-m25",
+    "kind": "vocab",
+    "prompt": "What is a timedelta?",
+    "choices": [
+      "A date stored as the number of seconds since 1970",
+      "The time zone attached to a datetime",
+      "A string that describes how a date should be printed",
+      "A length of time, which you can add to or subtract from a date"
+    ],
+    "answer": 3,
+    "explain": "timedelta(days=7) is a duration, and date arithmetic in Python is done by adding and subtracting these."
+  },
+  {
+    "id": "u9-m26",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def factorial(n):\n    if n == 0 or n == 1:\n        return 1\n    return n * factorial(n - 1)\n\nprint(factorial(4))",
+    "choices": [
+      "12",
+      "4",
+      "24",
+      "It raises a RecursionError"
+    ],
+    "answer": 2,
+    "explain": "4 * 3 * 2 * 1 is 24, and the base case at n == 1 stops the chain of calls."
+  },
+  {
+    "id": "u9-m27",
+    "kind": "vocab",
+    "prompt": "What is the base case of a recursive function?",
+    "choices": [
+      "The condition that returns an answer directly instead of calling the function again",
+      "The first call the program makes to the function",
+      "The largest input the function is able to handle",
+      "The variable that counts how many calls have been made"
+    ],
+    "answer": 0,
+    "explain": "Without a base case the calls never stop, and Python eventually raises a RecursionError."
+  },
+  {
+    "id": "u9-m28",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def sum_list(numbers):\n    if not numbers:\n        return 0\n    return numbers[0] + sum_list(numbers[1:])\n\nprint(sum_list([1, 2, 3, 4]))",
+    "choices": [
+      "4",
+      "10",
+      "1",
+      "It raises an IndexError on the empty list"
+    ],
+    "answer": 1,
+    "explain": "Each call peels off the first number and adds it to the sum of the rest, and the empty list returns 0."
+  },
+  {
+    "id": "u9-m29",
+    "kind": "code",
+    "prompt": "What happens when this program runs?",
+    "code": "def countdown(n):\n    print(n)\n    countdown(n - 1)\n\ncountdown(3)",
+    "choices": [
+      "It prints 3, 2, 1 and then stops",
+      "It prints 3, 2, 1, 0 and keeps going until it raises a RecursionError",
+      "It prints 3, 2, 1, 0 and then stops",
+      "It raises a ValueError as soon as n goes negative"
+    ],
+    "answer": 1,
+    "explain": "There is no base case, so nothing ever stops the calls and Python hits its recursion limit."
+  },
+  {
+    "id": "u9-m30",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def power(base, exponent):\n    if exponent == 0:\n        return 1\n    return base * power(base, exponent - 1)\n\nprint(power(7, 0))",
+    "choices": [
+      "0",
+      "7",
+      "It raises a RecursionError",
+      "1"
+    ],
+    "answer": 3,
+    "explain": "The base case is reached immediately, so the function returns 1 without any recursive call."
+  },
+  {
+    "id": "u9-m31",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def fibonacci(n):\n    if n == 0:\n        return 0\n    if n == 1:\n        return 1\n    return fibonacci(n - 1) + fibonacci(n - 2)\n\nprint(fibonacci(6))",
+    "choices": [
+      "8",
+      "5",
+      "13",
+      "6"
+    ],
+    "answer": 0,
+    "explain": "The sequence runs 0, 1, 1, 2, 3, 5, 8, and fibonacci(6) is the seventh of those."
+  },
+  {
+    "id": "u9-m32",
+    "kind": "code",
+    "prompt": "How many times is factorial called in total, counting the first call?",
+    "code": "def factorial(n):\n    if n <= 1:\n        return 1\n    return n * factorial(n - 1)\n\nfactorial(4)",
+    "choices": [
+      "3",
+      "5",
+      "4",
+      "24"
+    ],
+    "answer": 2,
+    "explain": "The calls are factorial(4), factorial(3), factorial(2) and factorial(1), and the last one hits the base case."
+  },
+  {
+    "id": "u9-m33",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def countdown(n):\n    if n == 0:\n        print(\"Liftoff\")\n        return\n    print(n)\n    countdown(n - 1)\n\ncountdown(3)",
+    "choices": [
+      "Liftoff, 3, 2, 1",
+      "3, 2, 1, 0",
+      "3, 2, 1, Liftoff",
+      "Liftoff only"
+    ],
+    "answer": 2,
+    "explain": "Each call prints before recursing, so the numbers come out in order and the base case prints last."
+  },
+  {
+    "id": "u9-m34",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def find_max(numbers):\n    if len(numbers) == 1:\n        return numbers[0]\n    rest = find_max(numbers[1:])\n    return numbers[0] if numbers[0] > rest else rest\n\nprint(find_max([3, 7, 2, 9, 1]))",
+    "choices": [
+      "3",
+      "9",
+      "1",
+      "It raises a RecursionError on the empty list"
+    ],
+    "answer": 1,
+    "explain": "Each call compares its first item with the largest of the rest, and the slice never reaches empty because the base case stops at one item."
+  },
+  {
+    "id": "u9-m35",
+    "kind": "vocab",
+    "prompt": "Which kind of problem suits recursion best?",
+    "choices": [
+      "One that has to run as fast as possible on a very large list",
+      "One that reads a single line of input from the user",
+      "One that has no repetition in it at all",
+      "One that breaks into smaller problems of exactly the same shape, such as walking a folder tree"
+    ],
+    "answer": 3,
+    "explain": "Recursion shines when the structure repeats inside itself. For a plain sweep over a list a loop is simpler and cheaper."
+  },
+  {
+    "id": "u9-m36",
+    "kind": "code",
+    "prompt": "How many times does count increase, and what complexity is this?",
+    "code": "count = 0\nfor i in range(4):\n    for j in range(4):\n        count += 1\nprint(count)",
+    "choices": [
+      "16 times, and the pattern is O(n squared)",
+      "8 times, and the pattern is O(n)",
+      "4 times, and the pattern is O(1)",
+      "16 times, and the pattern is O(n)"
+    ],
+    "answer": 0,
+    "explain": "The inner loop runs fully for every step of the outer loop, so the work is n times n."
+  },
+  {
+    "id": "u9-m37",
+    "kind": "vocab",
+    "prompt": "What does Big O notation describe?",
+    "choices": [
+      "How many seconds an algorithm takes on a particular computer",
+      "How the work an algorithm does grows as the input gets larger",
+      "How many lines of code an algorithm needs",
+      "How much disk space a program uses when it is installed"
+    ],
+    "answer": 1,
+    "explain": "Big O is about the shape of the growth, not about exact timings, so it holds no matter how fast the machine is."
+  },
+  {
+    "id": "u9-m38",
+    "kind": "vocab",
+    "prompt": "What does it mean to say that reading my_list[0] is O(1)?",
+    "choices": [
+      "It takes one second no matter what",
+      "It can only be done once per list",
+      "It takes the same time whether the list holds ten items or ten million",
+      "It gets slower as the list grows, but only slowly"
+    ],
+    "answer": 2,
+    "explain": "Constant time means the size of the input does not change the cost of the operation."
+  },
+  {
+    "id": "u9-m39",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "seen = set()\nduplicates = []\nfor item in [1, 2, 2, 3, 1]:\n    if item in seen:\n        duplicates.append(item)\n    seen.add(item)\nprint(duplicates)",
+    "choices": [
+      "[1, 2]",
+      "[2, 2, 1]",
+      "[1, 2, 3]",
+      "[2, 1]"
+    ],
+    "answer": 3,
+    "explain": "A value is recorded the second time it appears, and 2 repeats before 1 does."
+  },
+  {
+    "id": "u9-m40",
+    "kind": "vocab",
+    "prompt": "Why use a set rather than a list to check whether a value has been seen before?",
+    "choices": [
+      "Checking membership in a set is roughly constant time, while a list has to scan its items",
+      "A set can hold more items than a list",
+      "A set keeps the items in the order they were added",
+      "A list cannot be searched with the in keyword"
+    ],
+    "answer": 0,
+    "explain": "That single change turns a nested scan of O(n squared) into a single pass of O(n)."
+  },
+  {
+    "id": "u9-m41",
+    "kind": "vocab",
+    "prompt": "You want to compare total sales for four different shops. Which plot fits best?",
+    "choices": [
+      "A bar chart, because the four shops are separate categories",
+      "A line plot, because it joins the values together",
+      "A scatter plot, because it shows two variables at once",
+      "A histogram, because it counts how often values appear"
+    ],
+    "answer": 0,
+    "explain": "Bars compare separate categories. Lines suit change over time and histograms show the spread of one variable."
+  },
+  {
+    "id": "u9-m42",
+    "kind": "code",
+    "prompt": "What does this program do when it runs?",
+    "code": "import matplotlib.pyplot as plt\n\nx = [1, 2, 3]\ny = [2, 4, 6]\nplt.plot(x, y)\nplt.xlabel(\"time\")\nplt.title(\"Growth\")",
+    "choices": [
+      "It opens a window showing the line, then closes it",
+      "It saves the plot as plot.png in the current folder",
+      "It raises an error because a plot must have a legend",
+      "It builds the plot in memory but never displays it, because plt.show() is missing"
+    ],
+    "answer": 3,
+    "explain": "Each call adds to the figure, and nothing appears on screen until plt.show() is called."
+  },
+  {
+    "id": "u9-m43",
+    "kind": "vocab",
+    "prompt": "What is the difference between plt.show() and plt.savefig()?",
+    "choices": [
+      "show displays the figure, savefig prints the data behind it",
+      "show works for line plots, savefig works for bar charts",
+      "show displays the figure on screen, savefig writes it to an image file",
+      "show is for one plot, savefig is for several plots at once"
+    ],
+    "answer": 2,
+    "explain": "Use savefig when the program runs unattended and there is no screen to draw on."
+  },
+  {
+    "id": "u9-m44",
+    "kind": "vocab",
+    "prompt": "What is pip?",
+    "choices": [
+      "A Python keyword for importing a library",
+      "The tool that installs Python packages from the Python Package Index",
+      "A folder inside every Python project where libraries are stored",
+      "A website where you read library documentation"
+    ],
+    "answer": 1,
+    "explain": "You run pip in a terminal, not inside your Python code, and it fetches packages from PyPI."
+  },
+  {
+    "id": "u9-m45",
+    "kind": "vocab",
+    "prompt": "What makes a library external rather than built in?",
+    "choices": [
+      "It can only be used inside a function",
+      "It is written in a language other than Python",
+      "It does not ship with Python, so it has to be installed before you can import it",
+      "It has to be imported with an alias"
+    ],
+    "answer": 2,
+    "explain": "math, random and datetime come with Python. requests, matplotlib and pandas have to be installed first."
+  },
+  {
+    "id": "u9-m46",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import math as m\n\nprint(m.sqrt(16))",
+    "choices": [
+      "4",
+      "4.0",
+      "16.0",
+      "It raises a NameError because math was renamed"
+    ],
+    "answer": 1,
+    "explain": "An alias just gives the module a shorter name, and math.sqrt always returns a float."
+  },
+  {
+    "id": "u9-m47",
+    "kind": "vocab",
+    "prompt": "What does automating a task with Python mean?",
+    "choices": [
+      "Writing code that repairs its own bugs",
+      "Running a program without ever importing anything",
+      "Letting Python decide which program to run next",
+      "Writing a script that performs a repetitive job for you, the same way every time"
+    ],
+    "answer": 3,
+    "explain": "Anything you find yourself doing by hand over and over, such as renaming a folder full of files, is a candidate."
+  },
+  {
+    "id": "u9-m48",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "for i in [1, 7, 42]:\n    print(f\"photo_{i:03d}.jpg\")",
+    "choices": [
+      "photo_001.jpg, photo_007.jpg, photo_042.jpg",
+      "photo_1.jpg, photo_7.jpg, photo_42.jpg",
+      "photo_100.jpg, photo_700.jpg, photo_420.jpg",
+      "photo_003.jpg, photo_003.jpg, photo_003.jpg"
+    ],
+    "answer": 0,
+    "explain": "The 03d format pads a number with zeros to three digits, which keeps generated file names sorting correctly."
+  },
+  {
+    "id": "u9-m49",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "from pathlib import Path\n\np = Path(\"report.final.csv\")\nprint(p.suffix)\nprint(p.suffix[1:])",
+    "choices": [
+      ".final then final",
+      "csv then sv",
+      ".final.csv then final.csv",
+      ".csv then csv"
+    ],
+    "answer": 3,
+    "explain": "suffix returns only the last extension and keeps the dot, so slicing from index 1 strips it off."
+  },
+  {
+    "id": "u9-m50",
+    "kind": "vocab",
+    "prompt": "Why give an automation script a dry run mode?",
+    "choices": [
+      "So it runs faster by skipping the slow steps",
+      "So it can report what it would change without actually changing anything",
+      "So it only processes the first file in the folder",
+      "So it keeps a copy of every file it touches"
+    ],
+    "answer": 1,
+    "explain": "A dry run lets you check the plan before a script renames or moves hundreds of real files."
+  }
+]

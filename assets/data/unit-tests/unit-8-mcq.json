@@ -1,0 +1,682 @@
+[
+  {
+    "id": "u8-m01",
+    "kind": "vocab",
+    "prompt": "What does debugging mean?",
+    "choices": [
+      "Deleting the comments and unused code before a program is shared",
+      "Rewriting a working program so that it runs faster",
+      "Finding the cause of a mistake in a program and fixing it",
+      "Adding new features to a program once it already runs"
+    ],
+    "answer": 2,
+    "explain": "Debugging is the work of tracking down a bug and correcting it, not tidying or extending a program."
+  },
+  {
+    "id": "u8-m02",
+    "kind": "code",
+    "prompt": "What happens when Python runs this file?",
+    "code": "def greet(name)\n    print(\"Hi\", name)\n\ngreet(\"Ada\")",
+    "choices": [
+      "It raises a SyntaxError before any code runs, because the def line has no colon",
+      "It prints Hi Ada, because Python ignores the missing colon",
+      "It raises a NameError, because name has not been given a value",
+      "It raises an IndentationError, because print is indented"
+    ],
+    "answer": 0,
+    "explain": "A missing colon is a syntax error, and Python reports syntax errors before it runs a single line."
+  },
+  {
+    "id": "u8-m03",
+    "kind": "vocab",
+    "prompt": "What is the difference between a syntax error and a runtime error?",
+    "choices": [
+      "A syntax error happens while the program runs, a runtime error happens before it starts",
+      "A syntax error is reported by the editor, a runtime error is reported by the operating system",
+      "A syntax error only affects functions, a runtime error only affects loops",
+      "A syntax error stops the program before it runs, a runtime error happens while it is running"
+    ],
+    "answer": 3,
+    "explain": "Python checks the structure of the whole file first, so syntax errors surface before execution begins."
+  },
+  {
+    "id": "u8-m04",
+    "kind": "code",
+    "prompt": "What happens when this program runs?",
+    "code": "def average(numbers):\n    return sum(numbers) / len(numbers)\n\nprint(average([]))",
+    "choices": [
+      "It prints 0",
+      "It raises a ZeroDivisionError",
+      "It prints 0.0",
+      "It raises a ValueError because the list is empty"
+    ],
+    "answer": 1,
+    "explain": "sum of an empty list is 0 and len is 0, so the division is 0 / 0 and Python raises ZeroDivisionError."
+  },
+  {
+    "id": "u8-m05",
+    "kind": "code",
+    "prompt": "The function is supposed to return the amount saved. What does this print?",
+    "code": "def discount(price, percent):\n    return price * percent\n\nprint(discount(100, 20))",
+    "choices": [
+      "2000",
+      "20",
+      "80",
+      "It raises a TypeError"
+    ],
+    "answer": 0,
+    "explain": "The code runs happily but the maths is wrong, so this is a logical error: the percent should be divided by 100 first."
+  },
+  {
+    "id": "u8-m06",
+    "kind": "vocab",
+    "prompt": "What is a logical error?",
+    "choices": [
+      "The program refuses to start because a keyword is misspelled",
+      "The program stops with a traceback partway through running",
+      "The program runs without crashing but produces the wrong result",
+      "The program runs correctly but uses more memory than it needs"
+    ],
+    "answer": 2,
+    "explain": "Logical errors are the hardest to spot because Python never complains, only the output is wrong."
+  },
+  {
+    "id": "u8-m07",
+    "kind": "code",
+    "prompt": "What is the last line of the traceback this program produces?",
+    "code": "person = {\"name\": \"Ada\"}\nprint(person[\"age\"])",
+    "choices": [
+      "IndexError: list index out of range",
+      "KeyError: 'age'",
+      "NameError: name 'age' is not defined",
+      "AttributeError: 'dict' object has no attribute 'age'"
+    ],
+    "answer": 1,
+    "explain": "Asking a dictionary for a key it does not hold raises KeyError, and the key is shown in the message."
+  },
+  {
+    "id": "u8-m08",
+    "kind": "code",
+    "prompt": "What happens when this program runs?",
+    "code": "age = int(\"twenty\")\nprint(age)",
+    "choices": [
+      "It prints 20",
+      "It prints 0",
+      "It raises a TypeError",
+      "It raises a ValueError"
+    ],
+    "answer": 3,
+    "explain": "int can convert a string of digits, but the word twenty is not a valid literal, so it raises ValueError."
+  },
+  {
+    "id": "u8-m09",
+    "kind": "vocab",
+    "prompt": "Where in a traceback do you find the name of the error?",
+    "choices": [
+      "On the first line, straight after the words Traceback most recent call last",
+      "On the second line, next to the name of the file",
+      "It is not in the traceback, you have to work it out from the line numbers",
+      "On the very last line, after all the file and line number entries"
+    ],
+    "answer": 3,
+    "explain": "Tracebacks are read from the bottom up: the last line names the error type and its message."
+  },
+  {
+    "id": "u8-m10",
+    "kind": "code",
+    "prompt": "What happens when this program runs?",
+    "code": "count = \"5\"\nprint(count + 10)",
+    "choices": [
+      "It prints 15",
+      "It raises a TypeError",
+      "It prints 510",
+      "It raises a ValueError"
+    ],
+    "answer": 1,
+    "explain": "count holds a string, and Python refuses to add an int to a str, so it raises TypeError."
+  },
+  {
+    "id": "u8-m11",
+    "kind": "code",
+    "prompt": "What happens when this program runs?",
+    "code": "scores = [10, 20, 30]\nprint(scores[3])",
+    "choices": [
+      "It raises an IndexError",
+      "It prints 30",
+      "It prints None",
+      "It raises a KeyError"
+    ],
+    "answer": 0,
+    "explain": "The three items sit at indexes 0, 1 and 2, so index 3 is past the end of the list."
+  },
+  {
+    "id": "u8-m12",
+    "kind": "vocab",
+    "prompt": "What do the middle lines of a traceback tell you?",
+    "choices": [
+      "The values every variable held when the error happened",
+      "A list of other errors Python found but decided to ignore",
+      "The chain of function calls that led to the error, with the file and line number of each",
+      "Suggestions from Python for how to fix the error"
+    ],
+    "answer": 2,
+    "explain": "Those lines are the call stack, so you can see which function called which on the way to the failure."
+  },
+  {
+    "id": "u8-m13",
+    "kind": "code",
+    "prompt": "What happens when this program runs?",
+    "code": "def total(price, quantity):\n    return price * quantit\n\nprint(total(10, 5))",
+    "choices": [
+      "It prints 50",
+      "It raises a SyntaxError before anything runs",
+      "It raises a NameError",
+      "It raises a TypeError"
+    ],
+    "answer": 2,
+    "explain": "quantit is a typo, so Python looks for a name that does not exist and raises NameError while the function runs."
+  },
+  {
+    "id": "u8-m14",
+    "kind": "code",
+    "prompt": "What happens when this program runs?",
+    "code": "def greet():\nprint(\"hi\")\n\ngreet()",
+    "choices": [
+      "It prints hi",
+      "It raises a NameError for greet",
+      "It runs but defines an empty function",
+      "It raises an IndentationError"
+    ],
+    "answer": 3,
+    "explain": "The body of a function must be indented, so Python reports an IndentationError before running anything."
+  },
+  {
+    "id": "u8-m15",
+    "kind": "vocab",
+    "prompt": "Why is reproducing a bug the first step of debugging?",
+    "choices": [
+      "Because Python only writes a traceback the second time an error happens",
+      "If you cannot make the bug happen on demand you cannot tell whether your fix worked",
+      "Because a bug that happens once is never worth fixing",
+      "Because reproducing the bug removes it from the program automatically"
+    ],
+    "answer": 1,
+    "explain": "A reliable way to trigger the bug gives you something to test against once you think you have fixed it."
+  },
+  {
+    "id": "u8-m16",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "assert 2 + 2 == 4\nprint(\"done\")",
+    "choices": [
+      "done",
+      "True then done",
+      "Nothing, because the assert stops the program",
+      "AssertionError"
+    ],
+    "answer": 0,
+    "explain": "An assert whose condition is true does nothing at all, so the program carries on to the print."
+  },
+  {
+    "id": "u8-m17",
+    "kind": "code",
+    "prompt": "What happens when this program runs?",
+    "code": "def test_total():\n    assert 2 * 3 == 5, \"expected 5\"\n\ntest_total()",
+    "choices": [
+      "It prints expected 5 and keeps running",
+      "It raises a ValueError with the message expected 5",
+      "Nothing happens, because assert only warns",
+      "It raises an AssertionError with the message expected 5"
+    ],
+    "answer": 3,
+    "explain": "When the condition is false the assert raises AssertionError, and the text after the comma becomes the message."
+  },
+  {
+    "id": "u8-m18",
+    "kind": "vocab",
+    "prompt": "What does the assert statement do?",
+    "choices": [
+      "It checks a condition and raises an AssertionError if the condition is false",
+      "It prints a warning whenever the condition is false",
+      "It stops the program whether the condition is true or false",
+      "It converts the condition into a True or False value and returns it"
+    ],
+    "answer": 0,
+    "explain": "assert is a check: silent when the condition holds, and an AssertionError when it does not."
+  },
+  {
+    "id": "u8-m19",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def add(a, b):\n    return a + b\n\ndef test_add():\n    assert add(2, 3) == 5\n    assert add(0, 0) == 0\n    assert add(-1, 1) == 0\n    print(\"All tests passed!\")\n\ntest_add()",
+    "choices": [
+      "5 then 0 then 0",
+      "True three times",
+      "All tests passed!",
+      "Nothing, because assert statements print nothing"
+    ],
+    "answer": 2,
+    "explain": "All three assertions hold, so none of them raises and the final print runs."
+  },
+  {
+    "id": "u8-m20",
+    "kind": "code",
+    "prompt": "What happens when this program runs?",
+    "code": "def add(a, b):\n    return a - b\n\ndef test_add():\n    assert add(2, 3) == 5\n    print(\"ok\")\n\ntest_add()",
+    "choices": [
+      "It prints ok, then raises an AssertionError",
+      "It raises an AssertionError and never prints ok",
+      "It prints -1",
+      "It prints ok because the assert only checks the types"
+    ],
+    "answer": 1,
+    "explain": "add subtracts by mistake, so the first assertion fails and the function stops before reaching the print."
+  },
+  {
+    "id": "u8-m21",
+    "kind": "vocab",
+    "prompt": "Why write automated tests instead of checking the output by hand each time?",
+    "choices": [
+      "Tests make the program itself run faster",
+      "Tests re-run every check in seconds, so a change that breaks old behaviour is caught straight away",
+      "Tests remove the need to ever read a traceback",
+      "Tests prove a program has no bugs left in it"
+    ],
+    "answer": 1,
+    "explain": "Automated tests are repeatable, so they catch regressions that a tired human checking by hand would miss."
+  },
+  {
+    "id": "u8-m22",
+    "kind": "code",
+    "prompt": "How many tests does unittest run here?",
+    "code": "import unittest\n\ndef double(n):\n    return n + n\n\nclass TestDouble(unittest.TestCase):\n    def test_positive(self):\n        self.assertEqual(double(3), 6)\n\n    def check_zero(self):\n        self.assertEqual(double(0), 1)\n\nunittest.main()",
+    "choices": [
+      "Two, and one of them fails",
+      "Two, and both pass",
+      "None, because there is no if __name__ block",
+      "One, and it passes"
+    ],
+    "answer": 3,
+    "explain": "unittest only collects methods whose names start with test_, so check_zero is never run."
+  },
+  {
+    "id": "u8-m23",
+    "kind": "code",
+    "prompt": "What does unittest report for this file?",
+    "code": "import unittest\n\nclass TestBag(unittest.TestCase):\n    def test_has_item(self):\n        self.assertIn(\"pen\", [\"pen\", \"book\"])\n\n    def test_count(self):\n        self.assertTrue(len([\"pen\", \"book\"]) == 3)\n\nunittest.main()",
+    "choices": [
+      "Ran 2 tests, with 1 failure",
+      "Ran 2 tests, both passing",
+      "Ran 1 test, because the second one is not a real assertion",
+      "It refuses to run because assertIn needs three arguments"
+    ],
+    "answer": 0,
+    "explain": "assertIn passes because pen is in the list, but the bag holds two items, so assertTrue gets False and that test fails."
+  },
+  {
+    "id": "u8-m24",
+    "kind": "code",
+    "prompt": "Does this test pass?",
+    "code": "import unittest\n\nclass TestConvert(unittest.TestCase):\n    def test_bad_number(self):\n        self.assertRaises(ValueError, int, \"twelve\")\n\nunittest.main()",
+    "choices": [
+      "No, because the ValueError escapes and fails the test",
+      "No, because assertRaises needs the call to succeed",
+      "Yes, because int(\"twelve\") raises exactly the error the test expects",
+      "Yes, but only because unittest ignores errors inside assertRaises"
+    ],
+    "answer": 2,
+    "explain": "assertRaises passes when the call raises the named exception, so this test is checking that the failure happens."
+  },
+  {
+    "id": "u8-m25",
+    "kind": "vocab",
+    "prompt": "What does self.assertEqual(a, b) check?",
+    "choices": [
+      "That a and b are equal, and it fails the test if they are not",
+      "That a and b are the same object in memory",
+      "That a and b are both true values",
+      "That a comes before b when they are sorted"
+    ],
+    "answer": 0,
+    "explain": "assertEqual is the unittest version of checking a == b, and it reports both values when the check fails."
+  },
+  {
+    "id": "u8-m26",
+    "kind": "code",
+    "prompt": "The function is meant to count even numbers. What does it print?",
+    "code": "def count_evens(numbers):\n    count = 0\n    for n in numbers:\n        if n % 2 == 1:\n            count += 1\n    return count\n\nprint(count_evens([1, 2, 3, 4]))",
+    "choices": [
+      "2, and they are the even numbers",
+      "2, but they are the odd numbers",
+      "4, because every number is counted",
+      "It raises a TypeError"
+    ],
+    "answer": 1,
+    "explain": "The condition tests for a remainder of 1, so it counts 1 and 3. The count is right by luck here, the logic is not."
+  },
+  {
+    "id": "u8-m27",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "try:\n    number = int(\"twelve\")\nexcept Exception:\n    print(\"general\")\nexcept ValueError:\n    print(\"value\")",
+    "choices": [
+      "value",
+      "general then value",
+      "It raises a SyntaxError because ValueError can never be reached",
+      "general"
+    ],
+    "answer": 3,
+    "explain": "Python uses the first handler that matches, and Exception matches everything, so the ValueError branch is dead code."
+  },
+  {
+    "id": "u8-m28",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def read_value():\n    try:\n        return 1 / 0\n    except ZeroDivisionError:\n        return \"caught\"\n    finally:\n        print(\"finally\")\n\nprint(read_value())",
+    "choices": [
+      "caught then finally",
+      "caught only, because the return skips the finally block",
+      "finally then caught",
+      "finally only, because the return value is thrown away"
+    ],
+    "answer": 2,
+    "explain": "A finally block runs before the function actually hands its value back, so finally is printed first."
+  },
+  {
+    "id": "u8-m29",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "try:\n    total = 10 / 2\nexcept ZeroDivisionError:\n    print(\"cannot divide\")\nelse:\n    print(\"ok\", total)\nfinally:\n    print(\"done\")",
+    "choices": [
+      "ok 5 then done",
+      "done only",
+      "ok 5.0 then done",
+      "cannot divide then done"
+    ],
+    "answer": 2,
+    "explain": "The else block runs when no exception was raised, and finally runs afterwards either way. Division always gives a float."
+  },
+  {
+    "id": "u8-m30",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "try:\n    value = int(\"abc\")\nexcept ValueError:\n    print(\"not a number\")\nexcept TypeError:\n    print(\"wrong type\")",
+    "choices": [
+      "not a number",
+      "wrong type",
+      "not a number then wrong type",
+      "Nothing, because int(\"abc\") returns 0"
+    ],
+    "answer": 0,
+    "explain": "int raises ValueError for a string that is not a number, so only the matching handler runs."
+  },
+  {
+    "id": "u8-m31",
+    "kind": "vocab",
+    "prompt": "What is a breakpoint?",
+    "choices": [
+      "A line of code that stops the program permanently",
+      "A print statement that the debugger adds for you",
+      "A point where Python automatically saves the values of all variables to a file",
+      "A marker on a line that tells the debugger to pause the program when it reaches that line"
+    ],
+    "answer": 3,
+    "explain": "The program pauses at the breakpoint so you can inspect variables before letting it continue."
+  },
+  {
+    "id": "u8-m32",
+    "kind": "vocab",
+    "prompt": "In a debugger, what is the difference between step over and step into?",
+    "choices": [
+      "Step over skips the line entirely, step into runs it twice",
+      "Step over runs a function call as one step, step into pauses on the first line inside that function",
+      "Step over moves to the next breakpoint, step into moves back one line",
+      "Step over works on loops, step into works on conditionals"
+    ],
+    "answer": 1,
+    "explain": "Use step over when you trust the function and step into when you suspect the bug lives inside it."
+  },
+  {
+    "id": "u8-m33",
+    "kind": "vocab",
+    "prompt": "What does the call stack panel in a debugger show you?",
+    "choices": [
+      "Every variable the program has created so far",
+      "Which function is running and the chain of calls that led to it",
+      "The lines of code that have not been run yet",
+      "How much memory each function is using"
+    ],
+    "answer": 1,
+    "explain": "The call stack is the same information a traceback shows, except you can see it while the program is paused."
+  },
+  {
+    "id": "u8-m34",
+    "kind": "vocab",
+    "prompt": "What is a watch expression in a debugger?",
+    "choices": [
+      "A breakpoint that only pauses when a condition is true",
+      "A note you attach to a line to remind yourself what it does",
+      "An expression the debugger re-evaluates and displays every time the program pauses",
+      "A copy of the traceback saved for later"
+    ],
+    "answer": 2,
+    "explain": "A watch lets you follow one value, such as total or len(items), without adding print statements."
+  },
+  {
+    "id": "u8-m35",
+    "kind": "code",
+    "prompt": "What happens when this program runs?",
+    "code": "assert (2 + 2 == 5, \"math is broken\")\nprint(\"done\")",
+    "choices": [
+      "It prints done, because a non empty tuple is always true",
+      "It raises an AssertionError with the message math is broken",
+      "It raises a TypeError because assert takes only one argument",
+      "It prints math is broken"
+    ],
+    "answer": 0,
+    "explain": "The parentheses turn the condition and the message into one tuple, which is always truthy, so the check never fails. Python warns about this."
+  },
+  {
+    "id": "u8-m36",
+    "kind": "vocab",
+    "prompt": "What are the three steps of the test driven development cycle, in order?",
+    "choices": [
+      "Refactor, then red, then green",
+      "Green, then red, then refactor",
+      "Red, then refactor, then green",
+      "Red, then green, then refactor"
+    ],
+    "answer": 3,
+    "explain": "You write a failing test first, write just enough code to pass it, then clean the code up with the test still passing."
+  },
+  {
+    "id": "u8-m37",
+    "kind": "code",
+    "prompt": "This is the first step of a test driven cycle. What happens when it runs?",
+    "code": "def test_area():\n    assert area(2, 3) == 6\n\ntest_area()",
+    "choices": [
+      "It raises an AssertionError, because area returns nothing",
+      "It passes, because the test only describes what area should do",
+      "It raises a NameError, because area has not been written yet",
+      "It raises a SyntaxError"
+    ],
+    "answer": 2,
+    "explain": "In the red step the test fails, and before the function exists at all the failure is a NameError."
+  },
+  {
+    "id": "u8-m38",
+    "kind": "vocab",
+    "prompt": "What are you allowed to do during the refactor step of test driven development?",
+    "choices": [
+      "Change the tests until the code you already wrote passes them",
+      "Improve the structure of the code while keeping every test passing",
+      "Add new features that no test covers yet",
+      "Delete the tests once the code is clean"
+    ],
+    "answer": 1,
+    "explain": "Refactoring changes how the code is written, not what it does, and the tests are what prove that."
+  },
+  {
+    "id": "u8-m39",
+    "kind": "vocab",
+    "prompt": "What is a regression test?",
+    "choices": [
+      "A test added for a bug you have fixed, so the same bug cannot come back unnoticed",
+      "A test that is run only once, before the first release",
+      "A test that measures how fast a program runs",
+      "A test that is expected to fail forever"
+    ],
+    "answer": 0,
+    "explain": "Turning each fixed bug into a test is how a project stops repeating its own mistakes."
+  },
+  {
+    "id": "u8-m40",
+    "kind": "vocab",
+    "prompt": "What does continuous testing mean?",
+    "choices": [
+      "Writing tests that never stop running until you close the program",
+      "Testing the program by hand every day",
+      "Running the tests only when a user reports a problem",
+      "Running the test suite regularly while you develop, not only once at the end"
+    ],
+    "answer": 3,
+    "explain": "Frequent runs mean a broken change is caught while you still remember what you changed."
+  },
+  {
+    "id": "u8-m41",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def check(items):\n    print(\"start\", items)\n    for item in items:\n        print(\"checking\", item)\n    print(\"end\")\n\ncheck([1, 2])",
+    "choices": [
+      "start [1, 2], then checking [1, 2], then end",
+      "checking 1, then checking 2, then start [1, 2], then end",
+      "start [1, 2] and end only, because the loop prints nothing",
+      "start [1, 2], then checking 1, then checking 2, then end"
+    ],
+    "answer": 3,
+    "explain": "Print debugging works because the lines appear in the exact order the program reaches them."
+  },
+  {
+    "id": "u8-m42",
+    "kind": "vocab",
+    "prompt": "Why do many programmers prefix debug output with something like DEBUG:?",
+    "choices": [
+      "It makes the temporary lines easy to spot and remove once the bug is fixed",
+      "Python only shows a print if it starts with a marker",
+      "It stops the output from being mixed up by the operating system",
+      "It makes the print run faster than a normal print"
+    ],
+    "answer": 0,
+    "explain": "A consistent prefix lets you search for every debug line and clear them out when you are done."
+  },
+  {
+    "id": "u8-m43",
+    "kind": "code",
+    "prompt": "This program crashes. Which line does the bottom of the traceback point at?",
+    "code": "def divide(a, b):\n    return a / b\n\ndef process(values):\n    return divide(values[0], values[1])\n\ndef main():\n    print(process([10, 0]))\n\nmain()",
+    "choices": [
+      "main(), the last line of the file",
+      "return a / b, inside divide",
+      "return divide(values[0], values[1]), inside process",
+      "print(process([10, 0])), inside main"
+    ],
+    "answer": 1,
+    "explain": "The deepest call is where the error actually happened, and that entry sits closest to the error message at the bottom."
+  },
+  {
+    "id": "u8-m44",
+    "kind": "code",
+    "prompt": "This is meant to add the numbers 1 to 5. What does it print?",
+    "code": "total = 0\nfor i in range(1, 5):\n    total += i\nprint(total)",
+    "choices": [
+      "15",
+      "14",
+      "10",
+      "11"
+    ],
+    "answer": 2,
+    "explain": "range(1, 5) stops before 5, so 5 is never added. This is a classic off by one error."
+  },
+  {
+    "id": "u8-m45",
+    "kind": "code",
+    "prompt": "This is meant to find the largest number. What does it print?",
+    "code": "def find_max(numbers):\n    max_value = 0\n    for n in numbers:\n        if n > max_value:\n            max_value = n\n    return max_value\n\nprint(find_max([-5, -2, -9]))",
+    "choices": [
+      "-2",
+      "0",
+      "-9",
+      "It raises a ValueError"
+    ],
+    "answer": 1,
+    "explain": "Starting from 0 breaks for a list of negative numbers. Start from numbers[0] instead."
+  },
+  {
+    "id": "u8-m46",
+    "kind": "code",
+    "prompt": "What happens when this program runs?",
+    "code": "x = 3\nif x = 3:\n    print(\"three\")",
+    "choices": [
+      "It prints three",
+      "It raises a NameError",
+      "It raises a SyntaxError before anything runs",
+      "It sets x to 3 again and prints nothing"
+    ],
+    "answer": 2,
+    "explain": "A single = assigns, it does not compare, and Python will not accept an assignment as the condition of an if."
+  },
+  {
+    "id": "u8-m47",
+    "kind": "code",
+    "prompt": "What happens when this program runs?",
+    "code": "text = \"hello\"\nprint(text.push(\"!\"))",
+    "choices": [
+      "It raises an AttributeError",
+      "It prints hello!",
+      "It raises a TypeError",
+      "It prints None"
+    ],
+    "answer": 0,
+    "explain": "Strings have no push method, and asking for a method that does not exist raises AttributeError."
+  },
+  {
+    "id": "u8-m48",
+    "kind": "vocab",
+    "prompt": "What is an edge case?",
+    "choices": [
+      "An error message shown at the edge of the screen",
+      "A bug that only appears on one particular computer",
+      "The last line of a function",
+      "An input at the limit of what the code expects, such as an empty list or a zero"
+    ],
+    "answer": 3,
+    "explain": "Most bugs hide at the edges, so tests should cover empty inputs, zeroes and the largest allowed values."
+  },
+  {
+    "id": "u8-m49",
+    "kind": "code",
+    "prompt": "A user typed 5 at an input prompt and the program stored it as answer. What does this print?",
+    "code": "answer = \"5\"\nif answer == 5:\n    print(\"match\")\nelse:\n    print(\"no match\")",
+    "choices": [
+      "no match",
+      "match",
+      "It raises a TypeError because a string cannot be compared to an int",
+      "It prints nothing"
+    ],
+    "answer": 0,
+    "explain": "input always gives a string, and the string \"5\" is never equal to the number 5, so the comparison is False."
+  },
+  {
+    "id": "u8-m50",
+    "kind": "vocab",
+    "prompt": "In what sense do tests act as documentation?",
+    "choices": [
+      "Tests are automatically turned into a README file",
+      "Each test shows a concrete example of how the code is meant to be called and what it should return",
+      "Tests contain the only comments allowed in a project",
+      "Tests replace the need to name variables clearly"
+    ],
+    "answer": 1,
+    "explain": "A reader can look at the tests to see the intended behaviour, and unlike prose these examples cannot quietly go stale."
+  }
+]

@@ -8,6 +8,7 @@
    it in devtools still gets nothing: firestore.rules refuses the query. */
 import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
 import { currentUser } from '/assets/js/auth.js';
+import { normalizeScores, passedUnits } from '/assets/js/unit-test-summary.js';
 
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const { collection, getDocs } = await import(`${BASE}/firebase-firestore.js`);
@@ -42,6 +43,7 @@ function toRow(id, data) {
   const count = Number.isFinite(Number(data.unitsCompleted))
     ? Number(data.unitsCompleted)
     : units.length;
+  const testScores = normalizeScores(data.testScores);
   return {
     uid: id,
     email: data.email || '',
@@ -51,6 +53,11 @@ function toRow(id, data) {
     lastSeenAt: Number(data.lastSeenAt) || Number(data.lastLoginAt) || 0,
     seconds: Number(data.totalSeconds) || 0,
     units: Math.max(0, Math.min(TOTAL_UNITS, count)),
+    testScores: testScores,
+    testsAttempted: Object.keys(testScores).length,
+    // Recomputed from the scores rather than read off testsPassed, so the
+    // count on screen can never disagree with the marks it came from.
+    testsPassed: passedUnits(testScores).length,
     certificate: !!data.hasCertificate,
   };
 }
@@ -81,6 +88,21 @@ function esc(value) {
     .replace(/"/g, '&quot;');
 }
 
+// Staff scan this table for who is stuck, so the pill carries the count and the
+// individual marks ride along in the tooltip. The teacher's roster is where a
+// per unit breakdown belongs; this page is one row per learner in the world.
+function testsCell(row) {
+  if (!row.testsAttempted) return '<span class="admin-pill admin-pill--no">None yet</span>';
+  const all = row.testsPassed === row.testsAttempted;
+  const detail = Object.keys(row.testScores)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .map((unit) => 'Unit ' + unit + ': ' + row.testScores[String(unit)])
+    .join(', ');
+  return `<span class="admin-pill ${all ? 'admin-pill--yes' : 'admin-pill--wait'}"
+    title="${esc(detail)}">${row.testsPassed}/${row.testsAttempted} passed</span>`;
+}
+
 function rowHtml(row) {
   const pct = Math.round((row.units / TOTAL_UNITS) * 100);
   return `<tr>
@@ -101,6 +123,7 @@ function rowHtml(row) {
       </div>
       <span class="admin-bar-label">${row.units}/${TOTAL_UNITS}</span>
     </td>
+    <td class="admin-cell-tests">${testsCell(row)}</td>
     <td>${
       row.certificate
         ? '<span class="admin-pill admin-pill--yes">Earned</span>'
@@ -116,7 +139,7 @@ function render() {
   if (body) {
     body.innerHTML = visible.length
       ? visible.map(rowHtml).join('')
-      : '<tr><td colspan="6" class="admin-empty">No learners match that search.</td></tr>';
+      : '<tr><td colspan="7" class="admin-empty">No learners match that search.</td></tr>';
   }
 
   const totalSeconds = state.rows.reduce((sum, r) => sum + r.seconds, 0);
@@ -141,7 +164,11 @@ function render() {
 // One row per learner, same columns as the table, so the roster can go into a
 // spreadsheet without retyping it.
 function toCsv(rows) {
-  const head = ['uid', 'email', 'name', 'created', 'last_seen', 'seconds', 'hours', 'units_completed', 'certificate'];
+  const unitHeads = Array.from({ length: TOTAL_UNITS }, (_, i) => 'test_unit_' + (i + 1));
+  const head = [
+    'uid', 'email', 'name', 'created', 'last_seen', 'seconds', 'hours',
+    'units_completed', 'tests_passed', 'tests_attempted', ...unitHeads, 'certificate',
+  ];
   const cell = (v) => {
     const s = String(v == null ? '' : v);
     return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
@@ -150,7 +177,14 @@ function toCsv(rows) {
     r.uid, r.email, r.name,
     r.createdAt ? new Date(r.createdAt).toISOString() : '',
     r.lastSeenAt ? new Date(r.lastSeenAt).toISOString() : '',
-    r.seconds, ACT.toHours(r.seconds), r.units, r.certificate ? 'yes' : 'no',
+    r.seconds, ACT.toHours(r.seconds), r.units,
+    r.testsPassed, r.testsAttempted,
+    // Empty, not zero, for a unit the learner has never sat.
+    ...Array.from({ length: TOTAL_UNITS }, (_, i) => {
+      const score = r.testScores[String(i + 1)];
+      return Number.isFinite(score) ? score : '';
+    }),
+    r.certificate ? 'yes' : 'no',
   ].map(cell).join(','));
   return [head.join(','), ...lines].join('\n');
 }

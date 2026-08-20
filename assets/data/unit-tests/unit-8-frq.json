@@ -1,0 +1,360 @@
+[
+ {
+  "id": "u8-f1",
+  "title": "Count the passing checks",
+  "prompt": "Write a function named run_checks that takes pairs, a list where every item is a list holding an actual value first and an expected value second, and returns how many pairs hold two values that are equal. An empty list gives 0. Return the count, do not print it.",
+  "starter": "def run_checks(pairs):\n    # your code here\n    pass\n",
+  "entry": "run_checks",
+  "cases": [
+   {
+    "args": [
+     [
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       3
+      ]
+     ]
+    ],
+    "expect": 1
+   },
+   {
+    "args": [
+     [
+      [
+       "a",
+       "a"
+      ]
+     ]
+    ],
+    "expect": 1
+   },
+   {
+    "args": [
+     [
+      [
+       1,
+       2
+      ],
+      [
+       3,
+       4
+      ]
+     ]
+    ],
+    "expect": 0
+   },
+   {
+    "args": [
+     [
+      [
+       5,
+       5
+      ],
+      [
+       6,
+       6
+      ],
+      [
+       7,
+       8
+      ]
+     ]
+    ],
+    "expect": 2
+   },
+   {
+    "args": [
+     []
+    ],
+    "expect": 0,
+    "hidden": true
+   },
+   {
+    "args": [
+     [
+      [
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        2
+       ]
+      ],
+      [
+       "x",
+       "y"
+      ]
+     ]
+    ],
+    "expect": 1,
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u8-f2",
+  "title": "Assertion message",
+  "prompt": "Write a function named assert_equal_message that takes an actual value and an expected value. It returns the string \"PASS\" when the two are equal. Otherwise it returns a string made of \"FAIL: expected \", then the expected value, then \", got \", then the actual value. So comparing 3 against 4 returns \"FAIL: expected 4, got 3\". Return the string, do not print it.",
+  "starter": "def assert_equal_message(actual, expected):\n    # your code here\n    pass\n",
+  "entry": "assert_equal_message",
+  "cases": [
+   {
+    "args": [
+     2,
+     2
+    ],
+    "expect": "PASS"
+   },
+   {
+    "args": [
+     3,
+     4
+    ],
+    "expect": "FAIL: expected 4, got 3"
+   },
+   {
+    "args": [
+     "a",
+     "b"
+    ],
+    "expect": "FAIL: expected b, got a"
+   },
+   {
+    "args": [
+     10,
+     10
+    ],
+    "expect": "PASS"
+   },
+   {
+    "args": [
+     [
+      1,
+      2
+     ],
+     [
+      1,
+      2
+     ]
+    ],
+    "expect": "PASS",
+    "hidden": true
+   },
+   {
+    "args": [
+     "",
+     "x"
+    ],
+    "expect": "FAIL: expected x, got ",
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u8-f3",
+  "title": "Find the first index",
+  "prompt": "Write a function named find_index that takes a list of items and a target value, and returns the position of the first item equal to the target, counting from 0. When no item matches, it returns -1. An empty list always returns -1. Return the number, do not print it.",
+  "starter": "def find_index(items, target):\n    # your code here\n    pass\n",
+  "entry": "find_index",
+  "cases": [
+   {
+    "args": [
+     [
+      "a",
+      "b",
+      "c"
+     ],
+     "b"
+    ],
+    "expect": 1
+   },
+   {
+    "args": [
+     [
+      1,
+      2,
+      3
+     ],
+     5
+    ],
+    "expect": -1
+   },
+   {
+    "args": [
+     [
+      7
+     ],
+     7
+    ],
+    "expect": 0
+   },
+   {
+    "args": [
+     [
+      3,
+      6,
+      9,
+      6
+     ],
+     6
+    ],
+    "expect": 1
+   },
+   {
+    "args": [
+     [],
+     1
+    ],
+    "expect": -1,
+    "hidden": true
+   },
+   {
+    "args": [
+     [
+      4,
+      4,
+      4
+     ],
+     4
+    ],
+    "expect": 0,
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u8-f4",
+  "title": "Validate an age",
+  "prompt": "Write a function named validate_age that takes value, a string typed by a user, and returns one of three strings. Return \"not a number\" when int(value) raises ValueError. Return \"out of range\" when the number is below 0 or above 120. Return \"valid\" otherwise, so 0 and 120 are both valid. Return the string, do not print it.",
+  "starter": "def validate_age(value):\n    # your code here\n    pass\n",
+  "entry": "validate_age",
+  "cases": [
+   {
+    "args": [
+     "30"
+    ],
+    "expect": "valid"
+   },
+   {
+    "args": [
+     "abc"
+    ],
+    "expect": "not a number"
+   },
+   {
+    "args": [
+     "150"
+    ],
+    "expect": "out of range"
+   },
+   {
+    "args": [
+     "120"
+    ],
+    "expect": "valid"
+   },
+   {
+    "args": [
+     "0"
+    ],
+    "expect": "valid",
+    "hidden": true
+   },
+   {
+    "args": [
+     "-1"
+    ],
+    "expect": "out of range",
+    "hidden": true
+   },
+   {
+    "args": [
+     ""
+    ],
+    "expect": "not a number",
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u8-f5",
+  "title": "Is the list sorted",
+  "prompt": "Write a function named is_sorted that takes a list of numbers and returns True when every number is greater than or equal to the one before it, and False otherwise. An empty list and a list with one item both count as sorted. Return the True or False value, do not print it.",
+  "starter": "def is_sorted(numbers):\n    # your code here\n    pass\n",
+  "entry": "is_sorted",
+  "cases": [
+   {
+    "args": [
+     [
+      1,
+      2,
+      3
+     ]
+    ],
+    "expect": true
+   },
+   {
+    "args": [
+     [
+      3,
+      1,
+      2
+     ]
+    ],
+    "expect": false
+   },
+   {
+    "args": [
+     [
+      1,
+      1,
+      2
+     ]
+    ],
+    "expect": true
+   },
+   {
+    "args": [
+     [
+      10,
+      9,
+      8
+     ]
+    ],
+    "expect": false
+   },
+   {
+    "args": [
+     []
+    ],
+    "expect": true,
+    "hidden": true
+   },
+   {
+    "args": [
+     [
+      5
+     ]
+    ],
+    "expect": true,
+    "hidden": true
+   },
+   {
+    "args": [
+     [
+      2,
+      1
+     ]
+    ],
+    "expect": false,
+    "hidden": true
+   }
+  ]
+ }
+]

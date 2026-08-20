@@ -1,0 +1,677 @@
+[
+  {
+    "id": "u10-m01",
+    "kind": "vocab",
+    "prompt": "Why plan a project before writing any code?",
+    "choices": [
+      "Planning makes the finished program run faster",
+      "Planning removes the need to test the program later",
+      "Planning is only useful for projects with more than one programmer",
+      "It decides what the project will and will not do"
+    ],
+    "answer": 3,
+    "explain": "Without a plan, features get added at random and the project grows until it is too big to finish."
+  },
+  {
+    "id": "u10-m02",
+    "kind": "vocab",
+    "prompt": "What is a project proposal?",
+    "choices": [
+      "The finished code, submitted for marking",
+      "A written plan of the project's purpose, features and users",
+      "A list of the bugs found while testing the finished program",
+      "The README file that ships with the project"
+    ],
+    "answer": 1,
+    "explain": "The proposal is written before the code and acts as the reference you check your work against."
+  },
+  {
+    "id": "u10-m03",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "tasks = [\"Write notes\", \"Read chapter\", \"Rest\"]\nfor i, task in enumerate(tasks, 1):\n    print(f\"{i}. {task}\")",
+    "choices": [
+      "0. Write notes, 1. Read chapter, 2. Rest",
+      "1. Write notes only",
+      "1. Write notes, 2. Read chapter, 3. Rest",
+      "It raises a TypeError because enumerate takes one argument"
+    ],
+    "answer": 2,
+    "explain": "The second argument to enumerate is the number to start counting from, which is how menus number their items from 1."
+  },
+  {
+    "id": "u10-m04",
+    "kind": "vocab",
+    "prompt": "What is the difference between a core feature and a nice to have feature?",
+    "choices": [
+      "A core feature is one the project does not work without, a nice to have only improves it",
+      "A core feature is easy to build, a nice to have is difficult",
+      "A core feature is written first in the file, a nice to have is written last",
+      "A core feature is tested, a nice to have does not need testing"
+    ],
+    "answer": 0,
+    "explain": "Building the core features first means you always have something that works, even if you run out of time."
+  },
+  {
+    "id": "u10-m05",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def add_task(tasks, name):\n    tasks.append({\"name\": name, \"completed\": False})\n    return tasks\n\nmy_tasks = []\nadd_task(my_tasks, \"Buy milk\")\nadd_task(my_tasks, \"Walk dog\")\nprint(len(my_tasks), my_tasks[1][\"name\"])",
+    "choices": [
+      "2 Buy milk",
+      "2 Walk dog",
+      "1 Walk dog",
+      "It raises an IndexError because the return value was ignored"
+    ],
+    "answer": 1,
+    "explain": "append changes the list in place, so both tasks land in my_tasks even though the returned list is thrown away."
+  },
+  {
+    "id": "u10-m06",
+    "kind": "vocab",
+    "prompt": "Why does a proposal list features that are out of scope?",
+    "choices": [
+      "It shows the marker which features were too hard for you",
+      "It reserves those features so nobody else builds them",
+      "It is required before you are allowed to use external libraries",
+      "It records what you have decided not to build"
+    ],
+    "answer": 3,
+    "explain": "Naming what you will not do is what keeps a two week project from turning into a two month one."
+  },
+  {
+    "id": "u10-m07",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def add_task(tasks, name):\n    tasks.append(name)\n\ntasks = [\"one\"]\ntasks = add_task(tasks, \"two\")\nprint(tasks)",
+    "choices": [
+      "None",
+      "['one', 'two']",
+      "['two']",
+      "It raises a TypeError"
+    ],
+    "answer": 0,
+    "explain": "The function never returns anything, so it hands back None and the assignment throws the real list away."
+  },
+  {
+    "id": "u10-m08",
+    "kind": "vocab",
+    "prompt": "What makes a project goal a SMART goal?",
+    "choices": [
+      "It is short, modern, ambitious, readable and technical",
+      "It is simple, memorable, and written in one sentence",
+      "It is specific, measurable, achievable, relevant and time bound",
+      "It names the modules, the files and the functions the project will use"
+    ],
+    "answer": 2,
+    "explain": "Build a command line task manager that adds, lists and completes tasks in two weeks is a SMART goal. Build a task manager is not."
+  },
+  {
+    "id": "u10-m09",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def parse(value):\n    try:\n        return int(value)\n    except ValueError:\n        return None\n\nprint(parse(\"7\"), parse(\"seven\"))",
+    "choices": [
+      "7 0",
+      "7 seven",
+      "7 None",
+      "It raises a ValueError on the second call"
+    ],
+    "answer": 2,
+    "explain": "The first call converts cleanly, and the second is caught by the handler, which returns None instead of crashing."
+  },
+  {
+    "id": "u10-m10",
+    "kind": "vocab",
+    "prompt": "What belongs in the inputs and outputs section of a proposal?",
+    "choices": [
+      "What data the program takes in and what it produces or displays in return",
+      "The names of every variable the program will use",
+      "The keyboard shortcuts the program will support",
+      "How long each part of the project will take to build"
+    ],
+    "answer": 0,
+    "explain": "Describing the data flow, such as user types a task then the program saves it and shows the list, clarifies the design early."
+  },
+  {
+    "id": "u10-m11",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def safe_divide(text):\n    try:\n        number = int(text)\n        return 10 / number\n    except ValueError:\n        return \"not a number\"\n    except ZeroDivisionError:\n        return \"cannot divide by zero\"\n\nprint(safe_divide(\"0\"))",
+    "choices": [
+      "not a number",
+      "cannot divide by zero",
+      "0",
+      "It raises a ZeroDivisionError"
+    ],
+    "answer": 1,
+    "explain": "int(\"0\") succeeds, so the failure happens at the division and the ZeroDivisionError handler is the one that matches."
+  },
+  {
+    "id": "u10-m12",
+    "kind": "vocab",
+    "prompt": "Why catch a specific exception such as ValueError instead of catching Exception?",
+    "choices": [
+      "Catching Exception is slower than catching a specific error",
+      "Catching Exception is not allowed in a try block",
+      "A specific exception can be caught more than once",
+      "A broad catch hides bugs you did not expect and makes them look handled"
+    ],
+    "answer": 3,
+    "explain": "You want the errors you planned for to be handled and everything else to be loud, so you can find it."
+  },
+  {
+    "id": "u10-m13",
+    "kind": "code",
+    "prompt": "A user typed 3.5 at the prompt. What does this print?",
+    "code": "value = \"3.5\"\nif value.isdigit():\n    print(\"valid\")\nelse:\n    print(\"Please enter a whole number.\")",
+    "choices": [
+      "valid",
+      "3.5",
+      "It raises a ValueError",
+      "Please enter a whole number."
+    ],
+    "answer": 3,
+    "explain": "isdigit is True only when every character is a digit, so a decimal point or a minus sign makes it False."
+  },
+  {
+    "id": "u10-m14",
+    "kind": "vocab",
+    "prompt": "Why validate user input before using it?",
+    "choices": [
+      "Validation makes the program use less memory",
+      "Validation is the only way to read from the keyboard",
+      "Unexpected input would otherwise crash the program partway through its work",
+      "Python refuses to run a program that calls input without a check"
+    ],
+    "answer": 2,
+    "explain": "Checking the value at the point it enters the program means the rest of the code can trust it."
+  },
+  {
+    "id": "u10-m15",
+    "kind": "code",
+    "prompt": "The user pressed the space bar a few times and then Enter. What does this print?",
+    "code": "entry = \"   \"\nif not entry.strip():\n    print(\"Input cannot be empty\")\nelse:\n    print(\"Saved\")",
+    "choices": [
+      "Input cannot be empty",
+      "Saved",
+      "Nothing, because the string is not empty",
+      "It raises a ValueError"
+    ],
+    "answer": 0,
+    "explain": "strip removes the spaces and leaves an empty string, which is falsy, so not turns the check True."
+  },
+  {
+    "id": "u10-m16",
+    "kind": "vocab",
+    "prompt": "What makes a good feedback message after the user adds an item?",
+    "choices": [
+      "It prints the internal list so the user can see the data structure",
+      "It confirms what happened in plain words, such as Task added successfully",
+      "It stays silent, because no news is good news",
+      "It shows the line number where the item was added"
+    ],
+    "answer": 1,
+    "explain": "Users need to know their action worked. Dumping raw data or saying nothing at all both leave them guessing."
+  },
+  {
+    "id": "u10-m17",
+    "kind": "code",
+    "prompt": "The user picks 1, then 9, then 3. What does this print?",
+    "code": "for choice in [\"1\", \"9\", \"3\"]:\n    if choice == \"1\":\n        print(\"Adding task\")\n    elif choice == \"3\":\n        print(\"Goodbye\")\n        break\n    else:\n        print(\"Unknown option\")",
+    "choices": [
+      "Adding task, Goodbye",
+      "Adding task, Unknown option, Goodbye, then it keeps looping",
+      "Adding task, Unknown option, Goodbye",
+      "Unknown option three times"
+    ],
+    "answer": 2,
+    "explain": "An unrecognised choice falls to the else branch and the menu carries on, and break ends the loop on the exit option."
+  },
+  {
+    "id": "u10-m18",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def mark_complete(tasks, number):\n    if 1 <= number <= len(tasks):\n        tasks[number - 1][\"completed\"] = True\n        return True\n    return False\n\ntasks = [{\"name\": \"a\", \"completed\": False}, {\"name\": \"b\", \"completed\": False}]\nprint(mark_complete(tasks, 2))\nprint(mark_complete(tasks, 3))",
+    "choices": [
+      "True then True",
+      "True then False",
+      "False then False",
+      "True then an IndexError"
+    ],
+    "answer": 1,
+    "explain": "The range check turns the user's 1 based number into a safe index, and an out of range number is refused instead of crashing."
+  },
+  {
+    "id": "u10-m19",
+    "kind": "vocab",
+    "prompt": "What is the job of main.py in a project?",
+    "choices": [
+      "It holds every function in the project, so nothing else is needed",
+      "It stores the project's settings and file paths",
+      "It contains the tests for the rest of the project",
+      "It is the entry point you run, and it calls the functions kept in the other files"
+    ],
+    "answer": 3,
+    "explain": "One clear starting file tells anyone reading the project where to begin."
+  },
+  {
+    "id": "u10-m20",
+    "kind": "code",
+    "prompt": "The user asked to delete task 3 from a list of three tasks. What happens?",
+    "code": "tasks = [\"a\", \"b\", \"c\"]\nnumber = 3\nprint(tasks[number])",
+    "choices": [
+      "It raises an IndexError",
+      "It prints c",
+      "It prints b",
+      "It prints None"
+    ],
+    "answer": 0,
+    "explain": "The list is numbered from 0, so the third task sits at index 2 and the code needs number - 1."
+  },
+  {
+    "id": "u10-m21",
+    "kind": "vocab",
+    "prompt": "What is a module in Python?",
+    "choices": [
+      "A .py file holding related functions that other files can import",
+      "A folder that contains a project's data files",
+      "A function that is used by more than one program",
+      "A library that has to be installed with pip"
+    ],
+    "answer": 0,
+    "explain": "Splitting a project into modules such as utils.py and storage.py keeps related code together."
+  },
+  {
+    "id": "u10-m22",
+    "kind": "code",
+    "prompt": "These two files sit in the same folder. What does main.py print?",
+    "code": "# utils.py\ndef clean(text):\n    return text.strip().title()\n\n# main.py\nfrom utils import clean\n\nprint(clean(\"  ada lovelace  \"))",
+    "choices": [
+      "  ada lovelace  ",
+      "ada lovelace",
+      "Ada Lovelace",
+      "It raises a ModuleNotFoundError because utils is not installed"
+    ],
+    "answer": 2,
+    "explain": "from utils import clean pulls one function out of your own file, and strip then title tidies the text."
+  },
+  {
+    "id": "u10-m23",
+    "kind": "code",
+    "prompt": "What does this file do when you run it, and what does it do when another file imports it?",
+    "code": "def main():\n    print(\"running\")\n\nif __name__ == \"__main__\":\n    main()",
+    "choices": [
+      "It prints running in both cases",
+      "It prints running when run directly, and prints nothing when imported",
+      "It prints nothing in both cases",
+      "It prints running when imported and nothing when run directly"
+    ],
+    "answer": 1,
+    "explain": "__name__ is only \"__main__\" in the file you actually started, which is how a module can be imported without side effects."
+  },
+  {
+    "id": "u10-m24",
+    "kind": "vocab",
+    "prompt": "Why split a growing project across several files?",
+    "choices": [
+      "Python runs several small files faster than one large one",
+      "A single file is limited to about 500 lines",
+      "It is the only way to use functions in Python",
+      "Related code stays together, so changes and tests stay contained to one part"
+    ],
+    "answer": 3,
+    "explain": "Structure is about finding and changing code safely, not about speed."
+  },
+  {
+    "id": "u10-m25",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def add(a, b):\n    \"\"\"Return the sum of two numbers.\"\"\"\n    return a + b\n\nprint(add.__doc__)",
+    "choices": [
+      "None",
+      "add(a, b)",
+      "Return the sum of two numbers.",
+      "It raises an AttributeError because functions have no __doc__"
+    ],
+    "answer": 2,
+    "explain": "A string on the first line of a function body becomes its docstring, and Python stores it on the function itself."
+  },
+  {
+    "id": "u10-m26",
+    "kind": "vocab",
+    "prompt": "What is the difference between a comment and a docstring?",
+    "choices": [
+      "A comment is a note in the source, a docstring can be read at run time",
+      "A comment starts with # and a docstring starts with //",
+      "A comment is for other people, a docstring is for Python only",
+      "A comment can be several lines, a docstring must be one line"
+    ],
+    "answer": 0,
+    "explain": "Tools such as help() read docstrings, which is why they belong on every function you expect others to call."
+  },
+  {
+    "id": "u10-m27",
+    "kind": "code",
+    "prompt": "What is wrong with the comment in this code?",
+    "code": "# add 1 to count\ncount = count + 1",
+    "choices": [
+      "It should be placed after the line, not before it",
+      "It should be a docstring rather than a comment",
+      "Nothing, every line should carry a comment like this",
+      "It repeats what the code already says instead of explaining why"
+    ],
+    "answer": 3,
+    "explain": "Useful comments explain the reason, for example why the count starts at 1 rather than 0."
+  },
+  {
+    "id": "u10-m28",
+    "kind": "vocab",
+    "prompt": "What should a comment explain?",
+    "choices": [
+      "What every line does, translated into English",
+      "Why the code does what it does, where that is not obvious",
+      "Who wrote the line and on what date",
+      "Which variables the line will change"
+    ],
+    "answer": 1,
+    "explain": "Clear code already says what it does. The reasoning behind it is the part that gets lost."
+  },
+  {
+    "id": "u10-m29",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "name = \"Ada\"\nage = 25\nprint(f\"[{name:10}][{age:3}]\")",
+    "choices": [
+      "[       Ada][25 ]",
+      "[Ada       ][ 25]",
+      "[Ada][25]",
+      "[Ada:10][25:3]"
+    ],
+    "answer": 1,
+    "explain": "A width in a format field pads the value. Text is padded on the right by default and numbers on the left."
+  },
+  {
+    "id": "u10-m30",
+    "kind": "vocab",
+    "prompt": "What should a project README contain?",
+    "choices": [
+      "A copy of every function in the project",
+      "The full history of every change you made",
+      "What the project does, how to install it and how to run it",
+      "The list of bugs you have not fixed yet"
+    ],
+    "answer": 2,
+    "explain": "A README is written for someone who has just found your project and wants to try it in the next two minutes."
+  },
+  {
+    "id": "u10-m31",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "print(f\"{'Task':<12}|{'Status':>8}|\")",
+    "choices": [
+      "        Task|Status  |",
+      "Task|Status|",
+      "Task<12|Status>8|",
+      "Task        |  Status|"
+    ],
+    "answer": 3,
+    "explain": "The < sign pads on the right and the > sign pads on the left, which is how columns are lined up by hand."
+  },
+  {
+    "id": "u10-m32",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "print(\"=\" * 20)\nprint(\"TASK MANAGER\")\nprint(\"=\" * 20)",
+    "choices": [
+      "A line of 20 equals signs, then TASK MANAGER, then another line of 20 equals signs",
+      "The text =20, then TASK MANAGER, then the text =20 again",
+      "One equals sign, then TASK MANAGER, then one equals sign",
+      "It raises a TypeError because a string cannot be multiplied by a number"
+    ],
+    "answer": 0,
+    "explain": "Multiplying a string repeats it, which is the simplest way to draw a separator in terminal output."
+  },
+  {
+    "id": "u10-m33",
+    "kind": "vocab",
+    "prompt": "Why spend time formatting a program's output?",
+    "choices": [
+      "Readable output makes the program easier to use",
+      "Formatted output runs faster than plain print calls",
+      "Python requires every print to use an f-string",
+      "It reduces the number of bugs in the program"
+    ],
+    "answer": 0,
+    "explain": "Presentation is the part of the project a user actually sees, so a little alignment goes a long way."
+  },
+  {
+    "id": "u10-m34",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "total = 12.5\nprint(f\"Total: ${total:.2f}\")",
+    "choices": [
+      "Total: $12.5",
+      "Total: $13",
+      "Total: $12.50000",
+      "Total: $12.50"
+    ],
+    "answer": 3,
+    "explain": "The .2f format shows exactly two decimal places, which is what money should always look like."
+  },
+  {
+    "id": "u10-m35",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "rows = [(\"Ada\", 36), (\"Bo\", 9)]\nprint(f\"{'Name':<8}{'Age':>5}\")\nfor name, age in rows:\n    print(f\"{name:<8}{age:>5}\")",
+    "choices": [
+      "A header row and two data rows, with the ages lined up on the left",
+      "A header row and two data rows, with the ages lined up on the right",
+      "Three identical rows of column headings",
+      "It raises a TypeError because age is a number, not a string"
+    ],
+    "answer": 1,
+    "explain": "Fixed widths in every row are what make the columns line up, and > right aligns the numbers under the heading."
+  },
+  {
+    "id": "u10-m36",
+    "kind": "vocab",
+    "prompt": "Why show a list of records as a table rather than one long line each?",
+    "choices": [
+      "Tables use fewer characters than plain lines",
+      "Python prints tables faster than it prints lists",
+      "Aligned columns let the reader compare the same field down the page",
+      "A table is the only way to show more than one field"
+    ],
+    "answer": 2,
+    "explain": "The whole point of a table is that the eye can run down one column instead of re-reading each line."
+  },
+  {
+    "id": "u10-m37",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "tasks = [{\"name\": \"a\", \"completed\": True}, {\"name\": \"b\", \"completed\": False}]\nfor task in tasks:\n    status = \"x\" if task[\"completed\"] else \" \"\n    print(f\"[{status}] {task['name']}\")",
+    "choices": [
+      "[x] a then [ ] b",
+      "[ ] a then [x] b",
+      "[True] a then [False] b",
+      "[x] a then [x] b"
+    ],
+    "answer": 0,
+    "explain": "A conditional expression picks the marker, so a finished task shows an x and an unfinished one shows a space."
+  },
+  {
+    "id": "u10-m38",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "tasks = [\n    {\"name\": \"a\", \"completed\": True},\n    {\"name\": \"b\", \"completed\": False},\n    {\"name\": \"c\", \"completed\": True},\n]\nprint(len([t for t in tasks if not t[\"completed\"]]))",
+    "choices": [
+      "2",
+      "3",
+      "0",
+      "1"
+    ],
+    "answer": 3,
+    "explain": "The comprehension keeps only the tasks that are not completed, and there is exactly one of those."
+  },
+  {
+    "id": "u10-m39",
+    "kind": "vocab",
+    "prompt": "What is a sensible order for a short project presentation?",
+    "choices": [
+      "Read the code from top to bottom, then show the program running",
+      "List the bugs, then the features, then the code",
+      "Introduce the problem, demonstrate the program, explain how it works, then conclude",
+      "Show the code, then the proposal, then the plan you started with"
+    ],
+    "answer": 2,
+    "explain": "Lead with the problem so the audience knows why the demo matters before they see it."
+  },
+  {
+    "id": "u10-m40",
+    "kind": "vocab",
+    "prompt": "Which of these is most worth including when you present your project?",
+    "choices": [
+      "A line by line reading of your longest function",
+      "What was difficult and how you worked around it",
+      "A list of the Python features you chose not to use",
+      "An apology for the parts you did not finish"
+    ],
+    "answer": 1,
+    "explain": "The challenges are where the real learning shows, and they are far more interesting than a code walkthrough."
+  },
+  {
+    "id": "u10-m41",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "tasks = [\n    {\"name\": \"a\", \"priority\": 2},\n    {\"name\": \"b\", \"priority\": 5},\n    {\"name\": \"c\", \"priority\": 1},\n]\nordered = sorted(tasks, key=lambda t: t[\"priority\"], reverse=True)\nprint([t[\"name\"] for t in ordered])",
+    "choices": [
+      "['c', 'a', 'b']",
+      "['a', 'b', 'c']",
+      "['b', 'a', 'c']",
+      "['b', 'c', 'a']"
+    ],
+    "answer": 2,
+    "explain": "sorted with reverse=True orders by priority from highest to lowest, giving 5, then 2, then 1."
+  },
+  {
+    "id": "u10-m42",
+    "kind": "vocab",
+    "prompt": "What is the point of reflecting once a project is finished?",
+    "choices": [
+      "It is how the project is graded",
+      "You turn the experience into lessons for the next project",
+      "It replaces the need to write documentation",
+      "It proves the project has no remaining bugs"
+    ],
+    "answer": 1,
+    "explain": "Reflection is what makes the next project easier, because the lessons are written down rather than forgotten."
+  },
+  {
+    "id": "u10-m43",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import json\n\ntasks = [{\"name\": \"a\", \"completed\": False}]\nprint(json.dumps(tasks))",
+    "choices": [
+      "[{\"name\": \"a\", \"completed\": false}]",
+      "[{\"name\": \"a\", \"completed\": False}]",
+      "[{'name': 'a', 'completed': False}]",
+      "It raises a TypeError because a list cannot be converted to JSON"
+    ],
+    "answer": 0,
+    "explain": "json.dumps handles a list of dictionaries fine, and it writes Python's False as JSON's lower case false."
+  },
+  {
+    "id": "u10-m44",
+    "kind": "vocab",
+    "prompt": "Why put a finished project on GitHub?",
+    "choices": [
+      "It is the only way to keep a backup of your files",
+      "It makes the program run on other people's computers automatically",
+      "It is required before a project can be called finished",
+      "It gives you a public link that shows your code and your README to anyone who asks"
+    ],
+    "answer": 3,
+    "explain": "A shareable project with a clear README is the most useful thing a beginner can point an employer at."
+  },
+  {
+    "id": "u10-m45",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def add_task(tasks, name):\n    tasks.append({\"name\": name, \"completed\": False})\n    return tasks\n\ndef test_add_task():\n    tasks = add_task([], \"Buy milk\")\n    assert len(tasks) == 1\n    assert tasks[0][\"completed\"] is False\n    print(\"Test passed\")\n\ntest_add_task()",
+    "choices": [
+      "Test passed",
+      "Nothing, because assert statements produce no output",
+      "It raises an AssertionError on the second assert",
+      "1 then False then Test passed"
+    ],
+    "answer": 0,
+    "explain": "Both assertions hold, so neither raises and the function reaches its final print."
+  },
+  {
+    "id": "u10-m46",
+    "kind": "vocab",
+    "prompt": "What counts as an edge case worth testing in a task manager?",
+    "choices": [
+      "Adding a task with a perfectly ordinary name",
+      "Running the program twice in a row",
+      "Opening the project in a different editor",
+      "Listing tasks when the list is empty"
+    ],
+    "answer": 3,
+    "explain": "Edge cases sit at the boundary: nothing at all, one item, the very last item, or input the user should not have given."
+  },
+  {
+    "id": "u10-m47",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def total_price(items):\n    print(sum(items))\n\nresult = total_price([2, 3])\nprint(result)",
+    "choices": [
+      "5 then 5",
+      "5 then None",
+      "None then 5",
+      "It raises a TypeError because total_price returns nothing"
+    ],
+    "answer": 1,
+    "explain": "The function prints its answer but never returns it, so result is None. Return the value when the caller needs it."
+  },
+  {
+    "id": "u10-m48",
+    "kind": "vocab",
+    "prompt": "What does building a project incrementally mean?",
+    "choices": [
+      "Writing the whole program first and testing it once at the end",
+      "Writing every function as a stub, then filling them all in together",
+      "Adding one feature at a time and checking it works before starting the next",
+      "Adding features in the order they appear in the proposal, no matter how hard"
+    ],
+    "answer": 2,
+    "explain": "One working feature at a time means you always have something that runs, and a break is easy to trace to your last change."
+  },
+  {
+    "id": "u10-m49",
+    "kind": "vocab",
+    "prompt": "What does it mean for a function to do one thing well?",
+    "choices": [
+      "It contains only one line of code",
+      "It has a single clear job, so it is easy to name and test",
+      "It is called from only one place in the project",
+      "It takes only one argument"
+    ],
+    "answer": 1,
+    "explain": "A function that saves a file and formats a report and asks the user a question is three functions wearing one name."
+  },
+  {
+    "id": "u10-m50",
+    "kind": "vocab",
+    "prompt": "Why keep settings such as file paths in named variables at the top of a file?",
+    "choices": [
+      "They can be found and changed in one place",
+      "Variables at the top of a file run faster",
+      "Python only allows file paths at the top of a file",
+      "It stops the settings from being changed by mistake"
+    ],
+    "answer": 0,
+    "explain": "A value repeated in five places is a value you will one day change in four of them."
+  }
+]

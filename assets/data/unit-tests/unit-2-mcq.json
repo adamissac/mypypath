@@ -1,0 +1,682 @@
+[
+  {
+    "id": "u2-m01",
+    "kind": "vocab",
+    "prompt": "What does the term control flow mean?",
+    "choices": [
+      "The speed at which Python runs a program.",
+      "The order in which Python decides to run the lines of your program.",
+      "The way values are stored in variables.",
+      "The rules for naming variables and functions."
+    ],
+    "answer": 1,
+    "explain": "Control flow is about which code runs and when, using decisions and repetition instead of simply going top to bottom."
+  },
+  {
+    "id": "u2-m02",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "print(5 >= 5)",
+    "choices": [
+      "False",
+      "5",
+      "It raises an error",
+      "True"
+    ],
+    "answer": 3,
+    "explain": "The >= operator is true when the left value is greater than or equal to the right one, and equal counts."
+  },
+  {
+    "id": "u2-m03",
+    "kind": "vocab",
+    "prompt": "What is the difference between = and == in Python?",
+    "choices": [
+      "= stores a value in a variable, while == asks whether two values are equal.",
+      "= compares two values, while == stores a value.",
+      "They do the same thing, but == is the newer style.",
+      "= works with numbers and == works with text."
+    ],
+    "answer": 0,
+    "explain": "A single = assigns, a double == compares, which is why using = inside an if condition is an error."
+  },
+  {
+    "id": "u2-m04",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "print(True and False)",
+    "choices": [
+      "True",
+      "It raises an error",
+      "False",
+      "None"
+    ],
+    "answer": 2,
+    "explain": "The and operator is only true when both sides are true, and here the right side is False."
+  },
+  {
+    "id": "u2-m05",
+    "kind": "vocab",
+    "prompt": "When is an expression joined with or True?",
+    "choices": [
+      "Only when both sides are True.",
+      "Only when both sides are False.",
+      "Never, because or is only used with numbers.",
+      "When at least one side is True."
+    ],
+    "answer": 3,
+    "explain": "or needs only one true condition, so it is False only when every part is False."
+  },
+  {
+    "id": "u2-m06",
+    "kind": "vocab",
+    "prompt": "What does the not operator do?",
+    "choices": [
+      "It reverses a boolean, turning True into False and False into True.",
+      "It checks whether two values are different.",
+      "It stops the program when a condition fails.",
+      "It combines two conditions into one."
+    ],
+    "answer": 0,
+    "explain": "not flips the truth value it is given, so not True is False."
+  },
+  {
+    "id": "u2-m07",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "age = 20\nhas_license = True\nprint(age >= 18 and has_license)",
+    "choices": [
+      "False",
+      "It raises an error",
+      "True",
+      "20"
+    ],
+    "answer": 2,
+    "explain": "age >= 18 is True and has_license is already True, so the whole and expression is True."
+  },
+  {
+    "id": "u2-m08",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "print(not (5 > 3))",
+    "choices": [
+      "True",
+      "False",
+      "5",
+      "It raises an error"
+    ],
+    "answer": 1,
+    "explain": "5 > 3 is True, and not reverses it to False."
+  },
+  {
+    "id": "u2-m09",
+    "kind": "vocab",
+    "prompt": "In an if, elif, else chain, how many blocks run?",
+    "choices": [
+      "At most one, the first whose condition is True.",
+      "Every block whose condition is True.",
+      "Always exactly two.",
+      "All of them, in order."
+    ],
+    "answer": 0,
+    "explain": "Python checks the conditions in order and stops as soon as one is True, so only that block runs."
+  },
+  {
+    "id": "u2-m10",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "score = 85\nif score >= 90:\n    print(\"Grade: A\")\nelif score >= 80:\n    print(\"Grade: B\")\nelif score >= 70:\n    print(\"Grade: C\")",
+    "choices": [
+      "Grade: A",
+      "Grade: C",
+      "Grade: B",
+      "Grade: B and Grade: C on separate lines"
+    ],
+    "answer": 2,
+    "explain": "The first condition fails, the second is True, and Python stops checking once a branch has run."
+  },
+  {
+    "id": "u2-m11",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "word = \"Python\"\ncount = 0\nfor letter in word:\n    count = count + 1\nprint(count)",
+    "choices": [
+      "5",
+      "6",
+      "7",
+      "1"
+    ],
+    "answer": 1,
+    "explain": "Looping over a string visits one character at a time, and Python has six letters."
+  },
+  {
+    "id": "u2-m12",
+    "kind": "vocab",
+    "prompt": "Which statement about the else clause is correct?",
+    "choices": [
+      "It must be indented inside the if block.",
+      "It can have its own condition after the word else.",
+      "It runs before the if block is checked.",
+      "It has no condition and runs whenever the if condition was False."
+    ],
+    "answer": 3,
+    "explain": "else is the catch all branch, so it takes no condition and sits at the same indentation level as its if."
+  },
+  {
+    "id": "u2-m13",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "age = 20\nhas_license = False\nif age >= 18:\n    print(\"You are an adult.\")\n    if has_license:\n        print(\"You can drive!\")",
+    "choices": [
+      "You can drive!",
+      "You are an adult. and You can drive! on separate lines",
+      "You are an adult.",
+      "Nothing is printed"
+    ],
+    "answer": 2,
+    "explain": "The outer condition is True so the first message prints, but the inner condition is False so the second is skipped."
+  },
+  {
+    "id": "u2-m14",
+    "kind": "code",
+    "prompt": "How many lines of output does this program produce?",
+    "code": "score = 85\nif score >= 90:\n    print(\"A\")\nif score >= 80:\n    print(\"B\")\nif score >= 70:\n    print(\"C\")",
+    "choices": [
+      "1",
+      "2",
+      "3",
+      "0"
+    ],
+    "answer": 1,
+    "explain": "These are three separate if statements, not a chain, so both true conditions print and only the first is skipped."
+  },
+  {
+    "id": "u2-m15",
+    "kind": "vocab",
+    "prompt": "Which sentence describes the difference between a for loop and a while loop?",
+    "choices": [
+      "A for loop can only count upwards, while a while loop can only count downwards.",
+      "A for loop is faster, while a while loop is more accurate.",
+      "A for loop needs a colon, while a while loop does not.",
+      "A for loop walks through a sequence, while a while loop repeats until a condition becomes False."
+    ],
+    "answer": 3,
+    "explain": "A for loop is a definite loop over a sequence, while a while loop is indefinite and keeps going until its condition fails."
+  },
+  {
+    "id": "u2-m16",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "total = 0\nfor i in range(1, 5):\n    total = total + i\nprint(total)",
+    "choices": [
+      "10",
+      "15",
+      "6",
+      "4"
+    ],
+    "answer": 0,
+    "explain": "range(1, 5) gives 1, 2, 3 and 4, and those add up to 10 because 5 is not included."
+  },
+  {
+    "id": "u2-m17",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "count = 0\nfor i in range(5):\n    count = count + 1\nprint(count)",
+    "choices": [
+      "4",
+      "5",
+      "6",
+      "0"
+    ],
+    "answer": 1,
+    "explain": "range(5) produces 0, 1, 2, 3 and 4, so the body runs five times."
+  },
+  {
+    "id": "u2-m18",
+    "kind": "vocab",
+    "prompt": "Which numbers does range(1, 6) produce?",
+    "choices": [
+      "1, 2, 3, 4, 5",
+      "1, 2, 3, 4, 5, 6",
+      "0, 1, 2, 3, 4, 5",
+      "1 and 6 only"
+    ],
+    "answer": 0,
+    "explain": "range starts at the first value and stops just before the second, so 6 is left out."
+  },
+  {
+    "id": "u2-m19",
+    "kind": "code",
+    "prompt": "What is the last number this program prints?",
+    "code": "for i in range(2, 6):\n    print(i)",
+    "choices": [
+      "2",
+      "4",
+      "6",
+      "5"
+    ],
+    "answer": 3,
+    "explain": "The stop value is not included, so the loop finishes at 5."
+  },
+  {
+    "id": "u2-m20",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "count = 0\nfor i in range(0, 10, 2):\n    count = count + 1\nprint(count)",
+    "choices": [
+      "3",
+      "4",
+      "5",
+      "10"
+    ],
+    "answer": 2,
+    "explain": "The step of 2 gives 0, 2, 4, 6 and 8, which is five values because 10 is not included."
+  },
+  {
+    "id": "u2-m21",
+    "kind": "vocab",
+    "prompt": "What does the break statement do inside a loop?",
+    "choices": [
+      "It stops the whole loop immediately and continues after it.",
+      "It skips the current item and moves to the next one.",
+      "It pauses the loop until a condition becomes True.",
+      "It does nothing and acts as a placeholder."
+    ],
+    "answer": 0,
+    "explain": "break leaves the loop straight away, even when there are items left in the sequence."
+  },
+  {
+    "id": "u2-m22",
+    "kind": "code",
+    "prompt": "How many lines of output does this program produce?",
+    "code": "count = 1\nwhile count <= 3:\n    print(count)\n    count = count + 1",
+    "choices": [
+      "1",
+      "2",
+      "4",
+      "3"
+    ],
+    "answer": 3,
+    "explain": "The loop runs while count is 1, 2 and 3, then stops when count reaches 4."
+  },
+  {
+    "id": "u2-m23",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "count = 0\nwhile count < 5:\n    count = count + 2\nprint(count)",
+    "choices": [
+      "4",
+      "5",
+      "6",
+      "10"
+    ],
+    "answer": 2,
+    "explain": "count goes 2, then 4, then 6. The check happens before each pass, so the loop stops once count is 6."
+  },
+  {
+    "id": "u2-m24",
+    "kind": "vocab",
+    "prompt": "What does the continue statement do inside a loop?",
+    "choices": [
+      "It ends the loop and moves on to the code after it.",
+      "It skips the rest of the current pass and starts the next one.",
+      "It restarts the loop from the very first item.",
+      "It repeats the current item once more."
+    ],
+    "answer": 1,
+    "explain": "continue abandons the rest of the current iteration but leaves the loop running."
+  },
+  {
+    "id": "u2-m25",
+    "kind": "code",
+    "prompt": "What is the last number this program prints?",
+    "code": "for i in range(10):\n    if i == 3:\n        break\n    print(i)",
+    "choices": [
+      "0",
+      "1",
+      "3",
+      "2"
+    ],
+    "answer": 3,
+    "explain": "When i reaches 3 the loop breaks before printing, so the last value printed is 2."
+  },
+  {
+    "id": "u2-m26",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "total = 0\nfor i in range(1, 6):\n    if i % 2 == 0:\n        continue\n    total = total + i\nprint(total)",
+    "choices": [
+      "6",
+      "15",
+      "9",
+      "5"
+    ],
+    "answer": 2,
+    "explain": "The even numbers 2 and 4 are skipped, so only 1, 3 and 5 are added, giving 9."
+  },
+  {
+    "id": "u2-m27",
+    "kind": "vocab",
+    "prompt": "What does the pass statement do?",
+    "choices": [
+      "It ends the loop early.",
+      "It does nothing, acting as a placeholder where Python expects a statement.",
+      "It skips the current item in a loop.",
+      "It passes a value back out of a loop."
+    ],
+    "answer": 1,
+    "explain": "pass is a do nothing placeholder, so unlike break and continue it does not change how the loop runs."
+  },
+  {
+    "id": "u2-m28",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "print(10 > 5 or 3 > 7)",
+    "choices": [
+      "True",
+      "False",
+      "It raises an error",
+      "10"
+    ],
+    "answer": 0,
+    "explain": "The first comparison is True, and or needs only one true part."
+  },
+  {
+    "id": "u2-m29",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "x = 4\nprint(x > 2 and x < 10)",
+    "choices": [
+      "False",
+      "4",
+      "True",
+      "It raises an error"
+    ],
+    "answer": 2,
+    "explain": "4 is greater than 2 and also less than 10, so both sides of the and are True."
+  },
+  {
+    "id": "u2-m30",
+    "kind": "vocab",
+    "prompt": "What is the usual cause of an infinite while loop?",
+    "choices": [
+      "Forgetting the colon at the end of the while line.",
+      "Using a for loop inside the while loop.",
+      "Starting the counter at 0 instead of 1.",
+      "Never changing the value that the condition depends on."
+    ],
+    "answer": 3,
+    "explain": "If nothing inside the loop moves the condition towards False, the loop never stops."
+  },
+  {
+    "id": "u2-m31",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "print(True or False and False)",
+    "choices": [
+      "True",
+      "False",
+      "It raises an error",
+      "None"
+    ],
+    "answer": 0,
+    "explain": "and is evaluated before or, so this is True or (False and False), which is True or False and therefore True."
+  },
+  {
+    "id": "u2-m32",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "numbers = [3, 1, 4]\ntotal = 0\nfor n in numbers:\n    total = total + n\nprint(total)",
+    "choices": [
+      "3",
+      "8",
+      "4",
+      "314"
+    ],
+    "answer": 1,
+    "explain": "The loop visits each item in turn and adds it, so the total is 3 plus 1 plus 4."
+  },
+  {
+    "id": "u2-m33",
+    "kind": "vocab",
+    "prompt": "What does the != operator check?",
+    "choices": [
+      "Whether the left value is smaller than the right value.",
+      "Whether two values are different.",
+      "Whether a value is not a number.",
+      "Whether both conditions are False."
+    ],
+    "answer": 1,
+    "explain": "!= means not equal, so it is True whenever the two values do not match."
+  },
+  {
+    "id": "u2-m34",
+    "kind": "code",
+    "prompt": "What is the first line this program prints?",
+    "code": "names = [\"Ada\", \"Bo\"]\nfor name in names:\n    print(f\"Hi {name}\")",
+    "choices": [
+      "Hi name",
+      "Hi Ada and Hi Bo on one line",
+      "Hi Ada",
+      "Hi, Ada"
+    ],
+    "answer": 2,
+    "explain": "On the first pass name holds \"Ada\", and the f-string puts that value in place of {name}."
+  },
+  {
+    "id": "u2-m35",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "numbers = [4, 9, 2]\nbiggest = numbers[0]\nfor n in numbers:\n    if n > biggest:\n        biggest = n\nprint(biggest)",
+    "choices": [
+      "9",
+      "4",
+      "2",
+      "15"
+    ],
+    "answer": 0,
+    "explain": "biggest starts at 4 and is replaced whenever a larger value appears, so it ends up holding 9."
+  },
+  {
+    "id": "u2-m36",
+    "kind": "vocab",
+    "prompt": "What is a nested conditional?",
+    "choices": [
+      "Two if statements written one after the other.",
+      "An if statement that uses the and operator.",
+      "An if statement that has more than one elif.",
+      "An if statement written inside another if statement's block."
+    ],
+    "answer": 3,
+    "explain": "Nesting puts one conditional inside another, so the inner condition is only checked when the outer one is True."
+  },
+  {
+    "id": "u2-m37",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "count = 10\nwhile count < 5:\n    print(\"Looping\")\nprint(\"Done\")",
+    "choices": [
+      "Done",
+      "Looping then Done",
+      "Nothing at all",
+      "It runs forever"
+    ],
+    "answer": 0,
+    "explain": "The condition is checked before the first pass and is already False, so the loop body never runs."
+  },
+  {
+    "id": "u2-m38",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "temperature = 75\nif temperature > 80:\n    print(\"Hot\")\nelif temperature > 60:\n    print(\"Warm\")\nelif temperature > 40:\n    print(\"Cool\")\nelse:\n    print(\"Cold\")",
+    "choices": [
+      "Hot",
+      "Warm",
+      "Cool",
+      "Cold"
+    ],
+    "answer": 1,
+    "explain": "75 is not above 80 but it is above 60, and the chain stops at the first True condition."
+  },
+  {
+    "id": "u2-m39",
+    "kind": "vocab",
+    "prompt": "Why must the body of an if statement be indented?",
+    "choices": [
+      "Because indentation makes the file smaller.",
+      "Because Python needs it only when the condition is False.",
+      "Because indentation is optional but considered polite.",
+      "Because indentation is how Python knows which lines belong to the if block."
+    ],
+    "answer": 3,
+    "explain": "Python uses indentation instead of braces, so the indented lines are exactly the ones that belong to the block."
+  },
+  {
+    "id": "u2-m40",
+    "kind": "code",
+    "prompt": "What happens when this code runs?",
+    "code": "age = 18\nif age = 18:\n    print(\"Adult\")",
+    "choices": [
+      "It prints Adult",
+      "It sets age to 18 and then prints Adult",
+      "Python raises a SyntaxError because = assigns rather than compares",
+      "It prints nothing and finishes normally"
+    ],
+    "answer": 2,
+    "explain": "A condition needs ==. Using a single = inside an if is a syntax error in Python."
+  },
+  {
+    "id": "u2-m41",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "for i in range(3, 3):\n    print(i)\nprint(\"done\")",
+    "choices": [
+      "0, 1 and 2 then done",
+      "3 then done",
+      "It raises an error",
+      "done"
+    ],
+    "answer": 3,
+    "explain": "range(3, 3) is empty because the stop value is not included, so the loop body never runs."
+  },
+  {
+    "id": "u2-m42",
+    "kind": "vocab",
+    "prompt": "What is sequential execution?",
+    "choices": [
+      "Running the same line over and over until it succeeds.",
+      "Running the lines of a program in order from top to bottom.",
+      "Running only the lines inside an if block.",
+      "Running two parts of a program at the same time."
+    ],
+    "answer": 1,
+    "explain": "By default Python works through the file line by line, and control flow is what changes that order."
+  },
+  {
+    "id": "u2-m43",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "print(\"hi\" == \"Hi\")",
+    "choices": [
+      "True",
+      "It raises an error",
+      "False",
+      "hi"
+    ],
+    "answer": 2,
+    "explain": "String comparison is case sensitive, so a lowercase h and a capital H do not match."
+  },
+  {
+    "id": "u2-m44",
+    "kind": "vocab",
+    "prompt": "In the counter pattern for a while loop, where must the counter be changed?",
+    "choices": [
+      "Inside the loop body, so the condition can eventually become False.",
+      "In the while condition itself.",
+      "After the loop has finished.",
+      "It does not need to change at all."
+    ],
+    "answer": 0,
+    "explain": "You set the counter before the loop, test it in the condition, and update it inside the body so the loop can end."
+  },
+  {
+    "id": "u2-m45",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "total = 1\nfor i in range(1, 4):\n    total = total * i\nprint(total)",
+    "choices": [
+      "3",
+      "4",
+      "6",
+      "1"
+    ],
+    "answer": 2,
+    "explain": "total is multiplied by 1, then 2, then 3, which gives 6."
+  },
+  {
+    "id": "u2-m46",
+    "kind": "vocab",
+    "prompt": "When should you use and instead of nesting one if inside another?",
+    "choices": [
+      "When both conditions are independent and both must be True.",
+      "When the inner condition only makes sense if the outer one passed.",
+      "Whenever you have more than one elif.",
+      "Only when one of the conditions is a boolean variable."
+    ],
+    "answer": 0,
+    "explain": "If both checks matter equally, a single condition joined with and is simpler and easier to read than nesting."
+  },
+  {
+    "id": "u2-m47",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "x = 5\nif x > 10:\n    print(\"big\")\nelse:\n    print(\"small\")",
+    "choices": [
+      "big",
+      "small",
+      "big and small on separate lines",
+      "Nothing is printed"
+    ],
+    "answer": 1,
+    "explain": "5 is not greater than 10, so the if block is skipped and the else block runs instead."
+  },
+  {
+    "id": "u2-m48",
+    "kind": "vocab",
+    "prompt": "When does a while loop check its condition?",
+    "choices": [
+      "Only once, before the loop starts.",
+      "Only after the body has run at least once.",
+      "Halfway through each pass of the body.",
+      "Before every pass, including the first one."
+    ],
+    "answer": 3,
+    "explain": "The condition is tested before each pass, which is why a loop whose condition starts False never runs at all."
+  },
+  {
+    "id": "u2-m49",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "is_raining = False\nif not is_raining:\n    print(\"Go outside\")\nelse:\n    print(\"Stay in\")",
+    "choices": [
+      "Stay in",
+      "Go outside",
+      "Nothing is printed",
+      "It raises an error"
+    ],
+    "answer": 1,
+    "explain": "is_raining is False, and not False is True, so the if block runs."
+  },
+  {
+    "id": "u2-m50",
+    "kind": "vocab",
+    "prompt": "What kind of value does a comparison such as age >= 18 produce?",
+    "choices": [
+      "A boolean, either True or False.",
+      "The number on the left of the operator.",
+      "A string saying yes or no.",
+      "Nothing, unless it is inside an if statement."
+    ],
+    "answer": 0,
+    "explain": "Comparison operators always give back a boolean, which is what an if statement then acts on."
+  }
+]

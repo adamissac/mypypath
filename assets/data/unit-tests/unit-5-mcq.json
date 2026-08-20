@@ -1,0 +1,682 @@
+[
+  {
+    "id": "u5-m01",
+    "kind": "vocab",
+    "prompt": "What is a module in Python?",
+    "choices": [
+      "A Python file whose functions and variables can be used by other programs.",
+      "A folder that holds all the files for one project.",
+      "A function that is defined inside another function.",
+      "A block of code that repeats until a condition is False."
+    ],
+    "answer": 0,
+    "explain": "Any file ending in .py can be a module, and its name without the .py is the name you import."
+  },
+  {
+    "id": "u5-m02",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import math\nprint(math.sqrt(16))",
+    "choices": [
+      "4",
+      "It raises an error because sqrt needs two arguments",
+      "16",
+      "4.0"
+    ],
+    "answer": 3,
+    "explain": "math.sqrt always returns a float, so the output has a decimal point."
+  },
+  {
+    "id": "u5-m03",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "from math import sqrt\nprint(sqrt(25))",
+    "choices": [
+      "5",
+      "25",
+      "5.0",
+      "It raises an error because the math prefix is missing"
+    ],
+    "answer": 2,
+    "explain": "from math import sqrt brings the name sqrt into your file, so no math. prefix is needed."
+  },
+  {
+    "id": "u5-m04",
+    "kind": "code",
+    "prompt": "What happens when this code runs?",
+    "code": "import math\nprint(sqrt(16))",
+    "choices": [
+      "It prints 4.0",
+      "Python raises a NameError because sqrt was not imported on its own",
+      "It prints 4",
+      "It prints nothing and finishes normally"
+    ],
+    "answer": 1,
+    "explain": "import math binds only the name math, so the function has to be reached as math.sqrt."
+  },
+  {
+    "id": "u5-m05",
+    "kind": "code",
+    "prompt": "What happens when this code runs?",
+    "code": "from math import sqrt\nprint(math.sqrt(16))",
+    "choices": [
+      "It prints 4.0",
+      "It prints 4",
+      "It raises a TypeError",
+      "Python raises a NameError because math itself was never imported"
+    ],
+    "answer": 3,
+    "explain": "from math import sqrt binds only sqrt, so the module name math is never created in your file."
+  },
+  {
+    "id": "u5-m06",
+    "kind": "vocab",
+    "prompt": "What is the difference between import math and from math import sqrt?",
+    "choices": [
+      "The first form is faster, the second form is slower.",
+      "The first form gives you the whole module under the name math, the second gives you the single name sqrt.",
+      "The first form only works for built-in modules.",
+      "There is no difference apart from how much you type."
+    ],
+    "answer": 1,
+    "explain": "With import math you write math.sqrt, and with from math import sqrt you write sqrt on its own."
+  },
+  {
+    "id": "u5-m07",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import math as m\nprint(m.sqrt(9))",
+    "choices": [
+      "It raises an error because the module is called math",
+      "3",
+      "9",
+      "3.0"
+    ],
+    "answer": 3,
+    "explain": "The alias m stands in for math, and sqrt still returns a float."
+  },
+  {
+    "id": "u5-m08",
+    "kind": "code",
+    "prompt": "What happens when this code runs?",
+    "code": "import math as m\nprint(math.pi)",
+    "choices": [
+      "It prints 3.141592653589793",
+      "It prints m.pi",
+      "Python raises a NameError because the alias replaced the name math",
+      "It prints 3.14"
+    ],
+    "answer": 2,
+    "explain": "Importing with as binds only the alias, so the original module name is not available."
+  },
+  {
+    "id": "u5-m09",
+    "kind": "vocab",
+    "prompt": "What does the keyword as do in the line import numpy as np?",
+    "choices": [
+      "It installs numpy if it is missing.",
+      "It imports only part of the numpy module.",
+      "It checks that numpy is the right version.",
+      "It gives the module a shorter name to use in this file."
+    ],
+    "answer": 3,
+    "explain": "An alias is just a nickname, and np for numpy is a convention the whole Python community follows."
+  },
+  {
+    "id": "u5-m10",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "from math import sqrt as root\nprint(root(36))",
+    "choices": [
+      "6.0",
+      "6",
+      "36",
+      "It raises an error because sqrt was renamed"
+    ],
+    "answer": 0,
+    "explain": "You can rename an imported function with as, and root is now another name for math.sqrt."
+  },
+  {
+    "id": "u5-m11",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import math\nprint(round(math.pi, 2))",
+    "choices": [
+      "3.14",
+      "3",
+      "3.141592653589793",
+      "3.1"
+    ],
+    "answer": 0,
+    "explain": "math.pi holds the full value of pi, and round cuts it down to two decimal places."
+  },
+  {
+    "id": "u5-m12",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import math\nprint(math.pi == 3.14)",
+    "choices": [
+      "True",
+      "It raises a TypeError",
+      "3.14",
+      "False"
+    ],
+    "answer": 3,
+    "explain": "math.pi is 3.141592653589793, which is close to 3.14 but not equal to it."
+  },
+  {
+    "id": "u5-m13",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import math\nprint(math.pow(2, 3))",
+    "choices": [
+      "6",
+      "8",
+      "It raises an error because pow is a built-in, not a math function",
+      "8.0"
+    ],
+    "answer": 3,
+    "explain": "math.pow raises the first number to the power of the second and always returns a float."
+  },
+  {
+    "id": "u5-m14",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import math\nradius = 2\nprint(round(math.pi * radius ** 2, 2))",
+    "choices": [
+      "12.57",
+      "6.28",
+      "12.56",
+      "3.14"
+    ],
+    "answer": 0,
+    "explain": "The area is pi times the radius squared, which is 12.566... and rounds to 12.57."
+  },
+  {
+    "id": "u5-m15",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import math\nprint(math.sqrt(16) + math.sqrt(9))",
+    "choices": [
+      "7",
+      "25",
+      "7.0",
+      "5.0"
+    ],
+    "answer": 2,
+    "explain": "Each call returns a float, 4.0 and 3.0, so adding them gives the float 7.0."
+  },
+  {
+    "id": "u5-m16",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "from math import sqrt\n\ndef sqrt(n):\n    return \"my own version\"\n\nprint(sqrt(16))",
+    "choices": [
+      "4.0",
+      "my own version",
+      "It raises an error because sqrt is defined twice",
+      "4"
+    ],
+    "answer": 1,
+    "explain": "The def runs after the import, so it replaces the imported name with your own function."
+  },
+  {
+    "id": "u5-m17",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def sqrt(n):\n    return \"my own version\"\n\nfrom math import sqrt\n\nprint(sqrt(16))",
+    "choices": [
+      "my own version",
+      "It raises an error because sqrt is defined twice",
+      "4.0",
+      "16"
+    ],
+    "answer": 2,
+    "explain": "The import comes last here, so the name sqrt ends up pointing at the math version instead of yours."
+  },
+  {
+    "id": "u5-m18",
+    "kind": "vocab",
+    "prompt": "In what order does Python search when you write import helpers?",
+    "choices": [
+      "Only the folder your script is in, and nowhere else.",
+      "The internet first, then your computer.",
+      "Built-in modules first, then the current directory, then the folders in sys.path.",
+      "Installed packages first, then built-in modules, then your own files."
+    ],
+    "answer": 2,
+    "explain": "The first match found wins, which is why the search order is worth knowing."
+  },
+  {
+    "id": "u5-m19",
+    "kind": "vocab",
+    "prompt": "You save your own file called random.py next to your script, then write import random. What happens?",
+    "choices": [
+      "Python imports your file instead of the standard random module.",
+      "Python refuses to run and reports a duplicate module name.",
+      "Python imports the standard random module and ignores your file.",
+      "Python merges the two so both sets of functions are available."
+    ],
+    "answer": 0,
+    "explain": "Your own file shadows the standard module, which is why naming a file after a standard module causes confusing bugs."
+  },
+  {
+    "id": "u5-m20",
+    "kind": "vocab",
+    "prompt": "Which is the strongest reason to split a long program into modules?",
+    "choices": [
+      "Python programs are limited to a few hundred lines per file.",
+      "Code written once in a module can be reused by many programs without copying it.",
+      "Modules make a program run noticeably faster.",
+      "Only code inside a module can define functions."
+    ],
+    "answer": 1,
+    "explain": "Modules exist for reuse and organisation, so a fix made in one place reaches everything that imports it."
+  },
+  {
+    "id": "u5-m21",
+    "kind": "code",
+    "prompt": "This code is saved as tools.py and run directly with python tools.py. What does it print?",
+    "code": "print(__name__)",
+    "choices": [
+      "tools",
+      "tools.py",
+      "__main__",
+      "It prints an empty line"
+    ],
+    "answer": 2,
+    "explain": "A file run directly always has __name__ set to \"__main__\", whatever the file is called."
+  },
+  {
+    "id": "u5-m22",
+    "kind": "code",
+    "prompt": "This file is run directly. What does it print?",
+    "code": "if __name__ == \"__main__\":\n    print(\"Running directly\")\nelse:\n    print(\"Imported as a module\")",
+    "choices": [
+      "Imported as a module",
+      "Nothing is printed",
+      "Both lines, one after the other",
+      "Running directly"
+    ],
+    "answer": 3,
+    "explain": "Because the file is being run rather than imported, __name__ is \"__main__\" and the first branch wins."
+  },
+  {
+    "id": "u5-m23",
+    "kind": "code",
+    "prompt": "This file is run directly. What does it print?",
+    "code": "def double(n):\n    return n * 2\n\nif __name__ == \"__main__\":\n    print(double(7))",
+    "choices": [
+      "14",
+      "7",
+      "Nothing, because the guard blocks the print",
+      "None"
+    ],
+    "answer": 0,
+    "explain": "The guard is True when the file is run directly, so the test call inside it runs."
+  },
+  {
+    "id": "u5-m24",
+    "kind": "code",
+    "prompt": "This file is run directly. What two lines does it print?",
+    "code": "def greet(name):\n    return \"Hello, \" + name + \"!\"\n\nif __name__ == \"__main__\":\n    print(greet(\"Ada\"))\n\nprint(\"done\")",
+    "choices": [
+      "done then Hello, Ada!",
+      "Hello, Ada! then done",
+      "Only done, because the guard is skipped",
+      "Only Hello, Ada!, because the guard ends the file"
+    ],
+    "answer": 1,
+    "explain": "The guard only controls the lines indented under it, so the final print still runs afterwards."
+  },
+  {
+    "id": "u5-m25",
+    "kind": "code",
+    "prompt": "This file is run directly. What does it print?",
+    "code": "def add(a, b):\n    return a + b\n\ndef subtract(a, b):\n    return a - b\n\nif __name__ == \"__main__\":\n    print(add(10, 5), subtract(10, 5))",
+    "choices": [
+      "15 5",
+      "15",
+      "5 15",
+      "Nothing is printed"
+    ],
+    "answer": 0,
+    "explain": "print shows both results on one line separated by a space."
+  },
+  {
+    "id": "u5-m26",
+    "kind": "vocab",
+    "prompt": "What is __name__ set to inside a file that has been imported by another file?",
+    "choices": [
+      "\"__main__\", the same as when it is run directly.",
+      "The name of the module, which is the filename without .py.",
+      "The name of the file that imported it.",
+      "It is not set at all until you assign it."
+    ],
+    "answer": 1,
+    "explain": "Importing calculator.py sets its __name__ to \"calculator\", which is what makes the main guard skip."
+  },
+  {
+    "id": "u5-m27",
+    "kind": "vocab",
+    "prompt": "Why do people put test code inside if __name__ == \"__main__\":?",
+    "choices": [
+      "It makes the test code run before anything else in the file.",
+      "It is the only way to call a function you have just defined.",
+      "It stops the test code from running when the file is imported as a module.",
+      "It hides the test code from anyone reading the file."
+    ],
+    "answer": 2,
+    "explain": "Without the guard, importing the module would run the tests as a side effect every single time."
+  },
+  {
+    "id": "u5-m28",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "GREETING = \"Hello\"\n\ndef say_hello(name):\n    return GREETING + \", \" + name + \"!\"\n\nprint(say_hello(\"Ada\"))",
+    "choices": [
+      "GREETING, Ada!",
+      "Hello, Ada!",
+      "Hello Ada",
+      "It raises a NameError because GREETING is outside the function"
+    ],
+    "answer": 1,
+    "explain": "A module level variable can be read by the functions in the same file, and importing the module makes it available as module.GREETING."
+  },
+  {
+    "id": "u5-m29",
+    "kind": "vocab",
+    "prompt": "What is a package?",
+    "choices": [
+      "A single Python file with more than one function in it.",
+      "A compressed archive that pip downloads and then deletes.",
+      "A folder of related modules that Python treats as one importable unit.",
+      "Another word for the standard library."
+    ],
+    "answer": 2,
+    "explain": "Packages let you group related modules into folders instead of leaving every file loose in one directory."
+  },
+  {
+    "id": "u5-m30",
+    "kind": "vocab",
+    "prompt": "What is the __init__.py file for?",
+    "choices": [
+      "It marks the folder as a package and can hold set up code that runs on import.",
+      "It lists the packages the project needs from pip.",
+      "It is the file Python runs first when the program starts.",
+      "It stores the documentation for every module in the folder."
+    ],
+    "answer": 0,
+    "explain": "Without __init__.py a folder is just a folder, and including it even when empty keeps the intent clear."
+  },
+  {
+    "id": "u5-m31",
+    "kind": "vocab",
+    "prompt": "A package folder called utils contains math_utils.py, which defines add(). Which import brings add in so you can call it as add(2, 3)?",
+    "choices": [
+      "import utils.math_utils.add",
+      "from utils.math_utils import add",
+      "import add from utils",
+      "from utils import add"
+    ],
+    "answer": 1,
+    "explain": "Dots walk down from the package to the module, and from ... import picks the name out of it."
+  },
+  {
+    "id": "u5-m32",
+    "kind": "vocab",
+    "prompt": "What is the Python standard library?",
+    "choices": [
+      "The set of packages most Python developers install with pip on a new machine.",
+      "The collection of modules that ship with Python and need no installation.",
+      "The folder where your own modules are stored.",
+      "The online documentation site for Python."
+    ],
+    "answer": 1,
+    "explain": "Modules such as math, random, json, csv and os come with Python, so importing them is all it takes."
+  },
+  {
+    "id": "u5-m33",
+    "kind": "vocab",
+    "prompt": "Which standard library module would you import to read and write JSON data?",
+    "choices": [
+      "csv",
+      "os",
+      "json",
+      "collections"
+    ],
+    "answer": 2,
+    "explain": "The json module turns JSON text into Python objects and Python objects back into JSON text."
+  },
+  {
+    "id": "u5-m34",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import json\ndata = json.loads('{\"name\": \"Ada\", \"age\": 30}')\nprint(data[\"age\"])",
+    "choices": [
+      "\"age\"",
+      "It raises a TypeError because data is still text",
+      "{\"age\": 30}",
+      "30"
+    ],
+    "answer": 3,
+    "explain": "json.loads turns the JSON text into a Python dictionary, so it can be read with a key."
+  },
+  {
+    "id": "u5-m35",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import json\nconfig = json.loads('{\"debug\": true}')\nprint(config[\"debug\"])",
+    "choices": [
+      "true",
+      "\"true\"",
+      "1",
+      "True"
+    ],
+    "answer": 3,
+    "explain": "JSON writes booleans in lowercase, and json.loads converts them into Python's True and False."
+  },
+  {
+    "id": "u5-m36",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import json\nprint(json.dumps({\"ok\": True}))",
+    "choices": [
+      "{\"ok\": true}",
+      "{'ok': True}",
+      "{\"ok\": True}",
+      "It raises an error because True is not valid JSON"
+    ],
+    "answer": 0,
+    "explain": "json.dumps produces JSON text, which uses double quotes and lowercase true."
+  },
+  {
+    "id": "u5-m37",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import json\nitems = json.loads('[1, 2, 3]')\nprint(len(items))",
+    "choices": [
+      "9",
+      "1",
+      "It raises a TypeError because items is a string",
+      "3"
+    ],
+    "answer": 3,
+    "explain": "A JSON array becomes a Python list, so len counts its three items."
+  },
+  {
+    "id": "u5-m38",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "from collections import Counter\ncounts = Counter([\"a\", \"b\", \"a\"])\nprint(counts[\"a\"])",
+    "choices": [
+      "1",
+      "3",
+      "['a', 'a']",
+      "2"
+    ],
+    "answer": 3,
+    "explain": "Counter is a standard library tool that tallies how often each item appears."
+  },
+  {
+    "id": "u5-m39",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import random\nprint(type(random.randint(1, 6)))",
+    "choices": [
+      "<class 'int'>",
+      "<class 'float'>",
+      "<class 'random'>",
+      "A different type every time it runs"
+    ],
+    "answer": 0,
+    "explain": "The number itself changes each run, but randint always gives back a whole number."
+  },
+  {
+    "id": "u5-m40",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "from random import choice\nprint(choice([\"python\"]))",
+    "choices": [
+      "['python']",
+      "python",
+      "p",
+      "It raises an error because the list has only one item"
+    ],
+    "answer": 1,
+    "explain": "choice picks one item from the list, and with a single item there is only one possible result."
+  },
+  {
+    "id": "u5-m41",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import sys\nprint(type(sys.path))",
+    "choices": [
+      "<class 'str'>",
+      "<class 'dict'>",
+      "<class 'list'>",
+      "<class 'module'>"
+    ],
+    "answer": 2,
+    "explain": "sys.path is the list of folders Python searches when it looks for a module to import."
+  },
+  {
+    "id": "u5-m42",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import os\nprint(type(os.getcwd()))",
+    "choices": [
+      "<class 'str'>",
+      "<class 'list'>",
+      "<class 'os'>",
+      "It raises an error because getcwd takes an argument"
+    ],
+    "answer": 0,
+    "explain": "os.getcwd returns the current working directory as a plain string."
+  },
+  {
+    "id": "u5-m43",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "import math\nprint(\"sqrt\" in dir(math))",
+    "choices": [
+      "True",
+      "False",
+      "['sqrt']",
+      "It raises a TypeError because dir needs a string"
+    ],
+    "answer": 0,
+    "explain": "dir() returns a list of the names a module defines, so this checks whether math provides sqrt."
+  },
+  {
+    "id": "u5-m44",
+    "kind": "vocab",
+    "prompt": "What is pip?",
+    "choices": [
+      "The program that runs Python files from the command line.",
+      "A module you import to read package documentation.",
+      "The tool that installs packages from the Python Package Index.",
+      "A folder inside every project that stores downloaded packages."
+    ],
+    "answer": 2,
+    "explain": "pip downloads a package from PyPI along with anything that package depends on."
+  },
+  {
+    "id": "u5-m45",
+    "kind": "vocab",
+    "prompt": "Which command installs version 2.31.0 of the requests package and no other version?",
+    "choices": [
+      "pip install requests 2.31.0",
+      "pip install requests==2.31.0",
+      "pip get requests-2.31.0",
+      "pip install requests --version 2.31.0"
+    ],
+    "answer": 1,
+    "explain": "Two equals signs after the package name pin the exact version pip should fetch."
+  },
+  {
+    "id": "u5-m46",
+    "kind": "vocab",
+    "prompt": "What does pip list do?",
+    "choices": [
+      "Shows every package available on PyPI.",
+      "Shows the packages that need upgrading.",
+      "Shows the packages your project imports.",
+      "Shows the packages installed in the environment you are using, with their versions."
+    ],
+    "answer": 3,
+    "explain": "pip list reports what is actually installed, while pip show gives the detail for one package."
+  },
+  {
+    "id": "u5-m47",
+    "kind": "vocab",
+    "prompt": "Why would you create a virtual environment for a project?",
+    "choices": [
+      "It makes the project's code run faster.",
+      "It keeps the project's packages separate so two projects can use different versions.",
+      "It is required before you can import any standard library module.",
+      "It compresses the project so it takes up less disk space."
+    ],
+    "answer": 1,
+    "explain": "Each environment has its own packages, which is what stops one project's upgrade from breaking another."
+  },
+  {
+    "id": "u5-m48",
+    "kind": "vocab",
+    "prompt": "Which command creates a virtual environment in a folder named venv?",
+    "choices": [
+      "pip install venv",
+      "python venv start",
+      "python -m venv venv",
+      "venv create venv"
+    ],
+    "answer": 2,
+    "explain": "The venv module ships with Python 3.3 and later, and -m tells Python to run it as a program."
+  },
+  {
+    "id": "u5-m49",
+    "kind": "vocab",
+    "prompt": "What does pip freeze > requirements.txt do?",
+    "choices": [
+      "It writes the installed packages and their versions into a file others can install from.",
+      "It stops pip from upgrading any package in the project.",
+      "It installs every package listed in requirements.txt.",
+      "It deletes packages that requirements.txt does not mention."
+    ],
+    "answer": 0,
+    "explain": "The saved file is how someone else rebuilds your exact environment with pip install -r requirements.txt."
+  },
+  {
+    "id": "u5-m50",
+    "kind": "vocab",
+    "prompt": "Which filename follows Python's naming convention for a module?",
+    "choices": [
+      "DataProcessing.py",
+      "dataProcessing.py",
+      "Data-Processing.py",
+      "data_processing.py"
+    ],
+    "answer": 3,
+    "explain": "Module files use lowercase words joined by underscores, while PascalCase is reserved for class names."
+  }
+]
