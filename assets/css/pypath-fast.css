@@ -487,6 +487,13 @@ body.nav-open::before {
   align-items: center;
 }
 
+/* The rule above is an author `display`, so it beats the browser's own [hidden]
+   rule and would leave the teacher-only Classroom tab as a visible gap for
+   everyone else. */
+.primary-nav .menu > li[hidden] {
+  display: none !important;
+}
+
 .primary-nav a,
 .primary-nav .dd-trigger {
   position: relative;
@@ -2227,6 +2234,174 @@ html.reduced-motion.page-from-nav main {
 .page-sandbox .sandbox-delete-btn:hover {
   color: #dc2626;
   border-color: color-mix(in srgb, #dc2626 35%, var(--border));
+}
+
+/* Save + export split control. Save stays a plain button so the muscle-memory
+   click never opens a menu; the caret beside it is the only disclosure. */
+.page-sandbox .sandbox-save-group {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+.page-sandbox .sandbox-save-group .sandbox-save-btn {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.page-sandbox .sandbox-export-dd {
+  position: relative;
+  list-style: none;
+}
+
+.page-sandbox .sandbox-export-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-left: -1px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.page-sandbox .sandbox-export-trigger .dd-chevron {
+  opacity: 0.6;
+  transition: transform var(--dur-base, 280ms) cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.page-sandbox .sandbox-export-dd.is-open > .sandbox-export-trigger {
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+.page-sandbox .sandbox-export-dd.is-open > .sandbox-export-trigger .dd-chevron {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+.page-sandbox .sandbox-export-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 400;
+  box-sizing: border-box;
+  min-width: 236px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-strong);
+  overflow: hidden;
+}
+
+.page-sandbox .sandbox-export-panel[hidden] {
+  display: none !important;
+}
+
+.page-sandbox .sandbox-export-panel .dd-panel__head {
+  padding: 10px 14px 8px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.page-sandbox .sandbox-export-panel .dd-panel__label {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.page-sandbox .sandbox-export-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+}
+
+.page-sandbox .sandbox-export-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  appearance: none;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: var(--text);
+  text-align: left;
+  padding: 9px 10px;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.page-sandbox .sandbox-export-item .icon-svg {
+  display: inline-flex;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.page-sandbox .sandbox-export-item:hover {
+  background: var(--bg-elevated);
+  color: var(--primary);
+}
+
+.page-sandbox .sandbox-export-item:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+  background: var(--bg-elevated);
+}
+
+/* Print-only view behind the PDF export. Hidden on screen; on paper it is the
+   only thing left standing so the browser's "Save as PDF" gets a clean page. */
+#sandbox-print-root {
+  display: none;
+}
+
+@media print {
+  body.is-printing > *:not(#sandbox-print-root) {
+    display: none !important;
+  }
+
+  body.is-printing #sandbox-print-root {
+    display: block;
+    margin: 0;
+    color: #000;
+    background: #fff;
+  }
+
+  #sandbox-print-root .sandbox-print-title {
+    margin: 0 0 4px;
+    font-size: 18pt;
+  }
+
+  #sandbox-print-root .sandbox-print-meta {
+    margin: 0 0 18px;
+    font-size: 9pt;
+    color: #555;
+  }
+
+  #sandbox-print-root .sandbox-print-heading {
+    margin: 18px 0 6px;
+    font-size: 11pt;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  #sandbox-print-root pre {
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 9.5pt;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
 }
 
 .page-sandbox .project-status {

@@ -60,7 +60,10 @@ FOOTER = """    <footer class="site-footer">
 
 
 def current_unit_from_path(path: Path) -> int | None:
-    m = re.search(r'units/unit-(\d+)', str(path))
+    # as_posix, not str: on Windows str(path) separates with backslashes, so
+    # this never matched and every lesson page baked without the is-current
+    # marker on its own unit.
+    m = re.search(r'units/unit-(\d+)', path.as_posix())
     return int(m.group(1)) if m else None
 
 
@@ -70,6 +73,8 @@ def nav_active(path: Path, pattern: str) -> bool:
         return path.name == 'index.html' and path.parent == ROOT
     if pattern == 'sandbox':
         return path.name == 'sandbox.html'
+    if pattern == 'classroom':
+        return path.name == 'classroom.html'
     if pattern == 'settings':
         return path.name == 'settings.html'
     if pattern == 'units':
@@ -98,6 +103,10 @@ def header_html(path: Path, show_progress: bool) -> str:
     cu = current_unit_from_path(path)
     home_a = ' active' if nav_active(path, 'home') else ''
     sandbox_a = ' active' if nav_active(path, 'sandbox') else ''
+    # The Classroom <li> is baked hidden and only role-nav.js reveals it, so a
+    # guest never sees a tab pointing at a page they cannot open. Hiding the
+    # <li> rather than the <a> is what keeps the nav from leaving a gap.
+    classroom_a = ' active' if nav_active(path, 'classroom') else ''
     settings_a = ' active' if nav_active(path, 'settings') else ''
     units_btn = ' aria-current="page"' if nav_active(path, 'units') else ''
 
@@ -142,6 +151,7 @@ def header_html(path: Path, show_progress: bool) -> str:
                 </div>
               </li>
               <li><a href="/sandbox.html" class="route{sandbox_a}">Sandbox</a></li>
+              <li data-account-classroom hidden><a href="/classroom.html" class="route{classroom_a}">Classroom</a></li>
               <li><a href="/settings.html" class="route{settings_a}">Settings</a></li>
               </ul>
             </div>
@@ -156,6 +166,7 @@ def header_html(path: Path, show_progress: bool) -> str:
             </button>
             <div class="account-panel" data-account-panel role="menu" hidden>
               <a href="/progress.html" class="route" role="menuitem">My progress</a>
+              <a href="/classroom.html" class="route" role="menuitem" data-account-classroom hidden>My classroom</a>
               <a href="/account.html" class="route" role="menuitem">Account</a>
               <button type="button" data-account-signout role="menuitem">Sign out</button>
             </div>
