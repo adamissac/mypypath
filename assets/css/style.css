@@ -535,9 +535,9 @@ main .container,
 
 /* Header */
 .site-header {
-  position: sticky; 
-  top: 0; 
-  z-index: 50;
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header, 800);
   background: var(--panel);
   border-bottom: 3px solid var(--border);
   box-shadow: 0 4px 12px rgba(44, 36, 22, 0.08);
@@ -1293,7 +1293,7 @@ pre code { display: block; overflow-x: auto; }
 @keyframes float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(6px, -12px); } }
 
 /* Toasts */
-.toast-container { position: fixed; right: 20px; bottom: 20px; display: grid; gap: 10px; z-index: 200; }
+.toast-container { position: fixed; right: 20px; bottom: 20px; display: grid; gap: 10px; z-index: var(--z-toast, 900); }
 .toast { 
   background: var(--panel); 
   border: 3px solid var(--border); 
@@ -2503,10 +2503,10 @@ pre code { display: block; overflow-x: auto; }
   .layout-course { grid-template-columns: 1fr; }
   .course-sidebar { 
     position: fixed; 
-    left: 16px; 
-    right: 16px; 
-    top: 76px; 
-    z-index: 60; 
+    left: 16px;
+    right: 16px;
+    top: 76px;
+    z-index: var(--z-sticky, 20);
     transform: translateY(-120%); 
     transition: transform 250ms ease;
     /* Prevent clicks when hidden */
@@ -3791,12 +3791,15 @@ pre code { display: block; overflow-x: auto; }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  /* Improved button sizes for touch */
+  /* Improved button sizes for touch.
+     These sit above the decoration inside their own card (0–5), never above
+     the header: at 100 they used to paint over an open Units / account
+     popup, since the header's stacking context caps everything inside it. */
   .btn:not(.btn-small):not(.btn-run):not(.btn-reset):not(.btn-check):not(.btn-solution):not(.btn-clear):not(.btn-clear-small) {
     padding: 14px 20px;
     min-height: 44px;
     font-size: 16px;
-    z-index: 100 !important;
+    z-index: 10 !important;
     pointer-events: auto !important;
     position: relative;
     touch-action: manipulation;
@@ -3808,7 +3811,7 @@ pre code { display: block; overflow-x: auto; }
     padding: 12px 18px;
     min-height: 44px;
     font-size: 15px;
-    z-index: 100 !important;
+    z-index: 10 !important;
     pointer-events: auto !important;
     position: relative;
     touch-action: manipulation;
@@ -3821,7 +3824,7 @@ pre code { display: block; overflow-x: auto; }
     font-size: 14px;
     white-space: nowrap;
     flex-shrink: 0;
-    z-index: 100 !important;
+    z-index: 10 !important;
     pointer-events: auto !important;
     position: relative;
     touch-action: manipulation;
@@ -3835,7 +3838,7 @@ pre code { display: block; overflow-x: auto; }
   input[type="submit"],
   .btn-primary,
   .btn-ghost {
-    z-index: 100 !important;
+    z-index: 10 !important;
     pointer-events: auto !important;
     position: relative;
     touch-action: manipulation;
@@ -3857,7 +3860,7 @@ pre code { display: block; overflow-x: auto; }
   .interactive-editor-header .btn {
     flex: 1 1 auto;
     min-width: 0;
-    z-index: 101 !important;
+    z-index: 11 !important;
   }
   
   /* Prevent overlays from blocking buttons */
@@ -3872,7 +3875,7 @@ pre code { display: block; overflow-x: auto; }
   /* Ensure buttons in these containers are above */
   .practice-box .btn,
   .lesson-nav .btn {
-    z-index: 101 !important;
+    z-index: 11 !important;
   }
   
   .primary-nav a, .primary-nav button {
