@@ -14,6 +14,32 @@
   --gradient: var(--primary);
   --gradient-soft: var(--accent);
 
+  /* ── Layer scale ──────────────────────────────────────────
+     The header is `position: fixed`, so it opens a stacking context:
+     anything inside it (the Units panel, the account menu) can never
+     climb above the header's own z-index, no matter how large its
+     value. Page furniture therefore has to stay below the header, or
+     it paints straight over an open popup. One scale, used everywhere:
+
+       0–19    in-page decoration (glows, illustrations, cards)
+       20–39   sticky page furniture (course sidebar)
+       40–49   floating page controls (sidebar reopen button)
+       790     the scrim behind the open mobile nav
+       800     the site header — and every popup it contains
+       850     hairline bars drawn across the top of the header
+       900     toasts
+       950+    full-screen transitions and modals
+  */
+  --z-sticky: 20;
+  --z-floating: 40;
+  --z-nav-scrim: 790;
+  --z-header: 800;
+  --z-header-popover: 60; /* inside the header's own stacking context */
+  --z-topbar: 850;
+  --z-toast: 900;
+  --z-transition: 950;
+  --z-modal: 1000;
+
   /* Warmer, cleaner palette (Adam's Alphabet–inspired) */
   --bg: #FBFAF7;
   --bg-elevated: #F3F1EC;
@@ -342,7 +368,7 @@ body.nav-open::before {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: 48;
+  z-index: var(--z-nav-scrim);
   background: rgba(0, 0, 0, 0.18);
 }
 
@@ -351,7 +377,7 @@ body.nav-open::before {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 50;
+  z-index: var(--z-header);
   background: var(--panel);
   border-bottom: 1px solid var(--border);
   box-shadow: none;
@@ -1400,7 +1426,7 @@ html.reduced-motion .page-home .hero-live-output.is-active {
   position: fixed;
   left: max(14px, env(safe-area-inset-left));
   top: calc(var(--header-height, 63px) + 14px);
-  z-index: 45;
+  z-index: var(--z-floating);
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -1547,7 +1573,7 @@ html.reduced-motion .page-home .hero-live-output.is-active {
   left: 0;
   right: 0;
   height: 3px;
-  z-index: 60;
+  z-index: var(--z-topbar);
   pointer-events: none;
 }
 
@@ -1562,7 +1588,7 @@ html.reduced-motion .page-home .hero-live-output.is-active {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  z-index: 100;
+  z-index: var(--z-toast);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1643,7 +1669,7 @@ html.reduced-motion .page-home .hero-live-output.is-active {
   display: block;
   position: fixed;
   inset: 0;
-  z-index: 200;
+  z-index: var(--z-transition);
   pointer-events: none;
   background: var(--bg);
   opacity: 0;
@@ -1660,7 +1686,7 @@ html.reduced-motion .page-home .hero-live-output.is-active {
   left: 0;
   right: 0;
   height: 3px;
-  z-index: 201;
+  z-index: calc(var(--z-transition) + 5);
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.12s ease;
