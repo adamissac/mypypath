@@ -392,16 +392,17 @@ body.nav-open::before {
   display: none;
 }
 
+/* One number for the header gutter: the bar's own padding and anything that
+   hangs off the bar (the account panel) line up on the same edge. */
+:root { --header-gutter: 24px; }
+
 .site-header .container {
-  padding-left: 24px;
-  padding-right: 24px;
+  padding-left: var(--header-gutter);
+  padding-right: var(--header-gutter);
 }
 
 @media (min-width: 1400px) {
-  .site-header .container {
-    padding-left: 36px;
-    padding-right: 36px;
-  }
+  :root { --header-gutter: 36px; }
 }
 
 .header-inner {
@@ -633,7 +634,10 @@ body.nav-open::before {
 
   .nav-pill {
     position: fixed;
-    top: calc(var(--header-accent) + var(--header-bar) + 8px);
+    /* --header-height already carries the accent strip, the bar, the progress
+       rail and the inspire banner, so the menu tracks the header instead of
+       floating 8px below it (or under it when the banner is showing). */
+    top: calc(var(--header-height) + 8px);
     left: 16px;
     right: 16px;
     z-index: 49;
