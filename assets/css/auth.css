@@ -23,25 +23,44 @@
   justify-self: end;
 }
 
-.account-menu { position: relative; display: inline-flex; align-items: center; }
+/* Deliberately unpositioned: the panel below anchors to .site-header instead,
+   so it can hang off the bottom of the bar rather than off the avatar. */
+.account-menu { display: inline-flex; align-items: center; }
 .account-avatar {
   border: 0; background: none; padding: 0; cursor: pointer; line-height: 0;
 }
 .account-avatar img { border-radius: 50%; }
+/* The avatar is centred in the bar, so anchoring the panel to the avatar
+   (top: 100% + .5rem) opened it *inside* the header and the header's bottom
+   rule was drawn straight across it. With .account-menu unpositioned, the
+   nearest positioned ancestor is .site-header, so `top: 100%` is exactly the
+   bottom edge of the bar — whatever the bar happens to measure. */
 .account-panel {
-  position: absolute; right: 0; top: calc(100% + .5rem); z-index: 40;
-  display: grid; min-width: 11rem; padding: .35rem;
-  background: var(--bg-elev, #fff);
+  position: absolute;
+  top: calc(100% + 10px);
+  right: max(var(--header-gutter, 24px), env(safe-area-inset-right));
+  left: auto;
+  z-index: var(--z-header-popover, 60);
+  display: grid;
+  min-width: 12rem;
+  max-width: calc(100vw - 2rem);
+  padding: .4rem;
+  background: var(--panel, #fff);
   border: 1px solid var(--border, #d0d0d8);
-  border-radius: .6rem;
-  box-shadow: 0 8px 24px rgb(0 0 0 / .12);
+  border-radius: .85rem;
+  box-shadow: var(--shadow-strong, 0 12px 32px rgb(0 0 0 / .14));
 }
 .account-panel a, .account-panel button {
-  padding: .5rem .6rem; text-align: left; border: 0; background: none;
-  color: inherit; cursor: pointer; border-radius: .4rem; font: inherit;
+  padding: .55rem .65rem; text-align: left; border: 0; background: none;
+  color: var(--text, inherit); cursor: pointer; border-radius: .55rem;
+  font: inherit; font-size: .9rem; font-weight: 600; text-decoration: none;
+  transition: background-color .15s ease, color .15s ease;
 }
-.account-panel a:hover, .account-panel button:hover {
-  background: var(--bg-subtle, #f2f2f5);
+.account-panel a:hover, .account-panel button:hover,
+.account-panel a:focus-visible, .account-panel button:focus-visible {
+  background: var(--bg-elevated, #f2f2f5);
+  color: var(--primary, inherit);
+  outline: none;
 }
 
 /* A class selector beats the user-agent [hidden] rule, so display: grid above

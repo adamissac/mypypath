@@ -213,15 +213,40 @@
     panel.style.removeProperty('width');
   }
 
+  /* A `position: fixed` panel inside the header is not necessarily laid out
+     against the viewport: the header carries a backdrop-filter, which makes it
+     the containing block for fixed descendants. Rather than guess which origin
+     applies, drop an empty fixed probe at 0,0 next to the panel and see where
+     it actually lands — that offset is what viewport coordinates must be
+     shifted by. Measuring the panel itself would fold in its open animation's
+     transform. */
+  function fixedOrigin(panel) {
+    var probe = document.createElement('div');
+    probe.setAttribute('aria-hidden', 'true');
+    probe.style.cssText =
+      'position:fixed;top:0;left:0;width:0;height:0;visibility:hidden;pointer-events:none;';
+    (panel.parentNode || document.body).appendChild(probe);
+    var at = probe.getBoundingClientRect();
+    probe.parentNode.removeChild(probe);
+    return { top: at.top, left: at.left };
+  }
+
   function positionNavPanel(root, trigger, panel) {
+    var header = trigger.closest('.site-header');
     var rect = trigger.getBoundingClientRect();
     var panelWidth = Math.min(400, window.innerWidth - 24);
     var left = rect.left + rect.width / 2 - panelWidth / 2;
     left = Math.max(12, Math.min(left, window.innerWidth - panelWidth - 12));
 
+    // Hang the panel off the bottom of the bar, not off the trigger: the
+    // trigger is centred in the header, so a trigger-relative panel opened
+    // inside the bar with the header's bottom rule drawn across it.
+    var top = header ? header.getBoundingClientRect().bottom + 10 : rect.bottom + 8;
+
+    var origin = fixedOrigin(panel);
     panel.style.position = 'fixed';
-    panel.style.top = Math.round(rect.bottom + 8) + 'px';
-    panel.style.left = Math.round(left) + 'px';
+    panel.style.top = Math.round(top - origin.top) + 'px';
+    panel.style.left = Math.round(left - origin.left) + 'px';
     panel.style.width = panelWidth + 'px';
   }
 
