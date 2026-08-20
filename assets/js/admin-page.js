@@ -1,8 +1,14 @@
-/* PyPath — admin dashboard: the whole roster, one row per learner.
+/* PyPath — admin dashboard: the roster, one row per learner.
 
-   Reads `users` in a single query. Every field it shows is mirrored onto the
+   Reads `users` a page at a time. Every field it shows is mirrored onto the
    user document by sync.js and activity.js precisely so this page does not
    need one round trip per learner.
+
+   Sorting, search, the stat tiles and the CSV all work off rows already in the
+   browser, so anything short of a complete load says so on screen rather than
+   presenting a first page as if it were the whole site. The CSV drains the
+   remaining pages before it writes, because an export that quietly stopped at
+   200 accounts is worse than a slow one.
 
    The uid check below only picks which panel to render. A non-admin who edits
    it in devtools still gets nothing: firestore.rules refuses the query. */
@@ -11,13 +17,27 @@ import { currentUser } from '/assets/js/auth.js';
 import { normalizeScores, passedUnits } from '/assets/js/unit-test-summary.js';
 
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
-const { collection, getDocs } = await import(`${BASE}/firebase-firestore.js`);
+const { collection, getDocs, query, orderBy, limit, startAfter, documentId } =
+  await import(`${BASE}/firebase-firestore.js`);
 
 const ADMIN = window.PyPathAdmin;
 const ACT = window.PyPathActivity;
 const TOTAL_UNITS = 10;
 
-const state = { rows: [], sort: 'lastSeenAt', dir: -1, query: '' };
+const state = {
+  rows: [],
+  sort: 'lastSeenAt',
+  dir: -1,
+  query: '',
+  // The last document of the last page, handed straight back to startAfter().
+  // Ordering is by document id: every user document has one, where a field
+  // like lastLoginAt is missing on accounts created before sync.js wrote it --
+  // and Firestore drops documents that lack the field it is ordered by, which
+  // would silently hide exactly the oldest accounts an admin is looking for.
+  cursor: null,
+  complete: false,
+  loading: false,
+};
 
 function qs(sel) { return document.querySelector(sel); }
 
@@ -132,15 +152,42 @@ function rowHtml(row) {
   </tr>`;
 }
 
+// What the empty table says depends on why it is empty. "No learners match"
+// under a partial load would be a claim the page cannot make.
+function emptyHtml() {
+  const message = state.complete
+    ? 'No learners match that search.'
+    : 'No match among the accounts loaded so far. Load the rest to search everyone.';
+  return `<tr><td colspan="7" class="admin-empty">${message}</td></tr>`;
+}
+
+function paintCoverage() {
+  const note = qs('[data-admin-coverage]');
+  if (note) {
+    const text = state.loading && !state.rows.length
+      ? 'Loading accounts…'
+      : ADMIN.coverageNote(state.rows.length, state.complete);
+    note.textContent = text;
+    note.hidden = !text;
+  }
+
+  const more = qs('[data-admin-more]');
+  if (more) {
+    more.hidden = state.complete;
+    more.disabled = state.loading;
+    more.textContent = state.loading ? 'Loading…' : 'Load all accounts';
+  }
+}
+
 function render() {
   const visible = sorted(state.rows.filter((r) => matches(r, state.query)));
 
   const body = qs('[data-admin-rows]');
   if (body) {
-    body.innerHTML = visible.length
-      ? visible.map(rowHtml).join('')
-      : '<tr><td colspan="7" class="admin-empty">No learners match that search.</td></tr>';
+    body.innerHTML = visible.length ? visible.map(rowHtml).join('') : emptyHtml();
   }
+
+  paintCoverage();
 
   const totalSeconds = state.rows.reduce((sum, r) => sum + r.seconds, 0);
   const stats = {
@@ -189,19 +236,51 @@ function toCsv(rows) {
   return [head.join(','), ...lines].join('\n');
 }
 
-async function load() {
-  show('loading');
+function fail(e) {
+  const msg = qs('[data-admin-error-message]');
+  if (msg) msg.textContent = String((e && e.message) || e);
+  show('error');
+}
+
+// One page, appended. Returns false when there is nothing more to ask for, so
+// drainAll() below has a termination condition that does not depend on state.
+async function loadPage() {
+  if (state.complete || state.loading) return false;
+  state.loading = true;
+  render();
   try {
-    const snap = await getDocs(collection(db, 'users'));
-    state.rows = [];
+    const parts = [orderBy(documentId()), limit(ADMIN.PAGE_SIZE)];
+    if (state.cursor) parts.splice(1, 0, startAfter(state.cursor));
+    const snap = await getDocs(query(collection(db, 'users'), ...parts));
+
     snap.forEach((d) => state.rows.push(toRow(d.id, d.data() || {})));
+    state.cursor = snap.docs.length ? snap.docs[snap.docs.length - 1] : state.cursor;
+    state.complete = ADMIN.isLastPage(snap.docs.length, ADMIN.PAGE_SIZE);
+    state.loading = false;
     render();
     show('ready');
+    return !state.complete;
   } catch (e) {
-    const msg = qs('[data-admin-error-message]');
-    if (msg) msg.textContent = String((e && e.message) || e);
-    show('error');
+    state.loading = false;
+    fail(e);
+    return false;
   }
+}
+
+// Every remaining page. The only two callers are the ones that would otherwise
+// lie: the CSV, and an admin who has asked to search everyone.
+async function drainAll() {
+  while (await loadPage()) { /* loadPage renders each page as it lands */ }
+  return state.complete;
+}
+
+async function load() {
+  show('loading');
+  state.rows = [];
+  state.cursor = null;
+  state.complete = false;
+  state.loading = false;
+  await loadPage();
 }
 
 function wire() {
@@ -222,12 +301,27 @@ function wire() {
     });
   }
 
-  const refresh = qs('[data-admin-refresh]');
-  if (refresh) refresh.addEventListener('click', load);
+  document.querySelectorAll('[data-admin-refresh]').forEach((btn) => {
+    btn.addEventListener('click', load);
+  });
+
+  const more = qs('[data-admin-more]');
+  if (more) more.addEventListener('click', drainAll);
 
   const csv = qs('[data-admin-csv]');
   if (csv) {
-    csv.addEventListener('click', () => {
+    csv.addEventListener('click', async () => {
+      // An export that stopped at the first page would look complete in a
+      // spreadsheet and there would be nothing in the file to say otherwise.
+      if (!state.complete) {
+        csv.disabled = true;
+        csv.textContent = 'Loading accounts…';
+        const done = await drainAll();
+        csv.disabled = false;
+        csv.textContent = 'Export CSV';
+        if (!done) return;
+      }
+
       const blob = new Blob([toCsv(sorted(state.rows))], { type: 'text/csv' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
