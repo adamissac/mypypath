@@ -22,6 +22,7 @@
     <script defer src="/assets/js/theme.js"></script>
     <script defer src="/assets/js/icons.js"></script>
     <script defer src="/assets/js/storage-keys.js"></script>
+    <script defer src="/assets/js/roles.js"></script>
     <script defer src="/assets/js/activity-core.js"></script>
     <script defer src="/assets/js/progress-store.js"></script>
     <script defer src="/assets/js/merge.js"></script>
@@ -33,6 +34,7 @@
     <script defer src="/assets/js/core.js"></script>
     <script type="module" src="/assets/js/auth.js"></script>
     <script type="module" src="/assets/js/sync.js"></script>
+    <script type="module" src="/assets/js/role-nav.js"></script>
     <script type="module" src="/assets/js/activity.js"></script>
     <script type="module" src="/assets/js/auth-ui.js"></script>
   </head>
@@ -95,6 +97,7 @@
             </button>
             <div class="account-panel" data-account-panel role="menu" hidden>
               <a href="/progress.html" class="route" role="menuitem">My progress</a>
+              <a href="/classroom.html" class="route" role="menuitem" data-account-classroom hidden>My classroom</a>
               <a href="/account.html" class="route" role="menuitem">Account</a>
               <button type="button" data-account-signout role="menuitem">Sign out</button>
             </div>
@@ -137,6 +140,12 @@
           <h2>What PyPath staff can see</h2>
           <p>A small, named group of PyPath staff can see a dashboard listing every account: name, email address, when the account was created, when it was last active, total time spent, how many units are complete, and whether the certificate has been earned. It exists so we can tell how the course is actually being used.</p>
           <p><strong>Your saved lesson code is not included, deliberately.</strong> The database rules keep code documents readable by their owner alone, with no staff exception, so nobody at PyPath can read the Python you write. Staff access is read-only: the dashboard cannot change your account or your progress. The list of staff accounts is enforced in the database rules themselves, not just in the page.</p>
+
+          <h2>Classroom accounts</h2>
+          <p>When you sign up you choose whether you are learning on your own, learning in a class, or teaching one. Learning on your own is the default and nothing about it changed: no other account can see anything of yours.</p>
+          <p>If you join a class by entering a teacher's join code, that teacher can see your name, your email address, when you joined, when you were last active, how long you have spent learning, how many units you have completed, and whether you have earned the certificate. They cannot see the Python you write — lesson code stays readable only by you, with no exception for teachers or for PyPath staff. Your teacher can remove you from their class; that clears the link and nothing else.</p>
+          <p>You are never put in a class without entering a code yourself. You can leave a class at any time from your <a href="/account.html" class="route">account page</a>, which stops your teacher seeing anything further, and your progress is untouched either way.</p>
+          <p>If you are a teacher, your join code identifies your class. Anyone who has the code can attach their account to you, so treat it like a class password and issue a new one from your classroom page if it spreads further than you meant.</p>
 
           <h2>Deleting your account</h2>
           <p>You can clear device-local data at any time from <a href="/settings.html" class="route">Settings</a>. To delete your account and everything stored against it, contact us using the address below and we will remove the account, its progress, and its saved code. Deletion is permanent.</p>

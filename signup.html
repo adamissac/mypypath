@@ -27,6 +27,7 @@
     <script defer src="/assets/js/merge.js"></script>
     <script defer src="/assets/js/username.js"></script>
     <script defer src="/assets/js/consent.js"></script>
+    <script defer src="/assets/js/roles.js"></script>
     <script defer src="/assets/js/gate.js"></script>
     <script defer src="/assets/js/curriculum.js"></script>
     <script defer src="/assets/js/lesson-progress.js"></script>
@@ -34,6 +35,7 @@
     <script defer src="/assets/js/core.js"></script>
     <script type="module" src="/assets/js/auth.js"></script>
     <script type="module" src="/assets/js/sync.js"></script>
+    <script type="module" src="/assets/js/role-nav.js"></script>
     <script type="module" src="/assets/js/activity.js"></script>
     <script type="module" src="/assets/js/auth-ui.js"></script>
 </head>
@@ -96,6 +98,7 @@
             </button>
             <div class="account-panel" data-account-panel role="menu" hidden>
               <a href="/progress.html" class="route" role="menuitem">My progress</a>
+              <a href="/classroom.html" class="route" role="menuitem" data-account-classroom hidden>My classroom</a>
               <a href="/account.html" class="route" role="menuitem">Account</a>
               <button type="button" data-account-signout role="menuitem">Sign out</button>
             </div>
@@ -124,6 +127,41 @@
         <input id="signup-password" type="password" autocomplete="new-password"
                minlength="8" required aria-describedby="signup-hint">
         <p class="auth-hint" id="signup-hint">At least 8 characters.</p>
+
+        <fieldset class="role-picker">
+          <legend>How will you use PyPath?</legend>
+
+          <label class="role-option">
+            <input type="radio" name="signup-role" value="personal" checked>
+            <span class="role-option__body">
+              <span class="role-option__title">On my own</span>
+              <span class="role-option__hint">Learning for yourself. Nobody else sees your progress.</span>
+            </span>
+          </label>
+
+          <label class="role-option">
+            <input type="radio" name="signup-role" value="student">
+            <span class="role-option__body">
+              <span class="role-option__title">I am in a class</span>
+              <span class="role-option__hint">Your teacher can see your progress, time spent, and certificate — never the code you write.</span>
+            </span>
+          </label>
+
+          <label class="role-option">
+            <input type="radio" name="signup-role" value="teacher">
+            <span class="role-option__body">
+              <span class="role-option__title">I am teaching a class</span>
+              <span class="role-option__hint">You get a join code to share, and a dashboard showing how your students are doing.</span>
+            </span>
+          </label>
+        </fieldset>
+
+        <div class="role-join" data-role-join hidden>
+          <label for="signup-join-code">Teacher join code</label>
+          <input id="signup-join-code" type="text" inputmode="latin" autocomplete="off"
+                 maxlength="9" placeholder="ABC234" aria-describedby="signup-join-hint">
+          <p class="auth-hint" id="signup-join-hint">Optional. Leave it blank if you do not have it yet — you can join your class later from your account page.</p>
+        </div>
 
         <div class="auth-consent">
           <input id="signup-terms" type="checkbox" required aria-describedby="signup-consent-hint">
@@ -167,6 +205,7 @@
       import { signUpWithEmail, signInWithGoogle, signInWithGitHub }
         from '/assets/js/auth.js';
       import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
+      import { joinClass, ensureJoinCode, setRole } from '/assets/js/class-join.js';
       const { doc, setDoc } =
         await import(`https://www.gstatic.com/firebasejs/${SDK_VERSION}/firebase-firestore.js`);
       const { updateProfile } =
@@ -207,6 +246,47 @@
           if (box) box.focus();
         }
         return check.ok;
+      }
+
+      const joinBox = document.querySelector('[data-role-join]');
+      function chosenRole() {
+        const picked = document.querySelector('input[name="signup-role"]:checked');
+        return window.PyPathRoles.normalizeRole(picked && picked.value);
+      }
+      // The join code field only makes sense for a student, and an empty box
+      // left visible reads as something they forgot to fill in.
+      document.querySelectorAll('input[name="signup-role"]').forEach((radio) => {
+        radio.addEventListener('change', () => {
+          if (joinBox) joinBox.hidden = chosenRole() !== 'student';
+        });
+      });
+
+      // Runs after the account exists. Nothing in here may throw far enough to
+      // strand someone with an account they were never told about: a class that
+      // did not attach is recoverable from the account page, a lost signup is not.
+      async function applyRole(user, role, rawCode) {
+        if (role === 'teacher') {
+          try {
+            await ensureJoinCode(user.uid, { role: 'teacher' });
+          } catch (e) {
+            window.PyUI && window.PyUI.showToast('Signed up. Your join code will be issued when you open My classroom.');
+          }
+          return;
+        }
+        if (role !== 'student') {
+          try { await setRole(user.uid, role); } catch (e) {}
+          return;
+        }
+        const code = window.PyPathRoles.normalizeCode(rawCode);
+        try { await setRole(user.uid, 'student'); } catch (e) {}
+        if (!code) return;
+        try {
+          await joinClass(user.uid, code);
+        } catch (e) {
+          window.PyUI && window.PyUI.showToast(
+            (e && e.message) || 'Could not join that class. You can try the code again from your account page.'
+          );
+        }
       }
 
       const err = document.getElementById('signup-error');
@@ -257,6 +337,7 @@
           try {
             await saveName(user.uid, first, last, name);
             await updateProfile(user, { displayName: name });
+            await applyRole(user, chosenRole(), document.getElementById('signup-join-code').value);
           } catch (e) {
             // The account exists either way; a failed profile write must not
             // strand the learner on this page with no account and no error.
@@ -274,6 +355,7 @@
           const user = await signIn();
           try {
             await saveConsent(user.uid);
+            await applyRole(user, chosenRole(), document.getElementById('signup-join-code').value);
           } catch (e) {
             // The account exists either way; a failed consent write must not
             // strand someone with an account they cannot reach.

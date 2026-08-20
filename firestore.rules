@@ -24,21 +24,89 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid == uid;
     }
 
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // A classroom join code. The document id is the code itself, so resolving
+    // a code is a single get with no query and no way to enumerate.
+    match /joinCodes/{code} {
+      // Any signed-in learner may resolve a code they were given. Codes are
+      // the credential for joining a class, and list is denied below so the
+      // collection cannot be walked to harvest them.
+      allow get: if signedIn();
+      allow list: if false;
+
+      // create, never update: create fails outright if the document already
+      // exists, so a teacher cannot take a code that is already issued, and
+      // the code-to-teacher mapping can never be repointed once made.
+      allow create: if signedIn()
+        && request.resource.data.teacherUid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['teacherUid', 'createdAt']);
+      allow update: if false;
+
+      // Regenerating a code retires the old one.
+      allow delete: if signedIn() && resource.data.teacherUid == request.auth.uid;
+    }
+
     match /users/{uid} {
+      // The teacher of this learner, established by resource.data.teacherUid on
+      // the document being read. That works for get and for list alike, so a
+      // teacher's roster query needs no per-document lookup.
+      function isTheirTeacher() {
+        return signedIn() && resource.data.get('teacherUid', '') == request.auth.uid;
+      }
+
+      // A student claiming a teacher must present the join code that proves it.
+      // Checked only when the claim changes, so ordinary progress writes do not
+      // pay for a joinCodes lookup on every save.
+      function joinIsProven() {
+        return !('teacherUid' in request.resource.data)
+          // The membership check below builds a document path out of joinCode.
+          // An absent or empty value would make that path invalid and error the
+          // whole rule, so both are ruled out before it is used.
+          || ('joinCode' in request.resource.data
+              && request.resource.data.joinCode is string
+              && request.resource.data.joinCode.size() > 0
+              && exists(/databases/$(database)/documents/joinCodes/$(request.resource.data.joinCode))
+              && get(/databases/$(database)/documents/joinCodes/$(request.resource.data.joinCode)).data.teacherUid
+                 == request.resource.data.teacherUid);
+      }
+
+      function classUnchanged() {
+        return !request.resource.data.diff(resource.data)
+          .affectedKeys().hasAny(['teacherUid', 'joinCode']);
+      }
+
+      // The one write a teacher may make to someone else's document: dropping
+      // a student from their own class. It may touch nothing but the class
+      // fields, and it may only clear them, never point them somewhere else.
+      function removingOwnStudent() {
+        return isTheirTeacher()
+          && request.resource.data.diff(resource.data)
+             .affectedKeys().hasOnly(['teacherUid', 'joinCode', 'updatedAt'])
+          && !('teacherUid' in request.resource.data);
+      }
+
       // `read` covers get and list, so an admin can query the whole collection
-      // to build the roster. Admins never write: the dashboard is read-only and
-      // nothing on it should be able to edit a learner's record.
-      allow read: if isOwner(uid) || isAdmin();
-      allow write: if isOwner(uid);
+      // and a teacher can query their own roster. Neither can write, apart from
+      // the single removal case above.
+      allow read: if isOwner(uid) || isAdmin() || isTheirTeacher();
+
+      allow create: if isOwner(uid) && joinIsProven();
+      allow update: if (isOwner(uid) && (classUnchanged() || joinIsProven()))
+        || removingOwnStudent();
+      allow delete: if isOwner(uid);
 
       match /state/{docId} {
         allow read: if isOwner(uid) || isAdmin();
         allow write: if isOwner(uid);
       }
 
-      // Deliberately owner-only, with no admin exception. The dashboard reports
-      // how far someone got and how long they spent; it has no reason to read
-      // the Python they wrote, and staff should not be able to.
+      // Deliberately owner-only, with no admin or teacher exception. The
+      // dashboards report how far someone got and how long they spent; they
+      // have no reason to read the Python a learner wrote, and neither staff
+      // nor a teacher should be able to.
       match /code/{docId} {
         allow read, delete: if isOwner(uid);
         allow create, update: if isOwner(uid)
