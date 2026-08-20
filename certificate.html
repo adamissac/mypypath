@@ -39,6 +39,10 @@
     <script type="module" src="/assets/js/role-nav.js"></script>
     <script type="module" src="/assets/js/activity.js"></script>
     <script type="module" src="/assets/js/auth-ui.js"></script>
+    <!-- After certificate.js, which is a plain defer script and so runs first:
+         the gate reads the globals that file defines and has to register its
+         listeners behind that renderer's to get the last word. -->
+    <script type="module" src="/assets/js/certificate-gate.js"></script>
 </head>
   <body class="page page-certificate">
     <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -124,6 +128,17 @@
           complete, including the capstone project in Unit 10. You have finished
           <strong data-cert-count>0</strong> of 10 — still to go:
           <strong data-cert-remaining></strong>.</p>
+        <p><a class="btn btn-primary route" href="/progress.html">See your progress</a></p>
+      </div>
+
+      <div data-cert-state="pending" hidden>
+        <h1>Waiting on your teacher</h1>
+        <p class="cert-intro">You finished all ten units — nice work. Because you
+          are in a class, your certificate goes to your teacher to approve
+          before it is issued. There is nothing else for you to do; check back
+          here once they have had a look.</p>
+        <p class="cert-hint" data-cert-requested-line hidden>Sent for approval on
+          <strong data-cert-requested></strong>.</p>
         <p><a class="btn btn-primary route" href="/progress.html">See your progress</a></p>
       </div>
 

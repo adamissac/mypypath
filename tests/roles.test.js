@@ -17,10 +17,16 @@ describe('normalizeRole', () => {
 
   // Every account that existed before roles shipped has no role field, and
   // those accounts must keep behaving exactly as they did.
-  it('treats a missing or unknown role as personal', () => {
+  it('treats a missing or unknown role as student', () => {
     [undefined, null, '', 'admin', 'TEACHER', 42, {}].forEach((v) => {
-      expect(R.normalizeRole(v)).toBe('personal');
+      expect(R.normalizeRole(v)).toBe('student');
     });
+  });
+
+  // `personal` was the role's old name; existing production accounts still
+  // carry it and must keep behaving like an unattached student.
+  it('maps the legacy personal role to student', () => {
+    expect(R.normalizeRole('personal')).toBe('student');
   });
 });
 
@@ -88,9 +94,14 @@ describe('generateCode', () => {
 });
 
 describe('validateJoin', () => {
-  it('ignores the code entirely for personal and teacher accounts', () => {
-    expect(R.validateJoin('personal', 'garbage')).toEqual({ ok: true, code: '', error: null });
+  it('ignores the code entirely for teacher accounts', () => {
     expect(R.validateJoin('teacher', 'garbage')).toEqual({ ok: true, code: '', error: null });
+  });
+
+  // `personal` normalizes to `student` now, so a legacy caller passing it
+  // still gets the student code path rather than being silently ignored.
+  it('validates the code for the legacy personal role like a student', () => {
+    expect(R.validateJoin('personal', 'abc-234').code).toBe('ABC234');
   });
 
   // A student may sign up before the teacher has handed the code out; losing
@@ -111,22 +122,28 @@ describe('validateJoin', () => {
   });
 });
 
-// The picker is only real if the page actually offers all three and wires the
-// role through to the account that gets created.
+// The picker is only real if the page actually offers exactly the two roles
+// and wires the role through to the account that gets created.
 describe('signup.html wiring', () => {
-  it('offers all three roles', () => {
+  it('offers exactly two role options', () => {
+    const inputs = signup.match(/<input type="radio" name="signup-role"/g) || [];
+    expect(inputs.length).toBe(2);
     R.ROLES.forEach((role) => {
       expect(signup).toContain(`value="${role}"`);
     });
   });
 
-  it('defaults to a personal account', () => {
-    expect(signup).toMatch(/value="personal"\s+checked/);
+  it('defaults to a student account', () => {
+    expect(signup).toMatch(/value="student"\s+checked/);
   });
 
-  it('has a join code field for students', () => {
-    expect(signup).toContain('id="signup-join-code"');
-    expect(signup).toContain('data-role-join');
+  it('drops the legacy personal role', () => {
+    expect(signup).not.toContain('value="personal"');
+  });
+
+  it('has no join-code entry at signup', () => {
+    expect(signup).not.toContain('id="signup-join-code"');
+    expect(signup).not.toContain('data-role-join');
   });
 
   it('applies the role on both the email and the provider path', () => {

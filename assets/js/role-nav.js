@@ -5,6 +5,10 @@
    twenty document reads to keep one menu item visible. */
 import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
 import { currentUser } from '/assets/js/auth.js';
+// Rides along here rather than as its own script tag: this module is already
+// loaded on every page, and adding a tag to all 124 of them is a change that
+// would have to be repeated for every page added later.
+import '/assets/js/join-menu.js';
 
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const { doc, getDoc } = await import(`${BASE}/firebase-firestore.js`);
@@ -35,7 +39,7 @@ function paint(role) {
 
 async function apply(user) {
   if (!user) {
-    paint('personal');
+    paint('student');
     return;
   }
   const known = cached(user.uid);
@@ -51,7 +55,7 @@ async function apply(user) {
   } catch (e) {
     // Offline or denied: leave the link hidden rather than showing a page the
     // account cannot use.
-    paint('personal');
+    paint('student');
   }
 }
 

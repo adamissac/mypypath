@@ -1,13 +1,13 @@
 /* PyPath — account roles and classroom join codes: pure rules, no I/O.
 
-   Three roles. `personal` is the default and behaves exactly as an account did
-   before roles existed; `teacher` owns a join code and a roster; `student` is
-   attached to at most one teacher at a time. */
+   Two roles. `student` is the default; a student with no teacher attached
+   behaves exactly as a personal account did before roles existed. `teacher`
+   owns a join code and a roster. */
 (function () {
   'use strict';
 
-  var ROLES = ['personal', 'student', 'teacher'];
-  var DEFAULT_ROLE = 'personal';
+  var ROLES = ['student', 'teacher'];
+  var DEFAULT_ROLE = 'student';
 
   var CODE_LENGTH = 6;
 
@@ -20,9 +20,13 @@
     return typeof value === 'string' && ROLES.indexOf(value) !== -1;
   }
 
-  // Accounts created before roles existed have no role field. They are
-  // personal accounts and must keep behaving like one.
+  // Accounts created before roles existed have no role field, and `personal`
+  // is what the role used to be called before the vocabulary shrank to two
+  // values. Both, and anything else unrecognized, fall back to `student` --
+  // a student with no teacher attached behaves exactly as a personal account
+  // did.
   function normalizeRole(value) {
+    if (value === 'personal') return DEFAULT_ROLE;
     return isRole(value) ? value : DEFAULT_ROLE;
   }
 
@@ -65,7 +69,9 @@
   }
 
   // A student may sign up before their teacher has handed out the code, so an
-  // empty code is allowed and simply leaves them unattached.
+  // empty code is allowed and simply leaves them unattached. Only teachers
+  // skip this check now -- a bare `role !== 'student'` used to also cover
+  // `personal` accounts, which no longer exist.
   function validateJoin(role, rawCode) {
     if (normalizeRole(role) !== 'student') return { ok: true, code: '', error: null };
     var code = normalizeCode(rawCode);

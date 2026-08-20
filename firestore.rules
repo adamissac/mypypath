@@ -115,6 +115,45 @@ service cloud.firestore {
         return !request.resource.data.keys().hasAny(['email', 'photoURL']);
       }
 
+      // The verdict a teacher returns on a certificate request. Kept out of
+      // reach of the student it is about: an owner who could write these keys
+      // would simply approve themselves, and the whole point of sending the
+      // request to a teacher is that the student cannot answer it.
+      //
+      // Split in two because an update has to compare against what is already
+      // stored. Checking the whole post-write document on update would lock a
+      // student out of their own roster the moment a teacher approved them:
+      // every later progress mirror still carries the approval forward, and
+      // would look like an attempt to write it.
+      function verdictAbsent() {
+        return !request.resource.data.keys()
+          .hasAny(['certificateApproved', 'certificateDecidedAt']);
+      }
+
+      function verdictUnchanged() {
+        return !request.resource.data.diff(resource.data)
+          .affectedKeys().hasAny(['certificateApproved', 'certificateDecidedAt']);
+      }
+
+      // The teacher's half of the certificate handshake. The student asks by
+      // stamping certificateRequestedAt; only their own teacher may answer.
+      //
+      // The key whitelist is what keeps this from becoming a general-purpose
+      // write on someone else's record: without it, "grading" would be a cover
+      // for rewriting a student's progress, renaming them, or moving them into
+      // another class. certificateRequestedAt is deliberately absent from it,
+      // so a teacher cannot forge a request that was never made.
+      function gradingOwnStudent() {
+        return theirTeacher()
+          && request.resource.data.diff(resource.data)
+             .affectedKeys().hasOnly(
+               ['certificateApproved', 'certificateDecidedAt', 'updatedAt'])
+          // A string 'true' would read as "not approved" to the client gate and
+          // strand the student in the waiting state with no way to tell why.
+          && (!('certificateApproved' in request.resource.data)
+              || request.resource.data.certificateApproved is bool);
+      }
+
       // The one write a teacher may make to someone else's document: dropping
       // a student from their own class. It may touch nothing but the class
       // fields, and it may only clear them, never point them somewhere else.
@@ -129,10 +168,12 @@ service cloud.firestore {
       // per-document lookup.
       allow read: if isOwner(uid) || isAdmin() || theirTeacher();
 
-      allow create: if isOwner(uid) && joinIsProven() && noContactDetails();
+      allow create: if isOwner(uid) && joinIsProven() && noContactDetails()
+        && verdictAbsent();
       allow update: if (isOwner(uid) && (classUnchanged() || joinIsProven())
-                        && noContactDetails())
-        || removingOwnStudent();
+                        && noContactDetails() && verdictUnchanged())
+        || removingOwnStudent()
+        || gradingOwnStudent();
       allow delete: if isOwner(uid);
     }
   }

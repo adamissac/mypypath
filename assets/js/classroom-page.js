@@ -10,7 +10,7 @@ import {
 } from '/assets/js/class-join.js';
 
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
-const { collection, query, where, getDocs } =
+const { collection, query, where, getDocs, doc, updateDoc } =
   await import(`${BASE}/firebase-firestore.js`);
 
 const ROLES = window.PyPathRoles;
@@ -18,6 +18,10 @@ const ACT = window.PyPathActivity;
 const TOTAL_UNITS = 10;
 
 const state = { uid: null, code: '', rows: [], sort: 'name', dir: 1 };
+
+// Decisions in flight, so a double click cannot fire two writes at one row and
+// leave the loser's revert undoing the winner's decision.
+const deciding = new Set();
 
 function qs(sel) { return document.querySelector(sel); }
 
@@ -52,21 +56,67 @@ function toRow(id, data) {
     ? Number(data.unitsCompleted)
     : units.length;
   return {
-    uid: id, // kept for the remove call only; never rendered or exported
+    uid: id, // kept for the remove and decision calls only; never rendered or exported
     name: data.displayName || '',
     joined: Number(data.joinedClassAt) || 0,
     lastSeenAt: Number(data.lastSeenAt) || 0,
     seconds: Number(data.totalSeconds) || 0,
     units: Math.max(0, Math.min(TOTAL_UNITS, count)),
     certificate: !!data.hasCertificate,
+    requestedAt: Number(data.certificateRequestedAt) || 0,
+    // Tri-state on purpose: null means "not looked at yet", and that is the
+    // only value that puts a student in the teacher's queue. Collapsing it to
+    // false would make every unfinished student look declined.
+    approved: typeof data.certificateApproved === 'boolean' ? data.certificateApproved : null,
+    decidedAt: Number(data.certificateDecidedAt) || 0,
   };
+}
+
+/* A decision always outranks the request that prompted it, so a student who
+   touches a unit again after a decline cannot quietly reopen a settled case.
+   The request stands in for "finished all ten units": it is only written once
+   they are, and trusting it means a roster row whose unit count has not caught
+   up yet cannot drop someone out of the queue. */
+function certState(row) {
+  if (row.approved === true) return 'approved';
+  if (row.approved === false) return 'declined';
+  if (row.requestedAt > 0) return 'pending';
+  if (row.certificate) return 'earned';
+  return 'none';
+}
+
+function isPending(row) { return certState(row) === 'pending'; }
+
+const CERT_RANK = { none: 0, earned: 1, approved: 2, declined: 3, pending: 4 };
+
+const CERT_VIEW = {
+  none: { pill: 'admin-pill--no', label: 'Not finished' },
+  earned: { pill: 'admin-pill--yes', label: 'Earned' },
+  approved: { pill: 'admin-pill--yes', label: 'Approved' },
+  declined: { pill: 'admin-pill--declined', label: 'Declined' },
+  pending: { pill: 'admin-pill--wait', label: 'Awaiting you' },
+};
+
+const CERT_CSV = {
+  none: 'not finished',
+  earned: 'earned',
+  approved: 'approved',
+  declined: 'declined',
+  pending: 'awaiting approval',
+};
+
+// The certificate column sorts on the state rather than the stored field, so
+// the default descending click puts everything waiting on the teacher on top.
+function sortValue(row, key) {
+  if (key === 'certificate') return CERT_RANK[certState(row)];
+  return row[key];
 }
 
 function sorted(rows) {
   const key = state.sort;
   return rows.slice().sort((a, b) => {
-    const x = a[key];
-    const y = b[key];
+    const x = sortValue(a, key);
+    const y = sortValue(b, key);
     if (typeof x === 'string' || typeof y === 'string') {
       return String(x).localeCompare(String(y)) * state.dir;
     }
@@ -74,9 +124,32 @@ function sorted(rows) {
   });
 }
 
+function certCell(row) {
+  const st = certState(row);
+  const view = CERT_VIEW[st];
+  const who = esc(row.name || 'this learner');
+  const buttons = [];
+  if (st === 'pending' || st === 'declined') {
+    buttons.push(`<button type="button" class="btn ${st === 'pending' ? 'btn-primary' : 'btn-ghost'} btn-small"
+        data-class-approve="${esc(row.uid)}"
+        aria-label="Approve the certificate for ${who}">Approve</button>`);
+  }
+  if (st === 'pending' || st === 'approved') {
+    buttons.push(`<button type="button" class="btn btn-ghost btn-small"
+        data-class-decline="${esc(row.uid)}"
+        aria-label="Decline the certificate for ${who}">Decline</button>`);
+  }
+  return `<td class="admin-cell-cert">
+      <span class="admin-cert">
+        <span class="admin-pill ${view.pill}">${view.label}</span>
+        ${buttons.join('')}
+      </span>
+    </td>`;
+}
+
 function rowHtml(row) {
   const pct = Math.round((row.units / TOTAL_UNITS) * 100);
-  return `<tr>
+  return `<tr class="${isPending(row) ? 'admin-row--pending' : ''}">
     <td class="admin-cell-user">
       <span class="admin-name">${esc(row.name || 'Unnamed learner')}</span>
     </td>
@@ -89,11 +162,8 @@ function rowHtml(row) {
       </div>
       <span class="admin-bar-label">${row.units}/${TOTAL_UNITS}</span>
     </td>
-    <td>${
-      row.certificate
-        ? '<span class="admin-pill admin-pill--yes">Earned</span>'
-        : '<span class="admin-pill admin-pill--no">No</span>'
-    }</td>
+    <td>${esc(fmtDate(row.requestedAt))}</td>
+    ${certCell(row)}
     <td><button type="button" class="btn btn-ghost btn-small" data-class-remove="${esc(row.uid)}"
         >Remove</button></td>
   </tr>`;
@@ -107,21 +177,34 @@ function render() {
   if (body) {
     body.innerHTML = state.rows.length
       ? sorted(state.rows).map(rowHtml).join('')
-      : `<tr><td colspan="7" class="admin-empty">No students yet. Share the join
+      : `<tr><td colspan="8" class="admin-empty">No students yet. Share the join
          code above and they will appear here once they enter it.</td></tr>`;
   }
 
   const totalSeconds = state.rows.reduce((sum, r) => sum + r.seconds, 0);
+  const pending = state.rows.filter(isPending).length;
+  const issued = state.rows.filter((r) => {
+    const st = certState(r);
+    return st === 'approved' || st === 'earned';
+  });
   const stats = {
     students: String(state.rows.length),
     hours: String(ACT.toHours(totalSeconds)),
-    certificates: String(state.rows.filter((r) => r.certificate).length),
+    certificates: String(issued.length),
     started: String(state.rows.filter((r) => r.units > 0).length),
+    pending: String(pending),
   };
   Object.keys(stats).forEach((key) => {
     const el = qs(`[data-class-stat="${key}"]`);
     if (el) el.textContent = stats[key];
   });
+
+  // The tile only stands out while there is something to do; a permanently
+  // highlighted zero is the fastest way to teach a teacher to ignore it.
+  const pendingTile = qs('[data-class-stat="pending"]');
+  if (pendingTile && pendingTile.parentElement) {
+    pendingTile.parentElement.classList.toggle('admin-stat--alert', pending > 0);
+  }
 
   document.querySelectorAll('[data-class-sort]').forEach((btn) => {
     const active = btn.dataset.classSort === state.sort;
@@ -130,20 +213,63 @@ function render() {
   });
 }
 
-// Same columns the teacher sees, minus nothing and plus nothing. No uid.
+// Same columns the teacher sees, plus the two decision timestamps. No uid, and
+// still nothing that could be used to contact a student.
 function toCsv(rows) {
-  const head = ['name', 'joined_class', 'last_active', 'hours', 'units_completed', 'certificate'];
+  const head = [
+    'name', 'joined_class', 'last_active', 'hours', 'units_completed',
+    'certificate', 'certificate_status', 'certificate_requested', 'certificate_decided',
+  ];
   const cell = (v) => {
     const s = String(v == null ? '' : v);
     return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
   };
-  const lines = rows.map((r) => [
-    r.name,
-    r.joined ? new Date(r.joined).toISOString() : '',
-    r.lastSeenAt ? new Date(r.lastSeenAt).toISOString() : '',
-    ACT.toHours(r.seconds), r.units, r.certificate ? 'yes' : 'no',
-  ].map(cell).join(','));
+  const lines = rows.map((r) => {
+    const st = certState(r);
+    return [
+      r.name,
+      r.joined ? new Date(r.joined).toISOString() : '',
+      r.lastSeenAt ? new Date(r.lastSeenAt).toISOString() : '',
+      ACT.toHours(r.seconds), r.units,
+      st === 'approved' || st === 'earned' ? 'yes' : 'no',
+      CERT_CSV[st],
+      r.requestedAt ? new Date(r.requestedAt).toISOString() : '',
+      r.decidedAt ? new Date(r.decidedAt).toISOString() : '',
+    ].map(cell).join(',');
+  });
   return [head.join(','), ...lines].join('\n');
+}
+
+async function decide(uid, approved) {
+  const row = state.rows.find((r) => r.uid === uid);
+  if (!row || deciding.has(uid)) return;
+  const before = { approved: row.approved, decidedAt: row.decidedAt };
+  const now = Date.now();
+  deciding.add(uid);
+  row.approved = approved;
+  row.decidedAt = now;
+  render();
+  try {
+    // Exactly the three keys the rules let a teacher change. Anything else in
+    // this object — even a field read straight back off the row unchanged —
+    // makes the whole write fail.
+    await updateDoc(doc(db, `roster/${uid}`), {
+      certificateApproved: approved,
+      certificateDecidedAt: now,
+      updatedAt: now,
+    });
+    toast(approved
+      ? (row.name || 'That learner') + ' can now download their certificate.'
+      : 'Held back. ' + (row.name || 'That learner')
+        + ' can be approved from the same row once the work improves.');
+  } catch (e) {
+    row.approved = before.approved;
+    row.decidedAt = before.decidedAt;
+    render();
+    toast('Could not save that decision. Please try again.');
+  } finally {
+    deciding.delete(uid);
+  }
 }
 
 async function loadRoster() {
@@ -221,6 +347,17 @@ function wire() {
   const body = qs('[data-class-rows]');
   if (body) {
     body.addEventListener('click', async (e) => {
+      /* Neither decision asks for confirmation. Both are reversible from the
+         same cell in one click — a declined row keeps an Approve button, an
+         approved one keeps Decline — so a confirm step would buy nothing here
+         and would blunt the one guarding Remove, which is the click that
+         cannot be taken back. */
+      const approve = e.target.closest('[data-class-approve]');
+      if (approve) { decide(approve.dataset.classApprove, true); return; }
+
+      const decline = e.target.closest('[data-class-decline]');
+      if (decline) { decide(decline.dataset.classDecline, false); return; }
+
       const btn = e.target.closest('[data-class-remove]');
       if (!btn) return;
       const uid = btn.dataset.classRemove;
