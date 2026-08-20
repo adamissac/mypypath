@@ -9,8 +9,11 @@ html[data-gate="locked"] main > *:not([data-gate-paywall]) {
   user-select: none;
 }
 
+/* Also injected straight into <main>, so on anything narrower than 34rem it
+   had no gutter at all. Same side spacing as the rest of the page. */
 .gate-paywall {
-  max-width: 34rem;
+  width: min(34rem, 100% - 2 * clamp(1.5rem, 4.5vw, 3.5rem));
+  max-width: none;
   margin: 3rem auto;
   padding: 2rem;
   text-align: center;
