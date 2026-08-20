@@ -416,8 +416,14 @@
           ? '<p><a class="btn btn-primary route" href="' + next + '">Go to the next Unit ' + prev + ' lesson</a></p>'
           : '<p><a class="btn btn-primary route" href="/units/unit-' + prev + '.html">Back to Unit ' + prev + '</a></p>');
 
+    // <main> has no gutters of its own — the page's .container supplies them —
+    // so the notice needs a wrapper or it sits flush against the window edge.
+    var wrap = document.createElement('div');
+    wrap.className = 'unit-locked-notice-wrap';
+    wrap.appendChild(box);
+
     var main = document.querySelector('main');
-    if (main) main.insertBefore(box, main.firstChild);
+    if (main) main.insertBefore(wrap, main.firstChild);
   }
 
   // The end of unit test links on the unit pages and the curriculum are real

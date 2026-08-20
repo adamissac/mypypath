@@ -26,8 +26,27 @@
   background: rgba(16, 78, 51, 0.35);
 }
 
+/* The notice is injected as a direct child of <main>, outside the page's
+   .container, so it used to run edge to edge with the text jammed against the
+   window. The wrapper below borrows the same gutters as lesson content, and
+   the notice is capped at a readable measure inside them. */
+.unit-locked-notice-wrap {
+  box-sizing: border-box;
+  width: 100%;
+  padding-left: clamp(1.5rem, 4.5vw, 3.5rem);
+  padding-right: clamp(1.5rem, 4.5vw, 3.5rem);
+}
+
+@media (min-width: 1400px) {
+  .unit-locked-notice-wrap {
+    padding-left: clamp(2rem, 5vw, 4rem);
+    padding-right: clamp(2rem, 5vw, 4rem);
+  }
+}
+
 .unit-locked-notice {
-  margin: 20px 0 28px;
+  max-width: 68ch;
+  margin: 24px 0 28px;
   padding: 20px 22px;
   border: 1px solid #f0d08a;
   border-left: 4px solid #e0a72e;
