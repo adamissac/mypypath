@@ -10,7 +10,7 @@ OUT = ROOT / "sitemap.xml"
 SKIP_DIRS = {".git", "node_modules", "lesson-format-kit", "REVIEW", "docs", "tests"}
 # A 404 page must never be advertised for indexing, and the staff dashboard
 # is not public content.
-SKIP_FILES = {"404.html", "admin.html"}
+SKIP_FILES = {"404.html", "admin.html", "classroom.html"}
 
 def page_url(path: Path) -> str:
     rel = path.relative_to(ROOT).as_posix()

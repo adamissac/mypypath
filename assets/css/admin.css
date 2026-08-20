@@ -216,3 +216,114 @@
 
 [data-theme='dark'] .admin-tag { background: #5a4212; color: #f6d5a8; }
 [data-theme='dark'] .admin-pill--yes { background: #143622; color: #a9e8c1; }
+
+/* Role picker on signup, and the classroom panels. */
+.role-picker {
+  margin: 1.25rem 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.role-picker legend {
+  padding: 0;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.role-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 0.7rem;
+  cursor: pointer;
+  font-weight: 400;
+}
+
+/* :has is the only way to style the row from the input's state without a
+   wrapper script; browsers without it simply get an unhighlighted row. */
+.role-option:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--bg-elevated);
+}
+
+.role-option input {
+  margin: 0.2rem 0 0;
+  flex: none;
+  accent-color: var(--accent);
+}
+
+.role-option__body { display: block; }
+
+.role-option__title {
+  display: block;
+  font-weight: 600;
+}
+
+.role-option__hint {
+  display: block;
+  font-size: 0.87rem;
+  opacity: 0.75;
+  line-height: 1.4;
+}
+
+.role-join { margin-top: 0.75rem; }
+
+.role-join input,
+.class-section input[type='text'] {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.class-section {
+  margin: 2rem 0 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.class-code {
+  margin-bottom: 1.75rem;
+  padding: 1.25rem 1.4rem;
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  background: var(--panel);
+}
+
+.class-code__label {
+  margin: 0 0 0.35rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.class-code__value {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 2.4rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  line-height: 1.1;
+}
+
+.class-code__hint {
+  margin: 0.4rem 0 0.9rem;
+  font-size: 0.9rem;
+  opacity: 0.75;
+}
+
+.class-warn {
+  margin-top: 0.9rem;
+  padding: 0.8rem 0.95rem;
+  border-radius: 0.6rem;
+  background: var(--bg-elevated);
+  font-size: 0.92rem;
+}
+
+.btn-small {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.85rem;
+}

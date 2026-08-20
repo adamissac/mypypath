@@ -5,8 +5,8 @@
     <script src="/assets/js/theme-init.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Admin &bull; PyPath</title>
-    <meta name="description" content="Internal learner roster for PyPath staff." />
+    <title>My classroom &bull; PyPath</title>
+    <meta name="description" content="Your PyPath class: the join code to share and how your students are progressing." />
     <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
     <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
@@ -22,11 +22,10 @@
 <script defer src="/assets/js/theme.js"></script>
     <script defer src="/assets/js/icons.js"></script>
 <script defer src="/assets/js/storage-keys.js"></script>
-    <script defer src="/assets/js/roles.js"></script>
     <script defer src="/assets/js/progress-store.js"></script>
     <script defer src="/assets/js/merge.js"></script>
     <script defer src="/assets/js/username.js"></script>
-    <script defer src="/assets/js/admin-access.js"></script>
+    <script defer src="/assets/js/roles.js"></script>
     <script defer src="/assets/js/activity-core.js"></script>
     <script defer src="/assets/js/motion.js"></script>
     <script defer src="/assets/js/core.js"></script>
@@ -35,9 +34,9 @@
     <script type="module" src="/assets/js/role-nav.js"></script>
     <script type="module" src="/assets/js/activity.js"></script>
     <script type="module" src="/assets/js/auth-ui.js"></script>
-    <script type="module" src="/assets/js/admin-page.js"></script>
+    <script type="module" src="/assets/js/classroom-page.js"></script>
 </head>
-  <body class="page page-admin">
+  <body class="page page-classroom">
     <a class="skip-link" href="#main-content">Skip to main content</a>
     <div id="page-transition" aria-hidden="true"></div>
 
@@ -84,52 +83,60 @@
     </header>
 
     <main id="main-content" class="container admin-page">
-      <h1>Learner dashboard</h1>
+      <h1>My classroom</h1>
 
-      <p data-admin-state="loading">Checking your account&hellip;</p>
+      <p data-class-state="loading">Loading your class&hellip;</p>
 
-      <section data-admin-state="denied" hidden>
-        <p>This page is for PyPath staff. If you are signed in to the wrong
-           account, <a href="/login.html" class="route">sign in again</a>.</p>
+      <section data-class-state="guest" hidden>
+        <p><a href="/login.html" class="route">Sign in</a> to see your class.</p>
       </section>
 
-      <section class="admin-error" data-admin-state="error" hidden>
-        <p>Could not load the roster.</p>
-        <code data-admin-error-message></code>
-        <p><button type="button" class="btn btn-ghost" data-admin-refresh>Try again</button></p>
+      <section data-class-state="not-teacher" hidden>
+        <p>This page is for teacher accounts. You can switch your account to a
+           teacher account from your <a href="/account.html" class="route">account
+           page</a>, and a join code will be issued to you.</p>
       </section>
 
-      <div data-admin-state="ready" hidden>
-        <div class="admin-head">
-          <div>
-            <p>Every account, how long they have spent learning, how far they
-               got, and whether they finished.</p>
-          </div>
+      <section class="admin-error" data-class-state="error" hidden>
+        <p>Could not load your class.</p>
+        <code data-class-error-message></code>
+      </section>
+
+      <div data-class-state="ready" hidden>
+        <section class="class-code">
+          <h2 class="class-code__label">Your join code</h2>
+          <p class="class-code__value" data-class-code>——————</p>
+          <p class="class-code__hint">Students enter this when they sign up, or from
+             their account page if they already have an account.</p>
           <div class="admin-actions">
-            <label class="visually-hidden" for="admin-search">Search learners</label>
-            <input class="admin-search" id="admin-search" type="search"
-                   placeholder="Search name, email, uid" data-admin-search>
-            <button type="button" class="btn btn-ghost" data-admin-refresh>Refresh</button>
-            <button type="button" class="btn btn-primary" data-admin-csv>Export CSV</button>
+            <button type="button" class="btn btn-primary" data-class-copy>Copy code</button>
+            <button type="button" class="btn btn-ghost" data-class-regenerate>Issue a new code</button>
+            <button type="button" class="btn btn-ghost" data-class-csv>Export CSV</button>
           </div>
-        </div>
+          <p class="class-warn" data-class-regen-confirm hidden>
+            Issuing a new code stops the current one working straight away.
+            Students already in your class stay in it.
+            <button type="button" class="btn btn-primary btn-small" data-class-regenerate>Yes, issue a new code</button>
+            <button type="button" class="btn btn-ghost btn-small" data-class-regen-cancel>Cancel</button>
+          </p>
+        </section>
 
         <dl class="admin-stats">
           <div class="admin-stat">
-            <dt>Accounts</dt>
-            <dd data-admin-stat="learners">0</dd>
+            <dt>Students</dt>
+            <dd data-class-stat="students">0</dd>
           </div>
           <div class="admin-stat">
             <dt>Total hours</dt>
-            <dd data-admin-stat="hours">0</dd>
+            <dd data-class-stat="hours">0</dd>
           </div>
           <div class="admin-stat">
-            <dt>Have studied</dt>
-            <dd data-admin-stat="active">0</dd>
+            <dt>Started a unit</dt>
+            <dd data-class-stat="started">0</dd>
           </div>
           <div class="admin-stat">
             <dt>Certificates</dt>
-            <dd data-admin-stat="certificates">0</dd>
+            <dd data-class-stat="certificates">0</dd>
           </div>
         </dl>
 
@@ -137,22 +144,23 @@
           <table class="admin-table">
             <thead>
               <tr>
-                <th scope="col"><button type="button" data-admin-sort="email">Learner</button></th>
-                <th scope="col"><button type="button" data-admin-sort="createdAt">Joined</button></th>
-                <th scope="col"><button type="button" data-admin-sort="lastSeenAt">Last active</button></th>
-                <th scope="col"><button type="button" data-admin-sort="seconds">Time on platform</button></th>
-                <th scope="col"><button type="button" data-admin-sort="units">Progress</button></th>
-                <th scope="col"><button type="button" data-admin-sort="certificate">Certificate</button></th>
+                <th scope="col"><button type="button" data-class-sort="name">Student</button></th>
+                <th scope="col"><button type="button" data-class-sort="joined">Joined class</button></th>
+                <th scope="col"><button type="button" data-class-sort="lastSeenAt">Last active</button></th>
+                <th scope="col"><button type="button" data-class-sort="seconds">Time learning</button></th>
+                <th scope="col"><button type="button" data-class-sort="units">Progress</button></th>
+                <th scope="col"><button type="button" data-class-sort="certificate">Certificate</button></th>
+                <th scope="col"><span class="visually-hidden">Actions</span></th>
               </tr>
             </thead>
-            <tbody data-admin-rows></tbody>
+            <tbody data-class-rows></tbody>
           </table>
         </div>
 
-        <p class="admin-note">Time counts only while a signed-in learner has the
-          tab open and has interacted within the last five minutes, so an
-          abandoned tab does not inflate the number. Accounts created before
-          time tracking shipped show no history until their next visit.</p>
+        <p class="admin-note">Time counts only while a student has PyPath open in
+          front of them and has interacted within the last five minutes. You can
+          see how far your students have got and how long they have spent; you
+          cannot see the Python they write in the lessons.</p>
       </div>
     </main>
 
