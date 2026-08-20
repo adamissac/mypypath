@@ -26,11 +26,11 @@
   background: rgba(16, 78, 51, 0.35);
 }
 
-/* The notice is injected as a direct child of <main>, outside the page's
-   .container, so it used to run edge to edge with the text jammed against the
-   window. The wrapper below borrows the same gutters as lesson content, and
-   the notice is capped at a readable measure inside them. */
-.unit-locked-notice-wrap {
+/* These notices are injected as direct children of <main>, outside the page's
+   .container, so they used to run edge to edge with the text jammed against
+   the window. The wrapper below borrows the same gutters as lesson content,
+   and each notice is capped at a readable measure inside them. */
+.main-notice-wrap {
   box-sizing: border-box;
   width: 100%;
   padding-left: clamp(1.5rem, 4.5vw, 3.5rem);
@@ -38,7 +38,7 @@
 }
 
 @media (min-width: 1400px) {
-  .unit-locked-notice-wrap {
+  .main-notice-wrap {
     padding-left: clamp(2rem, 5vw, 4rem);
     padding-right: clamp(2rem, 5vw, 4rem);
   }
@@ -173,7 +173,8 @@
 /* Teacher view banner. Deliberately not the amber of .unit-locked-notice --
    nothing here is a warning, it is a statement of which view you are in. */
 .teacher-view-note {
-  margin: 20px 0 28px;
+  max-width: 68ch;
+  margin: 24px 0 28px;
   padding: 18px 22px;
   border: 1px solid var(--border, #cfe3f2);
   border-left: 4px solid var(--accent, #2f7ea8);
