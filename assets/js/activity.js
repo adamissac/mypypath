@@ -8,6 +8,7 @@
    inventing one would mean guessing who was at the keyboard. */
 import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
 import { currentUser } from '/assets/js/auth.js';
+import { currentTeacher } from '/assets/js/class-state.js';
 
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const { doc, setDoc, increment } = await import(`${BASE}/firebase-firestore.js`);
@@ -106,6 +107,15 @@ async function flush() {
       { totalSeconds: increment(amount), lastSeenAt: now },
       { merge: true }
     );
+    // A learner in a class mirrors the same totals into the roster, the only
+    // place their teacher can read them. No class means no third write.
+    if (currentTeacher()) {
+      await setDoc(
+        doc(db, `roster/${id}`),
+        { totalSeconds: increment(amount), lastSeenAt: now },
+        { merge: true }
+      );
+    }
     savePending(id, 0);
   } catch (e) {
     pendingSeconds += amount;

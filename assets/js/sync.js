@@ -1,6 +1,7 @@
 /* PyPath — installs a Firestore remote adapter into ProgressStore whenever a
    user is signed in, and merges local state into remote on sign-in. */
 import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
+import { currentTeacher, loadFor } from '/assets/js/class-state.js';
 
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const { doc, getDoc, setDoc, collection, getDocs, deleteDoc } =
@@ -39,6 +40,16 @@ function summary(units, now) {
     hasCertificate: complete,
     progressUpdatedAt: now,
   };
+}
+
+// A learner in a class has the same progress mirrored into the roster, which
+// is the only thing their teacher can read. Nothing is written for a learner
+// who is not in a class -- no class, no document, no extra write.
+async function mirrorToRoster(uid, fields) {
+  if (!currentTeacher()) return;
+  try {
+    await setDoc(doc(db, `roster/${uid}`), fields, { merge: true });
+  } catch (e) { /* the learner's own copy already saved; retried on next write */ }
 }
 
 // Everything the roster needs to identify a learner. Written on every sign-in,
@@ -101,6 +112,7 @@ function makeAdapter(uid) {
               { merge: true }
             );
             await setDoc(doc(db, `users/${uid}`), summary(units, now), { merge: true });
+            await mirrorToRoster(uid, summary(units, now));
           } else {
             await setDoc(doc(db, `users/${uid}/code/${KEYS.toDocId(key)}`), {
               localKey: key,
@@ -208,13 +220,17 @@ document.addEventListener('pypath:auth', async (e) => {
 
   try {
     await setDoc(doc(db, `users/${user.uid}`), identity(user), { merge: true });
+    // Who their teacher is, if anyone, before anything is mirrored.
+    await loadFor(user.uid);
     await mergeOnSignIn(user.uid);
     // mergeOnSignIn may have unioned in units this device did not know about.
-    await setDoc(
-      doc(db, `users/${user.uid}`),
-      summary(STORE.getCompletedUnits(), Date.now()),
-      { merge: true }
-    );
+    const merged = summary(STORE.getCompletedUnits(), Date.now());
+    await setDoc(doc(db, `users/${user.uid}`), merged, { merge: true });
+    // displayName is on the account record, which a teacher cannot read, so
+    // the roster carries its own copy of the name to show.
+    await mirrorToRoster(user.uid, Object.assign(
+      { displayName: user.displayName || '' }, merged
+    ));
   } catch (err) {
     toast('Working offline; progress is saved on this device');
   }

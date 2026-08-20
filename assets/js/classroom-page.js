@@ -54,8 +54,7 @@ function toRow(id, data) {
   return {
     uid: id, // kept for the remove call only; never rendered or exported
     name: data.displayName || '',
-    email: data.email || '',
-    joined: Number(data.joinedClassAt) || Number(data.createdAt) || 0,
+    joined: Number(data.joinedClassAt) || 0,
     lastSeenAt: Number(data.lastSeenAt) || 0,
     seconds: Number(data.totalSeconds) || 0,
     units: Math.max(0, Math.min(TOTAL_UNITS, count)),
@@ -80,7 +79,6 @@ function rowHtml(row) {
   return `<tr>
     <td class="admin-cell-user">
       <span class="admin-name">${esc(row.name || 'Unnamed learner')}</span>
-      <span class="admin-email">${esc(row.email)}</span>
     </td>
     <td>${esc(fmtDate(row.joined))}</td>
     <td>${esc(fmtDate(row.lastSeenAt))}</td>
@@ -134,13 +132,13 @@ function render() {
 
 // Same columns the teacher sees, minus nothing and plus nothing. No uid.
 function toCsv(rows) {
-  const head = ['name', 'email', 'joined_class', 'last_active', 'hours', 'units_completed', 'certificate'];
+  const head = ['name', 'joined_class', 'last_active', 'hours', 'units_completed', 'certificate'];
   const cell = (v) => {
     const s = String(v == null ? '' : v);
     return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
   };
   const lines = rows.map((r) => [
-    r.name, r.email,
+    r.name,
     r.joined ? new Date(r.joined).toISOString() : '',
     r.lastSeenAt ? new Date(r.lastSeenAt).toISOString() : '',
     ACT.toHours(r.seconds), r.units, r.certificate ? 'yes' : 'no',
@@ -150,7 +148,7 @@ function toCsv(rows) {
 
 async function loadRoster() {
   const snap = await getDocs(
-    query(collection(db, 'users'), where('teacherUid', '==', state.uid))
+    query(collection(db, 'roster'), where('teacherUid', '==', state.uid))
   );
   state.rows = [];
   snap.forEach((d) => state.rows.push(toRow(d.id, d.data() || {})));
@@ -161,7 +159,7 @@ function wire() {
     btn.addEventListener('click', () => {
       const key = btn.dataset.classSort;
       if (state.sort === key) state.dir = -state.dir;
-      else { state.sort = key; state.dir = key === 'name' || key === 'email' ? 1 : -1; }
+      else { state.sort = key; state.dir = key === 'name' ? 1 : -1; }
       render();
     });
   });
