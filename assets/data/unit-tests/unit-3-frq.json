@@ -1,0 +1,290 @@
+[
+ {
+  "id": "u3-f1",
+  "title": "Apply a discount",
+  "prompt": "Write a function named apply_discount that takes a price and an optional percent. When percent is left out it should default to 10. The function returns the price after taking that percentage off it, so a price of 200 with the default percent returns 180.0. Return the new price, do not print it.",
+  "starter": "def apply_discount(price, percent=10):\n    # your code here\n    pass\n",
+  "entry": "apply_discount",
+  "cases": [
+   {
+    "args": [
+     200
+    ],
+    "expect": 180.0
+   },
+   {
+    "args": [
+     50,
+     50
+    ],
+    "expect": 25.0
+   },
+   {
+    "args": [
+     100,
+     0
+    ],
+    "expect": 100.0
+   },
+   {
+    "args": [
+     120,
+     25
+    ],
+    "expect": 90.0
+   },
+   {
+    "args": [
+     0
+    ],
+    "expect": 0.0,
+    "hidden": true
+   },
+   {
+    "args": [
+     80,
+     100
+    ],
+    "expect": 0.0,
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u3-f2",
+  "title": "Greeting with defaults",
+  "prompt": "Write a function named build_greeting that takes a name and two optional parameters, greeting which defaults to \"Hello\" and punctuation which defaults to \"!\". It returns one string made of the greeting, then a comma and a space, then the name, then the punctuation. So build_greeting(\"Ada\") returns \"Hello, Ada!\". Return the string, do not print it.",
+  "starter": "def build_greeting(name, greeting=\"Hello\", punctuation=\"!\"):\n    # your code here\n    pass\n",
+  "entry": "build_greeting",
+  "cases": [
+   {
+    "args": [
+     "Ada"
+    ],
+    "expect": "Hello, Ada!"
+   },
+   {
+    "args": [
+     "Bo",
+     "Hi"
+    ],
+    "expect": "Hi, Bo!"
+   },
+   {
+    "args": [
+     "Cy",
+     "Hey",
+     "."
+    ],
+    "expect": "Hey, Cy."
+   },
+   {
+    "args": [
+     "Dee",
+     "Welcome",
+     "?"
+    ],
+    "expect": "Welcome, Dee?"
+   },
+   {
+    "args": [
+     ""
+    ],
+    "expect": "Hello, !",
+    "hidden": true
+   },
+   {
+    "args": [
+     "Eve",
+     "Yo",
+     ""
+    ],
+    "expect": "Yo, Eve",
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u3-f3",
+  "title": "Count the long words",
+  "prompt": "Write a function named count_long_words that takes a list of words and an optional min_length that defaults to 4. It returns how many words in the list are strictly longer than min_length, so a word whose length equals min_length does not count. An empty list gives 0. Return the count, do not print it.",
+  "starter": "def count_long_words(words, min_length=4):\n    # your code here\n    pass\n",
+  "entry": "count_long_words",
+  "cases": [
+   {
+    "args": [
+     [
+      "apple",
+      "fig",
+      "banana"
+     ]
+    ],
+    "expect": 2
+   },
+   {
+    "args": [
+     [
+      "a",
+      "bb",
+      "ccc"
+     ],
+     2
+    ],
+    "expect": 1
+   },
+   {
+    "args": [
+     [
+      "hello",
+      "world"
+     ]
+    ],
+    "expect": 2
+   },
+   {
+    "args": [
+     [
+      "tree",
+      "house"
+     ]
+    ],
+    "expect": 1
+   },
+   {
+    "args": [
+     []
+    ],
+    "expect": 0,
+    "hidden": true
+   },
+   {
+    "args": [
+     [
+      "abcd",
+      "abcde"
+     ],
+     4
+    ],
+    "expect": 1,
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u3-f4",
+  "title": "Initials",
+  "prompt": "Write a function named initials that takes two strings, first and last, each holding at least one character, and returns the two initials in upper case with a full stop after each one. So initials(\"ada\", \"lovelace\") returns \"A.L.\". Return the string, do not print it.",
+  "starter": "def initials(first, last):\n    # your code here\n    pass\n",
+  "entry": "initials",
+  "cases": [
+   {
+    "args": [
+     "ada",
+     "lovelace"
+    ],
+    "expect": "A.L."
+   },
+   {
+    "args": [
+     "Grace",
+     "Hopper"
+    ],
+    "expect": "G.H."
+   },
+   {
+    "args": [
+     "bo",
+     "yu"
+    ],
+    "expect": "B.Y."
+   },
+   {
+    "args": [
+     "linus",
+     "torvalds"
+    ],
+    "expect": "L.T."
+   },
+   {
+    "args": [
+     "x",
+     "y"
+    ],
+    "expect": "X.Y.",
+    "hidden": true
+   },
+   {
+    "args": [
+     "ALAN",
+     "turing"
+    ],
+    "expect": "A.T.",
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u3-f5",
+  "title": "Average that survives an empty list",
+  "prompt": "Write a function named safe_average that takes a list of numbers and returns their average. If the list is empty it returns 0 instead of failing. Return the number, do not print it.",
+  "starter": "def safe_average(numbers):\n    # your code here\n    pass\n",
+  "entry": "safe_average",
+  "cases": [
+   {
+    "args": [
+     [
+      2,
+      4,
+      6
+     ]
+    ],
+    "expect": 4.0
+   },
+   {
+    "args": [
+     [
+      10
+     ]
+    ],
+    "expect": 10.0
+   },
+   {
+    "args": [
+     [
+      1,
+      2
+     ]
+    ],
+    "expect": 1.5
+   },
+   {
+    "args": [
+     [
+      5,
+      5,
+      5,
+      5
+     ]
+    ],
+    "expect": 5.0
+   },
+   {
+    "args": [
+     []
+    ],
+    "expect": 0,
+    "hidden": true
+   },
+   {
+    "args": [
+     [
+      -2,
+      2
+     ]
+    ],
+    "expect": 0.0,
+    "hidden": true
+   }
+  ]
+ }
+]

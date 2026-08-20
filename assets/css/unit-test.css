@@ -1,0 +1,328 @@
+/* PyPath — the /unit-test.html paper. Linked only from that page.
+   Shares the panel-on-border look of progress.css and gate.css so a test
+   reads as part of the same site rather than a separate app. */
+
+.unit-test-page {
+  max-width: 52rem;
+  padding-block: 2.5rem 4rem;
+}
+
+.unit-test-page .eyebrow {
+  color: var(--muted, #475569);
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  font-size: .8rem;
+  margin-bottom: .25rem;
+}
+
+/* ---------- notices ---------- */
+
+.ut-notice {
+  margin: 1.25rem 0;
+  padding: .85rem 1rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .6rem;
+  background: var(--bg-elevated, #f1f5f9);
+  color: var(--muted, #475569);
+}
+
+.ut-notice p { margin: 0; }
+.ut-notice p + * { margin-top: .6rem; }
+
+.ut-notice--error {
+  border-color: color-mix(in srgb, var(--danger, #dc2626) 45%, var(--border, #cbd5e1));
+  color: var(--text, #0f172a);
+}
+
+.ut-notice--info {
+  border-color: color-mix(in srgb, var(--accent, #38bdf8) 45%, var(--border, #cbd5e1));
+}
+
+.ut-picker {
+  list-style: none;
+  margin: .75rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.ut-picker a {
+  display: inline-block;
+  padding: .35rem .7rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: 999px;
+  background: var(--panel, #fff);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.ut-picker a:hover { border-color: var(--primary, #2563eb); }
+
+/* ---------- the intro panel ---------- */
+
+.ut-intro {
+  padding: 1.25rem 1.35rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .9rem;
+  background: var(--panel, #fff);
+}
+
+.ut-intro p { color: var(--muted, #475569); }
+.ut-intro p:first-child { margin-top: 0; }
+.ut-best { font-weight: 600; color: var(--text, #0f172a) !important; }
+
+/* ---------- questions ---------- */
+
+.ut-q {
+  margin: 0 0 1rem;
+  padding: 1rem 1.15rem 1.15rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .75rem;
+  background: var(--panel, #fff);
+}
+
+.ut-q__legend {
+  padding: 0 .4rem;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--muted, #475569);
+}
+
+.ut-q__prompt {
+  margin: .2rem 0 .75rem;
+  font-weight: 600;
+  color: var(--text-strong, #020617);
+}
+
+.ut-code {
+  margin: 0 0 .85rem;
+  padding: .7rem .85rem;
+  overflow-x: auto;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .5rem;
+  background: var(--bg-elevated, #f1f5f9);
+  font-size: .9rem;
+  line-height: 1.5;
+}
+
+.ut-choices { display: grid; gap: .4rem; }
+
+/* The whole row is the label, so the hit target is the line and not just the
+   twelve pixels of the radio itself. */
+.ut-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: .6rem;
+  padding: .5rem .65rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .5rem;
+  cursor: pointer;
+}
+
+.ut-choice:hover { border-color: var(--primary, #2563eb); }
+.ut-choice input { margin-top: .2rem; flex: none; }
+.ut-choice:has(input:checked) {
+  border-color: var(--primary, #2563eb);
+  background: color-mix(in srgb, var(--primary, #2563eb) 8%, transparent);
+}
+.ut-choice:has(input:focus-visible) { outline: 2px solid var(--primary, #2563eb); outline-offset: 2px; }
+.ut-choice__text { color: var(--text, #0f172a); }
+
+/* ---------- free response ---------- */
+
+.ut-frq {
+  margin-top: 2rem;
+  padding: 1.15rem 1.25rem 1.35rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .9rem;
+  background: var(--panel, #fff);
+}
+
+.ut-frq__heading {
+  margin: 0;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--muted, #475569);
+}
+
+.ut-frq__title { margin: .35rem 0 .5rem; }
+.ut-frq__prompt { margin: 0 0 .75rem; }
+.ut-frq__entry { margin: 0 0 1rem; color: var(--muted, #475569); }
+.ut-frq__label { margin: 1.1rem 0 .4rem; font-weight: 600; }
+.ut-hint { font-size: .85rem; color: var(--muted, #475569); }
+
+.ut-cases {
+  width: 100%;
+  margin: 0 0 .5rem;
+  border-collapse: collapse;
+  font-size: .9rem;
+  display: block;
+  overflow-x: auto;
+}
+
+.ut-cases caption {
+  text-align: left;
+  padding-bottom: .4rem;
+  font-weight: 600;
+  color: var(--muted, #475569);
+}
+
+.ut-cases th,
+.ut-cases td {
+  text-align: left;
+  padding: .4rem .6rem;
+  border-bottom: 1px solid var(--border, #cbd5e1);
+  vertical-align: top;
+}
+
+.ut-cases th {
+  font-size: .78rem;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--muted, #475569);
+}
+
+.ut-case__call,
+.ut-case__expect,
+.ut-case__detail {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.ut-case__tag {
+  display: inline-block;
+  padding: .05rem .4rem;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: .7rem;
+  color: var(--muted, #475569);
+  background: var(--bg-elevated, #f1f5f9);
+  border: 1px solid var(--border, #cbd5e1);
+}
+
+.ut-case__verdict { font-weight: 700; }
+.ut-cases--result .is-pass .ut-case__verdict { color: var(--success, #16a34a); }
+.ut-cases--result .is-fail .ut-case__verdict { color: var(--danger, #dc2626); }
+.ut-case__detail { display: block; color: var(--muted, #475569); font-size: .82rem; }
+
+.ut-editor {
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .5rem;
+  overflow: hidden;
+}
+
+.ut-editor__textarea {
+  width: 100%;
+  min-height: 16rem;
+  padding: .7rem;
+  border: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .9rem;
+}
+
+.ut-submit-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.ut-submit-row .ut-hint { margin: 0; }
+
+/* ---------- the result ---------- */
+
+.ut-result {
+  margin-top: 1.5rem;
+  padding: 1.35rem 1.4rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .9rem;
+  background: var(--panel, #fff);
+  box-shadow: var(--shadow-strong, 0 12px 32px rgb(0 0 0 / .10));
+}
+
+.ut-result.is-pass { border-color: color-mix(in srgb, var(--success, #16a34a) 50%, var(--border, #cbd5e1)); }
+.ut-result.is-fail { border-color: color-mix(in srgb, var(--danger, #dc2626) 45%, var(--border, #cbd5e1)); }
+
+.ut-score { margin: 0; font-size: 2rem; }
+.ut-result.is-pass .ut-score { color: var(--success, #16a34a); }
+.ut-verdict { margin: .35rem 0 1rem; color: var(--muted, #475569); }
+
+.ut-split {
+  list-style: none;
+  margin: 0 0 1.25rem;
+  padding: 0;
+  display: grid;
+  gap: .4rem;
+}
+
+.ut-split li {
+  padding: .55rem .8rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .55rem;
+  background: var(--bg-elevated, #f1f5f9);
+  font-size: .92rem;
+}
+
+.ut-actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+
+.ut-review__heading {
+  margin: 1.75rem 0 .75rem;
+  font-size: 1rem;
+  letter-spacing: .02em;
+}
+
+.ut-review {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: .75rem;
+}
+
+.ut-review__item {
+  padding: .75rem .9rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-left-width: 4px;
+  border-radius: .55rem;
+}
+
+.ut-review__item.is-correct { border-left-color: var(--success, #16a34a); }
+.ut-review__item.is-wrong { border-left-color: var(--danger, #dc2626); }
+.ut-review__item p { margin: 0 0 .35rem; }
+.ut-review__prompt { font-weight: 600; }
+.ut-review__yours,
+.ut-review__answer { font-size: .9rem; }
+.ut-review__answer { font-weight: 600; }
+.ut-review__explain { font-size: .9rem; color: var(--muted, #475569); }
+
+/* ---------- dark ---------- */
+
+[data-theme="dark"] .ut-intro,
+[data-theme="dark"] .ut-q,
+[data-theme="dark"] .ut-frq,
+[data-theme="dark"] .ut-result,
+[data-theme="dark"] .ut-picker a {
+  background: var(--bg-elevated, #282d38);
+  border-color: var(--border, #434a58);
+}
+
+[data-theme="dark"] .ut-notice,
+[data-theme="dark"] .ut-split li,
+[data-theme="dark"] .ut-code,
+[data-theme="dark"] .ut-case__tag {
+  background: var(--panel, #313744);
+  border-color: var(--border, #434a58);
+}
+
+[data-theme="dark"] .ut-result {
+  box-shadow: var(--shadow-strong, 0 12px 32px rgb(0 0 0 / .5));
+}
+
+@media (max-width: 640px) {
+  .ut-submit-row { align-items: flex-start; flex-direction: column; }
+}

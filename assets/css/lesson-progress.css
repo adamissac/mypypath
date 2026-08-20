@@ -56,3 +56,47 @@
   color: var(--muted, #5b7c92);
   letter-spacing: 0.02em;
 }
+
+/* Entry points to the end of unit test: one card on each unit page, and a
+   list of all ten on the curriculum. Styled here rather than in unit-test.css
+   because that file is only loaded on the test page itself. */
+.unit-test-status {
+  margin: 0;
+  color: var(--muted, #5b7c92);
+  font-size: 0.95rem;
+}
+
+.unit-test-status.is-pass {
+  color: var(--ok, #1f9d55);
+  font-weight: 600;
+}
+
+.ut-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.ut-link {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--border, rgba(20, 60, 90, 0.14));
+  border-radius: 14px;
+  text-decoration: none;
+  color: inherit;
+  background: var(--card, rgba(255, 255, 255, 0.6));
+}
+
+.ut-link:hover,
+.ut-link:focus-visible {
+  border-color: var(--accent, #2f7ea8);
+}
+
+.ut-link__unit {
+  font-weight: 700;
+}

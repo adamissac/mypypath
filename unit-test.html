@@ -5,8 +5,8 @@
     <script src="/assets/js/theme-init.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Unit 5 • Modules & Packages • PyPath</title>
-    <meta name="description" content="Unit 5: Modules & Packages — PyPath curriculum" />
+    <title>End of unit test • PyPath</title>
+    <meta name="description" content="Take the end of unit test: ten multiple choice questions and one free response problem." />
     <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
     <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -18,7 +18,10 @@
     <link rel="stylesheet" href="/assets/css/auth.css" />
     <link rel="stylesheet" href="/assets/css/gate.css" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+    <link rel="stylesheet" href="/assets/css/unit-test.css" />
 
+    <script defer src="/assets/js/pyodide-loader.js"></script>
 <script defer src="/assets/js/theme.js"></script>
     <script defer src="/assets/js/icons.js"></script>
 <script defer src="/assets/js/storage-keys.js"></script>
@@ -37,8 +40,12 @@
     <script type="module" src="/assets/js/role-nav.js"></script>
     <script type="module" src="/assets/js/activity.js"></script>
     <script type="module" src="/assets/js/auth-ui.js"></script>
-</head>
-  <body class="page page-unit">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script defer src="/assets/js/unit-test.js"></script>
+    <script defer src="/assets/js/unit-test-page.js"></script>
+  </head>
+  <body class="page page-unit-test">
     <a class="skip-link" href="#main-content">Skip to main content</a>
     <div id="page-transition" aria-hidden="true"></div>
 
@@ -60,7 +67,7 @@
               <ul class="menu" id="primary-menu">
               <li><a href="/" class="route">Home</a></li>
               <li class="dd dd--nav" data-dd>
-                <button type="button" class="dd-trigger" id="nav-units-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="nav-units-panel" aria-current="page">
+                <button type="button" class="dd-trigger" id="nav-units-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="nav-units-panel">
                   <span>Units</span> <svg class="dd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                 </button>
                 <div class="dd-panel" id="nav-units-panel" role="menu" aria-labelledby="nav-units-btn" hidden>
@@ -73,7 +80,7 @@
             <li role="none"><a role="menuitem" href="/units/unit-2/understanding-control-flow.html" class="dd-item route"><span class="dd-item__num">2</span><span class="dd-item__body"><span class="dd-item__title">Control Flow</span><span class="dd-item__meta">Unit 2</span></span></a></li>
             <li role="none"><a role="menuitem" href="/units/unit-3/what-are-functions.html" class="dd-item route"><span class="dd-item__num">3</span><span class="dd-item__body"><span class="dd-item__title">Functions</span><span class="dd-item__meta">Unit 3</span></span></a></li>
             <li role="none"><a role="menuitem" href="/units/unit-4/introduction-data-structures.html" class="dd-item route"><span class="dd-item__num">4</span><span class="dd-item__body"><span class="dd-item__title">Data Structures</span><span class="dd-item__meta">Unit 4</span></span></a></li>
-            <li role="none"><a role="menuitem" href="/units/unit-5/what-are-modules.html" class="dd-item route is-current"><span class="dd-item__num">5</span><span class="dd-item__body"><span class="dd-item__title">Modules & Packages</span><span class="dd-item__meta">Unit 5</span></span></a></li>
+            <li role="none"><a role="menuitem" href="/units/unit-5/what-are-modules.html" class="dd-item route"><span class="dd-item__num">5</span><span class="dd-item__body"><span class="dd-item__title">Modules & Packages</span><span class="dd-item__meta">Unit 5</span></span></a></li>
             <li role="none"><a role="menuitem" href="/units/unit-6/introduction-oop-concepts.html" class="dd-item route"><span class="dd-item__num">6</span><span class="dd-item__body"><span class="dd-item__title">OOP</span><span class="dd-item__meta">Unit 6</span></span></a></li>
             <li role="none"><a role="menuitem" href="/units/unit-7/introduction-file-handling.html" class="dd-item route"><span class="dd-item__num">7</span><span class="dd-item__body"><span class="dd-item__title">Files & Errors</span><span class="dd-item__meta">Unit 7</span></span></a></li>
             <li role="none"><a role="menuitem" href="/units/unit-8/what-is-debugging.html" class="dd-item route"><span class="dd-item__num">8</span><span class="dd-item__body"><span class="dd-item__title">Testing</span><span class="dd-item__meta">Unit 8</span></span></a></li>
@@ -107,49 +114,36 @@
         </div>
       </div>
     </header>
-                                            <main id="main-content">
-      <section class="section">
-        <div class="container narrow">
-          <p class="eyebrow">Unit 5</p>
-          <h1 class="page-title">Unit 5: Modules & Packages</h1>
-          <p class="muted">Work through the lessons below in order. Each lesson includes short explanations and runnable code.</p>
-          <div class="cta" style="margin-top: 18px;">
-            <a class="btn btn-primary route" href="/units/unit-5/what-are-modules.html">Start Unit 5</a>
-            <a class="btn btn-ghost route" href="/curriculum.html">Back to curriculum</a>
-          </div>
-        </div>
+    <main id="main-content" class="container unit-test-page">
+      <p class="eyebrow" id="ut-eyebrow" hidden></p>
+      <h1 class="page-title" id="ut-title">End of unit test</h1>
+
+      <div class="ut-notice" id="ut-notice" role="status" aria-live="polite" hidden></div>
+
+      <noscript>
+        <p class="ut-notice ut-notice--error">The end of unit test needs JavaScript, because it runs your Python answer in the browser.</p>
+      </noscript>
+
+      <section class="ut-intro" id="ut-intro" hidden>
+        <p>Ten multiple choice questions worth 7 points each, and one free response
+           problem worth 30. That is 100 points in total, and you need 70 to finish
+           the unit and open the next one.</p>
+        <p>You can retake the test as many times as you like. Your best score is the
+           one that counts, so a worse retake never takes anything away.</p>
+        <p class="ut-best" id="ut-best" hidden></p>
+        <p><button type="button" class="btn btn-primary" id="ut-start">Start the test</button></p>
       </section>
 
-      <section class="section">
-        <div class="container narrow">
-          <h2>Lessons</h2>
-          <ol class="unit-lesson-list">
-                <li><a class="route" href="/units/unit-5/what-are-modules.html">1. What Are Modules?</a></li>
-                <li><a class="route" href="/units/unit-5/importing-builtin-modules.html">2. Importing Built-in Modules</a></li>
-                <li><a class="route" href="/units/unit-5/creating-your-own-modules.html">3. Creating Your Own Modules</a></li>
-                <li><a class="route" href="/units/unit-5/name-main-pattern.html">4. The __name__ == "__main__" Pattern</a></li>
-                <li><a class="route" href="/units/unit-5/working-with-packages.html">5. Working with Packages</a></li>
-                <li><a class="route" href="/units/unit-5/python-standard-library.html">6. The Python Standard Library</a></li>
-                <li><a class="route" href="/units/unit-5/installing-external-packages.html">7. Installing External Packages with pip</a></li>
-                <li><a class="route" href="/units/unit-5/virtual-environments.html">8. Virtual Environments and Dependency Management</a></li>
-                <li><a class="route" href="/units/unit-5/module-aliases-selective-imports.html">9. Module Aliases and Selective Imports</a></li>
-                <li><a class="route" href="/units/unit-5/project-organization-best-practices.html">10. Project Organization Best Practices</a></li>
-          </ol>
+      <form class="ut-paper" id="ut-paper" hidden>
+        <div id="ut-mcq"></div>
+        <section class="ut-frq" id="ut-frq"></section>
+        <div class="ut-submit-row">
+          <button type="submit" class="btn btn-primary" id="ut-submit">Submit the paper</button>
+          <p class="ut-hint">Nothing is graded until you submit. If you reload, this paper is still here.</p>
         </div>
-      </section>
+      </form>
 
-      <section class="section">
-        <div class="container narrow">
-          <h2>End of unit test</h2>
-          <p class="muted">Ten multiple choice questions worth 7 points each and one
-             free response problem worth 30, so 100 in total. Score 70 or more to
-             finish Unit 5 and unlock Unit 6.</p>
-          <p class="unit-test-status" data-unit-test-status="5" hidden></p>
-          <div class="cta" style="margin-top: 18px;">
-            <a class="btn btn-primary route" data-unit-test-link="5" href="/unit-test.html?unit=5">Take the Unit 5 test</a>
-          </div>
-        </div>
-      </section>
+      <section class="ut-result" id="ut-result" hidden></section>
     </main>
     <footer class="site-footer">
       <div class="container">
@@ -174,4 +168,4 @@
       </div>
     </footer>
   </body>
-</html>
+  </html>

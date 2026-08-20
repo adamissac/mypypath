@@ -5,6 +5,7 @@
   var COMPLETED_UNITS_KEY = 'pypath-completed-units';
   var COMPLETED_AT_KEY = 'pypath-completed-at';
   var LESSON_PROGRESS_KEY = 'pypath-progress-lessons';
+  var UNIT_TESTS_KEY = 'pypath-unit-tests';
 
   // Allowlist, deliberately. A new pypath-* key must not sync until it is
   // added here on purpose.
@@ -12,6 +13,7 @@
     /^pypath-completed-units$/,
     /^pypath-completed-at$/,
     /^pypath-progress-lessons$/,
+    /^pypath-unit-tests$/,
     /^pypath-lesson-.+/,
     /^exercise_.+/
   ];
@@ -33,6 +35,7 @@
     COMPLETED_UNITS_KEY: COMPLETED_UNITS_KEY,
     COMPLETED_AT_KEY: COMPLETED_AT_KEY,
     LESSON_PROGRESS_KEY: LESSON_PROGRESS_KEY,
+    UNIT_TESTS_KEY: UNIT_TESTS_KEY,
     isSyncable: isSyncable,
     toDocId: toDocId
   };

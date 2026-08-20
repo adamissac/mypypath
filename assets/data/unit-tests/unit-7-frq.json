@@ -1,0 +1,340 @@
+[
+ {
+  "id": "u7-f1",
+  "title": "Count the content lines",
+  "prompt": "Write a function named count_content_lines that takes lines, a list of strings standing for the lines of a text file, and returns how many of them still have text once the surrounding whitespace is stripped away. A line that is empty or holds only spaces or tabs does not count. The grader runs in a browser and has no filesystem, so the file content is handed to you as an argument instead of being opened with open. Return the count, do not print it.",
+  "starter": "def count_content_lines(lines):\n    # your code here\n    pass\n",
+  "entry": "count_content_lines",
+  "cases": [
+   {
+    "args": [
+     [
+      "a",
+      "",
+      "b"
+     ]
+    ],
+    "expect": 2
+   },
+   {
+    "args": [
+     [
+      "   ",
+      "x"
+     ]
+    ],
+    "expect": 1
+   },
+   {
+    "args": [
+     [
+      "one",
+      "two",
+      "three"
+     ]
+    ],
+    "expect": 3
+   },
+   {
+    "args": [
+     [
+      "first line",
+      "",
+      "  ",
+      "last line"
+     ]
+    ],
+    "expect": 2
+   },
+   {
+    "args": [
+     []
+    ],
+    "expect": 0,
+    "hidden": true
+   },
+   {
+    "args": [
+     [
+      "",
+      "  ",
+      "\t"
+     ]
+    ],
+    "expect": 0,
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u7-f2",
+  "title": "Parse a config file",
+  "prompt": "Write a function named parse_config that takes lines, a list of strings standing for the lines of a settings file, and returns a dictionary of the settings. Handle each line like this: strip the surrounding whitespace, then skip it if it is empty, if it starts with a # comment marker, or if it holds no = sign. Otherwise split it at the first = sign only, strip the whitespace off the key and off the value, skip the line if the key is now empty, and store the value under the key as a string. A later line with the same key replaces the earlier one. The grader runs in a browser and has no filesystem, so the file content is handed to you as an argument instead of being opened with open. Return the dictionary, do not print it.",
+  "starter": "def parse_config(lines):\n    # your code here\n    pass\n",
+  "entry": "parse_config",
+  "cases": [
+   {
+    "args": [
+     [
+      "a=1",
+      "b=2"
+     ]
+    ],
+    "expect": {
+     "a": "1",
+     "b": "2"
+    }
+   },
+   {
+    "args": [
+     [
+      "# comment",
+      "x = 5"
+     ]
+    ],
+    "expect": {
+     "x": "5"
+    }
+   },
+   {
+    "args": [
+     [
+      "novalue"
+     ]
+    ],
+    "expect": {}
+   },
+   {
+    "args": [
+     [
+      "host = localhost",
+      "port=8080",
+      "",
+      "# end"
+     ]
+    ],
+    "expect": {
+     "host": "localhost",
+     "port": "8080"
+    }
+   },
+   {
+    "args": [
+     []
+    ],
+    "expect": {},
+    "hidden": true
+   },
+   {
+    "args": [
+     [
+      "k = v",
+      "k=w",
+      "=orphan"
+     ]
+    ],
+    "expect": {
+     "k": "w"
+    },
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u7-f3",
+  "title": "Division that does not crash",
+  "prompt": "Write a function named safe_divide that takes two numbers, a and b, and returns a divided by b. When b is 0 the division raises ZeroDivisionError, so catch it with try and except and return the string \"undefined\" instead. Return the value, do not print it.",
+  "starter": "def safe_divide(a, b):\n    # your code here\n    pass\n",
+  "entry": "safe_divide",
+  "cases": [
+   {
+    "args": [
+     10,
+     2
+    ],
+    "expect": 5.0
+   },
+   {
+    "args": [
+     7,
+     2
+    ],
+    "expect": 3.5
+   },
+   {
+    "args": [
+     5,
+     0
+    ],
+    "expect": "undefined"
+   },
+   {
+    "args": [
+     -9,
+     3
+    ],
+    "expect": -3.0
+   },
+   {
+    "args": [
+     0,
+     5
+    ],
+    "expect": 0.0,
+    "hidden": true
+   },
+   {
+    "args": [
+     0,
+     0
+    ],
+    "expect": "undefined",
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u7-f4",
+  "title": "Convert text to whole numbers",
+  "prompt": "Write a function named to_ints that takes values, a list of strings, and a default number. It returns a new list holding the same number of items, where each string is turned into a whole number with int. When int raises ValueError because the text is not a whole number, put the default in that position instead. Return the list, do not print it.",
+  "starter": "def to_ints(values, default):\n    # your code here\n    pass\n",
+  "entry": "to_ints",
+  "cases": [
+   {
+    "args": [
+     [
+      "1",
+      "2"
+     ],
+     0
+    ],
+    "expect": [
+     1,
+     2
+    ]
+   },
+   {
+    "args": [
+     [
+      "3",
+      "x"
+     ],
+     -1
+    ],
+    "expect": [
+     3,
+     -1
+    ]
+   },
+   {
+    "args": [
+     [
+      "abc"
+     ],
+     0
+    ],
+    "expect": [
+     0
+    ]
+   },
+   {
+    "args": [
+     [
+      "10",
+      "20",
+      "thirty"
+     ],
+     0
+    ],
+    "expect": [
+     10,
+     20,
+     0
+    ]
+   },
+   {
+    "args": [
+     [],
+     0
+    ],
+    "expect": [],
+    "hidden": true
+   },
+   {
+    "args": [
+     [
+      "  7 ",
+      "4.5"
+     ],
+     9
+    ],
+    "expect": [
+     7,
+     9
+    ],
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u7-f5",
+  "title": "Withdrawal with raised errors",
+  "prompt": "Write a function named withdraw_result that takes a balance and an amount. Inside it, raise a ValueError with the message \"Invalid amount\" when the amount is 0 or less, and raise a ValueError with the message \"Insufficient funds\" when the amount is larger than the balance. Catch that ValueError in the same function and return its message as a string. When the withdrawal is allowed, return the balance left after taking the amount away. Return the value, do not print it.",
+  "starter": "def withdraw_result(balance, amount):\n    # your code here\n    pass\n",
+  "entry": "withdraw_result",
+  "cases": [
+   {
+    "args": [
+     100,
+     40
+    ],
+    "expect": 60
+   },
+   {
+    "args": [
+     50,
+     50
+    ],
+    "expect": 0
+   },
+   {
+    "args": [
+     20,
+     30
+    ],
+    "expect": "Insufficient funds"
+   },
+   {
+    "args": [
+     75,
+     25
+    ],
+    "expect": 50
+   },
+   {
+    "args": [
+     10,
+     0
+    ],
+    "expect": "Invalid amount",
+    "hidden": true
+   },
+   {
+    "args": [
+     10,
+     -5
+    ],
+    "expect": "Invalid amount",
+    "hidden": true
+   },
+   {
+    "args": [
+     0,
+     1
+    ],
+    "expect": "Insufficient funds",
+    "hidden": true
+   }
+  ]
+ }
+]

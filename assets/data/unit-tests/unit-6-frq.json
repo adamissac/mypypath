@@ -1,0 +1,422 @@
+[
+ {
+  "id": "u6-f1",
+  "title": "Rectangle class",
+  "prompt": "Define a class named Rectangle whose __init__ takes a width and a height and stores them, and which has an area method and a perimeter method. Then write a function named rectangle_stats that takes a width and a height, builds a Rectangle from them, and returns a list holding the area first and the perimeter second. The perimeter is twice the width plus twice the height. Return the list, do not print it.",
+  "starter": "class Rectangle:\n    pass\n\n\ndef rectangle_stats(width, height):\n    # your code here\n    pass\n",
+  "entry": "rectangle_stats",
+  "cases": [
+   {
+    "args": [
+     3,
+     4
+    ],
+    "expect": [
+     12,
+     14
+    ]
+   },
+   {
+    "args": [
+     5,
+     5
+    ],
+    "expect": [
+     25,
+     20
+    ]
+   },
+   {
+    "args": [
+     1,
+     10
+    ],
+    "expect": [
+     10,
+     22
+    ]
+   },
+   {
+    "args": [
+     7,
+     2
+    ],
+    "expect": [
+     14,
+     18
+    ]
+   },
+   {
+    "args": [
+     0,
+     5
+    ],
+    "expect": [
+     0,
+     10
+    ],
+    "hidden": true
+   },
+   {
+    "args": [
+     2.5,
+     4
+    ],
+    "expect": [
+     10.0,
+     13.0
+    ],
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u6-f2",
+  "title": "Bank account balance",
+  "prompt": "Define a class named BankAccount whose __init__ takes a starting balance, with a deposit method that adds an amount and a withdraw method that takes an amount away only when the account holds enough, ignoring the withdrawal otherwise. Then write a function named final_balance that takes a starting balance, a list of deposit amounts and a list of withdrawal amounts. It applies every deposit in order, then every withdrawal in order, and returns the balance at the end. Return the number, do not print it.",
+  "starter": "class BankAccount:\n    pass\n\n\ndef final_balance(start, deposits, withdrawals):\n    # your code here\n    pass\n",
+  "entry": "final_balance",
+  "cases": [
+   {
+    "args": [
+     100,
+     [
+      50
+     ],
+     [
+      30
+     ]
+    ],
+    "expect": 120
+   },
+   {
+    "args": [
+     0,
+     [
+      10,
+      10
+     ],
+     [
+      5
+     ]
+    ],
+    "expect": 15
+   },
+   {
+    "args": [
+     50,
+     [],
+     [
+      100
+     ]
+    ],
+    "expect": 50
+   },
+   {
+    "args": [
+     200,
+     [
+      25,
+      25
+     ],
+     [
+      100,
+      50
+     ]
+    ],
+    "expect": 100
+   },
+   {
+    "args": [
+     0,
+     [],
+     []
+    ],
+    "expect": 0,
+    "hidden": true
+   },
+   {
+    "args": [
+     20,
+     [
+      5
+     ],
+     [
+      30,
+      10
+     ]
+    ],
+    "expect": 15,
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u6-f3",
+  "title": "Animal sounds",
+  "prompt": "Define a class named Animal with a speak method that returns the string \"...\", then two subclasses, Dog whose speak returns \"Woof\" and Cat whose speak returns \"Meow\". Then write a function named all_sounds that takes a list of strings. For each string it builds a Dog when the string is \"dog\", a Cat when the string is \"cat\", and a plain Animal for anything else, then collects what each one says. It returns the list of sounds in the same order. Return the list, do not print it.",
+  "starter": "class Animal:\n    pass\n\n\ndef all_sounds(kinds):\n    # your code here\n    pass\n",
+  "entry": "all_sounds",
+  "cases": [
+   {
+    "args": [
+     [
+      "dog",
+      "cat"
+     ]
+    ],
+    "expect": [
+     "Woof",
+     "Meow"
+    ]
+   },
+   {
+    "args": [
+     [
+      "cat",
+      "cat"
+     ]
+    ],
+    "expect": [
+     "Meow",
+     "Meow"
+    ]
+   },
+   {
+    "args": [
+     [
+      "dog",
+      "bird"
+     ]
+    ],
+    "expect": [
+     "Woof",
+     "..."
+    ]
+   },
+   {
+    "args": [
+     [
+      "dog",
+      "dog",
+      "cat",
+      "cat"
+     ]
+    ],
+    "expect": [
+     "Woof",
+     "Woof",
+     "Meow",
+     "Meow"
+    ]
+   },
+   {
+    "args": [
+     []
+    ],
+    "expect": [],
+    "hidden": true
+   },
+   {
+    "args": [
+     [
+      "fish"
+     ]
+    ],
+    "expect": [
+     "..."
+    ],
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u6-f4",
+  "title": "Inventory value",
+  "prompt": "Define a class named Item whose __init__ takes a name, a quantity and a unit price, and which has a total_value method returning the quantity multiplied by the unit price. Then write a function named inventory_total that takes a list of items, where each item is a list holding the name, the quantity and the unit price in that order. It builds an Item for each one and returns the sum of all their total values. An empty list gives 0. Return the number, do not print it.",
+  "starter": "class Item:\n    pass\n\n\ndef inventory_total(items):\n    # your code here\n    pass\n",
+  "entry": "inventory_total",
+  "cases": [
+   {
+    "args": [
+     [
+      [
+       "apple",
+       2,
+       1.5
+      ],
+      [
+       "pear",
+       4,
+       0.5
+      ]
+     ]
+    ],
+    "expect": 5.0
+   },
+   {
+    "args": [
+     [
+      [
+       "nail",
+       100,
+       0.25
+      ]
+     ]
+    ],
+    "expect": 25.0
+   },
+   {
+    "args": [
+     [
+      [
+       "box",
+       3,
+       10
+      ]
+     ]
+    ],
+    "expect": 30
+   },
+   {
+    "args": [
+     [
+      [
+       "a",
+       1,
+       2.5
+      ],
+      [
+       "b",
+       2,
+       2.5
+      ],
+      [
+       "c",
+       0,
+       99
+      ]
+     ]
+    ],
+    "expect": 7.5
+   },
+   {
+    "args": [
+     []
+    ],
+    "expect": 0,
+    "hidden": true
+   },
+   {
+    "args": [
+     [
+      [
+       "free",
+       5,
+       0
+      ]
+     ]
+    ],
+    "expect": 0,
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u6-f5",
+  "title": "Payroll with super",
+  "prompt": "Define a class named Employee whose __init__ takes a name and a base pay and which has a pay method returning the base pay. Then define a subclass named Manager whose __init__ calls the parent __init__ with super and whose pay method returns the base pay plus a bonus of 1000. Then write a function named payroll that takes a list of rows, where each row is a list holding a role string and a base pay. A role of \"manager\" builds a Manager and anything else builds an Employee. It returns the list of amounts each one is paid, in the same order. Return the list, do not print it.",
+  "starter": "class Employee:\n    pass\n\n\ndef payroll(rows):\n    # your code here\n    pass\n",
+  "entry": "payroll",
+  "cases": [
+   {
+    "args": [
+     [
+      [
+       "employee",
+       1000
+      ],
+      [
+       "manager",
+       1000
+      ]
+     ]
+    ],
+    "expect": [
+     1000,
+     2000
+    ]
+   },
+   {
+    "args": [
+     [
+      [
+       "manager",
+       2500
+      ]
+     ]
+    ],
+    "expect": [
+     3500
+    ]
+   },
+   {
+    "args": [
+     [
+      [
+       "employee",
+       800
+      ],
+      [
+       "employee",
+       900
+      ]
+     ]
+    ],
+    "expect": [
+     800,
+     900
+    ]
+   },
+   {
+    "args": [
+     [
+      [
+       "manager",
+       0
+      ],
+      [
+       "employee",
+       0
+      ]
+     ]
+    ],
+    "expect": [
+     1000,
+     0
+    ]
+   },
+   {
+    "args": [
+     []
+    ],
+    "expect": [],
+    "hidden": true
+   },
+   {
+    "args": [
+     [
+      [
+       "intern",
+       500
+      ]
+     ]
+    ],
+    "expect": [
+     500
+    ],
+    "hidden": true
+   }
+  ]
+ }
+]

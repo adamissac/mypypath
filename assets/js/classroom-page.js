@@ -8,6 +8,9 @@ import { currentUser } from '/assets/js/auth.js';
 import {
   readProfile, ensureJoinCode, regenerateJoinCode, removeStudent,
 } from '/assets/js/class-join.js';
+import {
+  normalizeScores, passedUnits, scoreRows, PASS_MARK,
+} from '/assets/js/unit-test-summary.js';
 
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const { collection, query, where, getDocs, doc, updateDoc } =
@@ -17,7 +20,9 @@ const ROLES = window.PyPathRoles;
 const ACT = window.PyPathActivity;
 const TOTAL_UNITS = 10;
 
-const state = { uid: null, code: '', rows: [], sort: 'name', dir: 1 };
+// openTests holds the uid whose per unit scores are expanded, at most one at a
+// time: ten units times a whole class is a wall of numbers nobody reads.
+const state = { uid: null, code: '', rows: [], sort: 'name', dir: 1, openTests: null };
 
 // Decisions in flight, so a double click cannot fire two writes at one row and
 // leave the loser's revert undoing the winner's decision.
@@ -55,6 +60,11 @@ function toRow(id, data) {
   const count = Number.isFinite(Number(data.unitsCompleted))
     ? Number(data.unitsCompleted)
     : units.length;
+  // testsPassed is recomputed from the scores rather than read off the
+  // document: the two are written together, but only one of them says what the
+  // detail view shows, and a stale array would disagree with it on screen.
+  const testScores = normalizeScores(data.testScores);
+  const passed = passedUnits(testScores);
   return {
     uid: id, // kept for the remove and decision calls only; never rendered or exported
     name: data.displayName || '',
@@ -62,6 +72,9 @@ function toRow(id, data) {
     lastSeenAt: Number(data.lastSeenAt) || 0,
     seconds: Number(data.totalSeconds) || 0,
     units: Math.max(0, Math.min(TOTAL_UNITS, count)),
+    testScores: testScores,
+    testsAttempted: Object.keys(testScores).length,
+    testsPassed: passed.length,
     certificate: !!data.hasCertificate,
     requestedAt: Number(data.certificateRequestedAt) || 0,
     // Tri-state on purpose: null means "not looked at yet", and that is the
@@ -109,6 +122,9 @@ const CERT_CSV = {
 // the default descending click puts everything waiting on the teacher on top.
 function sortValue(row, key) {
   if (key === 'certificate') return CERT_RANK[certState(row)];
+  // Sorting on tests means "who has passed the most", not "who has sat the
+  // most": a student with nine attempts and one pass is the one to look at.
+  if (key === 'tests') return row.testsPassed;
   return row[key];
 }
 
@@ -147,9 +163,50 @@ function certCell(row) {
     </td>`;
 }
 
+/* Tests get one column and a drawer, the same shape the certificate cell uses:
+   a pill for the state, a button in the cell that acts on that one student,
+   and everything re-rendered from state afterwards. Ten score columns would
+   not survive a phone, and the count is what a teacher scans for anyway. */
+function testsCell(row) {
+  if (!row.testsAttempted) {
+    return `<td class="admin-cell-tests">
+      <span class="admin-pill admin-pill--no">None yet</span>
+    </td>`;
+  }
+  const all = row.testsPassed === row.testsAttempted;
+  const open = state.openTests === row.uid;
+  const who = esc(row.name || 'this learner');
+  return `<td class="admin-cell-tests">
+    <span class="admin-cert">
+      <span class="admin-pill ${all ? 'admin-pill--yes' : 'admin-pill--wait'}"
+        >${row.testsPassed}/${row.testsAttempted} passed</span>
+      <button type="button" class="btn btn-ghost btn-small"
+        data-class-tests="${esc(row.uid)}" aria-expanded="${open ? 'true' : 'false'}"
+        aria-label="${open ? 'Hide' : 'Show'} unit test scores for ${who}"
+        >${open ? 'Hide scores' : 'Scores'}</button>
+    </span>
+  </td>`;
+}
+
+function testsDetailHtml(row) {
+  const scores = scoreRows(row.testScores).map((s) => `<li class="admin-score">
+      <span class="admin-score__unit">Unit ${s.unit}</span>
+      <span class="admin-pill ${s.passed ? 'admin-pill--yes' : 'admin-pill--declined'}"
+        >${s.score}</span>
+    </li>`).join('');
+  return `<tr class="admin-row--detail">
+    <td colspan="9">
+      <p class="admin-detail-title">Unit test scores for ${esc(row.name || 'this learner')}</p>
+      <ul class="admin-scores">${scores}</ul>
+      <p class="admin-detail-hint">Each test is marked out of 100 and ${PASS_MARK}
+        is a pass. Units that are not listed have not been attempted yet.</p>
+    </td>
+  </tr>`;
+}
+
 function rowHtml(row) {
   const pct = Math.round((row.units / TOTAL_UNITS) * 100);
-  return `<tr class="${isPending(row) ? 'admin-row--pending' : ''}">
+  const main = `<tr class="${isPending(row) ? 'admin-row--pending' : ''}">
     <td class="admin-cell-user">
       <span class="admin-name">${esc(row.name || 'Unnamed learner')}</span>
     </td>
@@ -162,11 +219,15 @@ function rowHtml(row) {
       </div>
       <span class="admin-bar-label">${row.units}/${TOTAL_UNITS}</span>
     </td>
+    ${testsCell(row)}
     <td>${esc(fmtDate(row.requestedAt))}</td>
     ${certCell(row)}
     <td><button type="button" class="btn btn-ghost btn-small" data-class-remove="${esc(row.uid)}"
         >Remove</button></td>
   </tr>`;
+  return state.openTests === row.uid && row.testsAttempted
+    ? main + testsDetailHtml(row)
+    : main;
 }
 
 function render() {
@@ -177,7 +238,7 @@ function render() {
   if (body) {
     body.innerHTML = state.rows.length
       ? sorted(state.rows).map(rowHtml).join('')
-      : `<tr><td colspan="8" class="admin-empty">No students yet. Share the join
+      : `<tr><td colspan="9" class="admin-empty">No students yet. Share the join
          code above and they will appear here once they enter it.</td></tr>`;
   }
 
@@ -216,8 +277,12 @@ function render() {
 // Same columns the teacher sees, plus the two decision timestamps. No uid, and
 // still nothing that could be used to contact a student.
 function toCsv(rows) {
+  const unitHeads = Array.from(
+    { length: TOTAL_UNITS }, (_, i) => 'test_unit_' + (i + 1)
+  );
   const head = [
     'name', 'joined_class', 'last_active', 'hours', 'units_completed',
+    'tests_passed', 'tests_attempted', ...unitHeads,
     'certificate', 'certificate_status', 'certificate_requested', 'certificate_decided',
   ];
   const cell = (v) => {
@@ -231,6 +296,12 @@ function toCsv(rows) {
       r.joined ? new Date(r.joined).toISOString() : '',
       r.lastSeenAt ? new Date(r.lastSeenAt).toISOString() : '',
       ACT.toHours(r.seconds), r.units,
+      r.testsPassed, r.testsAttempted,
+      // An empty cell, not a zero: a unit nobody has sat did not score nothing.
+      ...Array.from({ length: TOTAL_UNITS }, (_, i) => {
+        const score = r.testScores[String(i + 1)];
+        return Number.isFinite(score) ? score : '';
+      }),
       st === 'approved' || st === 'earned' ? 'yes' : 'no',
       CERT_CSV[st],
       r.requestedAt ? new Date(r.requestedAt).toISOString() : '',
@@ -357,6 +428,14 @@ function wire() {
 
       const decline = e.target.closest('[data-class-decline]');
       if (decline) { decide(decline.dataset.classDecline, false); return; }
+
+      const scores = e.target.closest('[data-class-tests]');
+      if (scores) {
+        const uid = scores.dataset.classTests;
+        state.openTests = state.openTests === uid ? null : uid;
+        render();
+        return;
+      }
 
       const btn = e.target.closest('[data-class-remove]');
       if (!btn) return;

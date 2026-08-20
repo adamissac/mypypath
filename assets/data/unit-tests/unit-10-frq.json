@@ -1,0 +1,401 @@
+[
+ {
+  "id": "u10-f1",
+  "title": "Formatted item table",
+  "prompt": "Write a function named format_table that takes rows, a list where every item is a list holding a name string and a whole number quantity. It returns one string holding a line for each row, with the lines joined by newline characters and no newline at the end. On each line the name is padded on the right to fill 10 characters and the quantity follows it padded on the left to fill 5 characters, which is what the f-string alignment fields <10 and >5 do. A name longer than 10 characters is not cut short. An empty list gives an empty string. Return the string, do not print it.",
+  "starter": "def format_table(rows):\n    # your code here\n    pass\n",
+  "entry": "format_table",
+  "cases": [
+   {
+    "args": [
+     [
+      [
+       "apple",
+       3
+      ]
+     ]
+    ],
+    "expect": "apple         3"
+   },
+   {
+    "args": [
+     [
+      [
+       "apple",
+       3
+      ],
+      [
+       "fig",
+       12
+      ]
+     ]
+    ],
+    "expect": "apple         3\nfig          12"
+   },
+   {
+    "args": [
+     [
+      [
+       "nail",
+       1000
+      ]
+     ]
+    ],
+    "expect": "nail       1000"
+   },
+   {
+    "args": [
+     [
+      [
+       "a",
+       0
+      ],
+      [
+       "b",
+       7
+      ]
+     ]
+    ],
+    "expect": "a             0\nb             7"
+   },
+   {
+    "args": [
+     []
+    ],
+    "expect": "",
+    "hidden": true
+   },
+   {
+    "args": [
+     [
+      [
+       "extraordinary",
+       2
+      ]
+     ]
+    ],
+    "expect": "extraordinary    2",
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u10-f2",
+  "title": "Menu choice",
+  "prompt": "Write a function named menu_choice that takes choice, a string typed by the user, and options, a list of option strings. When the string is a whole number that names a valid option counting from 1, return that option. Otherwise return \"Invalid choice\", including when the text is not a number at all, when it is 0 or negative, and when it is past the end of the list. Return the string, do not print it.",
+  "starter": "def menu_choice(choice, options):\n    # your code here\n    pass\n",
+  "entry": "menu_choice",
+  "cases": [
+   {
+    "args": [
+     "1",
+     [
+      "New",
+      "Load",
+      "Quit"
+     ]
+    ],
+    "expect": "New"
+   },
+   {
+    "args": [
+     "3",
+     [
+      "New",
+      "Load",
+      "Quit"
+     ]
+    ],
+    "expect": "Quit"
+   },
+   {
+    "args": [
+     "4",
+     [
+      "New",
+      "Load",
+      "Quit"
+     ]
+    ],
+    "expect": "Invalid choice"
+   },
+   {
+    "args": [
+     "x",
+     [
+      "New",
+      "Load",
+      "Quit"
+     ]
+    ],
+    "expect": "Invalid choice"
+   },
+   {
+    "args": [
+     "0",
+     [
+      "New",
+      "Load",
+      "Quit"
+     ]
+    ],
+    "expect": "Invalid choice",
+    "hidden": true
+   },
+   {
+    "args": [
+     "1",
+     []
+    ],
+    "expect": "Invalid choice",
+    "hidden": true
+   },
+   {
+    "args": [
+     "-2",
+     [
+      "New"
+     ]
+    ],
+    "expect": "Invalid choice",
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u10-f3",
+  "title": "Quiz score report",
+  "prompt": "Write a function named quiz_score that takes answers and key, two lists of the same length holding the learner's answers and the correct ones. It returns a dictionary with three keys: \"correct\" holding how many answers match the key at the same position, \"total\" holding how many questions there were, and \"percent\" holding the whole number percentage worked out as int(100 * correct / total). When there are no questions at all, correct, total and percent are all 0. Return the dictionary, do not print it.",
+  "starter": "def quiz_score(answers, key):\n    # your code here\n    pass\n",
+  "entry": "quiz_score",
+  "cases": [
+   {
+    "args": [
+     [
+      "a",
+      "b",
+      "c"
+     ],
+     [
+      "a",
+      "b",
+      "c"
+     ]
+    ],
+    "expect": {
+     "correct": 3,
+     "total": 3,
+     "percent": 100
+    }
+   },
+   {
+    "args": [
+     [
+      "a",
+      "x",
+      "c"
+     ],
+     [
+      "a",
+      "b",
+      "c"
+     ]
+    ],
+    "expect": {
+     "correct": 2,
+     "total": 3,
+     "percent": 66
+    }
+   },
+   {
+    "args": [
+     [
+      "x",
+      "y"
+     ],
+     [
+      "a",
+      "b"
+     ]
+    ],
+    "expect": {
+     "correct": 0,
+     "total": 2,
+     "percent": 0
+    }
+   },
+   {
+    "args": [
+     [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f"
+     ],
+     [
+      "a",
+      "b",
+      "x",
+      "y",
+      "e",
+      "f"
+     ]
+    ],
+    "expect": {
+     "correct": 4,
+     "total": 6,
+     "percent": 66
+    }
+   },
+   {
+    "args": [
+     [],
+     []
+    ],
+    "expect": {
+     "correct": 0,
+     "total": 0,
+     "percent": 0
+    },
+    "hidden": true
+   },
+   {
+    "args": [
+     [
+      "a",
+      "b",
+      "c"
+     ],
+     [
+      "a",
+      "x",
+      "y"
+     ]
+    ],
+    "expect": {
+     "correct": 1,
+     "total": 3,
+     "percent": 33
+    },
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u10-f4",
+  "title": "Progress bar",
+  "prompt": "Write a function named progress_bar that takes done, total and width, three whole numbers, and returns a text progress bar. The number of filled slots is int(width * done / total) and the percentage is int(100 * done / total). The returned string is an opening square bracket, then one # for each filled slot, then one - for each remaining slot, then a closing square bracket, then a space, then the percentage, then a percent sign. So progress_bar(4, 10, 10) returns \"[####------] 40%\". When total is 0, treat the bar as empty and the percentage as 0. Return the string, do not print it.",
+  "starter": "def progress_bar(done, total, width):\n    # your code here\n    pass\n",
+  "entry": "progress_bar",
+  "cases": [
+   {
+    "args": [
+     4,
+     10,
+     10
+    ],
+    "expect": "[####------] 40%"
+   },
+   {
+    "args": [
+     0,
+     10,
+     10
+    ],
+    "expect": "[----------] 0%"
+   },
+   {
+    "args": [
+     10,
+     10,
+     10
+    ],
+    "expect": "[##########] 100%"
+   },
+   {
+    "args": [
+     3,
+     4,
+     8
+    ],
+    "expect": "[######--] 75%"
+   },
+   {
+    "args": [
+     0,
+     0,
+     5
+    ],
+    "expect": "[-----] 0%",
+    "hidden": true
+   },
+   {
+    "args": [
+     1,
+     3,
+     3
+    ],
+    "expect": "[#--] 33%",
+    "hidden": true
+   }
+  ]
+ },
+ {
+  "id": "u10-f5",
+  "title": "Validate a project name",
+  "prompt": "Write a function named validate_project_name that takes name, a string, and returns a list of the problems with it. Check two rules in this order. First, if the name is empty once the surrounding whitespace is stripped, add \"Name must not be empty\". Second, if the stripped name is longer than 20 characters, add \"Name is too long\". Then, if the stripped name still holds a space anywhere inside it, add \"Name must not contain spaces\". A name that breaks no rule gives an empty list. Return the list, do not print it.",
+  "starter": "def validate_project_name(name):\n    # your code here\n    pass\n",
+  "entry": "validate_project_name",
+  "cases": [
+   {
+    "args": [
+     "my_app"
+    ],
+    "expect": []
+   },
+   {
+    "args": [
+     ""
+    ],
+    "expect": [
+     "Name must not be empty"
+    ]
+   },
+   {
+    "args": [
+     "my app"
+    ],
+    "expect": [
+     "Name must not contain spaces"
+    ]
+   },
+   {
+    "args": [
+     "  trimmed_ok  "
+    ],
+    "expect": []
+   },
+   {
+    "args": [
+     "   "
+    ],
+    "expect": [
+     "Name must not be empty"
+    ],
+    "hidden": true
+   },
+   {
+    "args": [
+     "a name that is far too long to accept"
+    ],
+    "expect": [
+     "Name is too long",
+     "Name must not contain spaces"
+    ],
+    "hidden": true
+   }
+  ]
+ }
+]

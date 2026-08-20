@@ -2,6 +2,7 @@
    user is signed in, and merges local state into remote on sign-in. */
 import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
 import { currentTeacher, loadFor } from '/assets/js/class-state.js';
+import { summarizeUnitTests, UNIT_TESTS_KEY } from '/assets/js/unit-test-summary.js';
 
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const { doc, getDoc, setDoc, collection, getDocs, deleteDoc } =
@@ -23,8 +24,12 @@ function toast(message) {
 // A flat mirror of progress on the user document itself. The source of truth
 // stays in state/progress; this copy exists so the admin roster is one query
 // over `users` instead of a per-learner round trip.
-function summary(units, now) {
+// `tests` is passed in rather than read here so summary() stays a function of
+// its arguments: every caller below already knows which test results it means,
+// and the one that does not yet have them says so by calling readTests().
+function summary(units, now, tests) {
   const list = Array.isArray(units) ? units : [];
+  const results = tests || { testScores: {}, testsPassed: [] };
   // certificate.js owns this rule, but it is only loaded on certificate.html,
   // and sync.js runs everywhere. Prefer the real implementation when it is
   // present and fall back to the same 1..TOTAL_UNITS check otherwise.
@@ -38,8 +43,19 @@ function summary(units, now) {
     completedUnits: list,
     unitsCompleted: list.length,
     hasCertificate: complete,
+    testScores: results.testScores,
+    testsPassed: results.testsPassed,
     progressUpdatedAt: now,
   };
+}
+
+// The end-of-unit test results as they stand on this device right now.
+function readTests() {
+  try {
+    return summarizeUnitTests(STORE.getItem(UNIT_TESTS_KEY));
+  } catch (e) {
+    return { testScores: {}, testsPassed: [] };
+  }
 }
 
 // A learner in a class has the same progress mirrored into the roster, which
@@ -111,14 +127,26 @@ function makeAdapter(uid) {
               { completedUnits: units, updatedAt: now },
               { merge: true }
             );
-            await setDoc(doc(db, `users/${uid}`), summary(units, now), { merge: true });
-            await mirrorToRoster(uid, summary(units, now));
+            const fields = summary(units, now, readTests());
+            await setDoc(doc(db, `users/${uid}`), fields, { merge: true });
+            await mirrorToRoster(uid, fields);
           } else {
             await setDoc(doc(db, `users/${uid}/code/${KEYS.toDocId(key)}`), {
               localKey: key,
               content: entry.value,
               updatedAt: now,
             });
+            // A test result only reaches the teacher through the summary, and
+            // a unit can be sat many times before it is finished. Refresh the
+            // summary from the value being written, so a teacher does not wait
+            // for the next completed unit to see a mark.
+            if (key === UNIT_TESTS_KEY) {
+              const fields = summary(
+                STORE.getCompletedUnits(), now, summarizeUnitTests(entry.value)
+              );
+              await setDoc(doc(db, `users/${uid}`), fields, { merge: true });
+              await mirrorToRoster(uid, fields);
+            }
           }
         } catch (e) {
           // Local write already succeeded. Retry happens on the next write,
@@ -224,7 +252,8 @@ document.addEventListener('pypath:auth', async (e) => {
     await loadFor(user.uid);
     await mergeOnSignIn(user.uid);
     // mergeOnSignIn may have unioned in units this device did not know about.
-    const merged = summary(STORE.getCompletedUnits(), Date.now());
+    // mergeOnSignIn may also have pulled down test results from another device.
+    const merged = summary(STORE.getCompletedUnits(), Date.now(), readTests());
     await setDoc(doc(db, `users/${user.uid}`), merged, { merge: true });
     // displayName is on the account record, which a teacher cannot read, so
     // the roster carries its own copy of the name to show.

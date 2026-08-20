@@ -1,0 +1,681 @@
+[
+  {
+    "id": "u6-m01",
+    "kind": "vocab",
+    "prompt": "In object oriented programming, what is a class?",
+    "choices": [
+      "A single object that already holds real data",
+      "A blueprint that describes the attributes and methods its objects will have",
+      "A function stored inside a module for later reuse",
+      "A variable that can hold only one value at a time"
+    ],
+    "answer": 1,
+    "explain": "A class is the blueprint. The objects you create from it are the instances that hold the actual data."
+  },
+  {
+    "id": "u6-m02",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Book:\n    def __init__(self, title):\n        self.title = title\n\nb = Book(\"Python Basics\")\nprint(b.title)",
+    "choices": [
+      "title",
+      "Book",
+      "Python Basics",
+      "It raises an AttributeError"
+    ],
+    "answer": 2,
+    "explain": "Creating the object runs __init__, which stores \"Python Basics\" in self.title, so b.title prints that string."
+  },
+  {
+    "id": "u6-m03",
+    "kind": "vocab",
+    "prompt": "What is the job of the __init__ method?",
+    "choices": [
+      "It runs automatically when a new object is made and sets up that object's attributes",
+      "It deletes the object once the program finishes",
+      "It must be called by hand after the object has been created",
+      "It defines the class variables that every object will share"
+    ],
+    "answer": 0,
+    "explain": "Python calls __init__ for you as soon as the object is created, and its usual job is assigning the starting attributes."
+  },
+  {
+    "id": "u6-m04",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Dog:\n    def __init__(self, name):\n        self.name = name\n\na = Dog(\"Buddy\")\nb = Dog(\"Max\")\na.name = \"Rex\"\nprint(b.name)",
+    "choices": [
+      "Rex",
+      "Buddy",
+      "It raises an error because name was changed",
+      "Max"
+    ],
+    "answer": 3,
+    "explain": "Each object keeps its own instance variables, so renaming a leaves b.name as \"Max\"."
+  },
+  {
+    "id": "u6-m05",
+    "kind": "vocab",
+    "prompt": "What does the parameter self refer to inside a method?",
+    "choices": [
+      "The class itself, so you can read class variables",
+      "The name of the method that is currently running",
+      "A copy of the object that is thrown away when the method ends",
+      "The specific object the method was called on"
+    ],
+    "answer": 3,
+    "explain": "Python passes the object itself as the first argument, so self is the particular instance the method is acting on."
+  },
+  {
+    "id": "u6-m06",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Car:\n    def __init__(self, brand):\n        self.brand = brand\n        self.speed = 0\n\n    def accelerate(self):\n        self.speed += 10\n\nc = Car(\"Toyota\")\nc.accelerate()\nc.accelerate()\nprint(c.speed)",
+    "choices": [
+      "0",
+      "10",
+      "20",
+      "It raises a TypeError because accelerate takes no arguments"
+    ],
+    "answer": 2,
+    "explain": "Each call to accelerate adds 10 to the same object's speed attribute, so two calls give 20."
+  },
+  {
+    "id": "u6-m07",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Counter:\n    count = 0\n\n    def __init__(self, label):\n        self.label = label\n        Counter.count += 1\n\nc1 = Counter(\"first\")\nc2 = Counter(\"second\")\nc3 = Counter(\"third\")\nprint(Counter.count)",
+    "choices": [
+      "3",
+      "0",
+      "1",
+      "It raises a NameError because count is not defined with self"
+    ],
+    "answer": 0,
+    "explain": "count is a class variable shared by every instance, and each __init__ call adds one to it."
+  },
+  {
+    "id": "u6-m08",
+    "kind": "vocab",
+    "prompt": "Which statement correctly describes the difference between a class variable and an instance variable?",
+    "choices": [
+      "Class variables are private, instance variables are public",
+      "A class variable is shared by every object of the class, while each object has its own copy of an instance variable",
+      "Class variables can only hold numbers, instance variables can hold any type",
+      "Instance variables are defined at the top of the class, class variables are defined inside __init__"
+    ],
+    "answer": 1,
+    "explain": "Class variables live on the class and are shared, while instance variables are set with self and belong to one object."
+  },
+  {
+    "id": "u6-m09",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Plant:\n    kingdom = \"Plantae\"\n\np = Plant()\nq = Plant()\np.kingdom = \"Fungi\"\nprint(p.kingdom, q.kingdom, Plant.kingdom)",
+    "choices": [
+      "Fungi Fungi Fungi",
+      "Plantae Plantae Plantae",
+      "Fungi Plantae Fungi",
+      "Fungi Plantae Plantae"
+    ],
+    "answer": 3,
+    "explain": "Assigning p.kingdom creates a new instance variable that hides the class variable for p only, so q and the class still see \"Plantae\"."
+  },
+  {
+    "id": "u6-m10",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Team:\n    members = []\n\n    def __init__(self, name):\n        self.name = name\n\n    def add(self, person):\n        self.members.append(person)\n\na = Team(\"Red\")\nb = Team(\"Blue\")\na.add(\"Ana\")\nprint(len(b.members))",
+    "choices": [
+      "0",
+      "1",
+      "2",
+      "It raises an AttributeError because b never called add"
+    ],
+    "answer": 1,
+    "explain": "members is one list on the class, so appending through a changes the same list that b reads."
+  },
+  {
+    "id": "u6-m11",
+    "kind": "vocab",
+    "prompt": "What does the @classmethod decorator do?",
+    "choices": [
+      "It hides the method so it cannot be called from outside the class",
+      "It makes the method run automatically when an object is created",
+      "It turns the method into a class variable",
+      "It makes the method receive the class as its first argument instead of an instance"
+    ],
+    "answer": 3,
+    "explain": "A class method takes cls, the class itself, rather than self, so it can work with class level data."
+  },
+  {
+    "id": "u6-m12",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Logger:\n    level = \"INFO\"\n\n    @classmethod\n    def describe(cls):\n        return \"level is \" + cls.level\n\nlog = Logger()\nprint(log.describe())",
+    "choices": [
+      "level is INFO",
+      "level is cls.level",
+      "It raises a TypeError because describe was called on an instance",
+      "It raises a NameError because cls is not defined"
+    ],
+    "answer": 0,
+    "explain": "A class method can be called through an instance, and Python still passes the class in as cls."
+  },
+  {
+    "id": "u6-m13",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Date:\n    def __init__(self, year, month):\n        self.year = year\n        self.month = month\n\n    @classmethod\n    def from_text(cls, text):\n        year, month = text.split(\"-\")\n        return cls(int(year), int(month))\n\nd = Date.from_text(\"2024-07\")\nprint(d.year + d.month)",
+    "choices": [
+      "202407",
+      "2024-07",
+      "2031",
+      "It raises a TypeError because from_text has no self"
+    ],
+    "answer": 2,
+    "explain": "from_text is an alternative constructor: it splits the text, converts both parts to integers, and 2024 plus 7 is 2031."
+  },
+  {
+    "id": "u6-m14",
+    "kind": "vocab",
+    "prompt": "What does encapsulation mean in OOP?",
+    "choices": [
+      "Writing a class that inherits from several parents at once",
+      "Bundling data and the methods that work on it together, and controlling how that data is reached from outside",
+      "Giving two different classes methods with the same name",
+      "Splitting a program into separate files so it is easier to read"
+    ],
+    "answer": 1,
+    "explain": "Encapsulation keeps an object's data and behaviour together and routes outside access through methods."
+  },
+  {
+    "id": "u6-m15",
+    "kind": "vocab",
+    "prompt": "What does a single leading underscore, as in self._balance, signal to another programmer?",
+    "choices": [
+      "That Python will refuse to let outside code read the attribute",
+      "That the attribute is a class variable rather than an instance variable",
+      "That the attribute is meant for internal use, by convention only",
+      "That the attribute is a constant that must never change"
+    ],
+    "answer": 2,
+    "explain": "A single underscore is only a convention meaning \"internal\". Python still allows direct access."
+  },
+  {
+    "id": "u6-m16",
+    "kind": "code",
+    "prompt": "What happens when this program runs?",
+    "code": "class Vault:\n    def __init__(self, code):\n        self.__code = code\n\nv = Vault(42)\nprint(v.__code)",
+    "choices": [
+      "It prints 42",
+      "It prints __code",
+      "It prints None",
+      "It raises an AttributeError"
+    ],
+    "answer": 3,
+    "explain": "The double underscore triggers name mangling, so the attribute is really _Vault__code and v.__code does not exist."
+  },
+  {
+    "id": "u6-m17",
+    "kind": "vocab",
+    "prompt": "What is name mangling?",
+    "choices": [
+      "Python renaming an attribute written as __name to _ClassName__name inside the class",
+      "Python refusing to create two attributes with the same name",
+      "Python shortening long attribute names to save memory",
+      "Python converting attribute names to lower case automatically"
+    ],
+    "answer": 0,
+    "explain": "A double underscore prefix makes Python rewrite the attribute name with the class name in front, which discourages accidental access."
+  },
+  {
+    "id": "u6-m18",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Score:\n    def __init__(self):\n        self._value = 0\n\n    def set_value(self, value):\n        if 0 <= value <= 100:\n            self._value = value\n        else:\n            print(\"rejected\")\n\n    def get_value(self):\n        return self._value\n\ns = Score()\ns.set_value(150)\ns.set_value(80)\nprint(s.get_value())",
+    "choices": [
+      "rejected then 150",
+      "rejected then 80",
+      "150 then 80",
+      "rejected then 0"
+    ],
+    "answer": 1,
+    "explain": "The setter rejects 150 and prints a message, then accepts 80, so the getter returns 80."
+  },
+  {
+    "id": "u6-m19",
+    "kind": "vocab",
+    "prompt": "Why would a class use a setter method instead of letting code assign the attribute directly?",
+    "choices": [
+      "Setter methods run faster than direct assignment",
+      "Direct assignment is not allowed on objects in Python",
+      "A setter can validate the new value before storing it",
+      "A setter turns the attribute into a class variable"
+    ],
+    "answer": 2,
+    "explain": "Routing changes through a method gives the class a place to check the value and refuse bad data."
+  },
+  {
+    "id": "u6-m20",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Vehicle:\n    def __init__(self, brand):\n        self.brand = brand\n\n    def start(self):\n        return self.brand + \" starts\"\n\nclass Car(Vehicle):\n    pass\n\nc = Car(\"Toyota\")\nprint(c.start())",
+    "choices": [
+      "Toyota starts",
+      "Car starts",
+      "It raises a TypeError because Car has no __init__",
+      "It raises an AttributeError because Car has no start method"
+    ],
+    "answer": 0,
+    "explain": "Car inherits both __init__ and start from Vehicle, so it behaves exactly like a Vehicle here."
+  },
+  {
+    "id": "u6-m21",
+    "kind": "vocab",
+    "prompt": "Which line correctly makes Student a subclass of Person?",
+    "choices": [
+      "class Student inherits Person:",
+      "class Student(Person):",
+      "class Student = Person:",
+      "class Student extends Person:"
+    ],
+    "answer": 1,
+    "explain": "In Python you list the parent class in parentheses after the child class name."
+  },
+  {
+    "id": "u6-m22",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Animal:\n    def speak(self):\n        return \"Some sound\"\n\nclass Cat(Animal):\n    def speak(self):\n        return \"Meow\"\n\nprint(Cat().speak())",
+    "choices": [
+      "Some sound",
+      "Some sound Meow",
+      "It raises an error because speak is defined twice",
+      "Meow"
+    ],
+    "answer": 3,
+    "explain": "Cat overrides speak, so the subclass version replaces the parent version for Cat objects."
+  },
+  {
+    "id": "u6-m23",
+    "kind": "vocab",
+    "prompt": "What does it mean to override a method?",
+    "choices": [
+      "To call the parent method from inside the child method",
+      "To define a method in a subclass with the same name as one in the parent, replacing it for that subclass",
+      "To give a method a second name so it can be called two ways",
+      "To stop a subclass from inheriting anything from its parent"
+    ],
+    "answer": 1,
+    "explain": "Overriding means the subclass supplies its own version of an inherited method under the same name."
+  },
+  {
+    "id": "u6-m24",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\nclass Mammal(Animal):\n    def breathe(self):\n        return \"air\"\n\nclass Bat(Mammal):\n    def fly(self):\n        return \"flying\"\n\nb = Bat(\"Echo\")\nprint(b.name, b.breathe(), b.fly())",
+    "choices": [
+      "Echo air flying",
+      "It raises an AttributeError because Bat has no name",
+      "Echo flying air",
+      "It raises a TypeError because Bat defines no __init__"
+    ],
+    "answer": 0,
+    "explain": "Inheritance can chain: Bat gets fly from itself, breathe from Mammal, and __init__ from Animal."
+  },
+  {
+    "id": "u6-m25",
+    "kind": "vocab",
+    "prompt": "What does polymorphism mean?",
+    "choices": [
+      "One class can inherit from several parent classes",
+      "An object can change its class while the program runs",
+      "The same method call can behave differently depending on the object's class",
+      "A method can accept any number of arguments"
+    ],
+    "answer": 2,
+    "explain": "Polymorphism means many forms: one shared method name, each class supplying its own behaviour."
+  },
+  {
+    "id": "u6-m26",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Employee:\n    def pay(self):\n        return 0\n\nclass FullTime(Employee):\n    def pay(self):\n        return 5000\n\nclass PartTime(Employee):\n    def pay(self):\n        return 2500\n\nstaff = [FullTime(), PartTime(), FullTime()]\nprint(sum(person.pay() for person in staff))",
+    "choices": [
+      "0",
+      "7500",
+      "10000",
+      "12500"
+    ],
+    "answer": 3,
+    "explain": "Each object runs its own pay method, so the total is 5000 plus 2500 plus 5000."
+  },
+  {
+    "id": "u6-m27",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Shape:\n    def area(self):\n        return 0\n\nclass Rectangle(Shape):\n    def __init__(self, width, height):\n        self.width = width\n        self.height = height\n\n    def area(self):\n        return self.width * self.height\n\nshapes = [Shape(), Rectangle(3, 4)]\nfor s in shapes:\n    print(s.area())",
+    "choices": [
+      "0 then 12",
+      "0 then 0",
+      "12 then 12",
+      "It raises an AttributeError on the first shape"
+    ],
+    "answer": 0,
+    "explain": "The plain Shape uses the parent area and returns 0, while Rectangle uses its own overriding version."
+  },
+  {
+    "id": "u6-m28",
+    "kind": "vocab",
+    "prompt": "What does super() give you access to?",
+    "choices": [
+      "Every class defined in the program",
+      "The methods of the parent class from inside a child class",
+      "A copy of the current object that can be modified safely",
+      "The class variables of the child class only"
+    ],
+    "answer": 1,
+    "explain": "super() lets a child class call the parent version of a method instead of duplicating its code."
+  },
+  {
+    "id": "u6-m29",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Person:\n    def __init__(self, name):\n        self.name = name\n\nclass Student(Person):\n    def __init__(self, name, school):\n        super().__init__(name)\n        self.school = school\n\ns = Student(\"Ana\", \"PyPath\")\nprint(s.name, s.school)",
+    "choices": [
+      "It raises an AttributeError because name was never set",
+      "PyPath Ana",
+      "None PyPath",
+      "Ana PyPath"
+    ],
+    "answer": 3,
+    "explain": "super().__init__(name) runs the parent constructor, which sets self.name, and the child then adds self.school."
+  },
+  {
+    "id": "u6-m30",
+    "kind": "code",
+    "prompt": "What does this program print, in order?",
+    "code": "class Base:\n    def __init__(self):\n        print(\"Base\")\n\nclass Middle(Base):\n    def __init__(self):\n        super().__init__()\n        print(\"Middle\")\n\nclass Top(Middle):\n    def __init__(self):\n        super().__init__()\n        print(\"Top\")\n\nTop()",
+    "choices": [
+      "Top, Middle, Base",
+      "Top, Base, Middle",
+      "Base, Middle, Top",
+      "Middle, Base, Top"
+    ],
+    "answer": 2,
+    "explain": "Each constructor calls its parent before printing, so the calls travel up to Base and the prints happen on the way back down."
+  },
+  {
+    "id": "u6-m31",
+    "kind": "code",
+    "prompt": "What does this program print, in order?",
+    "code": "class A:\n    def who(self):\n        print(\"A\")\n\nclass B:\n    def who(self):\n        print(\"B\")\n\nclass C(A, B):\n    def who(self):\n        super().who()\n        print(\"C\")\n\nC().who()",
+    "choices": [
+      "B, C",
+      "A, B, C",
+      "C, A",
+      "A, C"
+    ],
+    "answer": 3,
+    "explain": "With class C(A, B), A comes first in the method resolution order, so super().who() runs A's version and then C prints."
+  },
+  {
+    "id": "u6-m32",
+    "kind": "vocab",
+    "prompt": "What does the method resolution order, or MRO, decide?",
+    "choices": [
+      "The order in which Python searches classes for a method when several classes could supply it",
+      "The order in which methods are written inside a class body",
+      "The order in which objects are removed from memory",
+      "The order in which arguments are passed to __init__"
+    ],
+    "answer": 0,
+    "explain": "The MRO is the search order Python follows through a class and its parents to find the method to run."
+  },
+  {
+    "id": "u6-m33",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Shape:\n    def area(self):\n        return 0\n\n    def describe(self):\n        return \"area is \" + str(self.area())\n\nclass Square(Shape):\n    def __init__(self, side):\n        self.side = side\n\n    def area(self):\n        return self.side * self.side\n\nprint(Square(4).describe())",
+    "choices": [
+      "area is 0",
+      "area is 4",
+      "area is 16",
+      "It raises an AttributeError because Square has no describe"
+    ],
+    "answer": 2,
+    "explain": "describe is inherited, but the self.area() inside it finds Square's overriding version, so it uses 4 times 4."
+  },
+  {
+    "id": "u6-m34",
+    "kind": "code",
+    "prompt": "What happens when this program runs?",
+    "code": "class Timer:\n    def tick(self):\n        print(\"tick\")\n\nTimer.tick()",
+    "choices": [
+      "It prints tick",
+      "It prints nothing at all",
+      "It raises a NameError because Timer was never instantiated",
+      "It raises a TypeError because the self argument is missing"
+    ],
+    "answer": 3,
+    "explain": "Calling the method on the class rather than an object leaves self with no value, so Python reports a missing positional argument."
+  },
+  {
+    "id": "u6-m35",
+    "kind": "vocab",
+    "prompt": "What is an instance?",
+    "choices": [
+      "Another name for a method defined inside a class",
+      "One particular object built from a class",
+      "The file that holds a class definition",
+      "A class that has no parent class"
+    ],
+    "answer": 1,
+    "explain": "Instantiating a class produces an instance, which is one concrete object with its own attribute values."
+  },
+  {
+    "id": "u6-m36",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Point:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\n    def __str__(self):\n        return \"Point(\" + str(self.x) + \", \" + str(self.y) + \")\"\n\nprint(Point(1, 2))",
+    "choices": [
+      "Point(1, 2)",
+      "(1, 2)",
+      "Something like <__main__.Point object at 0x7f9c>",
+      "It raises a TypeError because Point cannot be printed"
+    ],
+    "answer": 0,
+    "explain": "print uses the __str__ method when a class defines one, so the readable text is printed instead of the default object description."
+  },
+  {
+    "id": "u6-m37",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Animal:\n    pass\n\nclass Dog(Animal):\n    pass\n\nd = Dog()\nprint(isinstance(d, Animal), type(d) == Animal)",
+    "choices": [
+      "True True",
+      "False False",
+      "False True",
+      "True False"
+    ],
+    "answer": 3,
+    "explain": "isinstance counts subclasses, so d is an Animal, but its exact type is Dog and not Animal."
+  },
+  {
+    "id": "u6-m38",
+    "kind": "vocab",
+    "prompt": "Which of these best explains why inheritance is useful?",
+    "choices": [
+      "It makes objects use less memory",
+      "It lets shared behaviour live in one parent class instead of being copied into every similar class",
+      "It hides a class's attributes from outside code",
+      "It allows a class to be defined without any methods"
+    ],
+    "answer": 1,
+    "explain": "Inheritance avoids repeating the same code in several similar classes, which is the DRY idea."
+  },
+  {
+    "id": "u6-m39",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Cart:\n    def __init__(self, owner):\n        self.owner = owner\n        self.items = []\n\n    def add(self, thing):\n        self.items.append(thing)\n\na = Cart(\"Ana\")\nb = Cart(\"Bo\")\na.add(\"apple\")\nprint(len(a.items), len(b.items))",
+    "choices": [
+      "1 1",
+      "1 0",
+      "0 0",
+      "2 0"
+    ],
+    "answer": 1,
+    "explain": "Because the list is created inside __init__, each cart gets its own list, so adding to a does not touch b."
+  },
+  {
+    "id": "u6-m40",
+    "kind": "vocab",
+    "prompt": "What is the difference between a method and a plain function?",
+    "choices": [
+      "A method is defined inside a class and is called on an object or class",
+      "A method cannot return a value, a function can",
+      "A method must always be named with two leading underscores",
+      "A method can take arguments, a function cannot"
+    ],
+    "answer": 0,
+    "explain": "Methods belong to a class and are reached through an object or the class itself, which is why they take self or cls."
+  },
+  {
+    "id": "u6-m41",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Account:\n    def __init__(self, balance):\n        self.__balance = balance\n\n    def deposit(self, amount):\n        if amount > 0:\n            self.__balance += amount\n        return self.__balance\n\na = Account(100)\na.deposit(-50)\nprint(a.deposit(25))",
+    "choices": [
+      "75",
+      "100",
+      "125",
+      "It raises an AttributeError because __balance is private"
+    ],
+    "answer": 2,
+    "explain": "The negative deposit is ignored by the check, so the balance stays 100 and then rises to 125."
+  },
+  {
+    "id": "u6-m42",
+    "kind": "vocab",
+    "prompt": "What does abstraction mean in OOP?",
+    "choices": [
+      "Writing classes that never store any data",
+      "Copying a class definition into another file",
+      "Presenting a simple interface while the complicated details stay hidden inside",
+      "Turning every attribute into a class variable"
+    ],
+    "answer": 2,
+    "explain": "Abstraction is about exposing what a user needs and keeping the messy implementation out of sight."
+  },
+  {
+    "id": "u6-m43",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Robot:\n    count = 0\n\nr1 = Robot()\nr2 = Robot()\nr1.count = 5\nRobot.count = 9\nprint(r1.count, r2.count)",
+    "choices": [
+      "9 9",
+      "5 5",
+      "9 5",
+      "5 9"
+    ],
+    "answer": 3,
+    "explain": "r1 now has its own instance attribute set to 5, so the later class level change to 9 is only visible through r2."
+  },
+  {
+    "id": "u6-m44",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Stack:\n    def __init__(self):\n        self.items = []\n\n    def push(self, value):\n        self.items.append(value)\n\n    def pop(self):\n        return self.items.pop()\n\n    def size(self):\n        return len(self.items)\n\ns = Stack()\ns.push(1)\ns.push(2)\ns.push(3)\ns.pop()\nprint(s.size(), s.pop())",
+    "choices": [
+      "3 3",
+      "2 3",
+      "2 2",
+      "1 2"
+    ],
+    "answer": 2,
+    "explain": "After three pushes and one pop the stack holds 1 and 2, so size is 2 and the next pop returns 2."
+  },
+  {
+    "id": "u6-m45",
+    "kind": "vocab",
+    "prompt": "A class defines a method as def greet(self, name). How do you call it on an object named p?",
+    "choices": [
+      "p.greet(p, \"Ana\")",
+      "greet(p, \"Ana\")",
+      "p.greet(self, \"Ana\")",
+      "p.greet(\"Ana\")"
+    ],
+    "answer": 3,
+    "explain": "Python passes the object as self automatically, so you supply only the remaining arguments."
+  },
+  {
+    "id": "u6-m46",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Note:\n    def __init__(self, text):\n        self.text = text\n\nn = Note(\"hello\")\nn.author = \"Ana\"\nprint(n.author, hasattr(Note(\"bye\"), \"author\"))",
+    "choices": [
+      "Ana True",
+      "Ana False",
+      "It raises an AttributeError on the assignment",
+      "None False"
+    ],
+    "answer": 1,
+    "explain": "You can attach a new attribute to one object after it is built, but other objects of the class never gain it."
+  },
+  {
+    "id": "u6-m47",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Savings:\n    def __init__(self, balance):\n        self.balance = balance\n\n    def withdraw(self, amount):\n        self.balance -= amount\n        return self.balance\n\nclass Guarded(Savings):\n    def withdraw(self, amount):\n        if amount > self.balance:\n            return \"declined\"\n        return super().withdraw(amount)\n\ng = Guarded(100)\nprint(g.withdraw(150), g.balance)",
+    "choices": [
+      "declined 100",
+      "declined -50",
+      "-50 -50",
+      "100 100"
+    ],
+    "answer": 0,
+    "explain": "The child checks first and returns early, so the parent method never runs and the balance is untouched."
+  },
+  {
+    "id": "u6-m48",
+    "kind": "vocab",
+    "prompt": "Which of these is the clearest example of a class variable rather than an instance variable?",
+    "choices": [
+      "The current balance of one bank account",
+      "The name given to a particular dog",
+      "The interest rate that every account of a bank uses",
+      "The list of grades belonging to one student"
+    ],
+    "answer": 2,
+    "explain": "Data that is the same for every object of the class, such as a shared rate, belongs on the class."
+  },
+  {
+    "id": "u6-m49",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class Character:\n    def __init__(self, name, health=100):\n        self.name = name\n        self.health = health\n\n    def take_damage(self, amount):\n        self.health -= amount\n\nclass Warrior(Character):\n    def __init__(self, name):\n        super().__init__(name, 120)\n        self.armor = 5\n\n    def take_damage(self, amount):\n        super().take_damage(max(0, amount - self.armor))\n\nw = Warrior(\"Ada\")\nw.take_damage(3)\nw.take_damage(20)\nprint(w.health)",
+    "choices": [
+      "97",
+      "105",
+      "100",
+      "108"
+    ],
+    "answer": 1,
+    "explain": "Armor reduces 3 to 0 and 20 to 15, so 120 loses only 15 and ends at 105."
+  },
+  {
+    "id": "u6-m50",
+    "kind": "vocab",
+    "prompt": "In a banking program, which design best follows the ideas taught in this unit?",
+    "choices": [
+      "One BankAccount class with a private balance, and SavingsAccount and CheckingAccount subclasses that override withdraw",
+      "One long function that takes an account type string and uses if statements for every rule",
+      "Three unrelated classes that each repeat the same deposit and withdraw code",
+      "A list of dictionaries with a separate function for every account type"
+    ],
+    "answer": 0,
+    "explain": "Encapsulating the balance and letting subclasses override withdraw uses inheritance and polymorphism instead of repeated code."
+  }
+]

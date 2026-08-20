@@ -1,0 +1,683 @@
+[
+  {
+    "id": "u7-m01",
+    "kind": "vocab",
+    "prompt": "What does persistent storage mean?",
+    "choices": [
+      "Data that is copied into a variable at the start of a program",
+      "Data that only one program is allowed to read",
+      "Data that is saved to disk and survives after the program stops running",
+      "Data that Python keeps in memory for the whole run of the program"
+    ],
+    "answer": 2,
+    "explain": "Variables vanish when a program ends. Writing to a file makes the data persist on disk."
+  },
+  {
+    "id": "u7-m02",
+    "kind": "code",
+    "prompt": "What is in log.txt after this program runs?",
+    "code": "with open(\"log.txt\", \"w\") as f:\n    f.write(\"one\\n\")\nwith open(\"log.txt\", \"a\") as f:\n    f.write(\"two\\n\")\nwith open(\"log.txt\", \"w\") as f:\n    f.write(\"three\\n\")",
+    "choices": [
+      "Only the line three",
+      "The lines one, two and three",
+      "The lines one and three",
+      "Nothing, because the file was opened three times"
+    ],
+    "answer": 0,
+    "explain": "The last open uses \"w\", which empties the file before writing, so only three survives."
+  },
+  {
+    "id": "u7-m03",
+    "kind": "vocab",
+    "prompt": "What does opening a file in \"a\" mode do?",
+    "choices": [
+      "It opens the file for reading only and fails if the file is missing",
+      "It empties the file and then lets you write to it",
+      "It opens the file for reading and writing at the same time",
+      "It adds new data to the end of the file and keeps what was already there"
+    ],
+    "answer": 3,
+    "explain": "Append mode writes at the end of the existing content, and it creates the file if it does not exist yet."
+  },
+  {
+    "id": "u7-m04",
+    "kind": "code",
+    "prompt": "A file named d.txt holds the three lines a, b and c. What does this print?",
+    "code": "with open(\"d.txt\", \"r\") as f:\n    lines = f.readlines()\nprint(lines)",
+    "choices": [
+      "['a', 'b', 'c']",
+      "['a\\n', 'b\\n', 'c\\n']",
+      "'a\\nb\\nc\\n'",
+      "['abc']"
+    ],
+    "answer": 1,
+    "explain": "readlines returns a list of strings and each one keeps the newline character that ended the line."
+  },
+  {
+    "id": "u7-m05",
+    "kind": "code",
+    "prompt": "The file d2.txt holds some text. What does this print?",
+    "code": "with open(\"d2.txt\", \"r\") as f:\n    content = f.read()\n    rest = f.read()\nprint(repr(rest))",
+    "choices": [
+      "The whole file again",
+      "None",
+      "''",
+      "It raises a ValueError because the file was already read"
+    ],
+    "answer": 2,
+    "explain": "The first read moves the position to the end of the file, so a second read finds nothing and returns an empty string."
+  },
+  {
+    "id": "u7-m06",
+    "kind": "code",
+    "prompt": "The file d3.txt holds the lines first and second. What does this print?",
+    "code": "with open(\"d3.txt\", \"r\") as f:\n    a = f.readline()\n    b = f.readline()\nprint(repr(a), repr(b))",
+    "choices": [
+      "'first' 'second'",
+      "'first\\nsecond\\n' ''",
+      "'first' ''",
+      "'first\\n' 'second\\n'"
+    ],
+    "answer": 3,
+    "explain": "readline returns one line at a time and includes the newline character at the end of each."
+  },
+  {
+    "id": "u7-m07",
+    "kind": "vocab",
+    "prompt": "Why does a program need to close a file it has written to?",
+    "choices": [
+      "To make sure the buffered data is actually written to disk and the resource is released",
+      "Because Python refuses to open any other file while one is still open",
+      "Because a file that is left open loses the data it already held",
+      "To convert the file from binary format back to text format"
+    ],
+    "answer": 0,
+    "explain": "Writes can sit in a buffer until the file is closed, and closing also frees the system resources the file was using."
+  },
+  {
+    "id": "u7-m08",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "with open(\"c.txt\", \"w\") as f:\n    f.write(\"x\")\nprint(f.closed)",
+    "choices": [
+      "False",
+      "True",
+      "None",
+      "It raises a NameError because f only exists inside the with block"
+    ],
+    "answer": 1,
+    "explain": "Leaving the with block closes the file automatically, and the variable f is still in scope afterwards."
+  },
+  {
+    "id": "u7-m09",
+    "kind": "code",
+    "prompt": "The file missing.txt does not exist. What happens?",
+    "code": "with open(\"missing.txt\", \"r\") as f:\n    print(f.read())",
+    "choices": [
+      "It creates an empty missing.txt and prints an empty line",
+      "It prints None",
+      "It raises a PermissionError",
+      "It raises a FileNotFoundError"
+    ],
+    "answer": 3,
+    "explain": "Read mode never creates a file, so opening a file that is not there raises FileNotFoundError."
+  },
+  {
+    "id": "u7-m10",
+    "kind": "vocab",
+    "prompt": "Which file modes will create the file when it does not already exist?",
+    "choices": [
+      "Only \"a\"",
+      "Only \"r\"",
+      "Both \"w\" and \"a\"",
+      "None of the writing modes, the file must be created by hand first"
+    ],
+    "answer": 2,
+    "explain": "Write mode and append mode both create the file when it is missing, while read mode raises FileNotFoundError."
+  },
+  {
+    "id": "u7-m11",
+    "kind": "code",
+    "prompt": "What is in wl.txt after this program runs?",
+    "code": "lines = [\"a\", \"b\", \"c\"]\nwith open(\"wl.txt\", \"w\") as f:\n    f.writelines(lines)",
+    "choices": [
+      "Three lines reading a, b and c",
+      "One line reading abc",
+      "One line reading a b c",
+      "Nothing, because writelines needs a newline in each string to work"
+    ],
+    "answer": 1,
+    "explain": "writelines does not add newline characters, so the three strings run together on one line."
+  },
+  {
+    "id": "u7-m12",
+    "kind": "code",
+    "prompt": "The file it.txt holds the lines 10, 20 and 30. What does this print?",
+    "code": "total = 0\nwith open(\"it.txt\", \"r\") as f:\n    for line in f:\n        total += int(line.strip())\nprint(total)",
+    "choices": [
+      "60",
+      "102030",
+      "0",
+      "It raises a ValueError because each line ends with a newline"
+    ],
+    "answer": 0,
+    "explain": "Iterating a file gives one line at a time, and strip removes the newline so int can convert the digits."
+  },
+  {
+    "id": "u7-m13",
+    "kind": "code",
+    "prompt": "What happens when this program runs?",
+    "code": "with open(\"num.txt\", \"w\") as f:\n    f.write(42)",
+    "choices": [
+      "It writes 42 to the file",
+      "It writes the text \"42\" to the file",
+      "It writes nothing and leaves the file empty",
+      "It raises a TypeError because write only accepts strings"
+    ],
+    "answer": 3,
+    "explain": "write takes a string, so a number has to be converted first, for example with str(42) or an f-string."
+  },
+  {
+    "id": "u7-m14",
+    "kind": "vocab",
+    "prompt": "What is the main advantage of the with statement over calling open and close by hand?",
+    "choices": [
+      "It makes reading the file faster",
+      "It lets you open a file that does not exist in read mode",
+      "The file is closed automatically even if an error happens inside the block",
+      "It removes the need to pass a file mode to open"
+    ],
+    "answer": 2,
+    "explain": "The with statement closes the file when the block ends, including when an exception is raised part way through."
+  },
+  {
+    "id": "u7-m15",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "with open(\"w.txt\", \"w\") as f:\n    n = f.write(\"hello\")\nprint(n)",
+    "choices": [
+      "5",
+      "hello",
+      "True",
+      "None"
+    ],
+    "answer": 0,
+    "explain": "write returns the number of characters it wrote, and \"hello\" is five characters long."
+  },
+  {
+    "id": "u7-m16",
+    "kind": "vocab",
+    "prompt": "What is the difference between a syntax error and an exception?",
+    "choices": [
+      "A syntax error can be caught with try and except, an exception cannot",
+      "A syntax error stops the program from running at all, while an exception happens while the program is running",
+      "A syntax error only happens in files, an exception only happens with numbers",
+      "There is no difference, the two names mean the same thing"
+    ],
+    "answer": 1,
+    "explain": "Python refuses to run code with a syntax error, but an exception is raised during execution and can be handled."
+  },
+  {
+    "id": "u7-m17",
+    "kind": "code",
+    "prompt": "What does this program print, in order?",
+    "code": "def go():\n    try:\n        return \"try\"\n    finally:\n        print(\"finally runs\")\n\nprint(go())",
+    "choices": [
+      "try only",
+      "finally runs only",
+      "try, then finally runs",
+      "finally runs, then try"
+    ],
+    "answer": 3,
+    "explain": "The finally block runs before the function actually hands its return value back, so its print appears first."
+  },
+  {
+    "id": "u7-m18",
+    "kind": "code",
+    "prompt": "What does this program print, in order?",
+    "code": "try:\n    n = int(\"12\")\nexcept ValueError:\n    print(\"bad\")\nelse:\n    print(\"ok\", n)\nfinally:\n    print(\"done\")",
+    "choices": [
+      "bad, then done",
+      "ok 12 only",
+      "ok 12, then done",
+      "bad, then ok 12, then done"
+    ],
+    "answer": 2,
+    "explain": "No exception is raised, so the else block runs, and finally always runs at the end."
+  },
+  {
+    "id": "u7-m19",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "try:\n    int(\"abc\")\nexcept Exception:\n    print(\"general\")\nexcept ValueError:\n    print(\"specific\")",
+    "choices": [
+      "specific",
+      "general",
+      "general, then specific",
+      "It raises a SyntaxError because ValueError comes after Exception"
+    ],
+    "answer": 1,
+    "explain": "Python checks except clauses top to bottom, and Exception matches first, so the ValueError clause is never reached."
+  },
+  {
+    "id": "u7-m20",
+    "kind": "vocab",
+    "prompt": "When a try block has several except clauses, in what order should they be written?",
+    "choices": [
+      "The most specific exception types first and the broadest ones last",
+      "The broadest exception types first so nothing escapes",
+      "Alphabetical order by exception name",
+      "The order does not matter, Python picks the closest match"
+    ],
+    "answer": 0,
+    "explain": "Clauses are tried in order, so a broad clause placed early would swallow the errors the specific clauses were meant to handle."
+  },
+  {
+    "id": "u7-m21",
+    "kind": "code",
+    "prompt": "Which exception does this code raise?",
+    "code": "age = int(\"twenty\")",
+    "choices": [
+      "TypeError",
+      "NameError",
+      "ValueError",
+      "SyntaxError"
+    ],
+    "answer": 2,
+    "explain": "int receives a string of the right type but the wrong value, which is exactly what ValueError reports."
+  },
+  {
+    "id": "u7-m22",
+    "kind": "code",
+    "prompt": "Which exception does this code raise?",
+    "code": "person = {\"name\": \"Ana\"}\nprint(person[\"age\"])",
+    "choices": [
+      "IndexError",
+      "ValueError",
+      "AttributeError",
+      "KeyError"
+    ],
+    "answer": 3,
+    "explain": "Looking up a dictionary key that is not present raises KeyError."
+  },
+  {
+    "id": "u7-m23",
+    "kind": "vocab",
+    "prompt": "When does Python raise an IndexError?",
+    "choices": [
+      "When a variable is used before it is given a value",
+      "When a list is asked for a position that does not exist",
+      "When two values of different types are added together",
+      "When a dictionary key cannot be found"
+    ],
+    "answer": 1,
+    "explain": "IndexError means the position asked for is outside the range of the sequence."
+  },
+  {
+    "id": "u7-m24",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "try:\n    result = 10 / 0\nexcept ZeroDivisionError:\n    print(\"cannot divide by zero\")\nexcept ValueError:\n    print(\"bad value\")\nprint(\"still running\")",
+    "choices": [
+      "cannot divide by zero, then still running",
+      "bad value, then still running",
+      "cannot divide by zero only",
+      "The program crashes before printing anything"
+    ],
+    "answer": 0,
+    "explain": "The matching except clause handles the error, so the program keeps going and reaches the final print."
+  },
+  {
+    "id": "u7-m25",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def divide(a, b):\n    if b == 0:\n        raise ValueError(\"cannot divide by zero\")\n    return a / b\n\ntry:\n    print(divide(10, 0))\nexcept ValueError as e:\n    print(\"caught:\", e)",
+    "choices": [
+      "0.0",
+      "caught: ValueError",
+      "It crashes with an unhandled ZeroDivisionError",
+      "caught: cannot divide by zero"
+    ],
+    "answer": 3,
+    "explain": "The raise happens before any division, and printing the caught exception shows the message it was given."
+  },
+  {
+    "id": "u7-m26",
+    "kind": "vocab",
+    "prompt": "What does the raise keyword do?",
+    "choices": [
+      "It restarts the try block from the beginning",
+      "It reports the last exception that Python handled",
+      "It triggers an exception on purpose so the calling code knows something went wrong",
+      "It stops the program immediately without any error message"
+    ],
+    "answer": 2,
+    "explain": "raise is how your own code signals a problem, usually after a validation check fails."
+  },
+  {
+    "id": "u7-m27",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "class AppError(Exception):\n    pass\n\nclass ConfigError(AppError):\n    pass\n\ntry:\n    raise ConfigError(\"missing host\")\nexcept AppError as e:\n    print(\"caught:\", e)",
+    "choices": [
+      "caught: missing host",
+      "It crashes, because only ConfigError can catch a ConfigError",
+      "caught: ConfigError",
+      "caught: AppError"
+    ],
+    "answer": 0,
+    "explain": "A subclass of an exception is caught by a clause naming its parent, which is why exception hierarchies are useful."
+  },
+  {
+    "id": "u7-m28",
+    "kind": "vocab",
+    "prompt": "Why would you define your own exception class instead of raising a built in one?",
+    "choices": [
+      "Custom exceptions are the only kind that can carry a message",
+      "It names the problem precisely so calling code can catch just that kind of failure",
+      "Built in exceptions cannot be caught with try and except",
+      "Python runs custom exceptions faster than built in ones"
+    ],
+    "answer": 1,
+    "explain": "A named exception such as ConfigError makes the failure clear and lets callers handle it separately from unrelated errors."
+  },
+  {
+    "id": "u7-m29",
+    "kind": "code",
+    "prompt": "What does this program print, in order?",
+    "code": "def load():\n    try:\n        raise FileNotFoundError(\"gone\")\n    except FileNotFoundError:\n        print(\"logging\")\n        raise\n\ntry:\n    load()\nexcept FileNotFoundError as e:\n    print(\"outer:\", e)",
+    "choices": [
+      "logging only",
+      "outer: gone only",
+      "logging, then outer: gone",
+      "outer: gone, then logging"
+    ],
+    "answer": 2,
+    "explain": "A bare raise inside an except block sends the same exception on to the caller after the local handling is done."
+  },
+  {
+    "id": "u7-m30",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "values = [\"3\", \"x\", \"5\"]\ntotal = 0\nfor v in values:\n    try:\n        total += int(v)\n    except ValueError:\n        continue\nprint(total)",
+    "choices": [
+      "0",
+      "3",
+      "It crashes with a ValueError on the second item",
+      "8"
+    ],
+    "answer": 3,
+    "explain": "The bad item is skipped by the except clause, so only 3 and 5 are added."
+  },
+  {
+    "id": "u7-m31",
+    "kind": "vocab",
+    "prompt": "Where in a traceback do you find the exception type and its message?",
+    "choices": [
+      "On the last line, at the very bottom",
+      "On the first line, right after the word Traceback",
+      "In the middle, beside the file name",
+      "Tracebacks show only line numbers, never the exception type"
+    ],
+    "answer": 0,
+    "explain": "A traceback lists the call chain first and finishes with the exception type and message on the bottom line."
+  },
+  {
+    "id": "u7-m32",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "from pathlib import Path\n\np = Path(\"reports\") / \"summary.csv\"\nprint(p.name, p.stem, p.suffix)",
+    "choices": [
+      "summary.csv reports .csv",
+      "summary.csv summary .csv",
+      "summary summary.csv csv",
+      "reports summary .csv"
+    ],
+    "answer": 1,
+    "explain": "name is the file name with its extension, stem is the name without the extension, and suffix is the extension itself."
+  },
+  {
+    "id": "u7-m33",
+    "kind": "vocab",
+    "prompt": "Why should you build a path with os.path.join or a pathlib Path instead of gluing strings together with a slash?",
+    "choices": [
+      "Because gluing strings is slower for long paths",
+      "Because Python does not allow the plus operator on strings",
+      "Because the right separator is used on Windows as well as on Mac and Linux",
+      "Because only joined paths can be passed to open"
+    ],
+    "answer": 2,
+    "explain": "Windows uses a backslash while Mac and Linux use a forward slash, and the path tools pick the correct one for you."
+  },
+  {
+    "id": "u7-m34",
+    "kind": "code",
+    "prompt": "On a Mac or Linux machine, what does this print?",
+    "code": "import os\n\nprint(os.path.join(\"data\", \"raw\", \"file.txt\"))",
+    "choices": [
+      "data raw file.txt",
+      "datarawfile.txt",
+      "['data', 'raw', 'file.txt']",
+      "data/raw/file.txt"
+    ],
+    "answer": 3,
+    "explain": "os.path.join inserts the separator the current system uses between each part."
+  },
+  {
+    "id": "u7-m35",
+    "kind": "vocab",
+    "prompt": "What is a relative path?",
+    "choices": [
+      "A path that always begins at the root of the file system",
+      "A path that is interpreted from the directory the program is running in",
+      "A path that points only to a folder and never to a file",
+      "A path that contains no file extension"
+    ],
+    "answer": 1,
+    "explain": "A relative path such as data.txt is resolved against the current working directory rather than the root of the disk."
+  },
+  {
+    "id": "u7-m36",
+    "kind": "code",
+    "prompt": "The file report.txt does not exist. What does this print?",
+    "code": "from pathlib import Path\n\np = Path(\"report.txt\")\nprint(p.exists(), p.suffix)",
+    "choices": [
+      "False .txt",
+      "True .txt",
+      "False txt",
+      "It raises a FileNotFoundError"
+    ],
+    "answer": 0,
+    "explain": "A Path object is just a name, so exists reports False while suffix still reads the extension from the text."
+  },
+  {
+    "id": "u7-m37",
+    "kind": "code",
+    "prompt": "The file notes.txt does not exist yet. What happens?",
+    "code": "with open(\"notes.txt\", \"a\") as f:\n    f.write(\"hi\\n\")",
+    "choices": [
+      "It raises a FileNotFoundError",
+      "It raises a PermissionError",
+      "It does nothing, because append needs an existing file",
+      "It creates notes.txt containing the line hi"
+    ],
+    "answer": 3,
+    "explain": "Append mode creates the file when it is missing, then writes at the end."
+  },
+  {
+    "id": "u7-m38",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "line = \"  Hello World \\n\"\nprint(repr(line.strip()))",
+    "choices": [
+      "'  Hello World '",
+      "'HelloWorld'",
+      "'Hello World'",
+      "'  Hello World \\n'"
+    ],
+    "answer": 2,
+    "explain": "strip removes whitespace, including the newline, from both ends but leaves the space in the middle alone."
+  },
+  {
+    "id": "u7-m39",
+    "kind": "vocab",
+    "prompt": "What is the difference between read() and readlines()?",
+    "choices": [
+      "read returns the whole file as one string, readlines returns a list with one string per line",
+      "read returns a list of lines, readlines returns one string",
+      "read works only on small files, readlines works only on large files",
+      "read closes the file afterwards, readlines leaves it open"
+    ],
+    "answer": 0,
+    "explain": "Both load the whole file, but read gives a single string while readlines splits it into a list."
+  },
+  {
+    "id": "u7-m40",
+    "kind": "code",
+    "prompt": "The file input.txt holds the single line hello. What is in output.txt afterwards?",
+    "code": "with open(\"input.txt\", \"r\") as source:\n    with open(\"output.txt\", \"w\") as target:\n        for line in source:\n            target.write(line.upper())",
+    "choices": [
+      "hello",
+      "HELLO",
+      "Nothing, because a file cannot be read and written in the same block",
+      "HELLO written twice"
+    ],
+    "answer": 1,
+    "explain": "Nested with statements let you read one file and write another, and upper converts each line before it is written."
+  },
+  {
+    "id": "u7-m41",
+    "kind": "vocab",
+    "prompt": "What is a context manager?",
+    "choices": [
+      "A function that reads a whole file into memory at once",
+      "A module that keeps track of which files a program has opened",
+      "A special kind of exception used for file errors",
+      "An object that sets a resource up when a with block starts and cleans it up when the block ends"
+    ],
+    "answer": 3,
+    "explain": "File objects are context managers, which is why the with statement can open a file and reliably close it again."
+  },
+  {
+    "id": "u7-m42",
+    "kind": "code",
+    "prompt": "What happens when this program runs?",
+    "code": "with open(\"bad.txt\", \"w\") as f:\n    print(f.read())",
+    "choices": [
+      "It prints an empty line",
+      "It prints the previous contents of bad.txt",
+      "It raises an error because the file was not opened for reading",
+      "It raises a FileNotFoundError"
+    ],
+    "answer": 2,
+    "explain": "A file opened in \"w\" mode is write only, so calling read on it is an unsupported operation."
+  },
+  {
+    "id": "u7-m43",
+    "kind": "code",
+    "prompt": "The file data.txt does not exist. What does this program print?",
+    "code": "def read_safely(name):\n    try:\n        with open(name, \"r\") as f:\n            return f.read()\n    except FileNotFoundError:\n        print(\"no such file\")\n        return None\n\nresult = read_safely(\"data.txt\")\nprint(result)",
+    "choices": [
+      "no such file only",
+      "no such file, then None",
+      "None only",
+      "It crashes with an unhandled FileNotFoundError"
+    ],
+    "answer": 1,
+    "explain": "The handler prints its message and returns None, which the caller then prints."
+  },
+  {
+    "id": "u7-m44",
+    "kind": "vocab",
+    "prompt": "In except ValueError as e, what does the name e refer to?",
+    "choices": [
+      "The exception object, which carries the error message",
+      "The line number where the error happened",
+      "The name of the function that raised the error",
+      "A copy of the value that failed to convert"
+    ],
+    "answer": 0,
+    "explain": "The as clause binds the exception object, so printing e shows the message it was created with."
+  },
+  {
+    "id": "u7-m45",
+    "kind": "code",
+    "prompt": "What is in events.log after this program runs?",
+    "code": "def log(message):\n    with open(\"events.log\", \"a\") as f:\n        f.write(message + \"\\n\")\n\nlog(\"start\")\nlog(\"stop\")",
+    "choices": [
+      "Only the line stop",
+      "Only the line start",
+      "The line start followed by the line stop",
+      "One line reading startstop"
+    ],
+    "answer": 2,
+    "explain": "Append mode adds to the end each time, and the newline in the write keeps the entries on separate lines."
+  },
+  {
+    "id": "u7-m46",
+    "kind": "vocab",
+    "prompt": "Why is a bare except: that catches everything discouraged?",
+    "choices": [
+      "It runs more slowly than a named except clause",
+      "Python plans to remove it from the language",
+      "It can only be used once per program",
+      "It hides bugs by swallowing errors you never expected or planned for"
+    ],
+    "answer": 3,
+    "explain": "Catching everything makes real programming mistakes look like handled conditions, which makes debugging much harder."
+  },
+  {
+    "id": "u7-m47",
+    "kind": "code",
+    "prompt": "What does this program print?",
+    "code": "def get_number(text):\n    try:\n        return int(text)\n    except ValueError:\n        return 0\n\nprint(get_number(\"7\") + get_number(\"seven\"))",
+    "choices": [
+      "0",
+      "7",
+      "7seven",
+      "It crashes with a ValueError"
+    ],
+    "answer": 1,
+    "explain": "The first call converts successfully and the second falls back to 0, so the sum is 7."
+  },
+  {
+    "id": "u7-m48",
+    "kind": "vocab",
+    "prompt": "Which list contains only text files?",
+    "choices": [
+      "notes.txt, data.csv, config.json",
+      "photo.jpg, notes.txt, song.mp3",
+      "archive.zip, program.exe, image.png",
+      "report.pdf, data.csv, video.mp4"
+    ],
+    "answer": 0,
+    "explain": "Text files hold human readable characters, while images, audio, archives and executables are binary."
+  },
+  {
+    "id": "u7-m49",
+    "kind": "code",
+    "prompt": "What is true about this program?",
+    "code": "with open(\"a.txt\", \"r\") as source, open(\"b.txt\", \"w\") as target:\n    target.write(source.read())",
+    "choices": [
+      "Only a.txt is closed at the end of the block",
+      "Only b.txt is closed at the end of the block",
+      "It raises a SyntaxError because with cannot take two files",
+      "Both files are closed when the block ends"
+    ],
+    "answer": 3,
+    "explain": "A single with statement can manage several resources, and every one of them is closed when the block finishes."
+  },
+  {
+    "id": "u7-m50",
+    "kind": "vocab",
+    "prompt": "A program must read a file whose name the user types in. Which approach matches the practices taught in this unit?",
+    "choices": [
+      "Read the file with no checks and let the program crash if it is missing",
+      "Wrap every file operation in a bare except: that prints nothing",
+      "Check the path with Path.exists, then open it inside a with statement and catch FileNotFoundError and PermissionError",
+      "Copy the file to a fixed name first so the program can always open the same path"
+    ],
+    "answer": 2,
+    "explain": "Validate first, use with so the file is always closed, and catch the specific errors that this operation can realistically raise."
+  }
+]
