@@ -26,6 +26,7 @@
     <script defer src="/assets/js/progress-store.js"></script>
     <script defer src="/assets/js/merge.js"></script>
     <script defer src="/assets/js/username.js"></script>
+    <script defer src="/assets/js/consent.js"></script>
     <script defer src="/assets/js/gate.js"></script>
     <script defer src="/assets/js/curriculum.js"></script>
     <script defer src="/assets/js/lesson-progress.js"></script>
@@ -124,8 +125,13 @@
                minlength="8" required aria-describedby="signup-hint">
         <p class="auth-hint" id="signup-hint">At least 8 characters.</p>
 
-        <button type="submit" class="btn btn-primary">Create account</button>
-        <p class="auth-error" id="signup-error" role="alert" hidden></p>
+        <div class="auth-consent">
+          <input id="signup-terms" type="checkbox" required aria-describedby="signup-consent-hint">
+          <label for="signup-terms">I agree to the <a href="/terms.html" class="route">Terms of use</a> and the <a href="/privacy.html" class="route">Privacy policy</a>.</label>
+        </div>
+        <p class="auth-hint" id="signup-consent-hint">Required. This also covers signing up with Google or GitHub.</p>
+
+        <button type="submit" class="btn btn-primary">Create account</button>        <p class="auth-error" id="signup-error" role="alert" hidden></p>
       </form>
 
       <div class="auth-providers">
@@ -144,7 +150,7 @@
               <span class="brand-text">PyPath</span>
             </a>
             <p class="footer-tagline">Learn Python with clarity — free, structured lessons from foundations to real projects.</p>
-            <p class="footer-copy muted">&copy; <span id="year"></span> PyPath &middot; <a href="/privacy.html" class="route">Privacy</a></p>
+            <p class="footer-copy muted">&copy; <span id="year"></span> PyPath &middot; <a href="/privacy.html" class="route">Privacy</a> &middot; <a href="/terms.html" class="route">Terms</a></p>
           </div>
           <div class="footer-col">
             <h4 class="footer-heading">Learn</h4>
@@ -172,9 +178,35 @@
       async function saveName(uid, first, last, full) {
         await setDoc(
           doc(db, 'users/' + uid),
-          { firstName: first, lastName: last, displayName: full, updatedAt: Date.now() },
+          Object.assign(
+            { firstName: first, lastName: last, displayName: full, updatedAt: Date.now() },
+            window.PyPathConsent.record()
+          ),
           { merge: true }
         );
+      }
+
+      // Google and GitHub skip the form entirely, so the consent record has to
+      // be written on those paths too -- otherwise a provider sign-up would
+      // create an account with no record of what was agreed to.
+      async function saveConsent(uid) {
+        await setDoc(
+          doc(db, 'users/' + uid),
+          Object.assign({ updatedAt: Date.now() }, window.PyPathConsent.record()),
+          { merge: true }
+        );
+      }
+
+      // One gate for all three sign-up buttons.
+      function agreed() {
+        var box = document.getElementById('signup-terms');
+        var check = window.PyPathConsent.check(!!(box && box.checked));
+        if (!check.ok) {
+          err.hidden = false;
+          err.textContent = check.error;
+          if (box) box.focus();
+        }
+        return check.ok;
       }
 
       const err = document.getElementById('signup-error');
@@ -204,6 +236,7 @@
       document.getElementById('signup-form').addEventListener('submit', async (ev) => {
         ev.preventDefault();
         err.hidden = true;
+        if (!agreed()) return;
         const rawFirst = document.getElementById('signup-first-name').value;
         const rawLast = document.getElementById('signup-last-name').value;
         const check = window.PyPathUsername.validate(rawFirst, rawLast);
@@ -234,10 +267,26 @@
         } catch (e) { fail(e); }
       });
 
+      async function viaProvider(signIn) {
+        err.hidden = true;
+        if (!agreed()) return;
+        try {
+          const user = await signIn();
+          try {
+            await saveConsent(user.uid);
+          } catch (e) {
+            // The account exists either way; a failed consent write must not
+            // strand someone with an account they cannot reach.
+            window.PyUI && window.PyUI.showToast('Signed up, but we could not record your agreement');
+          }
+          done();
+        } catch (e) { fail(e); }
+      }
+
       document.getElementById('signup-google')
-        .addEventListener('click', async () => { try { await signInWithGoogle(); done(); } catch (e) { fail(e); } });
+        .addEventListener('click', () => viaProvider(signInWithGoogle));
       document.getElementById('signup-github')
-        .addEventListener('click', async () => { try { await signInWithGitHub(); done(); } catch (e) { fail(e); } });
+        .addEventListener('click', () => viaProvider(signInWithGitHub));
     </script>
   </body>
   </html>
