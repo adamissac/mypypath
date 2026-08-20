@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <script src="/assets/js/theme-init.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin &bull; PyPath</title>
+    <meta name="description" content="Internal learner roster for PyPath staff." />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
+    <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/pypath-fast.css" />
+    <link rel="stylesheet" href="/assets/css/pypath-theme.css" />
+    <link rel="stylesheet" href="/assets/css/auth.css" />
+    <link rel="stylesheet" href="/assets/css/admin.css" />
+
+<script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/icons.js"></script>
+<script defer src="/assets/js/storage-keys.js"></script>
+    <script defer src="/assets/js/progress-store.js"></script>
+    <script defer src="/assets/js/merge.js"></script>
+    <script defer src="/assets/js/username.js"></script>
+    <script defer src="/assets/js/admin-access.js"></script>
+    <script defer src="/assets/js/activity-core.js"></script>
+    <script defer src="/assets/js/motion.js"></script>
+    <script defer src="/assets/js/core.js"></script>
+    <script type="module" src="/assets/js/auth.js"></script>
+    <script type="module" src="/assets/js/sync.js"></script>
+    <script type="module" src="/assets/js/activity.js"></script>
+    <script type="module" src="/assets/js/auth-ui.js"></script>
+    <script type="module" src="/assets/js/admin-page.js"></script>
+</head>
+  <body class="page page-admin">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <div id="page-transition" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <div class="header-accent" aria-hidden="true"></div>
+      <div class="container header-inner">
+        <a class="brand route" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo" width="36" height="36">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <div class="header-actions">
+          <nav class="primary-nav" aria-label="Primary">
+            <button type="button" class="mobile-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-menu">
+              <span class="mobile-toggle-bar" aria-hidden="true"></span>
+              <span class="mobile-toggle-bar" aria-hidden="true"></span>
+              <span class="mobile-toggle-bar" aria-hidden="true"></span>
+            </button>
+            <div class="nav-pill">
+              <ul class="menu" id="primary-menu">
+              <li><a href="/" class="route">Home</a></li>
+              <li><a href="/curriculum.html" class="route">Curriculum</a></li>
+              <li><a href="/sandbox.html" class="route">Sandbox</a></li>
+              <li><a href="/settings.html" class="route">Settings</a></li>
+              </ul>
+            </div>
+          </nav>
+          <div class="header-end">
+          <div class="account-menu" data-account-menu>
+            <a href="/login.html" class="btn btn-ghost account-signin route" data-account-signin>Sign in</a>
+            <button type="button" class="account-avatar" data-account-avatar hidden aria-haspopup="menu" aria-expanded="false">
+              <img src="/assets/img/placeholder-avatar.svg" alt="" width="28" height="28" data-account-photo>
+              <span class="account-username" data-account-username></span>
+            </button>
+            <div class="account-panel" data-account-panel role="menu" hidden>
+              <a href="/progress.html" class="route" role="menuitem">My progress</a>
+              <a href="/account.html" class="route" role="menuitem">Account</a>
+              <button type="button" data-account-signout role="menuitem">Sign out</button>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content" class="container admin-page">
+      <h1>Learner dashboard</h1>
+
+      <p data-admin-state="loading">Checking your account&hellip;</p>
+
+      <section data-admin-state="denied" hidden>
+        <p>This page is for PyPath staff. If you are signed in to the wrong
+           account, <a href="/login.html" class="route">sign in again</a>.</p>
+      </section>
+
+      <section class="admin-error" data-admin-state="error" hidden>
+        <p>Could not load the roster.</p>
+        <code data-admin-error-message></code>
+        <p><button type="button" class="btn btn-ghost" data-admin-refresh>Try again</button></p>
+      </section>
+
+      <div data-admin-state="ready" hidden>
+        <div class="admin-head">
+          <div>
+            <p>Every account, how long they have spent learning, how far they
+               got, and whether they finished.</p>
+          </div>
+          <div class="admin-actions">
+            <label class="visually-hidden" for="admin-search">Search learners</label>
+            <input class="admin-search" id="admin-search" type="search"
+                   placeholder="Search name, email, uid" data-admin-search>
+            <button type="button" class="btn btn-ghost" data-admin-refresh>Refresh</button>
+            <button type="button" class="btn btn-primary" data-admin-csv>Export CSV</button>
+          </div>
+        </div>
+
+        <dl class="admin-stats">
+          <div class="admin-stat">
+            <dt>Accounts</dt>
+            <dd data-admin-stat="learners">0</dd>
+          </div>
+          <div class="admin-stat">
+            <dt>Total hours</dt>
+            <dd data-admin-stat="hours">0</dd>
+          </div>
+          <div class="admin-stat">
+            <dt>Have studied</dt>
+            <dd data-admin-stat="active">0</dd>
+          </div>
+          <div class="admin-stat">
+            <dt>Certificates</dt>
+            <dd data-admin-stat="certificates">0</dd>
+          </div>
+        </dl>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th scope="col"><button type="button" data-admin-sort="email">Learner</button></th>
+                <th scope="col"><button type="button" data-admin-sort="createdAt">Joined</button></th>
+                <th scope="col"><button type="button" data-admin-sort="lastSeenAt">Last active</button></th>
+                <th scope="col"><button type="button" data-admin-sort="seconds">Time on platform</button></th>
+                <th scope="col"><button type="button" data-admin-sort="units">Progress</button></th>
+                <th scope="col"><button type="button" data-admin-sort="certificate">Certificate</button></th>
+              </tr>
+            </thead>
+            <tbody data-admin-rows></tbody>
+          </table>
+        </div>
+
+        <p class="admin-note">Time counts only while a signed-in learner has the
+          tab open and has interacted within the last five minutes, so an
+          abandoned tab does not inflate the number. Accounts created before
+          time tracking shipped show no history until their next visit.</p>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand small route" href="/">
+              <img src="/assets/img/pyPathLogo.png" alt="" class="logo small" width="28" height="28">
+              <span class="brand-text">PyPath</span>
+            </a>
+            <p class="footer-copy muted">&copy; <span id="year"></span> PyPath &middot; <a href="/privacy.html" class="route">Privacy</a></p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+  </html>

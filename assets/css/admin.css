@@ -1,0 +1,218 @@
+/* PyPath — admin dashboard */
+
+.admin-page {
+  padding-block: 2.5rem 4rem;
+}
+
+.admin-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-head p {
+  margin: 0.25rem 0 0;
+}
+
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.admin-search {
+  min-width: 14rem;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  background: var(--panel);
+  color: inherit;
+  font: inherit;
+}
+
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.85rem;
+  margin-bottom: 1.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-stat {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  background: var(--panel);
+}
+
+.admin-stat dt {
+  margin: 0 0 0.3rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.admin-stat dd {
+  margin: 0;
+  font-family: Syne, system-ui, sans-serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* The table is wide by nature; it scrolls inside its own box rather than
+   pushing the page sideways on a phone. */
+.admin-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  background: var(--panel);
+}
+
+.admin-table {
+  width: 100%;
+  min-width: 46rem;
+  border-collapse: collapse;
+  font-size: 0.94rem;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 0.7rem 0.9rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.admin-table th {
+  position: sticky;
+  top: 0;
+  background: var(--bg-elevated);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.admin-table th button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.admin-table th button.is-active {
+  text-decoration: underline;
+}
+
+.admin-table th button[aria-sort='ascending']::after { content: '\2191'; }
+.admin-table th button[aria-sort='descending']::after { content: '\2193'; }
+
+.admin-cell-user {
+  display: table-cell;
+}
+
+.admin-name {
+  display: block;
+  font-weight: 600;
+}
+
+.admin-email {
+  display: block;
+  font-size: 0.84rem;
+  opacity: 0.72;
+  word-break: break-all;
+}
+
+.admin-tag {
+  display: inline-block;
+  padding: 0.05rem 0.35rem;
+  border-radius: 0.35rem;
+  background: #f6d5a8;
+  color: #6b4300;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.admin-num {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.admin-cell-progress {
+  min-width: 9rem;
+  white-space: nowrap;
+}
+
+.admin-bar {
+  display: inline-block;
+  width: 5.5rem;
+  height: 0.5rem;
+  margin-right: 0.5rem;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.admin-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+}
+
+.admin-bar-label {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+}
+
+.admin-pill {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.admin-pill--yes { background: #d4f0dc; color: #14532d; }
+.admin-pill--no  { background: var(--bg-elevated); opacity: 0.75; }
+
+.admin-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  opacity: 0.7;
+}
+
+.admin-note {
+  margin-top: 1.25rem;
+  font-size: 0.86rem;
+  opacity: 0.72;
+}
+
+.admin-error code {
+  display: block;
+  margin-top: 0.5rem;
+  word-break: break-word;
+}
+
+[data-theme='dark'] .admin-tag { background: #5a4212; color: #f6d5a8; }
+[data-theme='dark'] .admin-pill--yes { background: #143622; color: #a9e8c1; }

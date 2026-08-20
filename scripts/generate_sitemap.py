@@ -8,8 +8,9 @@ OUT = ROOT / "sitemap.xml"
 # important one: it is gitignored, never deploys, and rglob happily walked it
 # into the sitemap once dev dependencies were installed.
 SKIP_DIRS = {".git", "node_modules", "lesson-format-kit", "REVIEW", "docs", "tests"}
-# A 404 page must never be advertised for indexing.
-SKIP_FILES = {"404.html"}
+# A 404 page must never be advertised for indexing, and the staff dashboard
+# is not public content.
+SKIP_FILES = {"404.html", "admin.html"}
 
 def page_url(path: Path) -> str:
     rel = path.relative_to(ROOT).as_posix()
