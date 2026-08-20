@@ -574,6 +574,24 @@
     paintTestEntries();
   }
 
+  // pypath:progress fires on every ProgressStore write, and lesson-runner.js
+  // writes the editor contents on every CodeMirror change -- so on a lesson
+  // page this arrives once per keystroke. Repainting synchronously would put a
+  // full re-read and re-parse of the progress map in the typing path. One
+  // repaint per frame is as often as any of this can be seen.
+  var queued = false;
+
+  function repaintSoon() {
+    if (queued) return;
+    queued = true;
+    var run = function () {
+      queued = false;
+      repaint();
+    };
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(run);
+    else setTimeout(run, 16);
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     if (isLessonPage()) {
       required = requiredItems();
@@ -586,7 +604,8 @@
 
   // A write from this page, a value arriving from another device through
   // sync.js, or the role finally resolving -- all three change what the ticks
-  // and the lock notice should say.
-  document.addEventListener('pypath:progress', repaint);
+  // and the lock notice should say. The role lands once and is worth showing
+  // immediately; progress writes arrive in floods.
+  document.addEventListener('pypath:progress', repaintSoon);
   document.addEventListener('pypath:role', repaint);
 })();
