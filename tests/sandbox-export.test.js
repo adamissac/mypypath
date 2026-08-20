@@ -171,3 +171,23 @@ describe('buildPrintHtml', () => {
     );
   });
 });
+
+// core.js runs on every page and used to bind the settings backup to a bare
+// #export-btn. The sandbox caret claimed that id in good faith and inherited
+// the handler, so opening the menu downloaded pypath-settings.json. Both
+// halves of that fix are pinned here.
+describe('the export caret does not collide with the settings backup', () => {
+  it('gives the sandbox trigger a page-specific id', () => {
+    const html = fs.readFileSync('sandbox.html', 'utf8');
+    expect(html).toContain('id="sandbox-export-btn"');
+    expect(html).not.toContain('id="export-btn"');
+  });
+
+  it('scopes the settings backup handler to the settings page', () => {
+    const src = fs.readFileSync('assets/js/core.js', 'utf8');
+    const fn = src.slice(src.indexOf('function setupSettingsActions()'));
+    const guard = fn.indexOf("classList.contains('page-settings')");
+    expect(guard).toBeGreaterThan(-1);
+    expect(guard).toBeLessThan(fn.indexOf("qs('#export-btn')"));
+  });
+});

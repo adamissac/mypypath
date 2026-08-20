@@ -333,7 +333,7 @@ for i in range(3):
     if (!root) return;
     if (window.PyDropdowns && window.PyDropdowns.close) window.PyDropdowns.close(root);
     if (!refocus) return;
-    const trigger = $('export-btn');
+    const trigger = $('sandbox-export-btn');
     if (trigger) trigger.focus();
   }
 
