@@ -46,15 +46,22 @@ service cloud.firestore {
       allow update: if false;
 
       // Regenerating a code retires the old one.
-      allow delete: if signedIn() && resource.data.teacherUid == request.auth.uid;
+      allow delete: if signedIn()
+        && resource != null
+        && resource.data.teacherUid == request.auth.uid;
     }
 
     match /users/{uid} {
       // The teacher of this learner, established by resource.data.teacherUid on
       // the document being read. That works for get and for list alike, so a
       // teacher's roster query needs no per-document lookup.
+      // resource is null when the document does not exist, and dereferencing it
+      // makes the rule error rather than return false. Both deny the request,
+      // but an errored rule hides which condition actually failed.
       function isTheirTeacher() {
-        return signedIn() && resource.data.get('teacherUid', '') == request.auth.uid;
+        return signedIn()
+          && resource != null
+          && resource.data.get('teacherUid', '') == request.auth.uid;
       }
 
       // A student claiming a teacher must present the join code that proves it.
