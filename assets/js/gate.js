@@ -18,7 +18,12 @@
     return isNaN(n) ? null : n;
   }
 
-  function isLocked(unit, signedIn) {
+  // A teacher is never gated. They are signed in anyway, so this only matters
+  // in the window before auth resolves and if the free-unit boundary ever moves
+  // above zero for signed-in accounts -- but a teacher hitting a paywall while
+  // previewing a unit for their class is the failure worth ruling out outright.
+  function isLocked(unit, signedIn, teaching) {
+    if (teaching === true) return false;
     return unit !== null && unit > FREE_UNITS && !signedIn;
   }
 
@@ -56,8 +61,14 @@
     main.insertAdjacentHTML('afterbegin', paywallHtml(unit));
   }
 
+  function teaching() {
+    var R = window.PyPathRoles;
+    return !!(R && R.teachingNow());
+  }
+
   function markLockedCards(signedIn) {
     var links = document.querySelectorAll('a[href^="/units/unit-"]');
+    var teacher = teaching();
     Array.prototype.forEach.call(links, function (a) {
       // Header nav and footer link lists are not cards. Badging them would put
       // a lock on every unit in the dropdown menu on every page.
@@ -66,7 +77,7 @@
       // absolutely positioned badge without landing on top of the text.
       var card = a.closest('.unit-card, .curriculum-card, article');
       if (!card) return;
-      card.classList.toggle('is-gate-locked', isLocked(unitFromPath(a.getAttribute('href')), signedIn));
+      card.classList.toggle('is-gate-locked', isLocked(unitFromPath(a.getAttribute('href')), signedIn, teacher));
     });
   }
 
@@ -82,17 +93,25 @@
 
   var unit = unitFromPath(location.pathname);
   var settled = false;
+  var signedInNow = false;
 
   function settle(signedIn) {
     settled = true;
-    if (unit !== null) apply(isLocked(unit, signedIn) ? 'locked' : 'open', unit);
-    markLockedCards(signedIn);
+    signedInNow = !!signedIn;
+    if (unit !== null) apply(isLocked(unit, signedInNow, teaching()) ? 'locked' : 'open', unit);
+    markLockedCards(signedInNow);
   }
 
   if (unit !== null) document.documentElement.dataset.gate = 'pending';
 
   document.addEventListener('pypath:auth', function (e) {
     settle(!!(e.detail && e.detail.user));
+  });
+
+  // The role resolves after auth does, so a teacher's first paint can land
+  // before anyone knows they are a teacher. Re-settle when the role arrives.
+  document.addEventListener('pypath:role', function () {
+    if (settled) settle(signedInNow);
   });
 
   // Fail open. auth.js imports the Firebase SDK from gstatic.com; an ad blocker

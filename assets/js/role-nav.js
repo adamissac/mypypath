@@ -1,4 +1,8 @@
-/* PyPath — reveals the "My classroom" link for teacher accounts.
+/* PyPath — paints the account's role onto every page.
+
+   Reveals the "My classroom" link and any other teacher-only markup, and
+   announces the resolved role so the classic gating scripts (gate.js,
+   lesson-progress.js) can drop their learner gates for a teacher.
 
    The role lives in Firestore, and this runs on every page, so the answer is
    cached per session: a teacher navigating twenty lessons should not pay
@@ -31,31 +35,45 @@ function remember(uid, role) {
 }
 
 function paint(role) {
-  const isTeacher = ROLES.normalizeRole(role) === 'teacher';
-  document.querySelectorAll('[data-account-classroom]').forEach((el) => {
+  const isTeacher = ROLES.isTeacher(role);
+  // Also stamps data-role on <html> and caches the role for the classic
+  // scripts, which cannot read Firestore themselves.
+  ROLES.rememberRole(role);
+  document.querySelectorAll('[data-account-classroom], [data-teacher-only]').forEach((el) => {
     el.hidden = !isTeacher;
   });
+  document.querySelectorAll('[data-student-only]').forEach((el) => {
+    el.hidden = isTeacher;
+  });
+}
+
+// Only the resolver announces. paint() is also called from the pypath:role
+// listener below, and announcing from there would echo every event back onto
+// itself.
+function announce(role) {
+  paint(role);
+  document.dispatchEvent(new CustomEvent('pypath:role', { detail: { role: ROLES.normalizeRole(role) } }));
 }
 
 async function apply(user) {
   if (!user) {
-    paint('student');
+    announce('student');
     return;
   }
   const known = cached(user.uid);
   if (known) {
-    paint(known);
+    announce(known);
     return;
   }
   try {
     const snap = await getDoc(doc(db, `users/${user.uid}`));
     const role = ROLES.normalizeRole(snap.exists() ? snap.data().role : '');
     remember(user.uid, role);
-    paint(role);
+    announce(role);
   } catch (e) {
     // Offline or denied: leave the link hidden rather than showing a page the
     // account cannot use.
-    paint('student');
+    announce('student');
   }
 }
 
