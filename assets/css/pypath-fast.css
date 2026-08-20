@@ -1588,6 +1588,123 @@ html.reduced-motion .page-home .hero-live-output.is-active {
   transform: scaleX(0);
 }
 
+/* ── Copy-to-clipboard on code blocks ───────────────────────
+   lesson-ui.js puts one of these on every snippet. Its only styles lived
+   in motion.css, which no page loads, so it shipped as a bare browser
+   button sitting under the code. */
+.code-block-wrap {
+  position: relative;
+}
+
+.copy-snippet-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  cursor: pointer;
+  /* Quiet until wanted, but never invisible: a control you cannot see is a
+     control nobody finds. */
+  opacity: 0.62;
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 8%, transparent);
+  transition:
+    opacity var(--dur-fast) ease,
+    color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease,
+    background-color var(--dur-fast) ease,
+    box-shadow var(--dur-fast) ease,
+    transform var(--dur-fast) ease;
+}
+
+.copy-snippet-btn svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.copy-snippet-btn__label {
+  white-space: nowrap;
+}
+
+.code-block-wrap:hover .copy-snippet-btn,
+.code-block-wrap:focus-within .copy-snippet-btn {
+  opacity: 1;
+}
+
+.copy-snippet-btn:hover {
+  opacity: 1;
+  color: var(--primary-strong);
+  border-color: color-mix(in srgb, var(--primary) 45%, var(--border));
+  background: color-mix(in srgb, var(--primary) 8%, var(--panel));
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 18%, transparent);
+  transform: translateY(-1px);
+}
+
+.copy-snippet-btn:focus-visible {
+  opacity: 1;
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: var(--ring);
+}
+
+.copy-snippet-btn:active {
+  transform: scale(0.96);
+}
+
+.copy-snippet-btn.copied,
+.copy-snippet-btn.copied:hover {
+  opacity: 1;
+  color: #0b6b3a;
+  border-color: #9ad3b4;
+  background: #e8f7ef;
+  box-shadow: none;
+  transform: none;
+}
+
+[data-theme="dark"] .copy-snippet-btn.copied,
+[data-theme="dark"] .copy-snippet-btn.copied:hover {
+  color: #7ee2ab;
+  border-color: #1f6b45;
+  background: rgba(16, 78, 51, 0.4);
+}
+
+.copy-snippet-btn.copy-failed {
+  opacity: 1;
+  color: #b42318;
+  border-color: #f3b1aa;
+  background: #fdeceb;
+}
+
+/* Touch: there is no hover to reveal anything, and a 44px target is the
+   floor for a finger. */
+@media (hover: none) {
+  .copy-snippet-btn {
+    opacity: 1;
+    min-height: 36px;
+    padding: 8px 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .copy-snippet-btn,
+  .copy-snippet-btn:hover,
+  .copy-snippet-btn:active {
+    transition: none;
+    transform: none;
+  }
+}
+
 .toast-container {
   position: fixed;
   bottom: 20px;

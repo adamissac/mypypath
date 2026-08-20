@@ -26,32 +26,66 @@
     update();
   }
 
+  function setCopyState(btn, icon, label) {
+    btn.innerHTML =
+      (window.PyIcons ? window.PyIcons.svg(icon, 14) : '') +
+      '<span class="copy-snippet-btn__label">' + label + '</span>';
+  }
+
   function initCopySnippets() {
     document.querySelectorAll('pre.code, .code-example pre').forEach(function (pre) {
-      if (pre.querySelector('.copy-snippet-btn')) return;
       var wrap = pre.parentElement;
-      if (!wrap || wrap.classList.contains('code-block-wrap')) {
+      // The wrapper is what the button is positioned against, so the snippet
+      // always needs one of its own — without it the button anchored to
+      // whatever happened to be positioned further up the page.
+      if (!wrap || !wrap.classList.contains('code-block-wrap')) {
         wrap = document.createElement('div');
         wrap.className = 'code-block-wrap';
         pre.parentNode.insertBefore(wrap, pre);
         wrap.appendChild(pre);
       }
+      if (wrap.querySelector('.copy-snippet-btn')) return;
+
       var btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'copy-snippet-btn';
       btn.setAttribute('aria-label', 'Copy code');
-      if (window.PyIcons) btn.innerHTML = window.PyIcons.svg('copy', 16);
+      setCopyState(btn, 'copy', 'Copy');
+
+      var resetTimer = null;
       btn.addEventListener('click', function () {
-        var text = pre.textContent;
-        navigator.clipboard.writeText(text.trim()).then(function () {
-          btn.classList.add('copied');
-          if (window.PyIcons) btn.innerHTML = window.PyIcons.svg('check', 16);
-          setTimeout(function () {
-            btn.classList.remove('copied');
-            if (window.PyIcons) btn.innerHTML = window.PyIcons.svg('copy', 16);
-          }, 2000);
-        });
+        clearTimeout(resetTimer);
+
+        function settle(cls, icon, label, announce) {
+          btn.classList.remove('copied', 'copy-failed');
+          if (cls) btn.classList.add(cls);
+          setCopyState(btn, icon, label);
+          btn.setAttribute('aria-label', announce);
+          if (cls) {
+            resetTimer = setTimeout(function () {
+              btn.classList.remove(cls);
+              setCopyState(btn, 'copy', 'Copy');
+              btn.setAttribute('aria-label', 'Copy code');
+            }, 2000);
+          }
+        }
+
+        var copy = navigator.clipboard
+          ? navigator.clipboard.writeText(pre.textContent.trim())
+          : Promise.reject(new Error('clipboard unavailable'));
+
+        copy.then(
+          function () {
+            settle('copied', 'check', 'Copied', 'Code copied to clipboard');
+          },
+          function () {
+            // Denied permission, or an insecure origin. Say so rather than
+            // leaving the button looking like nothing happened.
+            settle('copy-failed', 'copy', 'Press Ctrl+C', 'Copy failed — select the code and press Ctrl+C');
+          }
+        );
       });
+
       wrap.appendChild(btn);
     });
   }
