@@ -179,7 +179,7 @@ function makeAdapter(uid) {
   };
 }
 
-async function mergeOnSignIn(uid) {
+async function reconcileWithRemote(uid) {
   const localSnapshot = STORE.snapshot();
 
   // 1. Completed units — set union, never destructive.
@@ -223,36 +223,44 @@ async function mergeOnSignIn(uid) {
 }
 
 let adapter = null;
+let signedIn = null;
+let syncing = false;
 
-function repush() {
-  if (adapter) adapter.repushAll();
+// When this device last got all the way through a reconciliation, per account.
+// Session-scoped on purpose: a new tab is cheap to reconcile once, and a
+// device-wide stamp would let a tab opened days later trust a merge nobody
+// alive remembers.
+const STAMP_PREFIX = 'pypath-synced:';
+
+function lastSyncedAt(uid) {
+  try { return Number(sessionStorage.getItem(STAMP_PREFIX + uid)); }
+  catch (e) { return 0; }
 }
 
-window.addEventListener('online', repush);
-document.addEventListener('visibilitychange', function () {
-  if (document.visibilityState === 'visible') repush();
-});
+function markSynced(uid) {
+  try { sessionStorage.setItem(STAMP_PREFIX + uid, String(Date.now())); }
+  catch (e) {}
+}
 
-document.addEventListener('pypath:auth', async (e) => {
-  const user = e.detail.user;
+function dueForSync(uid) {
+  return MERGE.needsFullSync(lastSyncedAt(uid), Date.now(), MERGE.RESYNC_AFTER_MS);
+}
 
-  if (!user) {
-    // Signed out: stop syncing, keep the local cache so the guest session works.
-    adapter = null;
-    STORE._setRemoteAdapter(null);
-    return;
-  }
-
-  adapter = makeAdapter(user.uid);
-  STORE._setRemoteAdapter(adapter);
-
+// Everything that has to talk to the server to be right. pypath:auth fires on
+// every page load, so this is what the stamp above keeps from running on every
+// page load with it.
+async function fullSync(user) {
+  if (syncing) return;
+  syncing = true;
   try {
     await setDoc(doc(db, `users/${user.uid}`), identity(user), { merge: true });
-    // Who their teacher is, if anyone, before anything is mirrored.
-    await loadFor(user.uid);
-    await mergeOnSignIn(user.uid);
-    // mergeOnSignIn may have unioned in units this device did not know about.
-    // mergeOnSignIn may also have pulled down test results from another device.
+    // Who their teacher is, if anyone, before anything is mirrored. Forced past
+    // the session cache: this is the run that is allowed to cost a read, and a
+    // learner their teacher has since removed should find out here.
+    await loadFor(user.uid, true);
+    await reconcileWithRemote(user.uid);
+    // reconcileWithRemote may have unioned in units this device did not know about.
+    // reconcileWithRemote may also have pulled down test results from another device.
     const merged = summary(STORE.getCompletedUnits(), Date.now(), readTests());
     await setDoc(doc(db, `users/${user.uid}`), merged, { merge: true });
     // displayName is on the account record, which a teacher cannot read, so
@@ -260,7 +268,55 @@ document.addEventListener('pypath:auth', async (e) => {
     await mirrorToRoster(user.uid, Object.assign(
       { displayName: user.displayName || '' }, merged
     ));
+    // Only a run that finished counts. A failed one leaves the stamp alone, so
+    // the next page load retries rather than waiting out the whole window.
+    markSynced(user.uid);
   } catch (err) {
     toast('Working offline; progress is saved on this device');
+  } finally {
+    syncing = false;
   }
+}
+
+function repush() {
+  if (adapter) adapter.repushAll();
+}
+
+// A tab that has been in the background for an hour never had a page load to
+// re-reconcile on, so waking it up is the other half of the trade: navigation
+// stops paying for the merge, and a long-lived tab starts.
+function wake() {
+  repush();
+  if (signedIn && dueForSync(signedIn.uid)) fullSync(signedIn);
+}
+
+window.addEventListener('online', wake);
+document.addEventListener('visibilitychange', function () {
+  if (document.visibilityState === 'visible') wake();
+});
+
+document.addEventListener('pypath:auth', async (e) => {
+  const user = e.detail.user;
+
+  if (!user) {
+    // Signed out: stop syncing, keep the local cache so the guest session works.
+    signedIn = null;
+    adapter = null;
+    STORE._setRemoteAdapter(null);
+    return;
+  }
+
+  signedIn = user;
+  adapter = makeAdapter(user.uid);
+  STORE._setRemoteAdapter(adapter);
+
+  if (dueForSync(user.uid)) {
+    await fullSync(user);
+    return;
+  }
+
+  // The reconciliation from earlier in this session still stands. All that is
+  // actually gone is this page's module memory, and the teacher lookup restores
+  // itself from the session cache without a read.
+  await loadFor(user.uid);
 });
