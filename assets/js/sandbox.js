@@ -12,7 +12,7 @@
   function sanitizeBase(name) {
     var base = typeof name === 'string' ? name : '';
 
-    base = base.replace(/\.(py|txt|pdf)$/i, '');
+    base = base.replace(/\.(py|txt|pdf|ipynb)$/i, '');
     base = base.replace(/[\/\\]+/g, ' ');
     base = base.replace(/[\u0000-\u001F\u007F<>:"|?*]+/g, '');
     base = base.replace(/\s+/g, '_');
@@ -59,6 +59,53 @@
     return lines.join('\n') + '\n';
   }
 
+  // nbformat stores a cell's source as one string per line, each keeping its
+  // own trailing newline except the last. Jupyter will open a single-string
+  // source, but every notebook it writes back uses the array form, so diffs
+  // against a student's saved copy stay readable.
+  function toSourceLines(text) {
+    if (!text) return [];
+    var lines = text.split('\n');
+    if (lines[lines.length - 1] === '') lines.pop();
+    return lines.map(function (line, i) {
+      return i === lines.length - 1 ? line : line + '\n';
+    });
+  }
+
+  // A real nbformat 4 notebook, not a .py in disguise: a notebook is what a
+  // teacher can open in Jupyter, Colab, or VS Code without converting anything
+  // first. The last run's output rides along as a stream cell, so the file that
+  // gets handed in shows what the code actually printed.
+  function buildIpynbContent(options) {
+    var opts = options || {};
+    var code = normalizeCode(opts.code).replace(/\s+$/, '');
+    var output = normalizeCode(opts.output).replace(/\s+$/, '');
+
+    var cell = {
+      cell_type: 'code',
+      // null, not 0: nbformat reserves null for "never run", and a count of 0
+      // would claim this cell had already executed.
+      execution_count: output ? 1 : null,
+      metadata: {},
+      outputs: output
+        ? [{ output_type: 'stream', name: 'stdout', text: toSourceLines(output) }]
+        : [],
+      source: toSourceLines(code)
+    };
+
+    var notebook = {
+      cells: [cell],
+      metadata: {
+        kernelspec: { display_name: 'Python 3', language: 'python', name: 'python3' },
+        language_info: { name: 'python', version: '3.11' }
+      },
+      nbformat: 4,
+      nbformat_minor: 5
+    };
+
+    return JSON.stringify(notebook, null, 1) + '\n';
+  }
+
   function escapeHtml(text) {
     return String(text)
       .replace(/&/g, '&amp;')
@@ -98,6 +145,7 @@
     filenameFor: filenameFor,
     buildPyContent: buildPyContent,
     buildTextContent: buildTextContent,
+    buildIpynbContent: buildIpynbContent,
     buildPrintHtml: buildPrintHtml
   };
 })();
@@ -400,6 +448,15 @@ for i in range(3):
     );
   }
 
+  function downloadNotebook() {
+    const name = currentProjectName();
+    downloadBlob(
+      window.SandboxExport.filenameFor(name, 'ipynb'),
+      window.SandboxExport.buildIpynbContent({ code: currentCode(), output: lastOutput }),
+      'application/x-ipynb+json'
+    );
+  }
+
   // No PDF library: we render a print-only view and hand the job to the
   // browser's own "Save as PDF" print destination, which every target browser
   // ships. Nothing new is vendored and the output honours the user's paper size.
@@ -637,6 +694,7 @@ for i in range(3):
     const itemIcons = {
       'export-copy-btn': 'copy',
       'export-py-btn': 'code',
+      'export-ipynb-btn': 'sparkles',
       'export-txt-btn': 'book',
       'export-pdf-btn': 'pen',
     };
@@ -668,6 +726,7 @@ for i in range(3):
     const exportActions = {
       'export-copy-btn': saveAsNewProject,
       'export-py-btn': downloadPython,
+      'export-ipynb-btn': downloadNotebook,
       'export-txt-btn': downloadText,
       'export-pdf-btn': exportPdf,
     };

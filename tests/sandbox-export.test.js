@@ -191,3 +191,48 @@ describe('the export caret does not collide with the settings backup', () => {
     expect(guard).toBeLessThan(fn.indexOf("qs('#export-btn')"));
   });
 });
+
+describe('buildIpynbContent', () => {
+  const parse = (opts) => JSON.parse(window.SandboxExport.buildIpynbContent(opts));
+
+  it('emits a valid nbformat 4 notebook with one code cell', () => {
+    const nb = parse({ code: 'print("hi")' });
+    expect(nb.nbformat).toBe(4);
+    expect(nb.metadata.kernelspec.name).toBe('python3');
+    expect(nb.cells).toHaveLength(1);
+    expect(nb.cells[0].cell_type).toBe('code');
+  });
+
+  it('splits source into per-line strings that keep their newline', () => {
+    const nb = parse({ code: 'a = 1\nb = 2' });
+    expect(nb.cells[0].source).toEqual(['a = 1\n', 'b = 2']);
+  });
+
+  it('leaves an unrun cell with a null execution count and no outputs', () => {
+    const nb = parse({ code: 'x' });
+    expect(nb.cells[0].execution_count).toBeNull();
+    expect(nb.cells[0].outputs).toEqual([]);
+  });
+
+  it('carries the last run output as a stdout stream', () => {
+    const nb = parse({ code: 'print(1)', output: '1\n' });
+    expect(nb.cells[0].execution_count).toBe(1);
+    expect(nb.cells[0].outputs).toEqual([
+      { output_type: 'stream', name: 'stdout', text: ['1'] },
+    ]);
+  });
+
+  it('normalizes CRLF so the notebook never carries stray carriage returns', () => {
+    const nb = parse({ code: 'a\r\nb' });
+    expect(nb.cells[0].source).toEqual(['a\n', 'b']);
+  });
+
+  it('handles an empty buffer without inventing a blank line', () => {
+    expect(parse({ code: '' }).cells[0].source).toEqual([]);
+  });
+
+  it('names the download .ipynb', () => {
+    expect(window.SandboxExport.filenameFor('my notebook', 'ipynb')).toBe('my_notebook.ipynb');
+    expect(window.SandboxExport.filenameFor('thing.ipynb', 'ipynb')).toBe('thing.ipynb');
+  });
+});
