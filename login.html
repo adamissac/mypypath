@@ -151,7 +151,7 @@
       </div>
     </footer>
     <script type="module">
-      import { signInWithEmail, signInWithGoogle, signInWithGitHub, sendReset }
+      import { signInWithEmail, signInWithGoogle, signInWithGitHub, sendReset, NO_ACCOUNT }
         from '/assets/js/auth.js';
 
       const err = document.getElementById('login-error');
@@ -163,12 +163,29 @@
         'auth/wrong-password',
         'auth/user-not-found',
       ];
+      function signupHref() {
+        const raw = new URLSearchParams(location.search).get('next');
+        const next = window.PyPathGate ? window.PyPathGate.safeNext(raw) : null;
+        return next ? '/signup.html?next=' + encodeURIComponent(next) : '/signup.html';
+      }
       function fail(e) {
         err.hidden = false;
+        if (e && e.code === NO_ACCOUNT) {
+          // Signing in is not a way to sign up: send them to create an account.
+          err.textContent = 'That account has not signed up for PyPath yet. ';
+          const link = document.createElement('a');
+          link.href = signupHref();
+          link.className = 'route';
+          link.textContent = 'Create your account';
+          err.appendChild(link);
+          return;
+        }
         if (e && e.code === 'auth/invalid-email') {
           err.textContent = 'That does not look like an email address.';
         } else if (e && BAD_CREDENTIAL.includes(e.code)) {
           err.textContent = 'That email and password do not match an account.';
+        } else if (e && (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request')) {
+          err.hidden = true;
         } else {
           err.textContent = 'Could not sign in. Please try again.';
         }
@@ -185,6 +202,7 @@
       document.getElementById('login-form').addEventListener('submit', async (ev) => {
         ev.preventDefault();
         err.hidden = true;
+        err.textContent = '';
         try {
           await signInWithEmail(
             document.getElementById('login-email').value,
@@ -194,10 +212,18 @@
         } catch (e) { fail(e); }
       });
 
+      // No allowNewAccount here: picking a Google or GitHub account that has
+      // never signed up must send the learner to signup, not quietly make one.
       document.getElementById('login-google')
-        .addEventListener('click', async () => { try { await signInWithGoogle(); done(); } catch (e) { fail(e); } });
+        .addEventListener('click', async () => {
+          err.hidden = true; err.textContent = '';
+          try { await signInWithGoogle(); done(); } catch (e) { fail(e); }
+        });
       document.getElementById('login-github')
-        .addEventListener('click', async () => { try { await signInWithGitHub(); done(); } catch (e) { fail(e); } });
+        .addEventListener('click', async () => {
+          err.hidden = true; err.textContent = '';
+          try { await signInWithGitHub(); done(); } catch (e) { fail(e); }
+        });
 
       document.getElementById('login-reset').addEventListener('click', async (ev) => {
         ev.preventDefault();

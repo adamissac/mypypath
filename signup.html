@@ -315,7 +315,9 @@
         err.hidden = true;
         if (!agreed()) return;
         try {
-          const user = await signIn();
+          // Signup is the one surface allowed to create a provider account;
+          // provider sign-in fails closed everywhere else.
+          const user = await signIn({ allowNewAccount: true });
           try {
             await saveConsent(user.uid);
             await applyRole(user, chosenRole());
