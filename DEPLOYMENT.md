@@ -134,6 +134,24 @@ and the `*.vercel.app` domain if you sign in there). Any domain missing from tha
 list fails every sign-in attempt with `auth/unauthorized-domain`, even though the
 rest of the site loads normally.
 
+## Asset caching
+
+`vercel.json` sets two `Cache-Control` rules. The reasoning lives here because
+`vercel.json` is strict JSON and rejects unknown keys — a `"//"` comment inside
+a `headers` entry fails schema validation and the whole deployment errors out
+with "Deployment failed."
+
+- `/assets/img/*` — `max-age=31536000, immutable`. Images are replaced by adding
+  a file under a new name, never edited in place, so they can be cached hard.
+  Without this Vercel serves everything `must-revalidate` and every page view
+  re-checks every asset.
+- `/assets/(js|css)/*` — `max-age=3600, stale-while-revalidate=86400`. Scripts
+  and stylesheets *are* edited in place and keep their names, so `immutable`
+  would strand a browser on whatever it saw before the last deploy. An hour of
+  cache with a day of stale-while-revalidate serves the old file instantly and
+  picks up the new one in the background. Content-hashed filenames would let
+  this be immutable too.
+
 ## Troubleshooting
 
 ### Sign-in Fails With `auth/unauthorized-domain`?
