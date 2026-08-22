@@ -152,6 +152,45 @@
     try { return location.pathname; } catch (e) { return ''; }
   }
 
+  /* A snapshot of one editor, taken on save and on run -- never on keystroke.
+     Per-keystroke history would be a recording of someone thinking, which is
+     both far more than a teacher needs and far more than a student would
+     expect to be kept.
+
+     Only stored for a learner whose work is mirrored to a class. A lone
+     learner's editor history is nobody's business and is not written at all. */
+  /* saveToStorage fires on every CodeMirror change, which is every keystroke.
+     Snapshotting there would be a recording of someone thinking. This waits
+     for typing to stop, so a snapshot marks a pause in the work rather than a
+     keypress. */
+  var SETTLE_MS = 3000;
+  var settleTimers = {};
+
+  function snapshotWhenSettled(editorId, getCode) {
+    if (settleTimers[editorId]) window.clearTimeout(settleTimers[editorId]);
+    settleTimers[editorId] = window.setTimeout(function () {
+      settleTimers[editorId] = null;
+      snapshot(editorId, getCode(), 'save');
+    }, SETTLE_MS);
+  }
+
+  function snapshot(editorId, code, reason) {
+    if (!window.PyPathSnapshots || !window.ProgressStore) return;
+    if (!window.PyPathEvents || !window.PyPathEvents.isEnabled()) return;
+    var key = (window.PyPathKeys ? window.PyPathKeys.SNAPSHOTS_PREFIX : 'pypath-snapshots-')
+      + lessonPath();
+    var current = {};
+    try {
+      current = JSON.parse(window.ProgressStore.getItem(key) || '{}') || {};
+    } catch (e) {
+      current = {};
+    }
+    var next = window.PyPathSnapshots.record(current, editorId, code, Date.now(), reason);
+    try {
+      window.ProgressStore.setItem(key, JSON.stringify(next));
+    } catch (e) {}
+  }
+
   function getSolutions() {
     return window.exerciseSolutions || {};
   }
@@ -182,6 +221,7 @@
       renderRunOutput(outputEl, result);
 
       var failed = !!(result && (result.error || result.stderr));
+      snapshot(editorId, code, 'run');
       note('code.run', { lessonPath: lessonPath(), editorId: editorId, ok: !failed });
       if (failed) {
         note('code.error', {
@@ -351,6 +391,9 @@
       window.editors[editorId].setSize(null, isExercise ? 180 : 150);
       window.editors[editorId].on('change', function () {
         saveToStorage('code', editorId, window.editors[editorId].getValue());
+        snapshotWhenSettled(editorId, function () {
+          return window.editors[editorId].getValue();
+        });
       });
 
       window.editors[editorId].setOption('extraKeys', Object.assign({}, window.editors[editorId].getOption('extraKeys') || {}, {

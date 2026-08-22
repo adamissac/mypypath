@@ -8,6 +8,8 @@
   var UNIT_TESTS_KEY = 'pypath-unit-tests';
   // Best auto-graded check result per exercise, keyed by lesson path.
   var CHECKS_PREFIX = 'pypath-checks-';
+  // A short history of how each editor's code developed, keyed by lesson path.
+  var SNAPSHOTS_PREFIX = 'pypath-snapshots-';
 
   // Allowlist, deliberately. A new pypath-* key must not sync until it is
   // added here on purpose.
@@ -18,6 +20,7 @@
     /^pypath-unit-tests$/,
     /^pypath-lesson-.+/,
     /^pypath-checks-.+/,
+    /^pypath-snapshots-.+/,
     /^exercise_.+/
   ];
 
@@ -40,6 +43,7 @@
     LESSON_PROGRESS_KEY: LESSON_PROGRESS_KEY,
     UNIT_TESTS_KEY: UNIT_TESTS_KEY,
     CHECKS_PREFIX: CHECKS_PREFIX,
+    SNAPSHOTS_PREFIX: SNAPSHOTS_PREFIX,
     isSyncable: isSyncable,
     toDocId: toDocId
   };
