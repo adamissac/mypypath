@@ -114,3 +114,239 @@
   line-height: 1.45;
   cursor: pointer;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   Joining a class
+
+   Two surfaces, one look: the card on the account page, and the dialog
+   the account menu opens from any page. Both were previously styled
+   somewhere the page that needed them could not see — the card's rules
+   were in admin.css, which the account page does not load, so it
+   rendered as bare text at the foot of the page.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── The join code field ────────────────────────────────────
+   A code is read off a board or a slip of paper and typed in one go, so
+   it gets room to breathe: monospace, tracked out, centred, and
+   uppercased on the way in. */
+.class-section input[type='text'],
+.join-modal__card input[type='text'] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--border, #d0d0d8);
+  border-radius: 0.7rem;
+  background: var(--bg, #fff);
+  color: var(--text, inherit);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-align: center;
+  text-transform: uppercase;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.class-section input[type='text']:focus-visible,
+.join-modal__card input[type='text']:focus-visible {
+  outline: none;
+  border-color: var(--primary, #0ea5e9);
+  box-shadow: var(--ring, 0 0 0 4px rgb(14 165 233 / .15));
+}
+
+.class-section input[type='text']::placeholder,
+.join-modal__card input[type='text']::placeholder {
+  color: var(--muted, #64748b);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  opacity: .55;
+}
+
+/* ── The card on the account page ───────────────────────────── */
+.class-section {
+  margin: 2rem 0 1.5rem;
+  padding: 1.4rem 1.5rem;
+  border: 1px solid var(--border, #d0d0d8);
+  border-radius: 1rem;
+  background: var(--panel, #fff);
+  box-shadow: var(--shadow, 0 4px 20px rgb(15 23 42 / .06));
+}
+
+.class-section > h2 {
+  margin: 0 0 0.9rem;
+  font-size: 1.2rem;
+  line-height: 1.2;
+}
+
+.class-section p {
+  line-height: 1.55;
+}
+
+.class-section [data-class-view] > p:first-child {
+  margin-top: 0;
+}
+
+.class-section .auth-form {
+  margin-block: 1.1rem 0.75rem;
+  gap: 0.45rem;
+}
+
+.class-section .auth-form label {
+  font-size: 0.9rem;
+}
+
+.class-section .auth-form .btn {
+  justify-self: start;
+  margin-top: 0.35rem;
+}
+
+/* The code the learner joined with, or the one a teacher hands out: a
+   value to be read back, so it is set apart from the sentence. */
+.class-section [data-class-current-code] {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--border, #d0d0d8);
+  border-radius: 0.45rem;
+  background: var(--bg-elevated, #f2f2f5);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.95em;
+  letter-spacing: 0.16em;
+}
+
+/* ── The dialog, opened from the account menu on any page ───── */
+.join-modal {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal, 1000);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.join-modal[hidden] { display: none; }
+
+.join-modal__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgb(8 12 18 / .55);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  animation: join-modal-scrim-in .18s ease both;
+}
+
+.join-modal__card {
+  position: relative;
+  width: min(26rem, 100%);
+  max-height: min(90vh, 44rem);
+  overflow-y: auto;
+  padding: 1.6rem 1.6rem 1.5rem;
+  border: 1px solid var(--border, #d0d0d8);
+  border-radius: 1.1rem;
+  background: var(--panel, #fff);
+  color: var(--text, #0f172a);
+  box-shadow: 0 24px 60px rgb(8 12 18 / .35);
+  animation: join-modal-card-in .22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.join-modal__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.join-modal__title {
+  margin: 0;
+  font-size: 1.3rem;
+  line-height: 1.2;
+}
+
+/* An × in the corner: the Cancel button is below the fold on a short
+   phone once the keyboard is up. */
+.join-modal__close {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin: -0.25rem -0.35rem 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0.55rem;
+  background: none;
+  color: var(--muted, #64748b);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .15s ease, color .15s ease;
+}
+
+.join-modal__close:hover {
+  background: var(--bg-elevated, #f2f2f5);
+  color: var(--text, inherit);
+}
+
+.join-modal__close:focus-visible {
+  outline: none;
+  box-shadow: var(--ring, 0 0 0 4px rgb(14 165 233 / .15));
+}
+
+.join-modal__body {
+  margin: 0.5rem 0 1.15rem;
+  font-size: 0.94rem;
+  line-height: 1.55;
+  color: var(--muted, #475569);
+}
+
+.join-modal__card label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.join-modal__card .auth-error {
+  margin: 0.6rem 0 0;
+}
+
+.join-modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.15rem;
+}
+
+.join-modal__actions .btn {
+  flex: 1 1 auto;
+  justify-content: center;
+}
+
+.join-modal__leave {
+  margin: 1.15rem 0 0;
+  padding-top: 0.95rem;
+  border-top: 1px solid var(--border, #d0d0d8);
+}
+
+/* The page behind a dialog must not scroll under it. */
+body.join-modal-open {
+  overflow: hidden;
+}
+
+@keyframes join-modal-scrim-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes join-modal-card-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .join-modal__scrim,
+  .join-modal__card {
+    animation: none;
+  }
+}
