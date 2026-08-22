@@ -2,7 +2,10 @@
   "exercise1": {
     "prompt": "Convert \"10\" to an integer, multiply by 5, print the result",
     "cases": [
-      { "name": "prints 50", "expect_stdout": "50" }
+      {
+        "name": "prints 50",
+        "expect_stdout": "50"
+      }
     ],
     "hiddenCases": [
       {
@@ -21,12 +24,73 @@
   "exercise2": {
     "prompt": "Print \"Hello, Alice! You are 25 years old.\"",
     "cases": [
-      { "name": "prints the full message", "expect_stdout": "Hello, Alice! You are 25 years old." }
+      {
+        "name": "prints the full message",
+        "expect_stdout": "Hello, Alice! You are 25 years old."
+      }
     ],
     "hiddenCases": [
-      { "name": "name holds Alice", "call": "name", "expect": "'Alice'" },
-      { "name": "age holds the number 25, not the text", "call": "type(age).__name__", "expect": "'int'" }
+      {
+        "name": "name holds Alice",
+        "call": "name",
+        "expect": "'Alice'"
+      },
+      {
+        "name": "age holds the number 25, not the text",
+        "call": "type(age).__name__",
+        "expect": "'int'"
+      }
     ],
     "hint": "print() puts a space between comma-separated pieces, so watch where the spaces and punctuation land. Building the sentence with an f-string gives you exact control."
-  }
+  },
+  "questions": [
+    {
+      "id": "u1-tio-1",
+      "prompt": "What does input() always return?",
+      "choices": [
+        "A number if the user typed digits",
+        "A string, always",
+        "Whatever type the user typed",
+        "None"
+      ],
+      "answer": 1,
+      "explain": "input() hands back text without exception, which is why converting it with int() or float() is usually the next step."
+    },
+    {
+      "id": "u1-tio-2",
+      "prompt": "What is \"10\" * 3?",
+      "choices": [
+        "30",
+        "'101010'",
+        "An error",
+        "'10 10 10'"
+      ],
+      "answer": 1,
+      "explain": "Multiplying a string by an integer repeats it. This is the classic bug from forgetting to convert input()."
+    },
+    {
+      "id": "u1-tio-3",
+      "prompt": "What does int(\"abc\") do?",
+      "choices": [
+        "Returns 0",
+        "Returns None",
+        "Raises ValueError",
+        "Returns 'abc'"
+      ],
+      "answer": 2,
+      "explain": "int() raises ValueError when the text does not describe a number, which is a good thing: it fails loudly."
+    },
+    {
+      "id": "u1-tio-4",
+      "prompt": "How do you combine a name and an age in one message?",
+      "choices": [
+        "print(\"Hi \" + name + \" you are \" + age)",
+        "print(f\"Hi {name}, you are {age}\")",
+        "Both work identically",
+        "Neither works"
+      ],
+      "answer": 1,
+      "explain": "The f-string works with any types. Concatenating with + fails if age is a number, because you cannot add an int to a str."
+    }
+  ]
 }

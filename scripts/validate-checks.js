@@ -58,9 +58,44 @@ export function validateChecks() {
         continue;
       }
 
+      // Checks for understanding. An unanswerable question is worse than no
+      // question: the learner reads the explanation for the wrong option and
+      // learns something untrue.
+      if (spec.questions !== undefined) {
+        const questions = spec.questions;
+        if (!Array.isArray(questions) || questions.length < 3 || questions.length > 5) {
+          errors.push(`${rel} / questions: expected 3 to 5 questions, found ` +
+            `${Array.isArray(questions) ? questions.length : typeof questions}`);
+        } else {
+          const seen = new Set();
+          questions.forEach((q, i) => {
+            const where = `${rel} / questions[${i}]`;
+            if (!q.id) errors.push(`${where}: no id`);
+            else if (seen.has(q.id)) errors.push(`${where}: duplicate id "${q.id}"`);
+            else seen.add(q.id);
+
+            if (!q.prompt) errors.push(`${where}: no prompt`);
+            if (!Array.isArray(q.choices) || q.choices.length < 2) {
+              errors.push(`${where}: needs at least two choices`);
+            } else {
+              if (new Set(q.choices).size !== q.choices.length) {
+                errors.push(`${where}: has two identical choices`);
+              }
+              if (!Number.isInteger(q.answer) || q.answer < 0 || q.answer >= q.choices.length) {
+                errors.push(`${where}: answer ${q.answer} is not one of the ` +
+                  `${q.choices.length} choices`);
+              }
+            }
+            if (!q.explain) {
+              errors.push(`${where}: no explanation, so a wrong answer teaches nothing`);
+            }
+          });
+        }
+      }
+
       for (const [exerciseId, entry] of Object.entries(spec)) {
-        // `questions` is the Phase 5 checks-for-understanding key and lives
-        // alongside the exercise ids rather than under one.
+        // `questions` is the checks-for-understanding key and lives alongside
+        // the exercise ids rather than under one; it is validated above.
         if (exerciseId === 'questions') continue;
 
         if (!lesson.exercises.includes(exerciseId) && !lesson.editors.includes(exerciseId)) {
