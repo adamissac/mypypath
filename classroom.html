@@ -45,7 +45,9 @@
     <script type="module" src="/assets/js/auth-ui.js"></script>
     <script defer src="/assets/js/classroom-core.js"></script>
     <script type="module" src="/assets/js/classroom-page.js"></script>
+    <script defer src="/assets/js/snapshots.js"></script>
     <script type="module" src="/assets/js/classroom-dashboard.js"></script>
+    <script type="module" src="/assets/js/student-detail.js"></script>
 </head>
   <body class="page page-classroom">
     <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -265,6 +267,58 @@
             <dl class="cr-stats" data-cr-summary></dl>
           </section>
 
+        </section>
+
+        <!-- Student drill-down, opened from a cell in the grid -->
+        <section class="sd" data-sd-root hidden aria-labelledby="sd-name" aria-busy="false">
+          <div class="sd-bar">
+            <h3 class="sd-name" id="sd-name" data-sd-name>Student</h3>
+            <button type="button" class="btn btn-ghost btn-small" data-sd-close>Close</button>
+          </div>
+
+          <p class="sd-readonly">
+            This is a read-only view. Nothing here can be edited from a teacher
+            account, and the security rules refuse it as well.
+          </p>
+
+          <dl class="cr-stats sd-header" data-sd-header></dl>
+
+          <h4>Lessons</h4>
+          <div class="cr-tablewrap">
+            <table class="cr-table" data-sd-lessons hidden>
+              <caption class="visually-hidden">Each lesson this student has opened</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Lesson</th>
+                  <th scope="col">State</th>
+                  <th scope="col">Attempts</th>
+                  <th scope="col">
+                    First try
+                    <button type="button" class="cr-info" data-cr-info="firstTry"
+                            aria-label="How first try is worked out">i</button>
+                  </th>
+                  <th scope="col">Last activity</th>
+                </tr>
+              </thead>
+              <tbody data-sd-lessons-body></tbody>
+            </table>
+          </div>
+          <p class="cr-empty-note" data-sd-lessons-empty hidden>
+            No lessons opened yet.
+          </p>
+
+          <h4>Activity</h4>
+          <div data-sd-timeline></div>
+
+          <h4>
+            Code history
+            <button type="button" class="cr-info" data-cr-info="snapshots"
+                    aria-label="How code history is recorded">i</button>
+          </h4>
+          <div data-sd-history></div>
+
+          <h4>Saved work</h4>
+          <div data-sd-work></div>
         </section>
 
         <!-- Explanations, opened by the info buttons -->
