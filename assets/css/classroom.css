@@ -305,6 +305,14 @@
 
 /* ---------- print ---------- */
 
+/* Landscape, because the grid is wider than it is tall: ten unit columns plus
+   a name column does not fit a portrait page without shrinking the text past
+   readable. */
+@page {
+  size: landscape;
+  margin: 12mm;
+}
+
 @media print {
   .site-header,
   .site-footer,
@@ -321,6 +329,18 @@
 
   .cr-table { font-size: 9pt; }
   .cr-code__value { font-size: 48pt; letter-spacing: .2em; }
+
+  /* One page. The grid is the thing being printed, so it gets the room and
+     the sections that only make sense on screen give theirs up. */
+  .cr-grid-section { break-inside: avoid; break-before: auto; }
+  .cr-attention { break-after: auto; }
+  .cr-explain,
+  .cr-key { display: none; }
+  .cr-stats { grid-template-columns: repeat(4, 1fr); }
+
+  /* Cell state has to survive a printer that drops backgrounds, so the mark
+     is the whole signal on paper. */
+  .cr-cell__mark { font-size: 11pt; }
 
   /* Backgrounds do not print by default, so the state marks carry the whole
      meaning on paper. They are letters, so they do. */
@@ -564,4 +584,59 @@
 @media print {
   .cr-share,
   .cr-digest { display: none; }
+}
+
+/* ---------- student work beside what was expected ---------- */
+
+.sd-pair {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: .6rem;
+}
+
+/* Side by side once there is room for both to stay readable. Below that they
+   stack, because two half-width columns of code are worse than one of each. */
+@media (min-width: 60rem) {
+  .sd-pair { grid-template-columns: 1.4fr 1fr; align-items: start; }
+}
+
+.sd-expected {
+  padding: .7rem .8rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-left: 3px solid var(--primary, #0ea5e9);
+  border-radius: .4rem;
+  background: var(--panel, #fff);
+}
+
+.sd-expected h5 {
+  margin: 0 0 .4rem;
+  font-size: .78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: var(--muted, #475569);
+}
+
+.sd-expected__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: .45rem;
+  font-size: .82rem;
+}
+
+.sd-expected__name { display: block; color: var(--text, #334155); }
+
+.sd-expected__value {
+  display: block;
+  margin-top: .15rem;
+  padding: .2rem .35rem;
+  border-radius: .25rem;
+  background: var(--bg-elevated, #f1f5f9);
+  color: var(--muted, #475569);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .78rem;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }

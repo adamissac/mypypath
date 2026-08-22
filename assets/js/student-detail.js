@@ -10,11 +10,9 @@ import {
 } from '/assets/js/classroom-store.js';
 
 const CORE = window.PyPathClassroom;
-const SNAPS = window.PyPathSnapshots;
 const KEYS = window.PyPathKeys;
 
 let manifest = { lessons: [] };
-let current = null;
 
 const $ = (sel, root) => (root || document).querySelector(sel);
 
@@ -164,9 +162,54 @@ function paintLessons(root, student) {
   }
 }
 
+/* What the exercise asked for, as the auto-grader states it.
+ *
+ * The sample solutions themselves live inline on each lesson page as
+ * window.exerciseSolutions, which this page has no access to. The check file
+ * is the part that is fetchable, and it is arguably the better answer anyway:
+ * it says what the code has to DO, which is what a teacher comparing against a
+ * student's different-but-correct approach actually needs. A single sample
+ * solution invites reading any difference from it as a mistake.
+ */
+async function expectationsFor(lessonPath) {
+  const m = /^\/units\/(unit-\d+)\/([a-z0-9-]+)\.html$/.exec(lessonPath || '');
+  if (!m) return null;
+  try {
+    const res = await fetch('/assets/data/checks/' + m[1] + '/' + m[2] + '.json');
+    return res.ok ? await res.json() : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+/* Renders the expected behaviour for one editor, beside the student's code. */
+function expectationPanel(spec, editorId) {
+  const entry = spec && spec[editorId];
+  if (!entry || !(entry.cases || []).length) return null;
+
+  const block = el('div', 'sd-expected');
+  block.appendChild(el('h5', null, 'What it had to do'));
+
+  const list = el('ul', 'sd-expected__list');
+  for (const testCase of entry.cases) {
+    const item = el('li');
+    item.appendChild(el('span', 'sd-expected__name', testCase.name));
+    if (typeof testCase.expect_stdout === 'string') {
+      item.appendChild(el('code', 'sd-expected__value', testCase.expect_stdout.trim()));
+    } else if (testCase.call) {
+      item.appendChild(el('code', 'sd-expected__value', testCase.call + ' → ' + testCase.expect));
+    } else if (testCase.describe) {
+      item.appendChild(el('span', 'sd-expected__value', testCase.describe));
+    }
+    list.appendChild(item);
+  }
+  block.appendChild(list);
+  return block;
+}
+
 /* The student's own work, beside what was expected. Read-only: rendered into
    <pre>, never into an editable field. */
-function paintWork(root, student) {
+async function paintWork(root, student) {
   const wrap = $('[data-sd-work]', root);
   wrap.innerHTML = '';
 
@@ -182,12 +225,31 @@ function paintWork(root, student) {
     return;
   }
 
+  // pypath-lesson-<path>-<type>-<id>: recover the lesson and the editor so the
+  // right expectations can be put beside the right code.
+  const specCache = new Map();
   for (const key of codeKeys) {
+    const parts = /^pypath-lesson-(.+)-(code|reflection)-(.+)$/.exec(key);
+    const lessonPath = parts ? parts[1] : '';
+    const editorId = parts ? parts[3] : '';
+
     const block = el('section', 'sd-work');
     block.appendChild(el('h4', null, key.replace('pypath-lesson-', '')));
+
+    const pair = el('div', 'sd-pair');
     const pre = el('pre', 'sd-code');
     pre.appendChild(el('code', null, student.mirror[key] || ''));
-    block.appendChild(pre);
+    pair.appendChild(pre);
+
+    if (lessonPath && editorId) {
+      if (!specCache.has(lessonPath)) {
+        specCache.set(lessonPath, await expectationsFor(lessonPath));
+      }
+      const expected = expectationPanel(specCache.get(lessonPath), editorId);
+      if (expected) pair.appendChild(expected);
+    }
+
+    block.appendChild(pair);
     wrap.appendChild(block);
   }
 
@@ -298,12 +360,11 @@ export async function openStudent(classId, uid, displayName) {
     events: await readEvents(classId, uid, 500).catch(() => []),
     mirror: await readMirror(classId, uid).catch(() => ({})),
   };
-  current = student;
 
   paintHeader(root, student);
   paintTimeline(root, student);
   paintLessons(root, student);
-  paintWork(root, student);
+  await paintWork(root, student);
   paintHistory(root, student);
   root.setAttribute('aria-busy', 'false');
 
@@ -313,7 +374,6 @@ export async function openStudent(classId, uid, displayName) {
 
 function closeDetail() {
   show($('[data-sd-root]'), false);
-  current = null;
 }
 
 document.addEventListener('pypath:classroom-student', (e) => {
