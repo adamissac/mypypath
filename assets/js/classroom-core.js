@@ -175,6 +175,48 @@
     return 'in-progress';
   }
 
+  /* How far through one unit a student is, as their teacher sees it.
+   *
+   * The counterpart to lesson-progress.js's unitBreakdown, which computes the
+   * same figure on the student's own machine from their stored lesson map.
+   * Both hand their counts to PyPathUnitProgress, so the percentage a teacher
+   * reads and the percentage the student reads are the same percentage. */
+  function unitProgress(events, lessonPaths, unit) {
+    var paths = lessonPaths || [];
+    var verified = verifiedUnits(events)[unit] === true;
+
+    var lessonsPassed = 0;
+    var lessonsStarted = 0;
+    paths.forEach(function (path) {
+      var state = lessonState(events, path, false);
+      if (state === 'passed' || state === 'verified') lessonsPassed += 1;
+      if (state !== 'not-opened') lessonsStarted += 1;
+    });
+
+    // The test half of the rule. test.submitted carries the score; unit
+    // completed with verified:true is the same fact recorded at roll-up, and
+    // either is enough.
+    var testPassed = verified || eventsOfType(events, 'test.submitted').some(function (e) {
+      var p = payloadOf(e);
+      return p.unit === unit && p.total > 0 && (p.score / p.total) * 100 >= 70;
+    });
+
+    var counts = {
+      unit: unit,
+      lessonsTotal: paths.length,
+      lessonsPassed: lessonsPassed,
+      lessonsStarted: lessonsStarted,
+      testPassed: testPassed
+    };
+
+    var UP = window.PyPathUnitProgress;
+    counts.percent = UP ? UP.percentFor(counts) : 0;
+    counts.complete = UP ? UP.isComplete(counts) : false;
+    counts.summary = UP ? UP.describe(counts) : '';
+    counts.state = unitState(events, paths, unit);
+    return counts;
+  }
+
   function percentComplete(events, lessonsByUnit) {
     var total = 0;
     var done = 0;
@@ -528,6 +570,11 @@
      trust is worse than no number, because it is still taking up the space
      where a usable one would go. */
   var EXPLANATIONS = {
+    unitPercent: 'Each lesson in the unit counts once and the end-of-unit test '
+      + 'counts once, so a unit of ten lessons has eleven parts. Finishing every '
+      + 'lesson without passing the test shows as 91%, because the unit is not '
+      + 'complete until both are done. This is the same figure the student sees '
+      + 'on their own progress page.',
     mastery: 'Not opened: no record of the lesson being opened. In progress: opened, '
       + 'nothing attempted yet. Attempted: code was run or an answer saved, but not '
       + 'everything passes. Passed: every visible check on the lesson passes. '
@@ -580,6 +627,7 @@
     toMillis: toMillis,
     lessonState: lessonState,
     unitState: unitState,
+    unitProgress: unitProgress,
     verifiedUnits: verifiedUnits,
     percentComplete: percentComplete,
     attemptsByExercise: attemptsByExercise,

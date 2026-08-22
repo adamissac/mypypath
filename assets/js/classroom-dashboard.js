@@ -196,6 +196,7 @@ function paintGrid() {
 
   body.innerHTML = '';
   const byUnit = lessonsByUnit();
+
   for (const student of list) {
     const tr = el('tr');
     const name = el('th', 'cr-grid__who', student.displayName);
@@ -203,7 +204,14 @@ function paintGrid() {
     tr.appendChild(name);
 
     for (const col of cols) {
-      const state = stateFor(student, col);
+      // At unit granularity the cell carries how far through the unit they
+      // are, not only which of the five states it is in. "Attempted" covers
+      // one lesson and nine, which is most of what a teacher wants to know.
+      const progress = scope === 'units'
+        ? CORE.unitProgress(student.events, byUnit[col.key] || [], col.key)
+        : null;
+      const state = progress ? progress.state : stateFor(student, col);
+
       const td = el('td', 'cr-cell cr-state--' + state);
       // Focusable and activatable from the keyboard, and it announces the
       // whole fact rather than leaving a screen reader to infer it from a
@@ -213,8 +221,12 @@ function paintGrid() {
       button.setAttribute(
         'aria-label',
         student.displayName + ', ' + col.full + ': ' + CORE.MASTERY_LABEL[state]
+          + (progress ? ', ' + progress.percent + '% — ' + progress.summary : '')
       );
       button.appendChild(el('span', 'cr-cell__mark', CORE.MASTERY_MARK[state]));
+      if (progress) {
+        button.appendChild(el('span', 'cr-cell__pct', progress.percent + '%'));
+      }
       button.appendChild(el('span', 'visually-hidden', CORE.MASTERY_LABEL[state]));
       button.addEventListener('click', () => openStudent(student, col));
       td.appendChild(button);

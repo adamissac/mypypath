@@ -120,6 +120,57 @@
     return null;
   }
 
+  /* How far through one unit this learner is, from their own stored map.
+   *
+   * The counterpart to classroom-core's unitProgress, which computes the same
+   * figure for a teacher out of the event log. Both hand the counts to
+   * PyPathUnitProgress so the two can never report different numbers for the
+   * same state. */
+  function unitBreakdown(unit) {
+    var n = Number(unit);
+    var paths = curriculum ? curriculum.lessonsIn(n) : [];
+    var map = readMap();
+    var passed = {};
+    passedLessons(map).forEach(function (p) { passed[p] = true; });
+
+    var lessonsPassed = 0;
+    var lessonsStarted = 0;
+    paths.forEach(function (path) {
+      if (passed[path]) lessonsPassed += 1;
+      // Started means some item on the page is ticked off, which is a
+      // different fact from having finished it and is worth showing.
+      var entry = map[path];
+      if (entry && entry.done && entry.done.length) lessonsStarted += 1;
+    });
+
+    var records = testRecords();
+    var record = records[String(n)] || null;
+    var counts = {
+      unit: n,
+      lessonsTotal: paths.length,
+      lessonsPassed: lessonsPassed,
+      lessonsStarted: lessonsStarted,
+      testPassed: unitTestPassed(records, n),
+      testBest: record && isFinite(Number(record.best)) ? Number(record.best) : null
+    };
+
+    var UP = window.PyPathUnitProgress;
+    counts.percent = UP ? UP.percentFor(counts) : 0;
+    // Deliberately the roll-up rule rather than the percentage: a rounding
+    // change must never be able to complete a unit.
+    counts.complete = completedUnits().indexOf(n) !== -1
+      || (UP ? UP.isComplete(counts) : false);
+    counts.summary = UP ? UP.describe(counts) : '';
+    return counts;
+  }
+
+  function allUnitBreakdowns() {
+    var total = curriculum ? (curriculum.TOTAL_UNITS || 10) : 10;
+    var out = [];
+    for (var n = 1; n <= total; n++) out.push(unitBreakdown(n));
+    return out;
+  }
+
   window.PyPathLessonProgress = {
     STORE_KEY: STORE_KEY,
     UNIT_TESTS_KEY: UNIT_TESTS_KEY,
@@ -132,6 +183,8 @@
     unitFinished: unitFinished,
     isUnitUnlocked: isUnitUnlocked,
     nextUnfinished: nextUnfinished,
+    unitBreakdown: unitBreakdown,
+    allUnitBreakdowns: allUnitBreakdowns,
     // The test page finishes a unit from a URL that is not a lesson page, so
     // it needs a way to ask for the roll-up by number rather than by location.
     rollUpUnitNumber: function (n) { return rollUpUnitNumber(n); }

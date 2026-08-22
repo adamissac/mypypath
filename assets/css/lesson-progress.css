@@ -189,3 +189,70 @@
 }
 
 .teacher-view-note p { margin: 0; }
+
+/* ---------- your progress in this unit ---------- */
+
+.unit-progress {
+  margin-top: 1.25rem;
+  padding: .85rem 1rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .5rem;
+  background: var(--panel, #fff);
+  max-width: 26rem;
+}
+
+.unit-progress__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .75rem;
+}
+
+.unit-progress__label {
+  font-size: .78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: var(--muted, #475569);
+}
+
+.unit-progress__pct {
+  font-size: 1.15rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-strong, #0f172a);
+}
+
+.unit-progress__meter {
+  margin: .45rem 0 .4rem;
+  height: .5rem;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--bg-elevated, #f1f5f9);
+  border: 1px solid var(--border, #cbd5e1);
+}
+
+.unit-progress__meter .bar {
+  height: 100%;
+  width: 0;
+  background: var(--primary, #0ea5e9);
+  transition: width .3s ease;
+}
+
+.unit-progress.is-complete .unit-progress__meter .bar {
+  background: var(--success, #16a34a);
+}
+
+.unit-progress.is-complete .unit-progress__pct {
+  color: var(--success, #16a34a);
+}
+
+.unit-progress__detail {
+  margin: 0;
+  font-size: .82rem;
+  color: var(--muted, #475569);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .unit-progress__meter .bar { transition: none; }
+}
