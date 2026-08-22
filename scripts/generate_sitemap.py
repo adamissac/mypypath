@@ -2,7 +2,7 @@
 from datetime import date
 from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
-BASE_URL = "https://www.mypypath.com"
+BASE_URL = "https://mypypath.com"
 OUT = ROOT / "sitemap.xml"
 # Directories that are not part of the deployed site. node_modules is the
 # important one: it is gitignored, never deploys, and rglob happily walked it
