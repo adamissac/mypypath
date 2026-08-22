@@ -484,3 +484,46 @@
   .sd-code { max-height: none; overflow: visible; white-space: pre-wrap; }
   .sd-day { break-inside: avoid; }
 }
+
+/* ---------- what your teacher can see ---------- */
+
+.disclosure {
+  margin: 1rem 0;
+  padding: .9rem 1rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .5rem;
+  background: var(--bg-elevated, #f1f5f9);
+  font-size: .88rem;
+}
+
+.disclosure__title {
+  margin: .8rem 0 .35rem;
+  font-size: .8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: var(--muted, #475569);
+}
+
+.disclosure__title:first-child { margin-top: 0; }
+
+.disclosure__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: .25rem;
+}
+
+/* The marker is a character, not a background image, so it survives greyscale
+   printing and a stylesheet that fails to load. */
+.disclosure__list li { display: grid; grid-template-columns: 1.1rem 1fr; gap: .4rem; }
+.disclosure__list li::before { font-weight: 700; }
+.disclosure__list--yes li::before { content: '\2713'; color: var(--text-strong, #0f172a); }
+.disclosure__list--no li::before { content: '\2715'; color: var(--muted, #475569); }
+
+.disclosure__note {
+  margin: .8rem 0 0;
+  color: var(--muted, #475569);
+  font-size: .82rem;
+}

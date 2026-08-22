@@ -33,6 +33,48 @@
      the explanation than the student. */
   var STRUGGLE_RATE = 0.5;
 
+  /* How long classroom data is kept.
+   *
+   * Indefinite retention is not an option here. The amended COPPA rule that
+   * reached full compliance on 22 April 2026 requires a stated retention
+   * period and prohibits keeping children's data for longer than needed, and
+   * this site is used by minors.
+   *
+   * These numbers are the policy. privacy.html quotes them and a test asserts
+   * the two agree, so the page cannot drift away from the code that enforces
+   * it. */
+  var RETENTION = {
+    EVENT_DAYS: 180,
+    SNAPSHOT_DAYS: 180,
+    ARCHIVED_CLASS_DAYS: 365,
+    // Mirrored from snapshots.js so the policy can state a real figure.
+    SNAPSHOTS_PER_EDITOR: 20,
+    SNAPSHOT_BYTES_PER_LESSON: 64 * 1024
+  };
+
+  /* Exactly what a teacher can see, in the words used on the join screen.
+     One list, so the consent panel, the policy page and the dashboard cannot
+     describe different things. */
+  var TEACHER_CAN_SEE = [
+    'Which lessons you have opened, and when',
+    'Which exercises you have attempted, and how many attempts each took',
+    'Which checks your code passed, and your end-of-unit test scores',
+    'The code you write in lesson exercises, including a short history of how you wrote it',
+    'The written answers you save to reflection questions',
+    'The username you chose, and when you were last active'
+  ];
+
+  var TEACHER_CANNOT_SEE = [
+    'Your email address',
+    'Your legal name',
+    'Anything you do outside this class',
+    'Anything at all, until you enter their join code yourself'
+  ];
+
+  /* Everything that has to be deleted when a student leaves a class. Named
+     here so the erasure path and its test are reading the same list. */
+  var ERASED_ON_LEAVE = ['roster', 'progress', 'events'];
+
   var MASTERY = ['not-opened', 'in-progress', 'attempted', 'passed', 'verified'];
 
   var MASTERY_LABEL = {
@@ -524,6 +566,10 @@
   };
 
   window.PyPathClassroom = {
+    RETENTION: RETENTION,
+    TEACHER_CAN_SEE: TEACHER_CAN_SEE,
+    TEACHER_CANNOT_SEE: TEACHER_CANNOT_SEE,
+    ERASED_ON_LEAVE: ERASED_ON_LEAVE,
     MASTERY: MASTERY,
     MASTERY_LABEL: MASTERY_LABEL,
     MASTERY_MARK: MASTERY_MARK,
