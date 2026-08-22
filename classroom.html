@@ -44,6 +44,7 @@
     <script type="module" src="/assets/js/activity.js"></script>
     <script type="module" src="/assets/js/auth-ui.js"></script>
     <script defer src="/assets/js/classroom-core.js"></script>
+    <script defer src="/assets/js/classroom-export.js"></script>
     <script type="module" src="/assets/js/classroom-page.js"></script>
     <script defer src="/assets/js/snapshots.js"></script>
     <script type="module" src="/assets/js/classroom-dashboard.js"></script>
@@ -175,6 +176,7 @@
             <div class="cr-bar__right">
               <button type="button" class="btn btn-ghost btn-small" data-cr-new-class>New class</button>
               <button type="button" class="btn btn-ghost btn-small" data-cr-export>Export CSV</button>
+              <button type="button" class="btn btn-ghost btn-small" data-cr-digest>Weekly summary</button>
               <button type="button" class="btn btn-ghost btn-small" data-cr-print>Print</button>
             </div>
           </div>
@@ -259,6 +261,36 @@
             <p class="cr-empty-note" data-cr-grid-empty hidden>
               No students have joined yet. Share the join code above.
             </p>
+          </section>
+
+          <!-- Share with a co-teacher: a second uid on the class, not a URL -->
+          <section class="cr-share" aria-labelledby="cr-share-h">
+            <h2 id="cr-share-h">Share this class</h2>
+            <p class="cr-empty-note">
+              A co-teacher sees exactly what you see and can change nothing about a
+              student's work. Add them by the account id on their account page.
+              This is deliberately not a secret link: a link cannot be taken back
+              once it has been forwarded, and an account can.
+            </p>
+            <form class="cr-create" data-cr-share>
+              <label for="cr-coteacher">Co-teacher account id</label>
+              <input id="cr-coteacher" name="uid" type="text" autocomplete="off"
+                     maxlength="128" placeholder="Their account id">
+              <button type="submit" class="btn btn-ghost btn-small">Add co-teacher</button>
+            </form>
+            <p class="cr-error" data-cr-share-error role="alert" hidden></p>
+            <ul class="cr-teachers" data-cr-teachers></ul>
+          </section>
+
+          <!-- Weekly digest, generated on request -->
+          <section class="cr-digest" data-cr-digest-section hidden aria-labelledby="cr-digest-h">
+            <h2 id="cr-digest-h">This week, as text</h2>
+            <p class="cr-empty-note">Copy this into an email or a planner. It is
+               generated when you ask for it; PyPath sends no scheduled mail.</p>
+            <label class="visually-hidden" for="cr-digest-text">Weekly summary</label>
+            <textarea id="cr-digest-text" class="cr-digest__text" data-cr-digest-text
+                      rows="14" readonly></textarea>
+            <button type="button" class="btn btn-ghost btn-small" data-cr-digest-copy>Copy</button>
           </section>
 
           <!-- C: class summary strip -->

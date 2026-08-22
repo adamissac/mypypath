@@ -9,6 +9,27 @@ import {
   readProfile, readRoster, joinClass, leaveClass, ensureJoinCode, setRole,
 } from '/assets/js/class-join.js';
 
+
+/* Deletes everything the class holds about this learner: their roster row,
+   their mirrored progress and code, their code history, and their activity
+   record. Best-effort and client-side, because there are no Cloud Functions
+   here -- but the rules permit exactly this and nothing wider, so a student
+   really can erase their own class record without asking anyone. */
+async function purgeClassCopy(uid) {
+  try {
+    const { currentClassId, loadMembership, setClassId } =
+      await import('/assets/js/membership.js');
+    const { purgeStudent } = await import('/assets/js/classroom-store.js');
+    const classId = currentClassId() || await loadMembership(uid, true);
+    if (!classId) return;
+    await purgeStudent(classId, uid);
+    setClassId(uid, null);
+  } catch (e) {
+    // A learner who was never in a classes/{classId} class has nothing to
+    // purge, and a failure here must not block leaving.
+  }
+}
+
 const ROLES = window.PyPathRoles;
 
 const section = document.querySelector('[data-class-section]');
@@ -92,10 +113,19 @@ if (section) {
       }
       try {
         await leaveClass(uid);
+
+        // Leaving is the erasure path, not just a disconnection. The rules
+        // permit deleting the class copy only once the roster document is
+        // gone, so this has to run after leaveClass rather than alongside it.
+        await purgeClassCopy(uid);
+
         await refresh();
         leave.textContent = 'Leave this class';
         delete leave.dataset.confirming;
-        window.PyUI && window.PyUI.showToast('You left the class. Your progress is unchanged.');
+        document.dispatchEvent(new CustomEvent('pypath:class-left'));
+        window.PyUI && window.PyUI.showToast(
+          'You left the class. The class copy of your work was deleted; your own progress is unchanged.'
+        );
       } catch (e) {
         fail('Could not leave the class. Please try again.');
       }

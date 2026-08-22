@@ -6,7 +6,7 @@
  */
 import { currentUser } from '/assets/js/auth.js';
 import {
-  classesFor, createClass, readRoster, readEvents, readMirror,
+  classesFor, createClass, readRoster, readEvents, readMirror, addCoTeacher,
 } from '/assets/js/classroom-store.js';
 
 const CORE = window.PyPathClassroom;
@@ -293,6 +293,29 @@ function paintAll() {
   paintAttention();
   paintGrid();
   paintSummary();
+  paintTeachers();
+}
+
+/* A filename a teacher can find again, from a class name they chose. */
+function slug(name) {
+  return String(name || 'class')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 40) || 'class';
+}
+
+function paintTeachers() {
+  const list = $('[data-cr-teachers]');
+  const klass = classes.filter((c) => c.id === activeClassId)[0];
+  if (!list || !klass) return;
+  list.innerHTML = '';
+  const user = currentUser();
+  for (const uid of klass.teacherUids || []) {
+    const item = el('li', 'cr-teacher');
+    item.textContent = uid === (user && user.uid) ? uid + ' (you)' : uid;
+    list.appendChild(item);
+  }
 }
 
 function openStudent(student, column) {
@@ -388,6 +411,78 @@ function wire() {
 
   const print = $('[data-cr-print]');
   if (print) print.addEventListener('click', () => window.print());
+
+  const exportBtn = $('[data-cr-export]');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', () => {
+      const klass = classes.filter((c) => c.id === activeClassId)[0];
+      const csv = window.PyPathExport.masteryCsv(sortedStudents(), {
+        lessonsByUnit: lessonsByUnit(),
+        totalUnits: (CURRICULUM && CURRICULUM.TOTAL_UNITS) || 10,
+      });
+      // Built and downloaded in the browser; the export never leaves the
+      // teacher's machine.
+      window.PyPathExport.download(
+        'pypath-' + slug(klass ? klass.name : 'class') + '.csv', csv
+      );
+    });
+  }
+
+  const digestBtn = $('[data-cr-digest]');
+  if (digestBtn) {
+    digestBtn.addEventListener('click', () => {
+      const klass = classes.filter((c) => c.id === activeClassId)[0];
+      const text = window.PyPathExport.digest(students, {
+        now: Date.now(),
+        lessonTitles: lessonTitles(),
+        className: klass ? klass.name : 'Class',
+      });
+      const field = $('[data-cr-digest-text]');
+      if (field) field.value = text;
+      show($('[data-cr-digest-section]'), true);
+      if (field) field.focus();
+    });
+  }
+
+  const digestCopy = $('[data-cr-digest-copy]');
+  if (digestCopy) {
+    digestCopy.addEventListener('click', async () => {
+      const field = $('[data-cr-digest-text]');
+      if (!field) return;
+      try {
+        await navigator.clipboard.writeText(field.value);
+        digestCopy.textContent = 'Copied';
+        setTimeout(() => { digestCopy.textContent = 'Copy'; }, 2000);
+      } catch (err) {
+        // The text is selectable on screen either way.
+        field.select();
+      }
+    });
+  }
+
+  const share = $('[data-cr-share]');
+  if (share) {
+    share.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const error = $('[data-cr-share-error]');
+      show(error, false);
+      const field = $('#cr-coteacher');
+      const uid = field.value.trim();
+      if (!uid || !activeClassId) return;
+      try {
+        await addCoTeacher(activeClassId, uid);
+        const user = currentUser();
+        if (user) classes = await classesFor(user.uid);
+        field.value = '';
+        paintTeachers();
+      } catch (err) {
+        if (error) {
+          error.textContent = 'Could not add that account. Check the id and try again.';
+          show(error, true);
+        }
+      }
+    });
+  }
 
   const newClass = $('[data-cr-new-class]');
   if (newClass) {
