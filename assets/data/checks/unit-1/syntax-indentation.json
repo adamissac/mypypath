@@ -1,0 +1,31 @@
+{
+  "exercise1": {
+    "prompt": "Fix the syntax error",
+    "cases": [
+      { "name": "runs without an error", "nonempty": true },
+      { "name": "prints Hello", "expect_stdout": "Hello" }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the body is actually indented",
+        "source_matches": "if\\s+True\\s*:\\s*\\n\\s+\\S",
+        "describe": "an indented body"
+      }
+    ],
+    "hint": "Everything that belongs inside an if statement has to be indented below it. Four spaces is the Python convention."
+  },
+  "exercise2": {
+    "prompt": "Create properly indented code",
+    "cases": [
+      { "name": "prints Start, Middle and End in order", "expect_stdout": "Start\nMiddle\nEnd" }
+    ],
+    "hiddenCases": [
+      {
+        "name": "Middle is inside the if, not beside it",
+        "source_matches": "if[\\s\\S]*?:\\s*\\n\\s+print",
+        "describe": "an indented print inside the if"
+      }
+    ],
+    "hint": "Print Start first, then an if True: with an indented print for Middle, then print End back at the left margin."
+  }
+}

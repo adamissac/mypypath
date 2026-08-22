@@ -1,0 +1,35 @@
+{
+  "exercise1": {
+    "prompt": "Create an integer, a float and a string, then print all three",
+    "cases": [
+      { "name": "prints something", "nonempty": true },
+      {
+        "name": "creates a whole number",
+        "call": "len([v for v in list(globals().values()) if type(v) is int]) >= 1",
+        "expect": "True"
+      },
+      {
+        "name": "creates a decimal number",
+        "call": "len([v for v in list(globals().values()) if type(v) is float]) >= 1",
+        "expect": "True"
+      },
+      {
+        "name": "creates a string",
+        "call": "len([v for v in list(globals().values()) if type(v) is str]) >= 1",
+        "expect": "True"
+      }
+    ],
+    "hint": "An integer has no decimal point (5), a float does (5.0), and a string is text in quotes (\"five\"). Assign each to its own variable name."
+  },
+  "exercise2": {
+    "prompt": "price = 15.50, quantity = 4, print the total",
+    "cases": [
+      { "name": "prints the total cost", "expect_stdout": "62.0" }
+    ],
+    "hiddenCases": [
+      { "name": "price holds 15.50", "call": "price", "expect": "15.5" },
+      { "name": "quantity holds 4", "call": "quantity", "expect": "4" }
+    ],
+    "hint": "Multiply the two variables and print the result: print(price * quantity). Python prints 62.0 rather than 62 because price is a decimal."
+  }
+}

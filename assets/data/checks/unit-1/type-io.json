@@ -1,0 +1,32 @@
+{
+  "exercise1": {
+    "prompt": "Convert \"10\" to an integer, multiply by 5, print the result",
+    "cases": [
+      { "name": "prints 50", "expect_stdout": "50" }
+    ],
+    "hiddenCases": [
+      {
+        "name": "text_number starts as a string",
+        "source_matches": "text_number\\s*=\\s*[\"']10[\"']",
+        "describe": "text_number set to the string \"10\""
+      },
+      {
+        "name": "uses int() to convert",
+        "source_matches": "int\\s*\\(",
+        "describe": "a call to int()"
+      }
+    ],
+    "hint": "int(\"10\") turns the text into the number 10. Multiplying the string by 5 instead would repeat it, giving 1010101010."
+  },
+  "exercise2": {
+    "prompt": "Print \"Hello, Alice! You are 25 years old.\"",
+    "cases": [
+      { "name": "prints the full message", "expect_stdout": "Hello, Alice! You are 25 years old." }
+    ],
+    "hiddenCases": [
+      { "name": "name holds Alice", "call": "name", "expect": "'Alice'" },
+      { "name": "age holds the number 25, not the text", "call": "type(age).__name__", "expect": "'int'" }
+    ],
+    "hint": "print() puts a space between comma-separated pieces, so watch where the spaces and punctuation land. Building the sentence with an f-string gives you exact control."
+  }
+}
