@@ -1,0 +1,26 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 697be49..91efe67 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -25,6 +25,8 @@ jobs:
+           ! grep -q 'certifications.html" class="route">Certifications' scripts/upgrade_site.py
+       - name: Check meta descriptions
+         run: python scripts/check_meta.py
++      - name: Classroom script tags are current on every page
++        run: python3 scripts/add_classroom_scripts.py --check
+ 
+   js:
+     runs-on: ubuntu-latest
+@@ -40,6 +42,12 @@ jobs:
+           distribution: temurin
+           java-version: "17"
+       - run: npm ci
++      - name: Curriculum manifest is current
++        run: |
++          npm run build:curriculum
++          git diff --exit-code assets/data/curriculum.json
++      - name: Check files are valid
++        run: npm run validate:checks
+       - name: Unit tests
+         run: npm test
+       - name: Firestore rules tests
