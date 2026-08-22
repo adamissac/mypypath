@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="/assets/css/pypath-fast.css" />
     <link rel="stylesheet" href="/assets/css/pypath-theme.css" />
     <link rel="stylesheet" href="/assets/css/auth.css" />
+    <link rel="stylesheet" href="/assets/css/classroom.css" />
     <link rel="stylesheet" href="/assets/css/gate.css" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css" />
 
@@ -24,6 +25,8 @@
 <script defer src="/assets/js/storage-keys.js"></script>
 <script defer src="/assets/js/schema-version.js"></script>
 <script defer src="/assets/js/events.js"></script>
+<script defer src="/assets/js/classroom-core.js"></script>
+<script defer src="/assets/js/join-disclosure.js"></script>
     <script defer src="/assets/js/roles.js"></script>
     <script defer src="/assets/js/activity-core.js"></script>
     <script defer src="/assets/js/progress-store.js"></script>
@@ -145,20 +148,22 @@
                      maxlength="9" placeholder="ABC234">
               <button type="submit" class="btn btn-primary">Join class</button>
             </form>
-            <p class="auth-hint">Joining a class lets your teacher see your progress,
-               time spent, and certificate. They can never see the code you write.</p>
+            <div data-join-disclosure></div>
             <p><button type="button" class="btn btn-ghost" data-class-become-teacher>I am teaching a class</button></p>
           </div>
 
           <div data-class-view="student" hidden>
-            <p>You are in a class, joined with code <strong data-class-current-code></strong>.
-               Your teacher can see your progress, time spent, and certificate.</p>
+            <p>You are in a class, joined with code <strong data-class-current-code></strong>.</p>
+            <div data-join-disclosure></div>
             <form class="auth-form" data-class-join-form>
               <label for="account-join-code-2">Move to a different class</label>
               <input id="account-join-code-2" type="text" inputmode="latin" autocomplete="off"
                      maxlength="9" placeholder="ABC234">
               <button type="submit" class="btn btn-primary">Join class</button>
             </form>
+            <p class="auth-hint">Leaving deletes the class copy of your work &mdash;
+               your activity record, your mirrored code and answers, and your code
+               history. Your own progress and saved code are untouched.</p>
             <p><button type="button" class="btn btn-ghost" data-class-leave>Leave this class</button></p>
           </div>
 
