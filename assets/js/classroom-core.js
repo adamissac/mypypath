@@ -394,6 +394,93 @@
     };
   }
 
+  /* ---------------------------------------------------- student drill-down */
+
+  /* Events grouped into days, newest day first, newest event first within a
+     day. A flat feed of four hundred events is not a thing anyone reads; days
+     are the unit a teacher already thinks in. */
+  function groupByDay(events, options) {
+    var opts = options || {};
+    var buckets = {};
+
+    (events || []).forEach(function (event) {
+      var at = toMillis(event.at);
+      if (!at) return;
+      var date = new Date(at);
+      // Local time on purpose: "which day was that" means the teacher's day.
+      var key = date.getFullYear() + '-'
+        + String(date.getMonth() + 1).padStart(2, '0') + '-'
+        + String(date.getDate()).padStart(2, '0');
+      if (!buckets[key]) buckets[key] = [];
+      buckets[key].push(event);
+    });
+
+    return Object.keys(buckets)
+      .sort()
+      .reverse()
+      .map(function (day) {
+        return {
+          day: day,
+          events: buckets[day].slice().sort(function (a, b) {
+            return toMillis(b.at) - toMillis(a.at);
+          }),
+          count: buckets[day].length,
+          // Collapsed by default, apart from the most recent day, which is
+          // what a teacher opened the student for.
+          open: opts.openLatest !== false && day === Object.keys(buckets).sort().reverse()[0]
+        };
+      });
+  }
+
+  /* One row per lesson the student has touched, plus any lesson the caller
+     asks about explicitly. */
+  function perLessonRows(events, lessons) {
+    var byExercise = attemptsByExercise(events);
+    var verified = verifiedUnits(events);
+    var rows = [];
+
+    (lessons || []).forEach(function (lesson) {
+      var forLesson = (events || []).filter(function (e) {
+        return (e.lessonPath || payloadOf(e).lessonPath) === lesson.path;
+      });
+      if (!forLesson.length) return;
+
+      var exercises = Object.keys(byExercise)
+        .map(function (key) { return byExercise[key]; })
+        .filter(function (entry) { return entry.lessonPath === lesson.path; });
+
+      var attempts = exercises.reduce(function (sum, e) { return sum + e.attempts; }, 0);
+      var firstTry = exercises.filter(function (e) { return e.firstTryPassed; }).length;
+
+      rows.push({
+        lessonPath: lesson.path,
+        title: lesson.title,
+        unit: lesson.unit,
+        state: lessonState(events, lesson.path, !!verified[lesson.unit]),
+        attempts: attempts,
+        exercises: exercises.length,
+        // Null rather than 0 when nothing was attempted: "no data" and "failed
+        // everything" are different facts and must not render the same.
+        firstTryRate: exercises.length ? firstTry / exercises.length : null,
+        lastActivity: lastEventAt(forLesson)
+      });
+    });
+
+    return rows.sort(function (a, b) { return b.lastActivity - a.lastActivity; });
+  }
+
+  /* The header figures for one student. */
+  function studentHeader(student, lessonsByUnitMap) {
+    var verified = verifiedUnits(student.events);
+    return {
+      displayName: student.displayName || student.uid,
+      joinedAt: toMillis(student.joinedAt),
+      lastActiveAt: Math.max(toMillis(student.lastActiveAt), lastEventAt(student.events)),
+      unitsVerified: Object.keys(verified).length,
+      percentComplete: percentComplete(student.events, lessonsByUnitMap)
+    };
+  }
+
   /* Every number on the dashboard gets one of these next to it. A teacher who
      cannot interrogate a number does not trust it, and a number they do not
      trust is worse than no number, because it is still taking up the space
@@ -420,6 +507,16 @@
       + 'only lessons at least two students have tried.',
     commonError: 'The Python exception raised most often across the class in the last '
       + '7 days. Only the exception type is recorded, never the code or the message.',
+    firstTry: 'The share of this lesson\'s exercises that passed on the very first '
+      + 'attempt. Blank means nothing has been attempted yet, which is not the same '
+      + 'as failing everything.',
+    largePaste: 'More than ' + 120 + ' characters appeared between one snapshot and '
+      + 'the next. That is all this means. Typing quickly, pasting your own earlier '
+      + 'work, and copying an example from the lesson all look the same here, so treat '
+      + 'it as a reason to ask a question rather than as evidence of anything.',
+    snapshots: 'Up to 20 states per editor, captured when code is run and when typing '
+      + 'pauses -- never per keystroke. Oldest are dropped once a lesson\'s history '
+      + 'passes 64KB.',
     trust: 'These events are recorded by each student\'s own browser. They are a '
       + 'record of what the site saw, not proof of what happened, and a determined '
       + 'student could send something untrue. Use them to decide who to talk to, '
@@ -443,6 +540,9 @@
     firstTryRate: firstTryRate,
     lastEventAt: lastEventAt,
     needsAttention: needsAttention,
-    classSummary: classSummary
+    classSummary: classSummary,
+    groupByDay: groupByDay,
+    perLessonRows: perLessonRows,
+    studentHeader: studentHeader
   };
 })();

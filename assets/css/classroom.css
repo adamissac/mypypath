@@ -332,3 +332,155 @@
   .cr-cell__btn,
   .cr-info { transition: none; }
 }
+
+/* ---------- student drill-down ---------- */
+
+.sd {
+  margin: 1.5rem 0;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .6rem;
+  background: var(--panel, #fff);
+}
+
+.sd-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sd-name { margin: 0; font-size: 1.15rem; }
+
+.sd-readonly {
+  margin: .5rem 0 1rem;
+  color: var(--muted, #475569);
+  font-size: .82rem;
+}
+
+.sd h4 {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin: 1.5rem 0 .6rem;
+  font-size: .95rem;
+}
+
+.sd-header { margin-bottom: 1rem; }
+.sd-num { text-align: right; font-variant-numeric: tabular-nums; }
+.sd-state__label { font-size: .82rem; }
+.sd-empty { color: var(--muted, #475569); font-size: .88rem; }
+
+/* ---------- timeline ---------- */
+
+.sd-day {
+  border-bottom: 1px solid var(--border, #cbd5e1);
+}
+
+.sd-day > summary {
+  display: flex;
+  gap: .6rem;
+  align-items: baseline;
+  padding: .5rem .2rem;
+  cursor: pointer;
+  font-size: .88rem;
+}
+
+.sd-day > summary:focus-visible {
+  outline: 2px solid var(--primary, #0ea5e9);
+  outline-offset: -2px;
+}
+
+.sd-day__date { font-weight: 600; color: var(--text-strong, #0f172a); }
+.sd-day__count { color: var(--muted, #475569); font-size: .8rem; }
+
+.sd-events {
+  margin: 0 0 .6rem;
+  padding: 0 0 0 .2rem;
+  list-style: none;
+  display: grid;
+  gap: .2rem;
+}
+
+.sd-event {
+  display: grid;
+  grid-template-columns: 4rem 1fr;
+  gap: .5rem;
+  font-size: .84rem;
+}
+
+.sd-event__at { color: var(--muted, #475569); font-variant-numeric: tabular-nums; }
+.sd-event__what { color: var(--text, #334155); }
+
+/* ---------- work and history ---------- */
+
+.sd-work,
+.sd-history { margin-bottom: 1.25rem; }
+
+.sd-work h4,
+.sd-history h4 { margin-top: 0; font-size: .85rem; color: var(--muted, #475569); }
+
+.sd-code {
+  margin: .4rem 0 0;
+  padding: .7rem .8rem;
+  max-height: 22rem;
+  overflow: auto;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .4rem;
+  background: var(--bg-elevated, #f1f5f9);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .82rem;
+  line-height: 1.5;
+  white-space: pre;
+}
+
+.sd-answer {
+  margin: .4rem 0 0;
+  padding: .6rem .7rem;
+  border-left: 3px solid var(--border, #cbd5e1);
+  color: var(--text, #334155);
+  font-size: .88rem;
+}
+
+.sd-scrub { width: 100%; max-width: 30rem; }
+.sd-scrub__label { display: block; font-size: .8rem; color: var(--muted, #475569); }
+.sd-scrub:focus-visible { outline: 2px solid var(--primary, #0ea5e9); outline-offset: 2px; }
+
+.sd-history__meta {
+  margin: .3rem 0 0;
+  color: var(--muted, #475569);
+  font-size: .78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Neutral by design. This is a label, not a verdict, so it gets no red and no
+   warning iconography -- the tooltip beside it explains that typing fast and
+   pasting look identical here. */
+.sd-flag:not(:empty) {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  margin-top: .3rem;
+  padding: .1rem .45rem;
+  border-radius: 999px;
+  font-size: .72rem;
+  color: var(--muted, #475569);
+  background: var(--bg-elevated, #f1f5f9);
+  border: 1px solid var(--border, #cbd5e1);
+}
+
+@media (max-width: 30rem) {
+  .sd { padding: .85rem .9rem; }
+  .sd-event { grid-template-columns: 1fr; gap: 0; }
+  .sd-code { font-size: .76rem; }
+}
+
+@media print {
+  .sd-scrub,
+  .sd-scrub__label,
+  [data-sd-close] { display: none; }
+
+  .sd-code { max-height: none; overflow: visible; white-space: pre-wrap; }
+  .sd-day { break-inside: avoid; }
+}

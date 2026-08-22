@@ -215,7 +215,7 @@ function paintGrid() {
       );
       button.appendChild(el('span', 'cr-cell__mark', CORE.MASTERY_MARK[state]));
       button.appendChild(el('span', 'visually-hidden', CORE.MASTERY_LABEL[state]));
-      button.addEventListener('click', () => openStudent(student.uid, col));
+      button.addEventListener('click', () => openStudent(student, col));
       td.appendChild(button);
       tr.appendChild(td);
     }
@@ -295,9 +295,16 @@ function paintAll() {
   paintSummary();
 }
 
-function openStudent(uid, column) {
+function openStudent(student, column) {
   document.dispatchEvent(new CustomEvent('pypath:classroom-student', {
-    detail: { classId: activeClassId, uid, column },
+    detail: {
+      classId: activeClassId,
+      uid: student.uid,
+      // A username, never a legal name -- it is the only name this feature
+      // ever holds.
+      displayName: student.displayName,
+      column,
+    },
   }));
 }
 
