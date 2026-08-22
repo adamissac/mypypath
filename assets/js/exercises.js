@@ -183,32 +183,128 @@
     }, 2000);
   }
 
-  function compareAnswers(userAnswer, correctAnswer) {
-    if (!userAnswer.trim() || !correctAnswer.trim()) {
-      return false;
-    }
-    
-    // Normalize answers for comparison
-    const normalize = (str) => {
+  /* How much of the sample answer's vocabulary the learner's answer touches.
+   *
+   * This replaces a 60%-similarity check that decided whether an answer was
+   * right. That check could not do the job, in both directions: the ratio was
+   * over the LONGER of the two texts, so a correct one-sentence answer against
+   * a fifty-word sample could never reach the threshold, while pasting the
+   * sample's nouns in any order sailed past it. It was measuring length
+   * agreement and keyword presence, and reporting the result as correctness.
+   *
+   * Nothing here decides correctness any more, because nothing here can. Two
+   * answers can share no words and both be right, which is what makes these
+   * reflection prompts worth setting. What is returned is a rough coverage
+   * figure used only to word a nudge, and it is never shown as a mark, never
+   * stored, and never sent to a teacher.
+   */
+  function overlapWithSample(userAnswer, sampleAnswer) {
+    var user = String(userAnswer || '').trim();
+    var sample = String(sampleAnswer || '').trim();
+    if (!user || !sample) return 0;
+
+    var normalize = function (str) {
       return str.toLowerCase()
         .replace(/[^\w\s]/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
     };
-    
-    const userNormalized = normalize(userAnswer);
-    const correctNormalized = normalize(correctAnswer);
-    
-    // Check if user answer contains key concepts (at least 60% similarity)
-    const userWords = userNormalized.split(' ');
-    const correctWords = correctNormalized.split(' ');
-    const commonWords = userWords.filter(word => correctWords.includes(word) && word.length > 3);
-    const similarity = commonWords.length / Math.max(userWords.length, correctWords.length);
-    
-    return similarity >= 0.6 || userNormalized.includes(correctNormalized.substring(0, Math.min(50, correctNormalized.length)));
+
+    // Content words only. Matching on "the" and "that" would make every pair
+    // of English sentences look related.
+    var contentWords = function (text) {
+      return normalize(text).split(' ').filter(function (w) { return w.length > 3; });
+    };
+
+    var sampleWords = contentWords(sample);
+    if (!sampleWords.length) return 0;
+
+    var userWords = {};
+    contentWords(user).forEach(function (w) { userWords[w] = true; });
+
+    // Recall against the sample, not a ratio over the longer text: the
+    // question is "did they touch these ideas", and a short answer that does
+    // is a good answer, not a 20% one.
+    var unique = Object.keys(sampleWords.reduce(function (acc, w) {
+      acc[w] = true;
+      return acc;
+    }, {}));
+    var hit = unique.filter(function (w) { return userWords[w]; }).length;
+    return hit / unique.length;
   }
 
+  /* The nudge shown after saving. Deliberately about what to do next rather
+     than about whether the answer was right, because this code cannot know
+     whether the answer was right. */
+  function coverageNudge(userAnswer, sampleAnswer) {
+    if (!sampleAnswer) {
+      return {
+        tone: 'saved',
+        text: 'Answer saved. Compare it with the lesson\'s key points.'
+      };
+    }
+    var words = String(userAnswer || '').trim().split(/\s+/).filter(Boolean).length;
+    if (words < 8) {
+      return {
+        tone: 'thin',
+        text: 'Answer saved. It is quite short -- see whether the sample answer '
+          + 'raises anything you have not covered.'
+      };
+    }
+    if (overlapWithSample(userAnswer, sampleAnswer) < 0.2) {
+      return {
+        tone: 'differs',
+        text: 'Answer saved. It uses quite different wording from the sample, '
+          + 'which may be fine -- read the sample and decide for yourself.'
+      };
+    }
+    return {
+      tone: 'saved',
+      text: 'Answer saved. Check it against the sample answer below.'
+    };
+  }
+
+  /* What a good reflection answer does, in general. Shown as checkboxes the
+     learner ticks themselves, because self-assessment against a stated
+     standard is something they can actually do, and a similarity score is not.
+     Ticks are not stored and are not reported anywhere. */
+  var RUBRIC = [
+    'I answered the question that was asked, in my own words',
+    'I explained why, not only what',
+    'I used a concrete example or referred to code I wrote'
+  ];
+
   // Alias for consistency
+  /* Adds the self-check list under an exercise, once. */
+  function renderRubric(item) {
+    if (!item || item.querySelector('.rubric')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'rubric';
+
+    const heading = document.createElement('p');
+    heading.className = 'rubric__title';
+    heading.textContent = 'Check your own answer';
+    wrap.appendChild(heading);
+
+    const list = document.createElement('ul');
+    list.className = 'rubric__list';
+    RUBRIC.forEach(function (point, index) {
+      const li = document.createElement('li');
+      const id = 'rubric-' + (item.getAttribute('data-exercise-id') || 'x') + '-' + index;
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+      box.id = id;
+      const label = document.createElement('label');
+      label.setAttribute('for', id);
+      label.textContent = point;
+      li.appendChild(box);
+      li.appendChild(label);
+      list.appendChild(li);
+    });
+    wrap.appendChild(list);
+    item.appendChild(wrap);
+  }
+
   function initExercises() {
     return initializeExercises();
   }
@@ -311,14 +407,9 @@
           attempt: nextAttempt(exerciseId)
         });
         
-        // Show comparison feedback if answer is available
-        if (correctAnswer) {
-          const matches = compareAnswers(userAnswer, correctAnswer);
-          feedbackDisplay.textContent = matches 
-            ? 'Your answer matches well with the correct answer!'
-            : 'Your answer is saved. Compare it with the correct answer to see how you did.';
-          feedbackDisplay.className = `answer-feedback show ${matches ? 'match' : 'no-match'}`;
-        }
+        const nudge = coverageNudge(userAnswer, correctAnswer);
+        feedbackDisplay.textContent = nudge.text;
+        feedbackDisplay.className = 'answer-feedback show is-' + nudge.tone;
       });
       
       // Show answer button handler (always available)
@@ -333,18 +424,15 @@
         }
         answerDisplay.classList.add('show');
         
-        // Compare if user has an answer and correct answer exists
+        // The sample is one good answer, not the answer. Saying so is the
+        // whole point of showing it.
         const userAnswer = textarea.value.trim();
-        if (userAnswer && correctAnswer) {
-          const matches = compareAnswers(userAnswer, correctAnswer);
-          feedbackDisplay.textContent = matches 
-            ? 'Great job! Your answer matches well with the correct answer.'
-            : 'Compare your answer with the correct answer above. Both approaches may be valid!';
-          feedbackDisplay.className = `answer-feedback show ${matches ? 'match' : 'no-match'}`;
-        } else if (userAnswer) {
-          feedbackDisplay.textContent = 'Your answer is saved. Review the lesson content to ensure you\'ve covered the key concepts.';
-          feedbackDisplay.className = 'answer-feedback show no-match';
+        if (userAnswer) {
+          feedbackDisplay.textContent = 'This is one good answer, not the only one. '
+            + 'Use the checklist to judge your own.';
+          feedbackDisplay.className = 'answer-feedback show is-saved';
         }
+        renderRubric(item);
       });
     });
   }
@@ -355,5 +443,11 @@
   } else {
     initializeExercises();
   }
+  // Exposed for tests. Nothing in the page reads these; they are here so the
+  // scoring rules can be argued with somewhere other than the DOM.
+  window.PyPathExercises = {
+    overlapWithSample: overlapWithSample,
+    coverageNudge: coverageNudge,
+    RUBRIC: RUBRIC
+  };
 })();
-
