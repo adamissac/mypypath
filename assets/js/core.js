@@ -158,8 +158,19 @@
     }
   }
 
+  // The run/save shortcuts take Ctrl as happily as Cmd, but the hints were
+  // written with ⌘ hardcoded — a key a school Chromebook does not have.
+  function labelModifierKeys() {
+    var apple = /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent);
+    if (apple) return;
+    document.querySelectorAll('kbd[data-mod-key]').forEach(function (key) {
+      key.textContent = 'Ctrl';
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     inject();
+    labelModifierKeys();
     document.dispatchEvent(new CustomEvent('pypath:layout-ready'));
   });
   window.PyLayout = { inject: inject };
