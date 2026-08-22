@@ -124,6 +124,73 @@
     return typeof testCase.call === 'string' && testCase.call.length > 0;
   }
 
+  /* A third kind of case, and the reason for it is worth stating.
+     
+     Much of Unit 1 asks for something personal: "print your own message",
+     "print three things about yourself". There is no single correct stdout to
+     compare against, and inventing one would mean marking a correct answer
+     wrong for not being the answer we happened to imagine. A property case
+     checks the shape of the result instead -- that three lines were printed,
+     that the output is not empty, that a comment was written -- which is
+     exactly what the lesson's own success criteria already say.
+     
+     Where an exercise does have one right answer, expect_stdout is still used.
+     This is not a softer check, it is a check of the thing that was asked. */
+  var PROPERTY_KEYS = ['nonempty', 'min_lines', 'max_lines', 'stdout_matches', 'source_matches'];
+
+  function isPropertyCase(testCase) {
+    return PROPERTY_KEYS.some(function (k) {
+      return Object.prototype.hasOwnProperty.call(testCase, k);
+    });
+  }
+
+  function outputLines(text) {
+    return normalizeOutput(text)
+      .split('\n')
+      .filter(function (line) { return line.trim() !== ''; });
+  }
+
+  /* Returns { ok, expected, actual } so a property failure reads the same way
+     a stdout failure does. */
+  function checkProperty(testCase, stdout, source) {
+    var lines = outputLines(stdout);
+
+    if (testCase.nonempty === true && lines.length === 0) {
+      return { ok: false, expected: 'some output', actual: 'nothing was printed' };
+    }
+    if (typeof testCase.min_lines === 'number' && lines.length < testCase.min_lines) {
+      return {
+        ok: false,
+        expected: 'at least ' + testCase.min_lines + ' lines of output',
+        actual: lines.length + (lines.length === 1 ? ' line' : ' lines')
+      };
+    }
+    if (typeof testCase.max_lines === 'number' && lines.length > testCase.max_lines) {
+      return {
+        ok: false,
+        expected: 'at most ' + testCase.max_lines + ' lines of output',
+        actual: lines.length + ' lines'
+      };
+    }
+    if (typeof testCase.stdout_matches === 'string'
+        && !new RegExp(testCase.stdout_matches, testCase.flags || 'i').test(normalizeOutput(stdout))) {
+      return {
+        ok: false,
+        expected: testCase.describe || 'output matching the exercise',
+        actual: lines.length ? lines.join(' / ') : 'nothing was printed'
+      };
+    }
+    if (typeof testCase.source_matches === 'string'
+        && !new RegExp(testCase.source_matches, testCase.flags || 'm').test(String(source || ''))) {
+      return {
+        ok: false,
+        expected: testCase.describe || 'code matching the exercise',
+        actual: 'not found in your code'
+      };
+    }
+    return { ok: true, expected: testCase.describe || 'as described', actual: 'matches' };
+  }
+
   /* Builds the result the UI renders.
    *
    * Hidden cases contribute to the counts and never to `failures`. A student
@@ -190,7 +257,18 @@
     var ok;
     var expected;
     var actual;
-    if (call) {
+    if (isPropertyCase(testCase)) {
+      if (out.error) {
+        ok = false;
+        expected = testCase.describe || 'your code to run';
+        actual = '(' + out.error + ')';
+      } else {
+        var verdict = checkProperty(testCase, out.stdout, code);
+        ok = verdict.ok;
+        expected = verdict.expected;
+        actual = verdict.actual;
+      }
+    } else if (call) {
       expected = String(testCase.expect == null ? '' : testCase.expect);
       actual = out.value == null ? '' : out.value;
       ok = !out.error && compareValue(actual, expected);
@@ -243,6 +321,9 @@
     normalizeValue: normalizeValue,
     compareValue: compareValue,
     isExpressionCase: isExpressionCase,
+    isPropertyCase: isPropertyCase,
+    checkProperty: checkProperty,
+    outputLines: outputLines,
     summarize: summarize,
     run: run
   };
