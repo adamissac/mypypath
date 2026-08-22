@@ -18,6 +18,13 @@
 
   var remote = null;
 
+  // The classroom mirror runs alongside the remote adapter, never instead of
+  // it. Local-first is unchanged: every write below still hits localStorage
+  // first and synchronously, and both adapters are optional passengers that
+  // can fail without the write failing. A learner in no class has no class
+  // adapter installed and pays nothing for any of this.
+  var classMirror = null;
+
   function rawGet(key) {
     try { return localStorage.getItem(key); } catch (e) { return null; }
   }
@@ -70,6 +77,17 @@
     try { remote.remove(key); } catch (e) {}
   }
 
+  function pushClass(key, value) {
+    if (!classMirror || !isSyncable(key)) return;
+    try { classMirror.push(key, value); } catch (e) {}
+  }
+
+  function removeClass(key) {
+    if (!classMirror || !isSyncable(key)) return;
+    if (typeof classMirror.remove !== 'function') return;
+    try { classMirror.remove(key); } catch (e) {}
+  }
+
   function isValidUnit(n) {
     return Number.isInteger(n) && n >= 1 && n <= 10;
   }
@@ -92,6 +110,7 @@
     rawSet(UNITS_KEY, value);
     stamp(UNITS_KEY);
     pushRemote(UNITS_KEY, value);
+    pushClass(UNITS_KEY, value);
     emit(UNITS_KEY);
   }
 
@@ -101,6 +120,7 @@
     rawSet(key, value);
     stamp(key);
     pushRemote(key, value);
+    pushClass(key, value);
     emit(key);
   }
 
@@ -108,12 +128,17 @@
     rawRemove(key);
     unstamp(key);
     removeRemote(key);
+    removeClass(key);
     emit(key);
   }
 
   // Apply a value that came FROM the remote — write locally without
   // re-uploading it (that would re-echo to the server, clobber the real
   // updatedAt with "now", and double write billing).
+  //
+  // The class mirror is skipped here for the same reason, and catches up
+  // through the sink's mirrorAll() pass after a sign-in merge rather than by
+  // echoing every pulled document straight back out.
   function applyRemote(key, value, updatedAt) {
     rawSet(key, value);
     stamp(key, updatedAt);
@@ -138,6 +163,12 @@
 
   function _setRemoteAdapter(adapter) { remote = adapter || null; }
 
+  // Parallel to _setRemoteAdapter rather than folded into it: the two have
+  // different lifetimes. Signing in installs the remote adapter; joining a
+  // class installs this one, and leaving a class removes it while the remote
+  // adapter stays exactly where it was.
+  function _setClassAdapter(adapter) { classMirror = adapter || null; }
+
   window.ProgressStore = {
     getCompletedUnits: getCompletedUnits,
     setCompletedUnits: setCompletedUnits,
@@ -146,6 +177,7 @@
     removeItem: removeItem,
     applyRemote: applyRemote,
     snapshot: snapshot,
-    _setRemoteAdapter: _setRemoteAdapter
+    _setRemoteAdapter: _setRemoteAdapter,
+    _setClassAdapter: _setClassAdapter
   };
 })();
