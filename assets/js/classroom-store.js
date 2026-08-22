@@ -20,7 +20,7 @@ import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
 
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const {
-  doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, collection, query,
+  doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, collection, query, where,
   orderBy, limit, writeBatch, serverTimestamp, arrayUnion, arrayRemove,
 } = await import(`${BASE}/firebase-firestore.js`);
 
@@ -300,6 +300,40 @@ export async function mirrorAll(classId, uid) {
   }
   await batch.commit();
   return keys.length;
+}
+
+/* ---------------------------------------------------------- retention */
+
+/* Deletes events past the retention window.
+ *
+ * Run by the student's own browser, because there is nowhere else to run it:
+ * no Cloud Functions, and the rules quite rightly let nobody else delete a
+ * student's record. The rules permit exactly this window and no more, so a
+ * client that skipped the call cannot keep anything alive that the policy says
+ * should go -- but it does mean expiry happens on next sign-in rather than on
+ * the stroke of midnight, and the policy is worded as "after" rather than "at".
+ */
+export async function purgeExpired(classId, uid, retentionDays) {
+  const days = retentionDays || 180;
+  const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  let removed = 0;
+
+  for (;;) {
+    const snap = await getDocs(
+      query(
+        collection(db, `classes/${classId}/roster/${uid}/events`),
+        where('at', '<', cutoff),
+        limit(400)
+      )
+    );
+    if (snap.empty) break;
+    const batch = writeBatch(db);
+    snap.docs.forEach((d) => batch.delete(d.ref));
+    await batch.commit();
+    removed += snap.size;
+    if (snap.size < 400) break;
+  }
+  return removed;
 }
 
 /* ------------------------------------------------------- erasure (Phase 6) */

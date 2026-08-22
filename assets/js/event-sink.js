@@ -11,7 +11,7 @@
  */
 import { currentUser } from '/assets/js/auth.js';
 import {
-  writeEvents, makeClassAdapter, mirrorAll, touchLastActive,
+  writeEvents, makeClassAdapter, mirrorAll, touchLastActive, purgeExpired,
 } from '/assets/js/classroom-store.js';
 import { loadMembership, setClassId } from '/assets/js/membership.js';
 
@@ -94,6 +94,11 @@ async function attach(user) {
   // as it arrives during the sign-in merge.
   mirrorAll(classId, uid).catch(() => {});
   touchLastActive(classId, uid);
+
+  // The retention policy, enforced on the only machine that is allowed to.
+  // Deliberately not awaited: expiring old records must never delay a lesson.
+  const RETENTION = window.PyPathClassroom && window.PyPathClassroom.RETENTION;
+  purgeExpired(classId, uid, RETENTION ? RETENTION.EVENT_DAYS : 180).catch(() => {});
 }
 
 function detach() {
