@@ -481,13 +481,16 @@
       node.hidden = false;
 
       // A learner who has already passed is retaking, not taking. Saying so
-      // stops the button reading like unfinished work they still owe. Only a
-      // plain text link is rewritten: the curriculum list wraps its label in
+      // stops the button reading like unfinished work they still owe. All of
+      // them, because the last lesson in a unit carries two: one in the header
+      // actions and one in the end of unit card at the foot of the page. Only
+      // a plain text link is rewritten: the curriculum list wraps its label in
       // spans, and replacing its text would flatten the whole card.
-      var link = document.querySelector('[data-unit-test-link="' + n + '"]');
-      if (link && state.passed && link.children.length === 0) {
-        link.textContent = 'Retake the Unit ' + n + ' test';
-      }
+      var links = document.querySelectorAll('[data-unit-test-link="' + n + '"]');
+      if (!state.passed) return;
+      Array.prototype.forEach.call(links, function (link) {
+        if (link.children.length === 0) link.textContent = 'Retake the Unit ' + n + ' test';
+      });
     });
   }
 
