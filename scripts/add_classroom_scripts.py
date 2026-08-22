@@ -28,6 +28,10 @@ ANCHOR_MODULE = '<script type="module" src="/assets/js/sync.js"></script>'
 NEW_GLOBALS = [
     '<script defer src="/assets/js/schema-version.js"></script>',
     '<script defer src="/assets/js/events.js"></script>',
+    # Shared unit-percentage formula. lesson-progress.js and classroom-core.js
+    # both hand their counts to it, so a learner and their teacher can never be
+    # shown different numbers for the same unit.
+    '<script defer src="/assets/js/unit-progress.js"></script>',
 ]
 NEW_MODULE = '<script type="module" src="/assets/js/event-sink.js"></script>'
 
@@ -50,9 +54,13 @@ def patch(html: str) -> str:
     if ANCHOR_GLOBAL not in html:
         return html
 
-    if NEW_GLOBALS[0] not in html:
+    # Each tag is checked on its own. Testing only the first one meant that
+    # adding a fourth global silently did nothing on every page that already
+    # had the first three.
+    absent = [tag for tag in NEW_GLOBALS if tag not in html]
+    if absent:
         pad = indent_of(html, ANCHOR_GLOBAL)
-        block = ANCHOR_GLOBAL + "".join("\n" + pad + tag for tag in NEW_GLOBALS)
+        block = ANCHOR_GLOBAL + "".join("\n" + pad + tag for tag in absent)
         html = html.replace(ANCHOR_GLOBAL, block, 1)
 
     if NEW_MODULE not in html and ANCHOR_MODULE in html:

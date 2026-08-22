@@ -39,25 +39,65 @@
   gap: .5rem;
 }
 
+/* Two columns -- name and percentage -- with the bar and the detail line
+   spanning both underneath. Previously a flex row holding "Complete" or
+   "Not started"; a learner eight lessons into a ten-lesson unit was told
+   "Not started", which was both wrong and the most discouraging thing the
+   page could have said to the person who had done the most unfinished work. */
 .progress-unit {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  column-gap: 1rem;
   padding: .7rem .9rem;
   border: 1px solid var(--border, #cbd5e1);
   border-radius: .55rem;
   background: var(--panel, #fff);
 }
 
+.progress-unit__meter {
+  grid-column: 1 / -1;
+  height: .4rem;
+  margin: .4rem 0 .3rem;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--bg-elevated, #f1f5f9);
+  border: 1px solid var(--border, #cbd5e1);
+}
+
+.progress-unit__meter .bar {
+  height: 100%;
+  width: 0;
+  background: var(--primary, #0ea5e9);
+  transition: width .3s ease;
+}
+
+.progress-unit.completed .progress-unit__meter .bar {
+  background: var(--success, #16a34a);
+}
+
+.progress-unit__detail {
+  grid-column: 1 / -1;
+  font-size: .78rem;
+  color: var(--muted, #475569);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-unit__meter .bar { transition: none; }
+}
+
 .progress-unit a { font-weight: 600; text-decoration: none; }
 .progress-unit a:hover { text-decoration: underline; }
 
 .progress-unit__status {
-  font-size: .85rem;
-  color: var(--muted, #475569);
+  font-size: .95rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-strong, #0f172a);
   white-space: nowrap;
 }
+
+.progress-unit.completed .progress-unit__status { color: var(--success, #16a34a); }
 
 .progress-unit.completed {
   border-color: color-mix(in srgb, var(--accent, #38bdf8) 45%, var(--border, #cbd5e1));

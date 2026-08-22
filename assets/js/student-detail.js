@@ -130,6 +130,52 @@ function paintTimeline(root, student) {
   }
 }
 
+/* A row per unit: the percentage, how many lessons are done, and whether the
+   end-of-unit test has been passed. The same figure the student sees on their
+   own progress page, because both come from PyPathUnitProgress. */
+function paintUnits(root, student) {
+  const body = $('[data-sd-units-body]', root);
+  if (!body) return;
+  body.innerHTML = '';
+
+  const byUnit = lessonsByUnit();
+  const total = Object.keys(byUnit).length || 10;
+
+  for (let unit = 1; unit <= total; unit += 1) {
+    const progress = CORE.unitProgress(student.events, byUnit[unit] || [], unit);
+
+    const tr = el('tr');
+    const th = el('th', null, 'Unit ' + unit);
+    th.scope = 'row';
+    tr.appendChild(th);
+
+    // A real progressbar rather than a decorative div, so the number is
+    // announced instead of skipped.
+    const cell = el('td', 'sd-unit__cell');
+    const meter = el('div', 'sd-unit__meter');
+    meter.setAttribute('role', 'progressbar');
+    meter.setAttribute('aria-label', 'Unit ' + unit + ' progress');
+    meter.setAttribute('aria-valuemin', '0');
+    meter.setAttribute('aria-valuemax', '100');
+    meter.setAttribute('aria-valuenow', String(progress.percent));
+    meter.setAttribute('aria-valuetext', progress.percent + '% — ' + progress.summary);
+    const fill = el('div', 'bar');
+    fill.style.width = progress.percent + '%';
+    meter.appendChild(fill);
+    cell.appendChild(meter);
+    cell.appendChild(el('span', 'sd-unit__pct', progress.percent + '%'));
+    tr.appendChild(cell);
+
+    tr.appendChild(el('td', 'sd-num',
+      progress.lessonsPassed + ' of ' + progress.lessonsTotal));
+    // A word, not a tick: a tick alone is invisible in greyscale and to a
+    // screen reader reading the cell out of context.
+    tr.appendChild(el('td', null, progress.testPassed ? 'Passed' : 'Not yet'));
+
+    body.appendChild(tr);
+  }
+}
+
 function paintLessons(root, student) {
   const body = $('[data-sd-lessons-body]', root);
   const table = $('[data-sd-lessons]', root);
@@ -362,6 +408,7 @@ export async function openStudent(classId, uid, displayName) {
   };
 
   paintHeader(root, student);
+  paintUnits(root, student);
   paintTimeline(root, student);
   paintLessons(root, student);
   await paintWork(root, student);

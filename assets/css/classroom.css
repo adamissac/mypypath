@@ -640,3 +640,48 @@
   overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
+
+/* ---------- per-unit progress ---------- */
+
+/* In a grid cell: the mark stays the primary signal and the percentage sits
+   under it, small. The number is detail; the mark is what you scan for. */
+.cr-cell__pct {
+  display: block;
+  margin-top: .05rem;
+  font-size: .6rem;
+  font-variant-numeric: tabular-nums;
+  opacity: .85;
+}
+
+.cr-cell__btn { line-height: 1.15; padding: .15rem 0; }
+
+.sd-unit__cell { min-width: 9rem; }
+
+.sd-unit__meter {
+  display: inline-block;
+  width: 6rem;
+  height: .5rem;
+  vertical-align: middle;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--bg-elevated, #f1f5f9);
+  border: 1px solid var(--border, #cbd5e1);
+}
+
+.sd-unit__meter .bar {
+  height: 100%;
+  background: var(--primary, #0ea5e9);
+}
+
+.sd-unit__pct {
+  margin-left: .45rem;
+  font-size: .8rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted, #475569);
+}
+
+@media print {
+  /* The bar is a background and will not print, so the number carries it. */
+  .sd-unit__meter { display: none; }
+  .sd-unit__pct { margin-left: 0; }
+}
