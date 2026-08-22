@@ -108,3 +108,51 @@
 @media (prefers-reduced-motion: reduce) {
   .btn-check-work { transition: none; }
 }
+
+/* ---------- self-check rubric on a reflection exercise ---------- */
+
+.rubric {
+  margin-top: .8rem;
+  padding: .7rem .8rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .5rem;
+  background: var(--bg-elevated, #f1f5f9);
+}
+
+.rubric__title {
+  margin: 0 0 .4rem;
+  font-size: .8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: var(--muted, #475569);
+}
+
+.rubric__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: .3rem;
+  font-size: .86rem;
+}
+
+.rubric__list li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .45rem;
+  align-items: baseline;
+}
+
+.rubric__list label { color: var(--text, #334155); cursor: pointer; }
+.rubric__list input:focus-visible { outline: 2px solid var(--primary, #0ea5e9); outline-offset: 2px; }
+
+/* The nudge under a saved answer. All three tones are neutral: none of them
+   is a verdict, so none of them is green or red. */
+.answer-feedback.is-saved,
+.answer-feedback.is-thin,
+.answer-feedback.is-differs {
+  color: var(--muted, #475569);
+  border-left: 3px solid var(--border, #cbd5e1);
+  padding-left: .6rem;
+}
