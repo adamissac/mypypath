@@ -140,6 +140,57 @@
     outputEl.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
   }
 
+  /* The classroom event log, when there is one. Every call below is a no-op
+     for a guest and for a signed-in learner who has joined no class, which is
+     what keeps the classroom feature from costing a lone learner anything. */
+  function note(type, payload) {
+    if (!window.PyPathEvents) return;
+    try { window.PyPathEvents.record(type, payload); } catch (e) {}
+  }
+
+  function lessonPath() {
+    try { return location.pathname; } catch (e) { return ''; }
+  }
+
+  /* A snapshot of one editor, taken on save and on run -- never on keystroke.
+     Per-keystroke history would be a recording of someone thinking, which is
+     both far more than a teacher needs and far more than a student would
+     expect to be kept.
+
+     Only stored for a learner whose work is mirrored to a class. A lone
+     learner's editor history is nobody's business and is not written at all. */
+  /* saveToStorage fires on every CodeMirror change, which is every keystroke.
+     Snapshotting there would be a recording of someone thinking. This waits
+     for typing to stop, so a snapshot marks a pause in the work rather than a
+     keypress. */
+  var SETTLE_MS = 3000;
+  var settleTimers = {};
+
+  function snapshotWhenSettled(editorId, getCode) {
+    if (settleTimers[editorId]) window.clearTimeout(settleTimers[editorId]);
+    settleTimers[editorId] = window.setTimeout(function () {
+      settleTimers[editorId] = null;
+      snapshot(editorId, getCode(), 'save');
+    }, SETTLE_MS);
+  }
+
+  function snapshot(editorId, code, reason) {
+    if (!window.PyPathSnapshots || !window.ProgressStore) return;
+    if (!window.PyPathEvents || !window.PyPathEvents.isEnabled()) return;
+    var key = (window.PyPathKeys ? window.PyPathKeys.SNAPSHOTS_PREFIX : 'pypath-snapshots-')
+      + lessonPath();
+    var current = {};
+    try {
+      current = JSON.parse(window.ProgressStore.getItem(key) || '{}') || {};
+    } catch (e) {
+      current = {};
+    }
+    var next = window.PyPathSnapshots.record(current, editorId, code, Date.now(), reason);
+    try {
+      window.ProgressStore.setItem(key, JSON.stringify(next));
+    } catch (e) {}
+  }
+
   function getSolutions() {
     return window.exerciseSolutions || {};
   }
@@ -168,8 +219,31 @@
       outputEl.innerHTML = '<div class="output-loading">Running...</div>';
       var result = await window.Pyodide.runCode(code);
       renderRunOutput(outputEl, result);
+
+      var failed = !!(result && (result.error || result.stderr));
+      snapshot(editorId, code, 'run');
+      note('code.run', { lessonPath: lessonPath(), editorId: editorId, ok: !failed });
+      if (failed) {
+        note('code.error', {
+          lessonPath: lessonPath(),
+          editorId: editorId,
+          // Class name only. errorClassOf drops the message, which quotes the
+          // student's own source.
+          errorType: window.PyPathEvents
+            ? window.PyPathEvents.errorClassOf(result.error || result.stderr)
+            : 'UnknownError'
+        });
+      }
     } catch (error) {
       outputEl.innerHTML = '<div class="output-error">' + escapeHtml(String(error)).replace(/\n/g, '<br>') + '</div>';
+      note('code.run', { lessonPath: lessonPath(), editorId: editorId, ok: false });
+      note('code.error', {
+        lessonPath: lessonPath(),
+        editorId: editorId,
+        errorType: window.PyPathEvents
+          ? window.PyPathEvents.errorClassOf(error)
+          : 'UnknownError'
+      });
     }
   };
 
@@ -317,6 +391,9 @@
       window.editors[editorId].setSize(null, isExercise ? 180 : 150);
       window.editors[editorId].on('change', function () {
         saveToStorage('code', editorId, window.editors[editorId].getValue());
+        snapshotWhenSettled(editorId, function () {
+          return window.editors[editorId].getValue();
+        });
       });
 
       window.editors[editorId].setOption('extraKeys', Object.assign({}, window.editors[editorId].getOption('extraKeys') || {}, {
@@ -358,6 +435,14 @@
     });
     bindLessonButtons();
     initEditors();
+
+    // Once per page load. This is the event that makes "opened it and
+    // struggled" distinguishable from "never opened it", which is the whole
+    // reason the log exists.
+    var unit = window.PyPathCurriculum
+      ? window.PyPathCurriculum.unitOf(lessonPath())
+      : null;
+    if (unit) note('lesson.opened', { lessonPath: lessonPath(), unit: unit });
 
     document.addEventListener('themechange', function () {
       Object.keys(window.editors || {}).forEach(function (id) {

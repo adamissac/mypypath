@@ -121,6 +121,18 @@
     s.setItem(STORE_KEY, JSON.stringify(records));
   }
 
+  /* The classroom event log, when there is one. A no-op for a guest and for a
+     signed-in learner who has joined no class. */
+  function note(type, payload) {
+    if (!window.PyPathEvents) return;
+    try { window.PyPathEvents.record(type, payload); } catch (e) {}
+  }
+
+  // When this sitting began, for the duration on test.submitted. Module-level
+  // rather than stored: a duration that survived a reload would count the time
+  // the tab spent closed.
+  var startedAt = 0;
+
   function attemptKey(unit) { return ATTEMPT_PREFIX + unit; }
 
   function readAttempt(unit) {
@@ -582,6 +594,17 @@
       });
 
       var at = Date.now();
+
+      note('test.submitted', {
+        unit: unit,
+        score: scored.total,
+        total: 100,
+        attempt: (readRecords()[String(unit)] || {}).attempts + 1 || 1,
+        // Clamped by the sanitizer, so a tab left open over a weekend cannot
+        // report a two-day test.
+        durationSec: startedAt ? Math.round((at - startedAt) / 1000) : 0
+      });
+
       var finished = persist({
         score: scored.total,
         mcqCorrect: mcqCorrect,
@@ -751,6 +774,8 @@
     renderMcq();
     renderFrq();
     show($('ut-paper'), true);
+    startedAt = Date.now();
+    note('test.started', { unit: unit });
   }
 
   function renderIntro() {

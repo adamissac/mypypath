@@ -1,0 +1,99 @@
+{
+  "exercise1": {
+    "prompt": "Create an integer, a float and a string, then print all three",
+    "cases": [
+      {
+        "name": "prints something",
+        "nonempty": true
+      },
+      {
+        "name": "creates a whole number",
+        "call": "len([v for v in list(globals().values()) if type(v) is int]) >= 1",
+        "expect": "True"
+      },
+      {
+        "name": "creates a decimal number",
+        "call": "len([v for v in list(globals().values()) if type(v) is float]) >= 1",
+        "expect": "True"
+      },
+      {
+        "name": "creates a string",
+        "call": "len([v for v in list(globals().values()) if type(v) is str]) >= 1",
+        "expect": "True"
+      }
+    ],
+    "hint": "An integer has no decimal point (5), a float does (5.0), and a string is text in quotes (\"five\"). Assign each to its own variable name."
+  },
+  "exercise2": {
+    "prompt": "price = 15.50, quantity = 4, print the total",
+    "cases": [
+      {
+        "name": "prints the total cost",
+        "expect_stdout": "62.0"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "price holds 15.50",
+        "call": "price",
+        "expect": "15.5"
+      },
+      {
+        "name": "quantity holds 4",
+        "call": "quantity",
+        "expect": "4"
+      }
+    ],
+    "hint": "Multiply the two variables and print the result: print(price * quantity). Python prints 62.0 rather than 62 because price is a decimal."
+  },
+  "questions": [
+    {
+      "id": "u1-var-1",
+      "prompt": "What is the type of the value 5.0?",
+      "choices": [
+        "int",
+        "float",
+        "str",
+        "bool"
+      ],
+      "answer": 1,
+      "explain": "The decimal point makes it a float, even though the value happens to be a whole number."
+    },
+    {
+      "id": "u1-var-2",
+      "prompt": "What does x = 5 actually do?",
+      "choices": [
+        "Tests whether x equals 5",
+        "Binds the name x to the value 5",
+        "Declares x as an integer variable permanently",
+        "Prints 5"
+      ],
+      "answer": 1,
+      "explain": "A single = assigns. Testing for equality is ==, which is a different operator entirely."
+    },
+    {
+      "id": "u1-var-3",
+      "prompt": "Which of these is a valid variable name?",
+      "choices": [
+        "2nd_place",
+        "my-score",
+        "my_score",
+        "class"
+      ],
+      "answer": 2,
+      "explain": "Names cannot start with a digit, cannot contain hyphens, and cannot be Python keywords like class."
+    },
+    {
+      "id": "u1-var-4",
+      "prompt": "What is the type of \"5\"?",
+      "choices": [
+        "int",
+        "float",
+        "str",
+        "It depends on how it is used"
+      ],
+      "answer": 2,
+      "explain": "The quotes make it text. \"5\" + \"5\" gives \"55\", not 10."
+    }
+  ]
+}

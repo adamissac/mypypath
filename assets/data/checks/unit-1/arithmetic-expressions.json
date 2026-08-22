@@ -1,0 +1,108 @@
+{
+  "exercise1": {
+    "prompt": "length = 8, width = 5, print the area",
+    "cases": [
+      {
+        "name": "prints the area",
+        "expect_stdout": "40"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "length holds 8",
+        "call": "length",
+        "expect": "8"
+      },
+      {
+        "name": "width holds 5",
+        "call": "width",
+        "expect": "5"
+      },
+      {
+        "name": "area is calculated, not typed in",
+        "source_matches": "length\\s*\\*\\s*width|width\\s*\\*\\s*length",
+        "describe": "length multiplied by width"
+      }
+    ],
+    "hint": "Store the two numbers in variables first, then print(length * width) so the calculation is the code rather than the answer."
+  },
+  "exercise2": {
+    "prompt": "Calculate (10 + 5) x 3 - 8",
+    "cases": [
+      {
+        "name": "prints 37",
+        "expect_stdout": "37"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "uses parentheses to force the addition first",
+        "source_matches": "\\(\\s*10\\s*\\+\\s*5\\s*\\)",
+        "describe": "(10 + 5) written with parentheses"
+      }
+    ],
+    "hint": "Without parentheses Python multiplies before it adds, so 10 + 5 * 3 - 8 gives 17. The parentheses are what make the addition happen first."
+  },
+  "questions": [
+    {
+      "id": "u1-ari-1",
+      "prompt": "What is 10 / 3 in Python 3?",
+      "choices": [
+        "3",
+        "3.3333333333333335",
+        "3.0",
+        "An error"
+      ],
+      "answer": 1,
+      "explain": "A single slash always gives a float, even when the numbers divide evenly."
+    },
+    {
+      "id": "u1-ari-2",
+      "prompt": "What is 10 // 3?",
+      "choices": [
+        "3",
+        "3.33",
+        "3.0",
+        "4"
+      ],
+      "answer": 0,
+      "explain": "Double slash is floor division: it divides and discards the remainder."
+    },
+    {
+      "id": "u1-ari-3",
+      "prompt": "What is 10 % 3?",
+      "choices": [
+        "3",
+        "1",
+        "0.33",
+        "3.33"
+      ],
+      "answer": 1,
+      "explain": "The modulo operator gives the remainder. It is how you test whether a number divides evenly."
+    },
+    {
+      "id": "u1-ari-4",
+      "prompt": "What is 2 + 3 * 4?",
+      "choices": [
+        "20",
+        "14",
+        "24",
+        "9"
+      ],
+      "answer": 1,
+      "explain": "Multiplication binds tighter than addition, so this is 2 + 12. Parentheses are how you override that."
+    },
+    {
+      "id": "u1-ari-5",
+      "prompt": "How do you make the addition happen first?",
+      "choices": [
+        "2 + 3 * 4",
+        "(2 + 3) * 4",
+        "2 + (3 * 4)",
+        "You cannot"
+      ],
+      "answer": 1,
+      "explain": "Parentheses are evaluated first, which is the P in PEMDAS."
+    }
+  ]
+}
