@@ -1,0 +1,249 @@
+/* PyPath — runs a student's code against authored test cases.
+ *
+ * This is what turns "started" into "actually works". Everything else the
+ * dashboard shows is a count of activity; this is the only signal that says
+ * the code does what it was supposed to do.
+ *
+ * Runs in the page's existing Pyodide instance -- there is exactly one
+ * interpreter and loading a second would double a cold start that already
+ * costs several seconds.
+ *
+ * The pure parts (normalizing, comparing, summarizing) are on the same global
+ * and take no I/O, so they can be tested without a runtime.
+ */
+(function () {
+  'use strict';
+
+  /* Wall-clock budget for one case. Generous, because the first case in a
+     lesson may be waiting on a cold interpreter, and stingy enough that a
+     runaway loop gives the tab back inside a few seconds. */
+  var CASE_TIMEOUT_SEC = 5;
+
+  var TIMEOUT_MARKER = '__pypath_timeout__';
+
+  /* The harness, installed once per Pyodide instance.
+   *
+   * Every case runs in a namespace of its own: one case defining a name must
+   * not be why the next one passes, and a student's code must not see the
+   * harness's own variables.
+   *
+   * The timeout is enforced with sys.settrace rather than a worker or an
+   * interrupt buffer. Pyodide runs on the main thread, and interrupting it
+   * properly needs SharedArrayBuffer, which needs cross-origin isolation
+   * headers this site does not send. Tracing costs speed -- irrelevant for
+   * exercises this size -- and catches what actually strands a tab, which is a
+   * `while True:` in the student's own Python. A loop spinning inside a C
+   * builtin is not traced and is documented as such rather than pretended
+   * about.
+   */
+  var HARNESS = [
+    'import sys, io, json, time, builtins',
+    '',
+    'def _pypath_run_case(code, stdin_text, call_expr, limit):',
+    '    ns = {"__name__": "__main__"}',
+    '    out = io.StringIO()',
+    '    lines = list(stdin_text.split("\\n")) if stdin_text else []',
+    '    pos = [0]',
+    '',
+    '    def fake_input(prompt=""):',
+    '        if prompt:',
+    '            out.write(str(prompt))',
+    '        if pos[0] >= len(lines):',
+    '            raise EOFError("no more input")',
+    '        pos[0] += 1',
+    '        return lines[pos[0] - 1]',
+    '',
+    '    ns["input"] = fake_input',
+    '    real_stdout, real_input = sys.stdout, builtins.input',
+    '    deadline = time.monotonic() + float(limit)',
+    '',
+    '    def guard(frame, event, arg):',
+    '        if time.monotonic() > deadline:',
+    '            raise TimeoutError("' + TIMEOUT_MARKER + '")',
+    '        return guard',
+    '',
+    '    result = {"stdout": "", "value": None, "error": None, "timeout": False}',
+    '    try:',
+    '        sys.stdout = out',
+    '        builtins.input = fake_input',
+    '        sys.settrace(guard)',
+    '        exec(code, ns)',
+    '        if call_expr:',
+    '            result["value"] = repr(eval(call_expr, ns))',
+    '    except TimeoutError as e:',
+    '        if "' + TIMEOUT_MARKER + '" in str(e):',
+    '            result["timeout"] = True',
+    '        result["error"] = "TimeoutError"',
+    '    except BaseException as e:',
+    '        # Class name only. The message quotes the student\'s own source and',
+    '        # has no business leaving this function.',
+    '        result["error"] = type(e).__name__',
+    '    finally:',
+    '        sys.settrace(None)',
+    '        sys.stdout = real_stdout',
+    '        builtins.input = real_input',
+    '    result["stdout"] = out.getvalue()',
+    '    return json.dumps(result)',
+    ''
+  ].join('\n');
+
+  /* ------------------------------------------------------------- pure part */
+
+  /* Trailing whitespace and line endings are not what any of these exercises
+     are about, and failing someone for a missing final newline teaches them
+     nothing. Interior spacing is left alone: "Hello,  world" really is wrong.  */
+  function normalizeOutput(text) {
+    return String(text == null ? '' : text)
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n')
+      .split('\n')
+      .map(function (line) { return line.replace(/[ \t]+$/, ''); })
+      .join('\n')
+      .replace(/\n+$/, '');
+  }
+
+  function compareOutput(actual, expected) {
+    return normalizeOutput(actual) === normalizeOutput(expected);
+  }
+
+  /* Expression cases compare Python reprs, so 'hello' and "hello" -- the same
+     string written two ways -- are the same answer. */
+  function normalizeValue(text) {
+    var s = String(text == null ? '' : text).trim();
+    if (s.length >= 2 && s.charAt(0) === "'" && s.charAt(s.length - 1) === "'") {
+      return '"' + s.slice(1, -1) + '"';
+    }
+    return s;
+  }
+
+  function compareValue(actual, expected) {
+    return normalizeValue(actual) === normalizeValue(expected);
+  }
+
+  function isExpressionCase(testCase) {
+    return typeof testCase.call === 'string' && testCase.call.length > 0;
+  }
+
+  /* Builds the result the UI renders.
+   *
+   * Hidden cases contribute to the counts and never to `failures`. A student
+   * is told how many they passed, never which input caught them out -- the
+   * point of a hidden case is that it cannot be special-cased, and naming it
+   * hands back exactly what it was withholding.
+   */
+  function summarize(visible, hidden, spec, attempt) {
+    var failures = visible.filter(function (r) { return !r.ok; });
+    var hiddenFailed = hidden.filter(function (r) { return !r.ok; }).length;
+    var passed = visible.filter(function (r) { return r.ok; }).length +
+      (hidden.length - hiddenFailed);
+
+    return {
+      passed: passed,
+      total: visible.length + hidden.length,
+      allPassed: passed === visible.length + hidden.length && passed > 0,
+      hiddenTotal: hidden.length,
+      hiddenPassed: hidden.length - hiddenFailed,
+      failures: failures.map(function (r) {
+        return { name: r.name, expected: r.expected, actual: r.actual };
+      }),
+      timedOut: visible.concat(hidden).some(function (r) { return r.timeout; }),
+      errorType: firstErrorType(visible.concat(hidden)),
+      // Held back until someone has actually tried twice. Offered sooner it is
+      // read before the thinking; offered never it is just a wall.
+      hint: attempt >= 2 ? (spec && spec.hint) || '' : ''
+    };
+  }
+
+  function firstErrorType(results) {
+    for (var i = 0; i < results.length; i++) {
+      if (results[i].errorType) return results[i].errorType;
+    }
+    return '';
+  }
+
+  /* ---------------------------------------------------------- runtime part */
+
+  var harnessInstalled = false;
+
+  function ensureHarness(pyodide) {
+    if (harnessInstalled) return;
+    pyodide.runPython(HARNESS);
+    harnessInstalled = true;
+  }
+
+  function pyLiteral(value) {
+    return JSON.stringify(String(value == null ? '' : value));
+  }
+
+  function runOneCase(pyodide, code, testCase) {
+    var call = isExpressionCase(testCase) ? testCase.call : '';
+    var raw = pyodide.runPython(
+      '_pypath_run_case(' +
+        pyLiteral(code) + ', ' +
+        pyLiteral(testCase.stdin || '') + ', ' +
+        pyLiteral(call) + ', ' +
+        CASE_TIMEOUT_SEC +
+      ')'
+    );
+    var out = JSON.parse(raw);
+
+    var ok;
+    var expected;
+    var actual;
+    if (call) {
+      expected = String(testCase.expect == null ? '' : testCase.expect);
+      actual = out.value == null ? '' : out.value;
+      ok = !out.error && compareValue(actual, expected);
+    } else {
+      expected = String(testCase.expect_stdout == null ? '' : testCase.expect_stdout);
+      actual = out.stdout;
+      ok = !out.error && compareOutput(actual, expected);
+    }
+
+    return {
+      name: String(testCase.name || 'case'),
+      ok: ok,
+      expected: expected,
+      actual: out.error ? '(' + out.error + ')' : actual,
+      timeout: out.timeout === true,
+      errorType: out.error || ''
+    };
+  }
+
+  /* Runs every case and returns the summary. Rejects only if Pyodide itself
+     could not be reached; a student's code failing is a result, not an error. */
+  async function run(code, spec, attempt) {
+    if (!window.Pyodide) throw new Error('Python is not loaded on this page.');
+    var pyodide = await window.Pyodide.ensureReady();
+    ensureHarness(pyodide);
+
+    var visible = (spec && spec.cases) || [];
+    var hidden = (spec && spec.hiddenCases) || [];
+
+    var visibleResults = visible.map(function (c) {
+      return runOneCase(pyodide, code, c);
+    });
+    // Hidden cases are skipped once a visible one has already failed: they can
+    // only repeat news the student has, and each one costs a run of code that
+    // may be the runaway loop we just timed out on.
+    var hiddenResults = visibleResults.every(function (r) { return r.ok; })
+      ? hidden.map(function (c) { return runOneCase(pyodide, code, c); })
+      : hidden.map(function (c) {
+        return { name: String(c.name || 'hidden'), ok: false, skipped: true,
+          expected: '', actual: '', timeout: false, errorType: '' };
+      });
+
+    return summarize(visibleResults, hiddenResults, spec, attempt || 1);
+  }
+
+  window.PyPathChecker = {
+    CASE_TIMEOUT_SEC: CASE_TIMEOUT_SEC,
+    normalizeOutput: normalizeOutput,
+    compareOutput: compareOutput,
+    normalizeValue: normalizeValue,
+    compareValue: compareValue,
+    isExpressionCase: isExpressionCase,
+    summarize: summarize,
+    run: run
+  };
+})();
