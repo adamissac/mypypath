@@ -1,0 +1,110 @@
+/* PyPath — results of an auto-graded exercise check.
+   Follows the conventions already in unit-test.css: the same --success and
+   --danger fallbacks, the same is-pass / is-fail state classes, and no
+   !important anywhere. */
+
+.btn-check-work {
+  font: inherit;
+  font-size: .82rem;
+  font-weight: 600;
+  padding: .35rem .75rem;
+  border-radius: .4rem;
+  cursor: pointer;
+  color: var(--panel, #fff);
+  background: var(--primary, #0ea5e9);
+  border: 1px solid var(--primary-strong, #0284c7);
+}
+
+.btn-check-work:hover:not(:disabled) {
+  background: var(--primary-strong, #0284c7);
+}
+
+.btn-check-work:disabled {
+  cursor: progress;
+  opacity: .7;
+}
+
+.btn-check-work:focus-visible {
+  outline: 2px solid var(--primary-strong, #0284c7);
+  outline-offset: 2px;
+}
+
+.check-results {
+  margin: .75rem 0 0;
+  padding: .9rem 1rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .6rem;
+  background: var(--panel, #fff);
+  font-size: .88rem;
+}
+
+.check-summary {
+  margin: 0 0 .6rem;
+  font-weight: 700;
+  color: var(--text-strong, #0f172a);
+}
+
+.check-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: .35rem;
+}
+
+/* The mark and the word both carry the status, so it survives greyscale, a
+   colourblind reader, and a screenshot. Colour is the third signal, never the
+   only one. */
+.check-row {
+  display: grid;
+  grid-template-columns: 1.1rem auto 1fr;
+  gap: .1rem .5rem;
+  align-items: baseline;
+}
+
+.check-mark { font-weight: 700; }
+.check-state { font-weight: 600; font-size: .78rem; text-transform: uppercase; letter-spacing: .02em; }
+.check-name { color: var(--text, #334155); }
+
+.check-row.is-pass .check-mark,
+.check-row.is-pass .check-state { color: var(--success, #16a34a); }
+
+.check-row.is-fail .check-mark,
+.check-row.is-fail .check-state { color: var(--danger, #dc2626); }
+
+.check-detail {
+  grid-column: 3;
+  color: var(--muted, #475569);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .78rem;
+  overflow-wrap: anywhere;
+}
+
+.check-note {
+  margin: .6rem 0 0;
+  color: var(--muted, #475569);
+  font-size: .82rem;
+}
+
+.check-hint {
+  margin: .7rem 0 0;
+  padding: .6rem .7rem;
+  border-left: 3px solid var(--primary, #0ea5e9);
+  border-radius: 0 .3rem .3rem 0;
+  background: var(--bg-elevated, #f1f5f9);
+  color: var(--text, #334155);
+}
+
+/* At 375px the three-column row would leave the name a few characters wide,
+   so the mark and word sit above the name instead of beside it. */
+@media (max-width: 27rem) {
+  .check-row {
+    grid-template-columns: 1.1rem 1fr;
+  }
+  .check-name { grid-column: 1 / -1; }
+  .check-detail { grid-column: 1 / -1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-check-work { transition: none; }
+}
