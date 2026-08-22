@@ -416,6 +416,49 @@ describe('the event log is append-only', () => {
     await assertFails(deleteDoc(doc(as('teacherA'), `classes/${CLASS_A}/roster/ann/events/old2`)));
   });
 
+  it('lets a teacher purge an archived class once its records are a year old', async () => {
+    // Student-run expiry cannot cover someone who never signs in again, so
+    // without this an archived class's records would outlive it indefinitely.
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await updateDoc(doc(ctx.firestore(), `classes/${CLASS_A}`), { archived: true });
+      await setDoc(doc(ctx.firestore(), `classes/${CLASS_A}/roster/ann/events/ancient`), {
+        type: 'lesson.opened',
+        at: new Date(Date.now() - 400 * 24 * 60 * 60 * 1000),
+        payload: {}, schemaVersion: 1,
+      });
+    });
+    await assertSucceeds(
+      deleteDoc(doc(as('teacherA'), `classes/${CLASS_A}/roster/ann/events/ancient`))
+    );
+  });
+
+  it('denies a teacher purging a class that is merely old, not archived', async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), `classes/${CLASS_A}/roster/ann/events/ancient2`), {
+        type: 'lesson.opened',
+        at: new Date(Date.now() - 400 * 24 * 60 * 60 * 1000),
+        payload: {}, schemaVersion: 1,
+      });
+    });
+    await assertFails(
+      deleteDoc(doc(as('teacherA'), `classes/${CLASS_A}/roster/ann/events/ancient2`))
+    );
+  });
+
+  it('denies a teacher purging recent records from an archived class', async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await updateDoc(doc(ctx.firestore(), `classes/${CLASS_A}`), { archived: true });
+    });
+    await assertFails(deleteDoc(doc(as('teacherA'), `classes/${CLASS_A}/roster/ann/events/e1`)));
+  });
+
+  it("denies another class's teacher purging an archived class", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await updateDoc(doc(ctx.firestore(), `classes/${CLASS_A}`), { archived: true });
+    });
+    await assertFails(deleteDoc(doc(as('teacherB'), `classes/${CLASS_A}/roster/ann/events/e1`)));
+  });
+
   it('lets a student clear their progress mirror once they have left', async () => {
     await assertSucceeds(deleteDoc(doc(as('ann'), `classes/${CLASS_A}/roster/ann`)));
     await assertSucceeds(

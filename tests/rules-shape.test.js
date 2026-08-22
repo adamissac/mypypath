@@ -92,6 +92,12 @@ describe('the event log stays append-only', () => {
     expect(events).toMatch(/resource\.data\.at < request\.time - duration\.value\(180, 'd'\)/);
   });
 
+  it('lets a teacher delete only from an archived class, and only past a year', () => {
+    expect(events).toMatch(/allow delete: if isTeacherOf\(classId\)/);
+    expect(events).toMatch(/classDoc\(classId\)\.archived == true/);
+    expect(events).toMatch(/duration\.value\(365, 'd'\)/);
+  });
+
   it('uses the same retention window the policy and the code declare', () => {
     new Function(fs.readFileSync('assets/js/classroom-core.js', 'utf8')).call(globalThis);
     const core = globalThis.PyPathClassroom || globalThis.window.PyPathClassroom;
@@ -104,12 +110,24 @@ describe('the event log stays append-only', () => {
 });
 
 describe('teachers read, and do not write, student work', () => {
-  it('gives the progress mirror no teacher write', () => {
+  it('gives the progress mirror no teacher create or update, ever', () => {
     const progress = matchBlock('/progress/{docId}');
     expect(progress).toMatch(/allow read:\s*if isOwner\(uid\) \|\| isTeacherOf\(/);
     expect(progress).toMatch(/allow create, update:\s*if isOwner\(uid\)/);
-    expect(progress).toMatch(/allow delete:\s*if isOwner\(uid\);/);
     expect(progress).not.toMatch(/allow[^;]*write/);
+    // The create/update clause must not mention a teacher at all: read-only
+    // means a teacher can never alter what a student wrote.
+    const writes = progress.slice(progress.indexOf('allow create, update:'));
+    expect(writes.slice(0, writes.indexOf(';'))).not.toMatch(/isTeacherOf/);
+  });
+
+  it('lets a teacher delete from the mirror only to purge an archived class', () => {
+    // The single exception, and only because a student who never returns
+    // cannot run their own expiry.
+    const progress = matchBlock('/progress/{docId}');
+    expect(progress).toMatch(
+      /allow delete:\s*if isOwner\(uid\)\s*\n\s*\|\| \(isTeacherOf\(classId\) && classDoc\(classId\)\.archived == true\);/
+    );
   });
 
   it('caps mirrored content at the same 100KB the private code collection uses', () => {
