@@ -18,6 +18,9 @@ const ROLES = window.PyPathRoles;
 let dialog = null;
 let uid = null;
 let roster = {};
+// What to hand focus back to when the dialog closes: the menu item that
+// opened it, so a keyboard user lands where they started.
+let opener = null;
 
 function toast(message) {
   if (window.PyUI && window.PyUI.showToast) window.PyUI.showToast(message);
@@ -38,19 +41,29 @@ function inClass() {
 }
 
 function close() {
-  if (dialog) dialog.hidden = true;
+  if (!dialog) return;
+  dialog.hidden = true;
+  document.body.classList.remove('join-modal-open');
+  if (opener && document.contains(opener)) opener.focus();
+  opener = null;
 }
 
 function buildDialog() {
   const wrap = el('div', { class: 'join-modal', hidden: 'hidden' });
   wrap.innerHTML = `
-    <div class="join-modal__scrim" data-join-close></div>
-    <div class="join-modal__card" role="dialog" aria-modal="true" aria-labelledby="join-modal-title">
-      <h2 class="join-modal__title" id="join-modal-title">Join a class</h2>
-      <p class="join-modal__body" data-join-body></p>
+    <div class="join-modal__scrim"></div>
+    <div class="join-modal__card" role="dialog" aria-modal="true"
+         aria-labelledby="join-modal-title" aria-describedby="join-modal-body">
+      <div class="join-modal__head">
+        <h2 class="join-modal__title" id="join-modal-title">Join a class</h2>
+        <button type="button" class="join-modal__close" data-join-close
+                aria-label="Close">&times;</button>
+      </div>
+      <p class="join-modal__body" id="join-modal-body" data-join-body></p>
       <form data-join-form>
         <label for="join-modal-code">Teacher join code</label>
         <input id="join-modal-code" type="text" inputmode="latin" autocomplete="off"
+               autocapitalize="characters" spellcheck="false"
                maxlength="9" placeholder="ABC234">
         <p class="auth-error" data-join-error role="alert" hidden></p>
         <div class="join-modal__actions">
@@ -67,6 +80,19 @@ function buildDialog() {
   wrap.querySelectorAll('[data-join-close]').forEach((b) => {
     b.addEventListener('click', close);
   });
+
+  // Codes are handed out in capitals and the field renders them that way, so
+  // the value follows what is on screen rather than what was typed.
+  const codeInput = wrap.querySelector('#join-modal-code');
+  codeInput.addEventListener('input', () => {
+    const at = codeInput.selectionStart;
+    codeInput.value = codeInput.value.toUpperCase();
+    codeInput.setSelectionRange(at, at);
+  });
+
+  // A click that starts on the card and ends on the scrim is a drag, not a
+  // dismissal, so only close on a press that begins outside.
+  wrap.querySelector('.join-modal__scrim').addEventListener('mousedown', close);
 
   wrap.querySelector('[data-join-form]').addEventListener('submit', async (ev) => {
     ev.preventDefault();
@@ -143,8 +169,12 @@ function open() {
   }
 
   dialog.hidden = false;
+  document.body.classList.add('join-modal-open');
   const input = form.querySelector('#join-modal-code');
-  if (input) input.focus();
+  if (input) {
+    input.value = '';
+    input.focus();
+  }
 }
 
 // The item lives in the account dropdown next to "My progress", so it is one
@@ -159,7 +189,10 @@ function paint() {
     if (!item) {
       item = el('button', { type: 'button', role: 'menuitem' });
       item.setAttribute('data-join-open', '');
-      item.addEventListener('click', open);
+      item.addEventListener('click', (ev) => {
+        opener = ev.currentTarget;
+        open();
+      });
       const anchor = panel.querySelector('[data-account-classroom]')
         || panel.querySelector('a[href="/progress.html"]');
       if (anchor && anchor.nextSibling) panel.insertBefore(item, anchor.nextSibling);
