@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="/assets/css/gate.css" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css" />
     <link rel="stylesheet" href="/assets/css/admin.css" />
+    <link rel="stylesheet" href="/assets/css/classroom.css" />
 
 <script defer src="/assets/js/theme.js"></script>
     <script defer src="/assets/js/icons.js"></script>
@@ -42,7 +43,9 @@
     <script type="module" src="/assets/js/role-nav.js"></script>
     <script type="module" src="/assets/js/activity.js"></script>
     <script type="module" src="/assets/js/auth-ui.js"></script>
+    <script defer src="/assets/js/classroom-core.js"></script>
     <script type="module" src="/assets/js/classroom-page.js"></script>
+    <script type="module" src="/assets/js/classroom-dashboard.js"></script>
 </head>
   <body class="page page-classroom">
     <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -133,6 +136,151 @@
         <p>Could not load your class.</p>
         <code data-class-error-message></code>
       </section>
+
+      <!-- ============================================================
+           The classes/{classId} dashboard.
+
+           Rendered by classroom-dashboard.js. The legacy join-code card and
+           roster table further down are driven by classroom-page.js and read
+           the older flat roster collection; both models are live, so a teacher
+           whose students joined before classes existed does not lose them.
+           ============================================================ -->
+      <section class="cr" data-cr-root hidden aria-busy="true">
+
+        <!-- No classes yet -->
+        <section class="cr-empty" data-cr-view="empty" hidden>
+          <h2>Create a class</h2>
+          <p>A class gives you a join code to hand out, and a view of how far
+             everyone has got. Students see exactly what you will see before
+             they join.</p>
+          <form class="cr-create" data-cr-create>
+            <label for="cr-class-name">Class name</label>
+            <input id="cr-class-name" name="name" type="text" required
+                   maxlength="100" autocomplete="off" placeholder="Period 1 Python">
+            <button type="submit" class="btn btn-primary">Create class</button>
+          </form>
+          <p class="cr-error" data-cr-create-error role="alert" hidden></p>
+        </section>
+
+        <!-- A class exists -->
+        <section data-cr-view="class" hidden>
+
+          <div class="cr-bar">
+            <div class="cr-bar__left">
+              <label class="visually-hidden" for="cr-class-switcher">Class</label>
+              <select id="cr-class-switcher" data-cr-switcher></select>
+            </div>
+            <div class="cr-bar__right">
+              <button type="button" class="btn btn-ghost btn-small" data-cr-new-class>New class</button>
+              <button type="button" class="btn btn-ghost btn-small" data-cr-export>Export CSV</button>
+              <button type="button" class="btn btn-ghost btn-small" data-cr-print>Print</button>
+            </div>
+          </div>
+
+          <!-- The join code, and a card that prints large -->
+          <section class="cr-code" aria-labelledby="cr-code-h">
+            <h2 id="cr-code-h">Join code</h2>
+            <p class="cr-code__value" data-cr-code>------</p>
+            <p class="cr-code__hint">Students enter this on their account page to
+               join. Joining is what makes their work visible to you; nothing is
+               shared until they do.</p>
+            <button type="button" class="btn btn-ghost btn-small" data-cr-copy>Copy code</button>
+          </section>
+
+          <!-- A: needs attention, pinned first -->
+          <section class="cr-attention" aria-labelledby="cr-attention-h">
+            <h2 id="cr-attention-h">
+              Needs attention
+              <button type="button" class="cr-info" data-cr-info="trust"
+                      aria-label="How this is worked out">i</button>
+            </h2>
+            <p class="cr-empty-note" data-cr-attention-empty hidden>
+              Nothing is flagged right now.
+            </p>
+            <div class="cr-tablewrap">
+              <table class="cr-table" data-cr-attention-table hidden>
+                <caption class="visually-hidden">
+                  Students needing attention, most urgent first
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Student</th>
+                    <th scope="col">What happened</th>
+                    <th scope="col">Next step</th>
+                    <th scope="col">Go to</th>
+                  </tr>
+                </thead>
+                <tbody data-cr-attention-body></tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- B: mastery grid -->
+          <section class="cr-grid-section" aria-labelledby="cr-grid-h">
+            <h2 id="cr-grid-h">
+              Progress
+              <button type="button" class="cr-info" data-cr-info="mastery"
+                      aria-label="What each state means">i</button>
+            </h2>
+
+            <div class="cr-controls">
+              <fieldset class="cr-scope">
+                <legend class="visually-hidden">Detail level</legend>
+                <label><input type="radio" name="cr-scope" value="units" checked> Units</label>
+                <label><input type="radio" name="cr-scope" value="lessons"> Lessons in</label>
+                <label class="visually-hidden" for="cr-unit-pick">Unit</label>
+                <select id="cr-unit-pick" data-cr-unit-pick disabled></select>
+              </fieldset>
+
+              <div class="cr-sort">
+                <label for="cr-sort">Sort by</label>
+                <select id="cr-sort" data-cr-sort>
+                  <option value="name">Student name</option>
+                  <option value="percent">Percent complete</option>
+                  <option value="active">Last active</option>
+                </select>
+              </div>
+            </div>
+
+            <ul class="cr-key" data-cr-key aria-label="What each mark means"></ul>
+
+            <div class="cr-tablewrap cr-tablewrap--grid">
+              <table class="cr-table cr-grid" data-cr-grid>
+                <caption class="visually-hidden">
+                  Each student's state for each unit. Every cell shows a mark and a
+                  word as well as a colour.
+                </caption>
+                <thead><tr data-cr-grid-head></tr></thead>
+                <tbody data-cr-grid-body></tbody>
+              </table>
+            </div>
+            <p class="cr-empty-note" data-cr-grid-empty hidden>
+              No students have joined yet. Share the join code above.
+            </p>
+          </section>
+
+          <!-- C: class summary strip -->
+          <section class="cr-summary" aria-labelledby="cr-summary-h">
+            <h2 id="cr-summary-h">This class</h2>
+            <dl class="cr-stats" data-cr-summary></dl>
+          </section>
+
+        </section>
+
+        <!-- Explanations, opened by the info buttons -->
+        <div class="cr-explain" data-cr-explain hidden role="dialog"
+             aria-labelledby="cr-explain-h" aria-modal="false">
+          <h3 id="cr-explain-h">How this is worked out</h3>
+          <p data-cr-explain-body></p>
+          <button type="button" class="btn btn-ghost btn-small" data-cr-explain-close>Close</button>
+        </div>
+
+      </section>
+
+      <hr class="cr-divider">
+      <h2 class="cr-legacy-h">Students who joined before classes existed</h2>
+      <p class="cr-legacy-note">These students are attached to your join code
+         directly rather than to a class. They keep working exactly as before.</p>
 
       <div data-class-state="ready" hidden>
         <section class="class-code">
