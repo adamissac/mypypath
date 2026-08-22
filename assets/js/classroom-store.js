@@ -336,6 +336,52 @@ export async function purgeExpired(classId, uid, retentionDays) {
   return removed;
 }
 
+/* Purges an archived class.
+ *
+ * Exists because the student-run expiry cannot cover everyone: someone who
+ * finishes the year and never signs in again will never run it, and their
+ * records would outlive the class indefinitely. The rules let a teacher clear
+ * an archived class's records once they are past the stated year, and nothing
+ * wider than that.
+ *
+ * Deliberately not automatic. It deletes a year of a class's records, so it is
+ * a thing a person decides to do.
+ */
+export async function purgeArchivedClass(classId) {
+  const klass = await readClass(classId);
+  if (!klass) throw new ClassroomError('not-found', 'That class no longer exists.');
+  if (!klass.archived) {
+    throw new ClassroomError('not-archived', 'Archive the class before purging it.');
+  }
+
+  const counts = { students: 0, events: 0, progress: 0 };
+  const roster = await readRoster(classId);
+
+  for (const row of roster) {
+    for (const sub of ['events', 'progress']) {
+      for (;;) {
+        const snap = await getDocs(
+          query(collection(db, `classes/${classId}/roster/${row.uid}/${sub}`), limit(400))
+        );
+        if (snap.empty) break;
+        const batch = writeBatch(db);
+        snap.docs.forEach((d) => batch.delete(d.ref));
+        // A partial failure leaves the rest to the next run rather than
+        // aborting the whole purge.
+        await batch.commit().catch(() => {});
+        counts[sub] += snap.size;
+        if (snap.size < 400) break;
+      }
+    }
+    // The roster row goes last, so a failure above leaves the student still
+    // reachable to try again rather than orphaning their records.
+    await deleteDoc(doc(db, `classes/${classId}/roster/${row.uid}`)).catch(() => {});
+    counts.students += 1;
+  }
+
+  return counts;
+}
+
 /* ------------------------------------------------------- erasure (Phase 6) */
 
 /* Deletes everything a class holds about one student. Client-side and

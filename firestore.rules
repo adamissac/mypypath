@@ -311,8 +311,11 @@ service cloud.firestore {
             && request.resource.data.content.size() <= 102400;
 
           // A teacher never writes into a student's work. Read-only means
-          // read-only, including the mirror.
-          allow delete: if isOwner(uid);
+          // read-only, including the mirror. The single exception is purging
+          // an archived class, for the same reason as the event log below: a
+          // student who never returns cannot run their own expiry.
+          allow delete: if isOwner(uid)
+            || (isTeacherOf(classId) && classDoc(classId).archived == true);
         }
 
         match /events/{eventId} {
@@ -365,6 +368,17 @@ service cloud.firestore {
           allow delete: if isOwner(uid)
             && (!isEnrolled(classId, uid)
                 || resource.data.at < request.time - duration.value(180, 'd'));
+
+          // The one deletion a teacher may make, and only because otherwise
+          // the archived-class policy has no mechanism either. A student who
+          // never signs in again cannot run their own expiry, so their records
+          // would outlive the class indefinitely. Narrow on both axes: the
+          // class must be archived, and the record must be older than the year
+          // the policy states. A teacher can still never delete anything from
+          // a live class, at any age.
+          allow delete: if isTeacherOf(classId)
+            && classDoc(classId).archived == true
+            && resource.data.at < request.time - duration.value(365, 'd');
         }
       }
     }

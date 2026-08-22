@@ -7,6 +7,7 @@
 import { currentUser } from '/assets/js/auth.js';
 import {
   classesFor, createClass, readRoster, readEvents, readMirror, addCoTeacher,
+  setArchived, purgeArchivedClass,
 } from '/assets/js/classroom-store.js';
 
 const CORE = window.PyPathClassroom;
@@ -294,6 +295,11 @@ function paintAll() {
   paintGrid();
   paintSummary();
   paintTeachers();
+
+  const archiveBtn = $('[data-cr-archive]');
+  if (archiveBtn && klass) {
+    archiveBtn.textContent = klass.archived ? 'Reopen class' : 'Archive class';
+  }
 }
 
 /* A filename a teacher can find again, from a class name they chose. */
@@ -456,6 +462,50 @@ function wire() {
       } catch (err) {
         // The text is selectable on screen either way.
         field.select();
+      }
+    });
+  }
+
+  const archive = $('[data-cr-archive]');
+  if (archive) {
+    archive.addEventListener('click', async () => {
+      const klass = classes.filter((c) => c.id === activeClassId)[0];
+      if (!klass) return;
+      await setArchived(activeClassId, !klass.archived).catch(() => {});
+      const user = currentUser();
+      if (user) classes = await classesFor(user.uid);
+      paintAll();
+    });
+  }
+
+  const purge = $('[data-cr-purge]');
+  if (purge) {
+    purge.addEventListener('click', async () => {
+      const note = $('[data-cr-purge-note]');
+      // Two presses, because this deletes a year of a class's records and
+      // there is no undo.
+      if (purge.dataset.confirming !== 'yes') {
+        purge.dataset.confirming = 'yes';
+        purge.textContent = 'Confirm: delete all records';
+        return;
+      }
+      purge.textContent = 'Purge archived class';
+      delete purge.dataset.confirming;
+      try {
+        const counts = await purgeArchivedClass(activeClassId);
+        if (note) {
+          note.textContent = 'Deleted records for ' + counts.students + ' student(s).';
+          show(note, true);
+        }
+        students = await loadClassData(activeClassId).catch(() => []);
+        paintAll();
+      } catch (err) {
+        if (note) {
+          note.textContent = err && err.code === 'not-archived'
+            ? 'Archive the class first.'
+            : 'Could not purge the class. Records older than a year can be purged once it is archived.';
+          show(note, true);
+        }
       }
     });
   }
