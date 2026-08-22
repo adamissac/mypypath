@@ -166,6 +166,36 @@ describe('the drill-down view', () => {
     expect(src).toMatch(/import \{\s*readEvents, readMirror,\s*\} from/);
   });
 
+  it('shows what the exercise had to do, beside the student\'s code', () => {
+    expect(src).toMatch(/function expectationPanel/);
+    expect(src).toMatch(/expectationsFor\(lessonPath\)/);
+    expect(src).toMatch(/el\('div', 'sd-pair'\)/);
+  });
+
+  it('recovers the lesson and editor from the saved-code key', () => {
+    // pypath-lesson-<path>-<type>-<id>, so the right expectations land beside
+    // the right code.
+    const re = /\^pypath-lesson-\(\.\+\)-\(code\|reflection\)-\(\.\+\)\$/;
+    expect(src).toMatch(re);
+    const parse = new RegExp('^pypath-lesson-(.+)-(code|reflection)-(.+)$');
+    const m = parse.exec('pypath-lesson-/units/unit-1/first-program.html-code-exercise1');
+    expect(m[1]).toBe('/units/unit-1/first-program.html');
+    expect(m[3]).toBe('exercise1');
+  });
+
+  it('states the expected behaviour rather than a single sample solution', () => {
+    // A lone sample invites reading any difference from it as a mistake.
+    expect(src).toMatch(/What it had to do/);
+    expect(src).toMatch(/invites reading any difference from it as a mistake/);
+  });
+
+  it('carries no dead declarations', () => {
+    // Matching the declaration, not the bare name: SNAPSHOTS_PREFIX is a real
+    // use and contains the same letters.
+    expect(src).not.toMatch(/const SNAPS =/);
+    expect(src).not.toMatch(/let current\b/);
+  });
+
   it('renders student code into a pre, never an editable field', () => {
     expect(src).toMatch(/el\('pre', 'sd-code'\)/);
     expect(src).not.toMatch(/contentEditable|<textarea|createElement\('textarea'\)/);

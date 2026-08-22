@@ -213,4 +213,19 @@ describe('the stylesheet', () => {
     expect(print).toMatch(/position: static/);
     expect(print).toMatch(/\.cr-code__value \{ font-size: 48pt/);
   });
+
+  it('prints landscape, because the grid is wider than it is tall', () => {
+    expect(css).toMatch(/@page \{[^}]*size: landscape/);
+  });
+
+  it('drops the screen-only sections so the grid gets the page', () => {
+    const print = css.slice(css.indexOf('@media print'));
+    expect(print).toMatch(/\.cr-explain,\s*\n\s*\.cr-key \{ display: none; \}/);
+    expect(print).toMatch(/break-inside: avoid/);
+  });
+
+  it('pairs student code with the expectations only when there is room', () => {
+    expect(css).toMatch(/@media \(min-width: 60rem\)[\s\S]*?\.sd-pair \{ grid-template-columns/);
+    expect(css).toMatch(/\.sd-pair \{\s*\n\s*display: grid;\s*\n\s*grid-template-columns: 1fr;/);
+  });
 });
