@@ -380,8 +380,13 @@
 
 * { box-sizing: border-box; }
 html, body { height: 100%; }
-html { 
+html {
   scroll-behavior: smooth;
+  /* The header is fixed, so an anchor that scrolls to the exact top of its
+     target parks that target underneath it. Every in-page jump stops short by
+     the height of the bar -- "Skip to main content" and the homepage's
+     "See the path" included. */
+  scroll-padding-top: calc(var(--header-height, 76px) + 12px);
   overflow-x: hidden; /* Prevent horizontal scroll */
   max-width: 100vw; /* Prevent viewport overflow */
 }
