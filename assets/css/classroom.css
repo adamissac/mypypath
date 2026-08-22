@@ -1,0 +1,642 @@
+/* PyPath — the teacher dashboard.
+   Reuses the tokens in pypath-theme.css and the --success/--danger fallbacks
+   already used by unit-test.css. No !important, and no new z-index values:
+   nothing here overlaps the fixed header. */
+
+.cr { margin-top: 1.5rem; }
+
+.cr h2 {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin: 2rem 0 .75rem;
+  font-size: 1.15rem;
+}
+
+/* ---------- the info button that explains a number ---------- */
+
+/* Every metric gets one. A teacher who cannot interrogate a number does not
+   trust it, and an untrusted number is worse than none because it still
+   occupies the space a usable one would have. */
+.cr-info {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  padding: 0;
+  border-radius: 50%;
+  font: inherit;
+  font-size: .7rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--muted, #475569);
+  background: var(--bg-elevated, #f1f5f9);
+  border: 1px solid var(--border, #cbd5e1);
+}
+
+.cr-info:hover { color: var(--text-strong, #0f172a); }
+.cr-info:focus-visible { outline: 2px solid var(--primary, #0ea5e9); outline-offset: 2px; }
+
+.cr-explain {
+  margin: 1rem 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-left: 3px solid var(--primary, #0ea5e9);
+  border-radius: .5rem;
+  background: var(--panel, #fff);
+}
+
+.cr-explain h3 { margin: 0 0 .4rem; font-size: .95rem; }
+.cr-explain p { margin: 0 0 .75rem; color: var(--text, #334155); font-size: .88rem; }
+
+/* ---------- top bar ---------- */
+
+.cr-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.cr-bar__right { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+.cr-bar select,
+.cr-controls select {
+  font: inherit;
+  font-size: .88rem;
+  padding: .35rem .5rem;
+  border-radius: .4rem;
+  color: var(--text, #334155);
+  background: var(--panel, #fff);
+  border: 1px solid var(--border, #cbd5e1);
+}
+
+/* ---------- join code ---------- */
+
+.cr-code {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .6rem;
+  background: var(--panel, #fff);
+}
+
+.cr-code__value {
+  margin: .25rem 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  color: var(--text-strong, #0f172a);
+}
+
+.cr-code__hint { margin: 0 0 .75rem; color: var(--muted, #475569); font-size: .85rem; }
+
+/* ---------- tables ---------- */
+
+.cr-tablewrap { overflow-x: auto; }
+
+.cr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .88rem;
+}
+
+.cr-table th,
+.cr-table td {
+  padding: .5rem .6rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border, #cbd5e1);
+  vertical-align: top;
+}
+
+.cr-table thead th {
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--muted, #475569);
+}
+
+.cr-row__who { font-weight: 600; color: var(--text-strong, #0f172a); }
+.cr-row__do { color: var(--muted, #475569); }
+.cr-link { color: var(--primary-strong, #0284c7); }
+
+/* A left edge that says how urgent, without relying on the colour alone --
+   the reason text always states what happened. */
+.cr-row--stuck { border-left: 3px solid var(--danger, #dc2626); }
+.cr-row--concept { border-left: 3px solid var(--warn, #d97706); }
+.cr-row--idle { border-left: 3px solid var(--muted, #475569); }
+.cr-row--never-started { border-left: 3px solid var(--border, #cbd5e1); }
+
+/* ---------- mastery grid ---------- */
+
+.cr-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: .75rem;
+}
+
+.cr-scope {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: .88rem;
+}
+
+.cr-scope label { display: flex; align-items: center; gap: .3rem; }
+.cr-sort { display: flex; align-items: center; gap: .4rem; font-size: .88rem; }
+
+.cr-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .9rem;
+  margin: 0 0 .75rem;
+  padding: 0;
+  list-style: none;
+  font-size: .8rem;
+  color: var(--muted, #475569);
+}
+
+.cr-key__item { display: flex; align-items: center; gap: .35rem; }
+
+.cr-tablewrap--grid { max-height: 70vh; overflow: auto; }
+
+.cr-grid { border-collapse: separate; border-spacing: 0; }
+
+.cr-grid th,
+.cr-grid td { border-bottom: 1px solid var(--border, #cbd5e1); }
+
+/* Sticky header row and first column, so a wide class stays readable while
+   scrolling in either direction. */
+.cr-grid thead th {
+  position: sticky;
+  top: 0;
+  background: var(--panel, #fff);
+}
+
+.cr-grid__who,
+.cr-grid__corner {
+  position: sticky;
+  left: 0;
+  background: var(--panel, #fff);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cr-grid__corner { top: 0; }
+
+.cr-grid__col { text-align: center; font-variant-numeric: tabular-nums; }
+.cr-grid__pct { text-align: right; font-variant-numeric: tabular-nums; }
+
+.cr-cell { padding: .15rem; text-align: center; }
+
+.cr-cell__btn {
+  display: block;
+  width: 100%;
+  min-width: 2rem;
+  min-height: 2rem;
+  padding: 0;
+  border: 0;
+  border-radius: .25rem;
+  font: inherit;
+  cursor: pointer;
+  background: transparent;
+}
+
+.cr-cell__btn:focus-visible {
+  outline: 2px solid var(--primary-strong, #0284c7);
+  outline-offset: -2px;
+}
+
+/* The mark is the primary signal and the aria-label carries the word. Colour
+   is the third channel, never the only one, so the grid still reads in
+   greyscale and to a colourblind teacher. */
+.cr-cell__mark { font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+.cr-state--not-opened { color: var(--muted, #475569); background: var(--bg-elevated, #f1f5f9); }
+.cr-state--in-progress { color: var(--text, #334155); background: var(--bg-elevated, #f1f5f9); }
+.cr-state--attempted { color: #92400e; background: #fef3c7; }
+.cr-state--passed { color: #14532d; background: #dcfce7; }
+.cr-state--verified { color: var(--panel, #fff); background: var(--success, #16a34a); }
+
+[data-theme="dark"] .cr-state--attempted { color: #fde68a; background: #4a3410; }
+[data-theme="dark"] .cr-state--passed { color: #bbf7d0; background: #14361f; }
+
+/* ---------- summary strip ---------- */
+
+.cr-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: .75rem;
+  margin: 0;
+}
+
+.cr-stat {
+  padding: .75rem .85rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .5rem;
+  background: var(--panel, #fff);
+}
+
+.cr-stat dt {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--muted, #475569);
+}
+
+.cr-stat dd {
+  margin: .3rem 0 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-strong, #0f172a);
+}
+
+/* ---------- create form, notes ---------- */
+
+.cr-create { display: flex; flex-wrap: wrap; gap: .5rem; align-items: flex-end; margin: 1rem 0; }
+.cr-create label { display: block; font-size: .8rem; color: var(--muted, #475569); }
+
+.cr-create input {
+  font: inherit;
+  padding: .45rem .6rem;
+  border-radius: .4rem;
+  color: var(--text, #334155);
+  background: var(--panel, #fff);
+  border: 1px solid var(--border, #cbd5e1);
+}
+
+.cr-error { color: var(--danger, #dc2626); font-size: .88rem; }
+.cr-empty-note { color: var(--muted, #475569); font-size: .88rem; }
+.cr-divider { margin: 3rem 0 1.5rem; border: 0; border-top: 1px solid var(--border, #cbd5e1); }
+.cr-legacy-h { font-size: 1.05rem; }
+.cr-legacy-note { color: var(--muted, #475569); font-size: .85rem; }
+
+/* ---------- 375px ---------- */
+
+@media (max-width: 30rem) {
+  .cr-bar { align-items: stretch; }
+  .cr-bar__right { width: 100%; }
+  .cr-bar__right .btn { flex: 1 1 auto; }
+  .cr-code__value { font-size: 1.5rem; letter-spacing: .12em; }
+  .cr-stats { grid-template-columns: 1fr; }
+  .cr-create { flex-direction: column; align-items: stretch; }
+
+  /* The attention table stops being a table on a phone: four columns in
+     375px leaves each one too narrow to read. Every cell keeps its header as
+     a label, so nothing is lost. */
+  .cr-attention .cr-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .cr-attention .cr-table tr { display: block; padding: .6rem 0; border-bottom: 1px solid var(--border, #cbd5e1); }
+  .cr-attention .cr-table th,
+  .cr-attention .cr-table td { display: block; border: 0; padding: .15rem .2rem; }
+  .cr-attention .cr-row__why::before { content: 'What happened: '; color: var(--muted, #475569); }
+  .cr-attention .cr-row__do::before { content: 'Next step: '; color: var(--muted, #475569); }
+}
+
+/* ---------- print ---------- */
+
+/* Landscape, because the grid is wider than it is tall: ten unit columns plus
+   a name column does not fit a portrait page without shrinking the text past
+   readable. */
+@page {
+  size: landscape;
+  margin: 12mm;
+}
+
+@media print {
+  .site-header,
+  .site-footer,
+  .cr-bar__right,
+  .cr-controls,
+  .cr-explain,
+  .cr-info,
+  [data-cr-copy] { display: none; }
+
+  .cr-tablewrap--grid { max-height: none; overflow: visible; }
+  .cr-grid thead th,
+  .cr-grid__who,
+  .cr-grid__corner { position: static; }
+
+  .cr-table { font-size: 9pt; }
+  .cr-code__value { font-size: 48pt; letter-spacing: .2em; }
+
+  /* One page. The grid is the thing being printed, so it gets the room and
+     the sections that only make sense on screen give theirs up. */
+  .cr-grid-section { break-inside: avoid; break-before: auto; }
+  .cr-attention { break-after: auto; }
+  .cr-explain,
+  .cr-key { display: none; }
+  .cr-stats { grid-template-columns: repeat(4, 1fr); }
+
+  /* Cell state has to survive a printer that drops backgrounds, so the mark
+     is the whole signal on paper. */
+  .cr-cell__mark { font-size: 11pt; }
+
+  /* Backgrounds do not print by default, so the state marks carry the whole
+     meaning on paper. They are letters, so they do. */
+  .cr-cell { border: 1px solid #999; }
+  .cr-grid-section { break-inside: avoid; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-cell__btn,
+  .cr-info { transition: none; }
+}
+
+/* ---------- student drill-down ---------- */
+
+.sd {
+  margin: 1.5rem 0;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .6rem;
+  background: var(--panel, #fff);
+}
+
+.sd-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sd-name { margin: 0; font-size: 1.15rem; }
+
+.sd-readonly {
+  margin: .5rem 0 1rem;
+  color: var(--muted, #475569);
+  font-size: .82rem;
+}
+
+.sd h4 {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin: 1.5rem 0 .6rem;
+  font-size: .95rem;
+}
+
+.sd-header { margin-bottom: 1rem; }
+.sd-num { text-align: right; font-variant-numeric: tabular-nums; }
+.sd-state__label { font-size: .82rem; }
+.sd-empty { color: var(--muted, #475569); font-size: .88rem; }
+
+/* ---------- timeline ---------- */
+
+.sd-day {
+  border-bottom: 1px solid var(--border, #cbd5e1);
+}
+
+.sd-day > summary {
+  display: flex;
+  gap: .6rem;
+  align-items: baseline;
+  padding: .5rem .2rem;
+  cursor: pointer;
+  font-size: .88rem;
+}
+
+.sd-day > summary:focus-visible {
+  outline: 2px solid var(--primary, #0ea5e9);
+  outline-offset: -2px;
+}
+
+.sd-day__date { font-weight: 600; color: var(--text-strong, #0f172a); }
+.sd-day__count { color: var(--muted, #475569); font-size: .8rem; }
+
+.sd-events {
+  margin: 0 0 .6rem;
+  padding: 0 0 0 .2rem;
+  list-style: none;
+  display: grid;
+  gap: .2rem;
+}
+
+.sd-event {
+  display: grid;
+  grid-template-columns: 4rem 1fr;
+  gap: .5rem;
+  font-size: .84rem;
+}
+
+.sd-event__at { color: var(--muted, #475569); font-variant-numeric: tabular-nums; }
+.sd-event__what { color: var(--text, #334155); }
+
+/* ---------- work and history ---------- */
+
+.sd-work,
+.sd-history { margin-bottom: 1.25rem; }
+
+.sd-work h4,
+.sd-history h4 { margin-top: 0; font-size: .85rem; color: var(--muted, #475569); }
+
+.sd-code {
+  margin: .4rem 0 0;
+  padding: .7rem .8rem;
+  max-height: 22rem;
+  overflow: auto;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .4rem;
+  background: var(--bg-elevated, #f1f5f9);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .82rem;
+  line-height: 1.5;
+  white-space: pre;
+}
+
+.sd-answer {
+  margin: .4rem 0 0;
+  padding: .6rem .7rem;
+  border-left: 3px solid var(--border, #cbd5e1);
+  color: var(--text, #334155);
+  font-size: .88rem;
+}
+
+.sd-scrub { width: 100%; max-width: 30rem; }
+.sd-scrub__label { display: block; font-size: .8rem; color: var(--muted, #475569); }
+.sd-scrub:focus-visible { outline: 2px solid var(--primary, #0ea5e9); outline-offset: 2px; }
+
+.sd-history__meta {
+  margin: .3rem 0 0;
+  color: var(--muted, #475569);
+  font-size: .78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Neutral by design. This is a label, not a verdict, so it gets no red and no
+   warning iconography -- the tooltip beside it explains that typing fast and
+   pasting look identical here. */
+.sd-flag:not(:empty) {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  margin-top: .3rem;
+  padding: .1rem .45rem;
+  border-radius: 999px;
+  font-size: .72rem;
+  color: var(--muted, #475569);
+  background: var(--bg-elevated, #f1f5f9);
+  border: 1px solid var(--border, #cbd5e1);
+}
+
+@media (max-width: 30rem) {
+  .sd { padding: .85rem .9rem; }
+  .sd-event { grid-template-columns: 1fr; gap: 0; }
+  .sd-code { font-size: .76rem; }
+}
+
+@media print {
+  .sd-scrub,
+  .sd-scrub__label,
+  [data-sd-close] { display: none; }
+
+  .sd-code { max-height: none; overflow: visible; white-space: pre-wrap; }
+  .sd-day { break-inside: avoid; }
+}
+
+/* ---------- what your teacher can see ---------- */
+
+.disclosure {
+  margin: 1rem 0;
+  padding: .9rem 1rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .5rem;
+  background: var(--bg-elevated, #f1f5f9);
+  font-size: .88rem;
+}
+
+.disclosure__title {
+  margin: .8rem 0 .35rem;
+  font-size: .8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: var(--muted, #475569);
+}
+
+.disclosure__title:first-child { margin-top: 0; }
+
+.disclosure__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: .25rem;
+}
+
+/* The marker is a character, not a background image, so it survives greyscale
+   printing and a stylesheet that fails to load. */
+.disclosure__list li { display: grid; grid-template-columns: 1.1rem 1fr; gap: .4rem; }
+.disclosure__list li::before { font-weight: 700; }
+.disclosure__list--yes li::before { content: '\2713'; color: var(--text-strong, #0f172a); }
+.disclosure__list--no li::before { content: '\2715'; color: var(--muted, #475569); }
+
+.disclosure__note {
+  margin: .8rem 0 0;
+  color: var(--muted, #475569);
+  font-size: .82rem;
+}
+
+/* ---------- share and digest ---------- */
+
+.cr-teachers {
+  margin: .6rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: .25rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .8rem;
+  color: var(--muted, #475569);
+}
+
+.cr-digest__text {
+  display: block;
+  width: 100%;
+  margin: .5rem 0;
+  padding: .7rem .8rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .4rem;
+  background: var(--bg-elevated, #f1f5f9);
+  color: var(--text, #334155);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .82rem;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.cr-digest__text:focus-visible {
+  outline: 2px solid var(--primary, #0ea5e9);
+  outline-offset: 2px;
+}
+
+@media print {
+  .cr-share,
+  .cr-digest { display: none; }
+}
+
+/* ---------- student work beside what was expected ---------- */
+
+.sd-pair {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: .6rem;
+}
+
+/* Side by side once there is room for both to stay readable. Below that they
+   stack, because two half-width columns of code are worse than one of each. */
+@media (min-width: 60rem) {
+  .sd-pair { grid-template-columns: 1.4fr 1fr; align-items: start; }
+}
+
+.sd-expected {
+  padding: .7rem .8rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-left: 3px solid var(--primary, #0ea5e9);
+  border-radius: .4rem;
+  background: var(--panel, #fff);
+}
+
+.sd-expected h5 {
+  margin: 0 0 .4rem;
+  font-size: .78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: var(--muted, #475569);
+}
+
+.sd-expected__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: .45rem;
+  font-size: .82rem;
+}
+
+.sd-expected__name { display: block; color: var(--text, #334155); }
+
+.sd-expected__value {
+  display: block;
+  margin-top: .15rem;
+  padding: .2rem .35rem;
+  border-radius: .25rem;
+  background: var(--bg-elevated, #f1f5f9);
+  color: var(--muted, #475569);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .78rem;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}

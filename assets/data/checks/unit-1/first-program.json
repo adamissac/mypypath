@@ -1,0 +1,82 @@
+{
+  "exercise1": {
+    "prompt": "Customize your hello message",
+    "cases": [
+      {
+        "name": "prints something",
+        "nonempty": true
+      },
+      {
+        "name": "uses print() rather than just writing text",
+        "source_matches": "print\\s*\\(",
+        "describe": "a call to print()"
+      }
+    ],
+    "hint": "Put your message inside print(), with the text in quotes: print(\"your message here\")."
+  },
+  "exercise2": {
+    "prompt": "Print three separate lines",
+    "cases": [
+      {
+        "name": "prints at least three lines",
+        "min_lines": 3
+      },
+      {
+        "name": "uses a separate print() for each line",
+        "source_matches": "(?:print\\s*\\([\\s\\S]*?){3}",
+        "describe": "three print() statements"
+      }
+    ],
+    "hint": "Each line needs its own print() on its own line. Three lines of output means three print() statements."
+  },
+  "questions": [
+    {
+      "id": "u1-first-1",
+      "prompt": "What does print() actually do?",
+      "choices": [
+        "Sends the text to a printer",
+        "Writes the value to the output, so you can see it",
+        "Saves the value to a file",
+        "Stores the value in a variable"
+      ],
+      "answer": 1,
+      "explain": "print() writes to standard output. The name is a leftover from when output really did go to a printer."
+    },
+    {
+      "id": "u1-first-2",
+      "prompt": "Which of these will cause an error?",
+      "choices": [
+        "print(\"Hello\")",
+        "print('Hello')",
+        "print(Hello)",
+        "print(\"Hello\", \"there\")"
+      ],
+      "answer": 2,
+      "explain": "Without quotes, Python reads Hello as a variable name, and no variable by that name exists."
+    },
+    {
+      "id": "u1-first-3",
+      "prompt": "How many lines does print(\"a\")\\nprint(\"b\") produce?",
+      "choices": [
+        "One",
+        "Two",
+        "Three",
+        "None, it is an error"
+      ],
+      "answer": 1,
+      "explain": "Each print() ends with a newline, so each call starts its output on a fresh line."
+    },
+    {
+      "id": "u1-first-4",
+      "prompt": "Why do single and double quotes both work for strings?",
+      "choices": [
+        "They mean different things",
+        "Python accepts either, so you can use the other kind inside without escaping",
+        "Single quotes are faster",
+        "Double quotes are for numbers"
+      ],
+      "answer": 1,
+      "explain": "Having both means you can write \"it's fine\" or 'she said \"hi\"' without escaping anything."
+    }
+  ]
+}

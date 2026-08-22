@@ -40,9 +40,16 @@ service cloud.firestore {
       // create, never update: create fails outright if the document already
       // exists, so a teacher cannot take a code that is already issued, and
       // the code-to-teacher mapping can never be repointed once made.
+      //
+      // classId and active are the classroom model's additions. They are
+      // optional so that codes issued before classes existed still resolve,
+      // and teacherUid stays required either way because the legacy roster
+      // below proves a join against it.
       allow create: if signedIn()
         && request.resource.data.teacherUid == request.auth.uid
-        && request.resource.data.keys().hasOnly(['teacherUid', 'createdAt']);
+        && request.resource.data.keys().hasAll(['teacherUid'])
+        && request.resource.data.keys()
+             .hasOnly(['teacherUid', 'createdAt', 'classId', 'active', 'schemaVersion']);
       allow update: if false;
 
       // Regenerating a code retires the old one.
@@ -175,6 +182,205 @@ service cloud.firestore {
         || removingOwnStudent()
         || gradingOwnStudent();
       allow delete: if isOwner(uid);
+    }
+
+    // ---------------------------------------------------------------------
+    // Classrooms.
+    //
+    // The consent boundary of the whole feature is here: a student's own data
+    // under /users stays owner-only and is not loosened by anything below.
+    // What a teacher reads is a separate, class-scoped mirror that only comes
+    // into existence when the student presents a join code and enrolls
+    // themselves. No enrollment, nothing to read.
+    //
+    // Written entirely by clients, because this project has no Cloud
+    // Functions. Everything a server would normally guarantee has to be a rule
+    // here or it is not guaranteed at all.
+    // ---------------------------------------------------------------------
+
+    function classDoc(classId) {
+      return get(/databases/$(database)/documents/classes/$(classId)).data;
+    }
+
+    function classExists(classId) {
+      return exists(/databases/$(database)/documents/classes/$(classId));
+    }
+
+    function isTeacherOf(classId) {
+      return signedIn()
+        && classExists(classId)
+        && request.auth.uid in classDoc(classId).teacherUids;
+    }
+
+    // Enrollment is the consent boundary, so it is checked by the presence of
+    // the student's own roster document rather than by a field anyone could
+    // set. Leaving the class deletes that document and every read below it
+    // stops resolving.
+    function isEnrolled(classId, uid) {
+      return exists(/databases/$(database)/documents/classes/$(classId)/roster/$(uid));
+    }
+
+    match /classes/{classId} {
+      // get, not read: a student who has just resolved a join code needs the
+      // class name to confirm they are joining the right room. list stays
+      // denied so the collection cannot be walked.
+      allow get: if signedIn();
+      allow list: if false;
+
+      allow create: if signedIn()
+        && request.resource.data.teacherUids == [request.auth.uid]
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 100
+        && request.resource.data.joinCode is string
+        && request.resource.data.joinCode.size() == 6
+        && request.resource.data.archived == false
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.keys().hasOnly(
+             ['name', 'joinCode', 'teacherUids', 'createdAt', 'archived', 'schemaVersion']);
+
+      // A teacher may rename, archive, rotate the code, and add a co-teacher.
+      // They may not write themselves out of the list: an update that drops
+      // the requester would either orphan the class or, worse, be a way to
+      // take one over and lock its owner out.
+      allow update: if isTeacherOf(classId)
+        && request.auth.uid in request.resource.data.teacherUids
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.keys().hasOnly(
+             ['name', 'joinCode', 'teacherUids', 'createdAt', 'archived', 'schemaVersion']);
+
+      // Archived, never deleted. Deleting the class document would strand
+      // every roster, progress and event document beneath it: subcollections
+      // survive their parent in Firestore, and with the parent gone
+      // isTeacherOf can no longer resolve, so nobody could reach them to
+      // clean them up. Phase 6 purges the subtree first.
+      allow delete: if false;
+
+      match /roster/{uid} {
+        // displayName is a username, never a legal name. Enforced here and not
+        // just in the client, because a teacher reads these documents.
+        function noRealNames() {
+          return !request.resource.data.keys()
+            .hasAny(['email', 'photoURL', 'firstName', 'lastName', 'realName']);
+        }
+
+        // Joining requires the code, and the code has to actually point at
+        // this class. Without this check a student could enroll themselves in
+        // any class whose id they guessed.
+        function codeProvesThisClass() {
+          return request.resource.data.joinCode is string
+            && request.resource.data.joinCode.size() == 6
+            && exists(/databases/$(database)/documents/joinCodes/$(request.resource.data.joinCode))
+            && get(/databases/$(database)/documents/joinCodes/$(request.resource.data.joinCode))
+                 .data.get('classId', '') == classId;
+        }
+
+        allow read: if isOwner(uid) || isTeacherOf(classId);
+
+        allow create: if isOwner(uid)
+          && codeProvesThisClass()
+          && classExists(classId)
+          && classDoc(classId).archived == false
+          && request.resource.data.displayName is string
+          && request.resource.data.displayName.size() <= 64
+          && request.resource.data.joinedAt == request.time
+          && noRealNames()
+          && request.resource.data.keys().hasOnly(
+               ['displayName', 'joinedAt', 'lastActiveAt', 'joinCode', 'schemaVersion']);
+
+        // Only the heartbeat and the display name move after joining. The
+        // join code and the joined date are the record of consent and stay
+        // exactly as written.
+        allow update: if isOwner(uid)
+          && noRealNames()
+          && !request.resource.data.diff(resource.data)
+               .affectedKeys().hasAny(['joinCode', 'joinedAt']);
+
+        // Either side may end the enrollment: the student leaves, or the
+        // teacher removes them from the class.
+        allow delete: if isOwner(uid) || isTeacherOf(classId);
+
+        // The class-scoped mirror of syncable progress keys. Same 100KB cap
+        // the private code collection uses.
+        match /progress/{docId} {
+          allow read: if isOwner(uid) || isTeacherOf(classId);
+
+          allow create, update: if isOwner(uid)
+            && isEnrolled(classId, uid)
+            && request.resource.data.content is string
+            && request.resource.data.content.size() <= 102400;
+
+          // A teacher never writes into a student's work. Read-only means
+          // read-only, including the mirror. The single exception is purging
+          // an archived class, for the same reason as the event log below: a
+          // student who never returns cannot run their own expiry.
+          allow delete: if isOwner(uid)
+            || (isTeacherOf(classId) && classDoc(classId).archived == true);
+        }
+
+        match /events/{eventId} {
+          function validEvent() {
+            return request.resource.data.type in [
+                'lesson.opened', 'code.run', 'code.error', 'code.tests_passed',
+                'answer.submitted', 'check.answered', 'test.started',
+                'test.submitted', 'unit.completed'
+              ]
+              // Client clocks are wrong, sometimes deliberately. Pinning the
+              // timestamp to request.time is what makes "no events in 7 days"
+              // mean something.
+              && request.resource.data.at == request.time
+              && request.resource.data.payload is map
+              && request.resource.data.payload.keys().size() <= 8
+              && request.resource.data.keys().hasOnly(
+                   ['type', 'lessonPath', 'unit', 'itemId', 'at', 'payload', 'schemaVersion'])
+              && (!('lessonPath' in request.resource.data)
+                  || (request.resource.data.lessonPath is string
+                      && request.resource.data.lessonPath.size() <= 200));
+          }
+
+          allow read: if isOwner(uid) || isTeacherOf(classId);
+
+          // Append-only, and only from the enrolled student themselves. A
+          // teacher cannot write events into a student's log either: a record
+          // a teacher can forge is worth nothing as a record.
+          allow create: if isOwner(uid) && isEnrolled(classId, uid) && validEvent();
+
+          // Never, by anyone. An event that can be edited after the fact is
+          // not a log, it is a draft.
+          allow update: if false;
+
+          // Deletion is the erasure path and the retention policy, never an
+          // edit. Two ways in, both the student's own:
+          //
+          // Once they have left the class -- roster document gone -- they may
+          // clear everything they left behind.
+          //
+          // While still enrolled they may delete only events older than the
+          // stated retention window. That is what makes the 180 days in
+          // privacy.html enforceable at all: there are no Cloud Functions
+          // here, so if the client cannot delete an expired event, nothing
+          // can, and "deleted after 180 days" would be a promise with no
+          // mechanism behind it.
+          //
+          // Neither route lets a currently enrolled student rewrite recent
+          // history one delete-and-recreate at a time, because anything
+          // recent enough to be worth rewriting is still inside the window.
+          allow delete: if isOwner(uid)
+            && (!isEnrolled(classId, uid)
+                || resource.data.at < request.time - duration.value(180, 'd'));
+
+          // The one deletion a teacher may make, and only because otherwise
+          // the archived-class policy has no mechanism either. A student who
+          // never signs in again cannot run their own expiry, so their records
+          // would outlive the class indefinitely. Narrow on both axes: the
+          // class must be archived, and the record must be older than the year
+          // the policy states. A teacher can still never delete anything from
+          // a live class, at any age.
+          allow delete: if isTeacherOf(classId)
+            && classDoc(classId).archived == true
+            && resource.data.at < request.time - duration.value(365, 'd');
+        }
+      }
     }
   }
 }

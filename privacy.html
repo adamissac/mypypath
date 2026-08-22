@@ -22,6 +22,8 @@
     <script defer src="/assets/js/theme.js"></script>
     <script defer src="/assets/js/icons.js"></script>
     <script defer src="/assets/js/storage-keys.js"></script>
+    <script defer src="/assets/js/schema-version.js"></script>
+    <script defer src="/assets/js/events.js"></script>
     <script defer src="/assets/js/roles.js"></script>
     <script defer src="/assets/js/activity-core.js"></script>
     <script defer src="/assets/js/progress-store.js"></script>
@@ -34,6 +36,7 @@
     <script defer src="/assets/js/core.js"></script>
     <script type="module" src="/assets/js/auth.js"></script>
     <script type="module" src="/assets/js/sync.js"></script>
+    <script type="module" src="/assets/js/event-sink.js"></script>
     <script type="module" src="/assets/js/role-nav.js"></script>
     <script type="module" src="/assets/js/activity.js"></script>
     <script type="module" src="/assets/js/auth-ui.js"></script>
@@ -120,7 +123,13 @@
           <p>When you sign up, the following is stored in our database:</p>
           <ul>
             <li><strong>Email address</strong> — how you sign in, and the only way to reset your password.</li>
-            <li><strong>Your first and last name</strong> — the name shown in the header and on your progress page, and the name other learners see. It is stored on your own account record only; PyPath keeps no public directory mapping names to accounts, and names are not required to be unique.</li>
+            <li><strong>Your first and last name</strong>
+              &mdash; the name shown in the header and on your progress page. It
+              is stored on your own account record only; PyPath keeps no public
+              directory mapping names to accounts, and names are not required to
+              be unique. <strong>It is never used in a classroom</strong>: a
+              teacher and their class see the username you chose, and the
+              database rules refuse a real-name field in classroom records.</li>
             <li><strong>Avatar URL</strong> — only if your sign-in provider supplies one.</li>
             <li><strong>Course progress</strong> — which lessons and units you have completed, and when.</li>
             <li><strong>Saved lesson code</strong> — the Python you write in lesson exercises, so it is still there when you come back.</li>
@@ -136,19 +145,105 @@
           <p>We do not sell your data and we do not share it with third parties beyond the processors named above.</p>
 
           <h2>Security rules</h2>
-          <p>Database rules restrict every progress and code document to the account that owns it. No other learner can read your progress, your saved code, or your email address.</p>
+          <p>Database rules restrict every progress and code document to the
+           account that owns it. No other learner can read your progress, your
+           saved code, or your email address &mdash; and that stays true of a
+           classmate even when you are both in the same class. The one exception
+           is a teacher of a class you joined yourself, and only for the separate
+           class copy described under Classroom accounts.</p>
 
           <h2>What PyPath staff can see</h2>
           <p>A small, named group of PyPath staff can see a dashboard listing every account: name, email address, when the account was created, when it was last active, total time spent, how many units are complete, and whether the certificate has been earned. It exists so we can tell how the course is actually being used.</p>
           <p><strong>Your saved lesson code is not included, deliberately.</strong> The database rules keep code documents readable by their owner alone, with no staff exception, so nobody at PyPath can read the Python you write. Staff access is read-only: the dashboard cannot change your account or your progress. The list of staff accounts is enforced in the database rules themselves, not just in the page.</p>
 
           <h2>Classroom accounts</h2>
-          <p>When you sign up you choose whether you are learning on your own, learning in a class, or teaching one. Learning on your own is the default and nothing about it changed: no other account can see anything of yours.</p>
-          <p>If you join a class by entering a teacher's join code, that teacher can see your name, when you joined, when you were last active, how long you have spent learning, how many units you have completed, and whether you have earned the certificate. They cannot see your email address: class information lives in a separate record that holds no contact details, and the database rules refuse a teacher any access to your account record at all, rather than relying on the page to leave it off the screen. They cannot see the Python you write — lesson code stays readable only by you, with no exception for teachers or for PyPath staff. Your teacher also decides whether your certificate is issued once you finish all ten units, and can see when you asked for it. Your teacher can remove you from their class; that clears the link and nothing else.</p>
-          <p>You are never put in a class without entering a code yourself. You can leave a class at any time from your <a href="/account.html" class="route">account page</a>, which stops your teacher seeing anything further, and your progress is untouched either way.</p>
-          <p>If you are a teacher, your join code identifies your class. Anyone who has the code can attach their account to you, so treat it like a class password and issue a new one from your classroom page if it spreads further than you meant.</p>
+        <p>When you sign up you choose whether you are learning on your own,
+           learning in a class, or teaching one. Learning on your own is the
+           default and nothing about it has changed: no other account can see
+           anything of yours, and none of the classroom storage described below
+           is written for you at all.</p>
 
-          <h2>Deleting your account</h2>
+        <p><strong>You are never put in a class without entering a join code
+           yourself.</strong> Entering that code is the moment your work becomes
+           visible to that teacher, and nothing is shared before it. The join
+           screen lists exactly what they will be able to see, in the same words
+           as below, before you confirm.</p>
+
+        <h3>What a teacher of your class can see</h3>
+        <ul>
+          <li>Which lessons you have opened, and when.</li>
+          <li>Which exercises you have attempted, and how many attempts each took.</li>
+          <li>Which checks your code passed, and your end-of-unit test scores.</li>
+          <li><strong>The code you write in lesson exercises</strong>, including a
+              short history of how you wrote it — up to 20 saved states per
+              editor, captured when you run your code and when you stop typing,
+              never as you type.</li>
+          <li>The written answers you save to reflection questions.</li>
+          <li>The username you chose, and when you were last active.</li>
+        </ul>
+
+        <p class="note"><strong>This is a change from what this page previously
+           said.</strong> Until the classroom feature existed, we said a teacher
+           could never see the Python you write. That is no longer true for a
+           class you have joined: seeing a student&rsquo;s actual code is how a
+           teacher can help with it. It remains true everywhere else. Your
+           private copy of your code, the one that syncs between your own
+           devices, is still readable by you alone, with no exception for
+           teachers or for PyPath staff. What a teacher reads is a separate copy
+           that only exists for the class you joined, and it is deleted when you
+           leave.</p>
+
+        <h3>What a teacher cannot see</h3>
+        <ul>
+          <li>Your email address.</li>
+          <li>Your legal name. Classroom records store the username you chose and
+              nothing else; the database rules refuse a name or email field
+              outright rather than relying on the page to leave it off screen.</li>
+          <li>Anything you do outside their class.</li>
+          <li>Anything at all, until you enter their join code yourself.</li>
+        </ul>
+
+        <p>Your teacher also decides whether your certificate is issued once you
+           finish all ten units, and can see when you asked for it. Your teacher
+           can remove you from their class, and can share the class with a
+           second teacher, who sees exactly the same things and nothing more.
+           A teacher can never change your work: the database rules refuse
+           every write from a teacher to a student&rsquo;s progress, code or
+           activity record, so a record of what you did cannot be edited by
+           someone else.</p>
+
+        <p>You can leave a class at any time from your
+           <a class="route" href="/account.html">account page</a>. Leaving stops
+           your teacher seeing anything further <em>and deletes the class copy of
+           your work</em> — your activity record, your mirrored code and answers,
+           and your code history. Your own progress and your own saved code are
+           untouched.</p>
+
+        <p>If you are a teacher, your join code is what identifies your class.
+           Anyone with the code can join it, so treat it like a class password
+           and issue a new one from your classroom page if it spreads further
+           than you meant.</p>
+
+        <h3>How long classroom data is kept</h3>
+        <p>Not indefinitely. Under the amended COPPA rule that reached full
+           compliance on 22 April 2026, children&rsquo;s data may not be kept for
+           longer than it is needed, and a retention period has to be stated
+           rather than left open.</p>
+        <ul>
+          <li>Activity records and code history are deleted after
+              <strong>180 days</strong>.</li>
+          <li>Code history is also capped as it is written: 20 states per editor
+              and 64KB per lesson, oldest discarded first.</li>
+          <li>An archived class and everything in it is purged after
+              <strong>one year</strong>. A teacher can carry that out from their
+              classroom page; the database rules allow it only for a class that
+              has been archived and only for records already older than the
+              year, and never for a class that is still running.</li>
+          <li>Leaving a class deletes your class records straight away, without
+              waiting for any of the above.</li>
+        </ul>
+
+        <h2>Deleting your account</h2>
           <p>You can clear device-local data at any time from <a href="/settings.html" class="route">Settings</a>. To delete your account and everything stored against it, contact us using the address below and we will remove the account, its progress, and its saved code. Deletion is permanent.</p>
 
           <h2>Children</h2>
