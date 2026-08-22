@@ -2,8 +2,14 @@
   "exercise1": {
     "prompt": "Fix the syntax error",
     "cases": [
-      { "name": "runs without an error", "nonempty": true },
-      { "name": "prints Hello", "expect_stdout": "Hello" }
+      {
+        "name": "runs without an error",
+        "nonempty": true
+      },
+      {
+        "name": "prints Hello",
+        "expect_stdout": "Hello"
+      }
     ],
     "hiddenCases": [
       {
@@ -17,7 +23,10 @@
   "exercise2": {
     "prompt": "Create properly indented code",
     "cases": [
-      { "name": "prints Start, Middle and End in order", "expect_stdout": "Start\nMiddle\nEnd" }
+      {
+        "name": "prints Start, Middle and End in order",
+        "expect_stdout": "Start\nMiddle\nEnd"
+      }
     ],
     "hiddenCases": [
       {
@@ -27,5 +36,55 @@
       }
     ],
     "hint": "Print Start first, then an if True: with an indented print for Middle, then print End back at the left margin."
-  }
+  },
+  "questions": [
+    {
+      "id": "u1-synt-1",
+      "prompt": "What does indentation do in Python?",
+      "choices": [
+        "Nothing, it is only for readability",
+        "It marks which lines belong inside a block",
+        "It makes the code run faster",
+        "It is required only inside functions"
+      ],
+      "answer": 1,
+      "explain": "In most languages braces mark a block and indentation is cosmetic. In Python the indentation IS the block."
+    },
+    {
+      "id": "u1-synt-2",
+      "prompt": "You write `if True:` and then an unindented print on the next line. What happens?",
+      "choices": [
+        "It runs fine",
+        "IndentationError",
+        "The print is skipped",
+        "SyntaxError about the colon"
+      ],
+      "answer": 1,
+      "explain": "A colon promises an indented block. Python raises IndentationError when the block does not arrive."
+    },
+    {
+      "id": "u1-synt-3",
+      "prompt": "Can you mix tabs and spaces for indentation?",
+      "choices": [
+        "Yes, freely",
+        "No -- Python treats them as different and will complain",
+        "Only inside loops",
+        "Only if you use exactly four spaces per tab"
+      ],
+      "answer": 1,
+      "explain": "Mixing them produces TabError, which is why editors are usually set to insert spaces."
+    },
+    {
+      "id": "u1-synt-4",
+      "prompt": "How many spaces does the Python style guide suggest per level?",
+      "choices": [
+        "One",
+        "Two",
+        "Four",
+        "Eight"
+      ],
+      "answer": 2,
+      "explain": "Four spaces is the PEP 8 convention. Any consistent amount works, but four is what everyone else uses."
+    }
+  ]
 }
