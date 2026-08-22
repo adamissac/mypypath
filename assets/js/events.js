@@ -158,6 +158,57 @@
     return out;
   }
 
+  /* Exception class names have a shape, and only that shape is accepted.
+
+     Anything else on the line is the message, and a Python message routinely
+     quotes the student's own source -- KeyError: 'name: value' would otherwise
+     hand back "name" and put a fragment of their data in the log. Requiring
+     the recognized suffixes means a stray colon inside a message cannot be
+     mistaken for a class name. */
+  var EXCEPTION_SHAPE = /(Error|Exception|Warning|Interrupt|Exit|StopIteration|StopAsyncIteration)$/;
+
+  /* Pyodide's own wrapper. Real to the runtime, useless to a teacher: every
+     Python failure is a PythonError, so it is only reported when it is the
+     only thing on the line. */
+  var WRAPPER = 'PythonError';
+
+  /* Pulls the Python exception class name out of whatever the runtime handed
+     back, and nothing else.
+
+     Pyodide surfaces a full traceback, whose last non-empty line is
+     "SomeError: some message". Everything except the class name is discarded
+     here, at the one place that knows the difference, so no caller has to
+     remember to do it. */
+  function errorClassOf(text) {
+    var raw = String(text == null ? '' : text);
+    var lines = raw.split(/\r?\n/);
+
+    for (var i = lines.length - 1; i >= 0; i--) {
+      var line = lines[i].trim();
+      if (!line) continue;
+
+      var names = [];
+      var re = /([A-Za-z_][A-Za-z0-9_.]*)\s*:/g;
+      var m;
+      while ((m = re.exec(line)) !== null) {
+        // "pyodide.ffi.PythonError" -> the last dotted segment.
+        var name = m[1].split('.').pop();
+        if (ERROR_TYPE_RE.test(name) && EXCEPTION_SHAPE.test(name)) names.push(name);
+      }
+
+      // "PythonError: IndentationError: expected an indented block" carries
+      // both; the inner one is the answer.
+      var specific = names.filter(function (n) { return n !== WRAPPER; });
+      if (specific.length) return specific[specific.length - 1];
+      if (names.length) return names[names.length - 1];
+
+      // A traceback's last line is the exception; anything above it is a
+      // frame, and frames quote source. Stop rather than keep looking.
+      break;
+    }
+    return 'UnknownError';
+  }
+
   function makeEvent(type, input) {
     if (!isValidType(type)) return null;
     var payload = buildPayload(type, input);
@@ -232,6 +283,7 @@
     MAX_BATCH: MAX_BATCH,
     MAX_PAYLOAD_CHARS: MAX_PAYLOAD_CHARS,
     isValidType: isValidType,
+    errorClassOf: errorClassOf,
     makeEvent: makeEvent,
     setEnabled: setEnabled,
     isEnabled: isEnabled,

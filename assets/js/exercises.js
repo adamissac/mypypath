@@ -126,6 +126,25 @@
     }
   };
 
+  /* Attempt numbers, per exercise, for the current page load. Kept in memory
+     rather than persisted: the count a teacher wants is "how many tries did
+     this take", and a persisted counter would keep climbing across every
+     revisit and every device. */
+  const attempts = new Map();
+
+  function nextAttempt(exerciseId) {
+    const n = (attempts.get(exerciseId) || 0) + 1;
+    attempts.set(exerciseId, n);
+    return n;
+  }
+
+  /* The classroom event log, when there is one. A no-op for a guest and for a
+     signed-in learner who has joined no class. */
+  function note(type, payload) {
+    if (!window.PyPathEvents) return;
+    try { window.PyPathEvents.record(type, payload); } catch (e) {}
+  }
+
   function qs(sel, parent) { return (parent || document).querySelector(sel); }
   function qsa(sel, parent) { return Array.from((parent || document).querySelectorAll(sel)); }
 
@@ -282,6 +301,15 @@
         
         saveAnswer(exerciseId, userAnswer);
         showSavedIndicator(submitBtn);
+
+        // The answer text itself is not in the event; it is already mirrored
+        // through the progress store, where the 100KB cap and the same rules
+        // apply to it.
+        note('answer.submitted', {
+          lessonPath: getCurrentPagePath(),
+          exerciseId: exerciseId,
+          attempt: nextAttempt(exerciseId)
+        });
         
         // Show comparison feedback if answer is available
         if (correctAnswer) {
