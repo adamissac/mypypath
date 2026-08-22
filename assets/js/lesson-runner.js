@@ -140,6 +140,18 @@
     outputEl.innerHTML = '<div class="output-placeholder">Code executed successfully (no output)</div>';
   }
 
+  /* The classroom event log, when there is one. Every call below is a no-op
+     for a guest and for a signed-in learner who has joined no class, which is
+     what keeps the classroom feature from costing a lone learner anything. */
+  function note(type, payload) {
+    if (!window.PyPathEvents) return;
+    try { window.PyPathEvents.record(type, payload); } catch (e) {}
+  }
+
+  function lessonPath() {
+    try { return location.pathname; } catch (e) { return ''; }
+  }
+
   function getSolutions() {
     return window.exerciseSolutions || {};
   }
@@ -168,8 +180,30 @@
       outputEl.innerHTML = '<div class="output-loading">Running...</div>';
       var result = await window.Pyodide.runCode(code);
       renderRunOutput(outputEl, result);
+
+      var failed = !!(result && (result.error || result.stderr));
+      note('code.run', { lessonPath: lessonPath(), editorId: editorId, ok: !failed });
+      if (failed) {
+        note('code.error', {
+          lessonPath: lessonPath(),
+          editorId: editorId,
+          // Class name only. errorClassOf drops the message, which quotes the
+          // student's own source.
+          errorType: window.PyPathEvents
+            ? window.PyPathEvents.errorClassOf(result.error || result.stderr)
+            : 'UnknownError'
+        });
+      }
     } catch (error) {
       outputEl.innerHTML = '<div class="output-error">' + escapeHtml(String(error)).replace(/\n/g, '<br>') + '</div>';
+      note('code.run', { lessonPath: lessonPath(), editorId: editorId, ok: false });
+      note('code.error', {
+        lessonPath: lessonPath(),
+        editorId: editorId,
+        errorType: window.PyPathEvents
+          ? window.PyPathEvents.errorClassOf(error)
+          : 'UnknownError'
+      });
     }
   };
 
@@ -358,6 +392,14 @@
     });
     bindLessonButtons();
     initEditors();
+
+    // Once per page load. This is the event that makes "opened it and
+    // struggled" distinguishable from "never opened it", which is the whole
+    // reason the log exists.
+    var unit = window.PyPathCurriculum
+      ? window.PyPathCurriculum.unitOf(lessonPath())
+      : null;
+    if (unit) note('lesson.opened', { lessonPath: lessonPath(), unit: unit });
 
     document.addEventListener('themechange', function () {
       Object.keys(window.editors || {}).forEach(function (id) {

@@ -241,6 +241,21 @@
     if (!s) return false;
     s.setCompletedUnits(units.concat([target]));
 
+    /* The phase brief expected this to be self-reported and always
+       verified:false. It is not: unitFinished() above already requires
+       unitTestPassed(), so reaching this line means the end-of-unit test was
+       passed and the honest value is true. It is recomputed rather than
+       assumed, so that if the roll-up rule is ever loosened again the flag
+       follows it instead of quietly lying to a teacher. */
+    if (window.PyPathEvents) {
+      try {
+        window.PyPathEvents.record('unit.completed', {
+          unit: target,
+          verified: unitTestPassed(testRecords(), target)
+        });
+      } catch (e) {}
+    }
+
     var total = curriculum.TOTAL_UNITS || 10;
     if (window.PyUI && window.PyUI.showToast) {
       window.PyUI.showToast(target >= total
