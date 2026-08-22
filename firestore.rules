@@ -346,14 +346,25 @@ service cloud.firestore {
           // not a log, it is a draft.
           allow update: if false;
 
-          // Deletion is the erasure path, not an edit. While the student is
-          // enrolled the log is immutable; once they have left the class --
-          // their roster document gone -- they may clear what they left
-          // behind. That is what makes the Phase 6 "leave and be forgotten"
-          // promise something the rules actually permit, without opening a
-          // hole a currently enrolled student could use to rewrite history
-          // one delete-and-recreate at a time.
-          allow delete: if isOwner(uid) && !isEnrolled(classId, uid);
+          // Deletion is the erasure path and the retention policy, never an
+          // edit. Two ways in, both the student's own:
+          //
+          // Once they have left the class -- roster document gone -- they may
+          // clear everything they left behind.
+          //
+          // While still enrolled they may delete only events older than the
+          // stated retention window. That is what makes the 180 days in
+          // privacy.html enforceable at all: there are no Cloud Functions
+          // here, so if the client cannot delete an expired event, nothing
+          // can, and "deleted after 180 days" would be a promise with no
+          // mechanism behind it.
+          //
+          // Neither route lets a currently enrolled student rewrite recent
+          // history one delete-and-recreate at a time, because anything
+          // recent enough to be worth rewriting is still inside the window.
+          allow delete: if isOwner(uid)
+            && (!isEnrolled(classId, uid)
+                || resource.data.at < request.time - duration.value(180, 'd'));
         }
       }
     }

@@ -82,8 +82,20 @@ describe('the event log stays append-only', () => {
     expect(events).toMatch(/allow create:\s*if isOwner\(uid\) && isEnrolled\(/);
   });
 
-  it('allows delete only after the student has left the class', () => {
-    expect(events).toMatch(/allow delete:\s*if isOwner\(uid\) && !isEnrolled\(/);
+  it('allows delete only to the student, and only in the two permitted cases', () => {
+    // Leaving the class, or an event past the stated retention window. The
+    // second is what makes "deleted after 180 days" enforceable at all: with
+    // no Cloud Functions, if the client cannot delete an expired event then
+    // nothing can.
+    expect(events).toMatch(/allow delete: if isOwner\(uid\)/);
+    expect(events).toMatch(/!isEnrolled\(classId, uid\)/);
+    expect(events).toMatch(/resource\.data\.at < request\.time - duration\.value\(180, 'd'\)/);
+  });
+
+  it('uses the same retention window the policy and the code declare', () => {
+    new Function(fs.readFileSync('assets/js/classroom-core.js', 'utf8')).call(globalThis);
+    const core = globalThis.PyPathClassroom || globalThis.window.PyPathClassroom;
+    expect(events).toContain(`duration.value(${core.RETENTION.EVENT_DAYS}, 'd')`);
   });
 
   it('pins the timestamp to request.time rather than trusting the client clock', () => {

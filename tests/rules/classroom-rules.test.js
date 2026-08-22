@@ -380,6 +380,42 @@ describe('the event log is append-only', () => {
     await assertSucceeds(deleteDoc(doc(as('ann'), `classes/${CLASS_A}/roster/ann/events/e1`)));
   });
 
+  it('lets a student delete an event that is past the retention window', async () => {
+    // The only deletion an enrolled student may make. Without it the 180-day
+    // policy would have no mechanism behind it at all: there are no Cloud
+    // Functions here and nobody else may delete a student's record.
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), `classes/${CLASS_A}/roster/ann/events/old1`), {
+        type: 'lesson.opened',
+        at: new Date(Date.now() - 200 * 24 * 60 * 60 * 1000),
+        payload: {}, schemaVersion: 1,
+      });
+    });
+    await assertSucceeds(deleteDoc(doc(as('ann'), `classes/${CLASS_A}/roster/ann/events/old1`)));
+  });
+
+  it('denies deleting an event that is still inside the window', async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), `classes/${CLASS_A}/roster/ann/events/recent1`), {
+        type: 'lesson.opened',
+        at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+        payload: {}, schemaVersion: 1,
+      });
+    });
+    await assertFails(deleteDoc(doc(as('ann'), `classes/${CLASS_A}/roster/ann/events/recent1`)));
+  });
+
+  it('denies a teacher deleting an expired event, however old it is', async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), `classes/${CLASS_A}/roster/ann/events/old2`), {
+        type: 'lesson.opened',
+        at: new Date(Date.now() - 400 * 24 * 60 * 60 * 1000),
+        payload: {}, schemaVersion: 1,
+      });
+    });
+    await assertFails(deleteDoc(doc(as('teacherA'), `classes/${CLASS_A}/roster/ann/events/old2`)));
+  });
+
   it('lets a student clear their progress mirror once they have left', async () => {
     await assertSucceeds(deleteDoc(doc(as('ann'), `classes/${CLASS_A}/roster/ann`)));
     await assertSucceeds(
