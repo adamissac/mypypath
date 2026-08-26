@@ -187,7 +187,7 @@
    *
    * This replaces a 60%-similarity check that decided whether an answer was
    * right. That check could not do the job, in both directions: the ratio was
-   * over the LONGER of the two texts, so a correct one-sentence answer against
+   * over the LONGER of the two texts, so a correct one-sentence answer agains
    * a fifty-word sample could never reach the threshold, while pasting the
    * sample's nouns in any order sailed past it. It was measuring length
    * agreement and keyword presence, and reporting the result as correctness.
@@ -311,20 +311,20 @@
 
   function initializeExercises() {
     const exerciseItems = document.querySelectorAll('.exercise-item');
-    
+
     exerciseItems.forEach((item, index) => {
       const textarea = item.querySelector('.reflection-input');
       if (!textarea) return;
-      
+
       const exerciseId = textarea.id;
       if (!exerciseId) return;
-      
+
       // Load saved answer
       const savedAnswer = loadAnswer(exerciseId);
       if (savedAnswer) {
         textarea.value = savedAnswer;
       }
-      
+
       // Create action buttons container
       let actionsContainer = item.querySelector('.exercise-actions');
       if (!actionsContainer) {
@@ -332,7 +332,7 @@
         actionsContainer.className = 'exercise-actions';
         textarea.parentNode.insertBefore(actionsContainer, textarea.nextSibling);
       }
-      
+
       // Create submit button
       let submitBtn = actionsContainer.querySelector('.submit-btn');
       if (!submitBtn) {
@@ -342,7 +342,7 @@
         submitBtn.type = 'button';
         actionsContainer.appendChild(submitBtn);
       }
-      
+
       // Create show answer button
       let showAnswerBtn = actionsContainer.querySelector('.show-answer-btn');
       if (!showAnswerBtn) {
@@ -352,7 +352,7 @@
         showAnswerBtn.type = 'button';
         actionsContainer.appendChild(showAnswerBtn);
       }
-      
+
       // Create correct answer display
       let answerDisplay = item.querySelector('.correct-answer');
       if (!answerDisplay) {
@@ -366,7 +366,7 @@
         answerDisplay.appendChild(answerContent);
         actionsContainer.parentNode.insertBefore(answerDisplay, actionsContainer.nextSibling);
       }
-      
+
       // Create feedback display
       let feedbackDisplay = item.querySelector('.answer-feedback');
       if (!feedbackDisplay) {
@@ -374,17 +374,17 @@
         feedbackDisplay.className = 'answer-feedback';
         answerDisplay.parentNode.insertBefore(feedbackDisplay, answerDisplay.nextSibling);
       }
-      
+
       const answers = getExerciseAnswers();
       const correctAnswer = answers[exerciseId];
-      
+
       // If no specific answer exists, still show the button but with a generic message
       if (!correctAnswer) {
         showAnswerBtn.textContent = 'View Sample Answer';
         const answerContent = answerDisplay.querySelector('.correct-answer-content');
         answerContent.textContent = 'Answers may vary. Review the lesson content and compare your understanding with the key concepts covered.';
       }
-      
+
       // Submit button handler
       submitBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -394,7 +394,7 @@
           alert('Please enter an answer before saving.');
           return;
         }
-        
+
         saveAnswer(exerciseId, userAnswer);
         showSavedIndicator(submitBtn);
 
@@ -406,12 +406,12 @@
           exerciseId: exerciseId,
           attempt: nextAttempt(exerciseId)
         });
-        
+
         const nudge = coverageNudge(userAnswer, correctAnswer);
         feedbackDisplay.textContent = nudge.text;
         feedbackDisplay.className = 'answer-feedback show is-' + nudge.tone;
       });
-      
+
       // Show answer button handler (always available)
       showAnswerBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -423,7 +423,7 @@
           answerContent.textContent = 'Answers may vary. Review the lesson content and compare your understanding with the key concepts covered. Focus on demonstrating your understanding of the key points discussed in the lesson.';
         }
         answerDisplay.classList.add('show');
-        
+
         // The sample is one good answer, not the answer. Saying so is the
         // whole point of showing it.
         const userAnswer = textarea.value.trim();
