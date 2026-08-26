@@ -116,7 +116,10 @@ async function flush() {
         { merge: true }
       );
     }
-    savePending(id, 0);
+    // Not savePending(id, 0): tick() may have banked more seconds while the
+    // write was in flight, and those are still owed. Persist what is actually
+    // pending now, which is zero in the common case.
+    savePending(id, pendingSeconds);
   } catch (e) {
     pendingSeconds += amount;
     savePending(id, pendingSeconds);

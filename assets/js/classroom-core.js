@@ -29,6 +29,13 @@
 
   var IDLE_DAYS = 7;
 
+  /* Mirrors PASS_MARK in unit-test.js, the same way lesson-progress.js does.
+     Neither file is loaded on a dashboard, and a teacher still has to be told
+     whether a unit test was passed, so the number is repeated rather than
+     depended on -- but it is named, so the next person to change it can grep
+     for it. */
+  var UNIT_TEST_PASS_MARK = 70;
+
   /* Below this first-try pass rate across a unit, the problem is more likely
      the explanation than the student. */
   var STRUGGLE_RATE = 0.5;
@@ -49,7 +56,8 @@
     ARCHIVED_CLASS_DAYS: 365,
     // Mirrored from snapshots.js so the policy can state a real figure.
     SNAPSHOTS_PER_EDITOR: 20,
-    SNAPSHOT_BYTES_PER_LESSON: 64 * 1024
+    SNAPSHOT_BYTES_PER_LESSON: 64 * 1024,
+    LARGE_INSERTION_CHARS: 120
   };
 
   /* Exactly what a teacher can see, in the words used on the join screen.
@@ -198,7 +206,8 @@
     // either is enough.
     var testPassed = verified || eventsOfType(events, 'test.submitted').some(function (e) {
       var p = payloadOf(e);
-      return p.unit === unit && p.total > 0 && (p.score / p.total) * 100 >= 70;
+      return p.unit === unit && p.total > 0
+        && (p.score / p.total) * 100 >= UNIT_TEST_PASS_MARK;
     });
 
     var counts = {
@@ -220,8 +229,11 @@
   function percentComplete(events, lessonsByUnit) {
     var total = 0;
     var done = 0;
+    // One pass over the log, not one per unit: this is called for every
+    // student on the dashboard and again for every row of the CSV export.
+    var verifiedByUnit = verifiedUnits(events);
     Object.keys(lessonsByUnit || {}).forEach(function (unit) {
-      var verified = verifiedUnits(events)[Number(unit)];
+      var verified = verifiedByUnit[Number(unit)];
       lessonsByUnit[unit].forEach(function (path) {
         total += 1;
         var state = lessonState(events, path, verified);
@@ -266,10 +278,13 @@
   /* First-try pass rate across a unit. Deliberately measured on the first
      attempt only: a rate that counts retries measures persistence, which is
      not what "did the lesson land" is asking. */
-  function firstTryRate(events, unit) {
+  /* `index` is an optional attemptsByExercise() result for the same events. A
+     caller that already has one -- needsAttention asks about all ten units in
+     a row -- passes it rather than paying for ten identical rebuilds. */
+  function firstTryRate(events, unit, index) {
     var attempted = 0;
     var passed = 0;
-    var byExercise = attemptsByExercise(events);
+    var byExercise = index || attemptsByExercise(events);
     Object.keys(byExercise).forEach(function (key) {
       var entry = byExercise[key];
       var m = /^\/units\/unit-(\d+)\//.exec(entry.lessonPath);
@@ -350,7 +365,7 @@
       });
 
       for (var unit = 1; unit <= 10; unit += 1) {
-        var rate = firstTryRate(events, unit);
+        var rate = firstTryRate(events, unit, byExercise);
         if (rate === null || rate >= STRUGGLE_RATE) continue;
         // One exercise is not a pattern; it is one exercise.
         if (countUnitExercises(byExercise, unit) < 3) continue;
@@ -499,21 +514,21 @@
       buckets[key].push(event);
     });
 
-    return Object.keys(buckets)
-      .sort()
-      .reverse()
-      .map(function (day) {
-        return {
-          day: day,
-          events: buckets[day].slice().sort(function (a, b) {
-            return toMillis(b.at) - toMillis(a.at);
-          }),
-          count: buckets[day].length,
-          // Collapsed by default, apart from the most recent day, which is
-          // what a teacher opened the student for.
-          open: opts.openLatest !== false && day === Object.keys(buckets).sort().reverse()[0]
-        };
-      });
+    var days = Object.keys(buckets).sort().reverse();
+    var latest = days[0];
+
+    return days.map(function (day) {
+      return {
+        day: day,
+        events: buckets[day].slice().sort(function (a, b) {
+          return toMillis(b.at) - toMillis(a.at);
+        }),
+        count: buckets[day].length,
+        // Collapsed by default, apart from the most recent day, which is
+        // what a teacher opened the student for.
+        open: opts.openLatest !== false && day === latest
+      };
+    });
   }
 
   /* One row per lesson the student has touched, plus any lesson the caller
@@ -599,13 +614,14 @@
     firstTry: 'The share of this lesson\'s exercises that passed on the very first '
       + 'attempt. Blank means nothing has been attempted yet, which is not the same '
       + 'as failing everything.',
-    largePaste: 'More than ' + 120 + ' characters appeared between one snapshot and '
+    largePaste: 'More than ' + RETENTION.LARGE_INSERTION_CHARS + ' characters appeared between one snapshot and '
       + 'the next. That is all this means. Typing quickly, pasting your own earlier '
       + 'work, and copying an example from the lesson all look the same here, so treat '
       + 'it as a reason to ask a question rather than as evidence of anything.',
-    snapshots: 'Up to 20 states per editor, captured when code is run and when typing '
-      + 'pauses -- never per keystroke. Oldest are dropped once a lesson\'s history '
-      + 'passes 64KB.',
+    snapshots: 'Up to ' + RETENTION.SNAPSHOTS_PER_EDITOR + ' states per editor, captured '
+      + 'when code is run and when typing pauses -- never per keystroke. Oldest are '
+      + 'dropped once a lesson\'s history passes '
+      + (RETENTION.SNAPSHOT_BYTES_PER_LESSON / 1024) + 'KB.',
     trust: 'These events are recorded by each student\'s own browser. They are a '
       + 'record of what the site saw, not proof of what happened, and a determined '
       + 'student could send something untrue. Use them to decide who to talk to, '

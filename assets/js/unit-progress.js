@@ -12,11 +12,11 @@
 (function () {
   'use strict';
 
-  /* A unit is finished when every lesson in it has passed AND its end-of-unit
+  /* A unit is finished when every lesson in it has passed AND its end-of-uni
      test has passed -- that rule is lesson-progress.js's, and this weighting
      is chosen to match it exactly rather than to look generous. The test is
      one part alongside each lesson, so a unit of ten lessons is eleven parts.
-     
+
      The consequence is deliberate: finishing every lesson and skipping the
      test shows as 91%, not 100%. A learner is not done, and a bar that said
      100% next to an unfinished unit would be the dashboard lying to both of
