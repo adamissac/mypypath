@@ -10,13 +10,17 @@
 (function () {
   'use strict';
 
+  var KEYS = window.PyPathKeys;
+
   // Deliberately not under the pypath-lesson- prefix: that namespace is saved
   // editor contents, and sharing it would make this look like lesson code.
-  var STORE_KEY = 'pypath-progress-lessons';
+  // The literals are the degraded-mode fallback for a page where
+  // storage-keys.js did not load, as in progress-store.js.
+  var STORE_KEY = (KEYS && KEYS.LESSON_PROGRESS_KEY) || 'pypath-progress-lessons';
 
   // The end-of-unit test results, written by unit-test-page.js. Read here
   // because a unit is not finished until its test is passed.
-  var UNIT_TESTS_KEY = 'pypath-unit-tests';
+  var UNIT_TESTS_KEY = (KEYS && KEYS.UNIT_TESTS_KEY) || 'pypath-unit-tests';
 
   // Mirrors PASS_MARK in unit-test.js. That file is not loaded on a lesson
   // page, and a lesson page must still be able to tell whether a unit is
