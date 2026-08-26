@@ -312,7 +312,7 @@
   function initializeExercises() {
     const exerciseItems = document.querySelectorAll('.exercise-item');
 
-    exerciseItems.forEach((item, index) => {
+    exerciseItems.forEach((item) => {
       const textarea = item.querySelector('.reflection-input');
       if (!textarea) return;
 
