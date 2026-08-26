@@ -49,7 +49,8 @@
     ARCHIVED_CLASS_DAYS: 365,
     // Mirrored from snapshots.js so the policy can state a real figure.
     SNAPSHOTS_PER_EDITOR: 20,
-    SNAPSHOT_BYTES_PER_LESSON: 64 * 1024
+    SNAPSHOT_BYTES_PER_LESSON: 64 * 1024,
+    LARGE_INSERTION_CHARS: 120
   };
 
   /* Exactly what a teacher can see, in the words used on the join screen.
@@ -605,13 +606,14 @@
     firstTry: 'The share of this lesson\'s exercises that passed on the very first '
       + 'attempt. Blank means nothing has been attempted yet, which is not the same '
       + 'as failing everything.',
-    largePaste: 'More than ' + 120 + ' characters appeared between one snapshot and '
+    largePaste: 'More than ' + RETENTION.LARGE_INSERTION_CHARS + ' characters appeared between one snapshot and '
       + 'the next. That is all this means. Typing quickly, pasting your own earlier '
       + 'work, and copying an example from the lesson all look the same here, so treat '
       + 'it as a reason to ask a question rather than as evidence of anything.',
-    snapshots: 'Up to 20 states per editor, captured when code is run and when typing '
-      + 'pauses -- never per keystroke. Oldest are dropped once a lesson\'s history '
-      + 'passes 64KB.',
+    snapshots: 'Up to ' + RETENTION.SNAPSHOTS_PER_EDITOR + ' states per editor, captured '
+      + 'when code is run and when typing pauses -- never per keystroke. Oldest are '
+      + 'dropped once a lesson\'s history passes '
+      + (RETENTION.SNAPSHOT_BYTES_PER_LESSON / 1024) + 'KB.',
     trust: 'These events are recorded by each student\'s own browser. They are a '
       + 'record of what the site saw, not proof of what happened, and a determined '
       + 'student could send something untrue. Use them to decide who to talk to, '
