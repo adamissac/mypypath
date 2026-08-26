@@ -8,11 +8,13 @@ ROOT = Path(__file__).resolve().parent.parent
 STANDARD_HEAD = """    <link rel="stylesheet" href="/assets/css/motion.css" />
     <script defer src="/assets/js/theme.js"></script>
     <script defer src="/assets/js/icons.js"></script>
-    <script defer src="/assets/js/motion.js"></script>
-    <script defer src="/assets/js/layout.js"></script>
-    <script defer src="/assets/js/dropdowns.js"></script>"""
+    <script defer src="/assets/js/motion.js"></script>"""
 # main.js was removed; its logic now lives in core.js (injected separately,
 # see bake_layout.py's normalize_scripts).
+#
+# layout.js and dropdowns.js are not emitted either: normalize_scripts strips
+# both from every page it bakes, so writing the tags here only meant the next
+# bake had more to undo. core.js carries the dropdown controller now.
 
 MOBILE_BANNER_RE = re.compile(
     r'\s*<div class="mobile-warning-banner"[^>]*>.*?</div>\s*',
