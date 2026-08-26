@@ -29,6 +29,13 @@
 
   var IDLE_DAYS = 7;
 
+  /* Mirrors PASS_MARK in unit-test.js, the same way lesson-progress.js does.
+     Neither file is loaded on a dashboard, and a teacher still has to be told
+     whether a unit test was passed, so the number is repeated rather than
+     depended on -- but it is named, so the next person to change it can grep
+     for it. */
+  var UNIT_TEST_PASS_MARK = 70;
+
   /* Below this first-try pass rate across a unit, the problem is more likely
      the explanation than the student. */
   var STRUGGLE_RATE = 0.5;
@@ -199,7 +206,8 @@
     // either is enough.
     var testPassed = verified || eventsOfType(events, 'test.submitted').some(function (e) {
       var p = payloadOf(e);
-      return p.unit === unit && p.total > 0 && (p.score / p.total) * 100 >= 70;
+      return p.unit === unit && p.total > 0
+        && (p.score / p.total) * 100 >= UNIT_TEST_PASS_MARK;
     });
 
     var counts = {
