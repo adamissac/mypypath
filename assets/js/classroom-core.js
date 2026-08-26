@@ -499,21 +499,21 @@
       buckets[key].push(event);
     });
 
-    return Object.keys(buckets)
-      .sort()
-      .reverse()
-      .map(function (day) {
-        return {
-          day: day,
-          events: buckets[day].slice().sort(function (a, b) {
-            return toMillis(b.at) - toMillis(a.at);
-          }),
-          count: buckets[day].length,
-          // Collapsed by default, apart from the most recent day, which is
-          // what a teacher opened the student for.
-          open: opts.openLatest !== false && day === Object.keys(buckets).sort().reverse()[0]
-        };
-      });
+    var days = Object.keys(buckets).sort().reverse();
+    var latest = days[0];
+
+    return days.map(function (day) {
+      return {
+        day: day,
+        events: buckets[day].slice().sort(function (a, b) {
+          return toMillis(b.at) - toMillis(a.at);
+        }),
+        count: buckets[day].length,
+        // Collapsed by default, apart from the most recent day, which is
+        // what a teacher opened the student for.
+        open: opts.openLatest !== false && day === latest
+      };
+    });
   }
 
   /* One row per lesson the student has touched, plus any lesson the caller
