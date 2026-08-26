@@ -437,12 +437,9 @@
   function stickyHeader() {
     var header = qs('.site-header');
     if (!header) return;
-    var lastY = 0;
 
     function onScroll() {
-      var y = window.scrollY;
-      header.classList.toggle('is-scrolled', y > 24);
-      lastY = y;
+      header.classList.toggle('is-scrolled', window.scrollY > 24);
     }
 
     window.addEventListener('scroll', onScroll, { passive: true });
