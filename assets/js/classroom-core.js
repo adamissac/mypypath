@@ -220,8 +220,11 @@
   function percentComplete(events, lessonsByUnit) {
     var total = 0;
     var done = 0;
+    // One pass over the log, not one per unit: this is called for every
+    // student on the dashboard and again for every row of the CSV export.
+    var verifiedByUnit = verifiedUnits(events);
     Object.keys(lessonsByUnit || {}).forEach(function (unit) {
-      var verified = verifiedUnits(events)[Number(unit)];
+      var verified = verifiedByUnit[Number(unit)];
       lessonsByUnit[unit].forEach(function (path) {
         total += 1;
         var state = lessonState(events, path, verified);
