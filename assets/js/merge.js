@@ -2,9 +2,15 @@
 (function () {
   'use strict';
 
+  // Same rule progress-store.js applies on the way in: a whole number from 1
+  // to 10. !isNaN alone let Number(null) and Number('') through as 0, so a
+  // remote document with a hole in its list merged to a completed "unit 0".
+  function isValidUnit(n) {
+    return Number.isInteger(n) && n >= 1 && n <= 10;
+  }
+
   function mergeCompletedUnits(local, remote) {
-    var all = [].concat(local || [], remote || []).map(Number)
-      .filter(function (n) { return !isNaN(n); });
+    var all = [].concat(local || [], remote || []).map(Number).filter(isValidUnit);
     return Array.from(new Set(all)).sort(function (a, b) { return a - b; });
   }
 

@@ -11,7 +11,11 @@
 (function () {
   'use strict';
 
-  var BEST_PREFIX = 'pypath-checks-';
+  // storage-keys.js owns this prefix and the sync allowlist that matches it;
+  // the literal is only a fallback for the degraded case where that script
+  // failed to load, matching what progress-store.js and lesson-runner.js do.
+  var BEST_PREFIX = (window.PyPathKeys && window.PyPathKeys.CHECKS_PREFIX)
+    || 'pypath-checks-';
 
   var attempts = {};
   var specs = null;

@@ -54,12 +54,12 @@
     rows.push(header);
 
     (students || []).forEach(function (student) {
-      var header2 = CORE.studentHeader(student, lessonsByUnit);
+      var figures = CORE.studentHeader(student, lessonsByUnit);
       var row = [
-        header2.displayName,
-        header2.percentComplete,
-        header2.unitsVerified,
-        isoDay(header2.lastActiveAt)
+        figures.displayName,
+        figures.percentComplete,
+        figures.unitsVerified,
+        isoDay(figures.lastActiveAt)
       ];
       for (var unit = 1; unit <= totalUnits; unit += 1) {
         // The word, not the mark: a spreadsheet is not the place for a glyph

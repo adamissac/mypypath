@@ -23,12 +23,12 @@
 
   /* The harness, installed once per Pyodide instance.
    *
-   * Every case runs in a namespace of its own: one case defining a name must
+   * Every case runs in a namespace of its own: one case defining a name mus
    * not be why the next one passes, and a student's code must not see the
    * harness's own variables.
    *
    * The timeout is enforced with sys.settrace rather than a worker or an
-   * interrupt buffer. Pyodide runs on the main thread, and interrupting it
+   * interrupt buffer. Pyodide runs on the main thread, and interrupting i
    * properly needs SharedArrayBuffer, which needs cross-origin isolation
    * headers this site does not send. Tracing costs speed -- irrelevant for
    * exercises this size -- and catches what actually strands a tab, which is a
@@ -125,7 +125,7 @@
   }
 
   /* A third kind of case, and the reason for it is worth stating.
-     
+
      Much of Unit 1 asks for something personal: "print your own message",
      "print three things about yourself". There is no single correct stdout to
      compare against, and inventing one would mean marking a correct answer
@@ -133,7 +133,7 @@
      checks the shape of the result instead -- that three lines were printed,
      that the output is not empty, that a comment was written -- which is
      exactly what the lesson's own success criteria already say.
-     
+
      Where an exercise does have one right answer, expect_stdout is still used.
      This is not a softer check, it is a check of the thing that was asked. */
   var PROPERTY_KEYS = ['nonempty', 'min_lines', 'max_lines', 'stdout_matches', 'source_matches'];
@@ -193,9 +193,9 @@
 
   /* Builds the result the UI renders.
    *
-   * Hidden cases contribute to the counts and never to `failures`. A student
+   * Hidden cases contribute to the counts and never to `failures`. A studen
    * is told how many they passed, never which input caught them out -- the
-   * point of a hidden case is that it cannot be special-cased, and naming it
+   * point of a hidden case is that it cannot be special-cased, and naming i
    * hands back exactly what it was withholding.
    */
   function summarize(visible, hidden, spec, attempt) {
@@ -230,12 +230,16 @@
 
   /* ---------------------------------------------------------- runtime part */
 
-  var harnessInstalled = false;
+  // The instance the harness was installed into, not a bare boolean: the
+  // comment on HARNESS says "installed once per Pyodide instance", and a flag
+  // cannot tell one instance from the next. Today there is only ever one, so
+  // this changes nothing; it stops the guard from being wrong if that changes.
+  var harnessedIn = null;
 
   function ensureHarness(pyodide) {
-    if (harnessInstalled) return;
+    if (harnessedIn === pyodide) return;
     pyodide.runPython(HARNESS);
-    harnessInstalled = true;
+    harnessedIn = pyodide;
   }
 
   function pyLiteral(value) {
@@ -302,7 +306,7 @@
       return runOneCase(pyodide, code, c);
     });
     // Hidden cases are skipped once a visible one has already failed: they can
-    // only repeat news the student has, and each one costs a run of code that
+    // only repeat news the student has, and each one costs a run of code tha
     // may be the runaway loop we just timed out on.
     var hiddenResults = visibleResults.every(function (r) { return r.ok; })
       ? hidden.map(function (c) { return runOneCase(pyodide, code, c); })
