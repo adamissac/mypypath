@@ -230,12 +230,16 @@
 
   /* ---------------------------------------------------------- runtime part */
 
-  var harnessInstalled = false;
+  // The instance the harness was installed into, not a bare boolean: the
+  // comment on HARNESS says "installed once per Pyodide instance", and a flag
+  // cannot tell one instance from the next. Today there is only ever one, so
+  // this changes nothing; it stops the guard from being wrong if that changes.
+  var harnessedIn = null;
 
   function ensureHarness(pyodide) {
-    if (harnessInstalled) return;
+    if (harnessedIn === pyodide) return;
     pyodide.runPython(HARNESS);
-    harnessInstalled = true;
+    harnessedIn = pyodide;
   }
 
   function pyLiteral(value) {
