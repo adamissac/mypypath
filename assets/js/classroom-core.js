@@ -269,10 +269,13 @@
   /* First-try pass rate across a unit. Deliberately measured on the first
      attempt only: a rate that counts retries measures persistence, which is
      not what "did the lesson land" is asking. */
-  function firstTryRate(events, unit) {
+  /* `index` is an optional attemptsByExercise() result for the same events. A
+     caller that already has one -- needsAttention asks about all ten units in
+     a row -- passes it rather than paying for ten identical rebuilds. */
+  function firstTryRate(events, unit, index) {
     var attempted = 0;
     var passed = 0;
-    var byExercise = attemptsByExercise(events);
+    var byExercise = index || attemptsByExercise(events);
     Object.keys(byExercise).forEach(function (key) {
       var entry = byExercise[key];
       var m = /^\/units\/unit-(\d+)\//.exec(entry.lessonPath);
@@ -353,7 +356,7 @@
       });
 
       for (var unit = 1; unit <= 10; unit += 1) {
-        var rate = firstTryRate(events, unit);
+        var rate = firstTryRate(events, unit, byExercise);
         if (rate === null || rate >= STRUGGLE_RATE) continue;
         // One exercise is not a pattern; it is one exercise.
         if (countUnitExercises(byExercise, unit) < 3) continue;
