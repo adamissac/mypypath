@@ -31,11 +31,11 @@
 
 **Interfaces:** Produces `window.PyPathPolicy` with `MODES`, `normalizeMode(raw)`, `resolveUnlocked(unit, policy, completedUnits, teaching)`.
 
-- [ ] **Step 1:** Write `tests/classroom-policy.test.js` covering the full matrix from the design doc's Testing section: three modes x teacher/learner x unit 1 / earned / unearned x in and out of `manualUnlocks` and `assignmentUnlocks`, plus null policy equalling the sequential answer and an unrecognized mode falling back to sequential.
-- [ ] **Step 2:** Run `npx vitest run tests/classroom-policy.test.js`, expect ENOENT.
-- [ ] **Step 3:** Write `assets/js/classroom-policy.js` implementing the seven ordered checks in the design doc.
-- [ ] **Step 4:** Run the test, expect PASS.
-- [ ] **Step 5:** Commit.
+- [x] **Step 1:** Write `tests/classroom-policy.test.js` covering the full matrix from the design doc's Testing section: three modes x teacher/learner x unit 1 / earned / unearned x in and out of `manualUnlocks` and `assignmentUnlocks`, plus null policy equalling the sequential answer and an unrecognized mode falling back to sequential.
+- [x] **Step 2:** Run `npx vitest run tests/classroom-policy.test.js`, expect ENOENT.
+- [x] **Step 3:** Write `assets/js/classroom-policy.js` implementing the seven ordered checks in the design doc.
+- [x] **Step 4:** Run the test, expect PASS.
+- [x] **Step 5:** Commit.
 
 ---
 
@@ -45,11 +45,11 @@
 
 **Interfaces:** Consumes `window.PyPathPolicy`. `isUnitUnlocked(unit, completedUnits, teaching, policy)`; the first three arguments behave exactly as today.
 
-- [ ] **Step 1:** Add tests asserting three-argument calls are unchanged, and that a fourth argument delegates to `resolveUnlocked`. The unchanged-behavior test is the regression guard for the whole compatibility claim.
-- [ ] **Step 2:** Run, expect the fourth-argument tests to fail.
-- [ ] **Step 3:** Delegate to `PyPathPolicy.resolveUnlocked` when it is present, keeping the inline sequential rule as the fallback for a page where the new file did not load.
-- [ ] **Step 4:** Run the full suite, expect PASS.
-- [ ] **Step 5:** Commit.
+- [x] **Step 1:** Add tests asserting three-argument calls are unchanged, and that a fourth argument delegates to `resolveUnlocked`. The unchanged-behavior test is the regression guard for the whole compatibility claim.
+- [x] **Step 2:** Run, expect the fourth-argument tests to fail.
+- [x] **Step 3:** Delegate to `PyPathPolicy.resolveUnlocked` when it is present, keeping the inline sequential rule as the fallback for a page where the new file did not load.
+- [x] **Step 4:** Run the full suite, expect PASS.
+- [x] **Step 5:** Commit.
 
 ---
 
@@ -59,11 +59,11 @@
 
 **Interfaces:** Produces `completedAt`, `assignmentStatus`, `assignmentUnlocks` and three new `EXPLANATIONS` keys on `window.PyPathClassroom`.
 
-- [ ] **Step 1:** Write the tests listed in the design doc: never/once/worse-later/better-later for `completedAt`; on-time, one minute late reading as 1 day, several days, overdue, not-due, expired, and multi-part taking the max for `assignmentStatus`; units, lesson paths, archived excluded, past-due included for `assignmentUnlocks`.
-- [ ] **Step 2:** Run, expect FAIL.
-- [ ] **Step 3:** Implement. `completedAt` replays the log in `at` order and returns the first moment the existing `lessonState` / `unitProgress` rule held.
-- [ ] **Step 4:** Run, expect PASS.
-- [ ] **Step 5:** Commit.
+- [x] **Step 1:** Write the tests listed in the design doc: never/once/worse-later/better-later for `completedAt`; on-time, one minute late reading as 1 day, several days, overdue, not-due, expired, and multi-part taking the max for `assignmentStatus`; units, lesson paths, archived excluded, past-due included for `assignmentUnlocks`.
+- [x] **Step 2:** Run, expect FAIL.
+- [x] **Step 3:** Implement. `completedAt` replays the log in `at` order and returns the first moment the existing `lessonState` / `unitProgress` rule held.
+- [x] **Step 4:** Run, expect PASS.
+- [x] **Step 5:** Commit.
 
 ---
 
@@ -71,11 +71,11 @@
 
 **Files:** Modify `firestore.rules`, `tests/rules/classroom-rules.test.js`
 
-- [ ] **Step 1:** Write the rules tests: teacher of the class may create, read, update, delete; a teacher of another class may not; an enrolled student may read and list but not write; a signed-out request is denied; `lockMode` outside the enum is denied; an update carrying an unlisted key is denied.
-- [ ] **Step 2:** Run `npm run test:rules`, expect FAIL.
-- [ ] **Step 3:** Add the `assignments` subcollection match and widen the `classes` update allowlist by `lockMode` and `manualUnlocks` with the enum check.
-- [ ] **Step 4:** Run, expect PASS.
-- [ ] **Step 5:** Commit.
+- [x] **Step 1:** Write the rules tests: teacher of the class may create, read, update, delete; a teacher of another class may not; an enrolled student may read and list but not write; a signed-out request is denied; `lockMode` outside the enum is denied; an update carrying an unlisted key is denied.
+- [x] **Step 2:** Run `npm run test:rules`, expect FAIL.
+- [x] **Step 3:** Add the `assignments` subcollection match and widen the `classes` update allowlist by `lockMode` and `manualUnlocks` with the enum check.
+- [x] **Step 4:** Run, expect PASS.
+- [x] **Step 5:** Commit.
 
 ---
 
@@ -85,8 +85,8 @@
 
 **Interfaces:** `createAssignment`, `readAssignments`, `updateAssignment`, `deleteAssignment`, `setLockPolicy`.
 
-- [ ] **Step 1:** Implement, matching the existing module's shape: `ClassroomError` for user-facing refusals, `serverTimestamp()` for `createdAt`, `schemaVersion: version()`.
-- [ ] **Step 2:** Commit.
+- [x] **Step 1:** Implement, matching the existing module's shape: `ClassroomError` for user-facing refusals, `serverTimestamp()` for `createdAt`, `schemaVersion: version()`.
+- [x] **Step 2:** Commit.
 
 ---
 
@@ -96,11 +96,11 @@
 
 **Interfaces:** `currentPolicy()`, `loadPolicy(classId, force)`, fires `pypath:policy`.
 
-- [ ] **Step 1:** Write it in the shape of `membership.js`: session cache under `pypath-policy:<classId>`, empty string as a real answer, `force` to skip the cache, failures leaving the value null rather than caching an offline result.
-- [ ] **Step 2:** Wire `lesson-progress.js` to listen for `pypath:policy` and repaint. No timer: null already means today's behavior.
-- [ ] **Step 3:** Inject `classroom-policy.js` in `scripts/bake_layout.py` next to `curriculum.js`, re-bake, confirm idempotent.
-- [ ] **Step 4:** Run `npm test`, expect PASS.
-- [ ] **Step 5:** Commit.
+- [x] **Step 1:** Write it in the shape of `membership.js`: session cache under `pypath-policy:<classId>`, empty string as a real answer, `force` to skip the cache, failures leaving the value null rather than caching an offline result.
+- [x] **Step 2:** Wire `lesson-progress.js` to listen for `pypath:policy` and repaint. No timer: null already means today's behavior.
+- [x] **Step 3:** Inject `classroom-policy.js` in `scripts/bake_layout.py` next to `curriculum.js`, re-bake, confirm idempotent.
+- [x] **Step 4:** Run `npm test`, expect PASS.
+- [x] **Step 5:** Commit.
 
 ---
 
@@ -110,19 +110,19 @@
 
 Use `.claude/skills/frontend-design`; match the existing `cr-*` style.
 
-- [ ] **Step 1:** Assignments section and create form in `classroom.html`.
-- [ ] **Step 2:** Unit access section: three radios, ten checkboxes in manual mode, copy stating free-roam does not cancel assignments.
-- [ ] **Step 3:** Render both in `classroom-dashboard.js`; add the grid overlay (`!` past due not done, `~` done late) and the assignment scope.
-- [ ] **Step 4:** "Assigned to this class" block in `student-detail.js`.
-- [ ] **Step 5:** Assignment columns in `classroom-export.js`, under the existing "Not a grade." footer.
-- [ ] **Step 6:** Styles. Every mark must survive greyscale.
-- [ ] **Step 7:** Commit.
+- [x] **Step 1:** Assignments section and create form in `classroom.html`.
+- [x] **Step 2:** Unit access section: three radios, ten checkboxes in manual mode, copy stating free-roam does not cancel assignments.
+- [x] **Step 3:** Render both in `classroom-dashboard.js`; add the grid overlay (`!` past due not done, `~` done late) and the assignment scope.
+- [x] **Step 4:** "Assigned to this class" block in `student-detail.js`.
+- [x] **Step 5:** Assignment columns in `classroom-export.js`, under the existing "Not a grade." footer.
+- [x] **Step 6:** Styles. Every mark must survive greyscale.
+- [x] **Step 7:** Commit.
 
 ---
 
 ### Task 8: verification
 
-- [ ] **Step 1:** `npm test`, expect PASS.
-- [ ] **Step 2:** `npm run test:rules`, expect PASS.
-- [ ] **Step 3:** Browser verification with `.claude/skills/webapp-testing`, served by `npm run serve`. Walk the nine numbered scenarios in the design doc's Testing section.
-- [ ] **Step 4:** Commit.
+- [x] **Step 1:** `npm test`, expect PASS.
+- [x] **Step 2:** `npm run test:rules`, expect PASS.
+- [x] **Step 3:** Browser verification with `.claude/skills/webapp-testing`, served by `npm run serve`. Walk the nine numbered scenarios in the design doc's Testing section.
+- [x] **Step 4:** Commit.

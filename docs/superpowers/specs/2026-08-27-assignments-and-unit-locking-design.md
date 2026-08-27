@@ -380,9 +380,13 @@ future change to it.
 **Rules (`npm run test:rules`, against the emulator).** The cases listed under Rules
 above.
 
-**Browser (`.claude/skills/webapp-testing`, served with `npm run serve`).** The brief
-names `scripts/with_server.py`; it does not exist in this repo, and `npm run serve` is
-the helper.
+**Browser (`.claude/skills/webapp-testing`).** Driven by
+`.claude/skills/webapp-testing/scripts/with_server.py` over `python3 -m http.server`.
+Scenarios 4 to 9 need no Firebase at all, because the property under test is what
+happens when the policy is absent, arrives late, or never arrives, and the page is
+driven by dispatching `pypath:policy` directly. They are scripted in
+`tests/browser/unit-lock-policy.py`. Scenarios 1 to 3 and 7 need a signed-in teacher
+and a seeded class, so they stay manual against the emulators.
 
 1. Teacher creates an assignment for unit 3 and a unit-4 lesson due tomorrow. It appears
    in the list with the right required items.
