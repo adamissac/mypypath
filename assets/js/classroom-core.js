@@ -505,18 +505,20 @@
     return attempted ? passed / attempted : null;
   }
 
-  /* Answers an AI second opinion flagged. Only ever recorded where the flag was
-     something other than none, so a wrong but genuine attempt never lands here:
-     that is between the learner and the lesson. */
+  /* Written answers that cleared the substance floor but did not mention any
+     of the ideas the lesson's author said a good answer touches.
+     
+     Note what this is not: it is not a judgement that the answer is wrong. It
+     is "none of the words we expected appeared", which is a fact about a
+     string, and a thoughtful answer in unexpected words lands here too. That
+     is why three of them make a row and one makes nothing. */
   function flaggedAnswers(events) {
     return (events || []).filter(function (e) {
-      if (e.type !== 'answer.submitted') return false;
-      var flag = payloadOf(e).aiFlag;
-      return !!flag && flag !== 'none';
+      return e.type === 'answer.submitted' && payloadOf(e).missedConcepts === true;
     }).map(function (e) {
       return {
         lessonPath: e.lessonPath || payloadOf(e).lessonPath || '',
-        flag: payloadOf(e).aiFlag,
+        itemId: payloadOf(e).itemId || '',
         at: toMillis(e.at)
       };
     });
@@ -573,16 +575,14 @@
         });
       }
 
-      /* Answers a second opinion flagged as not engaging with the question.
-         Priority 1, above idle and concept and below stuck: a student filling
-         boxes to get past them is a conversation worth having sooner than a
-         quiet week, and later than one visibly stuck on the same exercise.
+      /* Written answers that did not mention any of the ideas the lesson was
+         about. Priority 1, above a quiet week and below being visibly stuck on
+         one exercise.
 
          Wording rule as everywhere else in this function: describe what
-         happened, never what the student is. "Did not answer the question
-         asked" is a thing that happened. "Disengaged" is a label, and a
-         dashboard that hands a teacher one has changed how they see a
-         fourteen-year-old on the strength of a machine's opinion. */
+         happened, never what the student is. "Did not mention any of the ideas
+         the lesson covered" is a thing that happened, and it is also literally
+         all that was measured. */
       var flagged = flaggedAnswers(events);
       if (flagged.length >= AI_FLAG_RUN) {
         rows.push({
@@ -590,7 +590,8 @@
           displayName: name,
           kind: 'flagged',
           priority: 1,
-          reason: flagged.length + ' written answers did not address the question asked',
+          reason: flagged.length + ' written answers did not mention any of the '
+            + 'ideas the lesson covered',
           nextStep: 'Read one of them with them and ask what they were going for',
           lessonPath: flagged[flagged.length - 1].lessonPath
         });
@@ -886,11 +887,11 @@
       + 'everyone. Assignments are unaffected by all three, so an open course '
       + 'still owes whatever you set, and a unit you assign is always reachable '
       + 'even if the mode would otherwise keep it shut.',
-    flagged: 'Three or more written answers where a second-opinion check said '
-      + 'the answer did not address the question asked. That check is a model '
-      + 'reading text a browser sent, not a marker: it is a second opinion, not '
-      + 'an authority, and it is wrong sometimes. Treat it as a reason to read '
-      + 'one of the answers, never as a verdict. You can override any of them.',
+    flagged: 'Three or more written answers that contained none of the words '
+      + 'the lesson author listed as ideas a good answer touches. That is all '
+      + 'this measures: it is a word check, not a marker, and a thoughtful '
+      + 'answer written in unexpected words counts here too. Read one of them '
+      + 'before concluding anything.',
     trust: 'These events are recorded by each student\'s own browser. They are a '
       + 'record of what the site saw, not proof of what happened, and a determined '
       + 'student could send something untrue. Use them to decide who to talk to, '

@@ -508,17 +508,6 @@ def normalize_scripts(html: str, path: Path) -> str:
             1,
         )
 
-    # auth-token.js hands a Firebase ID token to the grading endpoint. An ES
-    # module, because auth.js is one and a classic script cannot import it; the
-    # bridge is a single function on window that lesson-progress.js reads.
-    if 'assets/js/auth-token.js' not in html and 'assets/js/sync.js' in html:
-        html = html.replace(
-            '<script type="module" src="/assets/js/sync.js"></script>',
-            '<script type="module" src="/assets/js/sync.js"></script>\n'
-            '    <script type="module" src="/assets/js/auth-token.js"></script>',
-            1,
-        )
-
     if 'assets/js/username.js' not in html and 'merge.js' in html:
         html = html.replace(
             '<script defer src="/assets/js/merge.js"></script>',
@@ -572,7 +561,7 @@ def normalize_scripts(html: str, path: Path) -> str:
     # new kinds, and lesson-progress.js asks the floor whether a reflection
     # counts. Both no-op when absent, which is the behaviour that shipped
     # before either existed.
-    for name in ('question-types', 'question-render', 'reflection-check', 'ai-grade'):
+    for name in ('question-types', 'question-render', 'reflection-check'):
         tag = f'<script defer src="/assets/js/{name}.js"></script>'
         if tag not in html and 'classroom-policy.js' in html:
             html = html.replace(
