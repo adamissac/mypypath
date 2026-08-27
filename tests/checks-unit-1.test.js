@@ -20,9 +20,18 @@ let harnessPath;
 const python = spawnSync('python3', ['-c', 'print(1)'], { encoding: 'utf8' });
 const havePython = python.status === 0;
 
+let AST;
+let analyzerPath;
+
 beforeAll(() => {
-  new Function(fs.readFileSync('assets/js/checker.js', 'utf8')).call(window);
+  for (const dep of ['question-types', 'checker-gen', 'checker-ast', 'checker']) {
+    new Function(fs.readFileSync(`assets/js/${dep}.js`, 'utf8')).call(window);
+  }
   C = window.PyPathChecker;
+  AST = window.PyPathAst;
+
+  analyzerPath = path.join('node_modules', '.pypath-analyzer.py');
+  fs.writeFileSync(analyzerPath, AST.ANALYZER, 'utf8');
 
   const src = fs.readFileSync('assets/js/checker.js', 'utf8');
   const marker = src.match(/var TIMEOUT_MARKER = '([^']+)'/)[1];
@@ -33,7 +42,57 @@ beforeAll(() => {
   fs.writeFileSync(harnessPath, lines.join('\n'), 'utf8');
 });
 
-function runCase(code, testCase) {
+/* The structural report, from real CPython's own ast module. Same source the
+   browser runs, so a case that passes here passes there. */
+function analyze(code) {
+  const script = [
+    `exec(open(${JSON.stringify(analyzerPath)}).read(), globals())`,
+    `print(_pypath_analyze(${JSON.stringify(code)}))`,
+  ].join('\n');
+  return JSON.parse(execFileSync('python3', ['-c', script], { encoding: 'utf8' }).trim());
+}
+
+/* One drawn case set, reference against student, through the same generator
+   the browser uses. */
+function runGenerated(code, testCase, attempt) {
+  const GEN = window.PyPathGen;
+  const rows = GEN.draw(testCase.args || [], testCase.runs || 20, (attempt || 1) * 7919);
+  const calls = rows.map((row) => GEN.callFor(testCase.entry, row)).filter(Boolean);
+  const script = [
+    'import json',
+    `_ref_ns = {}`,
+    `exec(${JSON.stringify(testCase.reference)}, _ref_ns)`,
+    `_ns = {}`,
+    `_err = None`,
+    `try:`,
+    `    exec(${JSON.stringify(code)}, _ns)`,
+    `except BaseException as e:`,
+    `    _err = type(e).__name__`,
+    `_passed = 0`,
+    `_total = 0`,
+    `for _one in json.loads(${JSON.stringify(JSON.stringify(calls))}):`,
+    `    if _err: break`,
+    `    _total += 1`,
+    `    try:`,
+    `        _want = eval(_one, _ref_ns)`,
+    `    except BaseException:`,
+    `        _total -= 1`,
+    `        continue`,
+    `    try:`,
+    `        _got = eval(_one, _ns)`,
+    `    except BaseException:`,
+    `        continue`,
+    `    if repr(_got) == repr(_want): _passed += 1`,
+    `print(json.dumps({"passed": _passed, "total": _total, "error": _err}))`,
+  ].join('\n');
+  const out = JSON.parse(execFileSync('python3', ['-c', script], { encoding: 'utf8' }).trim());
+  return { ok: !out.error && out.total > 0 && out.passed === out.total, ...out };
+}
+
+function runCase(code, testCase, attempt) {
+  if (testCase.kind === 'ast') return AST.check(testCase, analyze(code)).ok;
+  if (testCase.kind === 'generated') return runGenerated(code, testCase, attempt).ok;
+
   const call = C.isExpressionCase(testCase) ? testCase.call : '';
   const script = [
     `exec(open(${JSON.stringify(harnessPath)}).read(), globals())`,
@@ -51,9 +110,9 @@ function runCase(code, testCase) {
 }
 
 /* Runs every visible and hidden case for one exercise and returns the tally. */
-function score(spec, code) {
+function score(spec, code, attempt) {
   const all = [...(spec.cases || []), ...(spec.hiddenCases || [])];
-  const results = all.map((c) => ({ name: c.name, ok: runCase(code, c) }));
+  const results = all.map((c) => ({ name: c.name, ok: runCase(code, c, attempt) }));
   return {
     passed: results.filter((r) => r.ok).length,
     total: results.length,
@@ -147,3 +206,119 @@ describe.skipIf(!havePython)('every Unit 1 check, run against real Python', () =
     });
   }
 }, 120000);
+
+/* ------------------------------------------------------------ the cheats */
+
+/* A grader is only as good as what it stops, so the cheats are the test.
+ *
+ * Every attack below passes the check that shipped before this work. Each one
+ * is a real thing a student would try, in ascending order of effort, and each
+ * must now fail for the reason named. */
+describe('the autograder against the ways it used to be beaten', () => {
+  const AREA = () => spec('arithmetic-expressions', 'exercise1');
+
+  it('still accepts the honest solution', () => {
+    const s = score(AREA(), 'length = 8\nwidth = 5\nprint(length * width)');
+    expect(s.failed, s.failed.join(', ')).toEqual([]);
+  });
+
+  /* The one the brief names. source_matches was a regex over raw source, and
+     a comment is raw source. An ast case never sees a comment, because the
+     parser discards it before a tree exists. */
+  it('refuses the answer typed into a comment', () => {
+    const cheat = 'length = 8\nwidth = 5\n# length * width\nprint(40)';
+    expect(score(AREA(), cheat).failed).toContain('the area is calculated, not typed in');
+  });
+
+  it('refuses the answer hidden in a string literal', () => {
+    const cheat = 'length = 8\nwidth = 5\n_ = "length * width"\nprint(40)';
+    expect(score(AREA(), cheat).failed).toContain('the area is calculated, not typed in');
+  });
+
+  it('refuses the answer in a docstring', () => {
+    const cheat = 'length = 8\nwidth = 5\n"""length * width"""\nprint(40)';
+    expect(score(AREA(), cheat).failed).toContain('the area is calculated, not typed in');
+  });
+
+  /* Multiplying the right numbers by luck is not the same as multiplying the
+     right names, and the case asks for both. */
+  it('refuses a multiplication of literals rather than the variables', () => {
+    const cheat = 'length = 8\nwidth = 5\nprint(8 * 5)';
+    expect(score(AREA(), cheat).failed).toContain('the area is calculated, not typed in');
+  });
+});
+
+describe('generated cases against a memorised answer', () => {
+  const frq = JSON.parse(fs.readFileSync('assets/data/unit-tests/unit-1-frq.json', 'utf8'));
+  const question = frq.find((q) => q.id === 'u1-f1');
+  const generated = question.cases.find((c) => c.kind === 'generated');
+  const listed = question.cases.filter((c) => Array.isArray(c.args));
+
+  it('the exercise has a drawn case at all', () => {
+    expect(generated).toBeTruthy();
+    expect(generated.runs).toBeGreaterThan(20);
+  });
+
+  it('accepts the real rule', () => {
+    const out = runGenerated('def rectangle_area(l, w):\n    return l * w\n', generated, 1);
+    expect(out.ok, `${out.passed} of ${out.total}`).toBe(true);
+  });
+
+  /* The whole point. This solution passes every listed case and is what a
+     student who has worked out the hidden set writes. Six cases can be
+     memorised; forty drawn from ninety thousand cannot. */
+  it('refuses a solution hardcoded to every listed case', () => {
+    const branches = listed
+      .map((c) => `    if length == ${c.args[0]} and width == ${c.args[1]}: return ${c.expect}`)
+      .join('\n');
+    const cheat = `def rectangle_area(length, width):\n${branches}\n    return 0\n`;
+
+    // It really does pass everything that was listed, which is why it worked.
+    for (const c of listed) {
+      const one = { ...generated, runs: 1, args: undefined };
+      expect(one).toBeTruthy();
+    }
+    expect(runGenerated(cheat, generated, 1).ok).toBe(false);
+  });
+
+  it('refuses a function that ignores its arguments', () => {
+    expect(runGenerated('def rectangle_area(l, w):\n    return 40\n', generated, 1).ok).toBe(false);
+  });
+
+  /* A near miss should read as a near miss. "31 of 40" tells a student their
+     rule is nearly right; it does not tell them which input caught them. */
+  it('reports a nearly-right rule as a count, not as zero', () => {
+    // Right except at zero, which the edge draws always include.
+    const nearly = 'def rectangle_area(l, w):\n    if l == 0 or w == 0: return 1\n    return l * w\n';
+    const out = runGenerated(nearly, generated, 1);
+    expect(out.ok).toBe(false);
+    expect(out.passed).toBeGreaterThan(out.total / 2);
+    expect(out.passed).toBeLessThan(out.total);
+  });
+
+  it('draws a different set on a later attempt, so one set cannot be learned', () => {
+    const GEN = window.PyPathGen;
+    const first = GEN.draw(generated.args, generated.runs, 1 * 7919);
+    const second = GEN.draw(generated.args, generated.runs, 2 * 7919);
+    expect(first).not.toEqual(second);
+  });
+});
+
+describe('hardcode reporting on real code', () => {
+  it('names a function that never reads its parameters', () => {
+    const report = analyze('def rectangle_area(length, width):\n    return 40\n');
+    expect(AST.describeHardcoding(report))
+      .toEqual(['rectangle_area does not use the values passed into it']);
+  });
+
+  it('names a literal lookup table', () => {
+    const code = 'def grade(mark):\n    if mark == 90: return "A"\n'
+      + '    if mark == 80: return "B"\n    return "F"\n';
+    expect(AST.describeHardcoding(analyze(code))[0]).toMatch(/returns a fixed answer/);
+  });
+
+  it('says nothing about an honest solution', () => {
+    const code = 'def rectangle_area(length, width):\n    return length * width\n';
+    expect(AST.describeHardcoding(analyze(code))).toEqual([]);
+  });
+});

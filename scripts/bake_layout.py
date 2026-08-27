@@ -561,7 +561,8 @@ def normalize_scripts(html: str, path: Path) -> str:
     # new kinds, and lesson-progress.js asks the floor whether a reflection
     # counts. Both no-op when absent, which is the behaviour that shipped
     # before either existed.
-    for name in ('question-types', 'question-render', 'reflection-check'):
+    for name in ('question-types', 'question-render', 'reflection-check',
+                 'concept-check', 'checker-gen', 'checker-ast'):
         tag = f'<script defer src="/assets/js/{name}.js"></script>'
         if tag not in html and 'classroom-policy.js' in html:
             html = html.replace(

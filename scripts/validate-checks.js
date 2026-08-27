@@ -22,6 +22,125 @@ const PROPERTY_KEYS = ['nonempty', 'min_lines', 'max_lines', 'stdout_matches', '
    lists agree, so they cannot drift. */
 export const QUESTION_KINDS = ['mcq', 'multi', 'match', 'order', 'blank'];
 
+/* Mirrors the case kinds checker.js can run. The two new ones cannot be
+   inferred from shape the way the older three can, so an author who mistypes
+   `kind` gets a case that silently grades as something else unless this catches
+   it. That is the whole reason the discriminator exists. */
+export const CASE_KINDS = ['stdout', 'value', 'property', 'generated', 'ast'];
+
+const AST_KEYS = ['loops', 'conditionals', 'functions', 'calls', 'binop',
+  'names', 'returns', 'imports'];
+
+const ARG_TYPES = ['int', 'float', 'str', 'bool', 'list', 'choice'];
+
+function validateArgSpec(spec, where, errors) {
+  if (!spec || typeof spec !== 'object') {
+    errors.push(`${where}: each arg needs a type`);
+    return;
+  }
+  if (!ARG_TYPES.includes(spec.type)) {
+    errors.push(`${where}: type "${spec.type}" is not one of ${ARG_TYPES.join(', ')}`);
+    return;
+  }
+  if (spec.type === 'choice' && (!Array.isArray(spec.values) || !spec.values.length)) {
+    errors.push(`${where}: a choice arg needs a non-empty values list`);
+  }
+  if (spec.type === 'list') validateArgSpec(spec.of || { type: 'int' }, `${where}.of`, errors);
+  if (spec.min !== undefined && spec.max !== undefined && Number(spec.min) > Number(spec.max)) {
+    errors.push(`${where}: min is above max, so nothing can be drawn`);
+  }
+}
+
+function validateCase(testCase, where, errors) {
+  const kind = testCase.kind;
+  if (kind !== undefined && !CASE_KINDS.includes(kind)) {
+    errors.push(`${where}: kind "${kind}" is not one of ${CASE_KINDS.join(', ')}`);
+    return;
+  }
+
+  if (kind === 'generated') {
+    // Without a reference there is no oracle, and the case would report every
+    // student as wrong rather than failing loudly here.
+    if (typeof testCase.reference !== 'string' || !testCase.reference.trim()) {
+      errors.push(`${where}: a generated case needs a reference solution`);
+    }
+    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(String(testCase.entry || ''))) {
+      errors.push(`${where}: a generated case needs an entry function name`);
+    } else if (testCase.reference && !testCase.reference.includes(testCase.entry)) {
+      // The reference has to define the same name the student's code does, or
+      // the two are being asked different questions.
+      errors.push(`${where}: the reference does not define ${testCase.entry}`);
+    }
+    if (!Array.isArray(testCase.args)) {
+      errors.push(`${where}: a generated case needs an args list, even an empty one`);
+    } else {
+      testCase.args.forEach((a, i) => validateArgSpec(a, `${where}.args[${i}]`, errors));
+    }
+    if (testCase.runs !== undefined
+        && (!Number.isInteger(testCase.runs) || testCase.runs < 1)) {
+      errors.push(`${where}: runs must be a whole number of cases`);
+    }
+  }
+
+  if (kind === 'ast') {
+    const requires = testCase.requires || {};
+    const forbids = testCase.forbids || {};
+    if (!Object.keys(requires).length && !Object.keys(forbids).length
+        && testCase.max_nesting === undefined) {
+      errors.push(`${where}: an ast case that requires and forbids nothing checks nothing`);
+    }
+    for (const source of [requires, forbids]) {
+      for (const key of Object.keys(source)) {
+        if (!AST_KEYS.includes(key)) {
+          errors.push(`${where}: "${key}" is not one of ${AST_KEYS.join(', ')}`);
+        }
+      }
+    }
+    if (!testCase.describe) {
+      // The describe is what a student is shown; without it the failure reads
+      // as "code matching the exercise", which tells them nothing.
+      errors.push(`${where}: an ast case needs a describe, or its failure says nothing`);
+    }
+  }
+}
+
+/* What a lesson's author says a good written answer touches. Optional
+   throughout: almost every lesson has none, and that is a normal state. */
+function validateReflections(spec, rel, errors) {
+  const reflections = spec.reflections;
+  if (reflections === undefined) return;
+  if (!reflections || typeof reflections !== 'object' || Array.isArray(reflections)) {
+    errors.push(`${rel} / reflections: expected an object keyed by reflection id`);
+    return;
+  }
+  for (const [id, entry] of Object.entries(reflections)) {
+    const where = `${rel} / reflections.${id}`;
+    if (!/^reflection\d+$/.test(id)) {
+      errors.push(`${where}: id should match a reflection input on the page`);
+    }
+    if (!Array.isArray(entry.expect_any) || !entry.expect_any.length) {
+      errors.push(`${where}: needs an expect_any list of synonym groups`);
+      continue;
+    }
+    entry.expect_any.forEach((group, i) => {
+      if (!Array.isArray(group) || !group.length) {
+        errors.push(`${where}.expect_any[${i}]: each group is a list of phrasings`);
+      } else if (group.some((phrase) => typeof phrase !== 'string' || !phrase.trim())) {
+        errors.push(`${where}.expect_any[${i}]: every phrasing must be text`);
+      }
+    });
+    if (entry.min_concepts !== undefined
+        && (!Number.isInteger(entry.min_concepts) || entry.min_concepts < 1)) {
+      errors.push(`${where}: min_concepts must be a whole number of groups`);
+    }
+    if (!entry.hint) {
+      // Without a hint a miss shows the learner nothing at all, which is worse
+      // than not checking: they are told to try again with no idea what for.
+      errors.push(`${where}: needs a hint, or a miss shows the learner nothing`);
+    }
+  }
+}
+
 /* What each kind needs to be answerable at all. An unanswerable question is
    worse than no question: the learner reads the explanation for an option that
    was never right and learns something untrue. */
@@ -169,10 +288,21 @@ export function validateChecks() {
         }
       }
 
+      validateReflections(spec, rel, errors);
+
       for (const [exerciseId, entry] of Object.entries(spec)) {
         // `questions` is the checks-for-understanding key and lives alongside
         // the exercise ids rather than under one; it is validated above.
-        if (exerciseId === 'questions') continue;
+        // `reflections` likewise.
+        if (exerciseId === 'questions' || exerciseId === 'reflections') continue;
+
+        for (const bucket of ['cases', 'hiddenCases']) {
+          const list = entry && entry[bucket];
+          if (!Array.isArray(list)) continue;
+          list.forEach((testCase, i) => {
+            validateCase(testCase || {}, `${rel} / ${exerciseId}.${bucket}[${i}]`, errors);
+          });
+        }
 
         if (!lesson.exercises.includes(exerciseId) && !lesson.editors.includes(exerciseId)) {
           errors.push(
@@ -196,8 +326,12 @@ export function validateChecks() {
             const isExpression = typeof c.call === 'string' && c.call.length > 0;
             const isStdout = typeof c.expect_stdout === 'string';
             const isProperty = PROPERTY_KEYS.some((k) => k in c);
+            // The two kinds that carry no property key and no call. They are
+            // checked in full by validateCase above; here they only need to
+            // not be mistaken for a case with nothing in it.
+            const isDeclared = c.kind === 'generated' || c.kind === 'ast';
 
-            if (!isExpression && !isStdout && !isProperty) {
+            if (!isExpression && !isStdout && !isProperty && !isDeclared) {
               errors.push(
                 `${where}: needs one of expect_stdout, call+expect, or a property ` +
                   `(${PROPERTY_KEYS.join(', ')})`
