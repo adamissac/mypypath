@@ -16,6 +16,92 @@ const CHECKS_DIR = path.join(ROOT, 'assets', 'data', 'checks');
 
 const PROPERTY_KEYS = ['nonempty', 'min_lines', 'max_lines', 'stdout_matches', 'source_matches'];
 
+/* Mirrors QUESTION_KINDS in assets/js/question-types.js. Repeated rather than
+   imported because that file is a browser global with no export, the same way
+   classroom-core.js repeats the unit-test pass mark. A test asserts the two
+   lists agree, so they cannot drift. */
+export const QUESTION_KINDS = ['mcq', 'multi', 'match', 'order', 'blank'];
+
+/* What each kind needs to be answerable at all. An unanswerable question is
+   worse than no question: the learner reads the explanation for an option that
+   was never right and learns something untrue. */
+function validateQuestionKind(q, where, errors) {
+  const kind = q.kind === undefined ? 'mcq' : q.kind;
+  if (!QUESTION_KINDS.includes(kind)) {
+    errors.push(`${where}: kind "${q.kind}" is not one of ${QUESTION_KINDS.join(', ')}`);
+    return;
+  }
+
+  if (kind === 'mcq' || kind === 'multi') {
+    if (!Array.isArray(q.choices) || q.choices.length < 2) {
+      errors.push(`${where}: needs at least two choices`);
+      return;
+    }
+    if (new Set(q.choices).size !== q.choices.length) {
+      errors.push(`${where}: has two identical choices`);
+    }
+  }
+
+  if (kind === 'mcq') {
+    // Singular `answer` on a multi-select would silently accept one box, so
+    // the two are kept apart here rather than left to the scorer.
+    if ('answers' in q) errors.push(`${where}: mcq takes answer, not answers`);
+    if (!Number.isInteger(q.answer) || q.answer < 0 || q.answer >= (q.choices || []).length) {
+      errors.push(`${where}: answer ${q.answer} is not one of the ` +
+        `${(q.choices || []).length} choices`);
+    }
+  }
+
+  if (kind === 'multi') {
+    if ('answer' in q) errors.push(`${where}: multi takes answers, not answer`);
+    if (!Array.isArray(q.answers) || !q.answers.length) {
+      errors.push(`${where}: multi needs an answers list`);
+    } else if (q.answers.some((a) => !Number.isInteger(a) || a < 0 || a >= q.choices.length)) {
+      errors.push(`${where}: an answer is not one of the ${q.choices.length} choices`);
+    } else if (q.answers.length === q.choices.length) {
+      // Every box correct is a question with nothing to judge.
+      errors.push(`${where}: every choice is correct, so there is nothing to decide`);
+    }
+  }
+
+  if (kind === 'match') {
+    if (!Array.isArray(q.left) || !Array.isArray(q.right) || q.left.length < 2) {
+      errors.push(`${where}: match needs a left and a right list, with at least two rows`);
+    } else if (!Array.isArray(q.answer) || q.answer.length !== q.left.length) {
+      errors.push(`${where}: match needs one answer per left item`);
+    } else if (q.answer.some((a) => !Number.isInteger(a) || a < 0 || a >= q.right.length)) {
+      errors.push(`${where}: a pairing points outside the right-hand list`);
+    }
+  }
+
+  if (kind === 'order') {
+    if (!Array.isArray(q.items) || q.items.length < 2) {
+      errors.push(`${where}: order needs at least two items`);
+    } else if (!Array.isArray(q.answer) || q.answer.length !== q.items.length) {
+      errors.push(`${where}: order needs one answer index per item`);
+    } else if (new Set(q.answer).size !== q.answer.length
+        || q.answer.some((a) => !Number.isInteger(a) || a < 0 || a >= q.items.length)) {
+      errors.push(`${where}: the answer is not a permutation of the items`);
+    }
+  }
+
+  if (kind === 'blank') {
+    if (!Array.isArray(q.blanks) || !q.blanks.length) {
+      errors.push(`${where}: blank needs a blanks list`);
+      return;
+    }
+    q.blanks.forEach((b, i) => {
+      if (!b || !Array.isArray(b.accept) || !b.accept.length) {
+        errors.push(`${where}: blanks[${i}] has nothing in accept`);
+      }
+    });
+    const gaps = String(q.prompt || '').split('___').length - 1;
+    if (gaps !== q.blanks.length) {
+      errors.push(`${where}: prompt has ${gaps} gap(s) but ${q.blanks.length} blank(s)`);
+    }
+  }
+}
+
 export function validateChecks() {
   const manifest = JSON.parse(
     fs.readFileSync(path.join(ROOT, 'assets', 'data', 'curriculum.json'), 'utf8')
@@ -75,17 +161,7 @@ export function validateChecks() {
             else seen.add(q.id);
 
             if (!q.prompt) errors.push(`${where}: no prompt`);
-            if (!Array.isArray(q.choices) || q.choices.length < 2) {
-              errors.push(`${where}: needs at least two choices`);
-            } else {
-              if (new Set(q.choices).size !== q.choices.length) {
-                errors.push(`${where}: has two identical choices`);
-              }
-              if (!Number.isInteger(q.answer) || q.answer < 0 || q.answer >= q.choices.length) {
-                errors.push(`${where}: answer ${q.answer} is not one of the ` +
-                  `${q.choices.length} choices`);
-              }
-            }
+            validateQuestionKind(q, where, errors);
             if (!q.explain) {
               errors.push(`${where}: no explanation, so a wrong answer teaches nothing`);
             }
