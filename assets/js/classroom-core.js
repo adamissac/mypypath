@@ -30,6 +30,11 @@
 
   var IDLE_DAYS = 7;
 
+  /* Two flagged answers is a coincidence often enough to be worth ignoring.
+     By the third it is a pattern, and the same reasoning as STUCK_ATTEMPTS
+     above: a dashboard that flags one of anything is a dashboard nobody reads. */
+  var AI_FLAG_RUN = 3;
+
   /* Mirrors PASS_MARK in unit-test.js, the same way lesson-progress.js does.
      Neither file is loaded on a dashboard, and a teacher still has to be told
      whether a unit test was passed, so the number is repeated rather than
@@ -500,6 +505,23 @@
     return attempted ? passed / attempted : null;
   }
 
+  /* Answers an AI second opinion flagged. Only ever recorded where the flag was
+     something other than none, so a wrong but genuine attempt never lands here:
+     that is between the learner and the lesson. */
+  function flaggedAnswers(events) {
+    return (events || []).filter(function (e) {
+      if (e.type !== 'answer.submitted') return false;
+      var flag = payloadOf(e).aiFlag;
+      return !!flag && flag !== 'none';
+    }).map(function (e) {
+      return {
+        lessonPath: e.lessonPath || payloadOf(e).lessonPath || '',
+        flag: payloadOf(e).aiFlag,
+        at: toMillis(e.at)
+      };
+    });
+  }
+
   function lastEventAt(events) {
     return (events || []).reduce(function (acc, e) {
       var at = toMillis(e.at);
@@ -548,6 +570,29 @@
           reason: 'No activity for ' + idleDays + ' days',
           nextStep: 'Ask where they got to and what stopped them',
           lessonPath: lastLessonPath(events)
+        });
+      }
+
+      /* Answers a second opinion flagged as not engaging with the question.
+         Priority 1, above idle and concept and below stuck: a student filling
+         boxes to get past them is a conversation worth having sooner than a
+         quiet week, and later than one visibly stuck on the same exercise.
+
+         Wording rule as everywhere else in this function: describe what
+         happened, never what the student is. "Did not answer the question
+         asked" is a thing that happened. "Disengaged" is a label, and a
+         dashboard that hands a teacher one has changed how they see a
+         fourteen-year-old on the strength of a machine's opinion. */
+      var flagged = flaggedAnswers(events);
+      if (flagged.length >= AI_FLAG_RUN) {
+        rows.push({
+          uid: student.uid,
+          displayName: name,
+          kind: 'flagged',
+          priority: 1,
+          reason: flagged.length + ' written answers did not address the question asked',
+          nextStep: 'Read one of them with them and ask what they were going for',
+          lessonPath: flagged[flagged.length - 1].lessonPath
         });
       }
 
@@ -841,6 +886,11 @@
       + 'everyone. Assignments are unaffected by all three, so an open course '
       + 'still owes whatever you set, and a unit you assign is always reachable '
       + 'even if the mode would otherwise keep it shut.',
+    flagged: 'Three or more written answers where a second-opinion check said '
+      + 'the answer did not address the question asked. That check is a model '
+      + 'reading text a browser sent, not a marker: it is a second opinion, not '
+      + 'an authority, and it is wrong sometimes. Treat it as a reason to read '
+      + 'one of the answers, never as a verdict. You can override any of them.',
     trust: 'These events are recorded by each student\'s own browser. They are a '
       + 'record of what the site saw, not proof of what happened, and a determined '
       + 'student could send something untrue. Use them to decide who to talk to, '
@@ -867,6 +917,7 @@
     percentComplete: percentComplete,
     attemptsByExercise: attemptsByExercise,
     firstTryRate: firstTryRate,
+    flaggedAnswers: flaggedAnswers,
     lastEventAt: lastEventAt,
     needsAttention: needsAttention,
     classSummary: classSummary,

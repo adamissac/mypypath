@@ -558,3 +558,63 @@ describe('assignmentUnlocks', () => {
     expect(K.assignmentUnlocks([], NOW)).toEqual([]);
   });
 });
+
+/* ------------------------------------------------------- flagged answers */
+
+describe('flaggedAnswers', () => {
+  const flagged = (d, flag, p) =>
+    ev('answer.submitted', d, { lessonPath: p || L1, aiFlag: flag });
+
+  it('records only answers a second opinion actually flagged', () => {
+    const events = [flagged(3, 'off-topic'), flagged(2, 'none'), flagged(1, null),
+      ev('code.run', 1, {})];
+    expect(K.flaggedAnswers(events).length).toBe(1);
+    expect(K.flaggedAnswers(events)[0].flag).toBe('off-topic');
+  });
+
+  it('reads no events at all as nothing flagged', () => {
+    expect(K.flaggedAnswers([])).toEqual([]);
+    expect(K.flaggedAnswers(null)).toEqual([]);
+  });
+});
+
+describe('needsAttention on flagged answers', () => {
+  const flagged = (d, p) =>
+    ev('answer.submitted', d, { lessonPath: p || L1, aiFlag: 'placeholder' });
+  const student = (events) => ({ uid: 'a', displayName: 'ann', events });
+
+  /* One of anything is not a pattern, and a dashboard that flags one is a
+     dashboard nobody reads. */
+  it('says nothing about one or two flagged answers', () => {
+    const rows = K.needsAttention([student([flagged(3), flagged(2)])], { now: NOW });
+    expect(rows.filter((r) => r.kind === 'flagged')).toEqual([]);
+  });
+
+  it('raises a row at three', () => {
+    const rows = K.needsAttention([student([flagged(3), flagged(2), flagged(1)])], { now: NOW });
+    const row = rows.filter((r) => r.kind === 'flagged')[0];
+    expect(row).toBeTruthy();
+    expect(row.reason).toMatch(/did not address the question/);
+  });
+
+  /* The rule the whole file is written to. A machine's opinion is not a
+     licence to hand a teacher a word for a fourteen-year-old. */
+  it('describes what happened rather than what the student is', () => {
+    const rows = K.needsAttention([student([flagged(3), flagged(2), flagged(1)])], { now: NOW });
+    const row = rows.filter((r) => r.kind === 'flagged')[0];
+    expect(row.reason).not.toMatch(/lazy|disengaged|careless|poor|weak/i);
+    expect(row.nextStep).toMatch(/ask|read/i);
+  });
+
+  it('sits above a quiet week and below being visibly stuck', () => {
+    const rows = K.needsAttention([student([flagged(3), flagged(2), flagged(1)])], { now: NOW });
+    const row = rows.filter((r) => r.kind === 'flagged')[0];
+    expect(row.priority).toBeGreaterThan(0);
+    expect(row.priority).toBeLessThan(3);
+  });
+
+  it('carries the honesty caveat in its own words', () => {
+    expect(K.EXPLANATIONS.flagged).toMatch(/second opinion, not/i);
+    expect(K.EXPLANATIONS.flagged).toMatch(/wrong sometimes|override/i);
+  });
+});
