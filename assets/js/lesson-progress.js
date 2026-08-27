@@ -106,7 +106,21 @@
   // A teacher has the whole course open. The lock exists to keep a learner
   // moving in order; a teacher previewing unit 7 for tomorrow's class is not a
   // learner, and making them grind unit 1 first would be absurd.
-  function isUnitUnlocked(unit, completedUnits, teaching) {
+  //
+  // `policy` is optional and is the class's lock settings, or null when there
+  // are none to be had. Every caller that predates class lock modes passes
+  // three arguments, gets null, and gets exactly the answer it always got.
+  //
+  // It arrives as an argument rather than as a Firestore read inside this
+  // function on purpose. The function stays pure, stays synchronous, stays
+  // testable with no DOM, and keeps answering for a guest with no network. The
+  // read lives in class-policy.js, which announces pypath:policy when it lands.
+  function isUnitUnlocked(unit, completedUnits, teaching, policy) {
+    var POLICY = window.PyPathPolicy;
+    if (POLICY) return POLICY.resolveUnlocked(unit, policy || null, completedUnits, teaching);
+
+    // Degraded mode for a page where classroom-policy.js did not load, in the
+    // same spirit as the storage-key literals at the top of this file.
     var n = Number(unit);
     if (!Number.isInteger(n) || n < 1) return false;
     if (teaching === true) return true;
@@ -278,6 +292,11 @@
   }
 
   var required = [];
+
+  // The class's lock settings, once class-policy.js has read them. Null until
+  // then, and null forever for a guest or a learner in no class, which is the
+  // fail-open case isUnitUnlocked is built around.
+  var classPolicy = null;
 
   function doneIds() {
     var entry = readMap()[path];
@@ -476,7 +495,7 @@
   // this unit is not open yet and where to go instead.
   function insertLockNotice() {
     if (!curriculum || !unit) return;
-    if (isUnitUnlocked(unit, completedUnits(), teaching())) {
+    if (isUnitUnlocked(unit, completedUnits(), teaching(), classPolicy)) {
       // The role can resolve after the notice has already been painted, so
       // this clears one that a teacher should never have seen.
       removeNotice(document.querySelector('.unit-locked-notice'));
@@ -683,4 +702,14 @@
   // immediately; progress writes arrive in floods.
   document.addEventListener('pypath:progress', repaintSoon);
   document.addEventListener('pypath:role', repaint);
+
+  // The class's lock mode, arriving from class-policy.js one read after sign
+  // in. No timeout guards this the way gate.js guards auth: a policy that never
+  // arrives leaves classPolicy null, and null is already the sequential answer
+  // the page rendered with. Nothing has to be hidden while it is pending,
+  // because this lock prepends a notice and never removes the lesson.
+  document.addEventListener('pypath:policy', function (e) {
+    classPolicy = (e && e.detail && e.detail.policy) || null;
+    repaint();
+  });
 })();
