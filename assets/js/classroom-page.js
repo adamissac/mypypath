@@ -236,6 +236,13 @@ function render() {
 
   const body = qs('[data-class-rows]');
   if (body) {
+    // The whole legacy panel appears only when it has somebody in it. Shown to
+    // every teacher it was the first thing a new one saw, and it reads as the
+    // whole feature: a join code and a table of students, with assignments and
+    // unit access looking absent because they live in the panel above.
+    const legacy = qs('[data-cr-legacy]');
+    if (legacy) legacy.hidden = state.rows.length === 0;
+
     body.innerHTML = state.rows.length
       ? sorted(state.rows).map(rowHtml).join('')
       : `<tr><td colspan="9" class="admin-empty">No students yet. Share the join
