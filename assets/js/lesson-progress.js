@@ -668,7 +668,51 @@
     }
     var verdict = CHECK.assess(input.value, { prompt: promptFor(input) });
     sayWhy(input, verdict.ok ? '' : verdict.reason);
-    if (verdict.ok) markItem(input.id);
+    if (!verdict.ok) return;
+
+    // The floor decides whether this counts, synchronously and offline. It has
+    // already decided by the time the second opinion is asked for, and nothing
+    // below can take it back: everything in this codebase is a ratchet, and a
+    // verdict arriving over the network a second later is not the exception.
+    markItem(input.id);
+    askForSecondOpinion(input);
+  }
+
+  /* The AI second opinion, which is advice and never a grade here.
+   *
+   * Fire and forget: the learner has already been told their answer counts, so
+   * nothing waits on this, and every way it can fail resolves to a review that
+   * says a teacher will look. A guest, an offline page, a missing endpoint and
+   * a rate-limited account all reach the same place, which is the behaviour
+   * that shipped before this existed. */
+  function askForSecondOpinion(input) {
+    var AI = window.PyPathAiGrade;
+    var auth = window.PyPathAuthToken;
+    if (!AI || !auth || typeof auth.idToken !== 'function') return;
+
+    var answer = input.value;
+    Promise.resolve(auth.idToken())
+      .then(function (token) {
+        if (!token) return null;
+        return AI.grade({
+          kind: 'text',
+          prompt: promptFor(input),
+          submission: answer
+        }, token);
+      })
+      .then(function (result) {
+        if (!result) return;
+        // The learner may have kept typing. Advice about a paragraph they have
+        // already replaced is worse than no advice.
+        if (input.value !== answer) return;
+        if (result.verdict === 'review') return;
+        if (AI.needsAnotherGo(result) || result.verdict === 'partial') {
+          sayWhy(input, result.feedback);
+        }
+      })
+      .catch(function () {
+        // Already covered inside grade(); this is the belt for the braces.
+      });
   }
 
   function watchReflections() {

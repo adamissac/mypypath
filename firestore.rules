@@ -28,6 +28,24 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    // What the grading endpoint cost, by day.
+    //
+    // Volume and tokens, never who needed the most help: a per-student record
+    // of that has no upside and an obvious downside. Any signed-in learner
+    // appends to the day's tally, because the only alternative is a server
+    // with credentials, which is exactly what api/grade.js refuses to be.
+    match /aiUsage/{day} {
+      allow read: if isAdmin();
+      allow list: if false;
+      allow create, update: if signedIn()
+        && request.resource.data.keys().hasOnly(['calls', 'inputTokens', 'outputTokens', 'updatedAt'])
+        && request.resource.data.calls is int
+        // Monotonic, so a client cannot hide a day's spend by writing a
+        // smaller number over it.
+        && (resource == null || request.resource.data.calls >= resource.data.calls);
+      allow delete: if false;
+    }
+
     // A classroom join code. The document id is the code itself, so resolving
     // a code is a single get with no query and no way to enumerate.
     match /joinCodes/{code} {
@@ -66,8 +84,31 @@ service cloud.firestore {
       allow write: if isOwner(uid);
 
       match /state/{docId} {
+        // The AI grading cap lives at state/aiGrading and is the one document
+        // here a learner cannot write freely.
+        //
+        // api/grade.js has no Firebase credentials by design, so it cannot
+        // count anything itself. The count has to be enforced where a rule can
+        // see it, which is here. The rule permits exactly one shape of change:
+        // today's date, one higher than what is stored. A client cannot reset
+        // it by writing a smaller number or an older date.
+        //
+        // Say plainly what this is not: a learner with devtools can still burn
+        // their own allowance faster than intended. What they cannot do is
+        // exceed it, spend somebody else's, or call the endpoint at all
+        // without a valid token for an account that exists.
+        function validCounter() {
+          return request.resource.data.keys().hasOnly(['day', 'count', 'updatedAt'])
+            && request.resource.data.day is string
+            && request.resource.data.count is int
+            && request.resource.data.count >= 0
+            && (resource == null
+                || resource.data.day != request.resource.data.day
+                || request.resource.data.count == resource.data.count + 1);
+        }
+
         allow read: if isOwner(uid) || isAdmin();
-        allow write: if isOwner(uid);
+        allow write: if isOwner(uid) && (docId != 'aiGrading' || validCounter());
       }
 
       // Deliberately owner-only, with no admin or teacher exception. The
@@ -134,12 +175,14 @@ service cloud.firestore {
       // would look like an attempt to write it.
       function verdictAbsent() {
         return !request.resource.data.keys()
-          .hasAny(['certificateApproved', 'certificateDecidedAt']);
+          .hasAny(['certificateApproved', 'certificateDecidedAt',
+                   'aiVerdict', 'aiOverriddenBy', 'aiDecidedAt']);
       }
 
       function verdictUnchanged() {
         return !request.resource.data.diff(resource.data)
-          .affectedKeys().hasAny(['certificateApproved', 'certificateDecidedAt']);
+          .affectedKeys().hasAny(['certificateApproved', 'certificateDecidedAt',
+                                  'aiVerdict', 'aiOverriddenBy', 'aiDecidedAt']);
       }
 
       // The teacher's half of the certificate handshake. The student asks by
@@ -150,11 +193,21 @@ service cloud.firestore {
       // for rewriting a student's progress, renaming them, or moving them into
       // another class. certificateRequestedAt is deliberately absent from it,
       // so a teacher cannot forge a request that was never made.
+      // Extended rather than duplicated for the AI verdict, because this is
+      // already the one narrow write a teacher has into somebody else's
+      // document and a second write path would be a second thing to get wrong.
+      //
+      // aiOverriddenBy is what makes the override final: once a teacher has
+      // decided, a later automated regrade cannot write over it. A grade a
+      // machine can quietly revoke is not an override.
       function gradingOwnStudent() {
         return theirTeacher()
           && request.resource.data.diff(resource.data)
              .affectedKeys().hasOnly(
-               ['certificateApproved', 'certificateDecidedAt', 'updatedAt'])
+               ['certificateApproved', 'certificateDecidedAt', 'updatedAt',
+                'aiVerdict', 'aiOverriddenBy', 'aiDecidedAt'])
+          && (!('aiOverriddenBy' in request.resource.data)
+              || request.resource.data.aiOverriddenBy == request.auth.uid)
           // A string 'true' would read as "not approved" to the client gate and
           // strand the student in the waiting state with no way to tell why.
           && (!('certificateApproved' in request.resource.data)
