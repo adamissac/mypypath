@@ -617,13 +617,66 @@
   // exercises.js builds its Save button at runtime, so this is delegated.
   // It must be captured, not bubbled: the Save handler calls stopPropagation(),
   // so a listener on document would never see the click at all.
+  // The prompt this box is answering, so the floor can tell a real answer from
+  // the question pasted back. Best effort: a lesson that does not label its
+  // reflection simply gets the checks that need no prompt.
+  function promptFor(input) {
+    var item = input.closest ? input.closest('.exercise-item') : null;
+    var label = item && (item.querySelector('.exercise-prompt')
+      || item.querySelector('h3')
+      || item.querySelector('p'));
+    return label ? label.textContent : '';
+  }
+
+  // Beside the box, never in place of it, and cleared as soon as it passes.
+  function sayWhy(input, reason) {
+    var host = input.parentNode;
+    if (!host) return;
+    var note = host.querySelector('.reflection-note');
+    if (!reason) {
+      if (note) note.remove();
+      return;
+    }
+    if (!note) {
+      note = document.createElement('p');
+      note.className = 'reflection-note';
+      note.setAttribute('role', 'status');
+      note.setAttribute('aria-live', 'polite');
+      input.insertAdjacentElement('afterend', note);
+    }
+    note.textContent = reason;
+  }
+
+  /* A reflection counts once there is actually an answer in the box.
+   *
+   * Until now it counted the instant the box was not empty, so one character
+   * finished it. The floor in reflection-check.js is structural only: it says
+   * whether something was written, never whether it was any good.
+   *
+   * It gates the tick and nothing else. The learner is told what is missing,
+   * edits, and saves again as often as they like. Nothing is locked, nothing
+   * is recorded as a failure, and no event is emitted, because "wrote
+   * something short" is not a fact worth pushing at a teacher.
+   */
+  function acceptReflection(input) {
+    if (!input || !input.id || !input.value.trim()) return;
+    var CHECK = window.PyPathReflection;
+    // No floor loaded is the behaviour that shipped before there was one.
+    if (!CHECK) {
+      markItem(input.id);
+      return;
+    }
+    var verdict = CHECK.assess(input.value, { prompt: promptFor(input) });
+    sayWhy(input, verdict.ok ? '' : verdict.reason);
+    if (verdict.ok) markItem(input.id);
+  }
+
   function watchReflections() {
     document.addEventListener('click', function (e) {
       var btn = e.target && e.target.closest && e.target.closest('.submit-btn');
       if (!btn) return;
       var item = btn.closest('.exercise-item');
-      var input = item && item.querySelector('.reflection-input');
-      if (input && input.id && input.value.trim()) markItem(input.id);
+      acceptReflection(item && item.querySelector('.reflection-input'));
     }, true);
 
     // Not every reflection prompt sits inside an .exercise-item -- an inline one
@@ -633,7 +686,7 @@
     document.addEventListener('change', function (e) {
       var el = e.target;
       if (!el || !el.classList || !el.classList.contains('reflection-input')) return;
-      if (el.id && el.value.trim()) markItem(el.id);
+      acceptReflection(el);
     }, true);
   }
 
