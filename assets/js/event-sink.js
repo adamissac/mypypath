@@ -14,6 +14,11 @@ import {
   writeEvents, makeClassAdapter, mirrorAll, touchLastActive, purgeExpired,
 } from '/assets/js/classroom-store.js';
 import { loadMembership, setClassId } from '/assets/js/membership.js';
+// Rides along here rather than as its own script tag on 124 pages, the way
+// join-menu.js rides on role-nav.js. This module already resolves the class id
+// and is already inert for anyone not in a class, which is exactly the set of
+// people who have a lock policy to read.
+import { loadPolicy } from '/assets/js/class-policy.js';
 
 const EVENTS = window.PyPathEvents;
 const STORE = window.ProgressStore;
@@ -83,8 +88,16 @@ async function attach(user) {
 
   if (!classId) {
     detach();
+    // Announced as null on purpose: a learner who has just left a class must
+    // stop being told their old class's lock mode, and null is the sequential
+    // chain everyone else already reads.
+    loadPolicy(null).catch(() => {});
     return;
   }
+
+  // Not awaited. Nothing below depends on it, and a lesson must never wait on
+  // the lock policy to start recording what a learner is doing.
+  loadPolicy(classId, true).catch(() => {});
 
   EVENTS.setEnabled(true);
   if (STORE) STORE._setClassAdapter(makeClassAdapter(classId, uid));
