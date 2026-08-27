@@ -556,6 +556,21 @@ def normalize_scripts(html: str, path: Path) -> str:
             1,
         )
 
+    # The question types and the reflection floor. Plain globals, and both must
+    # be defined before the files that consult them: lesson-quiz.js draws the
+    # new kinds, and lesson-progress.js asks the floor whether a reflection
+    # counts. Both no-op when absent, which is the behaviour that shipped
+    # before either existed.
+    for name in ('question-types', 'question-render', 'reflection-check'):
+        tag = f'<script defer src="/assets/js/{name}.js"></script>'
+        if tag not in html and 'classroom-policy.js' in html:
+            html = html.replace(
+                '<script defer src="/assets/js/classroom-policy.js"></script>',
+                '<script defer src="/assets/js/classroom-policy.js"></script>\n'
+                f'    {tag}',
+                1,
+            )
+
     # lesson-progress.js wraps window.runEditorCode and window.checkExercise, so
     # on lesson pages it has to load after lesson-runner.js defines them. On unit
     # overview pages there is no runner and it only paints the lock notice.

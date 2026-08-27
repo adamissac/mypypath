@@ -209,3 +209,104 @@
 @media (max-width: 27rem) {
   .quiz { padding: .9rem 1rem; }
 }
+
+/* ------------------------------------------- the four non-MCQ question types */
+
+.quiz-q__hint {
+  margin: 0 0 .6rem;
+  font-size: .85rem;
+  color: var(--muted, #475569);
+}
+
+.quiz-q__check { margin-top: .6rem; }
+
+/* Matching: a select per row, not drag and drop. A select works with a
+   keyboard, on a phone, and with a screen reader; drag and drop photographs
+   better and excludes all three. */
+.quiz-match { margin: 0; padding: 0; list-style: none; }
+
+.quiz-match__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  padding: .35rem 0;
+  border-bottom: 1px solid var(--border, #cbd5e1);
+}
+
+.quiz-match__row:last-child { border-bottom: 0; }
+.quiz-match__left { flex: 1 1 8rem; font-weight: 600; }
+.quiz-match__pick { flex: 1 1 12rem; }
+
+/* Ordering: a Parsons problem. Move buttons rather than dragging, for the same
+   reason matching uses selects. */
+.quiz-order { margin: 0; padding: 0; list-style: none; }
+
+.quiz-order__row {
+  display: flex;
+  align-items: stretch;
+  gap: .5rem;
+  margin: 0 0 .3rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .3rem;
+  background: var(--bg-elevated, #f1f5f9);
+}
+
+/* pre, and it stays pre: in Python the indentation is the answer, so nothing
+   here may collapse leading whitespace. */
+.quiz-order__code {
+  flex: 1;
+  margin: 0;
+  padding: .45rem .6rem;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .85rem;
+  white-space: pre;
+}
+
+.quiz-order__moves { display: flex; flex-direction: column; }
+
+.quiz-order__move {
+  flex: 1;
+  min-width: 2rem;
+  border: 0;
+  border-left: 1px solid var(--border, #cbd5e1);
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text, #334155);
+}
+
+.quiz-order__move:disabled { opacity: .35; cursor: default; }
+.quiz-order__move:focus-visible {
+  outline: 2px solid var(--primary-strong, #0284c7);
+  outline-offset: -2px;
+}
+
+/* Fill in the blank: the boxes sit in the gaps, so nobody has to count which
+   blank is which. */
+.quiz-blank {
+  margin: 0;
+  padding: .5rem .6rem;
+  overflow-x: auto;
+  border-radius: .3rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .85rem;
+  white-space: pre-wrap;
+  background: var(--bg-elevated, #f1f5f9);
+}
+
+.quiz-blank__input {
+  padding: .05rem .3rem;
+  border: 0;
+  border-bottom: 2px solid var(--primary, #0ea5e9);
+  border-radius: .15rem .15rem 0 0;
+  font: inherit;
+  background: var(--panel, #fff);
+  color: var(--text-strong, #0f172a);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .quiz-order__row { transition: background-color .15s ease; }
+}
