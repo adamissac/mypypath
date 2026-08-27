@@ -214,8 +214,7 @@ rather than to a learner unable to complete a lesson.
 | `assets/js/lesson-quiz.js` | dispatch on `kind`; mcq unchanged |
 | `assets/js/lesson-progress.js` | `watchReflections` consults the floor |
 | `assets/js/checker.js` | `kindOf` for cases, inference kept as the fallback |
-| `assets/js/unit-test-page.js` | render and score the new kinds in a paper |
-| `assets/js/unit-test.js` | `scoreAttempt` takes the new kinds' points |
+| `assets/data/checks/unit-2/*.json` | one worked example of each new kind |
 | `assets/css/checks.css` | styles for the four new types |
 | `assets/data/unit-tests/*-mcq.json` | `kind: 'mcq'`; the old `vocab`/`code` values dropped |
 | `scripts/validate-checks.js` | validate `kind` and each type's required keys |
@@ -241,6 +240,22 @@ surviving the migration.
 
 **Browser.** Each new type rendered, answered with the keyboard alone, and scored;
 a reflection refused with the reason visible, then edited and accepted.
+
+## Deliberately not done: the graded unit test paper
+
+The new kinds are live in lesson quizzes and are not in the end-of-unit test paper.
+
+`unit-test.js` fixes the paper at ten MCQs worth 7 points each plus one free response
+worth 30, and 70 passes. Adding a fifth question type to that paper changes what those
+numbers weigh and therefore what 70 percent means, retroactively, for every student who
+has already sat one. That is a curriculum decision about the assessment, not a coding
+decision, and it should be made deliberately by whoever owns the pass mark rather than
+arrived at as a side effect of adding a renderer.
+
+Everything needed for it is in place when that decision is made: `PyPathQuestions.score`
+already dispatches on kind and returns `{ correct, total }`, which is the shape
+`scoreAttempt` already works in for the free response. The remaining work is choosing the
+weights.
 
 ## Out of scope
 

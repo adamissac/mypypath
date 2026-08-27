@@ -120,8 +120,25 @@
     return normalizeValue(actual) === normalizeValue(expected);
   }
 
+  /* Both of these now ask question-types.js, which reads an explicit `kind`
+     where an author set one and falls back to exactly the structural inference
+     that was written here. Their signatures and their answers are unchanged for
+     every case authored so far, which is what lets fifteen check files stay as
+     they are. */
+  function kindOf(testCase) {
+    var Q = window.PyPathQuestions;
+    if (Q) return Q.kindOfCase(testCase);
+    // Degraded mode for a page where question-types.js did not load.
+    var c = testCase || {};
+    if (PROPERTY_KEYS.some(function (k) {
+      return Object.prototype.hasOwnProperty.call(c, k);
+    })) return 'property';
+    if (typeof c.call === 'string' && c.call.length > 0) return 'value';
+    return 'stdout';
+  }
+
   function isExpressionCase(testCase) {
-    return typeof testCase.call === 'string' && testCase.call.length > 0;
+    return kindOf(testCase) === 'value';
   }
 
   /* A third kind of case, and the reason for it is worth stating.
@@ -139,9 +156,7 @@
   var PROPERTY_KEYS = ['nonempty', 'min_lines', 'max_lines', 'stdout_matches', 'source_matches'];
 
   function isPropertyCase(testCase) {
-    return PROPERTY_KEYS.some(function (k) {
-      return Object.prototype.hasOwnProperty.call(testCase, k);
-    });
+    return kindOf(testCase) === 'property';
   }
 
   function outputLines(text) {
@@ -324,6 +339,7 @@
     compareOutput: compareOutput,
     normalizeValue: normalizeValue,
     compareValue: compareValue,
+    kindOf: kindOf,
     isExpressionCase: isExpressionCase,
     isPropertyCase: isPropertyCase,
     checkProperty: checkProperty,
