@@ -979,6 +979,28 @@ async function boot(user) {
     classes = [];
   }
 
+  /* A teacher with no class is a dead end, and it does not look like one.
+     Assignments and unit access live inside a class, so with none they stay
+     hidden, and the page reads as though the features are missing rather than
+     as though there is nothing yet to attach them to.
+
+     Becoming a teacher now creates a class, but every teacher who did so
+     before that landed here with none, so the gap is closed on arrival too.
+     Named "My class" and renameable, which is a better first run than a form
+     nobody knew to look for. */
+  if (!classes.length) {
+    try {
+      const made = await createClass(user.uid, 'My class');
+      classes = await classesFor(user.uid);
+      if (!classes.length && made) classes = [{ id: made.classId, name: made.name,
+        joinCode: made.joinCode, teacherUids: [user.uid], archived: false }];
+    } catch (e) {
+      // Offline, or the write was refused. The create form below is still
+      // there and still works, so this is a worse first run rather than a
+      // broken one.
+    }
+  }
+
   if (!classes.length) {
     show($('[data-cr-view="empty"]'), true);
     show($('[data-cr-view="class"]'), false);
