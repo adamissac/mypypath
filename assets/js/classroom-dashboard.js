@@ -7,7 +7,8 @@
 import { currentUser } from '/assets/js/auth.js';
 import {
   classesFor, createClass, readRoster, readEvents, readMirror, addCoTeacher,
-  setArchived, purgeArchivedClass,
+  setArchived, purgeArchivedClass, createAssignment, readAssignments,
+  deleteAssignment, setLockPolicy,
 } from '/assets/js/classroom-store.js';
 
 const CORE = window.PyPathClassroom;
@@ -20,6 +21,8 @@ let students = [];
 let scope = 'units';
 let scopeUnit = 1;
 let sortBy = 'name';
+let assignments = [];
+let scopeAssignment = null;
 
 const $ = (sel, root) => (root || document).querySelector(sel);
 const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
@@ -79,6 +82,228 @@ async function loadClassData(classId) {
       mirror: await readMirror(classId, row.uid).catch(() => ({})),
     }))
   );
+}
+
+/* ------------------------------------------------------------ assignments */
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/* The words a teacher reads, in one place, so the list, the grid and the
+   student page cannot describe the same state three different ways. */
+const ASSIGN_LABEL = {
+  'done-on-time': 'On time',
+  'done-late': 'Late',
+  'not-due': 'Not due yet',
+  overdue: 'Overdue',
+  expired: 'Records expired',
+};
+
+/* Every mark carries a character as well as a colour, for the same reason the
+   mastery grid does: a department printout is always greyscale. */
+const ASSIGN_MARK = { 'done-late': '~', overdue: '!' };
+
+function assignOptions() {
+  return { now: Date.now(), lessonsByUnit: lessonsByUnit(), lessonTitles: lessonTitles() };
+}
+
+function statusFor(assignment, student) {
+  return CORE.assignmentStatus(assignment, student.events, assignOptions());
+}
+
+function shortDate(millis) {
+  if (!millis) return '';
+  return new Date(millis).toLocaleDateString(undefined, {
+    year: 'numeric', month: 'short', day: 'numeric',
+  });
+}
+
+function requiredSummary(assignment) {
+  const titles = lessonTitles();
+  const parts = (assignment.units || []).map((u) => 'Unit ' + u)
+    .concat((assignment.lessonPaths || []).map((p) => titles[p] || p));
+  return parts.join(', ');
+}
+
+function paintAssignments() {
+  const list = $('[data-cr-assign-list]');
+  const empty = $('[data-cr-assign-empty]');
+  if (!list) return;
+
+  list.innerHTML = '';
+  show(empty, assignments.length === 0);
+
+  for (const assignment of assignments) {
+    const statuses = students.map((student) => statusFor(assignment, student));
+    const counted = (state) => statuses.filter((s) => s.state === state).length;
+
+    const item = el('li', 'cr-assign__item');
+    const head = el('div', 'cr-assign__head');
+    head.appendChild(el('h3', 'cr-assign__title', assignment.title));
+    head.appendChild(el('p', 'cr-assign__due', 'Due ' + shortDate(CORE.toMillis(assignment.dueAt))));
+    item.appendChild(head);
+
+    item.appendChild(el('p', 'cr-assign__what', requiredSummary(assignment)));
+
+    // Not-done past due and not-done not-yet-due are separate facts and are
+    // counted separately, never rolled into one "outstanding" number.
+    const tally = el('ul', 'cr-assign__tally');
+    for (const state of ['done-on-time', 'done-late', 'overdue', 'not-due', 'expired']) {
+      const n = counted(state);
+      if (!n) continue;
+      const cell = el('li', 'cr-assign__count cr-assign--' + state);
+      cell.appendChild(el('span', 'cr-assign__n', String(n)));
+      cell.appendChild(el('span', 'cr-assign__label', ASSIGN_LABEL[state]));
+      tally.appendChild(cell);
+    }
+    if (!students.length) {
+      tally.appendChild(el('li', 'cr-assign__count', 'No students have joined yet'));
+    }
+    item.appendChild(tally);
+
+    // Named individually as well as counted: a teacher acts on a name.
+    const late = students
+      .map((student, i) => ({ student, status: statuses[i] }))
+      .filter((row) => row.status.state === 'done-late' || row.status.state === 'overdue');
+    if (late.length) {
+      const who = el('p', 'cr-assign__who');
+      who.textContent = late.map((row) => row.student.displayName
+        + (row.status.state === 'done-late'
+          ? ' (' + row.status.daysLate + ' day' + (row.status.daysLate === 1 ? '' : 's') + ' late)'
+          : ' (not done)')).join(', ');
+      item.appendChild(who);
+    }
+
+    const remove = el('button', 'btn btn-ghost btn-small', 'Remove');
+    remove.type = 'button';
+    remove.addEventListener('click', () => removeAssignment(assignment));
+    item.appendChild(remove);
+
+    list.appendChild(item);
+  }
+
+  paintAssignmentPicker();
+}
+
+async function removeAssignment(assignment) {
+  // Deleting also re-locks whatever the assignment was holding open, which is
+  // why this warns rather than just doing it.
+  const ok = window.confirm('Remove "' + assignment.title + '"? Students lose the '
+    + 'due date, and any unit it was keeping open goes back to the access setting.');
+  if (!ok) return;
+  await deleteAssignment(activeClassId, assignment.id).catch(() => {});
+  assignments = await readAssignments(activeClassId).catch(() => []);
+  paintAssignments();
+  paintGrid();
+}
+
+function paintAssignmentPicker() {
+  const pick = $('[data-cr-assign-pick]');
+  if (!pick) return;
+  const previous = pick.value;
+  pick.innerHTML = '';
+  for (const assignment of assignments) {
+    const option = el('option', null, assignment.title);
+    option.value = assignment.id;
+    pick.appendChild(option);
+  }
+  if (assignments.some((a) => a.id === previous)) pick.value = previous;
+  else scopeAssignment = assignments.length ? assignments[0].id : null;
+  if (scopeAssignment) pick.value = scopeAssignment;
+
+  const radio = $('input[name="cr-scope"][value="assignment"]');
+  // An empty lens is not a lens. Offering it would give a teacher a blank grid
+  // and no way to tell whether that meant "nothing assigned" or "nobody did it".
+  if (radio) radio.disabled = assignments.length === 0;
+}
+
+/* The builder's target lists, filled from the generated manifest so a teacher
+   picks a lesson by its title rather than by a URL. */
+function paintAssignBuilder() {
+  const units = $('[data-cr-assign-units]');
+  const unitPick = $('[data-cr-assign-lesson-unit]');
+  const total = (CURRICULUM && CURRICULUM.TOTAL_UNITS) || 10;
+
+  if (units && !units.children.length) {
+    for (let u = 1; u <= total; u += 1) {
+      const label = el('label', 'cr-check');
+      const box = el('input');
+      box.type = 'checkbox';
+      box.value = String(u);
+      box.setAttribute('data-cr-assign-unit', '');
+      label.appendChild(box);
+      label.appendChild(el('span', null, 'Unit ' + u));
+      units.appendChild(label);
+    }
+  }
+
+  if (unitPick && !unitPick.options.length) {
+    for (let u = 1; u <= total; u += 1) {
+      const option = el('option', null, 'Unit ' + u);
+      option.value = String(u);
+      unitPick.appendChild(option);
+    }
+    paintAssignLessons(1);
+  }
+}
+
+function paintAssignLessons(unit) {
+  const host = $('[data-cr-assign-lessons]');
+  if (!host) return;
+  host.innerHTML = '';
+  const lessons = ((manifest && manifest.lessons) || []).filter((l) => l.unit === Number(unit));
+  for (const lesson of lessons) {
+    const label = el('label', 'cr-check');
+    const box = el('input');
+    box.type = 'checkbox';
+    box.value = lesson.path;
+    box.setAttribute('data-cr-assign-lesson', '');
+    label.appendChild(box);
+    label.appendChild(el('span', null, lesson.title));
+    host.appendChild(label);
+  }
+}
+
+/* ------------------------------------------------------------ unit access */
+
+function paintAccess() {
+  const klass = classes.filter((c) => c.id === activeClassId)[0];
+  if (!klass) return;
+  const POLICY = window.PyPathPolicy;
+  const mode = POLICY ? POLICY.normalizeMode(klass.lockMode) : 'sequential';
+  const open = klass.manualUnlocks || [];
+
+  const radio = $('input[name="cr-lock-mode"][value="' + mode + '"]');
+  if (radio) radio.checked = true;
+
+  const host = $('[data-cr-access-units]');
+  if (!host) return;
+  // The unit list is only meaningful when the teacher's list is the rule.
+  show(host, mode === 'manual');
+  if (host.children.length) {
+    $$('[data-cr-access-unit]', host).forEach((box) => {
+      box.checked = open.map(Number).indexOf(Number(box.value)) !== -1;
+    });
+    return;
+  }
+
+  const total = (CURRICULUM && CURRICULUM.TOTAL_UNITS) || 10;
+  for (let u = 1; u <= total; u += 1) {
+    const label = el('label', 'cr-check');
+    const box = el('input');
+    box.type = 'checkbox';
+    box.value = String(u);
+    box.setAttribute('data-cr-access-unit', '');
+    box.checked = open.map(Number).indexOf(u) !== -1;
+    // Unit 1 is always open, in every mode, so the control does not pretend
+    // otherwise by offering a tick that would change nothing.
+    if (u === 1) {
+      box.checked = true;
+      box.disabled = true;
+    }
+    label.appendChild(box);
+    label.appendChild(el('span', null, 'Unit ' + u));
+    host.appendChild(label);
+  }
 }
 
 /* --------------------------------------------------------------- painting */
@@ -146,7 +371,21 @@ function paintKey() {
   }
 }
 
+function activeAssignment() {
+  return assignments.filter((a) => a.id === scopeAssignment)[0] || null;
+}
+
 function columns() {
+  if (scope === 'assignment') {
+    const assignment = activeAssignment();
+    if (!assignment) return [];
+    const titles = lessonTitles();
+    return (assignment.units || []).map((u) => ({
+      key: u, label: 'U' + u, full: 'Unit ' + u, part: 'unit',
+    })).concat((assignment.lessonPaths || []).map((path) => ({
+      key: path, label: 'L', full: titles[path] || path, part: 'lesson',
+    })));
+  }
   if (scope === 'lessons') {
     const lessons = ((manifest && manifest.lessons) || []).filter((l) => l.unit === scopeUnit);
     return lessons.map((l) => ({ key: l.path, label: String(l.order), full: l.title }));
@@ -159,11 +398,45 @@ function columns() {
 }
 
 function stateFor(student, column) {
+  if (scope === 'assignment') {
+    if (column.part === 'unit') {
+      return CORE.unitState(student.events, lessonsByUnit()[column.key] || [], column.key);
+    }
+    const verified = CORE.verifiedUnits(student.events);
+    const unit = CURRICULUM ? CURRICULUM.unitOf(column.key) : null;
+    return CORE.lessonState(student.events, column.key, !!verified[unit]);
+  }
   if (scope === 'lessons') {
     const verified = CORE.verifiedUnits(student.events)[scopeUnit];
     return CORE.lessonState(student.events, column.key, !!verified);
   }
   return CORE.unitState(student.events, lessonsByUnit()[column.key] || [], column.key);
+}
+
+/* Whether this cell's target is assigned, and how it stands.
+ *
+ * Only the two states worth interrupting a grid for are drawn: done late, and
+ * past due with nothing done. On time and not-yet-due are the ordinary case and
+ * would be noise on every cell of an assigned unit.
+ *
+ * Null when nothing is assigned here, or in the assignment lens, where every
+ * column is assigned by definition and marking them all would say nothing.
+ */
+function overlayFor(student, col) {
+  if (scope === 'assignment' || !assignments.length) return null;
+  const key = scope === 'lessons' ? 'lessonPaths' : 'units';
+  const value = scope === 'lessons' ? col.key : Number(col.key);
+
+  let worst = null;
+  for (const assignment of assignments) {
+    const targets = (assignment[key] || []).map((t) => (key === 'units' ? Number(t) : t));
+    if (targets.indexOf(value) === -1) continue;
+    const state = statusFor(assignment, student).state;
+    // Overdue outranks late: one is still outstanding, the other is finished.
+    if (state === 'overdue') return 'overdue';
+    if (state === 'done-late') worst = 'done-late';
+  }
+  return worst;
 }
 
 function paintGrid() {
@@ -212,7 +485,13 @@ function paintGrid() {
         : null;
       const state = progress ? progress.state : stateFor(student, col);
 
-      const td = el('td', 'cr-cell cr-state--' + state);
+      // The assignment overlay. Not a separate table: a teacher already reads
+      // this grid, and an assigned-and-missed unit has to be visible where they
+      // are already looking. Character as well as colour, for the printout.
+      const overlay = overlayFor(student, col);
+
+      const td = el('td', 'cr-cell cr-state--' + state
+        + (overlay ? ' cr-assigned cr-assigned--' + overlay : ''));
       // Focusable and activatable from the keyboard, and it announces the
       // whole fact rather than leaving a screen reader to infer it from a
       // colour it cannot see.
@@ -222,12 +501,15 @@ function paintGrid() {
         'aria-label',
         student.displayName + ', ' + col.full + ': ' + CORE.MASTERY_LABEL[state]
           + (progress ? ', ' + progress.percent + '% — ' + progress.summary : '')
+          + (overlay ? ', assigned: ' + ASSIGN_LABEL[overlay] : '')
       );
-      button.appendChild(el('span', 'cr-cell__mark', CORE.MASTERY_MARK[state]));
+      button.appendChild(el('span', 'cr-cell__mark',
+        CORE.MASTERY_MARK[state] + (overlay ? ASSIGN_MARK[overlay] : '')));
       if (progress) {
         button.appendChild(el('span', 'cr-cell__pct', progress.percent + '%'));
       }
-      button.appendChild(el('span', 'visually-hidden', CORE.MASTERY_LABEL[state]));
+      button.appendChild(el('span', 'visually-hidden', CORE.MASTERY_LABEL[state]
+        + (overlay ? '. Assigned: ' + ASSIGN_LABEL[overlay] : '')));
       button.addEventListener('click', () => openStudent(student, col));
       td.appendChild(button);
       tr.appendChild(td);
@@ -303,6 +585,9 @@ function paintAll() {
   paintSwitcher();
   paintUnitPicker();
   paintKey();
+  paintAssignBuilder();
+  paintAssignments();
+  paintAccess();
   paintAttention();
   paintGrid();
   paintSummary();
@@ -361,6 +646,32 @@ function explain(key) {
   if (close) close.focus();
 }
 
+/* Writes the mode and the tick list together, because they are one setting.
+   Saving the mode without the list would briefly leave a class in "by hand"
+   with nothing but unit 1 open. */
+async function saveAccess() {
+  const error = $('[data-cr-access-error]');
+  show(error, false);
+  const picked = $('input[name="cr-lock-mode"]:checked');
+  const mode = picked ? picked.value : 'sequential';
+  const units = $$('[data-cr-access-unit]:checked').map((b) => Number(b.value));
+
+  try {
+    const saved = await setLockPolicy(activeClassId, mode, units);
+    const klass = classes.filter((c) => c.id === activeClassId)[0];
+    if (klass) {
+      klass.lockMode = saved.mode;
+      klass.manualUnlocks = saved.manualUnlocks;
+    }
+    paintAccess();
+  } catch (err) {
+    if (error) {
+      error.textContent = 'Could not save that. Check your connection and try again.';
+      show(error, true);
+    }
+  }
+}
+
 function wire() {
   document.addEventListener('click', (e) => {
     const info = e.target.closest && e.target.closest('[data-cr-info]');
@@ -383,6 +694,8 @@ function wire() {
     switcher.addEventListener('change', async () => {
       activeClassId = switcher.value;
       students = await loadClassData(activeClassId);
+      assignments = await readAssignments(activeClassId).catch(() => []);
+      scopeAssignment = assignments.length ? assignments[0].id : null;
       paintAll();
     });
   }
@@ -392,8 +705,68 @@ function wire() {
       scope = radio.value;
       const pick = $('[data-cr-unit-pick]');
       if (pick) pick.disabled = scope !== 'lessons';
+      const assignPick = $('[data-cr-assign-pick]');
+      if (assignPick) assignPick.disabled = scope !== 'assignment';
       paintGrid();
     });
+  });
+
+  const assignPick = $('[data-cr-assign-pick]');
+  if (assignPick) {
+    assignPick.addEventListener('change', () => {
+      scopeAssignment = assignPick.value;
+      paintGrid();
+    });
+  }
+
+  const lessonUnit = $('[data-cr-assign-lesson-unit]');
+  if (lessonUnit) {
+    lessonUnit.addEventListener('change', () => paintAssignLessons(lessonUnit.value));
+  }
+
+  const assignForm = $('[data-cr-assign-form]');
+  if (assignForm) {
+    assignForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const error = $('[data-cr-assign-error]');
+      show(error, false);
+
+      const title = $('#cr-assign-title').value;
+      const raw = $('#cr-assign-due').value;
+      // A date input gives midnight. Work due "on Friday" is due at the end of
+      // Friday, not at the start of it, so the deadline is the end of that day
+      // in the teacher's own timezone.
+      const due = raw ? new Date(raw + 'T23:59:59').getTime() : 0;
+
+      const units = $$('[data-cr-assign-unit]:checked').map((b) => Number(b.value));
+      const lessonPaths = $$('[data-cr-assign-lesson]:checked').map((b) => b.value);
+
+      try {
+        await createAssignment(activeClassId, { title, dueAt: due, units, lessonPaths });
+        assignments = await readAssignments(activeClassId).catch(() => []);
+        assignForm.reset();
+        $$('[data-cr-assign-unit], [data-cr-assign-lesson]').forEach((b) => { b.checked = false; });
+        const panel = assignForm.closest('details');
+        if (panel) panel.open = false;
+        paintAssignments();
+        paintGrid();
+      } catch (err) {
+        if (error) {
+          error.textContent = err && err.message ? err.message : 'Could not set that work.';
+          show(error, true);
+        }
+      }
+    });
+  }
+
+  $$('input[name="cr-lock-mode"]').forEach((radio) => {
+    radio.addEventListener('change', () => saveAccess());
+  });
+
+  document.addEventListener('change', (e) => {
+    if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-cr-access-unit')) {
+      saveAccess();
+    }
   });
 
   const pick = $('[data-cr-unit-pick]');
@@ -437,6 +810,9 @@ function wire() {
       const csv = window.PyPathExport.masteryCsv(sortedStudents(), {
         lessonsByUnit: lessonsByUnit(),
         totalUnits: (CURRICULUM && CURRICULUM.TOTAL_UNITS) || 10,
+        assignments,
+        lessonTitles: lessonTitles(),
+        now: Date.now(),
       });
       // Built and downloaded in the browser; the export never leaves the
       // teacher's machine.
@@ -612,6 +988,8 @@ async function boot(user) {
 
   activeClassId = classes[0].id;
   students = await loadClassData(activeClassId).catch(() => []);
+  assignments = await readAssignments(activeClassId).catch(() => []);
+  scopeAssignment = assignments.length ? assignments[0].id : null;
   show($('[data-cr-view="empty"]'), false);
   show($('[data-cr-view="class"]'), true);
   paintAll();

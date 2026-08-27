@@ -87,6 +87,58 @@
     ''
   ].join('\n');
 
+  /* Runs one drawn case twice: the author's reference and the student's code,
+     in separate namespaces, and reports whether they agreed.
+
+     Both sides run here rather than the reference being precomputed in JS,
+     because the reference is Python and only Python knows what it returns.
+     Integer division, float formatting and string methods all differ from the
+     JavaScript answer somebody would otherwise have to reimplement. */
+  var GENERATOR = [
+    'def _pypath_run_generated(code, reference, call_expr, limit):',
+    '    import json, time',
+    '    result = {"passed": 0, "total": 0, "error": None, "timeout": False}',
+    '    calls = json.loads(call_expr)',
+    '    deadline = time.monotonic() + float(limit)',
+    '',
+    '    ref_ns = {"__name__": "__pypath_ref__"}',
+    '    try:',
+    '        exec(reference, ref_ns)',
+    '    except BaseException as e:',
+    '        # An author error, not a student one, and it must not read as one.',
+    '        result["error"] = "ReferenceError"',
+    '        return json.dumps(result)',
+    '',
+    '    ns = {"__name__": "__main__"}',
+    '    try:',
+    '        exec(code, ns)',
+    '    except BaseException as e:',
+    '        result["error"] = type(e).__name__',
+    '        return json.dumps(result)',
+    '',
+    '    for one in calls:',
+    '        if time.monotonic() > deadline:',
+    '            result["timeout"] = True',
+    '            break',
+    '        result["total"] += 1',
+    '        try:',
+    '            expected = eval(one, ref_ns)',
+    '        except BaseException:',
+    '            result["total"] -= 1',
+    '            continue',
+    '        try:',
+    '            actual = eval(one, ns)',
+    '        except BaseException as e:',
+    '            if result["error"] is None:',
+    '                result["error"] = type(e).__name__',
+    '            continue',
+    '        if repr(actual) == repr(expected):',
+    '            result["passed"] += 1',
+    '',
+    '    return json.dumps(result)',
+    ''
+  ].join('\n');
+
   /* ------------------------------------------------------------- pure part */
 
   /* Trailing whitespace and line endings are not what any of these exercises
@@ -120,8 +172,29 @@
     return normalizeValue(actual) === normalizeValue(expected);
   }
 
+  /* Both of these now ask question-types.js, which reads an explicit `kind`
+     where an author set one and falls back to exactly the structural inference
+     that was written here. Their signatures and their answers are unchanged for
+     every case authored so far, which is what lets fifteen check files stay as
+     they are. */
+  function kindOf(testCase) {
+    var c = testCase || {};
+    // The two kinds that have no structural tell. Neither can be inferred: an
+    // authored case either says it is one of these or it is not one.
+    if (c.kind === 'generated' || c.kind === 'ast') return c.kind;
+
+    var Q = window.PyPathQuestions;
+    if (Q) return Q.kindOfCase(testCase);
+    // Degraded mode for a page where question-types.js did not load.
+    if (PROPERTY_KEYS.some(function (k) {
+      return Object.prototype.hasOwnProperty.call(c, k);
+    })) return 'property';
+    if (typeof c.call === 'string' && c.call.length > 0) return 'value';
+    return 'stdout';
+  }
+
   function isExpressionCase(testCase) {
-    return typeof testCase.call === 'string' && testCase.call.length > 0;
+    return kindOf(testCase) === 'value';
   }
 
   /* A third kind of case, and the reason for it is worth stating.
@@ -139,9 +212,7 @@
   var PROPERTY_KEYS = ['nonempty', 'min_lines', 'max_lines', 'stdout_matches', 'source_matches'];
 
   function isPropertyCase(testCase) {
-    return PROPERTY_KEYS.some(function (k) {
-      return Object.prototype.hasOwnProperty.call(testCase, k);
-    });
+    return kindOf(testCase) === 'property';
   }
 
   function outputLines(text) {
@@ -239,6 +310,10 @@
   function ensureHarness(pyodide) {
     if (harnessedIn === pyodide) return;
     pyodide.runPython(HARNESS);
+    pyodide.runPython(GENERATOR);
+    // The AST analyzer lives in its own file because it is a different kind of
+    // thing: HARNESS runs code, this one reads it.
+    if (window.PyPathAst) pyodide.runPython(window.PyPathAst.ANALYZER);
     harnessedIn = pyodide;
   }
 
@@ -246,7 +321,81 @@
     return JSON.stringify(String(value == null ? '' : value));
   }
 
-  function runOneCase(pyodide, code, testCase) {
+  /* A drawn case. One interpreter call for the whole set rather than one per
+     drawn row: forty round trips through runPython to answer one question is
+     forty times the overhead for the same answer. */
+  function runGeneratedCase(pyodide, code, testCase, attempt) {
+    var GEN = window.PyPathGen;
+    if (!GEN || !testCase.reference) {
+      return {
+        name: String(testCase.name || 'generated'), ok: false,
+        expected: 'a reference solution', actual: 'this exercise is not set up yet',
+        timeout: false, errorType: ''
+      };
+    }
+
+    // The seed moves with the attempt, so running the check twice draws two
+    // different sets and a student cannot tune to one.
+    var rows = GEN.draw(testCase.args || [], testCase.runs || 20, (attempt || 1) * 7919);
+    var calls = rows.map(function (row) { return GEN.callFor(testCase.entry, row); })
+      .filter(Boolean);
+
+    if (!calls.length) {
+      return {
+        name: String(testCase.name || 'generated'), ok: false,
+        expected: 'a function to test', actual: 'this exercise is not set up yet',
+        timeout: false, errorType: ''
+      };
+    }
+
+    var raw = pyodide.runPython(
+      '_pypath_run_generated(' +
+        pyLiteral(code) + ', ' +
+        pyLiteral(testCase.reference) + ', ' +
+        pyLiteral(JSON.stringify(calls)) + ', ' +
+        CASE_TIMEOUT_SEC +
+      ')'
+    );
+    var out = JSON.parse(raw);
+    var ok = out.total > 0 && out.passed === out.total && !out.error;
+
+    return {
+      name: String(testCase.name || 'generated'),
+      ok: ok,
+      // A count, never the input that caught them. "31 of 40" says the rule is
+      // nearly right; naming the case hands back a branch to special-case, and
+      // hands back exactly what a drawn case exists to withhold.
+      expected: out.total + ' of ' + out.total + ' random inputs',
+      actual: out.error ? '(' + out.error + ')' : out.passed + ' of ' + out.total,
+      timeout: out.timeout === true,
+      errorType: out.error || ''
+    };
+  }
+
+  /* A structural case, read off the analyzer's report. The report is built once
+     per run and shared, because parsing the same file for every AST case would
+     be one parse per case for no extra information. */
+  function runAstCase(code, testCase, report) {
+    var AST = window.PyPathAst;
+    var verdict = AST
+      ? AST.check(testCase, report)
+      : { ok: true, expected: 'as described', actual: 'not checked' };
+    return {
+      name: String(testCase.name || 'structure'),
+      ok: verdict.ok,
+      expected: verdict.expected,
+      actual: verdict.actual,
+      timeout: false,
+      errorType: ''
+    };
+  }
+
+  function runOneCase(pyodide, code, testCase, context) {
+    var ctx = context || {};
+    var kind = kindOf(testCase);
+    if (kind === 'generated') return runGeneratedCase(pyodide, code, testCase, ctx.attempt);
+    if (kind === 'ast') return runAstCase(code, testCase, ctx.report);
+
     var call = isExpressionCase(testCase) ? testCase.call : '';
     var raw = pyodide.runPython(
       '_pypath_run_case(' +
@@ -302,20 +451,49 @@
     var visible = (spec && spec.cases) || [];
     var hidden = (spec && spec.hiddenCases) || [];
 
+    /* The structural report, built once and shared by every ast case in the
+       run. Parsing the same file per case would be one parse per case for
+       exactly the same answer.
+
+       Built only when something asks for it: the overwhelming majority of
+       exercises have no ast case, and they should not pay for a parse. */
+    var context = { attempt: attempt || 1, report: null };
+    var wantsAst = visible.concat(hidden).some(function (c) {
+      return kindOf(c) === 'ast';
+    });
+    if (wantsAst) {
+      try {
+        context.report = JSON.parse(
+          pyodide.runPython('_pypath_analyze(' + pyLiteral(code) + ')')
+        );
+      } catch (e) {
+        // A parse that itself fails reads as unparseable code, which is what
+        // the case then reports. It must not take the whole run down.
+        context.report = { parsed: false };
+      }
+    }
+
     var visibleResults = visible.map(function (c) {
-      return runOneCase(pyodide, code, c);
+      return runOneCase(pyodide, code, c, context);
     });
     // Hidden cases are skipped once a visible one has already failed: they can
     // only repeat news the student has, and each one costs a run of code tha
     // may be the runaway loop we just timed out on.
     var hiddenResults = visibleResults.every(function (r) { return r.ok; })
-      ? hidden.map(function (c) { return runOneCase(pyodide, code, c); })
+      ? hidden.map(function (c) { return runOneCase(pyodide, code, c, context); })
       : hidden.map(function (c) {
         return { name: String(c.name || 'hidden'), ok: false, skipped: true,
           expected: '', actual: '', timeout: false, errorType: '' };
       });
 
-    return summarize(visibleResults, hiddenResults, spec, attempt || 1);
+    var out = summarize(visibleResults, hiddenResults, spec, attempt || 1);
+    // Reported, never failed. A student who has not understood parameters yet
+    // writes this shape by accident, and failing them on a heuristic would be
+    // marking a guess rather than an answer.
+    out.structureNotes = (context.report && window.PyPathAst)
+      ? window.PyPathAst.describeHardcoding(context.report)
+      : [];
+    return out;
   }
 
   window.PyPathChecker = {
@@ -324,6 +502,7 @@
     compareOutput: compareOutput,
     normalizeValue: normalizeValue,
     compareValue: compareValue,
+    kindOf: kindOf,
     isExpressionCase: isExpressionCase,
     isPropertyCase: isPropertyCase,
     checkProperty: checkProperty,

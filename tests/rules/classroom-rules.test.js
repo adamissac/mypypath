@@ -5,7 +5,7 @@ import {
   assertSucceeds,
 } from '@firebase/rules-unit-testing';
 import {
-  doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, collection,
+  doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, collection, serverTimestamp,
 } from 'firebase/firestore';
 import fs from 'node:fs';
 
@@ -76,7 +76,7 @@ function eventDoc(extra) {
     type: 'code.run',
     lessonPath: '/units/unit-1/first-program.html',
     unit: 1,
-    at: new Date(),
+    at: serverTimestamp(),
     payload: { lessonPath: '/units/unit-1/first-program.html', editorId: 'practice1', ok: true },
     schemaVersion: 1,
     ...extra,
@@ -108,7 +108,7 @@ describe('class documents', () => {
     await assertSucceeds(
       setDoc(doc(as('teacherC'), 'classes/classC'), {
         name: 'Period 3', joinCode: 'GHJ789', teacherUids: ['teacherC'],
-        createdAt: new Date(), archived: false, schemaVersion: 1,
+        createdAt: serverTimestamp(), archived: false, schemaVersion: 1,
       })
     );
   });
@@ -211,7 +211,7 @@ describe('enrollment is the consent boundary', () => {
   it('lets a student join with a code that points at that class', async () => {
     await assertSucceeds(
       setDoc(doc(as('cy'), `classes/${CLASS_A}/roster/cy`), {
-        displayName: 'cy', joinedAt: new Date(), lastActiveAt: new Date(),
+        displayName: 'cy', joinedAt: serverTimestamp(), lastActiveAt: serverTimestamp(),
         joinCode: CODE_A, schemaVersion: 1,
       })
     );
@@ -503,5 +503,142 @@ describe('the private user subtree is not loosened by any of this', () => {
       await setDoc(doc(ctx.firestore(), 'users/ann/code/lesson__x'), { content: 'print(1)' });
     });
     await assertFails(getDoc(doc(as('teacherA'), 'users/ann/code/lesson__x')));
+  });
+});
+
+/* Assignments. The shape under test: a teacher writes them, everyone enrolled
+   reads them, and nobody else does either. There is deliberately no
+   student-writable field anywhere in here, because completion is derived from
+   the event log rather than claimed. */
+
+function assignmentDoc(extra) {
+  return {
+    title: 'Week 1',
+    units: [3],
+    lessonPaths: ['/units/unit-4/lists-operations.html'],
+    dueAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
+    createdAt: serverTimestamp(),
+    archived: false,
+    schemaVersion: 1,
+    ...extra,
+  };
+}
+
+describe('assignments', () => {
+  const path = (cls) => `classes/${cls}/assignments/a1`;
+
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), path(CLASS_A)), assignmentDoc());
+    });
+  });
+
+  it('lets the class teacher create one', async () => {
+    await assertSucceeds(
+      setDoc(doc(as('teacherA'), `classes/${CLASS_A}/assignments/a2`), assignmentDoc())
+    );
+  });
+
+  it('lets the class teacher edit and delete one', async () => {
+    await assertSucceeds(
+      updateDoc(doc(as('teacherA'), path(CLASS_A)), { title: 'Week 1, moved' })
+    );
+    await assertSucceeds(deleteDoc(doc(as('teacherA'), path(CLASS_A))));
+  });
+
+  it('denies a teacher of another class', async () => {
+    await assertFails(
+      setDoc(doc(as('teacherB'), `classes/${CLASS_A}/assignments/a3`), assignmentDoc())
+    );
+    await assertFails(getDoc(doc(as('teacherB'), path(CLASS_A))));
+    await assertFails(deleteDoc(doc(as('teacherB'), path(CLASS_A))));
+  });
+
+  /* Students read, and must: their progress page shows what is due, and the
+     implicit unlock is computed on their own machine from these documents. */
+  it('lets an enrolled student read and list them', async () => {
+    await assertSucceeds(getDoc(doc(as('ann'), path(CLASS_A))));
+    await assertSucceeds(getDocs(collection(as('ann'), `classes/${CLASS_A}/assignments`)));
+  });
+
+  it('denies a student who is not enrolled', async () => {
+    await assertFails(getDoc(doc(as('mallory'), path(CLASS_A))));
+  });
+
+  it('denies a guest', async () => {
+    await assertFails(getDoc(doc(guest(), path(CLASS_A))));
+  });
+
+  // An assignment a student can edit is not an assignment.
+  it('denies an enrolled student every kind of write', async () => {
+    await assertFails(updateDoc(doc(as('ann'), path(CLASS_A)), { dueAt: Date.now() }));
+    await assertFails(deleteDoc(doc(as('ann'), path(CLASS_A))));
+    await assertFails(
+      setDoc(doc(as('ann'), `classes/${CLASS_A}/assignments/a4`), assignmentDoc())
+    );
+  });
+
+  it('denies an assignment that requires nothing, which could never be met', async () => {
+    await assertFails(
+      setDoc(doc(as('teacherA'), `classes/${CLASS_A}/assignments/a5`),
+        assignmentDoc({ units: [], lessonPaths: [] }))
+    );
+  });
+
+  it('denies a back-dated createdAt', async () => {
+    await assertFails(
+      setDoc(doc(as('teacherA'), `classes/${CLASS_A}/assignments/a6`),
+        assignmentDoc({ createdAt: new Date(2020, 0, 1) }))
+    );
+  });
+
+  it('denies an unlisted key', async () => {
+    await assertFails(
+      setDoc(doc(as('teacherA'), `classes/${CLASS_A}/assignments/a7`),
+        assignmentDoc({ grade: 100 }))
+    );
+  });
+
+  it('denies a title long enough to be a payload', async () => {
+    await assertFails(
+      setDoc(doc(as('teacherA'), `classes/${CLASS_A}/assignments/a8`),
+        assignmentDoc({ title: 'x'.repeat(101) }))
+    );
+  });
+});
+
+describe('the class lock mode', () => {
+  it('lets a teacher set any of the three modes', async () => {
+    for (const mode of ['sequential', 'manual', 'free']) {
+      await assertSucceeds(
+        updateDoc(doc(as('teacherA'), `classes/${CLASS_A}`), { lockMode: mode })
+      );
+    }
+  });
+
+  it('lets a teacher set the manual unlock list', async () => {
+    await assertSucceeds(
+      updateDoc(doc(as('teacherA'), `classes/${CLASS_A}`), {
+        lockMode: 'manual', manualUnlocks: [1, 5, 7],
+      })
+    );
+  });
+
+  /* Pinned where it is enforced, not only in the client. A client that read
+     "anything that is not sequential" as open would unlock the whole course
+     for a class on one typo. */
+  it('denies a mode outside the three', async () => {
+    await assertFails(
+      updateDoc(doc(as('teacherA'), `classes/${CLASS_A}`), { lockMode: 'open' })
+    );
+    await assertFails(
+      updateDoc(doc(as('teacherA'), `classes/${CLASS_A}`), { lockMode: '' })
+    );
+  });
+
+  it('denies a student setting their own class free', async () => {
+    await assertFails(
+      updateDoc(doc(as('ann'), `classes/${CLASS_A}`), { lockMode: 'free' })
+    );
   });
 });

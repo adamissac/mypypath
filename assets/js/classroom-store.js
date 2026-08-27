@@ -160,6 +160,122 @@ export async function removeCoTeacher(classId, uid) {
   await updateDoc(doc(db, `classes/${classId}`), { teacherUids: arrayRemove(uid) });
 }
 
+/* ----------------------------------------------------------- assignments */
+
+/* What a teacher has asked the class to finish, and by when.
+
+   Class-wide by design: there is no assignedTo field, so an assignment is for
+   everyone enrolled. The rules refuse any key not on the list below, so adding
+   per-student targeting later is a change in two places rather than a field
+   that quietly starts working.
+
+   Nothing about who completed what is written here. Completion is derived from
+   the event log the dashboard already reads, which is why there is no write
+   path for a student to claim one. */
+
+const MAX_UNIT = 10;
+
+function cleanTargets(units, lessonPaths) {
+  const cleanUnits = Array.from(new Set((units || [])
+    .map(Number)
+    .filter((n) => Number.isInteger(n) && n >= 1 && n <= MAX_UNIT)))
+    .sort((a, b) => a - b);
+  const cleanPaths = Array.from(new Set((lessonPaths || [])
+    .filter((p) => typeof p === 'string' && p.startsWith('/units/') && p.length <= 200)))
+    .sort();
+  return { units: cleanUnits, lessonPaths: cleanPaths };
+}
+
+export async function createAssignment(classId, draft) {
+  const title = String((draft && draft.title) || '').trim().slice(0, 100);
+  if (!title) throw new ClassroomError('no-title', 'Give the assignment a name.');
+
+  const targets = cleanTargets(draft && draft.units, draft && draft.lessonPaths);
+  if (!targets.units.length && !targets.lessonPaths.length) {
+    throw new ClassroomError('no-targets', 'Choose at least one unit or lesson.');
+  }
+
+  const dueAt = Number(draft && draft.dueAt);
+  if (!isFinite(dueAt) || dueAt <= 0) {
+    throw new ClassroomError('no-due-date', 'Give the assignment a due date.');
+  }
+
+  const ref = doc(collection(db, `classes/${classId}/assignments`));
+  await setDoc(ref, {
+    title,
+    units: targets.units,
+    lessonPaths: targets.lessonPaths,
+    dueAt,
+    createdAt: serverTimestamp(),
+    archived: false,
+    schemaVersion: version(),
+  });
+  return { id: ref.id, title, dueAt, ...targets };
+}
+
+export async function readAssignments(classId) {
+  const snap = await getDocs(collection(db, `classes/${classId}/assignments`));
+  return snap.docs
+    .map((d) => ({ id: d.id, ...d.data() }))
+    .sort((a, b) => Number(a.dueAt || 0) - Number(b.dueAt || 0));
+}
+
+export async function updateAssignment(classId, assignmentId, changes) {
+  const patch = {};
+  if (changes && changes.title != null) {
+    const title = String(changes.title).trim().slice(0, 100);
+    if (!title) throw new ClassroomError('no-title', 'Give the assignment a name.');
+    patch.title = title;
+  }
+  if (changes && changes.dueAt != null) {
+    const dueAt = Number(changes.dueAt);
+    if (!isFinite(dueAt) || dueAt <= 0) {
+      throw new ClassroomError('no-due-date', 'Give the assignment a due date.');
+    }
+    patch.dueAt = dueAt;
+  }
+  if (changes && changes.archived != null) patch.archived = changes.archived === true;
+  if (changes && (changes.units || changes.lessonPaths)) {
+    const targets = cleanTargets(changes.units, changes.lessonPaths);
+    if (!targets.units.length && !targets.lessonPaths.length) {
+      throw new ClassroomError('no-targets', 'Choose at least one unit or lesson.');
+    }
+    patch.units = targets.units;
+    patch.lessonPaths = targets.lessonPaths;
+  }
+  await updateDoc(doc(db, `classes/${classId}/assignments/${assignmentId}`), patch);
+}
+
+/* Deleted rather than archived, unlike a class. An assignment holds no
+   subcollection to strand, and a teacher who set the wrong due date wants it
+   gone rather than filed. Deleting also re-locks whatever it was holding open,
+   with no cleanup step, because that unlock was never stored. */
+export async function deleteAssignment(classId, assignmentId) {
+  await deleteDoc(doc(db, `classes/${classId}/assignments/${assignmentId}`));
+}
+
+/* ------------------------------------------------------------ lock policy */
+
+/* Which units are open to the class, and how that is decided.
+
+   Stored on the class document rather than in a collection of its own because
+   /classes already allows get to any signed-in user, so a student's lesson page
+   can read it under a rule that already exists. Anywhere else would need a new
+   read rule and a second document read on every lesson page. */
+export async function setLockPolicy(classId, mode, manualUnlocks) {
+  const POLICY = window.PyPathPolicy;
+  const clean = POLICY ? POLICY.normalizeMode(mode) : 'sequential';
+  const units = Array.from(new Set((manualUnlocks || [])
+    .map(Number)
+    .filter((n) => Number.isInteger(n) && n >= 1 && n <= MAX_UNIT)))
+    .sort((a, b) => a - b);
+  await updateDoc(doc(db, `classes/${classId}`), {
+    lockMode: clean,
+    manualUnlocks: units,
+  });
+  return { mode: clean, manualUnlocks: units };
+}
+
 /* ---------------------------------------------------------------- roster */
 
 export async function joinClass(uid, rawCode, displayName) {

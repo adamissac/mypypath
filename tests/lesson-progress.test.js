@@ -6,7 +6,7 @@ const SRC = fs.readFileSync('assets/js/lesson-progress.js', 'utf8');
 // The page half needs the manifest, the store, and the session role. Loading
 // each one is idempotent, so a suite that boots more than once is safe.
 function loadDeps() {
-  ['storage-keys', 'progress-store', 'roles', 'curriculum'].forEach((name) => {
+  ['storage-keys', 'progress-store', 'roles', 'curriculum', 'classroom-policy'].forEach((name) => {
     new Function(fs.readFileSync(`assets/js/${name}.js`, 'utf8')).call(window);
   });
 }
@@ -461,5 +461,51 @@ describe('teacher view', () => {
     document.dispatchEvent(new CustomEvent('pypath:role', { detail: { role: 'student' } }));
     expect(banner()).toBeNull();
     expect(notice()).not.toBeNull();
+  });
+});
+
+/* The class lock policy is an optional fourth argument. Everything above this
+   block calls with three, and every assertion there is the regression guard
+   for the compatibility claim: a page that never hears from class-policy.js
+   must behave exactly as it did before class lock modes existed. */
+describe('isUnitUnlocked with a class policy', () => {
+  const seq = { mode: 'sequential', manualUnlocks: [], assignmentUnlocks: [] };
+
+  it('treats an omitted policy as no policy', async () => {
+    expect(P().isUnitUnlocked(3, [1, 2])).toBe(true);
+    expect(P().isUnitUnlocked(3, [1])).toBe(false);
+  });
+
+  it('treats an explicit null the same way', async () => {
+    expect(P().isUnitUnlocked(3, [1, 2], false, null)).toBe(true);
+    expect(P().isUnitUnlocked(3, [1], false, null)).toBe(false);
+  });
+
+  it('leaves the sequential mode reading as the plain chain', async () => {
+    expect(P().isUnitUnlocked(3, [1, 2], false, seq)).toBe(true);
+    expect(P().isUnitUnlocked(3, [1], false, seq)).toBe(false);
+  });
+
+  it('opens everything in free-roam', async () => {
+    const free = { mode: 'free', manualUnlocks: [], assignmentUnlocks: [] };
+    expect(P().isUnitUnlocked(9, [], false, free)).toBe(true);
+  });
+
+  it('honours a manual list, in both directions', async () => {
+    const manual = { mode: 'manual', manualUnlocks: [5], assignmentUnlocks: [] };
+    expect(P().isUnitUnlocked(5, [], false, manual)).toBe(true);
+    // Closed even though the chain would have opened it. That is what manual
+    // mode is for.
+    expect(P().isUnitUnlocked(3, [1, 2], false, manual)).toBe(false);
+  });
+
+  it('opens an assigned unit whatever the mode says', async () => {
+    const manual = { mode: 'manual', manualUnlocks: [], assignmentUnlocks: [6] };
+    expect(P().isUnitUnlocked(6, [], false, manual)).toBe(true);
+  });
+
+  it('keeps a teacher ahead of every mode', async () => {
+    const manual = { mode: 'manual', manualUnlocks: [], assignmentUnlocks: [] };
+    expect(P().isUnitUnlocked(8, [], true, manual)).toBe(true);
   });
 });
