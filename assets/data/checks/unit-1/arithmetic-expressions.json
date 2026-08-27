@@ -19,8 +19,19 @@
         "expect": "5"
       },
       {
-        "name": "area is calculated, not typed in",
-        "source_matches": "length\\s*\\*\\s*width|width\\s*\\*\\s*length",
+        "kind": "ast",
+        "name": "the area is calculated, not typed in",
+        "requires": {
+          "binop": [
+            {
+              "op": "Mult",
+              "names": [
+                "length",
+                "width"
+              ]
+            }
+          ]
+        },
         "describe": "length multiplied by width"
       }
     ],
@@ -104,5 +115,32 @@
       "answer": 1,
       "explain": "Parentheses are evaluated first, which is the P in PEMDAS."
     }
-  ]
+  ],
+  "reflections": {
+    "reflection1": {
+      "expect_any": [
+        [
+          "multiply",
+          "multiplied",
+          "multiplication",
+          "times",
+          "*"
+        ],
+        [
+          "variable",
+          "variables",
+          "store",
+          "stored"
+        ],
+        [
+          "change",
+          "changes",
+          "reuse",
+          "again"
+        ]
+      ],
+      "min_concepts": 1,
+      "hint": "Say what the calculation does with the two numbers, and why storing them first helps."
+    }
+  }
 }

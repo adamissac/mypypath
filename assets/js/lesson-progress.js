@@ -514,15 +514,40 @@
     var box = document.createElement('div');
     box.className = 'unit-locked-notice';
     box.setAttribute('role', 'note');
-    box.innerHTML =
-      '<p class="unit-locked-notice__title">Unit ' + unit + ' is not unlocked yet</p>' +
-      '<p>Finish every lesson in Unit ' + prev + ' and pass the Unit ' + prev + ' test to ' +
-      'unlock it. You can keep reading ahead, but your progress counts from Unit ' + prev + '.</p>' +
-      (lessonsDone && !testDone
-        ? '<p><a class="btn btn-primary route" href="/unit-test.html?unit=' + prev + '">Take the Unit ' + prev + ' test</a></p>'
-        : next
-          ? '<p><a class="btn btn-primary route" href="' + next + '">Go to the next Unit ' + prev + ' lesson</a></p>'
-          : '<p><a class="btn btn-primary route" href="/units/unit-' + prev + '.html">Back to Unit ' + prev + '</a></p>');
+
+    // Which sentence is true depends on why this unit is shut, and getting it
+    // wrong is not a cosmetic slip.
+    //
+    // Under the sequential chain the reason is "you have not finished the unit
+    // before this one", and the notice says so. Under a teacher's manual list
+    // that sentence can be flatly false: a student who finished Unit 3, passed
+    // its test, and then had Unit 4 closed by their teacher would be told to go
+    // and do work they have already done. Their progress record still shows
+    // every bit of it -- this lock only decides what is browseable, and never
+    // touches completedUnits, the mastery grid or the certificate -- so a
+    // notice implying otherwise would be the one thing on the page that lies
+    // about them.
+    var teacherSet = classPolicy && window.PyPathPolicy
+      && window.PyPathPolicy.normalizeMode(classPolicy.mode) === 'manual';
+
+    if (teacherSet) {
+      box.innerHTML =
+        '<p class="unit-locked-notice__title">Unit ' + unit + ' is not open yet</p>' +
+        '<p>Your teacher chooses which units are open for your class, and this ' +
+        'one is not open at the moment. Nothing you have already finished is ' +
+        'affected. Ask your teacher if you think it should be open.</p>' +
+        '<p><a class="btn btn-primary route" href="/progress.html">See your progress</a></p>';
+    } else {
+      box.innerHTML =
+        '<p class="unit-locked-notice__title">Unit ' + unit + ' is not unlocked yet</p>' +
+        '<p>Finish every lesson in Unit ' + prev + ' and pass the Unit ' + prev + ' test to ' +
+        'unlock it. You can keep reading ahead, but your progress counts from Unit ' + prev + '.</p>' +
+        (lessonsDone && !testDone
+          ? '<p><a class="btn btn-primary route" href="/unit-test.html?unit=' + prev + '">Take the Unit ' + prev + ' test</a></p>'
+          : next
+            ? '<p><a class="btn btn-primary route" href="' + next + '">Go to the next Unit ' + prev + ' lesson</a></p>'
+            : '<p><a class="btn btn-primary route" href="/units/unit-' + prev + '.html">Back to Unit ' + prev + '</a></p>');
+    }
 
     prependNotice(box);
   }
@@ -667,10 +692,68 @@
       return;
     }
     var verdict = CHECK.assess(input.value, { prompt: promptFor(input) });
-    sayWhy(input, verdict.ok ? '' : verdict.reason);
-    if (!verdict.ok) return;
+    if (!verdict.ok) {
+      sayWhy(input, verdict.reason);
+      return;
+    }
 
+    // The floor decided, and it decided synchronously and offline. Everything
+    // below only nudges: nothing here ever un-ticks a reflection, because
+    // everything in this codebase is a ratchet.
     markItem(input.id);
+    nudgeOnConcepts(input);
+  }
+
+  /* Whether the answer mentions what the lesson was about.
+   *
+   * A word check, and a weak one: a thoughtful answer in words the author did
+   * not think of lands here too. That is exactly why it gates nothing. The
+   * learner sees the author's own hint beside a box that has already counted,
+   * and can take it or leave it.
+   *
+   * The teacher's side is the same fact recorded once, and it takes three of
+   * them across a class before anything appears on a dashboard. */
+  function nudgeOnConcepts(input) {
+    var CONCEPTS = window.PyPathConcepts;
+    var spec = conceptSpec[input.id];
+    if (!CONCEPTS || !spec) {
+      sayWhy(input, '');
+      return;
+    }
+
+    var out = CONCEPTS.assess(input.value, spec);
+    sayWhy(input, out.ok ? '' : out.hint);
+    if (!out.checked || out.ok) return;
+
+    if (window.PyPathEvents) {
+      try {
+        window.PyPathEvents.record('answer.submitted', {
+          lessonPath: path,
+          itemId: input.id,
+          // A fact about a string, and named as one. classroom-core words the
+          // dashboard row the same way.
+          missedConcepts: true
+        });
+      } catch (e) {}
+    }
+  }
+
+  /* What the lesson's author said a good answer touches, keyed by reflection
+     id, out of the same check file the auto-grader already reads. Fetched once
+     and quietly: a lesson with no expectations authored is the normal case and
+     is not a problem to report. */
+  var conceptSpec = {};
+
+  function loadConceptSpec() {
+    var m = /^\/units\/(unit-\d+)\/([a-z0-9-]+)\.html$/.exec(path);
+    if (!m || typeof fetch !== 'function') return;
+    fetch('/assets/data/checks/' + m[1] + '/' + m[2] + '.json')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (spec) {
+        var reflections = spec && spec.reflections;
+        if (reflections && typeof reflections === 'object') conceptSpec = reflections;
+      })
+      .catch(function () {});
   }
 
   function watchReflections() {
@@ -747,6 +830,7 @@
       insertChip();
       wrapGlobals();
       watchReflections();
+      loadConceptSpec();
     }
     repaint();
   });

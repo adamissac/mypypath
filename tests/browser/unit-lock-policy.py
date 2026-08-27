@@ -52,6 +52,17 @@ with sync_playwright() as p:
     page.wait_for_timeout(300)
     check("manual mode without unit 3 re-locks it", notice(page))
 
+    # A teacher can close a unit a student already finished. The lock only
+    # decides what is browseable; their progress record is untouched. So the
+    # banner must not tell them to go and do work they have already done.
+    banner = page.locator(".unit-locked-notice").inner_text()
+    check("a teacher-set lock does not claim the work is unfinished",
+          "Finish every lesson" not in banner, banner[:70])
+    check("it says whose decision it was",
+          "teacher" in banner.lower(), banner[:70])
+    check("it says their finished work still stands",
+          "already finished" in banner.lower(), banner[:70])
+
     # 4. An assignment on unit 3 opens it even in manual mode. This is the one
     #    failure the feature must not have: late for work you could not open.
     page.evaluate("""document.dispatchEvent(new CustomEvent('pypath:policy',
