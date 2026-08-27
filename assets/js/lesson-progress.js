@@ -106,7 +106,21 @@
   // A teacher has the whole course open. The lock exists to keep a learner
   // moving in order; a teacher previewing unit 7 for tomorrow's class is not a
   // learner, and making them grind unit 1 first would be absurd.
-  function isUnitUnlocked(unit, completedUnits, teaching) {
+  //
+  // `policy` is optional and is the class's lock settings, or null when there
+  // are none to be had. Every caller that predates class lock modes passes
+  // three arguments, gets null, and gets exactly the answer it always got.
+  //
+  // It arrives as an argument rather than as a Firestore read inside this
+  // function on purpose. The function stays pure, stays synchronous, stays
+  // testable with no DOM, and keeps answering for a guest with no network. The
+  // read lives in class-policy.js, which announces pypath:policy when it lands.
+  function isUnitUnlocked(unit, completedUnits, teaching, policy) {
+    var POLICY = window.PyPathPolicy;
+    if (POLICY) return POLICY.resolveUnlocked(unit, policy || null, completedUnits, teaching);
+
+    // Degraded mode for a page where classroom-policy.js did not load, in the
+    // same spirit as the storage-key literals at the top of this file.
     var n = Number(unit);
     if (!Number.isInteger(n) || n < 1) return false;
     if (teaching === true) return true;
@@ -278,6 +292,11 @@
   }
 
   var required = [];
+
+  // The class's lock settings, once class-policy.js has read them. Null until
+  // then, and null forever for a guest or a learner in no class, which is the
+  // fail-open case isUnitUnlocked is built around.
+  var classPolicy = null;
 
   function doneIds() {
     var entry = readMap()[path];
@@ -476,7 +495,7 @@
   // this unit is not open yet and where to go instead.
   function insertLockNotice() {
     if (!curriculum || !unit) return;
-    if (isUnitUnlocked(unit, completedUnits(), teaching())) {
+    if (isUnitUnlocked(unit, completedUnits(), teaching(), classPolicy)) {
       // The role can resolve after the notice has already been painted, so
       // this clears one that a teacher should never have seen.
       removeNotice(document.querySelector('.unit-locked-notice'));
@@ -495,15 +514,40 @@
     var box = document.createElement('div');
     box.className = 'unit-locked-notice';
     box.setAttribute('role', 'note');
-    box.innerHTML =
-      '<p class="unit-locked-notice__title">Unit ' + unit + ' is not unlocked yet</p>' +
-      '<p>Finish every lesson in Unit ' + prev + ' and pass the Unit ' + prev + ' test to ' +
-      'unlock it. You can keep reading ahead, but your progress counts from Unit ' + prev + '.</p>' +
-      (lessonsDone && !testDone
-        ? '<p><a class="btn btn-primary route" href="/unit-test.html?unit=' + prev + '">Take the Unit ' + prev + ' test</a></p>'
-        : next
-          ? '<p><a class="btn btn-primary route" href="' + next + '">Go to the next Unit ' + prev + ' lesson</a></p>'
-          : '<p><a class="btn btn-primary route" href="/units/unit-' + prev + '.html">Back to Unit ' + prev + '</a></p>');
+
+    // Which sentence is true depends on why this unit is shut, and getting it
+    // wrong is not a cosmetic slip.
+    //
+    // Under the sequential chain the reason is "you have not finished the unit
+    // before this one", and the notice says so. Under a teacher's manual list
+    // that sentence can be flatly false: a student who finished Unit 3, passed
+    // its test, and then had Unit 4 closed by their teacher would be told to go
+    // and do work they have already done. Their progress record still shows
+    // every bit of it -- this lock only decides what is browseable, and never
+    // touches completedUnits, the mastery grid or the certificate -- so a
+    // notice implying otherwise would be the one thing on the page that lies
+    // about them.
+    var teacherSet = classPolicy && window.PyPathPolicy
+      && window.PyPathPolicy.normalizeMode(classPolicy.mode) === 'manual';
+
+    if (teacherSet) {
+      box.innerHTML =
+        '<p class="unit-locked-notice__title">Unit ' + unit + ' is not open yet</p>' +
+        '<p>Your teacher chooses which units are open for your class, and this ' +
+        'one is not open at the moment. Nothing you have already finished is ' +
+        'affected. Ask your teacher if you think it should be open.</p>' +
+        '<p><a class="btn btn-primary route" href="/progress.html">See your progress</a></p>';
+    } else {
+      box.innerHTML =
+        '<p class="unit-locked-notice__title">Unit ' + unit + ' is not unlocked yet</p>' +
+        '<p>Finish every lesson in Unit ' + prev + ' and pass the Unit ' + prev + ' test to ' +
+        'unlock it. You can keep reading ahead, but your progress counts from Unit ' + prev + '.</p>' +
+        (lessonsDone && !testDone
+          ? '<p><a class="btn btn-primary route" href="/unit-test.html?unit=' + prev + '">Take the Unit ' + prev + ' test</a></p>'
+          : next
+            ? '<p><a class="btn btn-primary route" href="' + next + '">Go to the next Unit ' + prev + ' lesson</a></p>'
+            : '<p><a class="btn btn-primary route" href="/units/unit-' + prev + '.html">Back to Unit ' + prev + '</a></p>');
+    }
 
     prependNotice(box);
   }
@@ -598,13 +642,126 @@
   // exercises.js builds its Save button at runtime, so this is delegated.
   // It must be captured, not bubbled: the Save handler calls stopPropagation(),
   // so a listener on document would never see the click at all.
+  // The prompt this box is answering, so the floor can tell a real answer from
+  // the question pasted back. Best effort: a lesson that does not label its
+  // reflection simply gets the checks that need no prompt.
+  function promptFor(input) {
+    var item = input.closest ? input.closest('.exercise-item') : null;
+    var label = item && (item.querySelector('.exercise-prompt')
+      || item.querySelector('h3')
+      || item.querySelector('p'));
+    return label ? label.textContent : '';
+  }
+
+  // Beside the box, never in place of it, and cleared as soon as it passes.
+  function sayWhy(input, reason) {
+    var host = input.parentNode;
+    if (!host) return;
+    var note = host.querySelector('.reflection-note');
+    if (!reason) {
+      if (note) note.remove();
+      return;
+    }
+    if (!note) {
+      note = document.createElement('p');
+      note.className = 'reflection-note';
+      note.setAttribute('role', 'status');
+      note.setAttribute('aria-live', 'polite');
+      input.insertAdjacentElement('afterend', note);
+    }
+    note.textContent = reason;
+  }
+
+  /* A reflection counts once there is actually an answer in the box.
+   *
+   * Until now it counted the instant the box was not empty, so one character
+   * finished it. The floor in reflection-check.js is structural only: it says
+   * whether something was written, never whether it was any good.
+   *
+   * It gates the tick and nothing else. The learner is told what is missing,
+   * edits, and saves again as often as they like. Nothing is locked, nothing
+   * is recorded as a failure, and no event is emitted, because "wrote
+   * something short" is not a fact worth pushing at a teacher.
+   */
+  function acceptReflection(input) {
+    if (!input || !input.id || !input.value.trim()) return;
+    var CHECK = window.PyPathReflection;
+    // No floor loaded is the behaviour that shipped before there was one.
+    if (!CHECK) {
+      markItem(input.id);
+      return;
+    }
+    var verdict = CHECK.assess(input.value, { prompt: promptFor(input) });
+    if (!verdict.ok) {
+      sayWhy(input, verdict.reason);
+      return;
+    }
+
+    // The floor decided, and it decided synchronously and offline. Everything
+    // below only nudges: nothing here ever un-ticks a reflection, because
+    // everything in this codebase is a ratchet.
+    markItem(input.id);
+    nudgeOnConcepts(input);
+  }
+
+  /* Whether the answer mentions what the lesson was about.
+   *
+   * A word check, and a weak one: a thoughtful answer in words the author did
+   * not think of lands here too. That is exactly why it gates nothing. The
+   * learner sees the author's own hint beside a box that has already counted,
+   * and can take it or leave it.
+   *
+   * The teacher's side is the same fact recorded once, and it takes three of
+   * them across a class before anything appears on a dashboard. */
+  function nudgeOnConcepts(input) {
+    var CONCEPTS = window.PyPathConcepts;
+    var spec = conceptSpec[input.id];
+    if (!CONCEPTS || !spec) {
+      sayWhy(input, '');
+      return;
+    }
+
+    var out = CONCEPTS.assess(input.value, spec);
+    sayWhy(input, out.ok ? '' : out.hint);
+    if (!out.checked || out.ok) return;
+
+    if (window.PyPathEvents) {
+      try {
+        window.PyPathEvents.record('answer.submitted', {
+          lessonPath: path,
+          itemId: input.id,
+          // A fact about a string, and named as one. classroom-core words the
+          // dashboard row the same way.
+          missedConcepts: true
+        });
+      } catch (e) {}
+    }
+  }
+
+  /* What the lesson's author said a good answer touches, keyed by reflection
+     id, out of the same check file the auto-grader already reads. Fetched once
+     and quietly: a lesson with no expectations authored is the normal case and
+     is not a problem to report. */
+  var conceptSpec = {};
+
+  function loadConceptSpec() {
+    var m = /^\/units\/(unit-\d+)\/([a-z0-9-]+)\.html$/.exec(path);
+    if (!m || typeof fetch !== 'function') return;
+    fetch('/assets/data/checks/' + m[1] + '/' + m[2] + '.json')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (spec) {
+        var reflections = spec && spec.reflections;
+        if (reflections && typeof reflections === 'object') conceptSpec = reflections;
+      })
+      .catch(function () {});
+  }
+
   function watchReflections() {
     document.addEventListener('click', function (e) {
       var btn = e.target && e.target.closest && e.target.closest('.submit-btn');
       if (!btn) return;
       var item = btn.closest('.exercise-item');
-      var input = item && item.querySelector('.reflection-input');
-      if (input && input.id && input.value.trim()) markItem(input.id);
+      acceptReflection(item && item.querySelector('.reflection-input'));
     }, true);
 
     // Not every reflection prompt sits inside an .exercise-item -- an inline one
@@ -614,7 +771,7 @@
     document.addEventListener('change', function (e) {
       var el = e.target;
       if (!el || !el.classList || !el.classList.contains('reflection-input')) return;
-      if (el.id && el.value.trim()) markItem(el.id);
+      acceptReflection(el);
     }, true);
   }
 
@@ -673,6 +830,7 @@
       insertChip();
       wrapGlobals();
       watchReflections();
+      loadConceptSpec();
     }
     repaint();
   });
@@ -683,4 +841,14 @@
   // immediately; progress writes arrive in floods.
   document.addEventListener('pypath:progress', repaintSoon);
   document.addEventListener('pypath:role', repaint);
+
+  // The class's lock mode, arriving from class-policy.js one read after sign
+  // in. No timeout guards this the way gate.js guards auth: a policy that never
+  // arrives leaves classPolicy null, and null is already the sequential answer
+  // the page rendered with. Nothing has to be hidden while it is pending,
+  // because this lock prepends a notice and never removes the lesson.
+  document.addEventListener('pypath:policy', function (e) {
+    classPolicy = (e && e.detail && e.detail.policy) || null;
+    repaint();
+  });
 })();

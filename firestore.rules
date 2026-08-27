@@ -243,11 +243,24 @@ service cloud.firestore {
       // They may not write themselves out of the list: an update that drops
       // the requester would either orphan the class or, worse, be a way to
       // take one over and lock its owner out.
+      // lockMode and manualUnlocks are how a teacher chooses whether units open
+      // in order, by hand, or all at once. Both are optional, and both absent
+      // means the sequential chain that existed before they did, so every class
+      // created before this needs no migration.
+      //
+      // The enum is checked here and not only in the client. The client
+      // resolves an unrecognized mode by falling back to sequential, but a rule
+      // that took any string would invite a future client that reads "not
+      // sequential" as open, and one typo would then unlock the whole course
+      // for a class.
       allow update: if isTeacherOf(classId)
         && request.auth.uid in request.resource.data.teacherUids
         && request.resource.data.createdAt == resource.data.createdAt
+        && (!('lockMode' in request.resource.data)
+            || request.resource.data.lockMode in ['sequential', 'manual', 'free'])
         && request.resource.data.keys().hasOnly(
-             ['name', 'joinCode', 'teacherUids', 'createdAt', 'archived', 'schemaVersion']);
+             ['name', 'joinCode', 'teacherUids', 'createdAt', 'archived',
+              'schemaVersion', 'lockMode', 'manualUnlocks']);
 
       // Archived, never deleted. Deleting the class document would strand
       // every roster, progress and event document beneath it: subcollections
@@ -255,6 +268,51 @@ service cloud.firestore {
       // isTeacherOf can no longer resolve, so nobody could reach them to
       // clean them up. Phase 6 purges the subtree first.
       allow delete: if false;
+
+      // What a teacher has asked this class to finish, and by when.
+      //
+      // Class-scoped and class-wide: there is deliberately no assignedTo field,
+      // so an assignment is for everyone enrolled. Adding per-student targeting
+      // later should read as a decision, which is why its absence is written
+      // down rather than left as a gap.
+      //
+      // Nothing here records who did what. Completion is derived from the
+      // event log the dashboard already reads, so there is no student-writable
+      // completion field to secure, and a teacher learns nothing about a
+      // student they could not already see.
+      match /assignments/{assignmentId} {
+        // Split the way the class rule above is split. createdAt is pinned to
+        // request.time on create and to what is already stored on update:
+        // checking request.time on both would make every edit impossible,
+        // because an update carries the original timestamp forward.
+        function wellFormed() {
+          return request.resource.data.title is string
+            && request.resource.data.title.size() > 0
+            && request.resource.data.title.size() <= 100
+            && request.resource.data.units is list
+            && request.resource.data.lessonPaths is list
+            // An assignment requiring nothing is a row that can never be
+            // satisfied, and would show a class as permanently overdue.
+            && (request.resource.data.units.size() > 0
+                || request.resource.data.lessonPaths.size() > 0)
+            && request.resource.data.dueAt is number
+            && request.resource.data.keys().hasOnly(
+                 ['title', 'units', 'lessonPaths', 'dueAt', 'createdAt',
+                  'archived', 'schemaVersion']);
+        }
+
+        // Students read, and have to: their own page shows what is due, and the
+        // implicit unlock that keeps assigned work reachable is computed on
+        // their own machine out of these documents.
+        allow read: if isTeacherOf(classId) || isEnrolled(classId, request.auth.uid);
+
+        // An assignment a student can edit is not an assignment.
+        allow create: if isTeacherOf(classId) && wellFormed()
+          && request.resource.data.createdAt == request.time;
+        allow update: if isTeacherOf(classId) && wellFormed()
+          && request.resource.data.createdAt == resource.data.createdAt;
+        allow delete: if isTeacherOf(classId);
+      }
 
       match /roster/{uid} {
         // displayName is a username, never a legal name. Enforced here and not
