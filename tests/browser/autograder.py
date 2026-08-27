@@ -6,7 +6,7 @@ is the only place the AST analyzer and the drawn cases actually meet.
 """
 from playwright.sync_api import sync_playwright
 
-BASE = "http://localhost:8099"
+BASE = "http://localhost:8097"
 LESSON = "/units/unit-1/arithmetic-expressions.html"
 results = []
 
@@ -80,7 +80,11 @@ with sync_playwright() as p:
               '/assets/data/unit-tests/unit-1-frq.json')).json();
             const q = pool.find((x) => x.id === 'u1-f1');
             const gen = q.cases.find((c) => c.kind === 'generated');
-            const listed = q.cases.filter((c) => Array.isArray(c.args));
+            // The drawn case carries args too, but they are type specs
+            // rather than values. Including it builds "if length == [object
+            // Object]", which is a syntax error rather than a cheat.
+            const listed = q.cases.filter(
+              (c) => c.kind !== 'generated' && Array.isArray(c.args));
             const branches = listed.map((c) =>
               '    if length == ' + c.args[0] + ' and width == ' + c.args[1] +
               ': return ' + c.expect).join('\\n');
