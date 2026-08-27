@@ -42,6 +42,13 @@ function paint(role) {
   document.querySelectorAll('[data-account-classroom], [data-teacher-only]').forEach((el) => {
     el.hidden = !isTeacher;
   });
+  // Named in the menu it is asked from, so "am I a teacher on here" is a
+  // question the site answers rather than one you infer from which links show.
+  document.querySelectorAll('[data-account-role]').forEach((el) => {
+    el.textContent = isTeacher ? 'Teacher account' : 'Student account';
+    el.className = 'account-panel__role is-' + (isTeacher ? 'teacher' : 'student');
+    el.hidden = false;
+  });
   document.querySelectorAll('[data-student-only]').forEach((el) => {
     el.hidden = isTeacher;
   });

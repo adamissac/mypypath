@@ -350,3 +350,70 @@ body.join-modal-open {
     animation: none;
   }
 }
+
+/* Which kind of account this is, said first and said plainly. Before this the
+   only way to tell was to notice which controls were on the page. */
+.class-role {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .5rem;
+  margin: 0 0 1rem;
+}
+
+.class-role__badge {
+  padding: .15rem .6rem;
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: 600;
+  /* A word as well as a colour, so it reads in greyscale and to anyone who
+     cannot tell the two apart. */
+  border: 1px solid var(--border, #cbd5e1);
+}
+
+.class-role__badge.is-teacher { color: #14532d; background: #dcfce7; border-color: #86efac; }
+.class-role__badge.is-student { color: #1e3a5f; background: #dbeafe; border-color: #93c5fd; }
+
+[data-theme="dark"] .class-role__badge.is-teacher { color: #bbf7d0; background: #14361f; }
+[data-theme="dark"] .class-role__badge.is-student { color: #bfdbfe; background: #17233b; }
+
+.class-role__note { font-size: .85rem; color: var(--muted, #475569); }
+
+.class-list { margin: .25rem 0 1rem; padding: 0; list-style: none; }
+
+.class-list__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .35rem;
+  padding: .35rem 0;
+  border-bottom: 1px solid var(--border, #cbd5e1);
+}
+
+.class-list__item:last-child { border-bottom: 0; }
+
+.class-list__code {
+  padding: .1rem .4rem;
+  border-radius: .25rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 700;
+  letter-spacing: .05em;
+  background: var(--bg-elevated, #f1f5f9);
+}
+
+/* The role, at the top of the account menu. Not a link and not a control: it
+   answers a question rather than offering an action, so it is set apart from
+   the menu items under it. */
+.account-panel__role {
+  margin: 0;
+  padding: .5rem .75rem;
+  border-bottom: 1px solid var(--border, #cbd5e1);
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: var(--muted, #475569);
+}
+
+.account-panel__role.is-teacher { color: #15803d; }
+[data-theme="dark"] .account-panel__role.is-teacher { color: #86efac; }

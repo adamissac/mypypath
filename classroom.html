@@ -117,6 +117,10 @@
               <span class="account-username" data-account-username></span>
             </button>
             <div class="account-panel" data-account-panel role="menu" hidden>
+              <!-- Which kind of account this is, at the top of the menu it is
+                   asked from. Painted by role-nav.js, which already resolves
+                   the role for the classroom link below. -->
+              <p class="account-panel__role" data-account-role hidden></p>
               <a href="/progress.html" class="route" role="menuitem">My progress</a>
               <a href="/classroom.html" class="route" role="menuitem" data-account-classroom hidden>My classroom</a>
               <a href="/account.html" class="route" role="menuitem">Account</a>
@@ -532,10 +536,17 @@
 
       </section>
 
+      <!-- The legacy roster, and it stays hidden unless it has somebody in it.
+           Shown unconditionally it was the first thing a new teacher saw: a
+           join code and a table of students, which reads as the whole feature
+           and left assignments and unit access looking absent. classroom-page.js
+           reveals this only once it actually has rows. -->
+      <section class="cr-legacy" data-cr-legacy hidden>
       <hr class="cr-divider">
       <h2 class="cr-legacy-h">Students who joined before classes existed</h2>
       <p class="cr-legacy-note">These students are attached to your join code
-         directly rather than to a class. They keep working exactly as before.</p>
+         directly rather than to a class, so assignments and unit access do not
+         reach them. Ask them to join one of your classes with its code.</p>
 
       <div data-class-state="ready" hidden>
         <section class="class-code">
@@ -610,6 +621,8 @@
           cannot see the Python they write in the lessons, and you cannot see their
           email address.</p>
       </div>
+          </section>
+
     </main>
 
     <footer class="site-footer">

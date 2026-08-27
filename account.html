@@ -112,6 +112,10 @@
               <span class="account-username" data-account-username></span>
             </button>
             <div class="account-panel" data-account-panel role="menu" hidden>
+              <!-- Which kind of account this is, at the top of the menu it is
+                   asked from. Painted by role-nav.js, which already resolves
+                   the role for the classroom link below. -->
+              <p class="account-panel__role" data-account-role hidden></p>
               <a href="/progress.html" class="route" role="menuitem">My progress</a>
               <a href="/classroom.html" class="route" role="menuitem" data-account-classroom hidden>My classroom</a>
               <a href="/account.html" class="route" role="menuitem">Account</a>
@@ -148,6 +152,15 @@
         <section class="class-section" data-class-section hidden>
           <h2>Class</h2>
 
+          <!-- Which kind of account this is, said plainly and first.
+               Before this, the only way to tell was to notice which controls
+               were on the page, which is not something anyone should have to
+               work out. -->
+          <p class="class-role" data-class-role hidden>
+            <span class="class-role__badge" data-class-role-badge></span>
+            <span class="class-role__note" data-class-role-note></span>
+          </p>
+
           <div data-class-view="personal" hidden>
             <p>You are learning on your own. Nobody else can see your progress.</p>
             <form class="auth-form" data-class-join-form>
@@ -176,9 +189,36 @@
           </div>
 
           <div data-class-view="teacher" hidden>
-            <p>Your join code is <strong data-class-current-code></strong>. Share it with
-               your students; they enter it when they sign up.</p>
+            <!-- The classes this teacher actually has, each with its own code.
+                 A teacher can have several, and the code they hand out has to
+                 be the code for the class they mean. -->
+            <div data-class-list-wrap hidden>
+              <p>Your classes:</p>
+              <ul class="class-list" data-class-list></ul>
+            </div>
+
+            <p data-class-none hidden>
+              You do not have a class yet. Create one to hand out a join code and
+              to set work with due dates.
+            </p>
+
+            <form class="auth-form" data-class-create-form>
+              <label for="account-class-name">Create a class</label>
+              <input id="account-class-name" type="text" autocomplete="off"
+                     maxlength="100" placeholder="Period 1" required>
+              <button type="submit" class="btn btn-primary">Create class</button>
+            </form>
+
             <p><a class="btn btn-primary route" href="/classroom.html">Open my classroom</a></p>
+
+            <!-- Only shown when there is actually a legacy code in play, so a
+                 new teacher is never told about a system they will never use. -->
+            <p class="auth-hint" data-class-legacy-code hidden>
+              Your older join code is <strong data-class-current-code></strong>.
+              Students who joined with it appear in your classroom under
+              "Students who joined before classes existed". Assignments and unit
+              access apply to the classes above, not to that list.
+            </p>
           </div>
 
           <p class="auth-error" data-class-error role="alert" hidden></p>
