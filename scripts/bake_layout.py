@@ -544,6 +544,18 @@ def normalize_scripts(html: str, path: Path) -> str:
             1,
         )
 
+    # classroom-policy.js holds the three unit-access modes. Another plain
+    # global, and it must be defined before lesson-progress.js, which asks it
+    # whether a unit is open. It answers with no policy at all if class-policy.js
+    # never gets one, which is the same answer the site gave before it existed.
+    if 'assets/js/classroom-policy.js' not in html and 'curriculum.js' in html:
+        html = html.replace(
+            '<script defer src="/assets/js/curriculum.js"></script>',
+            '<script defer src="/assets/js/curriculum.js"></script>\n'
+            '    <script defer src="/assets/js/classroom-policy.js"></script>',
+            1,
+        )
+
     # lesson-progress.js wraps window.runEditorCode and window.checkExercise, so
     # on lesson pages it has to load after lesson-runner.js defines them. On unit
     # overview pages there is no runner and it only paints the lock notice.
