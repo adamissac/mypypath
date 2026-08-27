@@ -345,3 +345,216 @@ describe('timestamps', () => {
     expect(K.toMillis(undefined)).toBe(0);
   });
 });
+
+/* ---------------------------------------------------------- assignments */
+
+/* A whole unit's worth of lessons, so a unit-target assignment has something
+   real to be complete against. */
+const U1 = [L1, L2];
+
+function passing(d, p) {
+  return checked(d, 'e1', 1, 1, p);
+}
+
+function testSubmitted(d, unit, score) {
+  return ev('test.submitted', d, { unit, score, total: 100 });
+}
+
+function unitVerified(d, unit) {
+  return ev('unit.completed', d, { unit, verified: true });
+}
+
+const at = (agoDays) => NOW - agoDays * DAY;
+
+describe('completedAt for a lesson', () => {
+  it('returns null when the lesson was never passed', () => {
+    expect(K.completedAt([opened(5)], { kind: 'lesson', path: L1 })).toBe(null);
+    expect(K.completedAt([checked(5, 'e1', 1, 2)], { kind: 'lesson', path: L1 })).toBe(null);
+  });
+
+  it('returns the moment the lesson first passed', () => {
+    expect(K.completedAt([passing(5)], { kind: 'lesson', path: L1 })).toBe(at(5));
+  });
+
+  /* The ratchet. A student who reopens a passed lesson and does worse has not
+     un-finished it, and a student who does better has not finished it later.
+     Either would silently move an on-time completion across a due date. */
+  it('is not moved later by a worse attempt afterwards', () => {
+    const events = [passing(5), checked(2, 'e1', 0, 1)];
+    expect(K.completedAt(events, { kind: 'lesson', path: L1 })).toBe(at(5));
+  });
+
+  it('is not moved later by another pass afterwards', () => {
+    const events = [passing(5), passing(2)];
+    expect(K.completedAt(events, { kind: 'lesson', path: L1 })).toBe(at(5));
+  });
+
+  it('does not care what order the log arrives in', () => {
+    const events = [passing(2), passing(5)];
+    expect(K.completedAt(events, { kind: 'lesson', path: L1 })).toBe(at(5));
+  });
+
+  it('ignores another lesson passing', () => {
+    expect(K.completedAt([passing(5, L2)], { kind: 'lesson', path: L1 })).toBe(null);
+  });
+
+  it('counts a verified unit as every lesson in it being done', () => {
+    expect(K.completedAt([unitVerified(3, 1)], { kind: 'lesson', path: L1 })).toBe(at(3));
+  });
+});
+
+describe('completedAt for a unit', () => {
+  const target = { kind: 'unit', unit: 1, lessonPaths: U1 };
+
+  it('returns null with the lessons done but no test passed', () => {
+    expect(K.completedAt([passing(9, L1), passing(8, L2)], target)).toBe(null);
+  });
+
+  it('returns null with the test passed but a lesson outstanding', () => {
+    expect(K.completedAt([passing(9, L1), testSubmitted(7, 1, 90)], target)).toBe(null);
+  });
+
+  it('returns the moment the last outstanding piece landed', () => {
+    const events = [passing(9, L1), passing(8, L2), testSubmitted(7, 1, 90)];
+    expect(K.completedAt(events, target)).toBe(at(7));
+  });
+
+  it('takes the last piece even when the test came first', () => {
+    const events = [testSubmitted(9, 1, 90), passing(8, L1), passing(6, L2)];
+    expect(K.completedAt(events, target)).toBe(at(6));
+  });
+
+  it('does not count a failed test', () => {
+    const events = [passing(9, L1), passing(8, L2), testSubmitted(7, 1, 40)];
+    expect(K.completedAt(events, target)).toBe(null);
+  });
+
+  it('takes a verified roll-up as the whole unit', () => {
+    expect(K.completedAt([unitVerified(4, 1)], target)).toBe(at(4));
+  });
+
+  it('prefers whichever route finished first', () => {
+    const events = [passing(9, L1), passing(8, L2), testSubmitted(7, 1, 90), unitVerified(2, 1)];
+    expect(K.completedAt(events, target)).toBe(at(7));
+  });
+});
+
+describe('assignmentStatus', () => {
+  const opts = { now: NOW, lessonsByUnit: { 1: U1 }, lessonTitles: { [L1]: 'First program' } };
+  const due = (agoDays) => ({ title: 'Week 1', units: [], lessonPaths: [L1], dueAt: at(agoDays) });
+
+  it('reads a pass before the deadline as done on time', () => {
+    const s = K.assignmentStatus(due(3), [passing(5)], opts);
+    expect(s.state).toBe('done-on-time');
+    expect(s.completedAt).toBe(at(5));
+    expect(s.daysLate).toBe(0);
+    expect(s.doneCount).toBe(1);
+    expect(s.partCount).toBe(1);
+  });
+
+  it('reads a pass after the deadline as done late', () => {
+    const s = K.assignmentStatus(due(5), [passing(3)], opts);
+    expect(s.state).toBe('done-late');
+    expect(s.daysLate).toBe(2);
+  });
+
+  /* Whole days, rounded up. One minute past the deadline is a day late and
+     never zero days late, which would render as "on time" to anyone reading
+     the number rather than the word. */
+  it('counts one minute past the deadline as a day late', () => {
+    const assignment = { units: [], lessonPaths: [L1], dueAt: at(5) };
+    const events = [{ ...passing(5), at: at(5) + 60000 }];
+    const s = K.assignmentStatus(assignment, events, opts);
+    expect(s.state).toBe('done-late');
+    expect(s.daysLate).toBe(1);
+  });
+
+  it('separates not-yet-due from overdue', () => {
+    const ahead = { units: [], lessonPaths: [L1], dueAt: NOW + 3 * DAY };
+    expect(K.assignmentStatus(ahead, [opened(1)], opts).state).toBe('not-due');
+    expect(K.assignmentStatus(due(3), [opened(1)], opts).state).toBe('overdue');
+  });
+
+  it('reads an assignment past the retention window as expired', () => {
+    const old = { units: [], lessonPaths: [L1], dueAt: NOW - 400 * DAY };
+    const s = K.assignmentStatus(old, [], opts);
+    expect(s.state).toBe('expired');
+  });
+
+  it('is not finished until the last required piece is', () => {
+    const both = { units: [], lessonPaths: [L1, L2], dueAt: at(1) };
+    const s = K.assignmentStatus(both, [passing(9, L1), passing(4, L2)], opts);
+    expect(s.completedAt).toBe(at(4));
+    expect(s.doneCount).toBe(2);
+    expect(s.partCount).toBe(2);
+  });
+
+  it('holds back a partly done assignment', () => {
+    const both = { units: [], lessonPaths: [L1, L2], dueAt: at(1) };
+    const s = K.assignmentStatus(both, [passing(9, L1)], opts);
+    expect(s.completedAt).toBe(null);
+    expect(s.doneCount).toBe(1);
+    expect(s.state).toBe('overdue');
+  });
+
+  it('mixes unit parts and lesson parts', () => {
+    const mixed = { units: [1], lessonPaths: [L2], dueAt: at(1) };
+    const events = [passing(9, L1), passing(8, L2), testSubmitted(7, 1, 90)];
+    const s = K.assignmentStatus(mixed, events, opts);
+    expect(s.partCount).toBe(2);
+    expect(s.doneCount).toBe(2);
+    expect(s.state).toBe('done-on-time');
+  });
+
+  it('titles each part so a row does not read as a URL', () => {
+    const s = K.assignmentStatus(due(3), [passing(5)], opts);
+    expect(s.parts[0].title).toBe('First program');
+    expect(K.assignmentStatus({ units: [1], lessonPaths: [], dueAt: at(3) }, [], opts)
+      .parts[0].title).toBe('Unit 1');
+  });
+
+  it('treats an assignment requiring nothing as done nothing, never as complete', () => {
+    const empty = { units: [], lessonPaths: [], dueAt: at(3) };
+    const s = K.assignmentStatus(empty, [passing(5)], opts);
+    expect(s.partCount).toBe(0);
+    expect(s.completedAt).toBe(null);
+    expect(s.state).toBe('overdue');
+  });
+});
+
+describe('assignmentUnlocks', () => {
+  it('opens every unit a live assignment names', () => {
+    const list = [{ units: [3, 4], lessonPaths: [], dueAt: NOW }];
+    expect(K.assignmentUnlocks(list, NOW)).toEqual([3, 4]);
+  });
+
+  it('opens the unit a required lesson sits in', () => {
+    const list = [{ units: [], lessonPaths: ['/units/unit-6/loops.html'], dueAt: NOW }];
+    expect(K.assignmentUnlocks(list, NOW)).toEqual([6]);
+  });
+
+  /* Missing the deadline must not close the door on the work. Late is tracked
+     separately from not-done precisely so a student can still go and do it. */
+  it('keeps a past-due assignment open', () => {
+    const list = [{ units: [5], lessonPaths: [], dueAt: NOW - 30 * DAY }];
+    expect(K.assignmentUnlocks(list, NOW)).toEqual([5]);
+  });
+
+  it('drops an archived assignment', () => {
+    const list = [{ units: [5], lessonPaths: [], dueAt: NOW, archived: true }];
+    expect(K.assignmentUnlocks(list, NOW)).toEqual([]);
+  });
+
+  it('lists each unit once and in order', () => {
+    const list = [
+      { units: [4, 2], lessonPaths: ['/units/unit-2/if-statement.html'], dueAt: NOW },
+      { units: [2], lessonPaths: [], dueAt: NOW },
+    ];
+    expect(K.assignmentUnlocks(list, NOW)).toEqual([2, 4]);
+  });
+
+  it('reads nothing at all as nothing unlocked', () => {
+    expect(K.assignmentUnlocks(null, NOW)).toEqual([]);
+    expect(K.assignmentUnlocks([], NOW)).toEqual([]);
+  });
+});

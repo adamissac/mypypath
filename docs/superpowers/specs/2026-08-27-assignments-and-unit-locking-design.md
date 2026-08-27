@@ -189,7 +189,7 @@ function only ever reports the first moment the condition became true, both prop
 hold without storing anything.
 
 ```
-assignmentStatus(assignment, events, now) -> {
+assignmentStatus(assignment, events, options) -> {
   parts: [{ kind, unit|path, title, done, completedAt }],
   doneCount, partCount,
   completedAt: number | null,
@@ -207,6 +207,9 @@ assignmentStatus(assignment, events, now) -> {
   flag on one.
 - `expired` when `dueAt` is more than `RETENTION.EVENT_DAYS` in the past, checked before
   anything else, per the retention section above.
+- `options` is `{ now, lessonsByUnit, lessonTitles }`, the same shape `needsAttention`
+  and `classSummary` already take. A unit part needs its lesson list to know what
+  "complete" means, and `classroom-core.js` has no curriculum of its own on purpose.
 
 Everything is computed from `(dueAt, completion timestamp or now)` at render time.
 Nothing is stored, so a late marking can never get stuck stale because no job ran, and

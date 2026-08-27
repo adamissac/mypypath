@@ -20,7 +20,8 @@
 (function () {
   'use strict';
 
-  var WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+  var DAY_MS = 24 * 60 * 60 * 1000;
+  var WEEK_MS = 7 * DAY_MS;
 
   /* Three failed attempts at the same exercise with nothing passing. Two is a
      normal amount of wrong; by the fourth a student has usually stopped
@@ -241,6 +242,210 @@
       });
     });
     return total ? Math.round((done / total) * 100) : 0;
+  }
+
+  /* ------------------------------------------------------- assignments */
+
+  /* When a student first satisfied something, rather than whether they have.
+   *
+   * Everything else on this file answers "what is true now". An assignment
+   * needs "when did that become true", because a date is the whole difference
+   * between done and done late.
+   *
+   * Earliest, never latest, and that is the ratchet the rest of the codebase
+   * already keeps: mergeAttempt and recordBest never let a later worse attempt
+   * undo an earlier better one, and a completion date must not move either. A
+   * student who reopens a passed lesson and does badly has not un-finished it,
+   * and one who does it again better has not finished it a second time. Either
+   * reading would silently walk a completion across a due date.
+   *
+   * `target` is { kind: 'lesson', path } or { kind: 'unit', unit, lessonPaths }.
+   * Returns millis, or null if the thing was never finished at all.
+   */
+  function firstPassAt(events, lessonPath) {
+    var best = null;
+    (events || []).forEach(function (e) {
+      if (e.type !== 'code.tests_passed') return;
+      var p = payloadOf(e);
+      if ((e.lessonPath || p.lessonPath) !== lessonPath) return;
+      if (!p.total || p.passed < p.total) return;
+      var at = toMillis(e.at);
+      if (at && (best === null || at < best)) best = at;
+    });
+    return best;
+  }
+
+  function firstVerifiedAt(events, unit) {
+    var best = null;
+    eventsOfType(events, 'unit.completed').forEach(function (e) {
+      var p = payloadOf(e);
+      if (p.verified !== true || Number(p.unit) !== Number(unit)) return;
+      var at = toMillis(e.at);
+      if (at && (best === null || at < best)) best = at;
+    });
+    return best;
+  }
+
+  function firstTestPassAt(events, unit) {
+    var best = null;
+    eventsOfType(events, 'test.submitted').forEach(function (e) {
+      var p = payloadOf(e);
+      if (Number(p.unit) !== Number(unit) || !p.total) return;
+      if ((p.score / p.total) * 100 < UNIT_TEST_PASS_MARK) return;
+      var at = toMillis(e.at);
+      if (at && (best === null || at < best)) best = at;
+    });
+    return best;
+  }
+
+  function earlier(a, b) {
+    if (a === null) return b;
+    if (b === null) return a;
+    return a < b ? a : b;
+  }
+
+  function completedAt(events, target) {
+    var t = target || {};
+
+    if (t.kind === 'lesson') {
+      var unit = unitOfPath(t.path);
+      // A verified unit means every lesson in it is done, which is exactly what
+      // lessonState says when unitVerified is true.
+      return earlier(firstPassAt(events, t.path),
+        unit === null ? null : firstVerifiedAt(events, unit));
+    }
+
+    if (t.kind !== 'unit') return null;
+
+    var verified = firstVerifiedAt(events, t.unit);
+    var paths = t.lessonPaths || [];
+    if (!paths.length) return verified;
+
+    // The long route: every lesson passed and the test passed. The unit is not
+    // finished until the last outstanding piece lands, so this is a max over
+    // the parts, guarded by any one of them never happening.
+    var last = firstTestPassAt(events, t.unit);
+    for (var i = 0; last !== null && i < paths.length; i++) {
+      var lessonAt = firstPassAt(events, paths[i]);
+      if (lessonAt === null) { last = null; break; }
+      if (lessonAt > last) last = lessonAt;
+    }
+
+    // Whichever route finished first is when the unit was finished.
+    return earlier(last, verified);
+  }
+
+  function unitOfPath(path) {
+    var m = /^\/units\/unit-(\d+)\//.exec(String(path || ''));
+    return m ? Number(m[1]) : null;
+  }
+
+  /* One assignment, for one student, as a row a teacher can read.
+   *
+   * Nothing here is stored. Late is computed at render time out of the due date
+   * and either the completion time or now, the same way unitTestPassed and
+   * lessonState are computed rather than cached. A stored flag would go stale
+   * the moment nobody re-ran the job that set it, and a teacher would be
+   * looking at a late marking that stopped being true weeks ago.
+   */
+  function assignmentStatus(assignment, events, options) {
+    var a = assignment || {};
+    var opts = options || {};
+    var now = opts.now || Date.now();
+    var byUnit = opts.lessonsByUnit || {};
+    var titles = opts.lessonTitles || {};
+    var dueAt = toMillis(a.dueAt);
+
+    var parts = [];
+    (a.units || []).forEach(function (unit) {
+      var n = Number(unit);
+      parts.push({
+        kind: 'unit',
+        unit: n,
+        title: 'Unit ' + n,
+        completedAt: completedAt(events, {
+          kind: 'unit', unit: n, lessonPaths: byUnit[n] || byUnit[String(n)] || []
+        })
+      });
+    });
+    (a.lessonPaths || []).forEach(function (path) {
+      parts.push({
+        kind: 'lesson',
+        path: path,
+        title: titles[path] || path,
+        completedAt: completedAt(events, { kind: 'lesson', path: path })
+      });
+    });
+    parts.forEach(function (part) { part.done = part.completedAt !== null; });
+
+    var doneCount = parts.filter(function (p) { return p.done; }).length;
+
+    // An assignment requiring nothing can never be complete. Reading it as
+    // done would let an empty row report a class as finished.
+    var finishedAt = null;
+    if (parts.length && doneCount === parts.length) {
+      finishedAt = parts.reduce(function (acc, p) {
+        return p.completedAt > acc ? p.completedAt : acc;
+      }, 0);
+    }
+
+    var state;
+    var daysLate = 0;
+    if (dueAt && dueAt < now - RETENTION.EVENT_DAYS * DAY_MS) {
+      // The evidence has been deleted on purpose, by the retention policy the
+      // rules enforce. "We no longer keep this" and "nobody did the work" are
+      // different facts and must not paint the same.
+      state = 'expired';
+    } else if (finishedAt === null) {
+      state = now > dueAt ? 'overdue' : 'not-due';
+    } else if (finishedAt > dueAt) {
+      state = 'done-late';
+      // Whole days, rounded up: one minute past the deadline is a day late,
+      // never zero days late, which reads as on time to anyone looking at the
+      // number rather than the word.
+      daysLate = Math.ceil((finishedAt - dueAt) / DAY_MS);
+    } else {
+      state = 'done-on-time';
+    }
+
+    return {
+      parts: parts,
+      doneCount: doneCount,
+      partCount: parts.length,
+      completedAt: finishedAt,
+      dueAt: dueAt,
+      state: state,
+      daysLate: daysLate
+    };
+  }
+
+  /* Which units the class's assignments hold open, whatever its lock mode says.
+   *
+   * A student marked late for work they could not open is the one failure this
+   * feature must not have, so an assigned unit is reachable in every mode.
+   *
+   * Live means the assignment exists and is not archived, deliberately not
+   * "not yet due". Missing a deadline must not close the door on the work:
+   * late is tracked separately from not-done precisely so it can still be done.
+   *
+   * `now` is unused today and taken anyway, so that an "opens only once due"
+   * variant would be a change inside this function rather than at every call
+   * site.
+   */
+  function assignmentUnlocks(assignments, now) {
+    var seen = {};
+    (assignments || []).forEach(function (a) {
+      if (!a || a.archived === true) return;
+      (a.units || []).forEach(function (u) {
+        var n = Number(u);
+        if (Number.isInteger(n) && n >= 1) seen[n] = true;
+      });
+      (a.lessonPaths || []).forEach(function (path) {
+        var n = unitOfPath(path);
+        if (n !== null) seen[n] = true;
+      });
+    });
+    return Object.keys(seen).map(Number).sort(function (x, y) { return x - y; });
   }
 
   /* --------------------------------------------------- needs attention */
@@ -622,6 +827,20 @@
       + 'when code is run and when typing pauses -- never per keystroke. Oldest are '
       + 'dropped once a lesson\'s history passes '
       + (RETENTION.SNAPSHOT_BYTES_PER_LESSON / 1024) + 'KB.',
+    assignmentLate: 'Whether the work was finished before the due date. The '
+      + 'completion time is the first moment this site saw the work pass, '
+      + 'stamped with server time when it arrived, so the date is reliable even '
+      + 'if a student\'s own clock is not. What it does not show is who did the '
+      + 'work, so treat a late marking as a thing to ask about.',
+    assignmentExpired: 'This assignment was due more than ' + RETENTION.EVENT_DAYS
+      + ' days ago, and the activity records it would be measured against have '
+      + 'been deleted under the retention policy. That is not the same as nobody '
+      + 'having done it, so nothing is shown either way.',
+    lockMode: 'In order: a unit opens once the one before it is finished. By '
+      + 'hand: only the units you tick are open. Open: every unit is open to '
+      + 'everyone. Assignments are unaffected by all three, so an open course '
+      + 'still owes whatever you set, and a unit you assign is always reachable '
+      + 'even if the mode would otherwise keep it shut.',
     trust: 'These events are recorded by each student\'s own browser. They are a '
       + 'record of what the site saw, not proof of what happened, and a determined '
       + 'student could send something untrue. Use them to decide who to talk to, '
@@ -651,6 +870,9 @@
     lastEventAt: lastEventAt,
     needsAttention: needsAttention,
     classSummary: classSummary,
+    completedAt: completedAt,
+    assignmentStatus: assignmentStatus,
+    assignmentUnlocks: assignmentUnlocks,
     groupByDay: groupByDay,
     perLessonRows: perLessonRows,
     studentHeader: studentHeader
