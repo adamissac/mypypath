@@ -6,7 +6,7 @@
  * also produce a record of them having answered.
  */
 import {
-  readEvents, readMirror,
+  readEvents, readMirror, readAssignments,
 } from '/assets/js/classroom-store.js';
 
 const CORE = window.PyPathClassroom;
@@ -133,6 +133,64 @@ function paintTimeline(root, student) {
 /* A row per unit: the percentage, how many lessons are done, and whether the
    end-of-unit test has been passed. The same figure the student sees on their
    own progress page, because both come from PyPathUnitProgress. */
+/* What this class was set, and where this student stands on each of it.
+ *
+ * Deliberately its own block, above the units table rather than folded into
+ * it. "How far have they got" and "did they do what I asked" are different
+ * questions, and a student can be answering the first one well while missing
+ * the second entirely. */
+const ASSIGN_LABEL = {
+  'done-on-time': 'On time',
+  'done-late': 'Late',
+  'not-due': 'Not due yet',
+  overdue: 'Overdue',
+  expired: 'Records expired',
+};
+
+function paintAssignments(root, student, assignments) {
+  const table = $('[data-sd-assign]', root);
+  const body = $('[data-sd-assign-body]', root);
+  const empty = $('[data-sd-assign-empty]', root);
+  if (!body) return;
+
+  body.innerHTML = '';
+  show(table, assignments.length > 0);
+  show(empty, assignments.length === 0);
+
+  const options = {
+    now: Date.now(),
+    lessonsByUnit: lessonsByUnit(),
+    lessonTitles: manifest.lessons.reduce((acc, l) => {
+      acc[l.path] = l.title;
+      return acc;
+    }, {}),
+  };
+
+  for (const assignment of assignments) {
+    const status = CORE.assignmentStatus(assignment, student.events, options);
+
+    const tr = el('tr', 'sd-assign--' + status.state);
+    const th = el('th', null, assignment.title);
+    th.scope = 'row';
+    tr.appendChild(th);
+    tr.appendChild(el('td', null, fmtDate(CORE.toMillis(assignment.dueAt))));
+    tr.appendChild(el('td', 'sd-assign__parts',
+      status.doneCount + ' of ' + status.partCount + ': '
+        + status.parts.map((p) => p.title).join(', ')));
+
+    // A word, and the number of days where there is one. A colour alone says
+    // nothing on a printout or to a screen reader.
+    let verdict = ASSIGN_LABEL[status.state];
+    if (status.state === 'done-late') {
+      verdict += ' by ' + status.daysLate + ' day' + (status.daysLate === 1 ? '' : 's');
+    }
+    if (status.completedAt) verdict += ', finished ' + fmtDate(status.completedAt);
+    tr.appendChild(el('td', null, verdict));
+
+    body.appendChild(tr);
+  }
+}
+
 function paintUnits(root, student) {
   const body = $('[data-sd-units-body]', root);
   if (!body) return;
@@ -407,7 +465,12 @@ export async function openStudent(classId, uid, displayName) {
     mirror: await readMirror(classId, uid).catch(() => ({})),
   };
 
+  // Not fatal if it fails: the rest of the page is still worth showing, and an
+  // empty assignments table reads as "nothing set" either way.
+  const assignments = await readAssignments(classId).catch(() => []);
+
   paintHeader(root, student);
+  paintAssignments(root, student, assignments);
   paintUnits(root, student);
   paintTimeline(root, student);
   paintLessons(root, student);
