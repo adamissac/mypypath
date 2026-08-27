@@ -685,3 +685,170 @@
   .sd-unit__meter { display: none; }
   .sd-unit__pct { margin-left: 0; }
 }
+
+/* ------------------------------------------------------------ assignments */
+
+/* Same plain, dense card the join code and needs-attention use. Nothing here
+   introduces a second visual language for a second kind of fact. */
+.cr-assign,
+.cr-access {
+  margin: 0 0 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .5rem;
+  background: var(--panel, #fff);
+}
+
+.cr-assign__list { margin: 0; padding: 0; list-style: none; }
+
+.cr-assign__item {
+  padding: .75rem 0;
+  border-bottom: 1px solid var(--border, #cbd5e1);
+}
+
+.cr-assign__item:last-child { border-bottom: 0; }
+
+.cr-assign__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .5rem 1rem;
+  justify-content: space-between;
+}
+
+.cr-assign__title { margin: 0; font-size: 1rem; color: var(--text-strong, #0f172a); }
+
+.cr-assign__due {
+  margin: 0;
+  font-size: .85rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted, #475569);
+}
+
+.cr-assign__what { margin: .25rem 0 .5rem; font-size: .85rem; color: var(--muted, #475569); }
+
+.cr-assign__tally {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin: 0 0 .5rem;
+  padding: 0;
+  list-style: none;
+}
+
+/* A count is a number and a word, in that order, and it keeps the word even
+   when the colour is gone. */
+.cr-assign__count {
+  display: flex;
+  align-items: baseline;
+  gap: .35rem;
+  padding: .15rem .5rem;
+  border-radius: .25rem;
+  font-size: .8rem;
+  background: var(--bg-elevated, #f1f5f9);
+  color: var(--text, #334155);
+}
+
+.cr-assign__n { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.cr-assign--done-on-time { color: #14532d; background: #dcfce7; }
+.cr-assign--done-late { color: #92400e; background: #fef3c7; }
+.cr-assign--overdue { color: #7f1d1d; background: #fee2e2; }
+.cr-assign--expired { color: var(--muted, #475569); background: var(--bg-elevated, #f1f5f9); }
+
+[data-theme="dark"] .cr-assign--done-on-time { color: #bbf7d0; background: #14361f; }
+[data-theme="dark"] .cr-assign--done-late { color: #fde68a; background: #4a3410; }
+[data-theme="dark"] .cr-assign--overdue { color: #fecaca; background: #451a1a; }
+
+.cr-assign__who { margin: 0 0 .5rem; font-size: .85rem; color: var(--text, #334155); }
+
+.cr-assign__note,
+.cr-access__note {
+  margin: .5rem 0 0;
+  font-size: .82rem;
+  color: var(--muted, #475569);
+}
+
+.cr-assign__new { margin-top: .75rem; }
+.cr-assign__new summary { cursor: pointer; font-size: .9rem; font-weight: 600; }
+
+.cr-assign__form { margin-top: .75rem; }
+
+.cr-field { display: flex; flex-direction: column; gap: .25rem; margin: 0 0 .75rem; max-width: 22rem; }
+.cr-field label { font-size: .85rem; font-weight: 600; color: var(--text-strong, #0f172a); }
+
+.cr-assign__targets {
+  margin: 0 0 .75rem;
+  padding: .5rem .75rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .35rem;
+}
+
+.cr-assign__targets legend { padding: 0 .35rem; font-size: .82rem; font-weight: 600; }
+
+.cr-assign__units,
+.cr-assign__lessons,
+.cr-access__units {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem .9rem;
+}
+
+.cr-assign__lessons { flex-direction: column; gap: .3rem; }
+
+.cr-check {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .85rem;
+  color: var(--text, #334155);
+}
+
+/* ------------------------------------------------------------ unit access */
+
+.cr-access__modes { margin: 0 0 .75rem; padding: 0; border: 0; }
+
+.cr-access__modes label {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .15rem .5rem;
+  margin: 0 0 .5rem;
+  cursor: pointer;
+}
+
+.cr-access__modes input { grid-row: 1 / 3; align-self: start; margin-top: .2rem; }
+.cr-access__name { font-weight: 600; color: var(--text-strong, #0f172a); }
+.cr-access__hint { font-size: .82rem; color: var(--muted, #475569); }
+
+.cr-access__units {
+  margin: 0 0 .5rem;
+  padding: .5rem .75rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .35rem;
+}
+
+/* ------------------------------------------- the assignment grid overlay */
+
+/* An outline rather than a fill, because the cell's own fill is already
+   carrying the mastery state and must stay readable underneath. The trailing
+   character in .cr-cell__mark is what survives greyscale and a printout. */
+.cr-assigned .cr-cell__btn { box-shadow: inset 0 0 0 2px currentColor; }
+.cr-assigned--overdue .cr-cell__btn { box-shadow: inset 0 0 0 2px #dc2626; }
+.cr-assigned--done-late .cr-cell__btn { box-shadow: inset 0 0 0 2px #d97706; }
+
+/* --------------------------------------------- assigned, on one student */
+
+.sd-assign--overdue th { color: #7f1d1d; }
+.sd-assign--done-late th { color: #92400e; }
+.sd-assign__parts { font-size: .85rem; color: var(--muted, #475569); }
+
+[data-theme="dark"] .sd-assign--overdue th { color: #fecaca; }
+[data-theme="dark"] .sd-assign--done-late th { color: #fde68a; }
+
+@media print {
+  /* The builder is a control, not a record, and the outline is a colour.
+     The mark and the words carry both onto paper. */
+  .cr-assign__new { display: none; }
+  .cr-access__modes input { display: none; }
+  .cr-assigned .cr-cell__btn { box-shadow: none; }
+}

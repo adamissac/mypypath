@@ -193,6 +193,101 @@
             <button type="button" class="btn btn-ghost btn-small" data-cr-copy>Copy code</button>
           </section>
 
+          <!-- Assignments: what was asked for, and by when -->
+          <section class="cr-assign" aria-labelledby="cr-assign-h">
+            <h2 id="cr-assign-h">
+              Assignments
+              <button type="button" class="cr-info" data-cr-info="assignmentLate"
+                      aria-label="How late is worked out">i</button>
+            </h2>
+
+            <p class="cr-empty-note" data-cr-assign-empty hidden>
+              Nothing is assigned yet. Set some work below and this class's
+              progress against it appears here.
+            </p>
+
+            <ul class="cr-assign__list" data-cr-assign-list></ul>
+
+            <details class="cr-assign__new">
+              <summary>Set new work</summary>
+              <form class="cr-assign__form" data-cr-assign-form>
+                <p class="cr-field">
+                  <label for="cr-assign-title">What to call it</label>
+                  <input id="cr-assign-title" name="title" type="text" required
+                         maxlength="100" autocomplete="off"
+                         placeholder="Loops and conditionals" />
+                </p>
+
+                <p class="cr-field">
+                  <label for="cr-assign-due">Due</label>
+                  <input id="cr-assign-due" name="dueAt" type="date" required />
+                </p>
+
+                <fieldset class="cr-assign__targets">
+                  <legend>Whole units</legend>
+                  <div class="cr-assign__units" data-cr-assign-units></div>
+                </fieldset>
+
+                <fieldset class="cr-assign__targets">
+                  <legend>Or single lessons</legend>
+                  <p class="cr-field">
+                    <label for="cr-assign-lesson-unit">Lessons in</label>
+                    <select id="cr-assign-lesson-unit" data-cr-assign-lesson-unit></select>
+                  </p>
+                  <div class="cr-assign__lessons" data-cr-assign-lessons></div>
+                </fieldset>
+
+                <p class="cr-assign__note">
+                  Assignments go to everyone in the class. A unit you assign is
+                  always reachable, whatever the unit access setting below says,
+                  so nobody is ever marked late for work they could not open.
+                </p>
+
+                <button type="submit" class="btn btn-primary btn-small">Assign</button>
+                <p class="cr-error" data-cr-assign-error role="alert" hidden></p>
+              </form>
+            </details>
+          </section>
+
+          <!-- Unit access: how this class's units open -->
+          <section class="cr-access" aria-labelledby="cr-access-h">
+            <h2 id="cr-access-h">
+              Unit access
+              <button type="button" class="cr-info" data-cr-info="lockMode"
+                      aria-label="What each setting does">i</button>
+            </h2>
+
+            <fieldset class="cr-access__modes">
+              <legend class="visually-hidden">How units open for this class</legend>
+              <label>
+                <input type="radio" name="cr-lock-mode" value="sequential" checked>
+                <span class="cr-access__name">In order</span>
+                <span class="cr-access__hint">A unit opens once the one before it
+                  is finished. This is the default.</span>
+              </label>
+              <label>
+                <input type="radio" name="cr-lock-mode" value="manual">
+                <span class="cr-access__name">By hand</span>
+                <span class="cr-access__hint">Only the units you tick are open.
+                  Unit 1 is always open.</span>
+              </label>
+              <label>
+                <input type="radio" name="cr-lock-mode" value="free">
+                <span class="cr-access__name">Open</span>
+                <span class="cr-access__hint">Every unit is open to everyone, in
+                  any order.</span>
+              </label>
+            </fieldset>
+
+            <div class="cr-access__units" data-cr-access-units hidden></div>
+
+            <p class="cr-access__note">
+              None of these cancel an assignment. An open course still owes
+              whatever you set, and missed work still shows as late.
+            </p>
+            <p class="cr-error" data-cr-access-error role="alert" hidden></p>
+          </section>
+
           <!-- A: needs attention, pinned first -->
           <section class="cr-attention" aria-labelledby="cr-attention-h">
             <h2 id="cr-attention-h">
@@ -236,6 +331,9 @@
                 <label><input type="radio" name="cr-scope" value="lessons"> Lessons in</label>
                 <label class="visually-hidden" for="cr-unit-pick">Unit</label>
                 <select id="cr-unit-pick" data-cr-unit-pick disabled></select>
+                <label><input type="radio" name="cr-scope" value="assignment"> Assignment</label>
+                <label class="visually-hidden" for="cr-assign-pick">Which assignment</label>
+                <select id="cr-assign-pick" data-cr-assign-pick disabled></select>
               </fieldset>
 
               <div class="cr-sort">
@@ -329,6 +427,34 @@
           </p>
 
           <dl class="cr-stats sd-header" data-sd-header></dl>
+
+          <!-- What was actually asked for, kept separate from everything the
+               student has explored on their own. A student can be making fine
+               general progress while missing what was set. -->
+          <h4>
+            Assigned to this class
+            <button type="button" class="cr-info" data-cr-info="assignmentLate"
+                    aria-label="How late is worked out">i</button>
+          </h4>
+          <p class="cr-empty-note" data-sd-assign-empty hidden>
+            Nothing is assigned to this class.
+          </p>
+          <div class="cr-tablewrap">
+            <table class="cr-table" data-sd-assign hidden>
+              <caption class="visually-hidden">
+                What this class was set, and how this student stands on each
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Assignment</th>
+                  <th scope="col">Due</th>
+                  <th scope="col">Required</th>
+                  <th scope="col">State</th>
+                </tr>
+              </thead>
+              <tbody data-sd-assign-body></tbody>
+            </table>
+          </div>
 
           <h4>
             Units

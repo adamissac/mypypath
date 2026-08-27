@@ -41,6 +41,16 @@
     return new Date(ms).toISOString().slice(0, 10);
   }
 
+  /* The same words the dashboard uses, so a teacher comparing the sheet with
+     the screen is reading one vocabulary rather than two. */
+  var ASSIGN_LABEL = {
+    'done-on-time': 'On time',
+    'done-late': 'Late',
+    'not-due': 'Not due yet',
+    overdue: 'Overdue',
+    expired: 'Records expired'
+  };
+
   /* ------------------------------------------------------------ the grid */
 
   function masteryCsv(students, options) {
@@ -49,8 +59,18 @@
     var totalUnits = opts.totalUnits || 10;
     var rows = [];
 
+    var assignments = opts.assignments || [];
+    var statusOpts = {
+      now: opts.now || Date.now(),
+      lessonsByUnit: lessonsByUnit,
+      lessonTitles: opts.lessonTitles || {}
+    };
+
     var header = ['Student', 'Percent complete', 'Units verified', 'Last active'];
     for (var u = 1; u <= totalUnits; u += 1) header.push('Unit ' + u);
+    // One column per assignment, after the units, so the sheet reads as
+    // "where they are" and then "what was asked".
+    assignments.forEach(function (a) { header.push(a.title); });
     rows.push(header);
 
     (students || []).forEach(function (student) {
@@ -68,6 +88,13 @@
           CORE.unitState(student.events, lessonsByUnit[unit] || [], unit)
         ]);
       }
+      assignments.forEach(function (a) {
+        var status = CORE.assignmentStatus(a, student.events, statusOpts);
+        // The word and the day count, not a colour and not a mark: a
+        // spreadsheet outlives the page whose key would explain either.
+        row.push(ASSIGN_LABEL[status.state]
+          + (status.state === 'done-late' ? ' by ' + status.daysLate + 'd' : ''));
+      });
       rows.push(row);
     });
 

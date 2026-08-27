@@ -162,8 +162,16 @@ describe('the drill-down view', () => {
     }
   });
 
-  it('imports only the two read functions it needs', () => {
-    expect(src).toMatch(/import \{\s*readEvents, readMirror,\s*\} from/);
+  /* The property is read-only, not a particular arity. A teacher who could
+     write into a student's record could also produce a record of them having
+     answered, so this asserts that nothing that writes is even in scope. */
+  it('imports reads and nothing that writes', () => {
+    expect(src).toMatch(/import \{\s*readEvents, readMirror, readAssignments,\s*\} from/);
+    const imported = /import \{([^}]*)\} from '\/assets\/js\/classroom-store\.js'/.exec(src);
+    expect(imported).toBeTruthy();
+    for (const name of imported[1].split(',').map((n) => n.trim()).filter(Boolean)) {
+      expect(name, name).toMatch(/^read/);
+    }
   });
 
   it('shows what the exercise had to do, beside the student\'s code', () => {
