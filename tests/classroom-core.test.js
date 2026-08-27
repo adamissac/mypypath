@@ -562,14 +562,13 @@ describe('assignmentUnlocks', () => {
 /* ------------------------------------------------------- flagged answers */
 
 describe('flaggedAnswers', () => {
-  const flagged = (d, flag, p) =>
-    ev('answer.submitted', d, { lessonPath: p || L1, aiFlag: flag });
+  const flagged = (d, missed, p) =>
+    ev('answer.submitted', d, { lessonPath: p || L1, missedConcepts: missed });
 
-  it('records only answers a second opinion actually flagged', () => {
-    const events = [flagged(3, 'off-topic'), flagged(2, 'none'), flagged(1, null),
+  it('records only answers the concept check actually flagged', () => {
+    const events = [flagged(3, true), flagged(2, false), flagged(1, undefined),
       ev('code.run', 1, {})];
     expect(K.flaggedAnswers(events).length).toBe(1);
-    expect(K.flaggedAnswers(events)[0].flag).toBe('off-topic');
   });
 
   it('reads no events at all as nothing flagged', () => {
@@ -580,7 +579,7 @@ describe('flaggedAnswers', () => {
 
 describe('needsAttention on flagged answers', () => {
   const flagged = (d, p) =>
-    ev('answer.submitted', d, { lessonPath: p || L1, aiFlag: 'placeholder' });
+    ev('answer.submitted', d, { lessonPath: p || L1, missedConcepts: true });
   const student = (events) => ({ uid: 'a', displayName: 'ann', events });
 
   /* One of anything is not a pattern, and a dashboard that flags one is a
@@ -594,7 +593,7 @@ describe('needsAttention on flagged answers', () => {
     const rows = K.needsAttention([student([flagged(3), flagged(2), flagged(1)])], { now: NOW });
     const row = rows.filter((r) => r.kind === 'flagged')[0];
     expect(row).toBeTruthy();
-    expect(row.reason).toMatch(/did not address the question/);
+    expect(row.reason).toMatch(/did not mention any of the ideas/);
   });
 
   /* The rule the whole file is written to. A machine's opinion is not a
@@ -614,7 +613,7 @@ describe('needsAttention on flagged answers', () => {
   });
 
   it('carries the honesty caveat in its own words', () => {
-    expect(K.EXPLANATIONS.flagged).toMatch(/second opinion, not/i);
-    expect(K.EXPLANATIONS.flagged).toMatch(/wrong sometimes|override/i);
+    expect(K.EXPLANATIONS.flagged).toMatch(/word check, not a marker/i);
+    expect(K.EXPLANATIONS.flagged).toMatch(/read one of them/i);
   });
 });
