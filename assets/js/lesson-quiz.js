@@ -34,7 +34,65 @@
     return node;
   }
 
+  /* The four types that are not single-answer multiple choice.
+   *
+   * They are checked rather than answered live: an MCQ can show the reason the
+   * instant a radio is picked, because picking is the whole answer, but a
+   * matching question is not answered until every row is paired. Marking one
+   * as it is built would tell a learner they were wrong before they had
+   * finished being right. */
+  function renderRich(question, index) {
+    var RENDER = window.PyPathQuestionRender;
+    var Q = window.PyPathQuestions;
+    var built = RENDER && RENDER.render(question, index);
+    if (!built) return null;
+
+    var block = el('li', 'quiz-q');
+    block.appendChild(built.node);
+
+    var feedback = el('p', 'quiz-feedback');
+    feedback.setAttribute('role', 'status');
+    feedback.setAttribute('aria-live', 'polite');
+    feedback.hidden = true;
+
+    var check = el('button', 'btn btn-ghost btn-small quiz-q__check', 'Check');
+    check.type = 'button';
+    check.addEventListener('click', function () {
+      attempts[question.id] = (attempts[question.id] || 0) + 1;
+      var result = Q.score(question, built.read());
+
+      // The count as well as the verdict: "3 of 4" is a different thing to
+      // learn from than "not quite", and both of them beat a red cross.
+      feedback.textContent = (result.right ? '\u2713 Correct. ' : '\u2715 ')
+        + result.correct + ' of ' + result.total + ' right. '
+        + (question.explain || '');
+      feedback.className = 'quiz-feedback is-' + (result.right ? 'right' : 'wrong');
+      feedback.hidden = false;
+
+      note('check.answered', {
+        lessonPath: lessonPath(),
+        questionId: question.id,
+        correct: result.right,
+        attempt: attempts[question.id]
+      });
+    });
+
+    block.appendChild(check);
+    block.appendChild(feedback);
+    return block;
+  }
+
   function renderQuestion(question, index) {
+    var Q = window.PyPathQuestions;
+    if (Q && Q.kindOfQuestion(question) !== 'mcq') {
+      var rich = renderRich(question, index);
+      // A question whose renderer did not load is skipped rather than drawn as
+      // an MCQ it is not, which would show the wrong controls and mark them
+      // against the wrong answer key.
+      if (rich) return rich;
+      return null;
+    }
+
     var block = el('li', 'quiz-q');
     // A fieldset so the choices are announced as one group with the question
     // as their name, rather than as four unrelated radio buttons.
@@ -122,7 +180,8 @@
 
     var list = el('ol', 'quiz__list');
     questions.forEach(function (question, index) {
-      list.appendChild(renderQuestion(question, index));
+      var block = renderQuestion(question, index);
+      if (block) list.appendChild(block);
     });
     section.appendChild(list);
 
@@ -155,5 +214,6 @@
     init();
   }
 
-  window.PyPathQuiz = { specUrl: specUrl, render: render, renderQuestion: renderQuestion };
+  window.PyPathQuiz = { specUrl: specUrl, render: render, renderQuestion: renderQuestion,
+    renderRich: renderRich };
 })();
