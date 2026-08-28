@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /* PyPath — validates the authored check files against the curriculum manifest.
  *
  * A check file that names an exercise the page does not have is silently dead:
