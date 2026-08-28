@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /* PyPath — build assets/data/curriculum.json, the machine-readable lesson manifest.
  *
  * Everything downstream (classroom dashboards, check authoring, validators) reads
