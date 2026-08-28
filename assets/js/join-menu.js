@@ -11,7 +11,8 @@
    and threading one more element through each one is a change that has to be
    repeated for every future page. */
 import { currentUser } from '/assets/js/auth.js';
-import { joinClass, leaveClass, readRoster } from '/assets/js/class-join.js';
+import { readRoster } from '/assets/js/class-join.js';
+import { joinAnyClass, leaveAnyClass } from '/assets/js/join-flow.js';
 
 const ROLES = window.PyPathRoles;
 
@@ -107,7 +108,7 @@ function buildDialog() {
     const submit = wrap.querySelector('[data-join-submit]');
     submit.disabled = true;
     try {
-      await joinClass(uid, input.value);
+      await joinAnyClass(uid, input.value);
       roster = await readRoster(uid);
       input.value = '';
       close();
@@ -131,7 +132,7 @@ function buildDialog() {
       return;
     }
     try {
-      await leaveClass(uid);
+      await leaveAnyClass(uid);
       roster = await readRoster(uid);
       leave.textContent = 'Leave this class';
       delete leave.dataset.confirming;
