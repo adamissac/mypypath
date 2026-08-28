@@ -126,3 +126,8 @@ Use `.claude/skills/frontend-design`; match the existing `cr-*` style.
 - [x] **Step 2:** `npm run test:rules`, expect PASS.
 - [x] **Step 3:** Browser verification with `.claude/skills/webapp-testing`, served by `npm run serve`. Walk the nine numbered scenarios in the design doc's Testing section.
 - [x] **Step 4:** Commit.
+- [ ] **Step 5:** Deploy the rules: `npx firebase deploy --only firestore:rules`. This
+  task changed `firestore.rules`, and the push to `main` does not carry it — Vercel
+  ships the client code while production keeps enforcing the old rules. Skipping this
+  is what made "Create class" fail on the live site with `permission-denied` while
+  every local check passed.
