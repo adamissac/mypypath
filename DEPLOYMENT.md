@@ -157,6 +157,16 @@ with "Deployment failed."
 ### Sign-in Fails With `auth/unauthorized-domain`?
 - The domain serving the page is not in the Firebase Authorized Domains list. Add it.
 
+### A Button Fails But the Page Loads Fine?
+Symptom: the UI is current, the console shows `permission-denied: Missing or
+insufficient permissions`, and the same operation passes under `npm run test:rules`.
+That combination means the deployed rules are older than the client code. Run
+`npx firebase deploy --only firestore:rules` and retry — no code change needed.
+
+Generic in-app messages ("Could not create the class") usually hide this. To see the
+real error, call the failing store function directly from the browser console in a
+signed-in session and read the rejection.
+
 ### DNS Not Working?
 - Wait up to 24-48 hours for full DNS propagation
 - Use [whatsmydns.net](https://www.whatsmydns.net) to check DNS propagation
@@ -184,6 +194,22 @@ git push
 ```
 
 Vercel will automatically redeploy your site!
+
+**Except `firestore.rules`.** Vercel deploys the files in this repo; it has no
+connection to Firebase. Security rules are a separate deployment target with a
+separate command, and pushing to `main` does not touch them. If your commit
+changed `firestore.rules`, the push is only half the deploy — run Step 5's
+command too:
+
+```bash
+npx firebase deploy --only firestore:rules
+```
+
+This is the failure mode to watch for: new client code ships instantly while the
+rules it depends on stay behind, so the site looks fully updated right up until
+a write hits a rule that production doesn't have yet. `npm run test:rules` passes
+throughout, because it runs the emulator against the rules file in your working
+tree, not against the ones production is enforcing.
 
 ## Need Help?
 
