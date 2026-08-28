@@ -6,8 +6,9 @@
    check against, which is the useful half anyway. */
 import { currentUser } from '/assets/js/auth.js';
 import {
-  readProfile, readRoster, joinClass, leaveClass, ensureJoinCode, setRole,
+  readProfile, readRoster, ensureJoinCode, setRole,
 } from '/assets/js/class-join.js';
+import { joinAnyClass, leaveAnyClass } from '/assets/js/join-flow.js';
 
 
 /* Deletes everything the class holds about this learner: their roster row,
@@ -166,7 +167,7 @@ if (section) {
         return;
       }
       try {
-        await joinClass(uid, raw);
+        await joinAnyClass(uid, raw);
         if (input) input.value = '';
         await refresh();
         announce('student');
@@ -187,7 +188,7 @@ if (section) {
         return;
       }
       try {
-        await leaveClass(uid);
+        await leaveAnyClass(uid);
 
         // Leaving is the erasure path, not just a disconnection. The rules
         // permit deleting the class copy only once the roster document is
