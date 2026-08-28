@@ -207,8 +207,10 @@ describe('leaving a class erases the class copy', () => {
   const store = fs.readFileSync('assets/js/classroom-store.js', 'utf8');
 
   it('purges after leaving, which is the order the rules require', () => {
-    // Events may only be deleted once the roster document is gone.
-    expect(account).toMatch(/await leaveClass\(uid\);[\s\S]*await purgeClassCopy\(uid\);/);
+    // Events may only be deleted once the roster document is gone. Leaving now
+    // goes through join-flow.js, which clears both schemas' records; the
+    // ordering this asserts is unchanged.
+    expect(account).toMatch(/await leaveAnyClass\(uid\);[\s\S]*await purgeClassCopy\(uid\);/);
   });
 
   it('deletes the roster row, the mirror and the events', () => {
