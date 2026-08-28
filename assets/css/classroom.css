@@ -62,24 +62,142 @@
 
 .cr-bar__right { display: flex; flex-wrap: wrap; gap: .5rem; }
 
-.cr-bar select,
-.cr-controls select {
+/* ---------- form controls: one look for every input on the page ---------- */
+
+/* The dashboard had grown three different input treatments -- a select in the
+   top bar, a date field in the assignment builder, a text field in the share
+   form -- each with its own border weight and radius. They are all the same
+   kind of thing to a teacher, so they now share one control: a 2px edge that
+   the accent takes over on hover, a token radius, and the site focus ring. */
+.cr select,
+.cr input[type="text"],
+.cr input[type="date"],
+.cr input[type="search"],
+.cr input[type="email"] {
   font: inherit;
   font-size: .88rem;
-  padding: .35rem .5rem;
-  border-radius: .4rem;
-  color: var(--text, #334155);
+  font-weight: 600;
+  padding: .5rem .7rem;
+  border-radius: .6rem;
+  color: var(--text-strong, #0f172a);
   background: var(--panel, #fff);
-  border: 1px solid var(--border, #cbd5e1);
+  border: 2px solid var(--border, #cbd5e1);
+  transition: border-color var(--dur-fast, 150ms) ease,
+              box-shadow var(--dur-fast, 150ms) ease,
+              background-color var(--dur-fast, 150ms) ease;
 }
+
+.cr select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  padding-right: 2.1rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234a7390' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .65rem center;
+}
+
+[data-theme="dark"] .cr select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2389a8ba' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+
+.cr select:hover:not(:disabled),
+.cr input[type="text"]:hover:not(:disabled),
+.cr input[type="date"]:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--primary, #0ea5e9) 55%, var(--border, #cbd5e1));
+}
+
+.cr select:focus-visible,
+.cr input:focus-visible {
+  outline: none;
+  border-color: var(--primary, #0ea5e9);
+  box-shadow: var(--ring, 0 0 0 4px rgba(14, 165, 233, .15));
+}
+
+/* A disabled lens is still readable -- it says "this view exists, it just has
+   nothing behind it yet" rather than disappearing. */
+.cr select:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+  background-color: var(--bg-elevated, #f1f5f9);
+}
+
+.cr input::placeholder { font-weight: 500; color: var(--muted, #475569); opacity: .8; }
+
+/* Safari and Chrome hide the date field's own affordance behind a faint glyph.
+   Give it the same weight as the select chevron so the two fields read as one
+   family. */
+.cr input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: .55;
+  transition: opacity var(--dur-fast, 150ms) ease;
+}
+
+.cr input[type="date"]:hover::-webkit-calendar-picker-indicator { opacity: 1; }
+[data-theme="dark"] .cr input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+
+/* Ticks and radios. Native controls in this palette come out grey on every
+   platform and grey is the one colour the grid below already uses for "not
+   started", so they get drawn here instead. */
+.cr input[type="checkbox"],
+.cr input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: none;
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0;
+  cursor: pointer;
+  background: var(--panel, #fff);
+  border: 2px solid var(--border, #cbd5e1);
+  border-radius: .35rem;
+  transition: background-color var(--dur-fast, 150ms) ease,
+              border-color var(--dur-fast, 150ms) ease;
+}
+
+.cr input[type="radio"] { border-radius: 50%; }
+
+.cr input[type="checkbox"]:hover:not(:disabled),
+.cr input[type="radio"]:hover:not(:disabled) { border-color: var(--primary, #0ea5e9); }
+
+.cr input[type="checkbox"]:checked,
+.cr input[type="radio"]:checked {
+  background-color: var(--primary, #0ea5e9);
+  border-color: var(--primary, #0ea5e9);
+}
+
+.cr input[type="checkbox"]:checked {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 13 4 4 10-10'/%3E%3C/svg%3E");
+  background-size: .7rem;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.cr input[type="radio"]:checked { box-shadow: inset 0 0 0 3px var(--panel, #fff); }
+
+.cr input[type="checkbox"]:focus-visible,
+.cr input[type="radio"]:focus-visible {
+  outline: none;
+  box-shadow: var(--ring, 0 0 0 4px rgba(14, 165, 233, .15));
+}
+
+.cr input[type="radio"]:checked:focus-visible {
+  box-shadow: inset 0 0 0 3px var(--panel, #fff), var(--ring, 0 0 0 4px rgba(14, 165, 233, .15));
+}
+
+/* Unit 1 is ticked and cannot be unticked. It reads as settled rather than
+   broken: still filled, just not offering a hand cursor. */
+.cr input[type="checkbox"]:disabled,
+.cr input[type="radio"]:disabled { cursor: not-allowed; opacity: .6; }
 
 /* ---------- join code ---------- */
 
 .cr-code {
-  padding: 1rem 1.1rem;
+  padding: 1.1rem 1.2rem;
   border: 1px solid var(--border, #cbd5e1);
-  border-radius: .6rem;
+  border-radius: .9rem;
   background: var(--panel, #fff);
+  box-shadow: var(--shadow, 0 4px 20px rgba(12, 69, 102, .07));
 }
 
 .cr-code__value {
@@ -131,18 +249,25 @@
 
 /* ---------- mastery grid ---------- */
 
+/* The lens picker and the sort order are one toolbar, not two stray rows of
+   inputs above the grid. */
 .cr-controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: .75rem 1.25rem;
   align-items: center;
-  margin-bottom: .75rem;
+  justify-content: space-between;
+  margin-bottom: .85rem;
+  padding: .6rem .75rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .8rem;
+  background: color-mix(in srgb, var(--bg-elevated, #f1f5f9) 55%, var(--panel, #fff));
 }
 
 .cr-scope {
   display: flex;
   flex-wrap: wrap;
-  gap: .6rem;
+  gap: .35rem;
   align-items: center;
   margin: 0;
   padding: 0;
@@ -150,8 +275,49 @@
   font-size: .88rem;
 }
 
-.cr-scope label { display: flex; align-items: center; gap: .3rem; }
-.cr-sort { display: flex; align-items: center; gap: .4rem; font-size: .88rem; }
+/* Three views of the same class, so they read as one switch with three
+   positions rather than three unrelated ticks. */
+.cr-scope > label:not(.visually-hidden) {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .35rem .6rem;
+  border: 2px solid transparent;
+  border-radius: .55rem;
+  font-weight: 600;
+  color: var(--muted, #475569);
+  cursor: pointer;
+  transition: border-color var(--dur-fast, 150ms) ease,
+              background-color var(--dur-fast, 150ms) ease,
+              color var(--dur-fast, 150ms) ease;
+}
+
+.cr-scope > label:not(.visually-hidden):hover { color: var(--text-strong, #0f172a); }
+
+.cr-scope > label:not(.visually-hidden):has(:checked) {
+  border-color: var(--primary, #0ea5e9);
+  background: color-mix(in srgb, var(--primary, #0ea5e9) 10%, var(--panel, #fff));
+  color: var(--text-strong, #0f172a);
+}
+
+.cr-scope > label:not(.visually-hidden):has(:focus-visible) {
+  border-color: var(--primary, #0ea5e9);
+  box-shadow: var(--ring, 0 0 0 4px rgba(14, 165, 233, .15));
+}
+
+/* A lens with nothing behind it dims its own label too, so the row does not
+   look like a live control with a dead select beside it. */
+.cr-scope > label:not(.visually-hidden):has(:disabled) { opacity: .55; cursor: not-allowed; }
+
+.cr-sort { display: flex; align-items: center; gap: .5rem; font-size: .88rem; }
+
+.cr-sort label {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted, #475569);
+}
 
 .cr-key {
   display: flex;
@@ -265,19 +431,30 @@
 /* ---------- create form, notes ---------- */
 
 .cr-create { display: flex; flex-wrap: wrap; gap: .5rem; align-items: flex-end; margin: 1rem 0; }
-.cr-create label { display: block; font-size: .8rem; color: var(--muted, #475569); }
-
-.cr-create input {
-  font: inherit;
-  padding: .45rem .6rem;
-  border-radius: .4rem;
-  color: var(--text, #334155);
-  background: var(--panel, #fff);
-  border: 1px solid var(--border, #cbd5e1);
+.cr-create label {
+  display: block;
+  margin-bottom: .3rem;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted, #475569);
 }
 
 .cr-error { color: var(--danger, #dc2626); font-size: .88rem; }
-.cr-empty-note { color: var(--muted, #475569); font-size: .88rem; }
+.cr-empty-note { color: var(--muted, #475569); font-size: .88rem; line-height: 1.55; }
+
+/* An empty section is an invitation, not a gap. A dashed edge says the space
+   is waiting to be filled rather than that something failed to load. */
+.cr-assign > .cr-empty-note,
+.cr-attention > .cr-empty-note,
+.cr-grid-section > .cr-empty-note {
+  margin: 0;
+  padding: .9rem 1rem;
+  border: 1px dashed color-mix(in srgb, var(--primary, #0ea5e9) 40%, var(--border, #cbd5e1));
+  border-radius: .7rem;
+  background: color-mix(in srgb, var(--bg-elevated, #f1f5f9) 50%, var(--panel, #fff));
+}
 .cr-divider { margin: 3rem 0 1.5rem; border: 0; border-top: 1px solid var(--border, #cbd5e1); }
 .cr-legacy-h { font-size: 1.05rem; }
 .cr-legacy-note { color: var(--muted, #475569); font-size: .85rem; }
@@ -291,6 +468,12 @@
   .cr-code__value { font-size: 1.5rem; letter-spacing: .12em; }
   .cr-stats { grid-template-columns: 1fr; }
   .cr-create { flex-direction: column; align-items: stretch; }
+  .cr-assign__form > .cr-field { display: flex; margin-right: 0; max-width: none; }
+  .cr-controls { align-items: stretch; }
+  .cr-sort { justify-content: space-between; }
+  .cr-sort select { flex: 1 1 auto; min-width: 0; }
+  .cr-assign__units,
+  .cr-access__units { grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr)); }
 
   /* The attention table stops being a table on a phone: four columns in
      375px leaves each one too narrow to read. Every cell keeps its header as
@@ -688,21 +871,24 @@
 
 /* ------------------------------------------------------------ assignments */
 
-/* Same plain, dense card the join code and needs-attention use. Nothing here
+/* Same card as the join code and needs-attention, one step more solid: these
+   two sections are the only ones on the page that change what students see,
+   so they read as settings rather than as another read-out. Nothing here
    introduces a second visual language for a second kind of fact. */
 .cr-assign,
 .cr-access {
   margin: 0 0 1.5rem;
-  padding: 1rem;
+  padding: 1.1rem 1.2rem;
   border: 1px solid var(--border, #cbd5e1);
-  border-radius: .5rem;
+  border-radius: .9rem;
   background: var(--panel, #fff);
+  box-shadow: var(--shadow, 0 4px 20px rgba(12, 69, 102, .07));
 }
 
 .cr-assign__list { margin: 0; padding: 0; list-style: none; }
 
 .cr-assign__item {
-  padding: .75rem 0;
+  padding: .85rem 0;
   border-bottom: 1px solid var(--border, #cbd5e1);
 }
 
@@ -716,16 +902,25 @@
   justify-content: space-between;
 }
 
-.cr-assign__title { margin: 0; font-size: 1rem; color: var(--text-strong, #0f172a); }
+.cr-assign__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-strong, #0f172a);
+}
 
 .cr-assign__due {
   margin: 0;
-  font-size: .85rem;
+  padding: .1rem .5rem;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--muted, #475569);
+  background: var(--bg-elevated, #f1f5f9);
 }
 
-.cr-assign__what { margin: .25rem 0 .5rem; font-size: .85rem; color: var(--muted, #475569); }
+.cr-assign__what { margin: .3rem 0 .55rem; font-size: .85rem; color: var(--muted, #475569); }
 
 .cr-assign__tally {
   display: flex;
@@ -742,14 +937,15 @@
   display: flex;
   align-items: baseline;
   gap: .35rem;
-  padding: .15rem .5rem;
-  border-radius: .25rem;
+  padding: .2rem .55rem;
+  border-radius: 999px;
   font-size: .8rem;
+  font-weight: 600;
   background: var(--bg-elevated, #f1f5f9);
   color: var(--text, #334155);
 }
 
-.cr-assign__n { font-weight: 700; font-variant-numeric: tabular-nums; }
+.cr-assign__n { font-weight: 800; font-variant-numeric: tabular-nums; }
 
 .cr-assign--done-on-time { color: #14532d; background: #dcfce7; }
 .cr-assign--done-late { color: #92400e; background: #fef3c7; }
@@ -762,69 +958,279 @@
 
 .cr-assign__who { margin: 0 0 .5rem; font-size: .85rem; color: var(--text, #334155); }
 
+/* The two standing caveats -- an assignment outranks the lock setting, a lock
+   setting never cancels an assignment. Both are rules, not commentary, so they
+   get an accent edge rather than being set as quiet grey prose nobody reads. */
 .cr-assign__note,
 .cr-access__note {
-  margin: .5rem 0 0;
+  margin: .85rem 0 0;
+  padding: .55rem .75rem;
+  border-left: 3px solid color-mix(in srgb, var(--primary, #0ea5e9) 55%, transparent);
+  border-radius: .1rem .5rem .5rem .1rem;
+  font-size: .82rem;
+  line-height: 1.5;
+  color: var(--muted, #475569);
+  background: color-mix(in srgb, var(--primary, #0ea5e9) 6%, var(--panel, #fff));
+}
+
+/* ---------- the builder ---------- */
+
+.cr-assign__new { margin-top: 1rem; }
+
+/* On an empty class this summary is the only thing to do on the page, so it
+   is drawn as the action it is. The marker is a chevron that turns, which is
+   the same gesture the unit dropdowns in the header already use. */
+.cr-assign__new > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .65rem .85rem;
+  border: 2px solid var(--border, #cbd5e1);
+  border-radius: .7rem;
+  background: var(--bg-elevated, #f1f5f9);
+  color: var(--text-strong, #0f172a);
+  font-size: .9rem;
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+  transition: border-color var(--dur-fast, 150ms) ease,
+              color var(--dur-fast, 150ms) ease,
+              background-color var(--dur-fast, 150ms) ease;
+}
+
+.cr-assign__new > summary::-webkit-details-marker { display: none; }
+
+.cr-assign__new > summary::after {
+  content: "";
+  flex: none;
+  width: .5rem;
+  height: .5rem;
+  margin-right: .2rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  opacity: .6;
+  transition: transform var(--dur-base, 280ms) cubic-bezier(.16, 1, .3, 1),
+              opacity var(--dur-fast, 150ms) ease;
+}
+
+.cr-assign__new > summary:hover,
+.cr-assign__new > summary:focus-visible {
+  border-color: var(--primary, #0ea5e9);
+  color: var(--primary-strong, #0284c7);
+  outline: none;
+}
+
+.cr-assign__new > summary:focus-visible { box-shadow: var(--ring, 0 0 0 4px rgba(14, 165, 233, .15)); }
+
+.cr-assign__new[open] > summary {
+  border-color: var(--primary, #0ea5e9);
+  color: var(--primary-strong, #0284c7);
+  background: color-mix(in srgb, var(--primary, #0ea5e9) 8%, var(--panel, #fff));
+  border-radius: .7rem .7rem 0 0;
+  border-bottom-color: transparent;
+}
+
+.cr-assign__new[open] > summary::after { transform: translateY(2px) rotate(225deg); opacity: 1; }
+
+/* The open form is one continuous surface with the summary above it, so the
+   disclosure reads as a panel opening rather than as a stack of loose fields. */
+.cr-assign__form {
+  margin: 0;
+  padding: 1rem;
+  border: 2px solid var(--primary, #0ea5e9);
+  border-top: 0;
+  border-radius: 0 0 .7rem .7rem;
+  background: var(--panel, #fff);
+  animation: cr-open var(--dur-base, 280ms) cubic-bezier(.16, 1, .3, 1);
+}
+
+@keyframes cr-open {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-assign__form { animation: none; }
+}
+
+/* Name and due date belong to the same decision, so they sit on one line
+   where there is room for it. */
+.cr-assign__form > .cr-field {
+  display: inline-flex;
+  vertical-align: top;
+  margin-right: .75rem;
+}
+
+.cr-field {
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+  margin: 0 0 .85rem;
+  max-width: 22rem;
+}
+
+.cr-field label {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted, #475569);
+}
+
+.cr-field input,
+.cr-field select { width: 100%; }
+
+/* ---------- what the work covers ---------- */
+
+.cr-assign__targets {
+  margin: 0 0 .85rem;
+  padding: .85rem .9rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .7rem;
+  background: color-mix(in srgb, var(--bg-elevated, #f1f5f9) 55%, var(--panel, #fff));
+}
+
+.cr-assign__targets legend {
+  margin-left: -.2rem;
+  padding: .15rem .5rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: 999px;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted, #475569);
+  background: var(--panel, #fff);
+}
+
+.cr-assign__targets .cr-field { max-width: 16rem; margin-bottom: .7rem; }
+
+/* Ten units in a row of chips: a fixed grid keeps "Unit 1" and "Unit 10" the
+   same width, so the row scans as a set of ten rather than as ragged text. */
+.cr-assign__units,
+.cr-access__units {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(6.25rem, 1fr));
+  gap: .4rem;
+}
+
+.cr-assign__lessons {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+  max-height: 17rem;
+  overflow-y: auto;
+}
+
+/* A tick is a target, and a target that is on should look chosen rather than
+   look like a ticked box next to some text. */
+.cr-check {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .45rem .6rem;
+  border: 2px solid var(--border, #cbd5e1);
+  border-radius: .55rem;
+  background: var(--panel, #fff);
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--text, #334155);
+  cursor: pointer;
+  transition: border-color var(--dur-fast, 150ms) ease,
+              background-color var(--dur-fast, 150ms) ease,
+              color var(--dur-fast, 150ms) ease;
+}
+
+.cr-check:hover { border-color: color-mix(in srgb, var(--primary, #0ea5e9) 55%, var(--border, #cbd5e1)); }
+
+.cr-check:has(:checked) {
+  border-color: var(--primary, #0ea5e9);
+  background: color-mix(in srgb, var(--primary, #0ea5e9) 10%, var(--panel, #fff));
+  color: var(--text-strong, #0f172a);
+}
+
+.cr-check:has(:focus-visible) {
+  border-color: var(--primary, #0ea5e9);
+  box-shadow: var(--ring, 0 0 0 4px rgba(14, 165, 233, .15));
+}
+
+.cr-check:has(:disabled) { cursor: default; opacity: .8; }
+.cr-check:has(:disabled):hover { border-color: var(--primary, #0ea5e9); }
+
+/* Lesson titles are sentences, not labels, so their rows run full width and
+   wrap instead of being squeezed into a chip. */
+.cr-assign__lessons .cr-check {
+  border-width: 1px;
+  border-radius: .5rem;
+  font-weight: 500;
+  align-items: flex-start;
+  line-height: 1.4;
+}
+
+.cr-assign__lessons .cr-check input { margin-top: .1rem; }
+
+.cr-assign__lessons:empty::after {
+  content: "This unit has no lessons in the manifest yet.";
   font-size: .82rem;
   color: var(--muted, #475569);
 }
 
-.cr-assign__new { margin-top: .75rem; }
-.cr-assign__new summary { cursor: pointer; font-size: .9rem; font-weight: 600; }
-
-.cr-assign__form { margin-top: .75rem; }
-
-.cr-field { display: flex; flex-direction: column; gap: .25rem; margin: 0 0 .75rem; max-width: 22rem; }
-.cr-field label { font-size: .85rem; font-weight: 600; color: var(--text-strong, #0f172a); }
-
-.cr-assign__targets {
-  margin: 0 0 .75rem;
-  padding: .5rem .75rem;
-  border: 1px solid var(--border, #cbd5e1);
-  border-radius: .35rem;
-}
-
-.cr-assign__targets legend { padding: 0 .35rem; font-size: .82rem; font-weight: 600; }
-
-.cr-assign__units,
-.cr-assign__lessons,
-.cr-access__units {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .35rem .9rem;
-}
-
-.cr-assign__lessons { flex-direction: column; gap: .3rem; }
-
-.cr-check {
-  display: flex;
-  align-items: center;
-  gap: .35rem;
-  font-size: .85rem;
-  color: var(--text, #334155);
-}
+.cr-assign__form .cr-error { margin: .6rem 0 0; }
+.cr-assign__form .btn { margin-top: .25rem; }
 
 /* ------------------------------------------------------------ unit access */
 
-.cr-access__modes { margin: 0 0 .75rem; padding: 0; border: 0; }
+/* Three mutually exclusive rules for the whole class. Cards rather than a
+   stack of radios, because the hint under each name is the part that decides
+   it and needs to be read, not skimmed past. */
+.cr-access__modes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: .5rem;
+  margin: 0 0 .85rem;
+  padding: 0;
+  border: 0;
+}
 
 .cr-access__modes label {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: .15rem .5rem;
-  margin: 0 0 .5rem;
+  gap: .2rem .55rem;
+  align-content: start;
+  margin: 0;
+  padding: .7rem .8rem;
+  border: 2px solid var(--border, #cbd5e1);
+  border-radius: .7rem;
+  background: var(--panel, #fff);
   cursor: pointer;
+  transition: border-color var(--dur-fast, 150ms) ease,
+              background-color var(--dur-fast, 150ms) ease;
 }
 
-.cr-access__modes input { grid-row: 1 / 3; align-self: start; margin-top: .2rem; }
-.cr-access__name { font-weight: 600; color: var(--text-strong, #0f172a); }
-.cr-access__hint { font-size: .82rem; color: var(--muted, #475569); }
+.cr-access__modes label:hover { border-color: color-mix(in srgb, var(--primary, #0ea5e9) 55%, var(--border, #cbd5e1)); }
+
+.cr-access__modes label:has(:checked) {
+  border-color: var(--primary, #0ea5e9);
+  background: color-mix(in srgb, var(--primary, #0ea5e9) 8%, var(--panel, #fff));
+}
+
+.cr-access__modes label:has(:focus-visible) {
+  border-color: var(--primary, #0ea5e9);
+  box-shadow: var(--ring, 0 0 0 4px rgba(14, 165, 233, .15));
+}
+
+.cr-access__modes input { grid-row: 1 / 3; align-self: start; margin-top: .15rem; }
+.cr-access__name { font-weight: 700; color: var(--text-strong, #0f172a); }
+.cr-access__hint { font-size: .8rem; line-height: 1.45; color: var(--muted, #475569); }
 
 .cr-access__units {
   margin: 0 0 .5rem;
-  padding: .5rem .75rem;
+  padding: .85rem .9rem;
   border: 1px solid var(--border, #cbd5e1);
-  border-radius: .35rem;
+  border-radius: .7rem;
+  background: color-mix(in srgb, var(--bg-elevated, #f1f5f9) 55%, var(--panel, #fff));
 }
 
 /* ------------------------------------------- the assignment grid overlay */
