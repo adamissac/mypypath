@@ -2669,3 +2669,169 @@ html.reduced-motion.page-from-nav main {
     justify-content: flex-end;
   }
 }
+
+/* ------------------------------------------------------- the open dropdown */
+
+/* `appearance: none` gets you the closed box and stops there -- the list a
+   <select> drops down belongs to the operating system, so the styled control
+   above was opening into a grey platform menu. select-menu.js draws the list
+   instead and keeps the native <select> underneath as the value. These rules
+   only matter once that script has run; without it the native control is
+   still the one on screen. */
+
+.sel { position: relative; display: inline-block; vertical-align: top; }
+
+/* Kept for its value and its form behaviour, taken off screen and out of the
+   tab order. Not `display: none` -- a hidden-that-way control stops reporting
+   layout, and some browsers stop firing its events. */
+.sel__native {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.sel__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  width: 100%;
+  font: inherit;
+  font-size: .88rem;
+  font-weight: 600;
+  text-align: left;
+  padding: .5rem .7rem;
+  border-radius: .6rem;
+  color: var(--text-strong, #0f172a);
+  background: var(--panel, #fff);
+  border: 2px solid var(--border, #cbd5e1);
+  cursor: pointer;
+  transition: border-color var(--dur-fast, 150ms) ease,
+              box-shadow var(--dur-fast, 150ms) ease;
+}
+
+.sel__trigger:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--primary, #0ea5e9) 55%, var(--border, #cbd5e1));
+}
+
+.sel__trigger:focus-visible {
+  outline: none;
+  border-color: var(--primary, #0ea5e9);
+  box-shadow: var(--ring, 0 0 0 4px rgba(14, 165, 233, .15));
+}
+
+.sel.is-open .sel__trigger {
+  border-color: var(--primary, #0ea5e9);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.sel__trigger:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+  background: var(--bg-elevated, #f1f5f9);
+}
+
+.sel__value { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.sel__chevron {
+  flex: none;
+  width: .45rem;
+  height: .45rem;
+  margin-right: .15rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  opacity: .55;
+  transition: transform var(--dur-base, 280ms) cubic-bezier(.16, 1, .3, 1),
+              opacity var(--dur-fast, 150ms) ease;
+}
+
+.sel.is-open .sel__chevron { transform: translateY(2px) rotate(225deg); opacity: 1; }
+
+/* The panel is joined to the trigger rather than floating clear of it, the
+   same way the assignment builder opens under its own summary. */
+.sel__panel {
+  position: absolute;
+  z-index: var(--z-floating);
+  top: 100%;
+  left: 0;
+  min-width: 100%;
+  max-width: min(22rem, 80vw);
+  border: 2px solid var(--primary, #0ea5e9);
+  border-top: 0;
+  border-radius: 0 0 .6rem .6rem;
+  background: var(--panel, #fff);
+  box-shadow: var(--shadow-strong, 0 12px 36px rgba(12, 69, 102, .12));
+  overflow: hidden;
+  animation: sel-in var(--dur-fast, 150ms) cubic-bezier(.16, 1, .3, 1);
+}
+
+.sel__panel[hidden] { display: none; }
+
+@keyframes sel-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sel__panel { animation: none; }
+  .sel__chevron { transition: none; }
+}
+
+.sel__list { max-height: 15rem; overflow-y: auto; padding: .3rem; }
+
+.sel__option {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .45rem .55rem;
+  border-radius: .4rem;
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--text, #334155);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Hover and keyboard land on the same highlight, so arrowing down and moving
+   the mouse do not disagree about where you are. */
+.sel__option.is-active {
+  background: var(--bg-elevated, #f1f5f9);
+  color: var(--text-strong, #0f172a);
+}
+
+/* The chosen row keeps a tick, because on a highlighted row the fill alone
+   cannot say which of the two states you are looking at. */
+.sel__option[aria-selected="true"] {
+  color: var(--primary-strong, #0284c7);
+}
+
+.sel__option[aria-selected="true"]::after {
+  content: "";
+  flex: none;
+  margin-left: auto;
+  width: .3rem;
+  height: .55rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.sel__option[aria-selected="true"].is-active {
+  background: color-mix(in srgb, var(--primary, #0ea5e9) 12%, var(--panel, #fff));
+}
+
+.sel__option[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
+
+@media print {
+  .sel__panel { display: none; }
+}
