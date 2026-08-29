@@ -22,6 +22,7 @@ const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const {
   doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, collection, query, where,
   orderBy, limit, writeBatch, serverTimestamp, arrayUnion, arrayRemove,
+  onSnapshot,
 } = await import(`${BASE}/firebase-firestore.js`);
 
 const ROLES = window.PyPathRoles;
@@ -321,6 +322,32 @@ export async function leaveClass(uid, classId) {
 export async function readRoster(classId) {
   const snap = await getDocs(collection(db, `classes/${classId}/roster`));
   return snap.docs.map((d) => ({ uid: d.id, ...d.data() }));
+}
+
+/* The one live read on the dashboard.
+ *
+ * Everything else here is one-shot on purpose: a teacher's page is a report,
+ * and a report that rearranges itself while being read is worse than one that
+ * is a minute old. Who is in the room is the exception. A teacher reads the
+ * join code aloud and then watches for the names to appear, and a roster that
+ * only updates on reload makes a working join look like a broken one.
+ *
+ * Same collection and same row shape as readRoster, so a caller can merge a
+ * snapshot into what that returned without translating between the two. The
+ * read rule is `isOwner(uid) || isTeacherOf(classId)`; the teacher half does
+ * not depend on the document, which is what makes the collection listenable
+ * rather than only gettable one row at a time.
+ *
+ * Errors are swallowed deliberately. A dropped or denied listener leaves the
+ * last painted roster on screen, which is the same fallback the rest of the
+ * page takes: stale beats blank.
+ */
+export function watchRoster(classId, onChange) {
+  return onSnapshot(
+    collection(db, `classes/${classId}/roster`),
+    (snap) => onChange(snap.docs.map((d) => ({ uid: d.id, ...d.data() }))),
+    () => {}
+  );
 }
 
 export async function touchLastActive(classId, uid) {

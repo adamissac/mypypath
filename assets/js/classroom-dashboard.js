@@ -8,7 +8,7 @@ import { currentUser } from '/assets/js/auth.js';
 import {
   classesFor, createClass, readRoster, readEvents, readMirror, addCoTeacher,
   setArchived, purgeArchivedClass, createAssignment, readAssignments,
-  deleteAssignment, setLockPolicy,
+  deleteAssignment, setLockPolicy, watchRoster,
 } from '/assets/js/classroom-store.js';
 
 const CORE = window.PyPathClassroom;
@@ -23,6 +23,7 @@ let scopeUnit = 1;
 let sortBy = 'name';
 let assignments = [];
 let scopeAssignment = null;
+let unwatchRoster = null;
 
 const $ = (sel, root) => (root || document).querySelector(sel);
 const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
@@ -83,6 +84,81 @@ async function loadClassData(classId) {
     }))
   );
 }
+
+/* ---------------------------------------------------------- live roster */
+
+/* Who is in the room, kept current while the page sits open.
+ *
+ * A teacher reads the join code out and watches for names. Before this the
+ * names arrived on the next page load, so a join that had worked perfectly
+ * looked like one that had failed, and the obvious next move -- read the code
+ * out again -- was the wrong one.
+ *
+ * The snapshot carries roster rows and nothing else. It deliberately does not
+ * re-run loadClassData: that is one event-log read plus one mirror read per
+ * student, and paying for the whole class every time one person joins would
+ * turn a class of thirty arriving at the start of a lesson into nine hundred
+ * reads. So a snapshot merges names in and leaves progress alone.
+ *
+ * A student who appears this way is marked `pending`: their roster row is
+ * known and their progress is not loaded yet. That is not the same fact as
+ * "has done nothing", and the grid says so rather than showing them a row of
+ * zeroes it cannot vouch for. The real numbers arrive on the next full load.
+ */
+function mergeRoster(rows) {
+  const known = new Map(students.map((s) => [s.uid, s]));
+  // Rebuilt from the snapshot rather than patched, so a student who left is
+  // gone by virtue of not being in it.
+  students = rows.map((row) => {
+    const existing = known.get(row.uid);
+    if (existing) {
+      existing.displayName = row.displayName || existing.displayName;
+      existing.joinedAt = CORE.toMillis(row.joinedAt);
+      existing.lastActiveAt = CORE.toMillis(row.lastActiveAt);
+      return existing;
+    }
+    return {
+      uid: row.uid,
+      displayName: row.displayName || row.uid,
+      joinedAt: CORE.toMillis(row.joinedAt),
+      lastActiveAt: CORE.toMillis(row.lastActiveAt),
+      events: [],
+      mirror: {},
+      pending: true,
+    };
+  });
+}
+
+/* Only the views a roster change can actually alter. Assignments, unit access,
+   the switcher and the co-teacher list are all untouched by someone joining,
+   and repainting them would rebuild half the page to add one row. */
+function paintRosterViews() {
+  paintAttention();
+  paintGrid();
+  paintSummary();
+}
+
+function stopWatchingRoster() {
+  if (unwatchRoster) unwatchRoster();
+  unwatchRoster = null;
+}
+
+function watchActiveRoster(classId) {
+  stopWatchingRoster();
+  if (!classId) return;
+  unwatchRoster = watchRoster(classId, (rows) => {
+    // A listener torn down mid-flight can still deliver once. Painting that
+    // into the class the teacher has just switched to would show them the
+    // previous class's roster under the current class's name.
+    if (classId !== activeClassId) return;
+    mergeRoster(rows);
+    paintRosterViews();
+  });
+}
+
+// A listener outlives the page otherwise, and a bfcache restore would then
+// hold two.
+window.addEventListener('pagehide', stopWatchingRoster);
 
 /* ------------------------------------------------------------ assignments */
 
@@ -474,6 +550,10 @@ function paintGrid() {
     const tr = el('tr');
     const name = el('th', 'cr-grid__who', student.displayName);
     name.scope = 'row';
+    // Arrived on the live roster, progress not read yet. Said out loud rather
+    // than shown as a row of zeroes, which is a different claim and one this
+    // row cannot make yet.
+    if (student.pending) name.appendChild(el('span', 'cr-grid__pending', 'just joined'));
     tr.appendChild(name);
 
     for (const col of cols) {
@@ -692,11 +772,16 @@ function wire() {
   const switcher = $('[data-cr-switcher]');
   if (switcher) {
     switcher.addEventListener('change', async () => {
+      // Torn down before the await, not after: the old class's listener is
+      // live for as long as that load takes, and a fire during it would merge
+      // the previous class's roster into the one being switched to.
+      stopWatchingRoster();
       activeClassId = switcher.value;
       students = await loadClassData(activeClassId);
       assignments = await readAssignments(activeClassId).catch(() => []);
       scopeAssignment = assignments.length ? assignments[0].id : null;
       paintAll();
+      watchActiveRoster(activeClassId);
     });
   }
 
@@ -1015,6 +1100,9 @@ async function boot(user) {
   show($('[data-cr-view="empty"]'), false);
   show($('[data-cr-view="class"]'), true);
   paintAll();
+  // After the full load, so the first snapshot merges into real progress data
+  // rather than replacing it with placeholders.
+  watchActiveRoster(activeClassId);
   root.setAttribute('aria-busy', 'false');
 }
 
