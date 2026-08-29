@@ -16,9 +16,25 @@ describe('the page loads what it needs', () => {
       .toBeLessThan(html.indexOf('/assets/js/classroom-dashboard.js'));
   });
 
-  it('keeps the legacy roster page loaded, so existing students do not vanish', () => {
+  it('keeps the teacher gate loaded', () => {
+    // classroom-page.js is now only the gate. Its roster table and certificate
+    // queue moved onto the classes/{classId} model; the flat collection they
+    // read is still written on every join and still read by admin.html.
     expect(html).toContain('/assets/js/classroom-page.js');
-    expect(html).toContain('Students who joined before classes existed');
+    expect(html).toContain('data-class-state="not-teacher"');
+  });
+
+  it('no longer shows a separate legacy roster', () => {
+    // Students landed in it because the join flow only wrote the old schema.
+    // That is fixed, so the section was a second place to look for people who
+    // are now all in the first one.
+    expect(html).not.toContain('Students who joined before classes existed');
+    expect(html).not.toContain('data-class-rows');
+  });
+
+  it('has somewhere to decide a certificate', () => {
+    expect(html).toContain('data-cr-certs-list');
+    expect(html).toContain('Certificates');
   });
 
   it('loads the stylesheet in the head', () => {

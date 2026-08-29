@@ -22,7 +22,9 @@ const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const { doc, getDoc, getDocs, collection } = await import(`${BASE}/firebase-firestore.js`);
 
 const POLICY = window.PyPathPolicy;
-const CORE = window.PyPathClassroom;
+// Not window.PyPathClassroom: that module is the teacher dashboard's and is
+// not loaded on a lesson page, which is exactly where this policy is enforced.
+// Reading it here is what made assignmentUnlocks silently empty for students.
 const CACHE_PREFIX = 'pypath-policy:';
 
 let policy = null;
@@ -87,7 +89,7 @@ export async function loadPolicy(classId, force) {
       manualUnlocks: Array.isArray(data.manualUnlocks) ? data.manualUnlocks : [],
       // Derived here rather than stored, so deleting an assignment re-locks
       // whatever it was holding open with no cleanup step anywhere.
-      assignmentUnlocks: CORE ? CORE.assignmentUnlocks(live, Date.now()) : [],
+      assignmentUnlocks: POLICY ? POLICY.assignmentUnlocks(live, Date.now()) : [],
     };
     writeCache(classId, value);
     announce(value);

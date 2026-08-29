@@ -71,6 +71,10 @@
     // One column per assignment, after the units, so the sheet reads as
     // "where they are" and then "what was asked".
     assignments.forEach(function (a) { header.push(a.title); });
+    /* Carried over from the legacy roster export when its table was removed.
+       A teacher who exported that sheet for their records must not lose the
+       column just because the page it came from is gone. */
+    header.push('Certificate', 'Certificate requested', 'Certificate decided');
     rows.push(header);
 
     (students || []).forEach(function (student) {
@@ -95,6 +99,12 @@
         row.push(ASSIGN_LABEL[status.state]
           + (status.state === 'done-late' ? ' by ' + status.daysLate + 'd' : ''));
       });
+
+      var cert = student.certificate || {};
+      // The word, for the same reason every other cell here carries one.
+      row.push(CORE.CERT_CSV[CORE.certificateState(cert)]);
+      row.push(isoDay(cert.requestedAt || 0));
+      row.push(isoDay(cert.decidedAt || 0));
       rows.push(row);
     });
 

@@ -3,6 +3,9 @@ import fs from 'node:fs';
 
 let K;
 beforeAll(() => {
+  // The rules module first: assignmentUnlocks lives there now, because it is
+  // enforced on lesson pages and this file is not loaded on them.
+  new Function(fs.readFileSync('assets/js/classroom-policy.js', 'utf8')).call(window);
   new Function(fs.readFileSync('assets/js/classroom-core.js', 'utf8')).call(window);
   K = window.PyPathClassroom;
 });
