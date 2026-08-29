@@ -58,6 +58,23 @@ describe('the flow writes both schemas', () => {
       .toBeLessThan(flow.indexOf('classJoin(uid, rawCode'));
   });
 
+  it('is quiet when the code is one you are already in', () => {
+    // The update rule pins joinedAt, and serverTimestamp() is a new value each
+    // time, so writing again is a denied update. Read first, write only when
+    // the seat is empty. tests/rules/rejoin-repro.test.js proves the deny.
+    const store = fs.readFileSync('assets/js/classroom-store.js', 'utf8');
+    const join = store.slice(
+      store.indexOf('export async function joinClass'),
+      store.indexOf('export async function leaveClass')
+    );
+    expect(join).toMatch(/const already = await getDoc\(seat\)/);
+    expect(join).toMatch(/if \(!already\.exists\(\)\) \{/);
+    // The account pointer is written either way -- it is the half a
+    // legacy-only student is missing, and re-entering the code is their repair.
+    expect(join.indexOf('classId: resolved.classId'))
+      .toBeGreaterThan(join.indexOf('already.exists()'));
+  });
+
   it('falls back rather than failing when the code predates classes', () => {
     expect(flow).toMatch(/err\.code === 'legacy'/);
     expect(flow).toMatch(/if \(!isPreClassCode\(e\)\) throw e/);

@@ -288,15 +288,28 @@ export async function joinClass(uid, rawCode, displayName) {
     throw new ClassroomError('self', 'That is your own class code.');
   }
 
-  // displayName is a username. A legal name must never reach this collection,
-  // and the rules refuse the fields one would arrive in.
-  await setDoc(doc(db, `classes/${resolved.classId}/roster/${uid}`), {
-    displayName: String(displayName || '').slice(0, 64),
-    joinedAt: serverTimestamp(),
-    lastActiveAt: serverTimestamp(),
-    joinCode: resolved.code,
-    schemaVersion: version(),
-  });
+  // Submitting a code you are already in has to be quiet, and cannot be done
+  // by writing again: the update rule pins joinedAt as the record of consent,
+  // and serverTimestamp() is a new value every time, so the identical write
+  // that was a create a moment ago is a denied update now. Read first, and
+  // write only when there is nothing there.
+  //
+  // The read carries the repair path too. Anyone enrolled before join-flow.js
+  // shipped has the legacy roster document and not this one, so for them this
+  // is still a create and re-entering their code is how they fix themselves.
+  const seat = doc(db, `classes/${resolved.classId}/roster/${uid}`);
+  const already = await getDoc(seat);
+  if (!already.exists()) {
+    // displayName is a username. A legal name must never reach this collection,
+    // and the rules refuse the fields one would arrive in.
+    await setDoc(seat, {
+      displayName: String(displayName || '').slice(0, 64),
+      joinedAt: serverTimestamp(),
+      lastActiveAt: serverTimestamp(),
+      joinCode: resolved.code,
+      schemaVersion: version(),
+    });
+  }
 
   // Where membership.js looks the class up on the next page load. Written
   // after the roster document, so a failure here leaves an enrollment the
