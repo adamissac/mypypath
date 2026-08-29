@@ -5,6 +5,7 @@
  * in a test rather than through the DOM.
  */
 import { currentUser } from '/assets/js/auth.js';
+import { readProfile } from '/assets/js/class-join.js';
 import {
   classesFor, createClass, readRoster, readEvents, readMirror, addCoTeacher,
   setArchived, purgeArchivedClass, createAssignment, readAssignments,
@@ -13,6 +14,7 @@ import {
 } from '/assets/js/classroom-store.js';
 
 const CORE = window.PyPathClassroom;
+const ROLES = window.PyPathRoles;
 const CURRICULUM = window.PyPathCurriculum;
 
 let manifest = null;
@@ -1174,6 +1176,25 @@ async function boot(user) {
   if (!root || !CORE) return;
 
   if (!user) {
+    show(root, false);
+    return;
+  }
+
+  /* Asked before anything is created. Below, a signed-in visitor with no
+     classes gets one made for them, and createClass writes role: 'teacher'
+     onto their own account -- so without this check any student who opened
+     /classroom.html was quietly turned into a teacher and handed a classroom.
+     classroom-page.js asks the same question to choose which state of the page
+     to show, but the two run independently and its answer never reached here. */
+  let profile = {};
+  try {
+    profile = await readProfile(user.uid);
+  } catch (e) {
+    // An unreadable profile is not permission to assume the generous answer.
+    show(root, false);
+    return;
+  }
+  if (!ROLES || ROLES.normalizeRole(profile.role) !== 'teacher') {
     show(root, false);
     return;
   }

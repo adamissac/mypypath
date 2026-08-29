@@ -100,3 +100,27 @@ describe('the lock mode applies without a reload', () => {
       .toBeLessThan(flow.indexOf('loadPolicy(classId, true)'));
   });
 });
+
+describe('the dashboard is for teachers only', () => {
+  const dash = fs.readFileSync('assets/js/classroom-dashboard.js', 'utf8');
+
+  it('checks the role before it creates anything', () => {
+    // boot() makes a class for a signed-in visitor who has none, and
+    // createClass writes role: 'teacher' onto their own account. Without this
+    // check any student who opened /classroom.html was quietly turned into a
+    // teacher and handed a classroom.
+    const boot = dash.slice(dash.indexOf('async function boot'));
+    const role = boot.indexOf("normalizeRole(profile.role) !== 'teacher'");
+    const make = boot.indexOf('createClass(user.uid');
+    expect(role).toBeGreaterThan(-1);
+    expect(role).toBeLessThan(make);
+  });
+
+  it('does not treat an unreadable profile as a yes', () => {
+    // Sliced from boot to the end: createClass also appears earlier, in the
+    // create-form handler that wire() installs.
+    const boot = dash.slice(dash.indexOf('async function boot'));
+    expect(boot.slice(0, boot.indexOf('createClass(user.uid')))
+      .toMatch(/catch \(e\) \{\s*\n[^}]*show\(root, false\);\s*\n\s*return;/);
+  });
+});
