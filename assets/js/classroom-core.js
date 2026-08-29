@@ -482,20 +482,13 @@
    * variant would be a change inside this function rather than at every call
    * site.
    */
+  /* Moved to classroom-policy.js, which is loaded on every lesson page while
+     this file is not. Kept here as a delegation because this module's API is
+     what the dashboard and its tests already call, and because a second copy
+     of the rule is a second thing to keep in step. Looked up when called, not
+     at load, so script order between the two files does not matter. */
   function assignmentUnlocks(assignments, now) {
-    var seen = {};
-    (assignments || []).forEach(function (a) {
-      if (!a || a.archived === true) return;
-      (a.units || []).forEach(function (u) {
-        var n = Number(u);
-        if (Number.isInteger(n) && n >= 1) seen[n] = true;
-      });
-      (a.lessonPaths || []).forEach(function (path) {
-        var n = unitOfPath(path);
-        if (n !== null) seen[n] = true;
-      });
-    });
-    return Object.keys(seen).map(Number).sort(function (x, y) { return x - y; });
+    return window.PyPathPolicy.assignmentUnlocks(assignments, now);
   }
 
   /* --------------------------------------------------- needs attention */
