@@ -288,15 +288,28 @@ export async function joinClass(uid, rawCode, displayName) {
     throw new ClassroomError('self', 'That is your own class code.');
   }
 
-  // displayName is a username. A legal name must never reach this collection,
-  // and the rules refuse the fields one would arrive in.
-  await setDoc(doc(db, `classes/${resolved.classId}/roster/${uid}`), {
-    displayName: String(displayName || '').slice(0, 64),
-    joinedAt: serverTimestamp(),
-    lastActiveAt: serverTimestamp(),
-    joinCode: resolved.code,
-    schemaVersion: version(),
-  });
+  // Submitting a code you are already in has to be quiet, and cannot be done
+  // by writing again: the update rule pins joinedAt as the record of consent,
+  // and serverTimestamp() is a new value every time, so the identical write
+  // that was a create a moment ago is a denied update now. Read first, and
+  // write only when there is nothing there.
+  //
+  // The read carries the repair path too. Anyone enrolled before join-flow.js
+  // shipped has the legacy roster document and not this one, so for them this
+  // is still a create and re-entering their code is how they fix themselves.
+  const seat = doc(db, `classes/${resolved.classId}/roster/${uid}`);
+  const already = await getDoc(seat);
+  if (!already.exists()) {
+    // displayName is a username. A legal name must never reach this collection,
+    // and the rules refuse the fields one would arrive in.
+    await setDoc(seat, {
+      displayName: String(displayName || '').slice(0, 64),
+      joinedAt: serverTimestamp(),
+      lastActiveAt: serverTimestamp(),
+      joinCode: resolved.code,
+      schemaVersion: version(),
+    });
+  }
 
   // Where membership.js looks the class up on the next page load. Written
   // after the roster document, so a failure here leaves an enrollment the
@@ -354,6 +367,49 @@ export async function touchLastActive(classId, uid) {
   await updateDoc(doc(db, `classes/${classId}/roster/${uid}`), {
     lastActiveAt: serverTimestamp(),
   }).catch(() => {});
+}
+
+/* ---------------------------------------------------------- certificates */
+
+/* The certificate handshake still lives on the flat roster/{uid} document, and
+ * deliberately stays there. The rules' gradingOwnStudent() predicate targets
+ * that document, the learner's own request half writes it, and join-flow.js
+ * guarantees every class-enrolled student has one alongside their class seat.
+ * Moving the storage would mean moving all three; moving only the controls
+ * that read it costs nothing.
+ *
+ * One query for the whole class rather than a read per student: the flat
+ * roster is queryable by teacherUid, which is the same query the page this
+ * replaces used.
+ */
+export async function readCertificates(teacherUid) {
+  const snap = await getDocs(
+    query(collection(db, 'roster'), where('teacherUid', '==', teacherUid))
+  );
+  const out = {};
+  snap.forEach((d) => {
+    const v = d.data() || {};
+    out[d.id] = {
+      requestedAt: Number(v.certificateRequestedAt) || 0,
+      approved: typeof v.certificateApproved === 'boolean' ? v.certificateApproved : null,
+      decidedAt: Number(v.certificateDecidedAt) || 0,
+      earned: !!v.hasCertificate,
+    };
+  });
+  return out;
+}
+
+/* Exactly the three keys the rules let a teacher change. Anything else in this
+ * object -- even a field read straight back off the row unchanged -- makes the
+ * whole write fail. */
+export async function setCertificateDecision(uid, approved) {
+  const now = Date.now();
+  await updateDoc(doc(db, `roster/${uid}`), {
+    certificateApproved: approved,
+    certificateDecidedAt: now,
+    updatedAt: now,
+  });
+  return now;
 }
 
 /* ---------------------------------------------------------------- events */

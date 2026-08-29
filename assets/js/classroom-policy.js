@@ -42,6 +42,41 @@
     return hasUnit(completedUnits, n - 1);
   }
 
+  function unitOfPath(path) {
+    var m = /^\/units\/unit-(\d+)\//.exec(String(path || ''));
+    return m ? Number(m[1]) : null;
+  }
+
+  /* Which units are held open because work was set on them.
+   *
+   * This lives here rather than in classroom-core.js, where it used to, for one
+   * reason: this file is loaded on every lesson page and that one is not. When
+   * this was over there, class-policy.js read window.PyPathClassroom, found it
+   * undefined on every lesson a student opens, and quietly substituted an empty
+   * list -- so the guarantee the unit access panel prints in as many words, that
+   * a unit you assign is always reachable whatever the mode says, held only on
+   * the teacher's dashboard and never anywhere a student is actually gated.
+   *
+   * Due dates are deliberately not consulted. An assignment that has come and
+   * gone still has to be openable, or a student marked late for it has no way
+   * to go and do it.
+   */
+  function assignmentUnlocks(assignments, now) {
+    var seen = {};
+    (assignments || []).forEach(function (a) {
+      if (!a || a.archived === true) return;
+      (a.units || []).forEach(function (u) {
+        var n = Number(u);
+        if (Number.isInteger(n) && n >= 1) seen[n] = true;
+      });
+      (a.lessonPaths || []).forEach(function (path) {
+        var n = unitOfPath(path);
+        if (n !== null) seen[n] = true;
+      });
+    });
+    return Object.keys(seen).map(Number).sort(function (x, y) { return x - y; });
+  }
+
   /* `policy` is { mode, manualUnlocks, assignmentUnlocks } or null.
 
      The order of these checks is the design. Each one is a rule somebody would
@@ -85,6 +120,7 @@
   window.PyPathPolicy = {
     MODES: MODES,
     normalizeMode: normalizeMode,
-    resolveUnlocked: resolveUnlocked
+    resolveUnlocked: resolveUnlocked,
+    assignmentUnlocks: assignmentUnlocks
   };
 })();

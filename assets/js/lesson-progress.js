@@ -501,20 +501,6 @@
       removeNotice(document.querySelector('.unit-locked-notice'));
       return;
     }
-    if (document.querySelector('.unit-locked-notice')) return;
-
-    var prev = unit - 1;
-    var passed = passedLessons(readMap());
-    var next = nextUnfinished(curriculum.lessonsIn(prev), passed);
-    // Once the lessons are all done the only thing left is the test, so point
-    // at the test rather than back at lessons the learner has already finished.
-    var lessonsDone = unitComplete(curriculum.lessonsIn(prev), passed);
-    var testDone = unitTestPassed(testRecords(), prev);
-
-    var box = document.createElement('div');
-    box.className = 'unit-locked-notice';
-    box.setAttribute('role', 'note');
-
     // Which sentence is true depends on why this unit is shut, and getting it
     // wrong is not a cosmetic slip.
     //
@@ -529,6 +515,34 @@
     // about them.
     var teacherSet = classPolicy && window.PyPathPolicy
       && window.PyPathPolicy.normalizeMode(classPolicy.mode) === 'manual';
+    var variant = teacherSet ? 'teacher' : 'sequential';
+
+    // The class policy is fetched after this first runs, so the notice is
+    // painted from the sequential fallback and then reconsidered once the real
+    // answer lands. Returning early on "a notice exists" left whichever
+    // sentence won the race on screen for good, which meant a student locked
+    // out by their teacher was reliably told to go and redo Unit 3. Re-render
+    // when the reason changes; leave it alone when it has not.
+    var showing = document.querySelector('.unit-locked-notice');
+    if (showing) {
+      if (showing.getAttribute('data-lock-variant') === variant) return;
+      removeNotice(showing);
+    }
+
+    var prev = unit - 1;
+    var passed = passedLessons(readMap());
+    var next = nextUnfinished(curriculum.lessonsIn(prev), passed);
+    // Once the lessons are all done the only thing left is the test, so point
+    // at the test rather than back at lessons the learner has already finished.
+    var lessonsDone = unitComplete(curriculum.lessonsIn(prev), passed);
+    var testDone = unitTestPassed(testRecords(), prev);
+
+    var box = document.createElement('div');
+    box.className = 'unit-locked-notice';
+    box.setAttribute('role', 'note');
+    // What this notice is claiming, so a later pass can tell whether the
+    // reason has changed under it.
+    box.setAttribute('data-lock-variant', variant);
 
     if (teacherSet) {
       box.innerHTML =

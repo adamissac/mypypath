@@ -110,3 +110,51 @@ describe('a snapshot does not re-read the whole class', () => {
     expect(dash).toMatch(/show\(table, list\.length > 0\);\s*\n\s*show\(empty, list\.length === 0\);/);
   });
 });
+
+describe('an assigned unit is reachable where students are actually gated', () => {
+  const policy = fs.readFileSync('assets/js/classroom-policy.js', 'utf8');
+  const read = fs.readFileSync('assets/js/class-policy.js', 'utf8');
+  const lesson = fs.readFileSync('units/unit-2/comparison-logical-operators.html', 'utf8');
+
+  it('computes the unlocks in the module lesson pages load', () => {
+    // classroom-core.js is the dashboard's and is not on a lesson page. While
+    // assignmentUnlocks lived there, class-policy.js read an undefined global
+    // and substituted an empty list, so the guarantee the unit access panel
+    // prints -- an assigned unit is always reachable -- held only on the
+    // teacher's own screen.
+    expect(policy).toMatch(/function assignmentUnlocks\(assignments, now\)/);
+    expect(policy).toMatch(/assignmentUnlocks: assignmentUnlocks/);
+  });
+
+  it('the lesson page loads that module', () => {
+    expect(lesson).toContain('/assets/js/classroom-policy.js');
+  });
+
+  it('the reader no longer depends on the dashboard module', () => {
+    // Comments stripped: the one left at the top of that file names the global
+    // on purpose, to say why reading it there was wrong.
+    const code = read.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+    expect(code).not.toMatch(/window\.PyPathClassroom/);
+    expect(code).toMatch(/POLICY \? POLICY\.assignmentUnlocks\(/);
+  });
+});
+
+describe('the lock notice says why the unit is shut', () => {
+  const lp = fs.readFileSync('assets/js/lesson-progress.js', 'utf8');
+
+  it('re-renders when the reason changes, instead of keeping the first guess', () => {
+    // The class policy arrives after the notice is first painted, so the
+    // sequential fallback always wins the race. Returning early on "a notice
+    // exists" left that sentence up for good, and a student locked out by
+    // their teacher was reliably told to go and redo the unit before -- work
+    // they may well have already done.
+    expect(lp).toMatch(/data-lock-variant/);
+    expect(lp).toMatch(/getAttribute\('data-lock-variant'\) === variant\) return;/);
+    expect(lp).toMatch(/removeNotice\(showing\)/);
+  });
+
+  it('still says the two different things it always meant to', () => {
+    expect(lp).toContain('is not open yet');
+    expect(lp).toContain('is not unlocked yet');
+  });
+});
