@@ -1288,3 +1288,104 @@
    page constrains its width are here. */
 .cr-field .sel { width: 100%; }
 .cr-sort .sel { min-width: 11rem; }
+
+/* ---------------------------------------------------------- certificates */
+
+/* The one thing on this page a teacher owes a student rather than the other
+   way round, so it gets a section rather than a column with a menu in it. */
+.cr-certs {
+  margin: 0 0 1.5rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .9rem;
+  background: var(--panel, #fff);
+  box-shadow: var(--shadow, 0 4px 20px rgba(12, 69, 102, .07));
+}
+
+.cr-certs__list { margin: 0; padding: 0; list-style: none; }
+
+.cr-cert-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: .25rem 1rem;
+  align-items: center;
+  padding: .75rem 0;
+  border-bottom: 1px solid var(--border, #cbd5e1);
+}
+
+.cr-cert-row:last-child { border-bottom: 0; }
+
+.cr-cert-row__who {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  margin: 0;
+}
+
+.cr-cert-row__when {
+  grid-column: 1;
+  margin: 0;
+  font-size: .8rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted, #475569);
+}
+
+.cr-cert-row__do {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  display: flex;
+  gap: .4rem;
+  margin: 0;
+}
+
+/* Mark first, then the word. The colour is the third thing that says it, not
+   the only one -- this list gets printed for a department meeting. */
+.cr-cert-row__state {
+  display: inline-flex;
+  align-items: baseline;
+  gap: .3rem;
+  padding: .15rem .5rem;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 700;
+  background: var(--bg-elevated, #f1f5f9);
+  color: var(--text, #334155);
+}
+
+.cr-cert__mark {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-weight: 700;
+}
+
+.cr-cert--pending .cr-cert-row__state { color: #7c2d12; background: #ffedd5; }
+.cr-cert--approved .cr-cert-row__state { color: #14532d; background: #dcfce7; }
+.cr-cert--declined .cr-cert-row__state { color: #7f1d1d; background: #fee2e2; }
+.cr-cert--earned .cr-cert-row__state { color: #14532d; background: #dcfce7; }
+
+[data-theme="dark"] .cr-cert--pending .cr-cert-row__state { color: #fed7aa; background: #43220c; }
+[data-theme="dark"] .cr-cert--approved .cr-cert-row__state,
+[data-theme="dark"] .cr-cert--earned .cr-cert-row__state { color: #bbf7d0; background: #14361f; }
+[data-theme="dark"] .cr-cert--declined .cr-cert-row__state { color: #fecaca; background: #451a1a; }
+
+/* The grid's certificate cell: a mark, and the word to a screen reader. */
+.cr-grid__cert { text-align: center; }
+.cr-grid__cert .cr-cert__mark { font-size: .95rem; }
+.cr-grid .cr-cert--pending { color: #9a3412; }
+.cr-grid .cr-cert--approved,
+.cr-grid .cr-cert--earned { color: #15803d; }
+.cr-grid .cr-cert--declined { color: #b91c1c; }
+
+[data-theme="dark"] .cr-grid .cr-cert--pending { color: #fdba74; }
+[data-theme="dark"] .cr-grid .cr-cert--approved,
+[data-theme="dark"] .cr-grid .cr-cert--earned { color: #86efac; }
+[data-theme="dark"] .cr-grid .cr-cert--declined { color: #fca5a5; }
+
+/* A waiting certificate is the only attention row that names something the
+   teacher owes, so it gets the accent rather than a warning colour. */
+.cr-row--certificate { border-left: 3px solid var(--primary, #0ea5e9); }
+
+@media (max-width: 30rem) {
+  .cr-cert-row { grid-template-columns: 1fr; }
+  .cr-cert-row__do { grid-column: 1; grid-row: auto; }
+}

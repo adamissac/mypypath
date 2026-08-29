@@ -110,6 +110,51 @@
     verified: '*'
   };
 
+  /* The certificate handshake, as a teacher sees it.
+     `pending` is the only one that is a job: the learner has finished and is
+     waiting on a person. The other four are records. */
+  var CERT_LABEL = {
+    none: 'Not finished',
+    earned: 'Earned',
+    pending: 'Awaiting you',
+    approved: 'Approved',
+    declined: 'Declined'
+  };
+
+  /* Same rule as MASTERY_MARK, for the same reason: this state ends up on a
+     printout for a department meeting, and that printout is greyscale. */
+  var CERT_MARK = {
+    none: '\u00b7',
+    earned: '*',
+    pending: '?',
+    approved: '+',
+    declined: 'x'
+  };
+
+  /* The order the certificate queue reads in, highest first, so what is
+     waiting on the teacher sits at the top. It orders the five states, never
+     the students: this dashboard does not rank people against each other, and
+     tests/classroom-core.test.js keeps that word off the public API on
+     purpose. */
+  var CERT_ORDER = { none: 0, earned: 1, approved: 2, declined: 3, pending: 4 };
+
+  var CERT_CSV = {
+    none: 'not finished',
+    earned: 'earned',
+    pending: 'awaiting approval',
+    approved: 'approved',
+    declined: 'declined'
+  };
+
+  function certificateState(cert) {
+    var c = cert || {};
+    if (c.approved === true) return 'approved';
+    if (c.approved === false) return 'declined';
+    if ((c.requestedAt || 0) > 0) return 'pending';
+    if (c.earned) return 'earned';
+    return 'none';
+  }
+
   function toMillis(value) {
     if (value == null) return 0;
     if (typeof value === 'number') return value;
@@ -548,6 +593,22 @@
       var events = student.events || [];
       var name = student.displayName || student.uid;
 
+      /* Checked before the no-events return below, so a waiting certificate is
+         never skipped. It is also the only row here that names something the
+         teacher owes the student rather than the other way round, which is
+         exactly why it belongs at the top of this table. */
+      if (certificateState(student.certificate) === 'pending') {
+        rows.push({
+          uid: student.uid,
+          displayName: name,
+          kind: 'certificate',
+          priority: 0,
+          reason: 'Finished the course and is waiting on their certificate',
+          nextStep: 'Approve or decline it in Certificates below',
+          lessonPath: '/certificate.html'
+        });
+      }
+
       if (!events.length) {
         rows.push({
           uid: student.uid,
@@ -882,6 +943,12 @@
       + ' days ago, and the activity records it would be measured against have '
       + 'been deleted under the retention policy. That is not the same as nobody '
       + 'having done it, so nothing is shown either way.',
+    certificate: 'A learner who finishes all ten units does not get the '
+      + 'certificate straight away: it waits here for you to approve or '
+      + 'decline. Either decision can be changed later from the same row, so a '
+      + 'decline holds the certificate back rather than ending anything. A '
+      + 'learner who is not in anyone\'s class is unaffected and gets theirs '
+      + 'the moment they finish.',
     lockMode: 'In order: a unit opens once the one before it is finished. By '
       + 'hand: only the units you tick are open. Open: every unit is open to '
       + 'everyone. Assignments are unaffected by all three, so an open course '
@@ -906,6 +973,11 @@
     MASTERY: MASTERY,
     MASTERY_LABEL: MASTERY_LABEL,
     MASTERY_MARK: MASTERY_MARK,
+    CERT_LABEL: CERT_LABEL,
+    CERT_MARK: CERT_MARK,
+    CERT_ORDER: CERT_ORDER,
+    CERT_CSV: CERT_CSV,
+    certificateState: certificateState,
     STUCK_ATTEMPTS: STUCK_ATTEMPTS,
     IDLE_DAYS: IDLE_DAYS,
     STRUGGLE_RATE: STRUGGLE_RATE,

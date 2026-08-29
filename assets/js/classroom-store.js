@@ -369,6 +369,49 @@ export async function touchLastActive(classId, uid) {
   }).catch(() => {});
 }
 
+/* ---------------------------------------------------------- certificates */
+
+/* The certificate handshake still lives on the flat roster/{uid} document, and
+ * deliberately stays there. The rules' gradingOwnStudent() predicate targets
+ * that document, the learner's own request half writes it, and join-flow.js
+ * guarantees every class-enrolled student has one alongside their class seat.
+ * Moving the storage would mean moving all three; moving only the controls
+ * that read it costs nothing.
+ *
+ * One query for the whole class rather than a read per student: the flat
+ * roster is queryable by teacherUid, which is the same query the page this
+ * replaces used.
+ */
+export async function readCertificates(teacherUid) {
+  const snap = await getDocs(
+    query(collection(db, 'roster'), where('teacherUid', '==', teacherUid))
+  );
+  const out = {};
+  snap.forEach((d) => {
+    const v = d.data() || {};
+    out[d.id] = {
+      requestedAt: Number(v.certificateRequestedAt) || 0,
+      approved: typeof v.certificateApproved === 'boolean' ? v.certificateApproved : null,
+      decidedAt: Number(v.certificateDecidedAt) || 0,
+      earned: !!v.hasCertificate,
+    };
+  });
+  return out;
+}
+
+/* Exactly the three keys the rules let a teacher change. Anything else in this
+ * object -- even a field read straight back off the row unchanged -- makes the
+ * whole write fail. */
+export async function setCertificateDecision(uid, approved) {
+  const now = Date.now();
+  await updateDoc(doc(db, `roster/${uid}`), {
+    certificateApproved: approved,
+    certificateDecidedAt: now,
+    updatedAt: now,
+  });
+  return now;
+}
+
 /* ---------------------------------------------------------------- events */
 
 /* One batch per flush. Ids are generated client-side so the whole batch is a

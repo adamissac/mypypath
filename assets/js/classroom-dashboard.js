@@ -8,7 +8,8 @@ import { currentUser } from '/assets/js/auth.js';
 import {
   classesFor, createClass, readRoster, readEvents, readMirror, addCoTeacher,
   setArchived, purgeArchivedClass, createAssignment, readAssignments,
-  deleteAssignment, setLockPolicy, watchRoster,
+  deleteAssignment, setLockPolicy, watchRoster, readCertificates,
+  setCertificateDecision,
 } from '/assets/js/classroom-store.js';
 
 const CORE = window.PyPathClassroom;
@@ -24,6 +25,8 @@ let sortBy = 'name';
 let assignments = [];
 let scopeAssignment = null;
 let unwatchRoster = null;
+let certificates = {};
+const deciding = new Set();
 
 const $ = (sel, root) => (root || document).querySelector(sel);
 const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
@@ -70,6 +73,11 @@ function lessonsByUnit() {
 
 async function loadClassData(classId) {
   const roster = await readRoster(classId);
+  // One query for the whole class. The certificate handshake lives on the flat
+  // roster document, which is queryable by teacherUid; the class seat is not
+  // where it is stored and does not need to be.
+  const user = currentUser();
+  certificates = user ? await readCertificates(user.uid).catch(() => ({})) : {};
   // One student at a time rather than one query: the rules scope reads to a
   // single student's subcollection, which is the same property that stops a
   // teacher reading a class they do not own.
@@ -81,6 +89,7 @@ async function loadClassData(classId) {
       lastActiveAt: CORE.toMillis(row.lastActiveAt),
       events: await readEvents(classId, row.uid, 500).catch(() => []),
       mirror: await readMirror(classId, row.uid).catch(() => ({})),
+      certificate: certificates[row.uid] || {},
     }))
   );
 }
@@ -115,6 +124,7 @@ function mergeRoster(rows) {
       existing.displayName = row.displayName || existing.displayName;
       existing.joinedAt = CORE.toMillis(row.joinedAt);
       existing.lastActiveAt = CORE.toMillis(row.lastActiveAt);
+      existing.certificate = certificates[row.uid] || existing.certificate || {};
       return existing;
     }
     return {
@@ -124,6 +134,7 @@ function mergeRoster(rows) {
       lastActiveAt: CORE.toMillis(row.lastActiveAt),
       events: [],
       mirror: {},
+      certificate: certificates[row.uid] || {},
       pending: true,
     };
   });
@@ -136,6 +147,7 @@ function paintRosterViews() {
   paintAttention();
   paintGrid();
   paintSummary();
+  paintCertificates();
 }
 
 function stopWatchingRoster() {
@@ -542,6 +554,10 @@ function paintGrid() {
   const pct = el('th', 'cr-grid__col cr-grid__pct', '%');
   pct.scope = 'col';
   head.appendChild(pct);
+  const cert = el('th', 'cr-grid__col cr-grid__cert', 'Cert');
+  cert.scope = 'col';
+  cert.title = 'Certificate';
+  head.appendChild(cert);
 
   body.innerHTML = '';
   const byUnit = lessonsByUnit();
@@ -596,6 +612,17 @@ function paintGrid() {
     }
 
     tr.appendChild(el('td', 'cr-grid__pct', CORE.percentComplete(student.events, byUnit) + '%'));
+
+    // State only here. The decision lives in Certificates below, where there
+    // is room to say what approving means; this cell is for reading across a
+    // row, and carries a mark so it survives greyscale and a printout.
+    const cstate = CORE.certificateState(student.certificate);
+    const ctd = el('td', 'cr-grid__cert cr-cert--' + cstate);
+    ctd.appendChild(el('span', 'cr-cert__mark', CORE.CERT_MARK[cstate]));
+    ctd.appendChild(el('span', 'visually-hidden',
+      'Certificate: ' + CORE.CERT_LABEL[cstate]));
+    ctd.title = 'Certificate: ' + CORE.CERT_LABEL[cstate];
+    tr.appendChild(ctd);
     body.appendChild(tr);
   }
 }
@@ -614,6 +641,102 @@ function stat(dl, label, value, explainKey) {
   wrap.appendChild(dt);
   wrap.appendChild(el('dd', null, value));
   dl.appendChild(wrap);
+}
+
+/* ---------------------------------------------------------- certificates */
+
+/* The queue, and the two buttons that empty it.
+ *
+ * Only students who have got as far as finishing appear: a list of everyone
+ * who has not is the progress grid, which is already on this page. Decided
+ * rows stay, because a decision has to be reversible from where it was made --
+ * a declined learner is approved from the same row once the work improves.
+ */
+function paintCertificates() {
+  const section = $('[data-cr-certs]');
+  const list = $('[data-cr-certs-list]');
+  const empty = $('[data-cr-certs-empty]');
+  if (!list) return;
+
+  const rows = students
+    .map((s) => ({ student: s, state: CORE.certificateState(s.certificate) }))
+    .filter((r) => r.state !== 'none')
+    .sort((a, b) => CORE.CERT_ORDER[b.state] - CORE.CERT_ORDER[a.state]
+      || String(a.student.displayName).localeCompare(String(b.student.displayName)));
+
+  list.innerHTML = '';
+  show(empty, rows.length === 0);
+  if (section) show(section, true);
+
+  for (const { student, state } of rows) {
+    const item = el('li', 'cr-cert-row cr-cert--' + state);
+
+    const who = el('p', 'cr-cert-row__who');
+    who.appendChild(el('strong', null, student.displayName));
+    const pill = el('span', 'cr-cert-row__state');
+    // Mark and word, never colour alone.
+    pill.appendChild(el('span', 'cr-cert__mark', CORE.CERT_MARK[state]));
+    pill.appendChild(el('span', null, ' ' + CORE.CERT_LABEL[state]));
+    who.appendChild(pill);
+    item.appendChild(who);
+
+    const when = student.certificate || {};
+    const asked = when.requestedAt
+      ? 'Asked ' + new Date(when.requestedAt).toLocaleDateString() : '';
+    const done = when.decidedAt
+      ? ' · decided ' + new Date(when.decidedAt).toLocaleDateString() : '';
+    if (asked) item.appendChild(el('p', 'cr-cert-row__when', asked + done));
+
+    // Both buttons on every row, whatever the state: reversing a decision is
+    // the same gesture as making it, and hiding the other half would mean a
+    // declined learner could never be approved.
+    const actions = el('p', 'cr-cert-row__do');
+    for (const [approved, label] of [[true, 'Approve'], [false, 'Decline']]) {
+      const btn = el('button', 'btn btn-ghost btn-small', label);
+      btn.type = 'button';
+      btn.setAttribute('aria-label',
+        label + ' the certificate for ' + student.displayName);
+      btn.disabled = deciding.has(student.uid);
+      btn.addEventListener('click', () => decideCertificate(student, approved));
+      actions.appendChild(btn);
+    }
+    item.appendChild(actions);
+    list.appendChild(item);
+  }
+}
+
+/* Painted first and reconciled after, so the row answers immediately. A failed
+   write puts the old state back rather than leaving a decision on screen that
+   never reached the database. */
+async function decideCertificate(student, approved) {
+  if (deciding.has(student.uid)) return;
+  const before = Object.assign({}, student.certificate || {});
+  deciding.add(student.uid);
+  student.certificate = Object.assign({}, before,
+    { approved, decidedAt: Date.now() });
+  certificates[student.uid] = student.certificate;
+  paintCertificates();
+  paintGrid();
+  paintAttention();
+
+  try {
+    await setCertificateDecision(student.uid, approved);
+    if (window.PyUI) {
+      window.PyUI.showToast(approved
+        ? student.displayName + ' can now download their certificate.'
+        : 'Held back. ' + student.displayName
+          + ' can be approved from the same row once the work improves.');
+    }
+  } catch (e) {
+    student.certificate = before;
+    certificates[student.uid] = before;
+    if (window.PyUI) window.PyUI.showToast('Could not save that decision. Please try again.');
+  } finally {
+    deciding.delete(student.uid);
+    paintCertificates();
+    paintGrid();
+    paintAttention();
+  }
 }
 
 function paintSummary() {
@@ -671,6 +794,7 @@ function paintAll() {
   paintAttention();
   paintGrid();
   paintSummary();
+  paintCertificates();
   paintTeachers();
 
   const archiveBtn = $('[data-cr-archive]');
