@@ -12,7 +12,6 @@ import fs from 'node:fs';
 const flow = fs.readFileSync('assets/js/join-flow.js', 'utf8');
 const menu = fs.readFileSync('assets/js/join-menu.js', 'utf8');
 const account = fs.readFileSync('assets/js/account-class.js', 'utf8');
-const page = fs.readFileSync('assets/js/classroom-page.js', 'utf8');
 
 describe('both join entry points go through the same flow', () => {
   it('the join modal uses it', () => {
@@ -42,11 +41,14 @@ describe('the flow writes both schemas', () => {
   });
 
   it('writes the legacy roster too, or certificates stop reaching teachers', () => {
-    // classroom-page.js finds its approval queue by querying the flat roster
-    // for teacherUid. A join that skips it drops the student out of that queue
-    // with nothing anywhere to say so.
+    // The certificate handshake is stored on the flat roster document and the
+    // approval queue finds it by querying that collection for teacherUid. A
+    // join that skips the legacy write drops the student out of that queue
+    // with nothing anywhere to say so. The queue moved onto the class view;
+    // where it reads from did not.
     expect(flow).toMatch(/legacyJoin\(uid, rawCode\)/);
-    expect(page).toMatch(/collection\(db, 'roster'\)[\s\S]*where\('teacherUid', '==', state\.uid\)/);
+    const store = fs.readFileSync('assets/js/classroom-store.js', 'utf8');
+    expect(store).toMatch(/collection\(db, 'roster'\)[\s\S]*?where\('teacherUid', '==', teacherUid\)/);
   });
 
   it('writes the legacy record first, so a retry is not refused', () => {

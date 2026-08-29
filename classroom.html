@@ -376,6 +376,22 @@
             </p>
           </section>
 
+          <!-- Certificates: the one thing on this page a teacher owes a student -->
+          <section class="cr-certs" data-cr-certs aria-labelledby="cr-certs-h" hidden>
+            <h2 id="cr-certs-h">
+              Certificates
+              <button type="button" class="cr-info" data-cr-info="certificate"
+                      aria-label="How a certificate is decided">i</button>
+            </h2>
+
+            <p class="cr-empty-note" data-cr-certs-empty hidden>
+              Nobody has finished the course yet. When someone does, their
+              request to have the certificate issued appears here.
+            </p>
+
+            <ul class="cr-certs__list" data-cr-certs-list></ul>
+          </section>
+
           <!-- Share with a co-teacher: a second uid on the class, not a URL -->
           <section class="cr-share" aria-labelledby="cr-share-h">
             <h2 id="cr-share-h">Share this class</h2>
@@ -539,92 +555,6 @@
 
       </section>
 
-      <!-- The legacy roster, and it stays hidden unless it has somebody in it.
-           Shown unconditionally it was the first thing a new teacher saw: a
-           join code and a table of students, which reads as the whole feature
-           and left assignments and unit access looking absent. classroom-page.js
-           reveals this only once it actually has rows. -->
-      <section class="cr-legacy" data-cr-legacy hidden>
-      <hr class="cr-divider">
-      <h2 class="cr-legacy-h">Students who joined before classes existed</h2>
-      <p class="cr-legacy-note">These students are attached to your join code
-         directly rather than to a class, so assignments and unit access do not
-         reach them. Ask them to join one of your classes with its code.</p>
-
-      <div data-class-state="ready" hidden>
-        <section class="class-code">
-          <h2 class="class-code__label">Your join code</h2>
-          <p class="class-code__value" data-class-code>——————</p>
-          <p class="class-code__hint">Students enter this when they sign up, or from
-             their account page if they already have an account.</p>
-          <div class="admin-actions">
-            <button type="button" class="btn btn-primary" data-class-copy>Copy code</button>
-            <button type="button" class="btn btn-ghost" data-class-regenerate>Issue a new code</button>
-            <button type="button" class="btn btn-ghost" data-class-csv>Export CSV</button>
-          </div>
-          <p class="class-warn" data-class-regen-confirm hidden>
-            Issuing a new code stops the current one working straight away.
-            Students already in your class stay in it.
-            <button type="button" class="btn btn-primary btn-small" data-class-regenerate>Yes, issue a new code</button>
-            <button type="button" class="btn btn-ghost btn-small" data-class-regen-cancel>Cancel</button>
-          </p>
-        </section>
-
-        <dl class="admin-stats">
-          <div class="admin-stat">
-            <dt>Awaiting your approval</dt>
-            <dd data-class-stat="pending">0</dd>
-          </div>
-          <div class="admin-stat">
-            <dt>Students</dt>
-            <dd data-class-stat="students">0</dd>
-          </div>
-          <div class="admin-stat">
-            <dt>Total hours</dt>
-            <dd data-class-stat="hours">0</dd>
-          </div>
-          <div class="admin-stat">
-            <dt>Started a unit</dt>
-            <dd data-class-stat="started">0</dd>
-          </div>
-          <div class="admin-stat">
-            <dt>Certificates</dt>
-            <dd data-class-stat="certificates">0</dd>
-          </div>
-        </dl>
-
-        <div class="admin-table-wrap">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th scope="col"><button type="button" data-class-sort="name">Student</button></th>
-                <th scope="col"><button type="button" data-class-sort="joined">Joined class</button></th>
-                <th scope="col"><button type="button" data-class-sort="lastSeenAt">Last active</button></th>
-                <th scope="col"><button type="button" data-class-sort="seconds">Time learning</button></th>
-                <th scope="col"><button type="button" data-class-sort="units">Progress</button></th>
-                <th scope="col"><button type="button" data-class-sort="tests">Unit tests</button></th>
-                <th scope="col"><button type="button" data-class-sort="requestedAt">Requested</button></th>
-                <th scope="col"><button type="button" data-class-sort="certificate">Certificate</button></th>
-                <th scope="col"><span class="visually-hidden">Actions</span></th>
-              </tr>
-            </thead>
-            <tbody data-class-rows></tbody>
-          </table>
-        </div>
-
-        <p class="admin-note">A student in your class who finishes all ten units
-          does not get their certificate straight away: it waits here for you to
-          approve or decline it, and either decision can be changed later from the
-          same row. A learner who is not in anyone&rsquo;s class is unaffected and
-          still gets their certificate the moment they finish.</p>
-
-        <p class="admin-note">Time counts only while a student has PyPath open in
-          front of them and has interacted within the last five minutes. You can
-          see how far your students have got and how long they have spent; you
-          cannot see the Python they write in the lessons, and you cannot see their
-          email address.</p>
-      </div>
-          </section>
 
     </main>
 
