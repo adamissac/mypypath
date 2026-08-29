@@ -156,10 +156,14 @@
       <!-- ============================================================
            The classes/{classId} dashboard.
 
-           Rendered by classroom-dashboard.js. The legacy join-code card and
-           roster table further down are driven by classroom-page.js and read
-           the older flat roster collection; both models are live, so a teacher
-           whose students joined before classes existed does not lose them.
+           Rendered by classroom-dashboard.js, which is everything a teacher
+           sees here. classroom-page.js is only the gate that decides whether
+           they see it at all: its roster table and certificate queue moved
+           into this view and the flat-roster section they lived in is gone.
+
+           That collection is still written on every join, by join-flow.js,
+           because the certificate handshake is stored there and admin.html
+           reads it. It simply has no view of its own on this page any more.
            ============================================================ -->
       <section class="cr" data-cr-root hidden aria-busy="true">
 
