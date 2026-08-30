@@ -13,6 +13,7 @@ import { currentUser } from '/assets/js/auth.js';
 // loaded on every page, and adding a tag to all 124 of them is a change that
 // would have to be repeated for every page added later.
 import '/assets/js/join-menu.js';
+import { loadMembership } from '/assets/js/membership.js';
 
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const { doc, getDoc } = await import(`${BASE}/firebase-firestore.js`);
@@ -54,11 +55,35 @@ function paint(role) {
   });
 }
 
+/* The student half of the same idea as the classroom link. A learner in a
+   class has somewhere to see what has been set for them; one working alone has
+   nothing there, so the link would lead to an empty panel and an obvious
+   question about what it was for.
+
+   Enrollment rather than role, and read through membership.js so it comes off
+   the session cache rather than costing a document read on every page. */
+async function paintClassLinks(user, role) {
+  const links = document.querySelectorAll('[data-student-class]');
+  if (!links.length) return;
+  let inClass = false;
+  if (user && !ROLES.isTeacher(role)) {
+    try {
+      inClass = !!(await loadMembership(user.uid));
+    } catch (e) {
+      // Leave it hidden. A link to a page we could not confirm they can use is
+      // worse than no link.
+      inClass = false;
+    }
+  }
+  links.forEach((el) => { el.hidden = !inClass; });
+}
+
 // Only the resolver announces. paint() is also called from the pypath:role
 // listener below, and announcing from there would echo every event back onto
 // itself.
 function announce(role) {
   paint(role);
+  paintClassLinks(currentUser(), role).catch(() => {});
   document.dispatchEvent(new CustomEvent('pypath:role', { detail: { role: ROLES.normalizeRole(role) } }));
 }
 

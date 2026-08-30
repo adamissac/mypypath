@@ -31,6 +31,8 @@ import {
 import {
   joinClass as classJoin,
   leaveClass as classLeave,
+  resolveJoinCode,
+  ClassroomError,
 } from '/assets/js/classroom-store.js';
 import {
   currentClassId, setClassId, loadMembership,
@@ -51,6 +53,40 @@ function isPreClassCode(err) {
  * legacy record is written, so the certificate queue keeps seeing the student.
  */
 export async function joinAnyClass(uid, rawCode) {
+  /* One class at a time, checked before anything is written.
+   *
+   * Nothing used to stop a second join. The class seat for the new code was
+   * created, the single cached class pointer was moved to it, and the student
+   * was left enrolled in both: their first teacher's roster still listed them,
+   * still collecting a row that slowly went stale, while only the second
+   * class's assignments and lock mode actually applied. No error, no warning,
+   * and nothing on either teacher's screen to say it had happened.
+   *
+   * A flat block rather than an offer to switch. Leaving a class deletes the
+   * class copy of the student's work, and doing that as a side effect of
+   * mistyping a code is not a thing to bury inside a join. The message names
+   * the control that does it, which is on the same page as the field they just
+   * typed into.
+   */
+  let current = currentClassId();
+  if (!current) current = await loadMembership(uid, true);
+
+  if (current) {
+    let target = null;
+    try {
+      target = (await resolveJoinCode(rawCode)).classId;
+    } catch (e) {
+      // A pre-classes code resolves to no class at all. Joining on it would
+      // move the legacy roster's single teacherUid to someone else, which is
+      // the same double-enrollment wearing the older schema's clothes.
+      if (!isPreClassCode(e)) throw e;
+    }
+    if (target !== current) {
+      throw new ClassroomError('already-in-class',
+        'You are already in a class. Leave it first, then use the new code.');
+    }
+  }
+
   // Written first, and never skipped: classroom-page.js's approval queue reads
   // the flat roster directly, so a join that misses it drops the student out of
   // certificate approval entirely with nothing to show that it happened.

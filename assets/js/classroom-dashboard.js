@@ -174,6 +174,25 @@ function watchActiveRoster(classId) {
 // hold two.
 window.addEventListener('pagehide', stopWatchingRoster);
 
+/* A shut fold prints as its heading and nothing else, so the paper copy would
+   be whichever sections happened to be open when someone hit print. The
+   printout is the dashboard, not a snapshot of its UI state.
+
+   Done here rather than in the stylesheet because a details element hides its
+   content through the user agent stylesheet, and overriding that in CSS needs
+   !important -- which classroom.css does not use and has a test saying so.
+   Only folds this reopens are restored, so one a teacher had already opened
+   stays open afterwards. */
+let reopened = [];
+window.addEventListener('beforeprint', () => {
+  reopened = $$('.cr-fold:not([open])');
+  reopened.forEach((fold) => { fold.open = true; });
+});
+window.addEventListener('afterprint', () => {
+  reopened.forEach((fold) => { fold.open = false; });
+  reopened = [];
+});
+
 /* ------------------------------------------------------------ assignments */
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -424,10 +443,24 @@ function paintAttention() {
     tr.appendChild(el('td', 'cr-row__do', row.nextStep));
 
     const go = el('td', 'cr-row__go');
-    const link = el('a', 'cr-link', 'Open lesson');
-    link.href = row.lessonPath;
-    link.setAttribute('aria-label', 'Open ' + (lessonTitles()[row.lessonPath] || row.lessonPath)
-      + ' for ' + row.displayName);
+    // A waiting certificate is not a lesson, and a link that says "open
+    // lesson" and goes to the certificate page is a small lie in the one
+    // column whose whole job is telling you where to go next.
+    const isCert = row.kind === 'certificate';
+    const link = el('a', 'cr-link', isCert ? 'See certificates' : 'Open lesson');
+    link.href = isCert ? '#cr-certs-h' : row.lessonPath;
+    link.setAttribute('aria-label', isCert
+      ? 'Go to the certificate decision for ' + row.displayName
+      : 'Open ' + (lessonTitles()[row.lessonPath] || row.lessonPath)
+        + ' for ' + row.displayName);
+    if (isCert) {
+      // The section it points at is folded shut by default, so open it rather
+      // than scrolling someone to a closed heading.
+      link.addEventListener('click', () => {
+        const fold = $('[data-cr-fold="certs"]');
+        if (fold) fold.open = true;
+      });
+    }
     go.appendChild(link);
     tr.appendChild(go);
     body.appendChild(tr);
@@ -670,6 +703,19 @@ function paintCertificates() {
   show(empty, rows.length === 0);
   if (section) show(section, true);
 
+  /* The count on the shut header. A collapsed section that can accumulate
+     work owed to a person has to say what it is holding, or hiding it means a
+     student who finished the course waits on a teacher with no way to know. */
+  const waiting = rows.filter((r) => r.state === 'pending').length;
+  const badge = $('[data-cr-certs-count]');
+  if (badge) {
+    badge.textContent = waiting
+      ? waiting + (waiting === 1 ? ' waiting' : ' waiting')
+      : '';
+    badge.classList.toggle('is-waiting', waiting > 0);
+    show(badge, waiting > 0);
+  }
+
   for (const { student, state } of rows) {
     const item = el('li', 'cr-cert-row cr-cert--' + state);
 
@@ -824,6 +870,15 @@ function paintTeachers() {
     const item = el('li', 'cr-teacher');
     item.textContent = uid === (user && user.uid) ? uid + ' (you)' : uid;
     list.appendChild(item);
+  }
+
+  // Not work owed to anyone, so this one is stated rather than flagged: it
+  // answers "who else can see this class" without opening the section.
+  const others = (klass.teacherUids || []).length - 1;
+  const badge = $('[data-cr-teachers-count]');
+  if (badge) {
+    badge.textContent = others === 1 ? '1 co-teacher' : others + ' co-teachers';
+    show(badge, others > 0);
   }
 }
 
