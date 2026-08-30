@@ -395,38 +395,10 @@
 [data-theme="dark"] .cr-state--attempted { color: #fde68a; background: #4a3410; }
 [data-theme="dark"] .cr-state--passed { color: #bbf7d0; background: #14361f; }
 
-/* ---------- summary strip ---------- */
-
-.cr-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
-  gap: .75rem;
-  margin: 0;
-}
-
-.cr-stat {
-  padding: .75rem .85rem;
-  border: 1px solid var(--border, #cbd5e1);
-  border-radius: .5rem;
-  background: var(--panel, #fff);
-}
-
-.cr-stat dt {
-  display: flex;
-  align-items: center;
-  gap: .35rem;
-  font-size: .75rem;
-  text-transform: uppercase;
-  letter-spacing: .04em;
-  color: var(--muted, #475569);
-}
-
-.cr-stat dd {
-  margin: .3rem 0 0;
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--text-strong, #0f172a);
-}
+/* The summary strip that used to live here -- five bordered tiles in a grid --
+   is now one quiet line under the class name. See "the class, in one line"
+   further down: these figures are context for the attention list, not a
+   headline competing with it. */
 
 /* ---------- create form, notes ---------- */
 
@@ -1388,4 +1360,228 @@
 @media (max-width: 30rem) {
   .cr-cert-row { grid-template-columns: 1fr; }
   .cr-cert-row__do { grid-column: 1; grid-row: auto; }
+}
+
+/* =================================================== the page's four zones */
+
+/* Nine flat sections became five things to look at: what needs you, the grid,
+   what you have asked for, and the termly stuff folded away. Grouped by why a
+   teacher came rather than by when each part happened to be built. */
+
+/* ---------- the class bar ---------- */
+
+.cr-bar__left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem .9rem;
+}
+
+/* Six characters, read aloud at the start of term and almost never after. It
+   was a card with a heading, a paragraph and a button; it is now a line. */
+.cr-joincode {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin: 0;
+  padding: .3rem .3rem .3rem .7rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: 999px;
+  background: var(--panel, #fff);
+}
+
+.cr-joincode__label {
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted, #475569);
+}
+
+.cr-joincode__value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  color: var(--text-strong, #0f172a);
+}
+
+/* ---------- the class, in one line ---------- */
+
+/* Context for the list below rather than a headline of its own. The template
+   answer is five tiles with big numbers at the top of the page; nobody has
+   ever needed the median unit reached in the thirty seconds before a lesson. */
+.cr-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem 1.4rem;
+  margin: 0 0 1.25rem;
+  padding: .6rem .85rem;
+  border-radius: .7rem;
+  background: color-mix(in srgb, var(--bg-elevated, #f1f5f9) 60%, var(--panel, #fff));
+}
+
+.cr-stat { display: flex; align-items: baseline; gap: .4rem; }
+
+.cr-stat dt {
+  display: flex;
+  align-items: center;
+  gap: .25rem;
+  font-size: .78rem;
+  color: var(--muted, #475569);
+}
+
+.cr-stat dd {
+  margin: 0;
+  font-size: .95rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-strong, #0f172a);
+}
+
+/* ---------- zone 1: what needs you ---------- */
+
+/* The thesis of the page. A named child stuck on the same exercise for the
+   seventh time is the only thing here that can be acted on; a percentage is
+   not. So this leads, and the figures above are the quiet line under the name
+   of the class rather than the other way round. */
+.cr-attention {
+  margin: 0 0 1.5rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-left: 3px solid var(--primary, #0ea5e9);
+  border-radius: .9rem;
+  background: var(--panel, #fff);
+  box-shadow: var(--shadow, 0 4px 20px rgba(12, 69, 102, .07));
+}
+
+.cr-attention > h2 { margin-top: 0; }
+
+/* ---------- zones 3 and 4 ---------- */
+
+.cr-zone { margin: 2rem 0 0; }
+
+.cr-zone__h {
+  margin: 0 0 .75rem;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted, #475569);
+}
+
+/* The zone heading names the group; the cards inside keep their own headings,
+   so a section's h2 does not have to compete with the label above it. */
+.cr-zone .cr-assign > h2,
+.cr-zone .cr-access > h2 { font-size: 1.05rem; }
+
+/* ---------- the folds ---------- */
+
+.cr-fold {
+  margin: 0 0 .5rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .8rem;
+  background: var(--panel, #fff);
+  overflow: hidden;
+}
+
+.cr-fold > summary {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .8rem 1rem;
+  list-style: none;
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--text-strong, #0f172a);
+  transition: background-color var(--dur-fast, 150ms) ease;
+}
+
+.cr-fold > summary::-webkit-details-marker { display: none; }
+
+.cr-fold > summary::after {
+  content: "";
+  flex: none;
+  order: 3;
+  width: .5rem;
+  height: .5rem;
+  margin-left: auto;
+  margin-right: .2rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  opacity: .5;
+  transition: transform var(--dur-base, 280ms) cubic-bezier(.16, 1, .3, 1);
+}
+
+.cr-fold[open] > summary::after { transform: translateY(2px) rotate(225deg); opacity: 1; }
+.cr-fold > summary:hover { background: var(--bg-elevated, #f1f5f9); }
+.cr-fold > summary:focus-visible {
+  outline: none;
+  box-shadow: inset var(--ring, 0 0 0 4px rgba(14, 165, 233, .15));
+}
+
+.cr-fold[open] > summary {
+  border-bottom: 1px solid var(--border, #cbd5e1);
+  background: var(--bg-elevated, #f1f5f9);
+}
+
+.cr-fold__name { order: 1; }
+
+/* What the shut section is holding. Anything in here that can accumulate work
+   owed to a person says so on its own header, so folding cannot hide a
+   student waiting on a decision. */
+.cr-fold__count {
+  order: 2;
+  padding: .1rem .5rem;
+  border-radius: 999px;
+  font-size: .74rem;
+  font-weight: 700;
+  color: var(--muted, #475569);
+  background: var(--bg-elevated, #f1f5f9);
+}
+
+.cr-fold__count.is-waiting { color: #7c2d12; background: #ffedd5; }
+[data-theme="dark"] .cr-fold__count.is-waiting { color: #fed7aa; background: #43220c; }
+
+.cr-fold[open] > summary .cr-fold__count { background: var(--panel, #fff); }
+
+/* The sections inside a fold already carry their own card chrome, which would
+   be a border inside a border. */
+.cr-fold .cr-certs,
+.cr-fold .cr-share,
+.cr-fold .cr-digest,
+.cr-fold__body {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.cr-fold .cr-certs > h2,
+.cr-fold .cr-share > h2,
+.cr-fold .cr-digest > h2 {
+  margin-top: 0;
+  font-size: 1rem;
+}
+
+.cr-fold__actions { display: flex; flex-wrap: wrap; gap: .5rem; margin: .75rem 0 0; }
+
+@media (max-width: 30rem) {
+  .cr-bar__left { align-items: stretch; }
+  .cr-joincode { justify-content: space-between; }
+  .cr-stats { gap: .3rem .9rem; }
+}
+
+@media print {
+  /* The folds are opened for print by classroom-dashboard.js on beforeprint,
+     not from here: a details element hides its own content through the user
+     agent stylesheet, and the only way to override that in CSS is !important,
+     which this file does not use and has a test saying so. */
+  .cr-fold > summary { display: none; }
+  .cr-fold, .cr-fold[open] { border: 0; }
+  .cr-joincode { border: 0; padding-left: 0; }
+  .cr-joincode button { display: none; }
 }
