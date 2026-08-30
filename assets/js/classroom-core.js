@@ -936,6 +936,11 @@
       + ' days ago, and the activity records it would be measured against have '
       + 'been deleted under the retention policy. That is not the same as nobody '
       + 'having done it, so nothing is shown either way.',
+    joinCode: 'The code students type on their account page to join this '
+      + 'class. Joining is what makes their work visible to you; nothing is '
+      + 'shared until they do. A student can be in one class at a time, so a '
+      + 'student already in another class has to leave it before this code '
+      + 'will work for them.',
     certificate: 'A learner who finishes all ten units does not get the '
       + 'certificate straight away: it waits here for you to approve or '
       + 'decline. Either decision can be changed later from the same row, so a '

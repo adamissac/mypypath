@@ -186,125 +186,41 @@
 
         <!-- A class exists -->
         <section data-cr-view="class" hidden>
-
+          <!-- The class bar. Everything here is identity or a rare action:
+               which class, its code, and the four things you do to a class
+               rather than to a student. -->
           <div class="cr-bar">
             <div class="cr-bar__left">
               <label class="visually-hidden" for="cr-class-switcher">Class</label>
               <select id="cr-class-switcher" data-cr-switcher></select>
+
+              <!-- Six characters read aloud at the start of term and almost
+                   never after. It was a card with a heading, a paragraph and a
+                   button, taking a fifth of the first screen. -->
+              <p class="cr-joincode">
+                <span class="cr-joincode__label">Join code</span>
+                <span class="cr-joincode__value" data-cr-code>------</span>
+                <button type="button" class="btn btn-ghost btn-small" data-cr-copy>Copy</button>
+                <button type="button" class="cr-info" data-cr-info="joinCode"
+                        aria-label="What the join code does">i</button>
+              </p>
             </div>
             <div class="cr-bar__right">
               <button type="button" class="btn btn-ghost btn-small" data-cr-new-class>New class</button>
-              <button type="button" class="btn btn-ghost btn-small" data-cr-export>Export CSV</button>
-              <button type="button" class="btn btn-ghost btn-small" data-cr-digest>Weekly summary</button>
               <button type="button" class="btn btn-ghost btn-small" data-cr-print>Print</button>
             </div>
           </div>
 
-          <!-- The join code, and a card that prints large -->
-          <section class="cr-code" aria-labelledby="cr-code-h">
-            <h2 id="cr-code-h">Join code</h2>
-            <p class="cr-code__value" data-cr-code>------</p>
-            <p class="cr-code__hint">Students enter this on their account page to
-               join. Joining is what makes their work visible to you; nothing is
-               shared until they do.</p>
-            <button type="button" class="btn btn-ghost btn-small" data-cr-copy>Copy code</button>
-          </section>
+          <!-- The class, in one quiet line. These figures are context for the
+               list below, not a headline of their own: nobody has ever needed
+               the median unit reached in the thirty seconds before a lesson. -->
+          <dl class="cr-stats" data-cr-summary aria-label="This class"></dl>
 
-          <!-- Assignments: what was asked for, and by when -->
-          <section class="cr-assign" aria-labelledby="cr-assign-h">
-            <h2 id="cr-assign-h">
-              Assignments
-              <button type="button" class="cr-info" data-cr-info="assignmentLate"
-                      aria-label="How late is worked out">i</button>
-            </h2>
-
-            <p class="cr-empty-note" data-cr-assign-empty hidden>
-              Nothing is assigned yet. Set some work below and this class's
-              progress against it appears here.
-            </p>
-
-            <ul class="cr-assign__list" data-cr-assign-list></ul>
-
-            <details class="cr-assign__new">
-              <summary>Set new work</summary>
-              <form class="cr-assign__form" data-cr-assign-form>
-                <p class="cr-field">
-                  <label for="cr-assign-title">What to call it</label>
-                  <input id="cr-assign-title" name="title" type="text" required
-                         maxlength="100" autocomplete="off"
-                         placeholder="Loops and conditionals" />
-                </p>
-
-                <p class="cr-field">
-                  <label for="cr-assign-due">Due</label>
-                  <input id="cr-assign-due" name="dueAt" type="date" required />
-                </p>
-
-                <fieldset class="cr-assign__targets">
-                  <legend>Whole units</legend>
-                  <div class="cr-assign__units" data-cr-assign-units></div>
-                </fieldset>
-
-                <fieldset class="cr-assign__targets">
-                  <legend>Or single lessons</legend>
-                  <p class="cr-field">
-                    <label for="cr-assign-lesson-unit">Lessons in</label>
-                    <select id="cr-assign-lesson-unit" data-cr-assign-lesson-unit></select>
-                  </p>
-                  <div class="cr-assign__lessons" data-cr-assign-lessons></div>
-                </fieldset>
-
-                <p class="cr-assign__note">
-                  Assignments go to everyone in the class. A unit you assign is
-                  always reachable, whatever the unit access setting below says,
-                  so nobody is ever marked late for work they could not open.
-                </p>
-
-                <button type="submit" class="btn btn-primary btn-small">Assign</button>
-                <p class="cr-error" data-cr-assign-error role="alert" hidden></p>
-              </form>
-            </details>
-          </section>
-
-          <!-- Unit access: how this class's units open -->
-          <section class="cr-access" aria-labelledby="cr-access-h">
-            <h2 id="cr-access-h">
-              Unit access
-              <button type="button" class="cr-info" data-cr-info="lockMode"
-                      aria-label="What each setting does">i</button>
-            </h2>
-
-            <fieldset class="cr-access__modes">
-              <legend class="visually-hidden">How units open for this class</legend>
-              <label>
-                <input type="radio" name="cr-lock-mode" value="sequential" checked>
-                <span class="cr-access__name">In order</span>
-                <span class="cr-access__hint">A unit opens once the one before it
-                  is finished. This is the default.</span>
-              </label>
-              <label>
-                <input type="radio" name="cr-lock-mode" value="manual">
-                <span class="cr-access__name">By hand</span>
-                <span class="cr-access__hint">Only the units you tick are open.
-                  Unit 1 is always open.</span>
-              </label>
-              <label>
-                <input type="radio" name="cr-lock-mode" value="free">
-                <span class="cr-access__name">Open</span>
-                <span class="cr-access__hint">Every unit is open to everyone, in
-                  any order.</span>
-              </label>
-            </fieldset>
-
-            <div class="cr-access__units" data-cr-access-units hidden></div>
-
-            <p class="cr-access__note">
-              None of these cancel an assignment. An open course still owes
-              whatever you set, and missed work still shows as late.
-            </p>
-            <p class="cr-error" data-cr-access-error role="alert" hidden></p>
-          </section>
-
+          <!-- ============================================================
+               ZONE 1 — what needs a teacher now. First on the page because
+               it is what most visits are for, and because a named student who
+               is stuck is the only thing here that can actually be acted on.
+               ============================================================ -->
           <!-- A: needs attention, pinned first -->
           <section class="cr-attention" aria-labelledby="cr-attention-h">
             <h2 id="cr-attention-h">
@@ -333,6 +249,8 @@
             </div>
           </section>
 
+          <!-- ZONE 2 — the reference artifact. Printed for department
+               meetings, which is why it keeps its landscape print rules. -->
           <!-- B: mastery grid -->
           <section class="cr-grid-section" aria-labelledby="cr-grid-h">
             <h2 id="cr-grid-h">
@@ -380,73 +298,205 @@
             </p>
           </section>
 
-          <!-- Certificates: the one thing on this page a teacher owes a student -->
-          <section class="cr-certs" data-cr-certs aria-labelledby="cr-certs-h" hidden>
-            <h2 id="cr-certs-h">
-              Certificates
-              <button type="button" class="cr-info" data-cr-info="certificate"
-                      aria-label="How a certificate is decided">i</button>
+          <!-- ============================================================
+               ZONE 3 — what has been asked of the class. Neither a glance nor
+               paperwork: a deliberate weekly act, so it stays open rather
+               than sitting under a disclosure with archive-and-purge.
+               ============================================================ -->
+          <section class="cr-zone cr-zone--work" aria-labelledby="cr-work-h">
+            <h2 class="cr-zone__h" id="cr-work-h">Work set</h2>
+            <!-- Assignments: what was asked for, and by when -->
+            <section class="cr-assign" aria-labelledby="cr-assign-h">
+            <h2 id="cr-assign-h">
+            Assignments
+            <button type="button" class="cr-info" data-cr-info="assignmentLate"
+            aria-label="How late is worked out">i</button>
             </h2>
 
-            <p class="cr-empty-note" data-cr-certs-empty hidden>
-              Nobody has finished the course yet. When someone does, their
-              request to have the certificate issued appears here.
+            <p class="cr-empty-note" data-cr-assign-empty hidden>
+            Nothing is assigned yet. Set some work below and this class's
+            progress against it appears here.
             </p>
 
-            <ul class="cr-certs__list" data-cr-certs-list></ul>
+            <ul class="cr-assign__list" data-cr-assign-list></ul>
+
+            <details class="cr-assign__new">
+            <summary>Set new work</summary>
+            <form class="cr-assign__form" data-cr-assign-form>
+            <p class="cr-field">
+            <label for="cr-assign-title">What to call it</label>
+            <input id="cr-assign-title" name="title" type="text" required
+            maxlength="100" autocomplete="off"
+            placeholder="Loops and conditionals" />
+            </p>
+
+            <p class="cr-field">
+            <label for="cr-assign-due">Due</label>
+            <input id="cr-assign-due" name="dueAt" type="date" required />
+            </p>
+
+            <fieldset class="cr-assign__targets">
+            <legend>Whole units</legend>
+            <div class="cr-assign__units" data-cr-assign-units></div>
+            </fieldset>
+
+            <fieldset class="cr-assign__targets">
+            <legend>Or single lessons</legend>
+            <p class="cr-field">
+            <label for="cr-assign-lesson-unit">Lessons in</label>
+            <select id="cr-assign-lesson-unit" data-cr-assign-lesson-unit></select>
+            </p>
+            <div class="cr-assign__lessons" data-cr-assign-lessons></div>
+            </fieldset>
+
+            <p class="cr-assign__note">
+            Assignments go to everyone in the class. A unit you assign is
+            always reachable, whatever the unit access setting below says,
+            so nobody is ever marked late for work they could not open.
+            </p>
+
+            <button type="submit" class="btn btn-primary btn-small">Assign</button>
+            <p class="cr-error" data-cr-assign-error role="alert" hidden></p>
+            </form>
+            </details>
+            </section>
+
+            <!-- Unit access: how this class's units open -->
+            <section class="cr-access" aria-labelledby="cr-access-h">
+            <h2 id="cr-access-h">
+            Unit access
+            <button type="button" class="cr-info" data-cr-info="lockMode"
+            aria-label="What each setting does">i</button>
+            </h2>
+
+            <fieldset class="cr-access__modes">
+            <legend class="visually-hidden">How units open for this class</legend>
+            <label>
+            <input type="radio" name="cr-lock-mode" value="sequential" checked>
+            <span class="cr-access__name">In order</span>
+            <span class="cr-access__hint">A unit opens once the one before it
+            is finished. This is the default.</span>
+            </label>
+            <label>
+            <input type="radio" name="cr-lock-mode" value="manual">
+            <span class="cr-access__name">By hand</span>
+            <span class="cr-access__hint">Only the units you tick are open.
+            Unit 1 is always open.</span>
+            </label>
+            <label>
+            <input type="radio" name="cr-lock-mode" value="free">
+            <span class="cr-access__name">Open</span>
+            <span class="cr-access__hint">Every unit is open to everyone, in
+            any order.</span>
+            </label>
+            </fieldset>
+
+            <div class="cr-access__units" data-cr-access-units hidden></div>
+
+            <p class="cr-access__note">
+            None of these cancel an assignment. An open course still owes
+            whatever you set, and missed work still shows as late.
+            </p>
+            <p class="cr-error" data-cr-access-error role="alert" hidden></p>
+            </section>
           </section>
 
-          <!-- Share with a co-teacher: a second uid on the class, not a URL -->
-          <section class="cr-share" aria-labelledby="cr-share-h">
-            <h2 id="cr-share-h">Share this class</h2>
-            <p class="cr-empty-note">
+          <!-- ============================================================
+               ZONE 4 — termly. Collapsed, but never silent: anything in here
+               that can accumulate work owed to a person shows the count of
+               what it is holding on its own summary, so shutting a section
+               cannot hide a student waiting.
+               ============================================================ -->
+          <section class="cr-zone cr-zone--admin" aria-labelledby="cr-admin-h">
+            <h2 class="cr-zone__h" id="cr-admin-h">Class settings</h2>
+
+            <details class="cr-fold" data-cr-fold="certs">
+              <summary>
+                <span class="cr-fold__name">Certificates</span>
+                <span class="cr-fold__count" data-cr-certs-count hidden></span>
+              </summary>
+              <!-- Certificates: the one thing on this page a teacher owes a student -->
+              <section class="cr-certs" data-cr-certs aria-labelledby="cr-certs-h" hidden>
+              <h2 id="cr-certs-h">
+              Certificates
+              <button type="button" class="cr-info" data-cr-info="certificate"
+              aria-label="How a certificate is decided">i</button>
+              </h2>
+
+              <p class="cr-empty-note" data-cr-certs-empty hidden>
+              Nobody has finished the course yet. When someone does, their
+              request to have the certificate issued appears here.
+              </p>
+
+              <ul class="cr-certs__list" data-cr-certs-list></ul>
+              </section>
+            </details>
+
+            <details class="cr-fold" data-cr-fold="share">
+              <summary>
+                <span class="cr-fold__name">Share this class</span>
+                <span class="cr-fold__count" data-cr-teachers-count hidden></span>
+              </summary>
+              <!-- Share with a co-teacher: a second uid on the class, not a URL -->
+              <section class="cr-share" aria-labelledby="cr-share-h">
+              <h2 id="cr-share-h">Share this class</h2>
+              <p class="cr-empty-note">
               A co-teacher sees exactly what you see and can change nothing about a
               student's work. Add them by the account id on their account page.
               This is deliberately not a secret link: a link cannot be taken back
               once it has been forwarded, and an account can.
-            </p>
-            <form class="cr-create" data-cr-share>
+              </p>
+              <form class="cr-create" data-cr-share>
               <label for="cr-coteacher">Co-teacher account id</label>
               <input id="cr-coteacher" name="uid" type="text" autocomplete="off"
-                     maxlength="128" placeholder="Their account id">
+              maxlength="128" placeholder="Their account id">
               <button type="submit" class="btn btn-ghost btn-small">Add co-teacher</button>
-            </form>
-            <p class="cr-error" data-cr-share-error role="alert" hidden></p>
-            <ul class="cr-teachers" data-cr-teachers></ul>
+              </form>
+              <p class="cr-error" data-cr-share-error role="alert" hidden></p>
+              <ul class="cr-teachers" data-cr-teachers></ul>
 
-            <h3 class="cr-archive-h">Closing this class</h3>
-            <p class="cr-empty-note">
+              <h3 class="cr-archive-h">Closing this class</h3>
+              <p class="cr-empty-note">
               Archiving stops new students joining and keeps everything readable.
               A year after that, you can purge it: that permanently deletes every
               student's activity record and mirrored work for this class. Their
               own progress and their own saved code are never touched.
-            </p>
-            <div class="cr-bar__right">
+              </p>
+              <div class="cr-bar__right">
               <button type="button" class="btn btn-ghost btn-small" data-cr-archive>Archive class</button>
               <button type="button" class="btn btn-ghost btn-small" data-cr-purge>Purge archived class</button>
-            </div>
-            <p class="cr-error" data-cr-purge-note role="status" hidden></p>
-          </section>
+              </div>
+              <p class="cr-error" data-cr-purge-note role="status" hidden></p>
+              </section>
+            </details>
 
-          <!-- Weekly digest, generated on request -->
-          <section class="cr-digest" data-cr-digest-section hidden aria-labelledby="cr-digest-h">
-            <h2 id="cr-digest-h">This week, as text</h2>
-            <p class="cr-empty-note">Copy this into an email or a planner. It is
-               generated when you ask for it; PyPath sends no scheduled mail.</p>
-            <label class="visually-hidden" for="cr-digest-text">Weekly summary</label>
-            <textarea id="cr-digest-text" class="cr-digest__text" data-cr-digest-text
-                      rows="14" readonly></textarea>
-            <button type="button" class="btn btn-ghost btn-small" data-cr-digest-copy>Copy</button>
-          </section>
-
-          <!-- C: class summary strip -->
-          <section class="cr-summary" aria-labelledby="cr-summary-h">
-            <h2 id="cr-summary-h">This class</h2>
-            <dl class="cr-stats" data-cr-summary></dl>
+            <details class="cr-fold" data-cr-fold="reports">
+              <summary>
+                <span class="cr-fold__name">Export and reports</span>
+              </summary>
+              <div class="cr-fold__body">
+                <p class="cr-empty-note">A spreadsheet of the grid above, or a
+                   week of it written out to paste into an email. Both are built
+                   in your browser and uploaded nowhere.</p>
+                <p class="cr-fold__actions">
+                  <button type="button" class="btn btn-ghost btn-small" data-cr-export>Export CSV</button>
+                  <button type="button" class="btn btn-ghost btn-small" data-cr-digest>Weekly summary</button>
+                </p>
+                <!-- Weekly digest, generated on request -->
+                <section class="cr-digest" data-cr-digest-section hidden aria-labelledby="cr-digest-h">
+                <h2 id="cr-digest-h">This week, as text</h2>
+                <p class="cr-empty-note">Copy this into an email or a planner. It is
+                generated when you ask for it; PyPath sends no scheduled mail.</p>
+                <label class="visually-hidden" for="cr-digest-text">Weekly summary</label>
+                <textarea id="cr-digest-text" class="cr-digest__text" data-cr-digest-text
+                rows="14" readonly></textarea>
+                <button type="button" class="btn btn-ghost btn-small" data-cr-digest-copy>Copy</button>
+                </section>
+              </div>
+            </details>
           </section>
 
         </section>
-
         <!-- Student drill-down, opened from a cell in the grid -->
         <section class="sd" data-sd-root hidden aria-labelledby="sd-name" aria-busy="false">
           <div class="sd-bar">
