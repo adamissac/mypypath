@@ -124,3 +124,34 @@ describe('the dashboard is for teachers only', () => {
       .toMatch(/catch \(e\) \{\s*\n[^}]*show\(root, false\);\s*\n\s*return;/);
   });
 });
+
+describe('a student is in one class at a time', () => {
+  it('checks where they already are before writing anything', () => {
+    // Nothing used to stop a second join: the new seat was created, the single
+    // cached pointer moved to it, and the student was left enrolled in both --
+    // the first teacher's roster still listing them and slowly going stale
+    // while only the second class's assignments and lock mode applied.
+    const guard = flow.indexOf("throw new ClassroomError('already-in-class'");
+    expect(guard).toBeGreaterThan(-1);
+    expect(guard).toBeLessThan(flow.indexOf('legacyJoin(uid, rawCode)'));
+    expect(guard).toBeLessThan(flow.indexOf('classJoin(uid, rawCode'));
+  });
+
+  it('resolves the code without writing, to compare it', () => {
+    expect(flow).toMatch(/target = \(await resolveJoinCode\(rawCode\)\)\.classId/);
+  });
+
+  it('still lets the same class through, so a rejoin stays silent', () => {
+    expect(flow).toMatch(/if \(target !== current\)/);
+  });
+
+  it('leaves a student with no class alone, which is the repair path', () => {
+    // Anyone enrolled before join-flow.js shipped has no classId, and
+    // re-entering their code is how they move onto the class schema.
+    expect(flow).toMatch(/if \(current\) \{/);
+  });
+
+  it('names the control that unblocks them', () => {
+    expect(flow).toMatch(/Leave it first, then use the new code/);
+  });
+});
