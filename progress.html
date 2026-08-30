@@ -34,6 +34,7 @@
     <script defer src="/assets/js/gate.js"></script>
     <script defer src="/assets/js/curriculum.js"></script>
     <script defer src="/assets/js/classroom-policy.js"></script>
+    <script defer src="/assets/js/classroom-core.js"></script>
     <script defer src="/assets/js/question-types.js"></script>
     <script defer src="/assets/js/question-render.js"></script>
     <script defer src="/assets/js/reflection-check.js"></script>
@@ -49,6 +50,7 @@
     <script type="module" src="/assets/js/role-nav.js"></script>
     <script type="module" src="/assets/js/activity.js"></script>
     <script type="module" src="/assets/js/auth-ui.js"></script>
+    <script type="module" src="/assets/js/student-work.js"></script>
 </head>
   <body class="page page-progress">
     <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -96,6 +98,7 @@
               </li>
               <li><a href="/sandbox.html" class="route">Sandbox</a></li>
               <li data-account-classroom hidden><a href="/classroom.html" class="route">Classroom</a></li>
+              <li data-student-class hidden><a href="/progress.html" class="route">My class</a></li>
               <li><a href="/settings.html" class="route">Settings</a></li>
               </ul>
             </div>
@@ -139,6 +142,27 @@
         <p>You are browsing as a guest. Your progress is saved on this device only.
            <a href="/signup.html" class="route">Create an account</a> to sync it everywhere.</p>
       </div>
+
+      <!-- What the class has asked for. Hidden for anyone not in a class:
+           a learner working alone owes nobody anything, and an empty panel
+           saying so would be a permanent apology for a feature they are not
+           using. Rendered by student-work.js. -->
+      <section class="sw" data-sw aria-labelledby="sw-h" hidden>
+        <h2 id="sw-h">Work set by <span data-sw-class>your class</span></h2>
+
+        <p class="sw-clear" data-sw-empty hidden>
+          Nothing outstanding. Everything your teacher has set is done.
+        </p>
+
+        <p class="sw-clear" data-sw-none hidden>
+          Your teacher has not set any work yet. When they do, it appears here
+          with what it covers and when it is due.
+        </p>
+
+        <ul class="sw-list" data-sw-list></ul>
+
+        <p class="sw-how" data-sw-how hidden></p>
+      </section>
 
       <section id="progress-body">
         <p class="progress-headline"><span id="progress-count">0</span> of 10 units complete</p>

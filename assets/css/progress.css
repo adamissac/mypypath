@@ -111,3 +111,116 @@
 @media (prefers-reduced-motion: reduce) {
   .progress-page .progress-global .bar { transition: none; }
 }
+
+/* ------------------------------------------------- work set by your class */
+
+/* Above the unit list on purpose: what is owed to someone else outranks how
+   far along you are, and a student opening this page during a lesson is
+   usually here for the first question, not the second. */
+.sw {
+  margin: 0 0 2rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .9rem;
+  background: var(--panel, #fff);
+  box-shadow: var(--shadow, 0 4px 20px rgba(12, 69, 102, .07));
+}
+
+.sw h2 { margin: 0 0 .75rem; font-size: 1.15rem; }
+
+/* Nothing due is good news, and reads as good news rather than as a panel
+   that failed to load. */
+.sw-clear {
+  margin: 0;
+  padding: .85rem 1rem;
+  border-left: 3px solid var(--primary, #0ea5e9);
+  border-radius: .1rem .6rem .6rem .1rem;
+  background: color-mix(in srgb, var(--primary, #0ea5e9) 7%, var(--panel, #fff));
+  color: var(--text, #334155);
+  font-size: .92rem;
+}
+
+.sw-list { margin: 0; padding: 0; list-style: none; display: grid; gap: .6rem; }
+
+.sw-item {
+  padding: .85rem .95rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-left: 3px solid var(--border, #cbd5e1);
+  border-radius: .6rem;
+  background: color-mix(in srgb, var(--bg-elevated, #f1f5f9) 45%, var(--panel, #fff));
+}
+
+/* The edge says how urgent without being the only thing that says it: the
+   state below is always spelled out in a word. */
+.sw-item--overdue { border-left-color: #dc2626; }
+.sw-item--not-due { border-left-color: var(--primary, #0ea5e9); }
+.sw-item--done-on-time { border-left-color: #16a34a; }
+.sw-item--done-late { border-left-color: #d97706; }
+.sw-item--expired { border-left-color: var(--muted, #475569); }
+
+.sw-item__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .35rem .9rem;
+}
+
+.sw-item__title { margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-strong, #0f172a); }
+
+.sw-item__state {
+  display: inline-flex;
+  align-items: baseline;
+  gap: .3rem;
+  margin: 0;
+  padding: .15rem .55rem;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 700;
+  background: var(--bg-elevated, #f1f5f9);
+  color: var(--text, #334155);
+}
+
+/* Mark as well as colour, the same rule the mastery grid follows. */
+.sw-item__mark { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+.sw-item--overdue .sw-item__state { color: #7f1d1d; background: #fee2e2; }
+.sw-item--done-on-time .sw-item__state { color: #14532d; background: #dcfce7; }
+.sw-item--done-late .sw-item__state { color: #92400e; background: #fef3c7; }
+
+[data-theme="dark"] .sw-item--overdue .sw-item__state { color: #fecaca; background: #451a1a; }
+[data-theme="dark"] .sw-item--done-on-time .sw-item__state { color: #bbf7d0; background: #14361f; }
+[data-theme="dark"] .sw-item--done-late .sw-item__state { color: #fde68a; background: #4a3410; }
+
+.sw-item__due {
+  margin: .3rem 0 .5rem;
+  font-size: .85rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted, #475569);
+}
+
+/* What was actually asked for, by name, each one a way in. A student who has
+   to work out which lesson "unit 3" meant has been given a puzzle. */
+.sw-parts { margin: 0; padding: 0; list-style: none; display: grid; gap: .2rem; }
+
+.sw-part { display: flex; align-items: baseline; gap: .45rem; font-size: .88rem; }
+.sw-part__mark {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--muted, #475569);
+}
+.sw-part.is-done .sw-part__mark { color: #16a34a; }
+.sw-part.is-done .sw-part__link { color: var(--muted, #475569); }
+.sw-part__link { color: var(--primary-strong, #0284c7); }
+
+.sw-item__note, .sw-how {
+  margin: .5rem 0 0;
+  font-size: .82rem;
+  line-height: 1.5;
+  color: var(--muted, #475569);
+}
+
+.sw-how { margin-top: .85rem; }
+
+@media (max-width: 30rem) {
+  .sw-item__head { flex-direction: column; align-items: flex-start; }
+}
