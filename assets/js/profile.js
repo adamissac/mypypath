@@ -37,22 +37,71 @@
  * the server has not confirmed. A snapshot carrying unacknowledged local
  * writes is not an answer, it is our own write reflected back at us.
  *
- * Failing is still allowed, and still means what it meant. When nothing
- * server-confirmed arrives and there is no clean cached copy to fall back on,
- * this rejects -- callers already render "we could not reach the database",
- * which is honest, where "you are not a teacher" is not.
+ * THE SECOND ATTEMPT, and why the first one was not enough. 47533a6 tried to
+ * establish "the server has confirmed this" from a snapshot listener's
+ * metadata: resolve on the first snapshot with fromCache false and
+ * hasPendingWrites false, wait four seconds, then fall back. Instrumenting a
+ * four-tab contended load showed both halves of that were wrong.
+ *
+ * The metadata does not mean what it was being read to mean. A contended load
+ * really does produce
+ *
+ *     fromCache=false  hasPendingWrites=true  role=undefined
+ *
+ * -- the backend has acknowledged our own merge write, so the client counts
+ * itself in sync and has no unacknowledged writes pending, while the document
+ * view is still nothing but the fields we just merged. hasPendingWrites going
+ * false means "no local write is still in the air", not "this view came from
+ * the server". Order those two events the other way round and the flags both
+ * read clear over a document with no role on it, which is the original bug
+ * wearing the fix's own approval.
+ *
+ * And the four second deadline turned slow into offline. Under four tabs
+ * contending for the persistence lock the server snapshot regularly took
+ * longer than that, and the timeout rejected a read that was still making
+ * progress -- 0 of 32 cold tabs rendered the dashboard, every one of them
+ * reporting "Could not reach your account record" on a working connection.
+ *
+ * getDocFromServer() looks like the answer to that and is not. It returns the
+ * local view with outstanding mutations applied, so during exactly this race it
+ * hands back our own merge write over an empty cache -- measured, with
+ * hasPendingWrites true and no role on the document, which is the original bug
+ * arriving through the primitive named after the fix for it. There is no read
+ * that dodges an outstanding local write. The only way out is to wait for the
+ * write to stop being outstanding, which is what hasPendingWrites going false
+ * means, so the listener stays and the condition it resolves on stays.
+ *
+ * What changes is the deadline. Four seconds was not a fallback, it was a
+ * failure: under contention the confirmed snapshot arrives later than that, and
+ * rejecting a read still making progress reported an unreachable database on a
+ * working connection. Twenty seconds is the ceiling now, and a page that really
+ * is offline no longer waits it out -- navigator.onLine settles that case as
+ * soon as a cache-only snapshot arrives.
+ *
+ * Failing is still allowed, and still means what it meant. Offline falls back
+ * to the cache, and only to a cached view the server confirmed at some point;
+ * with nothing to fall back on this rejects, and callers render "we could not
+ * reach the database", which is honest, where "you are not a teacher" is not.
  */
 import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
 
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const { doc, onSnapshot } = await import(`${BASE}/firebase-firestore.js`);
 
-/* How long to wait for the server before falling back to a clean cached copy.
-   Only ever paid by a genuinely offline page: online, the confirmed snapshot
-   arrives in a round trip. Long enough that a slow connection is not called
-   offline, short enough that a teacher on a plane still sees their own
-   cached record rather than a spinner. */
-const SERVER_WAIT_MS = 4000;
+/* How long to wait for an answer before giving up on the network.
+ *
+ * Twenty seconds, and the number is the whole point of this round. 47533a6
+ * used four, and under four tabs contending for the persistence lock the
+ * confirmed snapshot regularly arrived later than that -- so the deadline
+ * rejected a read that was still making progress and every one of those tabs
+ * reported "Could not reach your account record" on a working connection.
+ *
+ * A page that is genuinely offline does not wait this out: the navigator.onLine
+ * check below takes the cached answer as soon as a cache-only snapshot arrives.
+ * This is the ceiling for "online, but something is badly wrong", where being
+ * slow and right beats being fast and wrong -- the page says "Loading your
+ * class" throughout, which is true. */
+const SERVER_WAIT_MS = 20000;
 
 /* Cached for the page rather than for the session.
 
@@ -86,11 +135,21 @@ export function invalidateProfile(uid) {
   }
 }
 
-/* One read that waits for the server to confirm the document.
+/* One read that waits for a document view nobody local is still writing to.
  *
- * A one-shot listener rather than getDoc, because getDoc gives no way to ask
- * "is this the server's answer or my own pending write?" -- onSnapshot with
- * includeMetadataChanges does, and that distinction is the entire bug.
+ * A snapshot listener with includeMetadataChanges, because the two facts that
+ * matter are only on the metadata. getDocFromServer() was tried here and is
+ * wrong for this: it returns the local view with outstanding mutations applied,
+ * so during exactly the race this file exists for it hands back our own merge
+ * write over an empty cache -- measured, with hasPendingWrites true and no role
+ * on the document. There is no read primitive that dodges this. The only way
+ * out is to wait for the write to stop being outstanding.
+ *
+ * hasPendingWrites false is what proves that. It means no local write is still
+ * in the air, so the view is the document as the backend has it rather than as
+ * we have just patched it. fromCache false is the second half: the client is in
+ * sync with the backend for this document. Both, together, and nothing else is
+ * trusted.
  */
 function readAuthoritative(uid) {
   return new Promise((resolve, reject) => {
@@ -100,17 +159,25 @@ function readAuthoritative(uid) {
 
     // The best cache-only view seen so far, kept for the offline fallback.
     // Only a snapshot with no pending writes qualifies: one with pending
-    // writes is the half-built document described at the top of this file, and
-    // falling back to it would reintroduce the bug on a slow connection.
+    // writes is the half-built document described at the top of this file.
     let clean = null;
 
     function finish(fn, value) {
       if (settled) return;
       settled = true;
       if (timer) clearTimeout(timer);
-      // Unsubscribing inside the callback is fine and is what getDoc does.
       if (unsub) unsub();
       fn(value);
+    }
+
+    function giveUp() {
+      if (clean) {
+        finish(resolve, clean);
+        return;
+      }
+      const err = new Error('Could not reach your account record.');
+      err.code = 'unavailable';
+      finish(reject, err);
     }
 
     unsub = onSnapshot(
@@ -119,26 +186,25 @@ function readAuthoritative(uid) {
       (snap) => {
         const meta = snap.metadata;
         if (!meta.fromCache && !meta.hasPendingWrites) {
-          // The server has spoken. A document that genuinely does not exist
-          // yet is a real answer too, and is {} -- a brand new account with no
-          // record written is not a teacher, and saying so is correct.
+          // A document that genuinely does not exist yet is a real answer too,
+          // and is {} -- a brand new account with no record written is not a
+          // teacher, and saying so is correct.
           finish(resolve, snap.exists() ? snap.data() : {});
           return;
         }
         if (snap.exists() && !meta.hasPendingWrites) clean = snap.data();
+        // Offline is answered now rather than at the deadline. Waiting twenty
+        // seconds to tell a learner on a train something we already know is a
+        // worse page than answering from the copy we have. navigator.onLine is
+        // only ever trusted in this direction: it is famously willing to claim
+        // a connection that does not work, but a browser saying it has no
+        // network at all is not something to sit out.
+        if (typeof navigator !== 'undefined' && navigator.onLine === false) giveUp();
       },
       (err) => finish(reject, err)
     );
 
-    timer = setTimeout(() => {
-      if (clean) {
-        finish(resolve, clean);
-        return;
-      }
-      const err = new Error('Could not reach your account record.');
-      err.code = 'unavailable';
-      finish(reject, err);
-    }, SERVER_WAIT_MS);
+    timer = setTimeout(giveUp, SERVER_WAIT_MS);
   });
 }
 

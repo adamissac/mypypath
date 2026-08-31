@@ -129,6 +129,70 @@ describe('the cold-cache race that told a teacher they were a student', () => {
   });
 });
 
+describe('a slow answer is not an absent one', () => {
+  /* WHAT SLIPPED PAST THE FIRST SEVENTEEN TESTS, and it is worth naming: every
+     one of them scripted its snapshots inside the four second deadline, so not
+     one of them ever let the timer fire while the sequence was still
+     progressing. They proved the metadata logic, which was right, and never
+     touched the deadline, which was wrong. Re-testing the deploy under four
+     tabs contending for the persistence lock, the confirmed snapshot regularly
+     arrived later than four seconds and the read was rejected as unreachable on
+     a working connection -- 0 of 32 cold tabs rendered the dashboard.
+
+     This is that case, and it fails against 47533a6. */
+  it('waits for a server snapshot that takes six seconds', async () => {
+    const P = compileProfile(scripted([
+      { data: HALF_BUILT, fromCache: true, hasPendingWrites: true, after: 5 },
+      { data: REAL, fromCache: false, hasPendingWrites: false, after: 6000 },
+    ]));
+    const out = await settle(P.loadProfile('u1'), 8000);
+    expect(out.err).toBe(undefined);
+    expect(out.ok.role).toBe('teacher');
+  });
+
+  it('still gives up eventually rather than hanging a page forever', async () => {
+    const P = compileProfile(scripted([
+      { data: HALF_BUILT, fromCache: true, hasPendingWrites: true, after: 5 },
+    ]));
+    const out = await settle(P.loadProfile('u1'), 25000);
+    expect(out.err.code).toBe('unavailable');
+  });
+});
+
+describe('a browser that says it has no network is believed at once', () => {
+  /* The other half of moving the deadline out. Twenty seconds is the right
+     ceiling for "online but struggling" and the wrong one for a learner on a
+     train, who can be answered immediately from a copy we already hold. */
+  function offline(value) {
+    Object.defineProperty(window.navigator, 'onLine', {
+      value, configurable: true, writable: true,
+    });
+  }
+
+  afterEach(() => offline(true));
+
+  it('answers from the cached copy without waiting out the deadline', async () => {
+    offline(false);
+    const P = compileProfile(scripted([
+      { data: REAL, fromCache: true, hasPendingWrites: false, after: 5 },
+    ]));
+    // Only 100ms of clock is advanced: waiting the deadline would not resolve.
+    const out = await settle(P.loadProfile('u1'), 100);
+    expect(out.ok.role).toBe('teacher');
+  });
+
+  it('refuses at once rather than resolving the half-built document', async () => {
+    // Offline is not permission to answer from our own pending write.
+    offline(false);
+    const P = compileProfile(scripted([
+      { data: HALF_BUILT, fromCache: true, hasPendingWrites: true, after: 5 },
+    ]));
+    const out = await settle(P.loadProfile('u1'), 100);
+    expect(out.ok).toBe(undefined);
+    expect(out.err.code).toBe('unavailable');
+  });
+});
+
 describe('offline is reported as offline, never as "not a teacher"', () => {
   it('rejects when only a pending-write view was ever available', async () => {
     // The dangerous fallback. Resolving the half-built document here would be
@@ -136,7 +200,10 @@ describe('offline is reported as offline, never as "not a teacher"', () => {
     const P = compileProfile(scripted([
       { data: HALF_BUILT, fromCache: true, hasPendingWrites: true, after: 5 },
     ]));
-    const out = await settle(P.loadProfile('u1'), 5000);
+    // 25s, not 5s: the deadline moved out to twenty seconds because four was
+    // rejecting reads that were still making progress. See the slow-answer
+    // group above.
+    const out = await settle(P.loadProfile('u1'), 25000);
     expect(out.ok).toBe(undefined);
     expect(out.err.code).toBe('unavailable');
   });
@@ -146,7 +213,7 @@ describe('offline is reported as offline, never as "not a teacher"', () => {
     const P = compileProfile(scripted([
       { data: REAL, fromCache: true, hasPendingWrites: false, after: 5 },
     ]));
-    const out = await settle(P.loadProfile('u1'), 5000);
+    const out = await settle(P.loadProfile('u1'), 25000);
     expect(out.ok.role).toBe('teacher');
   });
 
@@ -231,6 +298,8 @@ describe('four callers, one read, one answer', () => {
 describe('every role check goes through it', () => {
   const join = fs.readFileSync('assets/js/class-join.js', 'utf8');
   const store = fs.readFileSync('assets/js/classroom-store.js', 'utf8');
+  const nav = fs.readFileSync('assets/js/role-nav.js', 'utf8');
+  const sync = fs.readFileSync('assets/js/sync.js', 'utf8');
 
   it('readProfile delegates rather than reading for itself', () => {
     // The three modules that reproduced the bug all call readProfile by name,
@@ -256,5 +325,39 @@ describe('every role check goes through it', () => {
     // four in classroom-store.js that move a role, a class index or a code.
     expect(join.match(/invalidateProfile\(uid\)/g).length).toBe(4);
     expect(store.match(/invalidateProfile\(uid\)/g).length).toBe(4);
+  });
+
+  /* The fifth reader, which 47533a6 missed. role-nav.js runs on all 124 pages
+     and had its own getDoc with the same cold-cache bug -- and the worst
+     consequence of the five, because it wrote its answer to sessionStorage
+     rather than to a page-lifetime cache. */
+  it('role-nav reads through the shared reader rather than its own getDoc', () => {
+    expect(nav).toContain("from '/assets/js/profile.js'");
+    expect(nav).toMatch(/await loadProfile\(user\.uid\)/);
+    expect(nav).not.toMatch(/getDoc\(/);
+  });
+
+  it('role-nav never caches a role it failed to read', () => {
+    /* It used to announce('student') here. That did not merely leave the
+       teacher link hidden: paint() calls ROLES.rememberRole, which writes
+       sessionStorage, which ROLES.teachingNow() reads, which lesson-progress.js
+       asks before applying the unit lock. One unlucky read left a teacher
+       locked out of their own course for the whole session. */
+    const fn = nav.slice(nav.indexOf('async function apply'), nav.indexOf('// Changing role'));
+    // Comments stripped: the block explains at length what it no longer does,
+    // and an assertion that matched its own explanation would prove nothing.
+    const rescue = fn.slice(fn.indexOf('} catch'))
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/\/\/[^\n]*/g, '');
+    expect(rescue).not.toMatch(/announce\(/);
+    expect(rescue).not.toMatch(/remember\(/);
+  });
+
+  it('sync reads the profile before it writes over it', () => {
+    // The race removed at source: with the shared read resolved first there is
+    // no unacknowledged merge write for any reader to be poisoned by.
+    const fn = sync.slice(sync.indexOf('async function fullSync'));
+    expect(fn.indexOf('await loadProfile(')).toBeGreaterThan(-1);
+    expect(fn.indexOf('await loadProfile(')).toBeLessThan(fn.indexOf('identity(user)'));
   });
 });
