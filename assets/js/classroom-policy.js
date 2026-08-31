@@ -117,6 +117,57 @@
     return sequentiallyOpen(n, completedUnits);
   }
 
+  /* How many times a class may sit the same end-of-unit test.
+   *
+   * The whole feature is "the teacher's call", not a number this product picks.
+   * null means unlimited and is the answer for a teacher, for a class that has
+   * never set one, for a class created before the setting existed, for an
+   * offline or denied policy read, and -- the case that matters most -- for a
+   * learner who is in no class at all. Someone working through this on their
+   * own has nobody to set them a limit and never acquires one.
+   *
+   * MAX_ATTEMPT_CAP exists so a stored value cannot be so large that the
+   * client's arithmetic stops meaning anything; anything above it is the same
+   * as unlimited in practice and is clamped rather than rejected.
+   */
+  var MAX_ATTEMPT_CAP = 99;
+
+  function normalizeAttemptCap(raw) {
+    // A string is admitted for the same reason hasUnit above admits one:
+    // Firestore and a <select> both hand numbers back as strings often enough
+    // that refusing them is a bug waiting for one round trip. A boolean is
+    // not, because Number(true) is 1 and a stray flag would quietly become a
+    // one-attempt class.
+    if (typeof raw !== 'number' && typeof raw !== 'string') return null;
+    var n = Number(raw);
+    if (!Number.isInteger(n) || n < 1) return null;
+    return Math.min(n, MAX_ATTEMPT_CAP);
+  }
+
+  function attemptCap(policy, teaching) {
+    // A teacher sitting a test is checking the paper, not being marked on it.
+    if (teaching === true) return null;
+    if (!policy || typeof policy !== 'object') return null;
+    return normalizeAttemptCap(policy.maxTestAttempts);
+  }
+
+  /* Sittings still available, or null for unlimited.
+
+     `used` is the learner's own attempt count from their stored test record,
+     which is the same number the intro screen already prints back to them. */
+  function attemptsLeft(policy, used, teaching) {
+    var cap = attemptCap(policy, teaching);
+    if (cap === null) return null;
+    var n = Number(used);
+    if (!Number.isFinite(n) || n < 0) n = 0;
+    return Math.max(0, cap - Math.floor(n));
+  }
+
+  function canSitTest(policy, used, teaching) {
+    var left = attemptsLeft(policy, used, teaching);
+    return left === null || left > 0;
+  }
+
   /* Whether a learner may reveal an exercise solution.
    *
    * A teacher always may: they are checking the exercise, not sitting it.
@@ -139,9 +190,14 @@
 
   window.PyPathPolicy = {
     MODES: MODES,
+    MAX_ATTEMPT_CAP: MAX_ATTEMPT_CAP,
     normalizeMode: normalizeMode,
+    normalizeAttemptCap: normalizeAttemptCap,
     resolveUnlocked: resolveUnlocked,
     assignmentUnlocks: assignmentUnlocks,
+    attemptCap: attemptCap,
+    attemptsLeft: attemptsLeft,
+    canSitTest: canSitTest,
     solutionsAllowed: solutionsAllowed
   };
 })();

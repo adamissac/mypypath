@@ -266,6 +266,20 @@
     return !!(R && R.teachingNow());
   }
 
+  /* Whether this page's unit is shut to this learner right now.
+   *
+   * The one question the hard lock asks. Kept beside teaching() rather than in
+   * the pure-rules section above because it reads the page's own unit and the
+   * policy this file is holding, and because every caller below wants the same
+   * four arguments filled in the same way.
+   *
+   * A page that is not part of a unit is never locked: the answer for the
+   * sandbox, the curriculum page and everything else is "no". */
+  function unitLocked() {
+    if (!unit) return false;
+    return !isUnitUnlocked(unit, completedUnits(), teaching(), classPolicy);
+  }
+
   // Required item ids, read from the page itself so no manifest can drift.
   function requiredItems() {
     var exercises = Array.prototype.map.call(
@@ -309,6 +323,13 @@
   function rollUpUnitNumber(n) {
     var target = Number(n);
     if (!curriculum || !Number.isInteger(target) || target < 1) return false;
+    // A locked unit does not complete. This is the half of the hard lock that
+    // decides credit rather than access: the lessons stay readable, the record
+    // stays honest, and nothing is added to completedUnits or announced to a
+    // teacher for work the class was not open for. It is checked for the unit
+    // being rolled up rather than for the page's own unit, because the test
+    // page calls this from a URL that belongs to no unit at all.
+    if (!isUnitUnlocked(target, completedUnits(), teaching(), classPolicy)) return false;
     var passed = passedLessons(readMap());
     if (!unitFinished(curriculum.lessonsIn(target), passed, testRecords(), target)) return false;
     var units = completedUnits();
@@ -348,6 +369,10 @@
 
   function markItem(id) {
     if (!id || required.indexOf(id) === -1) return;
+    // Nothing on a locked unit is ticked off. Without this the lesson quietly
+    // filled in behind the banner, and a unit that was never open to this
+    // class arrived at the roll-up already finished.
+    if (unitLocked()) return;
     var map = readMap();
     var entry = map[path];
     var done = entry ? entry.done.slice() : [];
@@ -491,8 +516,13 @@
     (wrap || box).remove();
   }
 
-  // Soft lock: the content stays readable, but the learner is told plainly that
-  // this unit is not open yet and where to go instead.
+  // The banner that explains the lock. The lock itself is real now -- markItem
+  // refuses to tick anything, rollUpUnitNumber refuses to complete the unit,
+  // paintLockedControls turns the buttons off, and the events rule in
+  // firestore.rules refuses the writes that would count -- so this is the one
+  // place that says why, and it has to be on screen wherever that refusal is
+  // felt. The content itself stays readable: reading ahead was never the thing
+  // anybody wanted to stop.
   function insertLockNotice() {
     if (!curriculum || !unit) return;
     if (isUnitUnlocked(unit, completedUnits(), teaching(), classPolicy)) {
@@ -538,7 +568,7 @@
     var testDone = unitTestPassed(testRecords(), prev);
 
     var box = document.createElement('div');
-    box.className = 'unit-locked-notice';
+    box.className = 'unit-locked-notice is-hard';
     box.setAttribute('role', 'note');
     // What this notice is claiming, so a later pass can tell whether the
     // reason has changed under it.
@@ -548,14 +578,17 @@
       box.innerHTML =
         '<p class="unit-locked-notice__title">Unit ' + unit + ' is not open yet</p>' +
         '<p>Your teacher chooses which units are open for your class, and this ' +
-        'one is not open at the moment. Nothing you have already finished is ' +
-        'affected. Ask your teacher if you think it should be open.</p>' +
+        'one is not open at the moment. You can read the lesson, but the ' +
+        'exercises are turned off here and nothing on this page will count ' +
+        'until it opens. Nothing you have already finished is affected. Ask ' +
+        'your teacher if you think it should be open.</p>' +
         '<p><a class="btn btn-primary route" href="/progress.html">See your progress</a></p>';
     } else {
       box.innerHTML =
         '<p class="unit-locked-notice__title">Unit ' + unit + ' is not unlocked yet</p>' +
         '<p>Finish every lesson in Unit ' + prev + ' and pass the Unit ' + prev + ' test to ' +
-        'unlock it. You can keep reading ahead, but your progress counts from Unit ' + prev + '.</p>' +
+        'unlock it. You can keep reading ahead, but the exercises here are ' +
+        'turned off until then, and your progress counts from Unit ' + prev + '.</p>' +
         (lessonsDone && !testDone
           ? '<p><a class="btn btn-primary route" href="/unit-test.html?unit=' + prev + '">Take the Unit ' + prev + ' test</a></p>'
           : next
@@ -812,6 +845,44 @@
     prependNotice(box);
   }
 
+  /* Turns off the controls on a locked unit.
+   *
+   * The other half of what "hard lock" has to mean. markItem() already refuses
+   * to tick anything here, but letting a learner run every exercise on the
+   * page and then find that none of it counted is a worse experience than
+   * today's banner was: they would have done the work twice and been told
+   * nothing.
+   *
+   * Disabled rather than hidden, which is the opposite of the choice
+   * paintSolutionButtons makes above, and for the opposite reason. A hidden
+   * Show Solution button promises nothing, because nothing is coming. These
+   * buttons are coming back the moment the unit opens, and a lesson with its
+   * Run button silently removed reads as broken. The banner directly above
+   * says why they are off.
+   *
+   * The editors themselves are left alone: reading ahead is still allowed, and
+   * so is typing in the box. Only the actions that would count are stopped.
+   */
+  function paintLockedControls() {
+    if (!isLessonPage()) return;
+    var locked = unitLocked();
+    var nodes = document.querySelectorAll('.btn-run, .btn-check, .submit-btn');
+    for (var i = 0; i < nodes.length; i++) {
+      var btn = nodes[i];
+      // Never fight a button something else has disabled for its own reasons,
+      // such as a run already in flight. Only ever undo our own.
+      if (locked) {
+        btn.disabled = true;
+        btn.setAttribute('data-unit-locked', '');
+        btn.setAttribute('title', 'Unit ' + unit + ' is not open for your class yet.');
+      } else if (btn.hasAttribute('data-unit-locked')) {
+        btn.disabled = false;
+        btn.removeAttribute('data-unit-locked');
+        btn.removeAttribute('title');
+      }
+    }
+  }
+
   /* The Show Solution buttons, for a class whose teacher turned them off.
    *
    * Removed rather than disabled: a greyed-out button is a promise that
@@ -844,6 +915,7 @@
     paintLessonList();
     paintTestEntries();
     paintSolutionButtons();
+    paintLockedControls();
   }
 
   // pypath:progress fires on every ProgressStore write, and lesson-runner.js
