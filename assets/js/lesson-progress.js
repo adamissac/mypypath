@@ -812,12 +812,38 @@
     prependNotice(box);
   }
 
+  /* The Show Solution buttons, for a class whose teacher turned them off.
+   *
+   * Removed rather than disabled: a greyed-out button is a promise that
+   * something is coming, and nothing is. The exercise, the editor, the checker
+   * and the hints are all untouched -- this takes away the answer key, not the
+   * work.
+   *
+   * What it does not do, said plainly because the teacher's own copy says it
+   * too: the solutions travel inside the lesson's HTML, so this removes the
+   * button and not the answer. window.showSolution refuses as well, so a stale
+   * button left over from an earlier paint cannot act, but neither of those is
+   * a lock and this file should not pretend otherwise.
+   */
+  function paintSolutionButtons() {
+    var POLICY = window.PyPathPolicy;
+    var allowed = POLICY
+      ? POLICY.solutionsAllowed(classPolicy, teaching())
+      : true;
+    window.pyPathSolutionsAllowed = allowed;
+    var buttons = document.querySelectorAll('.btn-solution');
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].hidden = !allowed;
+    }
+  }
+
   function repaint() {
     if (isLessonPage()) paintProgress();
     insertLockNotice();
     paintTeacherBanner();
     paintLessonList();
     paintTestEntries();
+    paintSolutionButtons();
   }
 
   // pypath:progress fires on every ProgressStore write, and lesson-runner.js

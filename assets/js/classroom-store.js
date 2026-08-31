@@ -332,6 +332,16 @@ export async function leaveClass(uid, classId) {
   ).catch(() => {});
 }
 
+/* Whether this class gets the "Show Solution" button on an exercise.
+ *
+ * Stored as a boolean and read as "absent means yes", so every class that
+ * existed before this setting did keeps the behaviour it had. */
+export async function setShowSolutions(classId, allowed) {
+  const on = allowed !== false;
+  await updateDoc(doc(db, `classes/${classId}`), { showSolutions: on });
+  return on;
+}
+
 export async function readRoster(classId) {
   const snap = await getDocs(collection(db, `classes/${classId}/roster`));
   return snap.docs.map((d) => ({ uid: d.id, ...d.data() }));

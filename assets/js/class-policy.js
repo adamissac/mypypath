@@ -90,6 +90,9 @@ export async function loadPolicy(classId, force) {
       // Derived here rather than stored, so deleting an assignment re-locks
       // whatever it was holding open with no cleanup step anywhere.
       assignmentUnlocks: POLICY ? POLICY.assignmentUnlocks(live, Date.now()) : [],
+      // Absent means allowed, so a class created before this setting existed
+      // keeps the button it has always had.
+      showSolutions: data.showSolutions !== false,
     };
     writeCache(classId, value);
     announce(value);
