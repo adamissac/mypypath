@@ -241,8 +241,21 @@ describe('unitTestPassed', () => {
   });
 
   it('trusts a passed flag that has no best beside it', () => {
+    // Still true, and for the original reason: with no score stored the flag is
+    // the only evidence there is, and a record truncated mid-write must not
+    // cost a learner a unit they really passed.
     expect(P().unitTestPassed({ '1': { passed: true } }, 1)).toBe(true);
-    expect(P().unitTestPassed({ '1': { passed: true, best: 0 } }, 1)).toBe(true);
+  });
+
+  it('lets a stored score overrule the flag beside it', () => {
+    /* Changed deliberately. This used to read as passed, so a record carrying
+       `passed: true` next to a failing score unlocked the next unit at any mark
+       at all -- the one way "score 70 or higher" was not literally true of the
+       sequential chain. `passed` is derived from `best` and `best` only
+       ratchets upward, so neither of these can come from sitting the test. */
+    expect(P().unitTestPassed({ '1': { passed: true, best: 0 } }, 1)).toBe(false);
+    expect(P().unitTestPassed({ '1': { passed: true, best: 30 } }, 1)).toBe(false);
+    expect(P().unitTestPassed({ '1': { passed: true, best: 70 } }, 1)).toBe(true);
   });
 
   it('accepts the unit as a number or a numeric string', () => {
