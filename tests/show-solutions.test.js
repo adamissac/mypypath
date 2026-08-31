@@ -50,7 +50,11 @@ describe('who may see a solution', () => {
 
 describe('the setting is stored and typed', () => {
   it('the rules admit the field', () => {
-    expect(rules).toMatch(/'showSolutions'\]\);/);
+    // Membership of the class document's key whitelist, not position in it:
+    // the list has grown since (assignmentUnlocks, maxTestAttempts) and this
+    // is a claim about what may be stored, not about what is stored last.
+    const hasOnly = rules.slice(rules.indexOf('allow update: if isTeacherOf(classId)'));
+    expect(hasOnly.slice(0, hasOnly.indexOf(';'))).toContain("'showSolutions'");
   });
 
   it('the rules pin it to a boolean', () => {

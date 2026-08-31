@@ -10,7 +10,8 @@ import {
   classesFor, createClass, readRoster, readEvents, readMirror, addCoTeacher,
   setArchived, purgeArchivedClass, createAssignment, readAssignments,
   deleteAssignment, setLockPolicy, watchRoster, readCertificates,
-  setCertificateDecision, setShowSolutions,
+  setCertificateDecision, setShowSolutions, setMaxTestAttempts,
+  refreshAssignmentUnlocks,
 } from '/assets/js/classroom-store.js';
 
 const CORE = window.PyPathClassroom;
@@ -382,6 +383,19 @@ function paintSolutions() {
   // created before this setting existed shows the box ticked rather than
   // silently reporting that its students have lost something.
   box.checked = klass.showSolutions !== false;
+}
+
+function paintRetakes() {
+  const box = $('[data-cr-max-attempts]');
+  const klass = classes.filter((c) => c.id === activeClassId)[0];
+  if (!box || !klass) return;
+  const POLICY = window.PyPathPolicy;
+  const cap = POLICY ? POLICY.normalizeAttemptCap(klass.maxTestAttempts) : null;
+  // The empty option is "unlimited", which is what an absent field means. A
+  // stored value the list does not offer falls back to it too, because a
+  // select assigned a value with no matching option lands on none -- better
+  // than quietly showing the nearest number as though it were the setting.
+  box.value = cap === null ? '' : String(cap);
 }
 
 function paintAccess() {
@@ -850,6 +864,7 @@ function paintAll() {
   paintAssignments();
   paintAccess();
   paintSolutions();
+  paintRetakes();
   paintAttention();
   paintGrid();
   paintSummary();
@@ -975,6 +990,33 @@ function wire() {
         // Put the box back where it was: a tick that did not save is a tick
         // that says students can see something they cannot.
         solutions.checked = !want;
+        if (error) {
+          error.textContent = 'Could not save that. Check your connection and try again.';
+          show(error, true);
+        }
+      }
+    });
+  }
+
+  const retakes = $('[data-cr-max-attempts]');
+  if (retakes) {
+    retakes.addEventListener('change', async () => {
+      const error = $('[data-cr-retakes-error]');
+      show(error, false);
+      const before = (() => {
+        const klass = classes.filter((c) => c.id === activeClassId)[0];
+        const POLICY = window.PyPathPolicy;
+        const cap = klass && POLICY ? POLICY.normalizeAttemptCap(klass.maxTestAttempts) : null;
+        return cap === null ? '' : String(cap);
+      })();
+      try {
+        const saved = await setMaxTestAttempts(activeClassId, retakes.value || null);
+        const klass = classes.filter((c) => c.id === activeClassId)[0];
+        if (klass) klass.maxTestAttempts = saved;
+      } catch (err) {
+        // Put it back. A limit that did not save is a limit a teacher believes
+        // is in force and is not.
+        retakes.value = before;
         if (error) {
           error.textContent = 'Could not save that. Check your connection and try again.';
           show(error, true);
@@ -1330,6 +1372,17 @@ async function boot(user) {
   students = await loadClassData(activeClassId).catch(() => []);
   assignments = await readAssignments(activeClassId).catch(() => []);
   scopeAssignment = assignments.length ? assignments[0].id : null;
+
+  /* The unlock list the events rule reads, brought up to date.
+   *
+   * It is maintained on every assignment write, so this is only ever a no-op
+   * or a backfill -- and the backfill is the point. A class that has not had
+   * an assignment touched since this shipped has no stored list, and until it
+   * does the rule cannot see its assignment unlocks and deliberately permits
+   * everything. This is where that ends, on the first dashboard load, without
+   * asking the teacher to do anything. Never awaited into the render path and
+   * never fatal: a failure leaves the class exactly as permissive as it was. */
+  refreshAssignmentUnlocks(activeClassId, assignments).catch(() => {});
   show($('[data-cr-view="empty"]'), false);
   show($('[data-cr-view="class"]'), true);
   paintAll();

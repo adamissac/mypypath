@@ -144,10 +144,17 @@
         <p>Ten multiple choice questions worth 7 points each, and one free response
            problem worth 30. That is 100 points in total, and you need 70 to finish
            the unit and open the next one.</p>
-        <p>You can retake the test as many times as you like. Your best score is the
+        <!-- Rewritten by unit-test-page.js when the learner's class has set a
+             retake limit. The unlimited sentence is the default because it is
+             what every learner outside a class has, and what every class that
+             has not set a limit has. -->
+        <p id="ut-retakes">You can retake the test as many times as you like. Your best score is the
            one that counts, so a worse retake never takes anything away.</p>
         <p class="ut-best" id="ut-best" hidden></p>
-        <p><button type="button" class="btn btn-primary" id="ut-start">Start the test</button></p>
+        <!-- Why the button below is not there: a locked unit, or a retake
+             limit reached. Never both at once -- see blockedReason(). -->
+        <p class="ut-gate" id="ut-gate" role="note" hidden></p>
+        <p id="ut-start-row"><button type="button" class="btn btn-primary" id="ut-start">Start the test</button></p>
       </section>
 
       <form class="ut-paper" id="ut-paper" hidden>

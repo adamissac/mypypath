@@ -947,6 +947,15 @@
       + 'hide the answer either -- solutions are part of the lesson page, so a '
       + 'student who opens the page source can read one whatever this is set '
       + 'to. It takes the answer key off the desk; it does not lock it away.',
+    maxTestAttempts: 'How many times a student in this class may sit the same '
+      + 'end-of-unit test. Unlimited is the default and is what every class had '
+      + 'before this setting existed. It reaches students in this class and '
+      + 'nobody else: a learner working on their own has no teacher to set them '
+      + 'a limit and never gets one. Running out never costs anything already '
+      + 'earned -- the best score stands, and so does a unit already completed. '
+      + 'Worth knowing where it is kept: this is a rule the site follows in the '
+      + 'student\'s browser, not one the database enforces, so treat it as a '
+      + 'setting rather than as a guarantee.',
     certificate: 'A learner who finishes all ten units does not get the '
       + 'certificate straight away: it waits here for you to approve or '
       + 'decline. Either decision can be changed later from the same row, so a '

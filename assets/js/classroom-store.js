@@ -17,6 +17,7 @@
  * document and fetched one get at a time, never by querying the collection.
  */
 import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
+import { loadProfile, invalidateProfile } from '/assets/js/profile.js';
 
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const {
@@ -114,6 +115,7 @@ export async function createClass(uid, name) {
     { role: 'teacher', classIds: arrayUnion(classId), updatedAt: Date.now() },
     { merge: true }
   );
+  invalidateProfile(uid);
 
   return { classId, joinCode: code, name: clean };
 }
@@ -124,10 +126,16 @@ export async function readClass(classId) {
 }
 
 /* One get per class rather than a query, because /classes denies list. A
-   teacher has a handful of classes, so this is a handful of reads. */
+   teacher has a handful of classes, so this is a handful of reads.
+
+   The index itself comes from profile.js rather than a getDoc of its own. It
+   is the same document classroom-page.js and classroom-dashboard.js read to
+   decide whether this person is a teacher at all, and a cold cache could hand
+   this one a half-built local copy with no classIds on it -- a teacher with
+   classes, shown as a teacher with none. profile.js has the long version. */
 export async function classesFor(uid) {
-  const profile = await getDoc(doc(db, `users/${uid}`));
-  const ids = (profile.exists() && profile.data().classIds) || [];
+  const profile = await loadProfile(uid).catch(() => ({}));
+  const ids = profile.classIds || [];
   const found = await Promise.all(ids.map((id) => readClass(id).catch(() => null)));
   return found.filter(Boolean).sort((a, b) => String(a.name).localeCompare(String(b.name)));
 }
@@ -155,6 +163,7 @@ export async function addCoTeacher(classId, uid) {
     // Their own user document is theirs to write, not ours. If this is denied
     // the class is still shared; they reach it through the code on the card.
   });
+  invalidateProfile(uid);
 }
 
 export async function removeCoTeacher(classId, uid) {
@@ -187,6 +196,65 @@ function cleanTargets(units, lessonPaths) {
   return { units: cleanUnits, lessonPaths: cleanPaths };
 }
 
+/* Which units the stored unlock list on the class document should hold.
+ *
+ * The list exists because firestore.rules cannot enumerate a subcollection:
+ * an unlock derived from /assignments is invisible to the server, and the unit
+ * lock is enforced there now. class-policy.js reads this same field, so the
+ * two answers cannot drift apart -- see its comment for the transitional case
+ * where the field does not exist yet.
+ *
+ * Every write below is ordered so that a failure leaves the class more open
+ * than it should be rather than less. Locking a student out of work that has
+ * been set is the one failure this feature must not have; carrying a stale
+ * unlock for a few minutes is merely untidy.
+ */
+function unitsTargetedBy(assignments) {
+  const POLICY = window.PyPathPolicy;
+  return POLICY ? POLICY.assignmentUnlocks(assignments, Date.now()) : [];
+}
+
+function sameUnits(a, b) {
+  return a.length === b.length && a.every((n, i) => n === b[i]);
+}
+
+async function storedOrDerivedUnlocks(classId, klass) {
+  const found = klass || await readClass(classId);
+  if (found && Array.isArray(found.assignmentUnlocks)) {
+    return found.assignmentUnlocks.map(Number);
+  }
+  // No field yet. Derive what it would have been, so the first write does not
+  // silently drop the unlocks every other assignment was already holding.
+  return unitsTargetedBy(await readAssignments(classId).catch(() => []));
+}
+
+/* Opens these units before the assignment that needs them exists. */
+async function widenUnlocks(classId, units) {
+  const want = (units || []).map(Number)
+    .filter((n) => Number.isInteger(n) && n >= 1 && n <= MAX_UNIT);
+  if (!want.length) return;
+  const base = await storedOrDerivedUnlocks(classId);
+  const merged = Array.from(new Set(base.concat(want))).sort((a, b) => a - b);
+  if (sameUnits(merged, base)) return;
+  await updateDoc(doc(db, `classes/${classId}`), { assignmentUnlocks: merged });
+}
+
+/* Brings the stored list back in line with the assignments that actually
+   exist. This is the narrowing half, so it runs after the write it follows,
+   and it is also the backfill: a class whose teacher has not touched an
+   assignment since this shipped gets its field the first time the dashboard
+   loads. Returns the list it settled on. */
+export async function refreshAssignmentUnlocks(classId, assignments) {
+  const live = assignments || await readAssignments(classId);
+  const next = unitsTargetedBy(live);
+  const klass = await readClass(classId);
+  const base = klass && Array.isArray(klass.assignmentUnlocks)
+    ? klass.assignmentUnlocks.map(Number) : null;
+  if (base && sameUnits(next, base)) return next;
+  await updateDoc(doc(db, `classes/${classId}`), { assignmentUnlocks: next });
+  return next;
+}
+
 export async function createAssignment(classId, draft) {
   const title = String((draft && draft.title) || '').trim().slice(0, 100);
   if (!title) throw new ClassroomError('no-title', 'Give the assignment a name.');
@@ -200,6 +268,10 @@ export async function createAssignment(classId, draft) {
   if (!isFinite(dueAt) || dueAt <= 0) {
     throw new ClassroomError('no-due-date', 'Give the assignment a due date.');
   }
+
+  // Before the assignment, never after: a student must never meet a unit that
+  // is assigned to them and locked against them.
+  await widenUnlocks(classId, unitsTargetedBy([targets]));
 
   const ref = doc(collection(db, `classes/${classId}/assignments`));
   await setDoc(ref, {
@@ -244,7 +316,15 @@ export async function updateAssignment(classId, assignmentId, changes) {
     patch.units = targets.units;
     patch.lessonPaths = targets.lessonPaths;
   }
+  // Widen first, edit, then settle. An edit that adds a unit must open it
+  // before the assignment claims it; an edit that drops one may re-lock late.
+  if (patch.units || patch.lessonPaths) {
+    await widenUnlocks(classId, unitsTargetedBy([patch]));
+  }
   await updateDoc(doc(db, `classes/${classId}/assignments/${assignmentId}`), patch);
+  await refreshAssignmentUnlocks(classId).catch(() => {
+    // The assignment is saved. A stale unlock is the open-erring failure.
+  });
 }
 
 /* Deleted rather than archived, unlike a class. An assignment holds no
@@ -253,6 +333,10 @@ export async function updateAssignment(classId, assignmentId, changes) {
    with no cleanup step, because that unlock was never stored. */
 export async function deleteAssignment(classId, assignmentId) {
   await deleteDoc(doc(db, `classes/${classId}/assignments/${assignmentId}`));
+  // The unlock is stored now rather than derived, so "no cleanup step" is no
+  // longer true and this is the step. After the delete, so a failure here
+  // leaves a unit open that should have re-locked.
+  await refreshAssignmentUnlocks(classId).catch(() => {});
 }
 
 /* ------------------------------------------------------------ lock policy */
@@ -319,6 +403,7 @@ export async function joinClass(uid, rawCode, displayName) {
     { role: 'student', classId: resolved.classId, updatedAt: Date.now() },
     { merge: true }
   );
+  invalidateProfile(uid);
 
   return { classId: resolved.classId, className: klass.name, code: resolved.code };
 }
@@ -330,6 +415,7 @@ export async function leaveClass(uid, classId) {
     { classId: '', updatedAt: Date.now() },
     { merge: true }
   ).catch(() => {});
+  invalidateProfile(uid);
 }
 
 /* Whether this class gets the "Show Solution" button on an exercise.
@@ -340,6 +426,24 @@ export async function setShowSolutions(classId, allowed) {
   const on = allowed !== false;
   await updateDoc(doc(db, `classes/${classId}`), { showSolutions: on });
   return on;
+}
+
+/* How many times this class may sit the same end-of-unit test.
+ *
+ * null clears the cap, and absent means unlimited, so a class created before
+ * this setting existed needs no migration and a learner in no class is never
+ * subject to it at all.
+ *
+ * Client-side only, and said out loud rather than left to be discovered: the
+ * rules pin the field's type and range so only a teacher can set it and only
+ * to something sane, but they cannot count a student's prior attempts, because
+ * a rule can get() one document and cannot aggregate a collection. See the
+ * note above validEvent() in firestore.rules. */
+export async function setMaxTestAttempts(classId, cap) {
+  const POLICY = window.PyPathPolicy;
+  const clean = POLICY ? POLICY.normalizeAttemptCap(cap) : null;
+  await updateDoc(doc(db, `classes/${classId}`), { maxTestAttempts: clean });
+  return clean;
 }
 
 export async function readRoster(classId) {
