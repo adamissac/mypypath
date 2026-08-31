@@ -2,6 +2,7 @@
    user is signed in, and merges local state into remote on sign-in. */
 import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
 import { currentTeacher, loadFor } from '/assets/js/class-state.js';
+import { loadProfile } from '/assets/js/profile.js';
 import { summarizeUnitTests, UNIT_TESTS_KEY } from '/assets/js/unit-test-summary.js';
 
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
@@ -312,6 +313,27 @@ async function fullSync(user) {
   if (syncing) return;
   syncing = true;
   try {
+    /* Read before write, and this ordering is load-bearing rather than tidy.
+     *
+     * The write below is a merge onto users/{uid}, and every module that has to
+     * know whether this person is a teacher reads that same document off the
+     * same pypath:auth event. A merge write against a cold cache synthesizes a
+     * local document holding only the merged fields -- no role -- and every
+     * read in the tab sees that local view until the write is acknowledged.
+     * That is the whole of the bug profile.js was written to survive, and this
+     * line is why it now mostly has nothing to survive: with the read resolved
+     * first there is no unacknowledged write for it to be poisoned by.
+     *
+     * It costs nothing. profile.js shares one read between every caller on the
+     * page, so this is the same read classroom-page.js and role-nav.js were
+     * already going to make, awaited here instead of raced against.
+     *
+     * Failure is ignored on purpose. A profile that will not load must not stop
+     * a learner's progress syncing -- profile.js's callers each decide what an
+     * unreadable account record means for them, and none of those decisions
+     * belong here. */
+    await loadProfile(user.uid).catch(() => null);
+
     await setDoc(doc(db, `users/${user.uid}`), identity(user), { merge: true });
     // Who their teacher is, if anyone, before anything is mirrored. Forced past
     // the session cache: this is the run that is allowed to cost a read, and a
