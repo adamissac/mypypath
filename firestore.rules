@@ -262,6 +262,21 @@ service cloud.firestore {
       // missing or non-boolean value as "allowed", and a rule that accepted any
       // type would let a future writer store a string that reads as truthy
       // where a teacher meant to turn it off.
+      //
+      // assignmentUnlocks is the list of units held open because work was set
+      // on them. It is written by the teacher's own dashboard and read by both
+      // class-policy.js and the events rule below, and it is stored rather than
+      // derived for exactly one reason: a rule can get() a document but cannot
+      // enumerate a collection, so an unlock that lives only as a derivation
+      // over /assignments is an unlock this file can never see. Teacher-written
+      // is the security property that matters -- a student cannot write here,
+      // so they cannot unlock themselves.
+      //
+      // maxTestAttempts is how many times this class may sit the same
+      // end-of-unit test. Absent or null means unlimited, which is what every
+      // existing class has and what a learner in no class keeps forever. Typed
+      // and bounded here so a teacher's setting is a number and not a string
+      // that some future client reads as zero.
       allow update: if isTeacherOf(classId)
         && request.auth.uid in request.resource.data.teacherUids
         && request.resource.data.createdAt == resource.data.createdAt
@@ -269,9 +284,17 @@ service cloud.firestore {
             || request.resource.data.lockMode in ['sequential', 'manual', 'free'])
         && (!('showSolutions' in request.resource.data)
             || request.resource.data.showSolutions is bool)
+        && (!('assignmentUnlocks' in request.resource.data)
+            || request.resource.data.assignmentUnlocks is list)
+        && (!('maxTestAttempts' in request.resource.data)
+            || request.resource.data.maxTestAttempts == null
+            || (request.resource.data.maxTestAttempts is int
+                && request.resource.data.maxTestAttempts >= 1
+                && request.resource.data.maxTestAttempts <= 99))
         && request.resource.data.keys().hasOnly(
              ['name', 'joinCode', 'teacherUids', 'createdAt', 'archived',
-              'schemaVersion', 'lockMode', 'manualUnlocks', 'showSolutions']);
+              'schemaVersion', 'lockMode', 'manualUnlocks', 'showSolutions',
+              'assignmentUnlocks', 'maxTestAttempts']);
 
       // Archived, never deleted. Deleting the class document would strand
       // every roster, progress and event document beneath it: subcollections
@@ -388,6 +411,84 @@ service cloud.firestore {
         }
 
         match /events/{eventId} {
+          /* THE UNIT LOCK, enforced rather than announced.
+           *
+           * Until now a class's lock mode was a suggestion: lesson-progress.js
+           * put a banner on a locked unit and left the lesson fully usable
+           * underneath, and this rule checked an event's shape without ever
+           * looking at its unit. A student who opened a locked unit's URL could
+           * do the work and have it counted, whatever their teacher had set.
+           *
+           * WHAT THIS ENFORCES, exactly, because the gap matters:
+           *
+           * By hand ('manual') is enforced. The open list lives on the class
+           * document, which only a teacher can write, so a student cannot
+           * unlock themselves and this rule is a real barrier.
+           *
+           * Open ('free') has nothing to enforce.
+           *
+           * In order ('sequential') is NOT enforced here, and pretending
+           * otherwise would be worse than saying so. It asks whether this
+           * student finished the previous unit, and the only record of that is
+           * one the student's own browser writes -- their progress mirror, or
+           * their own unit.completed events. A rule that consulted either would
+           * be asking the student whether the student may proceed. There are no
+           * Cloud Functions in this project, so there is nowhere a trustworthy
+           * answer could come from. Sequential stays a client-side chain, and
+           * the honesty note at the top of events.js already covers what that
+           * is worth.
+           *
+           * A class with no assignmentUnlocks field has never had its unlock
+           * list written -- see classroom-store.js -- so this cannot know which
+           * units its assignments hold open, and permits. class-policy.js falls
+           * back to deriving the same answer for the same class, so the client
+           * and this rule agree in that state too. Nothing is enforced for such
+           * a class until its teacher's dashboard writes the field, which is
+           * deliberate: a student refused a write for a unit their own page
+           * said was open is a worse failure than a lock that starts a day
+           * late.
+           */
+          function unitIsOpen(unit) {
+            let c = classDoc(classId);
+            let mode = c.get('lockMode', 'sequential');
+            return unit == 1
+              || mode != 'manual'
+              || unit in c.get('manualUnlocks', [])
+              || !('assignmentUnlocks' in c)
+              || unit in c.get('assignmentUnlocks', []);
+          }
+
+          /* The three types that make a unit count for something: a passing
+             test, a finished unit, and a passing set of exercise checks. The
+             rest of the vocabulary is a record of what happened -- opening a
+             locked lesson, running code in it -- and refusing those would only
+             make the log lie about a thing the student really did. */
+          function countsForCredit() {
+            return request.resource.data.type in
+              ['test.submitted', 'unit.completed', 'code.tests_passed'];
+          }
+
+          function unitAllowed() {
+            return !countsForCredit()
+              || unitIsOpen(request.resource.data.get('unit', 0));
+          }
+
+          /* NOT ENFORCED HERE, and this is the honest half of the retake cap.
+           *
+           * A class can set maxTestAttempts, and unit-test-page.js refuses a
+           * new sitting once it is reached. This rule cannot check it. Counting
+           * a student's prior test.started/test.submitted events means
+           * aggregating a collection, and rules can get() or exists() a known
+           * document path and cannot query. Deriving the ids so they could be
+           * probed one at a time was considered and rejected twice over: the
+           * retention rule below deletes events after 180 days, which would
+           * hand a long-running class its attempts back, and the score itself
+           * never passes through here anyway -- it lives in the student's own
+           * progress record, which they write. A cap enforced here would refuse
+           * the telemetry and leave the mark, which is the wrong half.
+           *
+           * So the cap is a client-side rule, and it is written down as one
+           * rather than shipped looking like a guarantee. */
           function validEvent() {
             return request.resource.data.type in [
                 'lesson.opened', 'code.run', 'code.error', 'code.tests_passed',
@@ -412,7 +513,8 @@ service cloud.firestore {
           // Append-only, and only from the enrolled student themselves. A
           // teacher cannot write events into a student's log either: a record
           // a teacher can forge is worth nothing as a record.
-          allow create: if isOwner(uid) && isEnrolled(classId, uid) && validEvent();
+          allow create: if isOwner(uid) && isEnrolled(classId, uid) && validEvent()
+            && unitAllowed();
 
           // Never, by anyone. An event that can be edited after the fact is
           // not a log, it is a draft.

@@ -169,6 +169,88 @@
   var editor = null;
   var grading = false;
 
+  /* The class's settings, once class-policy.js has read them. Null until then,
+     and null forever for a guest and for a learner in no class -- which is the
+     answer that means "unlimited retakes, sequential unlocking", exactly what
+     this page did before either setting existed. */
+  var classPolicy = null;
+
+  function teaching() {
+    var R = window.PyPathRoles;
+    return !!(R && R.teachingNow());
+  }
+
+  function attemptsUsed() {
+    var record = readRecords()[String(unit)];
+    return record ? record.attempts : 0;
+  }
+
+  function bestSoFar() {
+    var record = readRecords()[String(unit)];
+    return record ? record.best : 0;
+  }
+
+  /* Why this learner may not sit this paper, or null when they may.
+   *
+   * Two reasons, checked in this order and never both. A unit that is not open
+   * to this class cannot be sat at all, and telling somebody how many attempts
+   * they have left at a test they cannot reach would be the wrong sentence to
+   * put on the screen.
+   *
+   * Both are client-side, and they are not the same strength. The unit lock is
+   * enforced in firestore.rules too, so a student who gets past this one has
+   * their result refused where it would have counted. The retake cap is not,
+   * and cannot be: see the note above validEvent() in firestore.rules for why
+   * rules cannot count a student's prior attempts. It is a rule this page
+   * keeps, and it is worth exactly that much.
+   */
+  function blockedReason() {
+    var POLICY = window.PyPathPolicy;
+    if (!POLICY || unit === null) return null;
+
+    var units = window.ProgressStore ? window.ProgressStore.getCompletedUnits() : [];
+    if (!POLICY.resolveUnlocked(unit, classPolicy, units, teaching())) {
+      var byHand = classPolicy && POLICY.normalizeMode(classPolicy.mode) === 'manual';
+      return byHand
+        ? 'Unit ' + unit + ' is not open for your class yet, so this test cannot '
+          + 'be taken. Your teacher chooses which units are open. Nothing you '
+          + 'have already finished is affected.'
+        : 'Unit ' + unit + ' is not unlocked yet. Finish Unit ' + (unit - 1)
+          + ' and pass its test first.';
+    }
+
+    var left = POLICY.attemptsLeft(classPolicy, attemptsUsed(), teaching());
+    if (left === 0) {
+      var cap = POLICY.attemptCap(classPolicy, teaching());
+      return 'Your teacher allows ' + cap + (cap === 1 ? ' attempt' : ' attempts')
+        + ' at this test for your class, and you have used '
+        + (cap === 1 ? 'it' : 'them all') + '. Your best score of ' + bestSoFar()
+        + ' out of 100 still stands.';
+    }
+    return null;
+  }
+
+  /* The retake sentence, which is only true by default.
+
+     Left exactly as authored when there is no cap, so a learner outside a
+     class -- and every class that has not set one -- reads what this page has
+     always said. */
+  function paintRetakeLine() {
+    var line = $('ut-retakes');
+    var POLICY = window.PyPathPolicy;
+    if (!line || !POLICY) return;
+    var cap = POLICY.attemptCap(classPolicy, teaching());
+    if (cap === null) return;
+    var used = attemptsUsed();
+    var left = POLICY.attemptsLeft(classPolicy, used, teaching());
+    line.textContent = 'Your teacher allows ' + cap
+      + (cap === 1 ? ' attempt' : ' attempts') + ' at this test for your class. '
+      + 'You have used ' + used + ' of ' + cap + ', so you have ' + left
+      + (left === 1 ? ' attempt left. ' : ' attempts left. ')
+      + 'Your best score is the one that counts, so a worse retake never takes '
+      + 'anything away.';
+  }
+
   function el(tag, className, text) {
     var node = document.createElement(tag);
     if (className) node.className = className;
@@ -768,6 +850,13 @@
   // ---------- flow ----------
 
   function startPaper() {
+    // The gate again, at the moment of action. renderIntro already hides the
+    // button, but the policy can land between a page render and a click, and a
+    // stale button must not be a way through.
+    if (blockedReason()) {
+      renderIntro();
+      return;
+    }
     show($('ut-intro'), false);
     show($('ut-result'), false);
     notice('');
@@ -791,6 +880,20 @@
         best.hidden = true;
       }
     }
+
+    paintRetakeLine();
+
+    // The button goes rather than greys out. A disabled Start promises that
+    // something is about to become available, and neither of these reasons
+    // resolves itself by waiting on this page.
+    var reason = blockedReason();
+    var gate = $('ut-gate');
+    if (gate) {
+      gate.textContent = reason || '';
+      gate.hidden = !reason;
+    }
+    show($('ut-start-row'), !reason);
+
     show($('ut-intro'), true);
   }
 
@@ -823,7 +926,10 @@
       }
       notice('');
 
-      var saved = readAttempt(unit);
+      // A paper left half finished in this tab is not a way past the gate: a
+      // unit that closed, or a limit reached on another device, has to hold
+      // here too.
+      var saved = blockedReason() ? null : readAttempt(unit);
       if (saved && restorePaper(saved)) {
         startPaper();
         notice('Picking up the paper you already started.', 'info');
@@ -849,6 +955,18 @@
     var form = $('ut-paper');
     if (form) form.addEventListener('submit', submit);
   }
+
+  /* The class's settings arrive one read after sign-in, which is after this
+     page has already drawn its intro. Redraw when they land -- but only the
+     intro, and never over a paper in progress: taking the questions off the
+     screen mid-sitting because a policy read completed would lose work the
+     learner is in the middle of, and the gate is checked again at submit time
+     through the same rules that would refuse it server-side. */
+  document.addEventListener('pypath:policy', function (e) {
+    classPolicy = (e && e.detail && e.detail.policy) || null;
+    var intro = $('ut-intro');
+    if (unit !== null && intro && !intro.hidden) renderIntro();
+  });
 
   document.addEventListener('DOMContentLoaded', function () {
     if (!document.body || !document.body.classList.contains('page-unit-test')) return;

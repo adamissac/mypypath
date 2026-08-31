@@ -423,6 +423,43 @@
 
               <p class="cr-error" data-cr-solutions-error role="alert" hidden></p>
             </section>
+
+            <!-- A third axis again: unit access decides what a class can open,
+                 exercise solutions decides what an exercise offers, and this
+                 decides how many times the end-of-unit test may be sat. -->
+            <section class="cr-retakes" aria-labelledby="cr-retakes-h">
+              <h2 id="cr-retakes-h">
+                Test retakes
+                <button type="button" class="cr-info" data-cr-info="maxTestAttempts"
+                        aria-label="What this setting does">i</button>
+              </h2>
+
+              <label class="cr-retakes__field">
+                <span>Attempts at each end-of-unit test</span>
+                <!-- A short list rather than a number box. The useful answers
+                     are "as many as they like" and "a small number", and a free
+                     field invites 0, 1000 and a typo that locks a class out. -->
+                <select data-cr-max-attempts>
+                  <option value="">Unlimited</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="5">5</option>
+                </select>
+              </label>
+
+              <p class="cr-retakes__note">
+                Applies to students in this class only. Anyone learning on their
+                own keeps unlimited retakes. A student who runs out keeps their
+                best score &mdash; the limit stops new attempts, it never takes
+                away one that already happened. This is enforced by the site in
+                the student's browser, not by the database: a determined student
+                could get past it, the same way they could read a solution out
+                of the page source.
+              </p>
+
+              <p class="cr-error" data-cr-retakes-error role="alert" hidden></p>
+            </section>
           </section>
 
           <!-- ============================================================

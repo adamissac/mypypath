@@ -53,6 +53,39 @@ function announce(value) {
   document.dispatchEvent(new CustomEvent('pypath:policy', { detail: { policy: value } }));
 }
 
+/* Which units are held open by assigned work.
+ *
+ * This used to be derived here, on every read, out of the assignments
+ * subcollection -- deleting an assignment then re-locked whatever it held open
+ * with no cleanup step anywhere, which was the nicest property the old shape
+ * had. It is read off the class document now, and the reason is firestore.rules:
+ * a rule can `get()` one document but cannot enumerate a collection, so an
+ * unlock that only exists as a derivation over /assignments is an unlock the
+ * server can never see. The lock is enforced server-side now (see the events
+ * `create` rule), and client and rules have to be reading the same field or
+ * they will eventually disagree about what is open -- with the student caught
+ * in the middle, doing work that is then refused with no explanation.
+ * classroom-store.js maintains the field on every assignment write, widening
+ * before it creates and narrowing after it deletes, so a half-finished write
+ * always errs open.
+ *
+ * A class whose teacher has not opened their dashboard since this shipped has
+ * no such field yet. That case falls back to the old derivation, and the rules
+ * fall back to permitting, so the two still agree: nothing is enforced for that
+ * class until the field exists, and nothing regresses in the meantime.
+ */
+async function unlocksFor(classId, data) {
+  if (Array.isArray(data.assignmentUnlocks)) return data.assignmentUnlocks;
+  try {
+    const assignments = await getDocs(collection(db, `classes/${classId}/assignments`));
+    const live = assignments.docs.map((d) => d.data());
+    return POLICY ? POLICY.assignmentUnlocks(live, Date.now()) : [];
+  } catch (e) {
+    // Same failure the caller below handles: unreadable is not "locked".
+    return [];
+  }
+}
+
 /* Reads the class's settings and announces them.
  *
  * `force` skips the session cache. A teacher changing the mode on their own
@@ -76,23 +109,19 @@ export async function loadPolicy(classId, force) {
   }
 
   try {
-    const [klass, assignments] = await Promise.all([
-      getDoc(doc(db, `classes/${classId}`)),
-      getDocs(collection(db, `classes/${classId}/assignments`)),
-    ]);
-
+    const klass = await getDoc(doc(db, `classes/${classId}`));
     const data = klass.exists() ? klass.data() : {};
-    const live = assignments.docs.map((d) => d.data());
 
     const value = {
       mode: POLICY ? POLICY.normalizeMode(data.lockMode) : 'sequential',
       manualUnlocks: Array.isArray(data.manualUnlocks) ? data.manualUnlocks : [],
-      // Derived here rather than stored, so deleting an assignment re-locks
-      // whatever it was holding open with no cleanup step anywhere.
-      assignmentUnlocks: POLICY ? POLICY.assignmentUnlocks(live, Date.now()) : [],
+      assignmentUnlocks: await unlocksFor(classId, data),
       // Absent means allowed, so a class created before this setting existed
       // keeps the button it has always had.
       showSolutions: data.showSolutions !== false,
+      // Absent means unlimited, which is what every class has today and what a
+      // learner in no class keeps forever.
+      maxTestAttempts: POLICY ? POLICY.normalizeAttemptCap(data.maxTestAttempts) : null,
     };
     writeCache(classId, value);
     announce(value);
