@@ -6,6 +6,7 @@
 import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
 import { setTeacher } from '/assets/js/class-state.js';
 import { currentUser } from '/assets/js/auth.js';
+import { loadProfile, invalidateProfile } from '/assets/js/profile.js';
 
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const { doc, getDoc, setDoc, deleteDoc, updateDoc, deleteField } =
@@ -24,9 +25,14 @@ export class JoinError extends Error {
   }
 }
 
+/* The account record, through the shared reader in profile.js.
+ *
+ * Kept as a function here because four modules already call it by this name
+ * and because the interesting part is not the read but the coordination: every
+ * caller on a page shares one server-confirmed answer. profile.js explains why
+ * an unconfirmed one used to tell a teacher they were a student. */
 export async function readProfile(uid) {
-  const snap = await getDoc(doc(db, `users/${uid}`));
-  return snap.exists() ? snap.data() : {};
+  return loadProfile(uid);
 }
 
 // Class membership and the progress a teacher may see. Separate from the
@@ -84,6 +90,7 @@ export async function joinClass(uid, rawCode) {
   // The role itself is part of the account record, not the roster.
   await setDoc(doc(db, `users/${uid}`), { role: 'student', updatedAt: Date.now() },
     { merge: true });
+  invalidateProfile(uid);
   setTeacher(resolved.teacherUid);
   return resolved;
 }
@@ -154,6 +161,7 @@ export async function ensureJoinCode(uid, profile) {
     { role: 'teacher', joinCode: code, updatedAt: Date.now() },
     { merge: true }
   );
+  invalidateProfile(uid);
   return code;
 }
 
@@ -164,6 +172,7 @@ export async function regenerateJoinCode(uid, oldCode) {
     { role: 'teacher', joinCode: code, updatedAt: Date.now() },
     { merge: true }
   );
+  invalidateProfile(uid);
   // Retire the old code last. If this fails the class simply answers to two
   // codes for a while, which is far better than a window where it answers to
   // none and every student is locked out mid-lesson.
@@ -181,4 +190,5 @@ export async function setRole(uid, role) {
     { role: ROLES.normalizeRole(role), updatedAt: Date.now() },
     { merge: true }
   );
+  invalidateProfile(uid);
 }
