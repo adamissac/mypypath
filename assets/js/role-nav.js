@@ -7,16 +7,13 @@
    The role lives in Firestore, and this runs on every page, so the answer is
    cached per session: a teacher navigating twenty lessons should not pay
    twenty document reads to keep one menu item visible. */
-import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
 import { currentUser } from '/assets/js/auth.js';
+import { loadProfile } from '/assets/js/profile.js';
 // Rides along here rather than as its own script tag: this module is already
 // loaded on every page, and adding a tag to all 124 of them is a change that
 // would have to be repeated for every page added later.
 import '/assets/js/join-menu.js';
 import { loadMembership } from '/assets/js/membership.js';
-
-const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
-const { doc, getDoc } = await import(`${BASE}/firebase-firestore.js`);
 
 const ROLES = window.PyPathRoles;
 const CACHE_PREFIX = 'pypath-role:';
@@ -97,15 +94,29 @@ async function apply(user) {
     announce(known);
     return;
   }
+  /* Through profile.js rather than a getDoc of its own, and this was the
+     fifth independent reader of users/{uid} -- the one 47533a6 missed while
+     fixing the other four. It had the same cold-cache bug and the worst
+     consequence of any of them: a read that came back with no role was
+     normalized to 'student' and written to sessionStorage, where it outlives
+     the page. ROLES.teachingNow() reads that key, and lesson-progress.js asks
+     teachingNow() to decide whether the unit lock applies -- so one unlucky
+     first page load in a tab left a teacher with the classroom link hidden and
+     the course locked against them for the rest of the session, on every page
+     they opened, with no read left to correct it. */
   try {
-    const snap = await getDoc(doc(db, `users/${user.uid}`));
-    const role = ROLES.normalizeRole(snap.exists() ? snap.data().role : '');
+    const profile = await loadProfile(user.uid);
+    const role = ROLES.normalizeRole(profile.role);
     remember(user.uid, role);
     announce(role);
   } catch (e) {
-    // Offline or denied: leave the link hidden rather than showing a page the
-    // account cannot use.
-    announce('student');
+    /* Nothing is announced and nothing is remembered.
+       Offline or denied is not evidence of being a student, and the old
+       announce('student') here did not merely leave the link hidden: it cached
+       that guess for the session and stamped it onto <html>. Leaving the page
+       as it already is keeps the teacher-only links hidden, which is the
+       cautious half of what that line was for, without recording a fact
+       nobody established. */
   }
 }
 
