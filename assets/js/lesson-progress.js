@@ -77,19 +77,39 @@
     return lessonPaths.every(function (p) { return passed[p] === true; });
   }
 
-  // `records` is the pypath-unit-tests blob: unit number as a string, keyed to
-  // a record carrying `best` and `passed`. Trust `best` over `passed` as well
-  // as it, so a record written before the flag existed, or one where the flag
-  // was lost in a merge, still counts a score that cleared the bar.
+  /* Whether this unit's end-of-unit test has actually been cleared.
+   *
+   * `records` is the pypath-unit-tests blob: unit number as a string, keyed to
+   * a record carrying `best` and `passed`. The score decides whenever there is
+   * one, and the stored flag cannot override it.
+   *
+   * That is a narrowing, and a careful one. This used to return true for any
+   * record carrying `passed: true` whatever its score, so a stored flag beside
+   * a best of 30 unlocked the next unit -- the one way "score 70 or higher" was
+   * not literally true. `passed` is derived from `best` by mergeAttempt and
+   * `best` only ever ratchets upward, so that combination cannot come from
+   * sitting the test; it comes from a hand-edited store or a bad merge.
+   *
+   * The flag still stands when there is no score at all beside it. A record
+   * that carries nothing but `passed: true` predates `best` or was truncated
+   * mid-write, and the flag is then the only evidence there is -- refusing it
+   * would take a unit away from somebody who really did pass. What changed is
+   * only that a score present and below the mark now wins the argument.
+   *
+   * Nothing already earned is lost either way. completedUnits is a ratchet that
+   * only ever adds -- see rollUpUnitNumber -- so a learner who has finished a
+   * unit keeps it and keeps everything it unlocked. This decides future
+   * roll-ups only.
+   */
   function unitTestPassed(records, unit) {
     if (!records || typeof records !== 'object' || Array.isArray(records)) return false;
     var n = Number(unit);
     if (!Number.isInteger(n) || n < 1) return false;
     var entry = records[String(n)];
     if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return false;
-    if (entry.passed === true) return true;
     var best = Number(entry.best);
-    return isFinite(best) && best >= UNIT_TEST_PASS_MARK;
+    if (isFinite(best)) return best >= UNIT_TEST_PASS_MARK;
+    return entry.passed === true;
   }
 
   // A unit is finished when every lesson in it has passed AND its end of unit
@@ -102,6 +122,15 @@
   // Unit 1 is always open. Every later unit needs the one before it finished.
   // completedUnits is the existing pypath-completed-units list, so units a
   // learner earned under the old visit-based rule stay unlocked.
+  //
+  // WHERE THE SEQUENTIAL CHAIN IS ENFORCED, and it is only here. "In order"
+  // asks whether this learner finished the unit before, and the only record of
+  // that is one their own browser wrote, so firestore.rules cannot check it and
+  // deliberately does not try -- see the note above validEvent() there. This is
+  // a browser-side rule, the same honest limit maxTestAttempts documents about
+  // itself: it raises the bar for a learner clicking around, and a learner who
+  // opens devtools is not what it is for. "By hand" is the mode with a real
+  // server-side lock behind it.
   //
   // A teacher has the whole course open. The lock exists to keep a learner
   // moving in order; a teacher previewing unit 7 for tomorrow's class is not a
@@ -586,9 +615,10 @@
     } else {
       box.innerHTML =
         '<p class="unit-locked-notice__title">Unit ' + unit + ' is not unlocked yet</p>' +
-        '<p>Finish every lesson in Unit ' + prev + ' and pass the Unit ' + prev + ' test to ' +
-        'unlock it. You can keep reading ahead, but the exercises here are ' +
-        'turned off until then, and your progress counts from Unit ' + prev + '.</p>' +
+        '<p>Finish every lesson in Unit ' + prev + ' and score ' + UNIT_TEST_PASS_MARK +
+        ' or higher on the Unit ' + prev + ' test to unlock it. You can keep ' +
+        'reading ahead, but the exercises here are turned off until then, and ' +
+        'your progress counts from Unit ' + prev + '.</p>' +
         (lessonsDone && !testDone
           ? '<p><a class="btn btn-primary route" href="/unit-test.html?unit=' + prev + '">Take the Unit ' + prev + ' test</a></p>'
           : next
