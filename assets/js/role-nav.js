@@ -16,7 +16,11 @@ import '/assets/js/join-menu.js';
 import { loadMembership } from '/assets/js/membership.js';
 
 const ROLES = window.PyPathRoles;
-const CACHE_PREFIX = 'pypath-role:';
+/* Versioned so sessions poisoned by the old cold-load race are repaired once.
+   Before profile.js required a server-confirmed role, a teacher could be
+   cached here as a student for the rest of the tab. Keeping the old key would
+   make the fixed reader unreachable because apply() returns on any cache hit. */
+const CACHE_PREFIX = 'pypath-role:v2:';
 
 function cached(uid) {
   try {
