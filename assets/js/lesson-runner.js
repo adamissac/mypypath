@@ -329,6 +329,11 @@
   };
 
   window.showSolution = function (editorId) {
+    // Set by lesson-progress.js from the class policy. Checked here so a
+    // button left over from an earlier paint cannot still act. Not a lock: the
+    // solutions are in this page's own source either way, which is why the
+    // teacher's setting says it removes the button rather than the answer.
+    if (window.pyPathSolutionsAllowed === false) return;
     var exercise = getSolutions()[editorId];
     if (!exercise) { alert('Solution not found.'); return; }
     var editor = window.editors && window.editors[editorId];

@@ -941,6 +941,12 @@
       + 'shared until they do. A student can be in one class at a time, so a '
       + 'student already in another class has to leave it before this code '
       + 'will work for them.',
+    showSolutions: 'Whether an exercise offers a Show Solution button to this '
+      + 'class. It changes the button and nothing else: the exercise, the '
+      + 'editor, the checker and the hints are all still there. It does not '
+      + 'hide the answer either -- solutions are part of the lesson page, so a '
+      + 'student who opens the page source can read one whatever this is set '
+      + 'to. It takes the answer key off the desk; it does not lock it away.',
     certificate: 'A learner who finishes all ten units does not get the '
       + 'certificate straight away: it waits here for you to approve or '
       + 'decline. Either decision can be changed later from the same row, so a '

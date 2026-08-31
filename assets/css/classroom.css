@@ -1475,6 +1475,10 @@
 .cr-zone .cr-assign > h2,
 .cr-zone .cr-access > h2 { font-size: 1.05rem; }
 
+/* Unit access and solutions are two settings of the same kind, so they sit as
+   a pair rather than as another thing further down the scroll. */
+.cr-zone--work .cr-access { margin-bottom: 1rem; }
+
 /* ---------- the folds ---------- */
 
 .cr-fold {
@@ -1585,3 +1589,31 @@
   .cr-joincode { border: 0; padding-left: 0; }
   .cr-joincode button { display: none; }
 }
+
+/* ------------------------------------------------------ exercise solutions */
+
+/* A different axis from unit access: that decides what a class can open, this
+   decides what an exercise offers. Same card, so the two read as siblings. */
+.cr-solutions {
+  margin: 0;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .9rem;
+  background: var(--panel, #fff);
+  box-shadow: var(--shadow, 0 4px 20px rgba(12, 69, 102, .07));
+}
+
+.cr-solutions__toggle { display: inline-flex; max-width: 100%; }
+
+.cr-solutions__note {
+  margin: .85rem 0 0;
+  padding: .55rem .75rem;
+  border-left: 3px solid color-mix(in srgb, var(--primary, #0ea5e9) 55%, transparent);
+  border-radius: .1rem .5rem .5rem .1rem;
+  font-size: .82rem;
+  line-height: 1.5;
+  color: var(--muted, #475569);
+  background: color-mix(in srgb, var(--primary, #0ea5e9) 6%, var(--panel, #fff));
+}
+
+.cr-zone .cr-solutions > h2 { font-size: 1.05rem; margin-top: 0; }
