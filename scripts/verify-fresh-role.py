@@ -39,6 +39,7 @@ AUTH = "http://127.0.0.1:9099"
 FS = "http://127.0.0.1:8081"
 PROJECT = "mypypath"
 EMAIL = "teacher@example.com"
+TRIALS = int(os.environ.get("TRIALS", "5"))
 PASSWORD = "test-password-123"
 
 
@@ -147,41 +148,44 @@ def run():
                     warnings.append(path)
             return page
 
-        # ---- /classroom.html ----
-        page = cold_tab("/classroom.html")
-        not_teacher = page.locator('[data-class-state="not-teacher"]')
-        shown = not_teacher.is_visible()
-        root_visible = page.locator("[data-cr-root]").is_visible()
-        print(f'/classroom.html  not-teacher shown={shown}  dashboard shown={root_visible}')
-        if shown:
-            failures.append('/classroom.html showed "This page is for teacher accounts"')
-        if not root_visible:
-            failures.append("/classroom.html did not render the dashboard")
-        page.screenshot(path="/tmp/pypath-classroom-cold.png")
-        page.close()
+        # Repeated, because one pass proves very little about a race. Each
+        # trial is a genuinely new tab; the signed-in tab above stays open and
+        # keeps the persistence lock, which is what forces the memory-cache
+        # fallback the original report showed in its console.
+        for trial in range(1, TRIALS + 1):
+            page = cold_tab("/classroom.html")
+            shown = page.locator('[data-class-state="not-teacher"]').is_visible()
+            err = page.locator('[data-class-state="error"]').is_visible()
+            root = page.locator("[data-cr-root]").is_visible()
+            print(f"  trial {trial} /classroom.html  dashboard={root} not-teacher={shown} error={err}")
+            if shown:
+                failures.append(f'trial {trial}: /classroom.html said "not a teacher"')
+            if err:
+                failures.append(f"trial {trial}: /classroom.html could not read the account")
+            if not root:
+                failures.append(f"trial {trial}: /classroom.html did not render the dashboard")
+            page.close()
 
-        # ---- /account.html ----
-        page = cold_tab("/account.html")
-        badge = page.locator("[data-class-role-badge]")
-        text = badge.inner_text() if badge.count() else "(missing)"
-        print(f"/account.html    role badge={text!r}")
-        if text.strip() != "Teacher account":
-            failures.append(f"/account.html said {text!r}, not 'Teacher account'")
-        page.screenshot(path="/tmp/pypath-account-cold.png")
-        page.close()
+            page = cold_tab("/account.html")
+            badge = page.locator("[data-class-role-badge]")
+            text = badge.inner_text().strip() if badge.count() else "(missing)"
+            print(f"  trial {trial} /account.html     badge={text!r}")
+            if text != "Teacher account":
+                failures.append(f"trial {trial}: /account.html said {text!r}")
+            page.close()
 
         browser.close()
 
     httpd.shutdown()
 
     print()
-    print("persistence-lock fallback observed on:", warnings or "(none)")
+    print(f"persistence-lock fallback observed on {len(warnings)} of {TRIALS * 2} cold tabs")
     if failures:
         print("FAIL")
         for f in failures:
             print("  -", f)
         return 1
-    print("PASS: a cold second tab rendered the teacher view on both pages")
+    print(f"PASS: {TRIALS} trials, every cold tab rendered the teacher view on both pages")
     return 0
 
 

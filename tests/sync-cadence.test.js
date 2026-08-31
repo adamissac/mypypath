@@ -42,7 +42,11 @@ describe('sync.js reconciliation cadence', () => {
   it('stamps the session only after the last write lands', () => {
     const full = sync.slice(sync.indexOf('async function fullSync'), sync.indexOf('function repush'));
     expect(full.indexOf('markSynced(')).toBeGreaterThan(full.indexOf('mirrorToRoster('));
-    expect(full.indexOf('markSynced(')).toBeLessThan(full.indexOf('catch'));
+    // The catch *clause*, not the first occurrence of the word: fullSync now
+    // opens with an awaited loadProfile whose own .catch() would otherwise be
+    // mistaken for the end of the try block. The claim is unchanged -- only a
+    // run that got all the way through stamps the session.
+    expect(full.indexOf('markSynced(')).toBeLessThan(full.indexOf('} catch (err)'));
   });
 
   // A page load re-reconciles; a tab left open for an hour never gets one.

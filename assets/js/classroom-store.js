@@ -358,6 +358,18 @@ export async function setLockPolicy(classId, mode, manualUnlocks) {
     lockMode: clean,
     manualUnlocks: units,
   });
+
+  /* Arm the lock as part of the same save.
+   *
+   * A class only started being enforced server-side once its assignmentUnlocks
+   * field exists -- the events rule permits a class that has never had one,
+   * because it cannot see the assignments to know better. Switching a class to
+   * "By hand" is the moment that matters most and was the one path that could
+   * still leave it unwritten. After the mode, so a failure here leaves the
+   * class more open than intended rather than locking students out of assigned
+   * work, which is the direction every write in this file errs. */
+  await refreshAssignmentUnlocks(classId).catch(() => {});
+
   return { mode: clean, manualUnlocks: units };
 }
 
