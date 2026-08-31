@@ -23,6 +23,18 @@ describe('role-nav.js', () => {
     expect(roleNav).toContain('ROLES.rememberRole(role)');
   });
 
+  it('does not trust role entries cached before the authoritative reader fix', () => {
+    // The previous cache could hold a false student result for a real teacher
+    // for the rest of the tab. A new namespace forces one clean read after
+    // this deploy, then keeps the same session-caching behavior.
+    expect(roleNav).toContain("const CACHE_PREFIX = 'pypath-role:v2:'");
+    expect(roleNav).not.toContain("const CACHE_PREFIX = 'pypath-role:'");
+
+    const roles = fs.readFileSync('assets/js/roles.js', 'utf8');
+    expect(roles).toContain("var SESSION_KEY = 'pypath-role:v2'");
+    expect(roles).not.toMatch(/var SESSION_KEY = 'pypath-role';/);
+  });
+
   it('announces the resolved role so the gates can re-settle', () => {
     expect(roleNav).toContain("new CustomEvent('pypath:role'");
     // Every resolution path has to announce, including the offline fallback --

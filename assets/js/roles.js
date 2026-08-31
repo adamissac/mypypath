@@ -102,7 +102,10 @@
   // hint rather than an authority, and the worst a stale value can do is open a
   // unit early for the few milliseconds until role-nav.js announces the real
   // role -- it can never lock a learner out of something they had earned.
-  var SESSION_KEY = 'pypath-role';
+  /* Retire role values written before the authoritative profile reader was in
+     place. A bad cold-load answer from that version could say student for a
+     real teacher until the browser session ended. */
+  var SESSION_KEY = 'pypath-role:v2';
 
   function paintRoleAttr(role) {
     try {
