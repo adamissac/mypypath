@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import {
   initializeTestEnvironment, assertSucceeds, assertFails,
 } from '@firebase/rules-unit-testing';
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, updateDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import fs from 'node:fs';
 
 /* What happens when someone submits a join code they have already used.
@@ -89,5 +89,42 @@ describe('submitting a join code twice', () => {
     // missing, stays writable either way.
     await assertSucceeds(setDoc(doc(db, `users/${STUDENT}`),
       { role: 'student', classId: CLASS, updatedAt: Date.now() }, { merge: true }));
+  });
+});
+
+/* The Show Solution toggle is a field on the class document, so the update
+   rule's key allowlist has to admit it and its type has to be pinned. */
+describe('the show-solutions setting', () => {
+  const asTeacher = () => env.authenticatedContext(TEACHER).firestore();
+
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), `classes/${CLASS}`), {
+        name: 'Period 1', joinCode: CODE, teacherUids: [TEACHER],
+        createdAt: new Date(), archived: false, schemaVersion: 1,
+      });
+    });
+  });
+
+  // Exactly what setShowSolutions writes: one field, leaving createdAt alone.
+  // Rewriting createdAt is refused by design, and doing it here would be
+  // testing that rule instead of this one.
+  const write = (db, value) =>
+    updateDoc(doc(db, `classes/${CLASS}`), { showSolutions: value });
+
+  it('lets the teacher turn it off', async () => {
+    await assertSucceeds(write(asTeacher(), false));
+  });
+
+  it('lets the teacher turn it back on', async () => {
+    await assertSucceeds(write(asTeacher(), true));
+  });
+
+  it('refuses a non-boolean, so nothing truthy can stand in for off', async () => {
+    await assertFails(write(asTeacher(), 'false'));
+  });
+
+  it('refuses a student setting it', async () => {
+    await assertFails(write(env.authenticatedContext(STUDENT).firestore(), true));
   });
 });

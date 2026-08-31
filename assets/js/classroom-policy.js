@@ -117,10 +117,31 @@
     return sequentiallyOpen(n, completedUnits);
   }
 
+  /* Whether a learner may reveal an exercise solution.
+   *
+   * A teacher always may: they are checking the exercise, not sitting it.
+   * No policy at all means yes, which is what a learner outside any class has
+   * always had. Only an explicit false from their class turns it off, so a
+   * class that predates the setting, an offline page and a denied read all
+   * leave the button where it was.
+   *
+   * Worth being exact about what this does. The solutions are part of the
+   * lesson's own HTML -- window.exerciseSolutions, in the page -- so this
+   * removes the button, not the answer. Anyone who opens the page source can
+   * still read it. It is a setting about what the site offers, not a lock, and
+   * the teacher's copy says so in as many words.
+   */
+  function solutionsAllowed(policy, teaching) {
+    if (teaching === true) return true;
+    if (!policy || typeof policy !== 'object') return true;
+    return policy.showSolutions !== false;
+  }
+
   window.PyPathPolicy = {
     MODES: MODES,
     normalizeMode: normalizeMode,
     resolveUnlocked: resolveUnlocked,
-    assignmentUnlocks: assignmentUnlocks
+    assignmentUnlocks: assignmentUnlocks,
+    solutionsAllowed: solutionsAllowed
   };
 })();
