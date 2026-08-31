@@ -253,14 +253,25 @@ service cloud.firestore {
       // that took any string would invite a future client that reads "not
       // sequential" as open, and one typo would then unlock the whole course
       // for a class.
+      //
+      // showSolutions is whether the "Show Solution" button appears on an
+      // exercise for this class. Absent means true, so no class created before
+      // this needs a migration, and a learner in no class is unaffected.
+      //
+      // Typed here for the same reason the enum above is: the client reads a
+      // missing or non-boolean value as "allowed", and a rule that accepted any
+      // type would let a future writer store a string that reads as truthy
+      // where a teacher meant to turn it off.
       allow update: if isTeacherOf(classId)
         && request.auth.uid in request.resource.data.teacherUids
         && request.resource.data.createdAt == resource.data.createdAt
         && (!('lockMode' in request.resource.data)
             || request.resource.data.lockMode in ['sequential', 'manual', 'free'])
+        && (!('showSolutions' in request.resource.data)
+            || request.resource.data.showSolutions is bool)
         && request.resource.data.keys().hasOnly(
              ['name', 'joinCode', 'teacherUids', 'createdAt', 'archived',
-              'schemaVersion', 'lockMode', 'manualUnlocks']);
+              'schemaVersion', 'lockMode', 'manualUnlocks', 'showSolutions']);
 
       // Archived, never deleted. Deleting the class document would strand
       // every roster, progress and event document beneath it: subcollections
