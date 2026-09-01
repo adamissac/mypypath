@@ -53,7 +53,14 @@
 
   /* ------------------------------------------------------------ the grid */
 
-  function masteryCsv(students, options) {
+  /* The grid, as rows.
+   *
+   * Split out from masteryCsv so the .xlsx export builds its Grid sheet from
+   * exactly these rows rather than deriving the same figures a second time.
+   * Two exports of one class that disagreed about a mark would be worse than
+   * having only one, and the way that happens is two code paths asking
+   * classroom-core.js the same question slightly differently. */
+  function masteryRows(students, options) {
     var opts = options || {};
     var lessonsByUnit = opts.lessonsByUnit || {};
     var totalUnits = opts.totalUnits || 10;
@@ -108,7 +115,11 @@
       rows.push(row);
     });
 
-    return toCsv(rows);
+    return rows;
+  }
+
+  function masteryCsv(students, options) {
+    return toCsv(masteryRows(students, options));
   }
 
   /* --------------------------------------------------------- one student */
@@ -138,6 +149,150 @@
     });
 
     return toCsv(rows);
+  }
+
+  /* ---------------------------------------------------------- workbook */
+
+  /* The same class as a real .xlsx, in three sheets.
+   *
+   * What this buys over the CSV that already exists, which is the whole
+   * justification for it: three tables in one file instead of three downloads,
+   * a header row that stays put while a class of forty scrolls under it,
+   * columns wide enough to read, and a shaded cell where a teacher is scanning
+   * for gaps. None of that is expressible in CSV, and all of it is what a
+   * teacher meant by "export to Excel".
+   *
+   * Every figure comes from the row builders above, which is the point: the
+   * .xlsx and the .csv are two renderings of one set of rows, so they cannot
+   * come to different conclusions about the same student.
+   */
+
+  // Shading marks the states that are gaps, and it is redundant on purpose:
+  // the word is in the cell either way. A teacher printing this in greyscale,
+  // or reading it colourblind, loses nothing but the scanning aid -- the same
+  // rule MASTERY_MARK follows on screen.
+  var GAP_STATES = { 'not-opened': true, 'in-progress': true };
+
+  function markStyle(label) {
+    var X = window.PyPathXlsx;
+    if (!X) return 0;
+    var gap = Object.keys(GAP_STATES).some(function (key) {
+      return CORE.MASTERY_LABEL[key] === label;
+    });
+    return gap ? X.STYLE.mark : 0;
+  }
+
+  /* One row per assignment rather than one column: the grid sheet already has
+     the per-student view, and a teacher looking at this sheet is asking "how
+     did that piece of work go", which is a question about the class. */
+  function assignmentRows(students, options) {
+    var opts = options || {};
+    var assignments = opts.assignments || [];
+    var statusOpts = {
+      now: opts.now || Date.now(),
+      lessonsByUnit: opts.lessonsByUnit || {},
+      lessonTitles: opts.lessonTitles || {}
+    };
+    var rows = [[
+      'Assignment', 'Units', 'Lessons', 'Due', 'On time', 'Late', 'Not done', 'Records expired'
+    ]];
+
+    assignments.forEach(function (a) {
+      var tally = { 'done-on-time': 0, 'done-late': 0, 'not-due': 0, overdue: 0, expired: 0 };
+      (students || []).forEach(function (student) {
+        var state = CORE.assignmentStatus(a, student.events, statusOpts).state;
+        if (tally[state] !== undefined) tally[state] += 1;
+      });
+      rows.push([
+        a.title,
+        (a.units || []).join(', '),
+        (a.lessonPaths || []).length,
+        isoDay(CORE.toMillis(a.dueAt)),
+        tally['done-on-time'],
+        tally['done-late'],
+        // "Not done" is the honest merge of not-due and overdue: both mean the
+        // work is outstanding, and the due date column already says which.
+        tally['not-due'] + tally.overdue,
+        tally.expired
+      ]);
+    });
+
+    return rows;
+  }
+
+  /* The roster sheet: who is in the class and where their certificate stands.
+     Deliberately narrow -- this is the sheet a teacher prints for a meeting,
+     and the per-unit detail is one tab away. */
+  function rosterRows(students, options) {
+    var opts = options || {};
+    var lessonsByUnit = opts.lessonsByUnit || {};
+    var rows = [[
+      'Student', 'Percent complete', 'Units verified', 'Last active',
+      'Certificate', 'Requested', 'Decided'
+    ]];
+
+    (students || []).forEach(function (student) {
+      var figures = CORE.studentHeader(student, lessonsByUnit);
+      var cert = student.certificate || {};
+      rows.push([
+        figures.displayName,
+        figures.percentComplete,
+        figures.unitsVerified,
+        isoDay(figures.lastActiveAt),
+        CORE.CERT_CSV[CORE.certificateState(cert)],
+        isoDay(cert.requestedAt || 0),
+        isoDay(cert.decidedAt || 0)
+      ]);
+    });
+
+    return rows;
+  }
+
+  /* Column widths, in Excel's character units.
+   *
+   * Guessed from the content rather than measured, because measuring text
+   * needs a canvas and this is a spreadsheet, not typesetting. The first
+   * column is names and gets the most room; the rest are capped so one long
+   * assignment title cannot push the units off the screen. */
+  function widthsFor(rows) {
+    var widths = [];
+    (rows || []).forEach(function (row) {
+      (row || []).forEach(function (cell, i) {
+        var value = cell && typeof cell === 'object' ? cell.v : cell;
+        var len = String(value == null ? '' : value).length;
+        widths[i] = Math.max(widths[i] || 8, Math.min(len + 3, i === 0 ? 32 : 22));
+      });
+    });
+    return widths;
+  }
+
+  function masteryWorkbook(students, options) {
+    var X = window.PyPathXlsx;
+    if (!X) throw new Error('xlsx-writer.js is not loaded');
+
+    var grid = masteryRows(students, options);
+    // The unit columns start after Student / Percent / Units verified / Last
+    // active, and run for totalUnits. Only those get the gap shading; a
+    // shaded assignment or certificate cell would mean something different.
+    var firstUnit = 4;
+    var lastUnit = firstUnit + ((options && options.totalUnits) || 10) - 1;
+    var styled = grid.map(function (row, r) {
+      if (r === 0) return row;
+      return row.map(function (cell, c) {
+        if (c < firstUnit || c > lastUnit) return cell;
+        var style = markStyle(cell);
+        return style ? { v: cell, s: style } : cell;
+      });
+    });
+
+    var assignments = assignmentRows(students, options);
+    var roster = rosterRows(students, options);
+
+    return X.build([
+      { name: 'Mastery grid', rows: styled, widths: widthsFor(grid) },
+      { name: 'Assignments', rows: assignments, widths: widthsFor(assignments) },
+      { name: 'Roster', rows: roster, widths: widthsFor(roster) }
+    ]);
   }
 
   /* ------------------------------------------------------------- digest */
@@ -188,7 +343,12 @@
   /* Hands the browser a file. A data: or blob: link is used rather than any
      upload: the export never leaves the teacher's machine. */
   function download(filename, text, mime) {
-    var blob = new Blob([text], { type: (mime || 'text/csv') + ';charset=utf-8' });
+    // A string gets a charset; bytes must not, because ";charset=utf-8" on a
+    // zip is a lie and some browsers act on it.
+    var type = typeof text === 'string'
+      ? (mime || 'text/csv') + ';charset=utf-8'
+      : (mime || 'application/octet-stream');
+    var blob = new Blob([text], { type: type });
     var url = URL.createObjectURL(blob);
     var link = document.createElement('a');
     link.href = url;
@@ -204,7 +364,12 @@
     csvField: csvField,
     csvRow: csvRow,
     toCsv: toCsv,
+    masteryRows: masteryRows,
     masteryCsv: masteryCsv,
+    assignmentRows: assignmentRows,
+    rosterRows: rosterRows,
+    widthsFor: widthsFor,
+    masteryWorkbook: masteryWorkbook,
     studentCsv: studentCsv,
     digest: digest,
     download: download
