@@ -1,0 +1,75 @@
+[
+  {
+    "id": "q6-match-1",
+    "kind": "match",
+    "prompt": "Match each OOP word to what it means.",
+    "left": ["Class", "Object", "Method", "Attribute"],
+    "right": [
+      "A function that belongs to a class",
+      "The blueprint",
+      "A piece of data stored on an object",
+      "One thing built from the blueprint"
+    ],
+    "answer": [1, 3, 0, 2],
+    "explain": "One class can produce many objects, the same way one blueprint can produce many houses."
+  },
+  {
+    "id": "q6-match-2",
+    "kind": "match",
+    "prompt": "Match each piece of a class to its job.",
+    "left": ["__init__", "self", "super()", "class Dog(Animal):"],
+    "right": [
+      "Reaches the parent class",
+      "Runs when an object is created",
+      "Says Dog inherits from Animal",
+      "The object the method was called on"
+    ],
+    "answer": [1, 3, 0, 2],
+    "explain": "self is not a keyword — it is just the conventional name for the first parameter every method receives."
+  },
+  {
+    "id": "q6-multi-1",
+    "kind": "multi",
+    "prompt": "Which of these are true about inheritance?",
+    "choices": [
+      "A subclass gets its parent's methods without rewriting them",
+      "A subclass can replace a parent method with its own",
+      "A subclass must redefine every method it inherits",
+      "A class can inherit from a class that itself inherits from another"
+    ],
+    "answers": [0, 1, 3],
+    "explain": "Redefining everything would defeat the point. Overriding is a choice you make method by method."
+  },
+  {
+    "id": "q6-blank-1",
+    "kind": "blank",
+    "label": "Fill both blanks so each new Dog stores its own name.",
+    "prompt": "Fill both blanks so each new Dog stores its own name.",
+    "code": "class Dog:\n    def ___(self, name):\n        ___.name = name",
+    "blanks": [{ "accept": ["__init__", "init"] }, { "accept": ["self"] }],
+    "explain": "__init__ runs at creation, and assigning to self.name stores the value on that particular object."
+  },
+  {
+    "id": "q6-blank-2",
+    "kind": "blank",
+    "label": "Complete the subclass so it reuses the parent's setup.",
+    "prompt": "Complete the subclass so it reuses the parent's setup.",
+    "code": "class Cat(Animal):\n    def __init__(self, name):\n        ___().__init__(name)",
+    "blanks": [{ "accept": ["super"] }],
+    "explain": "super() finds the parent class, so the parent's __init__ still runs instead of being skipped."
+  },
+  {
+    "id": "q6-order-1",
+    "kind": "order",
+    "prompt": "Put these lines in order so a class is defined and then used.",
+    "items": [
+      "class Counter:",
+      "    def __init__(self):",
+      "        self.total = 0",
+      "c = Counter()",
+      "print(c.total)"
+    ],
+    "answer": [0, 1, 2, 3, 4],
+    "explain": "The whole class body comes first. Only once the class exists can you build an object from it."
+  }
+]

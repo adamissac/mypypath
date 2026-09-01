@@ -185,7 +185,8 @@ describe('the authored questions actually mark correctly', () => {
   /* Content, not plumbing, and the realistic bug is an answer index typed one
      out. Every seeded question is scored with its own key and with a
      deliberately wrong answer. */
-  const files = [1, 2, 3].map((n) => `assets/data/quiz-bank/unit-${n}.json`);
+  const files = Array.from({ length: 10 }, (_, i) =>
+    `assets/data/quiz-bank/unit-${i + 1}.json`);
 
   it('every seeded question scores full marks for its own key', () => {
     const Q = window.PyPathQuestions;
@@ -227,6 +228,66 @@ describe('the authored questions actually mark correctly', () => {
       JSON.parse(fs.readFileSync(file, 'utf8')).forEach((q) => kinds.add(q.kind));
     });
     expect([...kinds].sort()).toEqual(['blank', 'match', 'multi', 'order']);
+  });
+
+  it('covers every unit, not just the ones that were easy to write', () => {
+    /* This shipped seeded for units 1-3 with the gap called out as content
+       work rather than plumbing. That was a real gap: a teacher assigning a
+       quiz on Unit 7 got fifty MCQs and none of the kinds this feature exists
+       to make reachable. All ten are authored now, and this is what stops a
+       future unit being added without them. */
+    files.forEach((file) => {
+      expect(fs.existsSync(file), file).toBe(true);
+      const questions = JSON.parse(fs.readFileSync(file, 'utf8'));
+      const kinds = new Set(questions.map((q) => q.kind));
+      expect([...kinds].sort(), file).toEqual(['blank', 'match', 'multi', 'order']);
+    });
+  });
+
+  it('gives every question a unique id across the whole bank', () => {
+    // Ids collide across units easily -- q4-match-1 and q7-match-1 are one
+    // typo apart -- and merge() would silently drop the loser.
+    const seen = new Set();
+    files.forEach((file) => {
+      JSON.parse(fs.readFileSync(file, 'utf8')).forEach((q) => {
+        expect(seen.has(q.id), `${q.id} appears twice`).toBe(false);
+        seen.add(q.id);
+      });
+    });
+    expect(seen.size).toBe(60);
+  });
+
+  it('gives a fill-the-blank exactly as many gaps as it has blanks', () => {
+    // Fewer gaps than blanks and renderBlank appends loose boxes at the end;
+    // more gaps than blanks and a box scores nothing whatever is typed in it.
+    files.forEach((file) => {
+      JSON.parse(fs.readFileSync(file, 'utf8'))
+        .filter((q) => q.kind === 'blank')
+        .forEach((q) => {
+          const gaps = (String(q.code || q.prompt).match(/___/g) || []).length;
+          expect(gaps, `${q.id} in ${file}`).toBe(q.blanks.length);
+        });
+    });
+  });
+
+  it('gives a matching question as many right options as left rows', () => {
+    files.forEach((file) => {
+      JSON.parse(fs.readFileSync(file, 'utf8'))
+        .filter((q) => q.kind === 'match')
+        .forEach((q) => {
+          expect(q.right.length, `${q.id} in ${file}`).toBe(q.left.length);
+          expect(q.answer.length, `${q.id} in ${file}`).toBe(q.left.length);
+        });
+    });
+  });
+
+  it('explains every answer, because the review screen shows it', () => {
+    files.forEach((file) => {
+      JSON.parse(fs.readFileSync(file, 'utf8')).forEach((q) => {
+        expect(typeof q.explain, `${q.id} in ${file}`).toBe('string');
+        expect(q.explain.length, `${q.id} in ${file}`).toBeGreaterThan(20);
+      });
+    });
   });
 });
 

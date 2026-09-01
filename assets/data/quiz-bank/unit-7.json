@@ -1,0 +1,74 @@
+[
+  {
+    "id": "q7-match-1",
+    "kind": "match",
+    "prompt": "Match each file mode to what it does.",
+    "left": ["\"r\"", "\"w\"", "\"a\"", "\"x\""],
+    "right": [
+      "Adds to the end, keeping what is there",
+      "Read only",
+      "Fails if the file already exists",
+      "Empties the file and writes from scratch"
+    ],
+    "answer": [1, 3, 0, 2],
+    "explain": "\"w\" is the dangerous one: opening a file that way throws away everything already in it."
+  },
+  {
+    "id": "q7-match-2",
+    "kind": "match",
+    "prompt": "Match each error to what causes it.",
+    "left": ["FileNotFoundError", "ZeroDivisionError", "ValueError", "KeyError"],
+    "right": [
+      "int(\"hello\")",
+      "Opening a file that is not there",
+      "ages[\"nobody\"] on a dict without that key",
+      "10 / 0"
+    ],
+    "answer": [1, 3, 0, 2],
+    "explain": "Catching the specific error tells a reader what you expected to go wrong. A bare except hides all four."
+  },
+  {
+    "id": "q7-multi-1",
+    "kind": "multi",
+    "prompt": "Which are true about the with statement?",
+    "choices": [
+      "It closes the file for you, even if an error happens",
+      "It saves you writing file.close()",
+      "It stops the file from ever raising an error",
+      "It works only for reading, never for writing"
+    ],
+    "answers": [0, 1],
+    "explain": "with handles closing, not error prevention. A missing file still raises inside a with block."
+  },
+  {
+    "id": "q7-blank-1",
+    "kind": "blank",
+    "label": "Fill both blanks so the file is opened for reading and closed automatically.",
+    "prompt": "Fill both blanks so the file is opened for reading and closed automatically.",
+    "code": "___ open(\"notes.txt\", \"___\") as f:\n    print(f.read())",
+    "blanks": [{ "accept": ["with"] }, { "accept": ["r"] }],
+    "explain": "with takes care of closing the file whether the block finishes normally or raises."
+  },
+  {
+    "id": "q7-blank-2",
+    "kind": "blank",
+    "label": "Fill both blanks so a missing file is handled instead of crashing.",
+    "prompt": "Fill both blanks so a missing file is handled instead of crashing.",
+    "code": "___:\n    f = open(\"data.txt\")\n___ FileNotFoundError:\n    print(\"No file yet\")",
+    "blanks": [{ "accept": ["try"] }, { "accept": ["except"] }],
+    "explain": "try holds the risky line; except says what to do when that particular error is raised."
+  },
+  {
+    "id": "q7-order-1",
+    "kind": "order",
+    "prompt": "Put these lines in order so the program writes a line and then reads it back.",
+    "items": [
+      "with open(\"log.txt\", \"w\") as f:",
+      "    f.write(\"started\\n\")",
+      "with open(\"log.txt\") as f:",
+      "    print(f.read())"
+    ],
+    "answer": [0, 1, 2, 3],
+    "explain": "The first block has to finish before the second opens the file, or there is nothing written yet to read."
+  }
+]

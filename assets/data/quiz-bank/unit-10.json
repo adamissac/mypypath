@@ -1,0 +1,75 @@
+[
+  {
+    "id": "q10-match-1",
+    "kind": "match",
+    "prompt": "Match each project file to what belongs in it.",
+    "left": ["README.md", "requirements.txt", "main.py", ".gitignore"],
+    "right": [
+      "The packages your project needs",
+      "What the project is and how to run it",
+      "Files that should never be committed",
+      "The entry point you run"
+    ],
+    "answer": [1, 0, 3, 2],
+    "explain": "A README is the first thing anyone opens, including you in six months."
+  },
+  {
+    "id": "q10-match-2",
+    "kind": "match",
+    "prompt": "Match each stage of a project to what you produce.",
+    "left": ["Planning", "Proposal", "Building", "Presenting"],
+    "right": [
+      "Working features, one at a time",
+      "A list of what it should do and what it should not",
+      "A demo and an honest account of what is unfinished",
+      "A short written case for the idea"
+    ],
+    "answer": [1, 3, 0, 2],
+    "explain": "Deciding what a project will NOT do is planning work, and skipping it is how a capstone runs out of time."
+  },
+  {
+    "id": "q10-multi-1",
+    "kind": "multi",
+    "prompt": "Which of these make a project easier for someone else to run?",
+    "choices": [
+      "A README with the exact commands to start it",
+      "Pinning the versions of packages you depend on",
+      "Keeping all the code in one long file",
+      "Handling a missing input file with a clear message"
+    ],
+    "answers": [0, 1, 3],
+    "explain": "One long file is easier to write and harder for everyone afterwards, including the person who wrote it."
+  },
+  {
+    "id": "q10-blank-1",
+    "kind": "blank",
+    "label": "Complete the guard so this file can be both run and imported.",
+    "prompt": "Complete the guard so this file can be both run and imported.",
+    "code": "def main():\n    run_app()\n\nif __name__ == \"___\":\n    ___()",
+    "blanks": [{ "accept": ["__main__", "main"] }, { "accept": ["main"] }],
+    "explain": "This is what lets another file import your functions without your whole program starting up."
+  },
+  {
+    "id": "q10-blank-2",
+    "kind": "blank",
+    "label": "Fill both blanks so a bad number is reported instead of crashing.",
+    "prompt": "Fill both blanks so a bad number is reported instead of crashing.",
+    "code": "try:\n    age = int(input(\"Age: \"))\nexcept ___:\n    ___(\"Please type a whole number\")",
+    "blanks": [{ "accept": ["ValueError"] }, { "accept": ["print"] }],
+    "explain": "int() raises ValueError on text it cannot convert, and catching that one by name says what you expected to go wrong."
+  },
+  {
+    "id": "q10-order-1",
+    "kind": "order",
+    "prompt": "Put these steps in the order a project is built.",
+    "items": [
+      "Decide what the project will and will not do",
+      "Set up the folder and a place to run it",
+      "Build one core feature and check it works",
+      "Add error handling and tests",
+      "Write the README and present it"
+    ],
+    "answer": [0, 1, 2, 3, 4],
+    "explain": "Scope first: every step after it is cheaper once you know what you are not building."
+  }
+]

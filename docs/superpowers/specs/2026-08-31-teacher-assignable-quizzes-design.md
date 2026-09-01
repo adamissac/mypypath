@@ -76,13 +76,23 @@ So the bank is the union of two sources, read by one loader:
 - `assets/data/quiz-bank/unit-N.json` — **new**, and the home for the newer kinds. Same
   question shape `question-types.js` already marks, so no new schema.
 
-This version seeds `quiz-bank/` for **units 1–3**. That is a deliberate, stated limit
-rather than an accident: writing good `match`/`order`/`blank` questions for all ten units
-is content work, not plumbing, and shipping thirty mediocre questions to prove a code
-path is a worse outcome than shipping the path plus enough real content to use it. Every
-unit has a usable bank from day one (fifty MCQs); units 1–3 additionally have the newer
-kinds. The teacher-facing picker says which kinds a unit offers rather than leaving a
-teacher to discover the difference.
+This shipped seeded for **units 1–3**, with the rest recorded below as outstanding
+content work. That gap is now closed: **all ten units** carry six authored questions each
+— two matching, one choose-several, two fill-the-blank, one ordering — so every unit
+offers all five kinds from the picker, not just fifty MCQs.
+
+The reason the gap was worth closing rather than living with: a teacher assigning a quiz
+on Unit 7 got only MCQs, which is precisely the thing this feature existed to move past.
+"Every unit has a usable bank" was true and beside the point.
+
+Every authored key is checked by test against the real scorers — the key scores full
+marks, a deliberately wrong answer does not, a fill-the-blank has exactly as many gaps as
+blanks, a matching question has as many options as rows, ids are unique across all sixty,
+and every question carries an explanation, since the review screen shows it. An answer
+index typed one out is the realistic content bug and nothing else would catch it.
+
+The teacher-facing picker still names which kinds a unit offers rather than leaving a
+teacher to discover them, which stays useful if a future unit is added before its bank.
 
 ## Decision 2: a quiz is an assignment, not a parallel structure
 
@@ -271,7 +281,7 @@ New:
 - `assets/js/quiz-bank.js` — loads and merges the two bank sources, pure where it can be
 - `assets/js/quiz-page.js` — the student quiz page
 - `quiz.html`
-- `assets/data/quiz-bank/unit-{1,2,3}.json` — the newer kinds
+- `assets/data/quiz-bank/unit-{1..10}.json` — the newer kinds, one file per unit
 - `assets/css/quiz.css`
 
 Changed:
@@ -302,6 +312,6 @@ Untouched, deliberately: `unit-test.js`, `unit-test-page.js`, `lesson-quiz.js`.
 ## Out of scope
 
 - A question-authoring UI (Decision 1) — the coherent next feature.
-- `quiz-bank/` content for units 4–10 (Decision 1) — content, not plumbing.
+- ~~`quiz-bank/` content for units 4–10~~ — done; all ten units are authored.
 - Changing the end-of-unit test to use the newer kinds. That decision stands as left.
 - Any server-side marking. There is no server (Decision 3).
