@@ -947,6 +947,13 @@
       + 'hide the answer either -- solutions are part of the lesson page, so a '
       + 'student who opens the page source can read one whatever this is set '
       + 'to. It takes the answer key off the desk; it does not lock it away.',
+    progressViews: 'Two views of the same records. Roster is one row per '
+      + 'student and answers "who is behind" -- progress, units finished, their '
+      + 'most recent test mark, how much set work is done, and when they were '
+      + 'last here. Unit grid is one cell per student per unit and answers "how '
+      + 'did the class find Unit 4". Neither shows anything the other hides; '
+      + 'the roster is first because at a full class the grid is 400 cells and '
+      + 'the question is usually about a person, not a unit.',
     maxTestAttempts: 'How many times a student in this class may sit the same '
       + 'end-of-unit test. Unlimited is the default and is what every class had '
       + 'before this setting existed. It reaches students in this class and '

@@ -25,6 +25,13 @@ let students = [];
 let scope = 'units';
 let scopeUnit = 1;
 let sortBy = 'name';
+/* Which of the two progress views is on screen, and how the roster is ordered.
+   Separate from `sortBy`, which belongs to the unit grid: the roster sorts on
+   columns the grid does not have, and making one control drive both would mean
+   a teacher who sorted the roster by "last active" finding their grid
+   rearranged when they switched to it. */
+let view = 'roster';
+let rosterSort = { key: 'name', dir: 1 };
 let assignments = [];
 let scopeAssignment = null;
 let unwatchRoster = null;
@@ -148,6 +155,8 @@ function mergeRoster(rows) {
    and repainting them would rebuild half the page to add one row. */
 function paintRosterViews() {
   paintAttention();
+  paintRoster();
+  paintStudentPicker();
   paintGrid();
   paintSummary();
   paintCertificates();
@@ -504,6 +513,277 @@ function sortedStudents() {
     return String(a.displayName).localeCompare(String(b.displayName));
   });
   return copy;
+}
+
+/* ---------------------------------------------------------------- roster */
+
+/* The roster view: one row per student, a handful of high-signal columns.
+ *
+ * Why this exists, and why it leads. The unit grid is one cell per student per
+ * unit. At one student that is 10 cells and reads beautifully; at forty it is
+ * 400, and a teacher scanning it top to bottom is doing the summarising the
+ * page should have done for them. This is the same data asked a different
+ * question -- "who is behind" rather than "how did the class find Unit 4" --
+ * and it answers it in one row each.
+ *
+ * Nothing is removed to make room for it. The grid is a click away and keeps
+ * its scope, its unit picker, its assignment lens and its sort.
+ *
+ * Every column is a number or a date a teacher can act on, and every one of
+ * them is computed by classroom-core.js rather than here, so this view and the
+ * grid and the CSV export cannot disagree about what any of it means.
+ */
+const ROSTER_COLUMNS = [
+  { key: 'name', label: 'Student', align: 'left' },
+  { key: 'percent', label: 'Progress', align: 'right' },
+  { key: 'units', label: 'Units done', align: 'right' },
+  { key: 'test', label: 'Latest test', align: 'right' },
+  { key: 'work', label: 'Work done', align: 'right' },
+  { key: 'active', label: 'Last active', align: 'right' },
+  { key: 'flag', label: 'Flagged', align: 'left' },
+];
+
+function daysSince(millis, now) {
+  if (!millis) return null;
+  return Math.floor((now - millis) / DAY_MS);
+}
+
+/* "3 days ago" beats a date here: a teacher is deciding whether to walk over,
+   and the arithmetic between today's date and the 24th is work they should not
+   have to do standing up. */
+function agoLabel(millis, now) {
+  const days = daysSince(millis, now);
+  if (days === null) return { text: 'never', stale: true };
+  if (days <= 0) return { text: 'today', stale: false };
+  if (days === 1) return { text: 'yesterday', stale: false };
+  return { text: days + ' days ago', stale: days >= (CORE.IDLE_DAYS || 7) };
+}
+
+/* The most recent sitting of any end-of-unit test, with its mark.
+ *
+ * The most recent rather than the best: this column is "how did that go", and a
+ * teacher who wants the best score has the student's own detail panel a click
+ * away. The mark is out of 100 the same way the test page reports it. */
+function latestTest(events) {
+  let best = null;
+  for (const event of events || []) {
+    if (event.type !== 'test.submitted') continue;
+    const at = CORE.toMillis(event.at);
+    if (best && at <= best.at) continue;
+    const p = (event.payload || {});
+    best = { at, unit: Number(p.unit) || 0, score: Number(p.score) || 0 };
+  }
+  return best;
+}
+
+function rosterRows() {
+  const now = Date.now();
+  const byUnit = lessonsByUnit();
+  const total = (CURRICULUM && CURRICULUM.TOTAL_UNITS) || 10;
+
+  /* The same rows the "Needs attention" table at the top of the page is built
+     from, reused rather than recomputed, so a student flagged there is flagged
+     here and the two can never disagree. Highest priority wins the cell. */
+  const flags = new Map();
+  CORE.needsAttention(students, { now, lessonTitles: lessonTitles() })
+    .forEach((row) => {
+      const held = flags.get(row.uid);
+      if (!held || row.priority < held.priority) flags.set(row.uid, row);
+    });
+
+  return students.map((student) => {
+    const events = student.events || [];
+
+    let unitsDone = 0;
+    for (let u = 1; u <= total; u += 1) {
+      const state = CORE.unitState(events, byUnit[u] || [], u);
+      if (state === 'passed' || state === 'verified') unitsDone += 1;
+    }
+
+    let workDone = 0;
+    for (const assignment of assignments) {
+      const state = statusFor(assignment, student).state;
+      if (state === 'done-on-time' || state === 'done-late') workDone += 1;
+    }
+
+    return {
+      student,
+      uid: student.uid,
+      name: student.displayName,
+      pending: !!student.pending,
+      percent: student.pending ? null : CORE.percentComplete(events, byUnit),
+      units: student.pending ? null : unitsDone,
+      unitsTotal: total,
+      test: student.pending ? null : latestTest(events),
+      work: workDone,
+      workTotal: assignments.length,
+      active: CORE.lastEventAt(events) || student.lastActiveAt || 0,
+      flag: flags.get(student.uid) || null,
+    };
+  });
+}
+
+function sortRoster(rows) {
+  const dir = rosterSort.dir;
+  const key = rosterSort.key;
+  const num = (v) => (v === null || v === undefined ? -1 : v);
+  return rows.slice().sort((a, b) => {
+    if (key === 'name') return dir * String(a.name).localeCompare(String(b.name));
+    if (key === 'flag') {
+      // Flagged first when descending, and by urgency within that, because
+      // "show me who needs me" is the only reason to sort on this column.
+      const av = a.flag ? 10 - a.flag.priority : -1;
+      const bv = b.flag ? 10 - b.flag.priority : -1;
+      return dir * (bv - av);
+    }
+    if (key === 'test') {
+      return dir * (num(b.test && b.test.score) - num(a.test && a.test.score));
+    }
+    return dir * (num(b[key]) - num(a[key]));
+  });
+}
+
+function rosterHeadCell(col) {
+  const th = el('th', 'cr-roster__h cr-roster__h--' + col.align);
+  th.scope = 'col';
+  const button = el('button', 'cr-roster__sort', col.label);
+  button.type = 'button';
+  button.setAttribute('data-cr-roster-sort', col.key);
+  const active = rosterSort.key === col.key;
+  th.setAttribute('aria-sort', active ? (rosterSort.dir === 1 ? 'ascending' : 'descending') : 'none');
+  if (active) {
+    button.classList.add('is-sorted');
+    // A character, not only a colour or a rotation: this table gets printed.
+    button.appendChild(el('span', 'cr-roster__arrow', rosterSort.dir === 1 ? '\u2191' : '\u2193'));
+  }
+  th.appendChild(button);
+  return th;
+}
+
+/* A proportion drawn as well as written. The number is the fact and the bar is
+   the shape of the column -- forty of these read as a distribution at a glance,
+   which forty bare percentages do not. */
+function percentCell(row) {
+  const td = el('td', 'cr-roster__c cr-roster__c--right');
+  if (row.percent === null) {
+    td.appendChild(el('span', 'cr-roster__pending', 'loading'));
+    return td;
+  }
+  const wrap = el('div', 'cr-meter');
+  const fill = el('span', 'cr-meter__fill');
+  fill.style.width = Math.max(0, Math.min(100, row.percent)) + '%';
+  wrap.appendChild(fill);
+  td.appendChild(el('span', 'cr-roster__num', row.percent + '%'));
+  td.appendChild(wrap);
+  return td;
+}
+
+function paintRoster() {
+  const head = $('[data-cr-roster-head]');
+  const body = $('[data-cr-roster-body]');
+  const table = $('[data-cr-roster]');
+  const empty = $('[data-cr-roster-empty]');
+  if (!head || !body) return;
+
+  const rows = sortRoster(rosterRows());
+  show(table, rows.length > 0);
+  show(empty, rows.length === 0);
+
+  head.innerHTML = '';
+  ROSTER_COLUMNS.forEach((col) => head.appendChild(rosterHeadCell(col)));
+
+  body.innerHTML = '';
+  const now = Date.now();
+
+  for (const row of rows) {
+    const tr = el('tr', 'cr-roster__row');
+
+    const name = el('th', 'cr-roster__who');
+    name.scope = 'row';
+    const open = el('button', 'cr-roster__name', row.name);
+    open.type = 'button';
+    open.setAttribute('data-cr-open-student', row.uid);
+    name.appendChild(open);
+    if (row.pending) name.appendChild(el('span', 'cr-grid__pending', 'just joined'));
+    tr.appendChild(name);
+
+    tr.appendChild(percentCell(row));
+
+    const units = el('td', 'cr-roster__c cr-roster__c--right');
+    units.textContent = row.units === null ? '—' : row.units + ' / ' + row.unitsTotal;
+    tr.appendChild(units);
+
+    const test = el('td', 'cr-roster__c cr-roster__c--right');
+    if (!row.test) {
+      test.textContent = '—';
+      test.title = 'No end-of-unit test sat yet';
+    } else {
+      const passed = row.test.score >= 70;
+      test.appendChild(el('span', 'cr-roster__score is-' + (passed ? 'pass' : 'below'),
+        row.test.score + (passed ? '' : ' \u2022')));
+      test.appendChild(el('span', 'cr-roster__unit', ' U' + row.test.unit));
+      test.title = 'Unit ' + row.test.unit + ' test, most recent sitting: '
+        + row.test.score + ' out of 100'
+        + (passed ? '' : ' (below the 70 needed to pass)');
+    }
+    tr.appendChild(test);
+
+    const work = el('td', 'cr-roster__c cr-roster__c--right');
+    work.textContent = row.workTotal ? row.work + ' / ' + row.workTotal : '—';
+    if (row.workTotal) {
+      work.title = row.work + ' of ' + row.workTotal + ' assignments finished';
+      if (row.work < row.workTotal) work.classList.add('is-behind');
+    }
+    tr.appendChild(work);
+
+    const active = el('td', 'cr-roster__c cr-roster__c--right');
+    const ago = agoLabel(row.active, now);
+    active.textContent = ago.text;
+    if (ago.stale) active.classList.add('is-stale');
+    tr.appendChild(active);
+
+    const flag = el('td', 'cr-roster__c');
+    if (row.flag) {
+      // The mark carries a character as well as a colour, like every other
+      // mark on this page, because the printout is greyscale.
+      flag.appendChild(el('span', 'cr-roster__flag', '!'));
+      flag.appendChild(el('span', 'cr-roster__reason', row.flag.reason));
+      flag.title = row.flag.reason + '. ' + row.flag.nextStep;
+    } else {
+      flag.textContent = '';
+    }
+    tr.appendChild(flag);
+
+    body.appendChild(tr);
+  }
+}
+
+/* The picker. Same list, same order as the roster, so the name a teacher just
+   read in a row is where they expect it in the menu. */
+function paintStudentPicker() {
+  const pick = $('[data-cr-student-pick]');
+  if (!pick) return;
+  const chosen = pick.value;
+  pick.innerHTML = '';
+  const first = el('option', null, students.length
+    ? 'Choose a student\u2026' : 'No students yet');
+  first.value = '';
+  pick.appendChild(first);
+  sortRoster(rosterRows()).forEach((row) => {
+    const option = el('option', null, row.name);
+    option.value = row.uid;
+    pick.appendChild(option);
+  });
+  pick.value = chosen;
+  pick.disabled = students.length === 0;
+}
+
+function paintView() {
+  $$('[data-cr-pane]').forEach((pane) => {
+    pane.hidden = pane.getAttribute('data-cr-pane') !== view;
+  });
+  const radio = $('input[name="cr-view"][value="' + view + '"]');
+  if (radio) radio.checked = true;
 }
 
 function paintKey() {
@@ -866,6 +1146,9 @@ function paintAll() {
   paintSolutions();
   paintRetakes();
   paintAttention();
+  paintView();
+  paintRoster();
+  paintStudentPicker();
   paintGrid();
   paintSummary();
   paintCertificates();
@@ -906,6 +1189,11 @@ function paintTeachers() {
     badge.textContent = others === 1 ? '1 co-teacher' : others + ' co-teachers';
     show(badge, others > 0);
   }
+}
+
+function openStudentByUid(uid) {
+  const student = students.filter((s) => s.uid === uid)[0];
+  if (student) openStudent(student, null);
 }
 
 function openStudent(student, column) {
@@ -975,6 +1263,43 @@ function wire() {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') show($('[data-cr-explain]'), false);
   });
+
+  /* One delegated listener rather than one per row: the roster is rebuilt on
+     every live-roster snapshot, and re-binding forty buttons each time is work
+     nobody sees. */
+  document.addEventListener('click', (e) => {
+    const target = e.target.closest && e.target.closest('[data-cr-roster-sort]');
+    if (target) {
+      const key = target.getAttribute('data-cr-roster-sort');
+      // Same column again reverses it; a new column starts in the direction
+      // that answers the question -- names A-Z, everything else worst first,
+      // because nobody opens this to find who is doing best.
+      if (rosterSort.key === key) rosterSort.dir = -rosterSort.dir;
+      else rosterSort = { key, dir: key === 'name' ? 1 : -1 };
+      paintRoster();
+      return;
+    }
+    const open = e.target.closest && e.target.closest('[data-cr-open-student]');
+    if (open) openStudentByUid(open.getAttribute('data-cr-open-student'));
+  });
+
+  $$('input[name="cr-view"]').forEach((radio) => {
+    radio.addEventListener('change', () => {
+      if (!radio.checked) return;
+      view = radio.value;
+      paintView();
+    });
+  });
+
+  const picker = $('[data-cr-student-pick]');
+  if (picker) {
+    picker.addEventListener('change', () => {
+      if (!picker.value) return;
+      openStudentByUid(picker.value);
+      // Reset, so choosing the same student twice in a row opens them twice.
+      picker.value = '';
+    });
+  }
 
   const solutions = $('[data-cr-show-solutions]');
   if (solutions) {
