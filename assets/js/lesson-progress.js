@@ -844,7 +844,7 @@
     // client or a bad merge left behind must not show a learner a score of 0
     // they never sat for.
     if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
-      return { text: 'Not attempted yet.', passed: false, attempted: false };
+      return { text: 'Not attempted yet.', passed: false, attempted: false, best: null };
     }
 
     var best = Number(entry.best);
@@ -852,14 +852,18 @@
       return {
         text: isFinite(best) ? 'Passed, with a best score of ' + best + ' out of 100.' : 'Passed.',
         passed: true,
-        attempted: true
+        attempted: true,
+        // The number as a number, for a caller that wants to draw it rather
+        // than print it. The sentence above stays the source of the wording.
+        best: isFinite(best) ? best : null
       };
     }
     return {
       text: 'Best score ' + (isFinite(best) ? best : 0) + ' out of 100. You need ' +
         UNIT_TEST_PASS_MARK + ' to pass.',
       passed: false,
-      attempted: true
+      attempted: true,
+      best: isFinite(best) ? best : 0
     };
   }
 
