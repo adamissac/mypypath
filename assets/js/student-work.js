@@ -121,7 +121,13 @@ function row(assignment, status, now) {
     li.appendChild(el('span', 'sw-part__mark', part.done ? '+' : '·'));
     const link = el('a', 'sw-part__link route',
       part.title + (part.done ? '' : ''));
-    link.href = part.kind === 'unit' ? '/units/unit-' + part.unit + '.html' : part.path;
+    /* Where each part actually is. A quiz part is the one that needs the
+       assignment's own id in the URL, because unlike a unit or a lesson it has
+       no page of its own to link to -- and an assignment a student cannot
+       reach is the failure dcc32f6 already fixed once. */
+    link.href = part.kind === 'quiz'
+      ? '/quiz.html?a=' + encodeURIComponent(part.assignmentId)
+      : part.kind === 'unit' ? '/units/unit-' + part.unit + '.html' : part.path;
     li.appendChild(link);
     li.appendChild(el('span', 'visually-hidden', part.done ? ' — done' : ' — not done yet'));
     parts.appendChild(li);

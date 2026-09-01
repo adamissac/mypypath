@@ -35,6 +35,10 @@
     'check.answered': ['lessonPath', 'questionId', 'correct', 'attempt'],
     'test.started': ['unit'],
     'test.submitted': ['unit', 'score', 'total', 'attempt', 'durationSec'],
+    /* A teacher-assigned quiz, sat and marked. Separate from test.submitted on
+       purpose: the end-of-unit test unlocks the next unit and a quiz does not,
+       and one type carrying both would make every reader disambiguate them. */
+    'quiz.submitted': ['assignmentId', 'unit', 'score', 'correct', 'total', 'attempt'],
     'unit.completed': ['unit', 'verified']
   };
 

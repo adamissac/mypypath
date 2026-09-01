@@ -319,6 +319,31 @@ service cloud.firestore {
         // request.time on create and to what is already stored on update:
         // checking request.time on both would make every edit impossible,
         // because an update carries the original timestamp forward.
+        /* The optional quiz. Bounded on every axis because this document is
+           read by every student in the class: an unbounded blob written here
+           is an unbounded blob delivered to everyone's page.
+
+           25 questions and 40-character ids mirror cleanQuiz() in
+           classroom-store.js. This is the copy that is enforced. */
+        function quizWellFormed() {
+          return !('quiz' in request.resource.data)
+            || (request.resource.data.quiz is map
+                && request.resource.data.quiz.keys().hasOnly(
+                     ['unit', 'questionIds', 'passMark', 'attempts'])
+                && request.resource.data.quiz.unit is int
+                && request.resource.data.quiz.unit >= 1
+                && request.resource.data.quiz.unit <= 10
+                && request.resource.data.quiz.questionIds is list
+                && request.resource.data.quiz.questionIds.size() > 0
+                && request.resource.data.quiz.questionIds.size() <= 25
+                && request.resource.data.quiz.passMark is int
+                && request.resource.data.quiz.passMark >= 0
+                && request.resource.data.quiz.passMark <= 100
+                && request.resource.data.quiz.attempts is int
+                && request.resource.data.quiz.attempts >= 0
+                && request.resource.data.quiz.attempts <= 10);
+        }
+
         function wellFormed() {
           return request.resource.data.title is string
             && request.resource.data.title.size() > 0
@@ -326,12 +351,15 @@ service cloud.firestore {
             && request.resource.data.units is list
             && request.resource.data.lessonPaths is list
             // An assignment requiring nothing is a row that can never be
-            // satisfied, and would show a class as permanently overdue.
+            // satisfied, and would show a class as permanently overdue. A quiz
+            // is a third way to require something.
             && (request.resource.data.units.size() > 0
-                || request.resource.data.lessonPaths.size() > 0)
+                || request.resource.data.lessonPaths.size() > 0
+                || 'quiz' in request.resource.data)
+            && quizWellFormed()
             && request.resource.data.dueAt is number
             && request.resource.data.keys().hasOnly(
-                 ['title', 'units', 'lessonPaths', 'dueAt', 'createdAt',
+                 ['title', 'units', 'lessonPaths', 'quiz', 'dueAt', 'createdAt',
                   'archived', 'schemaVersion']);
         }
 
@@ -463,9 +491,24 @@ service cloud.firestore {
              rest of the vocabulary is a record of what happened -- opening a
              locked lesson, running code in it -- and refusing those would only
              make the log lie about a thing the student really did. */
+          /* The types whose unit is checked before the write is allowed.
+           *
+           * quiz.submitted is here for the same reason test.submitted is: a
+           * teacher-assigned quiz is graded work, and work on a unit the class
+           * has not opened must not be recordable. It does NOT unlock anything
+           * -- only the end-of-unit test does that -- but it is still a mark,
+           * and a mark on a shut unit is a mark that should not exist.
+           *
+           * What this cannot check, said here because the quiz's own cap has
+           * the same shape as the retake cap noted below: the score itself,
+           * and how many attempts a student has already had. Both are counted
+           * in the student's own browser. A quiz score is a record of what the
+           * site saw, not a proctored result, and no copy anywhere should
+           * suggest otherwise. */
           function countsForCredit() {
             return request.resource.data.type in
-              ['test.submitted', 'unit.completed', 'code.tests_passed'];
+              ['test.submitted', 'unit.completed', 'code.tests_passed',
+               'quiz.submitted'];
           }
 
           function unitAllowed() {
@@ -493,7 +536,7 @@ service cloud.firestore {
             return request.resource.data.type in [
                 'lesson.opened', 'code.run', 'code.error', 'code.tests_passed',
                 'answer.submitted', 'check.answered', 'test.started',
-                'test.submitted', 'unit.completed'
+                'test.submitted', 'unit.completed', 'quiz.submitted'
               ]
               // Client clocks are wrong, sometimes deliberately. Pinning the
               // timestamp to request.time is what makes "no events in 7 days"

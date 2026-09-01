@@ -354,8 +354,54 @@
     return a < b ? a : b;
   }
 
+  /* The first quiz.submitted for this assignment, and the best score across
+     every attempt at it.
+
+     Best rather than most recent, matching how unitTestPassed reads a test
+     record: a student who retook a quiz and did better has done better, and a
+     teacher looking at the column wants the ceiling, not the last thing that
+     happened to be recorded. */
+  function firstQuizSubmitAt(events, assignmentId) {
+    if (!assignmentId) return null;
+    var at = null;
+    (events || []).forEach(function (e) {
+      if (e.type !== 'quiz.submitted') return;
+      if (((e.payload || {}).assignmentId) !== assignmentId) return;
+      var when = toMillis(e.at);
+      if (at === null || when < at) at = when;
+    });
+    return at;
+  }
+
+  function quizScore(events, assignmentId) {
+    if (!assignmentId) return null;
+    var best = null;
+    var attempts = 0;
+    (events || []).forEach(function (e) {
+      if (e.type !== 'quiz.submitted') return;
+      var p = e.payload || {};
+      if (p.assignmentId !== assignmentId) return;
+      attempts += 1;
+      var score = Number(p.score);
+      if (!isFinite(score)) return;
+      if (best === null || score > best) best = score;
+    });
+    return attempts ? { best: best === null ? 0 : best, attempts: attempts } : null;
+  }
+
   function completedAt(events, target) {
     var t = target || {};
+
+    /* A quiz is done the first time it is submitted, whatever the score.
+     *
+     * Deliberately not "done when they passed it". The assignment column
+     * answers "did they do the work I set", and a student who sat the quiz and
+     * scored 40 did the work -- reading that row as "not done" would hide them
+     * among the students who never opened it, which is the opposite of useful.
+     * The mark is carried separately, by quizScore(). */
+    if (t.kind === 'quiz') {
+      return firstQuizSubmitAt(events, t.assignmentId);
+    }
 
     if (t.kind === 'lesson') {
       var unit = unitOfPath(t.path);
@@ -426,6 +472,19 @@
         completedAt: completedAt(events, { kind: 'lesson', path: path })
       });
     });
+    /* The quiz part, if this assignment carries one. Same shape as the other
+       two so nothing downstream has to know a quiz exists: the dashboard
+       column, the roster's work count, and both exports all read `parts` and
+       `state` and keep working unchanged. */
+    if (a.quiz && a.id) {
+      parts.push({
+        kind: 'quiz',
+        assignmentId: a.id,
+        unit: Number(a.quiz.unit) || 0,
+        title: 'Quiz on Unit ' + (Number(a.quiz.unit) || 0),
+        completedAt: completedAt(events, { kind: 'quiz', assignmentId: a.id })
+      });
+    }
     parts.forEach(function (part) { part.done = part.completedAt !== null; });
 
     var doneCount = parts.filter(function (p) { return p.done; }).length;
@@ -1010,6 +1069,7 @@
     STRUGGLE_RATE: STRUGGLE_RATE,
     EXPLANATIONS: EXPLANATIONS,
     toMillis: toMillis,
+    quizScore: quizScore,
     lessonState: lessonState,
     unitState: unitState,
     unitProgress: unitProgress,

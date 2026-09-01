@@ -1,0 +1,119 @@
+[
+  {
+    "id": "q3-match-1",
+    "kind": "match",
+    "prompt": "Match each part of a function to its name.",
+    "left": [
+      "def greet(name):",
+      "name",
+      "return",
+      "greet(\"Ada\")"
+    ],
+    "right": [
+      "A parameter",
+      "The call",
+      "The definition",
+      "Hands a value back to whoever called"
+    ],
+    "answer": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "explain": "The definition says what the function does; the call is where it actually runs."
+  },
+  {
+    "id": "q3-match-2",
+    "kind": "match",
+    "prompt": "Match each function call to what it returns.",
+    "left": [
+      "len(\"abc\")",
+      "str(7)",
+      "int(\"7\")",
+      "abs(-4)"
+    ],
+    "right": [
+      "\"7\"",
+      "3",
+      "4",
+      "7"
+    ],
+    "answer": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "explain": "len counts items, str and int convert between text and number, and abs drops the sign."
+  },
+  {
+    "id": "q3-multi-1",
+    "kind": "multi",
+    "prompt": "Which statements about a function's local variables are true?",
+    "choices": [
+      "They stop existing when the function returns",
+      "They can be read from anywhere in the program",
+      "A parameter is one of them",
+      "They must be declared before the def line"
+    ],
+    "answers": [
+      0,
+      2
+    ],
+    "explain": "A local name lives only for the duration of the call. Parameters are locals that arrive filled in."
+  },
+  {
+    "id": "q3-blank-1",
+    "kind": "blank",
+    "prompt": "Complete the definition so it hands the total back.",
+    "blanks": [
+      {
+        "accept": [
+          "return"
+        ]
+      }
+    ],
+    "explain": "Without return the function hands back None, whatever it printed on the way.",
+    "label": "Complete the definition so it hands the total back.",
+    "code": "def add(a, b):\n    ___ a + b"
+  },
+  {
+    "id": "q3-blank-2",
+    "kind": "blank",
+    "prompt": "Fill both blanks so percent defaults to 10.",
+    "blanks": [
+      {
+        "accept": [
+          "percent"
+        ]
+      },
+      {
+        "accept": [
+          "10"
+        ]
+      }
+    ],
+    "explain": "A default value in the def line is used whenever the caller leaves that argument out.",
+    "label": "Fill both blanks so percent defaults to 10.",
+    "code": "def discount(price, ___ = ___):\n    return price - price * percent / 100"
+  },
+  {
+    "id": "q3-order-1",
+    "kind": "order",
+    "prompt": "Put these lines in order so the function is defined before it is used.",
+    "items": [
+      "def area(width, height):",
+      "    return width * height",
+      "size = area(3, 4)",
+      "print(size)"
+    ],
+    "answer": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explain": "Python runs the file top to bottom, so a function has to be defined before the line that calls it."
+  }
+]
