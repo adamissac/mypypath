@@ -353,11 +353,12 @@
     var target = Number(n);
     if (!curriculum || !Number.isInteger(target) || target < 1) return false;
     // A locked unit does not complete. This is the half of the hard lock that
-    // decides credit rather than access: the lessons stay readable, the record
-    // stays honest, and nothing is added to completedUnits or announced to a
-    // teacher for work the class was not open for. It is checked for the unit
-    // being rolled up rather than for the page's own unit, because the test
-    // page calls this from a URL that belongs to no unit at all.
+    // decides credit rather than access: the record stays honest, and nothing
+    // is added to completedUnits or announced to a teacher for work the class
+    // was not open for. It is checked for the unit being rolled up rather than
+    // for the page's own unit, because the test page calls this from a URL
+    // that belongs to no unit at all -- and because the lock screen takes the
+    // lesson off the page but is not the thing that decides credit.
     if (!isUnitUnlocked(target, completedUnits(), teaching(), classPolicy)) return false;
     var passed = passedLessons(readMap());
     if (!unitFinished(curriculum.lessonsIn(target), passed, testRecords(), target)) return false;
@@ -398,9 +399,11 @@
 
   function markItem(id) {
     if (!id || required.indexOf(id) === -1) return;
-    // Nothing on a locked unit is ticked off. Without this the lesson quietly
-    // filled in behind the banner, and a unit that was never open to this
-    // class arrived at the roll-up already finished.
+    // Nothing on a locked unit is ticked off. The lock screen means a student
+    // is not normally holding an exercise to tick in the first place, but this
+    // is the guard that does not depend on the DOM: it still covers the moment
+    // between the page parsing and the screen painting, a control left over
+    // from an earlier paint, and anything driven from the console.
     if (unitLocked()) return;
     var map = readMap();
     var entry = map[path];
@@ -545,47 +548,134 @@
     (wrap || box).remove();
   }
 
-  // The banner that explains the lock. The lock itself is real now -- markItem
-  // refuses to tick anything, rollUpUnitNumber refuses to complete the unit,
-  // paintLockedControls turns the buttons off, and the events rule in
-  // firestore.rules refuses the writes that would count -- so this is the one
-  // place that says why, and it has to be on screen wherever that refusal is
-  // felt. The content itself stays readable: reading ahead was never the thing
-  // anybody wanted to stop.
-  function insertLockNotice() {
-    if (!curriculum || !unit) return;
-    if (isUnitUnlocked(unit, completedUnits(), teaching(), classPolicy)) {
-      // The role can resolve after the notice has already been painted, so
-      // this clears one that a teacher should never have seen.
-      removeNotice(document.querySelector('.unit-locked-notice'));
+  /* ---------- the lock screen ----------
+
+     What a locked unit shows instead of its lesson.
+
+     This used to be a banner sitting on top of a fully working lesson: the
+     notice said the exercises were off and would not count, and the lesson
+     itself stayed on the page to be read. That is no longer what a lock means
+     here. A locked unit shows the lock screen and nothing of the lesson --
+     not the overview, not the explanations, not the exercises.
+
+     The lesson body is taken out of the document rather than hidden. A rule
+     that only sets display:none is undone by a stylesheet the student
+     controls, and "you can read it if you turn CSS off" is not a lock, it is a
+     suggestion.
+
+     What tier of protection this actually is, said here as plainly as the
+     teacher-facing copy for Exercise solutions and Test retakes says it about
+     themselves: every lesson is a static file that ships with the site, and
+     this code runs in the student's own browser. It stops a student clicking
+     into a locked unit and reading it, which is what it is for. It does not
+     put the file out of reach of somebody who goes looking for it directly --
+     by URL, in the network tab, or in the site's source -- and nothing in this
+     file or on screen should be read as claiming that it does. It is the same
+     tier as every other gate in this codebase.
+
+     It is also client-side in time as well as in place: the lesson is in the
+     document from the moment the page is parsed until this runs on
+     DOMContentLoaded, so a locked lesson can flash on screen before it is
+     removed. Hiding the whole lesson column in CSS until this had decided
+     would trade that flash for a site that shows a learner with JavaScript off
+     nothing at all, on every lesson, which is the worse of the two.
+
+     The rest of the lock is unchanged and is where the enforcement lives:
+     markItem() refuses to tick, rollUpUnitNumber() refuses to complete the
+     unit, unit-test-page.js refuses to open or restore a paper, and the events
+     rule in firestore.rules refuses the writes that would count. */
+
+  // The parts of a lesson page that say which lesson this is rather than what
+  // it teaches. These stay: a student is allowed to know the name of the thing
+  // they cannot open yet, which is the same call the unit lists make.
+  var LESSON_FURNITURE = [
+    '.sidebar-toggle',
+    'nav[aria-label="Breadcrumb"]',
+    '.breadcrumb',
+    '.eyebrow',
+    '.lesson-title',
+    '.main-notice-wrap',
+    '.unit-lock-screen'
+  ].join(',');
+
+  // The lesson column. On a unit page there is none, and there is nothing to
+  // stow there anyway: a unit page is a list of lesson titles, not a lesson.
+  function lessonHost() {
+    return document.querySelector('.course-main') || document.querySelector('main');
+  }
+
+  function isFurniture(node) {
+    // Text and comments are whitespace between blocks; nothing is read from
+    // them and moving them about would only churn the document.
+    if (node.nodeType !== 1) return true;
+    return typeof node.matches === 'function' && node.matches(LESSON_FURNITURE);
+  }
+
+  /* The lesson body while its unit is shut.
+   *
+   * Held aside rather than destroyed, because a unit can open in the middle of
+   * a session -- a teacher ticks it, or a test result lands -- and rebuilding
+   * the lesson would mean reloading the page. A comment node stays where each
+   * removed node was, so what comes back comes back in its own place and in
+   * its own order rather than in a heap at the bottom.
+   *
+   * Detached nodes are not in the document: querySelector cannot find them,
+   * getElementById cannot find them, and an event fired inside one never
+   * reaches the listeners on document. That is the point. */
+  var stowed = null;
+
+  function stowLessonBody() {
+    if (stowed) return;
+    var host = lessonHost();
+    if (!host) return;
+    var items = [];
+    Array.prototype.slice.call(host.childNodes).forEach(function (node) {
+      if (isFurniture(node)) return;
+      var mark = document.createComment(' unit locked ');
+      host.replaceChild(mark, node);
+      items.push({ mark: mark, node: node });
+    });
+    stowed = { host: host, items: items };
+  }
+
+  function restoreLessonBody() {
+    if (!stowed) return;
+    stowed.items.forEach(function (item) {
+      if (item.mark.parentNode) item.mark.parentNode.replaceChild(item.node, item.mark);
+    });
+    stowed = null;
+  }
+
+  // Where the lock screen goes: in place of the lesson, if there was one to
+  // take away, and otherwise at the top of <main> the way every other notice
+  // on this page is placed.
+  function placeLockScreen(box) {
+    if (stowed && stowed.items.length && stowed.items[0].mark.parentNode) {
+      var first = stowed.items[0].mark;
+      first.parentNode.insertBefore(box, first);
       return;
     }
-    // Which sentence is true depends on why this unit is shut, and getting it
-    // wrong is not a cosmetic slip.
-    //
-    // Under the sequential chain the reason is "you have not finished the unit
-    // before this one", and the notice says so. Under a teacher's manual list
-    // that sentence can be flatly false: a student who finished Unit 3, passed
-    // its test, and then had Unit 4 closed by their teacher would be told to go
-    // and do work they have already done. Their progress record still shows
-    // every bit of it -- this lock only decides what is browseable, and never
-    // touches completedUnits, the mastery grid or the certificate -- so a
-    // notice implying otherwise would be the one thing on the page that lies
-    // about them.
-    var teacherSet = classPolicy && window.PyPathPolicy
-      && window.PyPathPolicy.normalizeMode(classPolicy.mode) === 'manual';
-    var variant = teacherSet ? 'teacher' : 'sequential';
+    prependNotice(box);
+  }
 
-    // The class policy is fetched after this first runs, so the notice is
-    // painted from the sequential fallback and then reconsidered once the real
-    // answer lands. Returning early on "a notice exists" left whichever
-    // sentence won the race on screen for good, which meant a student locked
-    // out by their teacher was reliably told to go and redo Unit 3. Re-render
-    // when the reason changes; leave it alone when it has not.
-    var showing = document.querySelector('.unit-locked-notice');
-    if (showing) {
-      if (showing.getAttribute('data-lock-variant') === variant) return;
-      removeNotice(showing);
+  function removeLockScreen(box) {
+    if (!box) return;
+    removeNotice(box);
+  }
+
+  /* What the student can do instead, as links.
+   *
+   * The same three the old notice offered, kept because they are the honest
+   * answer to "then what": their own progress, the previous unit's test when
+   * that is the only thing left, and the next lesson they have not finished. */
+  function wayOut(teacherSet) {
+    var progress = '<a class="btn btn-ghost route" href="/progress.html">See your progress</a>';
+
+    if (teacherSet) {
+      // Under a teacher's list there is no "previous unit" to point at: the
+      // student may well have finished it already. What is open to them is
+      // whatever their teacher ticked, so send them to the course itself.
+      return '<a class="btn btn-primary route" href="/curriculum.html">See what is open to you</a>' + progress;
     }
 
     var prev = unit - 1;
@@ -596,37 +686,100 @@
     var lessonsDone = unitComplete(curriculum.lessonsIn(prev), passed);
     var testDone = unitTestPassed(testRecords(), prev);
 
-    var box = document.createElement('div');
-    box.className = 'unit-locked-notice is-hard';
-    box.setAttribute('role', 'note');
-    // What this notice is claiming, so a later pass can tell whether the
-    // reason has changed under it.
-    box.setAttribute('data-lock-variant', variant);
+    var first = lessonsDone && !testDone
+      ? '<a class="btn btn-primary route" href="/unit-test.html?unit=' + prev + '">Take the Unit ' + prev + ' test</a>'
+      : next
+        ? '<a class="btn btn-primary route" href="' + next + '">Go to the next Unit ' + prev + ' lesson</a>'
+        : '<a class="btn btn-primary route" href="/units/unit-' + prev + '.html">Back to Unit ' + prev + '</a>';
+
+    return first + progress;
+  }
+
+  function lockScreenHTML(teacherSet, hidLesson) {
+    // Which sentence is true depends on why this unit is shut, and getting it
+    // wrong is not a cosmetic slip.
+    //
+    // Under the sequential chain the reason is "you have not finished the unit
+    // before this one", and the screen says so. Under a teacher's manual list
+    // that sentence can be flatly false: a student who finished Unit 3, passed
+    // its test, and then had Unit 4 closed by their teacher would be told to go
+    // and do work they have already done. Their progress record still shows
+    // every bit of it -- this lock only decides what is reachable, and never
+    // touches completedUnits, the mastery grid or the certificate -- so a
+    // screen implying otherwise would be the one thing on the page that lies
+    // about them.
+    //
+    // `hidLesson` is the difference between a lesson page, where the lesson has
+    // just been taken away, and a unit page, which is a list of titles and has
+    // nothing to take away.
+    var gone = hidLesson
+      ? 'The lesson is not shown while the unit is shut.'
+      : 'The lessons in it are not open yet.';
 
     if (teacherSet) {
-      box.innerHTML =
-        '<p class="unit-locked-notice__title">Unit ' + unit + ' is not open yet</p>' +
+      return '<p class="unit-lock-screen__title">Unit ' + unit + ' is not open yet</p>' +
         '<p>Your teacher chooses which units are open for your class, and this ' +
-        'one is not open at the moment. You can read the lesson, but the ' +
-        'exercises are turned off here and nothing on this page will count ' +
-        'until it opens. Nothing you have already finished is affected. Ask ' +
-        'your teacher if you think it should be open.</p>' +
-        '<p><a class="btn btn-primary route" href="/progress.html">See your progress</a></p>';
-    } else {
-      box.innerHTML =
-        '<p class="unit-locked-notice__title">Unit ' + unit + ' is not unlocked yet</p>' +
-        '<p>Finish every lesson in Unit ' + prev + ' and score ' + UNIT_TEST_PASS_MARK +
-        ' or higher on the Unit ' + prev + ' test to unlock it. You can keep ' +
-        'reading ahead, but the exercises here are turned off until then, and ' +
-        'your progress counts from Unit ' + prev + '.</p>' +
-        (lessonsDone && !testDone
-          ? '<p><a class="btn btn-primary route" href="/unit-test.html?unit=' + prev + '">Take the Unit ' + prev + ' test</a></p>'
-          : next
-            ? '<p><a class="btn btn-primary route" href="' + next + '">Go to the next Unit ' + prev + ' lesson</a></p>'
-            : '<p><a class="btn btn-primary route" href="/units/unit-' + prev + '.html">Back to Unit ' + prev + '</a></p>');
+        'one is not open at the moment. ' + gone + ' Nothing you have already ' +
+        'finished is affected, and nothing here has been taken off your record. ' +
+        'Ask your teacher if you think it should be open.</p>' +
+        '<p class="unit-lock-screen__actions">' + wayOut(true) + '</p>';
     }
 
-    prependNotice(box);
+    var prev = unit - 1;
+    return '<p class="unit-lock-screen__title">Unit ' + unit + ' is not unlocked yet</p>' +
+      '<p>Finish every lesson in Unit ' + prev + ' and score ' + UNIT_TEST_PASS_MARK +
+      ' or higher on the Unit ' + prev + ' test to unlock it. ' + gone +
+      ' Your progress counts from Unit ' + prev + '.</p>' +
+      '<p class="unit-lock-screen__actions">' + wayOut(false) + '</p>';
+  }
+
+  function paintLockScreen() {
+    if (!curriculum || !unit) return;
+    if (isUnitUnlocked(unit, completedUnits(), teaching(), classPolicy)) {
+      // Both of these undo a lock that should not have been applied. The role
+      // and the class policy both resolve after this file has already painted
+      // once, so a teacher opening their own curriculum, and a student whose
+      // teacher has this unit ticked, both start on the locked branch and
+      // arrive here a moment later. The lesson has to come back for them.
+      removeLockScreen(document.querySelector('.unit-lock-screen'));
+      restoreLessonBody();
+      return;
+    }
+
+    var teacherSet = classPolicy && window.PyPathPolicy
+      && window.PyPathPolicy.normalizeMode(classPolicy.mode) === 'manual';
+    var variant = teacherSet ? 'teacher' : 'sequential';
+
+    // Take the lesson away first, so that on the frame this paints there is no
+    // window in which both the lesson and the screen explaining its absence
+    // are on the page together.
+    if (isLessonPage()) stowLessonBody();
+    var hidLesson = !!(stowed && stowed.items.length);
+
+    // The class policy is fetched after this first runs, so the screen is
+    // painted from the sequential fallback and then reconsidered once the real
+    // answer lands. Returning early on "a screen exists" left whichever
+    // sentence won the race on screen for good, which meant a student locked
+    // out by their teacher was reliably told to go and redo Unit 3. Re-render
+    // when the reason changes; leave it alone when it has not.
+    var showing = document.querySelector('.unit-lock-screen');
+    if (showing) {
+      if (showing.getAttribute('data-lock-variant') === variant) return;
+      removeLockScreen(showing);
+    }
+
+    var box = document.createElement('div');
+    box.className = 'unit-lock-screen';
+    box.setAttribute('role', 'note');
+    // What this screen is claiming, so a later pass can tell whether the
+    // reason has changed under it.
+    box.setAttribute('data-lock-variant', variant);
+    // Whether a lesson was actually taken off this page, so a test can tell
+    // the lesson-page case from the unit-page one without reading the copy.
+    box.setAttribute('data-lesson-hidden', hidLesson ? 'true' : 'false');
+    box.innerHTML = lockScreenHTML(teacherSet, hidLesson);
+
+    placeLockScreen(box);
   }
 
   // The end of unit test links on the unit pages and the curriculum are real
@@ -852,8 +1005,9 @@
     }, true);
   }
 
-  // Says out loud what the missing lock notice already implies: this account is
-  // reading the course as a teacher, not working through it.
+  // Says out loud what the missing lock screen already implies: this account is
+  // reading the course as a teacher, not working through it. Every unit is
+  // open to a teacher, so nothing is ever taken off a page they are looking at.
   function paintTeacherBanner() {
     var existing = document.querySelector('.teacher-view-note');
     if (!teaching() || !(isLessonPage() || isUnitPage())) {
@@ -877,21 +1031,16 @@
 
   /* Turns off the controls on a locked unit.
    *
-   * The other half of what "hard lock" has to mean. markItem() already refuses
-   * to tick anything here, but letting a learner run every exercise on the
-   * page and then find that none of it counted is a worse experience than
-   * today's banner was: they would have done the work twice and been told
-   * nothing.
+   * Mostly a backstop now. On a locked lesson the whole lesson body has been
+   * taken out of the document, so there is normally no Run button left to
+   * disable. What this still covers is everything outside that: a control on a
+   * page with no lesson column to stow, and the window between the page being
+   * parsed and paintLockScreen() running, during which the buttons are on
+   * screen and a fast click would otherwise reach them.
    *
-   * Disabled rather than hidden, which is the opposite of the choice
-   * paintSolutionButtons makes above, and for the opposite reason. A hidden
-   * Show Solution button promises nothing, because nothing is coming. These
-   * buttons are coming back the moment the unit opens, and a lesson with its
-   * Run button silently removed reads as broken. The banner directly above
-   * says why they are off.
-   *
-   * The editors themselves are left alone: reading ahead is still allowed, and
-   * so is typing in the box. Only the actions that would count are stopped.
+   * Disabled rather than removed, for the controls it does reach: they are
+   * coming back the moment the unit opens, and the screen beside them says why
+   * they are off.
    */
   function paintLockedControls() {
     if (!isLessonPage()) return;
@@ -940,7 +1089,7 @@
 
   function repaint() {
     if (isLessonPage()) paintProgress();
-    insertLockNotice();
+    paintLockScreen();
     paintTeacherBanner();
     paintLessonList();
     paintTestEntries();
@@ -987,8 +1136,12 @@
   // The class's lock mode, arriving from class-policy.js one read after sign
   // in. No timeout guards this the way gate.js guards auth: a policy that never
   // arrives leaves classPolicy null, and null is already the sequential answer
-  // the page rendered with. Nothing has to be hidden while it is pending,
-  // because this lock prepends a notice and never removes the lesson.
+  // the page rendered with.
+  //
+  // Both directions are handled once it lands, which is why the lesson body is
+  // stowed rather than deleted: a unit the sequential fallback called open and
+  // the teacher's list calls shut loses its lesson here, and a unit the
+  // fallback called shut and the teacher has ticked gets it back.
   document.addEventListener('pypath:policy', function (e) {
     classPolicy = (e && e.detail && e.detail.policy) || null;
     repaint();

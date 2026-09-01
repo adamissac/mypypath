@@ -139,18 +139,18 @@ describe('an assigned unit is reachable where students are actually gated', () =
   });
 });
 
-describe('the lock notice says why the unit is shut', () => {
+describe('the lock screen says why the unit is shut', () => {
   const lp = fs.readFileSync('assets/js/lesson-progress.js', 'utf8');
 
   it('re-renders when the reason changes, instead of keeping the first guess', () => {
-    // The class policy arrives after the notice is first painted, so the
-    // sequential fallback always wins the race. Returning early on "a notice
+    // The class policy arrives after the screen is first painted, so the
+    // sequential fallback always wins the race. Returning early on "a screen
     // exists" left that sentence up for good, and a student locked out by
     // their teacher was reliably told to go and redo the unit before -- work
     // they may well have already done.
     expect(lp).toMatch(/data-lock-variant/);
     expect(lp).toMatch(/getAttribute\('data-lock-variant'\) === variant\) return;/);
-    expect(lp).toMatch(/removeNotice\(showing\)/);
+    expect(lp).toMatch(/removeLockScreen\(showing\)/);
   });
 
   it('still says the two different things it always meant to', () => {

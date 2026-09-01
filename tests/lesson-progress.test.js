@@ -395,7 +395,7 @@ describe('teacher view', () => {
       <li><a class="route" href="${LESSON}">1. What are modules</a></li>
     </ol></main>`;
 
-  const notice = () => document.querySelector('.unit-locked-notice');
+  const lockScreen = () => document.querySelector('.unit-lock-screen');
   const banner = () => document.querySelector('.teacher-view-note');
 
   function becomeTeacher() {
@@ -420,16 +420,16 @@ describe('teacher view', () => {
 
   it('still locks unit 5 for a learner who has not earned it', async () => {
     bootAt(LOCKED_UNIT, HTML);
-    expect(notice()).not.toBeNull();
+    expect(lockScreen()).not.toBeNull();
     expect(banner()).toBeNull();
   });
 
   it('opens the unit and says so once the role resolves', async () => {
     bootAt(LOCKED_UNIT, HTML);
-    expect(notice()).not.toBeNull();
+    expect(lockScreen()).not.toBeNull();
 
     becomeTeacher();
-    expect(notice()).toBeNull();
+    expect(lockScreen()).toBeNull();
     expect(banner()).not.toBeNull();
     expect(banner().textContent).toContain('Teacher view');
     expect(banner().querySelector('a').getAttribute('href')).toBe('/classroom.html');
@@ -438,7 +438,7 @@ describe('teacher view', () => {
   it('never paints the lock for a session already known to be a teacher', async () => {
     window.PyPathRoles.rememberRole('teacher');
     bootAt(LOCKED_UNIT, HTML);
-    expect(notice()).toBeNull();
+    expect(lockScreen()).toBeNull();
     expect(banner()).not.toBeNull();
   });
 
@@ -460,7 +460,7 @@ describe('teacher view', () => {
     window.PyPathRoles.rememberRole('student');
     document.dispatchEvent(new CustomEvent('pypath:role', { detail: { role: 'student' } }));
     expect(banner()).toBeNull();
-    expect(notice()).not.toBeNull();
+    expect(lockScreen()).not.toBeNull();
   });
 });
 
