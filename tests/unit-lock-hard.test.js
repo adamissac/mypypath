@@ -9,6 +9,17 @@ import fs from 'node:fs';
    all, so the write that made it count was accepted too. Between them a class's
    lock mode was a suggestion.
 
+   Then the lock became real but the lesson stayed on the page: a banner over
+   readable content, saying the exercises would not count. That is what these
+   tests were written against, and it is what has now changed. A locked unit
+   shows a lock screen and no lesson -- the lesson body is taken out of the
+   document, not hidden, because a student can turn a stylesheet off.
+
+   The gating tests below are unchanged in what they assert: nothing ticks,
+   nothing rolls up. Two of them reach the guard by a different route now,
+   because the control they used to click is no longer on the page to click --
+   which is the point.
+
    These tests are about the client half. The rules half is in
    tests/rules/unit-lock-rules.test.js, against the emulator, because a claim
    about what the server refuses is not worth making against a regex. */
@@ -27,31 +38,71 @@ function loadDeps() {
   });
 }
 
-/* A lesson page with one of each thing the lock has to reach: a reflection
-   that would tick the lesson off, and the two buttons that would do work. */
+/* A lesson page shaped like a real one, because what the lock screen keeps and
+   what it takes away is now a question about this structure. The sidebar and
+   the title say which lesson this is; .lesson-overview and .lesson-content are
+   the lesson itself. */
 const MARKUP = `
   <main>
-    <h1 class="lesson-title">Control flow</h1>
-    <div class="exercise-item">
-      <p class="exercise-prompt">Why?</p>
-      <textarea class="reflection-input" id="reflect-1"></textarea>
-      <button type="button" class="btn btn-primary btn-save submit-btn">Save</button>
-    </div>
-    <button type="button" class="btn-run">Run</button>
-    <button type="button" class="btn-check">Check</button>
+    <section class="section">
+      <div class="container layout-course">
+        <aside class="course-sidebar">
+          <nav><ul><li><a href="/units/unit-2/understanding-control-flow.html">1. Control flow</a></li></ul></nav>
+        </aside>
+        <section class="course-main">
+          <nav aria-label="Breadcrumb"><span class="current">Control flow</span></nav>
+          <div class="eyebrow">Unit 2 &bull; Lesson 1</div>
+          <h1 class="lesson-title">Control flow</h1>
+          <div class="lesson-overview">
+            <p class="lesson-summary">Loops repeat a block of code.</p>
+          </div>
+          <div class="lesson-content">
+            <div class="content-section">
+              <p class="lesson-prose">A while loop runs until its condition stops being true.</p>
+            </div>
+            <div class="exercise-item" data-exercise-id="ex-1">
+              <p class="exercise-prompt">Why?</p>
+              <textarea class="code-editor-small" data-editor-id="editor-1"></textarea>
+              <textarea class="reflection-input" id="reflect-1"></textarea>
+              <button type="button" class="btn btn-primary btn-save submit-btn">Save</button>
+            </div>
+            <button type="button" class="btn-run">Run</button>
+            <button type="button" class="btn-check">Check</button>
+          </div>
+          <div class="lesson-nav"><a href="/units/unit-2/next.html">Next</a></div>
+        </section>
+      </div>
+    </section>
   </main>`;
 
 function boot() {
   history.pushState({}, '', LESSON);
   document.body.innerHTML = MARKUP;
+  // The real page's Run button calls this; lesson-progress.js wraps it, and the
+  // wrapper is the DOM-free way into markItem().
+  window.runEditorCode = function () { return Promise.resolve(); };
+  delete window.checkExercise;
   new Function(SRC).call(window);
   document.dispatchEvent(new Event('DOMContentLoaded'));
 }
+
+// Everything inside the lesson column that is the lesson rather than its name.
+function lessonBody() {
+  return document.querySelectorAll('.lesson-overview, .lesson-content, .lesson-nav, .exercise-item, .reflection-input, .lesson-prose');
+}
+
+const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 // class-policy.js announces this once it has read the class. null is the
 // answer for a guest, for an offline page and for a learner in no class.
 function policyArrives(value) {
   document.dispatchEvent(new CustomEvent('pypath:policy', { detail: { policy: value } }));
+}
+
+// roles.js reads the role out of sessionStorage, so this is how a page comes up
+// as a teacher without a Firestore round trip.
+function signedInAsTeacher() {
+  sessionStorage.setItem(window.PyPathRoles.SESSION_KEY, 'teacher');
 }
 
 const LOCKED = { mode: 'manual', manualUnlocks: [], assignmentUnlocks: [] };
@@ -79,15 +130,33 @@ beforeEach(() => {
 });
 
 describe('a classroom student on a locked unit', () => {
-  it('cannot tick anything off the lesson', () => {
+  it('cannot tick anything off the lesson', async () => {
+    // The Save button this used to click is no longer on the page -- the lock
+    // screen took the lesson with it -- so the guard is reached the way
+    // anything left over would reach it: through the wrapped global the Run
+    // button calls. The assertion is the one it always was.
     boot();
     policyArrives(LOCKED);
-    document.querySelector('.reflection-input').value =
-      'A loop repeats a block of code until its condition stops being true.';
-    saveReflection();
+    await window.runEditorCode('editor-1');
+    await settle();
     // Not "ticked but not counted" -- nothing is recorded at all, because a
     // half-finished lesson on a unit that was never open is not a fact worth
     // storing either.
+    expect(lessonRecord()).toBe(null);
+  });
+
+  it('cannot submit an answer to it either', () => {
+    // Same guard, reached through the reflection path. The box is put back on
+    // the page by hand, standing in for any control that could still reach
+    // markItem() once the lesson column is gone.
+    boot();
+    policyArrives(LOCKED);
+    const box = document.createElement('textarea');
+    box.className = 'reflection-input';
+    box.id = 'reflect-1';
+    box.value = 'A loop repeats a block of code until its condition stops being true.';
+    document.body.appendChild(box);
+    box.dispatchEvent(new Event('change', { bubbles: true }));
     expect(lessonRecord()).toBe(null);
   });
 
@@ -100,22 +169,49 @@ describe('a classroom student on a locked unit', () => {
     });
   });
 
-  it('still gets the notice saying why', () => {
+  it('gets a lock screen saying why, and what they can do now', () => {
     boot();
     policyArrives(LOCKED);
-    const notice = document.querySelector('.unit-locked-notice');
-    expect(notice).not.toBe(null);
-    expect(notice.getAttribute('data-lock-variant')).toBe('teacher');
-    expect(notice.textContent).toMatch(/exercises are turned off/);
+    const screen = document.querySelector('.unit-lock-screen');
+    expect(screen).not.toBe(null);
+    expect(screen.getAttribute('data-lock-variant')).toBe('teacher');
+    expect(screen.getAttribute('data-lesson-hidden')).toBe('true');
+    expect(screen.textContent).toMatch(/Your teacher chooses which units are open/);
+    // The way out: what is open to them, and their own record.
+    const hrefs = Array.from(screen.querySelectorAll('a')).map((a) => a.getAttribute('href'));
+    expect(hrefs).toContain('/curriculum.html');
+    expect(hrefs).toContain('/progress.html');
   });
 
-  it('can still read the lesson', () => {
-    // Reading ahead was never the thing anybody wanted to stop, and taking the
-    // page away would be a different feature.
+  it('no longer says the lesson is readable, because it is not', () => {
     boot();
     policyArrives(LOCKED);
-    expect(document.querySelector('.reflection-input')).not.toBe(null);
-    expect(document.querySelector('.exercise-prompt').textContent).toBe('Why?');
+    const screen = document.querySelector('.unit-lock-screen');
+    expect(screen.textContent).not.toMatch(/read the lesson/i);
+    expect(screen.textContent).not.toMatch(/exercises are turned off/);
+    expect(SRC).not.toMatch(/exercises are turned off/);
+  });
+
+  it('cannot read the lesson: it is absent from the document, not hidden', () => {
+    // Absent rather than styled away, because a student who turns CSS off has
+    // undone anything weaker than this.
+    boot();
+    policyArrives(LOCKED);
+    expect(lessonBody().length).toBe(0);
+    expect(document.querySelector('.exercise-prompt')).toBe(null);
+    expect(document.body.textContent).not.toMatch(/while loop runs until/);
+    expect(document.body.textContent).not.toMatch(/Loops repeat a block/);
+    expect(document.body.innerHTML).not.toMatch(/data-exercise-id/);
+  });
+
+  it('still knows which lesson and unit it is', () => {
+    // The title is not the content. A student is allowed to know the name of
+    // the thing they cannot open yet -- the unit lists say as much already.
+    boot();
+    policyArrives(LOCKED);
+    expect(document.querySelector('.lesson-title').textContent).toBe('Control flow');
+    expect(document.querySelector('nav[aria-label="Breadcrumb"]')).not.toBe(null);
+    expect(document.querySelector('.course-sidebar a')).not.toBe(null);
   });
 
   it('does not complete the unit even if the roll-up is asked directly', () => {
@@ -144,16 +240,33 @@ describe('a classroom student whose teacher has opened the unit', () => {
     // assign is reachable whatever the mode says.
     boot();
     policyArrives(OPEN_BY_ASSIGNMENT);
+    expect(document.querySelector('.lesson-content')).not.toBe(null);
+    expect(runButtons().length).toBeGreaterThan(0);
     runButtons().forEach((btn) => expect(btn.disabled).toBe(false));
   });
 
-  it('gets its buttons back when the unit opens mid-session', () => {
+  it('gets the whole lesson back when the unit opens mid-session', () => {
+    // Stowed rather than destroyed, so a teacher ticking the unit while the
+    // student has the page open does not need a reload to make it work.
     boot();
     policyArrives(LOCKED);
-    expect(document.querySelector('.btn-run').disabled).toBe(true);
+    expect(document.querySelector('.btn-run')).toBe(null);
     policyArrives(OPEN_BY_MODE);
+    expect(document.querySelector('.unit-lock-screen')).toBe(null);
+    expect(document.querySelector('.lesson-content')).not.toBe(null);
+    expect(document.querySelector('.exercise-prompt').textContent).toBe('Why?');
     expect(document.querySelector('.btn-run').disabled).toBe(false);
     expect(document.querySelector('.btn-run').hasAttribute('title')).toBe(false);
+  });
+
+  it('puts it back in its own place, not in a heap at the bottom', () => {
+    boot();
+    policyArrives(LOCKED);
+    policyArrives(OPEN_BY_MODE);
+    const kids = Array.from(document.querySelector('.course-main').children)
+      .map((el) => el.className.split(' ')[0]);
+    expect(kids).toEqual(['', 'eyebrow', 'lesson-title', 'lesson-progress-chip',
+      'lesson-overview', 'lesson-content', 'lesson-nav']);
   });
 });
 
@@ -164,8 +277,8 @@ describe('a learner in no class is untouched', () => {
     // chain that existed before any of this, not by a class.
     boot();
     policyArrives(null);
-    expect(document.querySelector('.btn-run').disabled).toBe(true);
-    expect(document.querySelector('.unit-locked-notice').getAttribute('data-lock-variant'))
+    expect(document.querySelector('.btn-run')).toBe(null);
+    expect(document.querySelector('.unit-lock-screen').getAttribute('data-lock-variant'))
       .toBe('sequential');
   });
 
@@ -174,11 +287,66 @@ describe('a learner in no class is untouched', () => {
     boot();
     policyArrives(null);
     expect(document.querySelector('.btn-run').disabled).toBe(false);
-    expect(document.querySelector('.unit-locked-notice')).toBe(null);
+    expect(document.querySelector('.unit-lock-screen')).toBe(null);
     document.querySelector('.reflection-input').value =
       'A loop repeats a block of code until its condition stops being true.';
     saveReflection();
     expect(lessonRecord().done).toContain('reflect-1');
+  });
+});
+
+describe('a teacher previewing their own class\'s curriculum', () => {
+  it('sees the whole lesson on a unit that is shut to their students', () => {
+    // Locking a teacher out of the curriculum they are choosing units from
+    // would make the setting unusable by the person who sets it.
+    signedInAsTeacher();
+    boot();
+    policyArrives(LOCKED);
+    expect(document.querySelector('.unit-lock-screen')).toBe(null);
+    expect(document.querySelector('.lesson-content')).not.toBe(null);
+    expect(document.querySelector('.exercise-prompt').textContent).toBe('Why?');
+    expect(document.querySelector('.teacher-view-note')).not.toBe(null);
+  });
+
+  it('gets the lesson back if the role resolves after the page has locked it', () => {
+    // role-nav.js answers after this file has already painted once, so the
+    // first paint of a teacher's page is the student's answer.
+    boot();
+    policyArrives(LOCKED);
+    expect(document.querySelector('.lesson-content')).toBe(null);
+    signedInAsTeacher();
+    document.dispatchEvent(new Event('pypath:role'));
+    expect(document.querySelector('.unit-lock-screen')).toBe(null);
+    expect(document.querySelector('.lesson-content')).not.toBe(null);
+  });
+});
+
+describe('what the lock screen does not claim', () => {
+  it('says in the code what tier of protection this is', () => {
+    // The same disclosure maxTestAttempts and showSolutions make about
+    // themselves, in the same voice, because it is the same kind of gate.
+    const note = SRC.slice(SRC.indexOf('---------- the lock screen ----------'),
+      SRC.indexOf('var LESSON_FURNITURE'));
+    expect(note).toMatch(/static file that ships with the site/);
+    expect(note).toMatch(/does not\s+\*?\s*put the file out of reach/);
+    expect(note).toMatch(/same\s+tier as every other gate/);
+  });
+
+  it('tells the teacher the same thing where they choose the setting', () => {
+    const html = fs.readFileSync('classroom.html', 'utf8');
+    const core = fs.readFileSync('assets/js/classroom-core.js', 'utf8');
+    const section = html.slice(html.indexOf('<section class="cr-access"'),
+      html.indexOf('<section class="cr-solutions"'));
+    expect(section.replace(/\s+/g, ' ')).toMatch(/The lesson is not shown to them/);
+    expect(section.replace(/\s+/g, ' ')).toMatch(/does not put the material beyond reach/);
+    expect(core).toMatch(/the lesson itself is not shown/);
+  });
+
+  it('never says it to the student, who is only told they cannot open it', () => {
+    boot();
+    policyArrives(LOCKED);
+    const screen = document.querySelector('.unit-lock-screen');
+    expect(screen.textContent).not.toMatch(/browser|source|static|cryptograph/i);
   });
 });
 
