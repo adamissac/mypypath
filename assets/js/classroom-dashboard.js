@@ -1191,6 +1191,114 @@ function paintTeachers() {
   }
 }
 
+/* ------------------------------------------------------------------ quiz */
+
+/* Building a quiz from the bank.
+ *
+ * No authoring UI: a teacher picks from questions already written for that
+ * unit. There are fifty authored MCQs per unit for all ten units, plus the
+ * newer kinds where they exist, and that is a real feature on day one with no
+ * content work and no new storage. The case is argued at length in
+ * docs/superpowers/specs/2026-08-31-teacher-assignable-quizzes-design.md;
+ * authoring is a coherent second feature, not a smaller version of this one.
+ */
+let quizBank = [];
+
+function quizUnit() {
+  const select = $('[data-cr-quiz-unit]');
+  const value = select ? Number(select.value) : 0;
+  return Number.isInteger(value) && value >= 1 ? value : 0;
+}
+
+function chosenQuestionIds() {
+  return $$('[data-cr-quiz-q]:checked').map((b) => b.value);
+}
+
+function readQuizDraft() {
+  const unit = quizUnit();
+  if (!unit) return null;
+  const questionIds = chosenQuestionIds();
+  // No questions ticked reads as "no quiz", not as an error: a teacher who
+  // opened the unit picker to look and then assigned units instead should not
+  // be stopped by a fieldset they abandoned.
+  if (!questionIds.length) return null;
+  return {
+    unit,
+    questionIds,
+    passMark: Number(($('[data-cr-quiz-pass]') || {}).value) || 70,
+    attempts: Number(($('[data-cr-quiz-attempts]') || {}).value) || 0,
+  };
+}
+
+function paintQuizCount() {
+  const node = $('[data-cr-quiz-count]');
+  if (!node) return;
+  const n = chosenQuestionIds().length;
+  const max = (window.PyPathQuizBank && window.PyPathQuizBank.MAX_QUESTIONS) || 25;
+  node.textContent = n === 0
+    ? 'No questions picked yet, so no quiz will be set.'
+    : n + (n === 1 ? ' question picked.' : ' questions picked.')
+      + (n > max ? ' That is more than the ' + max + ' a quiz can hold.' : '');
+  node.classList.toggle('is-over', n > max);
+}
+
+function resetQuizPicker() {
+  const select = $('[data-cr-quiz-unit]');
+  if (select) select.value = '';
+  const list = $('[data-cr-quiz-list]');
+  if (list) list.innerHTML = '';
+  show($('[data-cr-quiz-body]'), false);
+  paintQuizCount();
+}
+
+async function paintQuizPicker() {
+  const BANK = window.PyPathQuizBank;
+  const list = $('[data-cr-quiz-list]');
+  const body = $('[data-cr-quiz-body]');
+  if (!BANK || !list) return;
+
+  const unit = quizUnit();
+  show(body, unit > 0);
+  if (!unit) { list.innerHTML = ''; paintQuizCount(); return; }
+
+  list.innerHTML = '';
+  list.appendChild(el('p', 'cr-empty-note', 'Loading the questions for that unit…'));
+  quizBank = await BANK.load(unit);
+  list.innerHTML = '';
+
+  const kinds = $('[data-cr-quiz-kinds]');
+  if (kinds) {
+    // Said up front rather than left to be discovered by scrolling: only some
+    // units have matching and ordering questions authored yet.
+    kinds.textContent = quizBank.length
+      ? 'Unit ' + unit + ' offers ' + BANK.kindsIn(quizBank)
+        .map((k) => BANK.KIND_LABEL[k].toLowerCase()).join(', ') + '.'
+      : 'No questions are authored for Unit ' + unit + ' yet.';
+  }
+
+  quizBank.forEach((question) => {
+    const row = el('label', 'cr-quiz__row');
+    const box = document.createElement('input');
+    box.type = 'checkbox';
+    box.value = question.id;
+    box.setAttribute('data-cr-quiz-q', '');
+    row.appendChild(box);
+
+    const text = el('span', 'cr-quiz__text');
+    const kind = window.PyPathQuestions
+      ? window.PyPathQuestions.kindOfQuestion(question) : 'mcq';
+    text.appendChild(el('span', 'cr-quiz__kind', BANK.KIND_LABEL[kind]));
+    // First line only: a prompt with a code block in it would otherwise make
+    // one row as tall as the picker.
+    text.appendChild(el('span', 'cr-quiz__prompt',
+      String(question.prompt || '').split('\n')[0]));
+    row.appendChild(text);
+    list.appendChild(row);
+  });
+
+  paintQuizCount();
+}
+
 function openStudentByUid(uid) {
   const student = students.filter((s) => s.uid === uid)[0];
   if (student) openStudent(student, null);
@@ -1406,12 +1514,14 @@ function wire() {
 
       const units = $$('[data-cr-assign-unit]:checked').map((b) => Number(b.value));
       const lessonPaths = $$('[data-cr-assign-lesson]:checked').map((b) => b.value);
+      const quiz = readQuizDraft();
 
       try {
-        await createAssignment(activeClassId, { title, dueAt: due, units, lessonPaths });
+        await createAssignment(activeClassId, { title, dueAt: due, units, lessonPaths, quiz });
         assignments = await readAssignments(activeClassId).catch(() => []);
         assignForm.reset();
         $$('[data-cr-assign-unit], [data-cr-assign-lesson]').forEach((b) => { b.checked = false; });
+        resetQuizPicker();
         const panel = assignForm.closest('details');
         if (panel) panel.open = false;
         paintAssignments();
@@ -1424,6 +1534,20 @@ function wire() {
       }
     });
   }
+
+  const quizUnitSelect = $('[data-cr-quiz-unit]');
+  if (quizUnitSelect) {
+    const total = (CURRICULUM && CURRICULUM.TOTAL_UNITS) || 10;
+    for (let n = 1; n <= total; n += 1) {
+      const option = el('option', null, 'Unit ' + n);
+      option.value = String(n);
+      quizUnitSelect.appendChild(option);
+    }
+    quizUnitSelect.addEventListener('change', () => { paintQuizPicker(); });
+  }
+
+  const quizList = $('[data-cr-quiz-list]');
+  if (quizList) quizList.addEventListener('change', paintQuizCount);
 
   $$('input[name="cr-lock-mode"]').forEach((radio) => {
     radio.addEventListener('change', () => saveAccess());

@@ -16,7 +16,11 @@ beforeEach(() => {
 const LESSON = '/units/unit-1/first-program.html';
 
 describe('the event vocabulary', () => {
-  it('defines exactly the nine documented types', () => {
+  it('defines exactly the ten documented types', () => {
+    /* quiz.submitted joined the vocabulary with teacher-assignable quizzes.
+       Deliberately its own type rather than a flavour of test.submitted: only
+       the end-of-unit test unlocks a unit, and one type carrying both would
+       make every reader disambiguate them. */
     expect(E.TYPES.sort()).toEqual(
       [
         'answer.submitted',
@@ -25,6 +29,7 @@ describe('the event vocabulary', () => {
         'code.run',
         'code.tests_passed',
         'lesson.opened',
+        'quiz.submitted',
         'test.started',
         'test.submitted',
         'unit.completed'

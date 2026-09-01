@@ -34,6 +34,7 @@
     <script defer src="/assets/js/curriculum.js"></script>
     <script defer src="/assets/js/classroom-policy.js"></script>
     <script defer src="/assets/js/question-types.js"></script>
+    <script defer src="/assets/js/quiz-bank.js"></script>
     <script defer src="/assets/js/question-render.js"></script>
     <script defer src="/assets/js/reflection-check.js"></script>
     <script defer src="/assets/js/concept-check.js"></script>
@@ -395,6 +396,59 @@
             <select id="cr-assign-lesson-unit" data-cr-assign-lesson-unit></select>
             </p>
             <div class="cr-assign__lessons" data-cr-assign-lessons></div>
+            </fieldset>
+
+            <!-- A quiz. Third way to require something, alongside units and
+                 lessons, rather than a parallel feature with its own due date:
+                 the assignment model already owns dueAt, lateness and the
+                 widen-unlocks-first ordering, and a second copy of those would
+                 eventually disagree with this one about what "late" means. -->
+            <fieldset class="cr-assign__targets cr-quiz">
+            <legend>Or a quiz</legend>
+            <p class="cr-field">
+            <label for="cr-quiz-unit">Questions about</label>
+            <select id="cr-quiz-unit" data-cr-quiz-unit>
+            <option value="">No quiz</option>
+            </select>
+            </p>
+
+            <div class="cr-quiz__body" data-cr-quiz-body hidden>
+            <p class="cr-quiz__kinds" data-cr-quiz-kinds></p>
+            <div class="cr-quiz__list" data-cr-quiz-list role="group"
+            aria-label="Questions to include"></div>
+            <p class="cr-quiz__count" data-cr-quiz-count role="status" aria-live="polite"></p>
+
+            <p class="cr-field cr-quiz__setting">
+            <label for="cr-quiz-pass">Mark to reach</label>
+            <select id="cr-quiz-pass" data-cr-quiz-pass>
+            <option value="50">50 out of 100</option>
+            <option value="60">60 out of 100</option>
+            <option value="70" selected>70 out of 100</option>
+            <option value="80">80 out of 100</option>
+            </select>
+            </p>
+
+            <p class="cr-field cr-quiz__setting">
+            <label for="cr-quiz-attempts">Attempts allowed</label>
+            <!-- Set here rather than inherited from Test retakes on purpose.
+                 That setting's own description says "end-of-unit test" in as
+                 many words, so quietly extending it to quizzes would make
+                 copy a teacher has already read untrue. -->
+            <select id="cr-quiz-attempts" data-cr-quiz-attempts>
+            <option value="0">Unlimited</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            </select>
+            </p>
+
+            <p class="cr-assign__note">
+            Marked in the student's browser as soon as they submit, and
+            recorded like any other activity. It tells you they sat it and what
+            they scored; it is not a proctored result, and a quiz never unlocks
+            a unit &mdash; only the end-of-unit test does that.
+            </p>
+            </div>
             </fieldset>
 
             <p class="cr-assign__note">
