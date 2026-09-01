@@ -53,6 +53,7 @@
     <script type="module" src="/assets/js/activity.js"></script>
     <script type="module" src="/assets/js/auth-ui.js"></script>
     <script defer src="/assets/js/classroom-core.js"></script>
+    <script defer src="/assets/js/xlsx-writer.js"></script>
     <script defer src="/assets/js/classroom-export.js"></script>
     <script type="module" src="/assets/js/classroom-page.js"></script>
     <script defer src="/assets/js/snapshots.js"></script>
@@ -595,9 +596,15 @@
               </summary>
               <div class="cr-fold__body">
                 <p class="cr-empty-note">A spreadsheet of the grid above, or a
-                   week of it written out to paste into an email. Both are built
-                   in your browser and uploaded nowhere.</p>
+                   week of it written out to paste into an email. All of them are
+                   built in your browser and uploaded nowhere.</p>
+                <p class="cr-empty-note">Excel gives you three tabs in one file
+                   &mdash; the grid, one row per assignment, and the roster with
+                   certificates &mdash; with the header row frozen. CSV is one
+                   flat table, and is the one to pick if something else has to
+                   read the file.</p>
                 <p class="cr-fold__actions">
+                  <button type="button" class="btn btn-small" data-cr-export-xlsx>Export Excel</button>
                   <button type="button" class="btn btn-ghost btn-small" data-cr-export>Export CSV</button>
                   <button type="button" class="btn btn-ghost btn-small" data-cr-digest>Weekly summary</button>
                 </p>
