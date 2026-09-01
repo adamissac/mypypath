@@ -844,7 +844,7 @@
     // client or a bad merge left behind must not show a learner a score of 0
     // they never sat for.
     if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
-      return { text: 'Not attempted yet.', passed: false, attempted: false };
+      return { text: 'Not attempted yet.', passed: false, attempted: false, best: null };
     }
 
     var best = Number(entry.best);
@@ -852,15 +852,73 @@
       return {
         text: isFinite(best) ? 'Passed, with a best score of ' + best + ' out of 100.' : 'Passed.',
         passed: true,
-        attempted: true
+        attempted: true,
+        // The number as a number, for a caller that wants to draw it rather
+        // than print it. The sentence above stays the source of the wording.
+        best: isFinite(best) ? best : null
       };
     }
     return {
       text: 'Best score ' + (isFinite(best) ? best : 0) + ' out of 100. You need ' +
         UNIT_TEST_PASS_MARK + ' to pass.',
       passed: false,
-      attempted: true
+      attempted: true,
+      best: isFinite(best) ? best : 0
     };
+  }
+
+  /* The score as a bar.
+   *
+   * The pass mark is drawn ON the track rather than left in the sentence.
+   * "Best score 42 out of 100. You need 70 to pass." asks a learner to hold
+   * two numbers and compare them; a notch at 70 with the fill stopping short
+   * of it is the same fact in one glance.
+   *
+   * The sentence stays, in a visually-hidden span. The bar is a picture of it,
+   * and a picture is not what a screen reader should be handed.
+   */
+  function paintScoreMeter(node, state) {
+    node.textContent = '';
+    var wrap = document.createElement('span');
+    wrap.className = 'ut-score';
+
+    var line = document.createElement('span');
+    line.className = 'ut-score__line';
+    var value = document.createElement('span');
+    value.className = 'ut-score__value';
+    value.textContent = state.best + ' / 100';
+    var note = document.createElement('span');
+    note.className = 'ut-score__note';
+    note.textContent = state.passed
+      ? 'Passed. A worse retake never takes this away.'
+      : UNIT_TEST_PASS_MARK + ' needed to pass.';
+    line.appendChild(value);
+    line.appendChild(note);
+    wrap.appendChild(line);
+
+    var track = document.createElement('span');
+    track.className = 'ut-score__track';
+    var fill = document.createElement('span');
+    fill.className = 'ut-score__fill' + (state.passed ? ' is-pass' : '');
+    fill.style.width = Math.max(0, Math.min(100, state.best)) + '%';
+    track.appendChild(fill);
+
+    // Not drawn once it is behind them: a pass mark marked on a bar that has
+    // already cleared it is a line pointing at nothing.
+    if (!state.passed) {
+      var mark = document.createElement('span');
+      mark.className = 'ut-score__mark';
+      mark.style.left = UNIT_TEST_PASS_MARK + '%';
+      track.appendChild(mark);
+    }
+    wrap.appendChild(track);
+
+    var sr = document.createElement('span');
+    sr.className = 'visually-hidden';
+    sr.textContent = state.text;
+    wrap.appendChild(sr);
+
+    node.appendChild(wrap);
   }
 
   function paintTestEntries() {
@@ -873,7 +931,14 @@
       if (!Number.isInteger(n) || n < 1) return;
 
       var state = testStatusLine(records, n);
-      node.textContent = state.text;
+      /* Only where the markup asks for it. The same status line appears on ten
+         unit pages and on the curriculum, where it is one sentence in a list
+         and a bar would be noise. */
+      if (node.hasAttribute('data-unit-test-meter') && state.attempted) {
+        paintScoreMeter(node, state);
+      } else {
+        node.textContent = state.text;
+      }
       node.classList.toggle('is-pass', state.passed);
       node.classList.toggle('is-attempted', state.attempted);
       node.hidden = false;

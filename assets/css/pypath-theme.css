@@ -1553,13 +1553,141 @@ main .container,
 .lesson-finish h2 { margin: 0 0 6px; }
 .lesson-finish p { margin: 0 auto 16px; max-width: 52ch; }
 
-/* The same card, used at the foot of the last lesson in every unit to hand the
-   learner the end of unit test instead of letting the nav skip past it. Warmer
-   than the certificate variant so two stacked cards on the capstone lesson do
-   not read as one block. */
+/* ------------------------------------------------- end of unit: the summit
+   The card at the foot of the last lesson in every unit, handing the learner
+   the end of unit test instead of letting the nav skip past it.
+
+   It used to be a wash of yellow -- rgba(250, 204, 21, 0.10) fading to nothing
+   -- picked only so that two stacked cards on the capstone lesson would not
+   read as one block. It solved that and nothing else: muddy against a
+   sky-blue site, and flat at the one moment in a unit that has earned some
+   ceremony. Two stacked cards still read as two, because this one is now a
+   dark panel and the certificate card above it is not. */
 .lesson-finish--test {
-  background: linear-gradient(180deg, rgba(250, 204, 21, 0.10), transparent);
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+  padding: clamp(1.5rem, 3.5vw, 2.25rem);
+  border: 0;
+  border-radius: 18px;
+  color: #eaf6fd;
+  background:
+    /* A summit ridge, low and quiet. PyPath is a path up to a summit -- the
+       logo, the trail, the 3D peak on the home page all say so -- and the end
+       of a unit is the one place in the course where that image is literally
+       true. Kept to the lower band so it never crosses the content, and drawn
+       in CSS rather than authored into ten lesson files. It is decoration:
+       everything it suggests, the words already say. */
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" preserveAspectRatio="none"><path d="M0 300 L180 170 L260 215 L420 90 L520 175 L640 120 L760 220 L900 140 L1010 205 L1200 95 L1200 300 Z" fill="rgba(125,211,252,0.05)" stroke="rgba(125,211,252,0.20)" stroke-width="2"/></svg>')
+      right bottom / 100% 42% no-repeat,
+    radial-gradient(120% 140% at 12% 0%, rgba(56, 189, 248, 0.28), transparent 58%),
+    linear-gradient(135deg, #0c4566 0%, #082f47 100%);
+  background-color: #0c3d5c;
+  box-shadow: 0 14px 40px rgba(9, 51, 76, 0.28);
 }
+
+/* The badge: a summit flag, which is the whole idea of the card in one shape.
+   Sized to sit level with the eyebrow and title beside it. */
+.lesson-finish__badge {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  flex: none;
+  border-radius: 50%;
+  color: #0c4566;
+  background: linear-gradient(140deg, #bae6fd, #7dd3fc);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+}
+.lesson-finish__badge svg { width: 1.5rem; height: 1.5rem; }
+
+.lesson-finish__head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+
+.lesson-finish--test h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.35rem, 3vw, 1.9rem);
+  line-height: 1.15;
+}
+
+.lesson-finish--test p {
+  margin: 0;
+  max-width: 62ch;
+  color: rgba(234, 246, 253, 0.82);
+}
+/* The paper, as four facts rather than one sentence of arithmetic.
+   "ten multiple choice questions worth 7 points each and one free response
+   problem worth 30 -- 100 points in total, score 70 or more" is a table
+   somebody wrote out longhand, and it reads like one. */
+.lesson-finish__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: 0.6rem;
+  list-style: none;
+  margin: 1.25rem 0 0;
+  padding: 0;
+}
+
+.lesson-finish__stat {
+  padding: 0.7rem 0.85rem;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(186, 230, 253, 0.16);
+}
+
+.lesson-finish__stat b {
+  display: block;
+  font-family: var(--pp-display, inherit);
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #fff;
+}
+
+.lesson-finish__stat span {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: rgba(186, 230, 253, 0.78);
+}
+
+/* The one that is the actual bar to clear, marked rather than left to be
+   spotted among the other three. */
+.lesson-finish__stat--pass {
+  background: rgba(125, 211, 252, 0.16);
+  border-color: rgba(125, 211, 252, 0.42);
+}
+
+@media (max-width: 560px) {
+  /* The badge gives up a little room before the title does: at 390px the
+     heading is the thing that has to keep its line length. */
+  .lesson-finish__head { gap: 0.8rem; }
+  .lesson-finish__badge { width: 2.5rem; height: 2.5rem; }
+  .lesson-finish__badge svg { width: 1.25rem; height: 1.25rem; }
+}
+
+/* The call to action, on a panel that is now darker than the button was
+   designed for. The site's primary blue on deep ink is two dark surfaces
+   touching; white on ink is the contrast this panel can actually carry. */
+.lesson-finish--test .btn-primary {
+  margin-top: 1.4rem;
+  background: #fff;
+  border-color: #fff;
+  color: #0c4566;
+}
+
+.lesson-finish--test .btn-primary:hover {
+  background: #e0f2fe;
+  border-color: #e0f2fe;
+  color: #0a3a55;
+}
+
 .lesson-finish__eyebrow {
   margin: 0 0 4px;
   font-size: 0.78rem;
@@ -1568,6 +1696,74 @@ main .container,
   text-transform: uppercase;
   color: var(--muted, #5b7c92);
 }
+
+.lesson-finish--test .lesson-finish__eyebrow { color: #7dd3fc; }
+
 /* The score line only appears once a paper has been sat, so it carries its own
    gap rather than the 16px every other paragraph in the card gets. */
-.lesson-finish--test .unit-test-status { margin: 0 auto 16px; }
+/* The score, once a paper has been sat.
+   It used to be a grey sentence under a grey paragraph -- the single most
+   useful thing on the card for a returning learner, styled as an aside. */
+.lesson-finish--test .unit-test-status {
+  display: block;
+  margin: 1.35rem 0 0;
+  color: rgba(234, 246, 253, 0.9);
+  font-size: 0.95rem;
+}
+
+.lesson-finish--test .unit-test-status.is-pass { color: #86efac; }
+
+.ut-score { display: block; }
+
+.ut-score__line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  max-width: 30rem;
+  margin-bottom: 0.5rem;
+}
+
+.ut-score__value {
+  font-family: var(--pp-display, inherit);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.ut-score__note { font-size: 0.9rem; color: rgba(186, 230, 253, 0.8); }
+
+.ut-score__track {
+  /* display:block matters. These are spans so the whole meter can live inside
+     the <p> the markup already had, and an inline span ignores height --
+     the track rendered as a 2px sliver until this line existed. */
+  display: block;
+  position: relative;
+  height: 10px;
+  max-width: 30rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  /* Not hidden: the pass-mark notch overhangs the track by 3px at each end on
+     purpose, so it reads as a line across it rather than a gap in it. */
+  overflow: visible;
+}
+
+.ut-score__fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #38bdf8, #7dd3fc);
+}
+
+.ut-score__fill.is-pass { background: linear-gradient(90deg, #34d399, #86efac); }
+
+/* The pass mark, drawn on the track. A notch rather than a colour change, so
+   it survives greyscale and a printout like every other mark on this site. */
+.ut-score__mark {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: #eaf6fd;
+  border-radius: 2px;
+}

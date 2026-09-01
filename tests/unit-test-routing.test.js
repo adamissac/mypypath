@@ -38,6 +38,21 @@ describe('end of unit test routing', () => {
       expect(html).toContain(`data-unit-test-status="${n}"`);
     });
 
+    it(`unit ${n} states the paper as facts, not a sentence of arithmetic`, () => {
+      const html = read(n);
+      expect(html).toContain('lesson-finish__stats');
+      // Authored, not injected, so the page still says what the test is with
+      // JavaScript off -- the same reason the test links are real markup.
+      expect(html).toContain('<b>100</b><span>points in total</span>');
+      expect(html).toContain('lesson-finish__stat--pass"><b>70</b><span>to pass</span>');
+    });
+
+    it(`unit ${n} asks for the score bar rather than the plain sentence`, () => {
+      // The unit pages and the curriculum share this status line and keep the
+      // sentence; only the end-of-unit card opts into the meter.
+      expect(read(n)).toContain('data-unit-test-meter');
+    });
+
     it(`unit ${n} does not let the foot nav outrank the test`, () => {
       const nav = read(n).match(/<div class="lesson-nav">[\s\S]*?<\/div>/);
       expect(nav).not.toBeNull();
@@ -45,8 +60,20 @@ describe('end of unit test routing', () => {
     });
 
     it(`unit ${n} points its test card at no other unit`, () => {
-      const card = read(n).match(/<div class="lesson-finish lesson-finish--test">[\s\S]*?<\/div>/);
-      const links = [...card[0].matchAll(/unit-test\.html\?unit=(\d+)/g)].map((m) => Number(m[1]));
+      /* Sliced to the foot nav rather than to the first </div>.
+         The card holds nested elements now -- a head block wrapping the badge,
+         eyebrow and title -- so a non-greedy match to the first closing tag
+         stops before the link it is supposed to be checking. That failure mode
+         is the dangerous one: it finds no links at all, and "every link points
+         at unit n" is vacuously true of an empty list. The length assertion
+         below is what caught it, and it stays for that reason. */
+      const html = read(n);
+      const start = html.indexOf('<div class="lesson-finish lesson-finish--test">');
+      const end = html.indexOf('<div class="lesson-nav">', start);
+      expect(start, 'card not found').toBeGreaterThan(-1);
+      expect(end, 'foot nav not found after the card').toBeGreaterThan(start);
+      const links = [...html.slice(start, end).matchAll(/unit-test\.html\?unit=(\d+)/g)]
+        .map((m) => Number(m[1]));
       expect(links).not.toHaveLength(0);
       expect(links.every((u) => u === n)).toBe(true);
     });
