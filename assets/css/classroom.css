@@ -1764,3 +1764,58 @@
   .cr-roster__h:nth-child(7), .cr-roster__c:nth-child(7) { display: none; }
   .cr-find select { min-width: 0; }
 }
+
+
+/* ------------------------------------------------------------- quiz picker
+   Inside the existing "Set new work" form, not a section of its own: a quiz is
+   a third kind of target alongside units and lessons, and putting it anywhere
+   else would imply it has its own due date. */
+
+.cr-quiz__kinds {
+  margin: 0 0 0.6rem;
+  font-size: 0.85rem;
+  color: var(--cr-muted, #5b6b7c);
+}
+
+/* Scrolls rather than growing: a unit offers up to fifty-six questions and an
+   un-capped list would push the Assign button off the page. */
+.cr-quiz__list {
+  max-height: 18rem;
+  overflow-y: auto;
+  border: 1px solid var(--cr-line, rgba(0, 0, 0, 0.14));
+  border-radius: 0.5rem;
+  padding: 0.35rem;
+}
+
+.cr-quiz__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 0.35rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.cr-quiz__row:hover { background: var(--cr-hover, rgba(0, 0, 0, 0.03)); }
+.cr-quiz__row:has(input:checked) { background: var(--cr-hover, rgba(0, 0, 0, 0.05)); }
+.cr-quiz__row input { margin-top: 0.25rem; flex: none; }
+
+.cr-quiz__text { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+
+/* The kind is a word, never only a position in the list: a teacher scanning
+   for "the matching ones" should not have to open them to find out. */
+.cr-quiz__kind {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cr-muted, #5b6b7c);
+}
+
+.cr-quiz__prompt { overflow-wrap: anywhere; }
+
+.cr-quiz__count { margin: 0.6rem 0; font-size: 0.85rem; color: var(--cr-muted, #5b6b7c); }
+.cr-quiz__count.is-over { color: var(--cr-warn-ink, #8a4b12); font-weight: 600; }
+
+.cr-quiz__setting { margin-top: 0.6rem; }

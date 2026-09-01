@@ -1,0 +1,120 @@
+[
+  {
+    "id": "q2-match-1",
+    "kind": "match",
+    "prompt": "Match each comparison to its result when x is 5.",
+    "left": [
+      "x > 3",
+      "x == 5",
+      "x != 5",
+      "x <= 4"
+    ],
+    "right": [
+      "False",
+      "True",
+      "True",
+      "False"
+    ],
+    "answer": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "explain": "== asks whether two values are equal; != asks whether they differ. Neither changes x."
+  },
+  {
+    "id": "q2-match-2",
+    "kind": "match",
+    "prompt": "Match each keyword to when it runs.",
+    "left": [
+      "if",
+      "elif",
+      "else",
+      "while"
+    ],
+    "right": [
+      "Only when every test above it was False",
+      "First, when its test is True",
+      "Repeats for as long as its test stays True",
+      "When the test above was False and its own test is True"
+    ],
+    "answer": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "explain": "elif is only reached when the if above it was False. else has no test of its own."
+  },
+  {
+    "id": "q2-multi-1",
+    "kind": "multi",
+    "prompt": "Which of these will run the body of the loop at least once?",
+    "choices": [
+      "while True:",
+      "while False:",
+      "for i in range(3):",
+      "for i in range(0):"
+    ],
+    "answers": [
+      0,
+      2
+    ],
+    "explain": "range(0) is empty, so that loop body never runs, and `while False` never starts."
+  },
+  {
+    "id": "q2-blank-1",
+    "kind": "blank",
+    "prompt": "Fill the blank so the loop counts 0, 1, 2, 3, 4.",
+    "blanks": [
+      {
+        "accept": [
+          "range"
+        ]
+      }
+    ],
+    "explain": "range(5) produces 0 up to but not including 5.",
+    "label": "Fill the blank so the loop counts 0, 1, 2, 3, 4.",
+    "code": "for i in ___(5):\n    print(i)"
+  },
+  {
+    "id": "q2-blank-2",
+    "kind": "blank",
+    "prompt": "Fill both blanks so the loop stops early when it reaches 3.",
+    "blanks": [
+      {
+        "accept": [
+          "==",
+          "is"
+        ]
+      },
+      {
+        "accept": [
+          "break"
+        ]
+      }
+    ],
+    "explain": "break leaves the loop immediately. continue would skip one turn and carry on.",
+    "label": "Fill both blanks so the loop stops early when it reaches 3.",
+    "code": "for i in range(10):\n    if i ___ 3:\n        ___"
+  },
+  {
+    "id": "q2-order-1",
+    "kind": "order",
+    "prompt": "Put these lines in order so the program keeps asking until the answer is right.",
+    "items": [
+      "answer = \"\"",
+      "while answer != \"yes\":",
+      "    answer = input(\"Ready? \")",
+      "print(\"Off we go\")"
+    ],
+    "answer": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explain": "answer has to exist before the while condition can test it, or the first check raises NameError."
+  }
+]
