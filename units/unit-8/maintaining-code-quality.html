@@ -330,12 +330,27 @@ def test_new_feature():
             </div>
 
             <div class="lesson-finish lesson-finish--test">
-              <p class="lesson-finish__eyebrow">End of Unit 8</p>
-              <h2>You have reached the end of Testing</h2>
-              <p>Every lesson in this unit is behind you. The end of unit test is ten
-                multiple choice questions worth 7 points each and one free response
-                problem worth 30 &mdash; 100 points in total. Score 70 or more to finish Unit 8 and unlock Unit 9.</p>
-              <p class="unit-test-status" data-unit-test-status="8" hidden></p>
+              <div class="lesson-finish__head">
+                <span class="lesson-finish__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22V4"/><path d="M4 4h11l-2 4 2 4H4"/></svg></span>
+                <div>
+                  <p class="lesson-finish__eyebrow">End of Unit 8</p>
+                  <h2>You have reached the end of Testing</h2>
+                </div>
+              </div>
+              <p>Every lesson in this unit is behind you. Score 70 or more to finish Unit 8 and unlock Unit 9.</p>
+              <!-- The paper as four facts rather than a sentence of
+                   arithmetic. Authored here rather than injected, so it
+                   still reads with JavaScript off. -->
+              <ul class="lesson-finish__stats">
+                <li class="lesson-finish__stat"><b>10 &times; 7</b><span>multiple choice</span></li>
+                <li class="lesson-finish__stat"><b>1 &times; 30</b><span>free response</span></li>
+                <li class="lesson-finish__stat"><b>100</b><span>points in total</span></li>
+                <li class="lesson-finish__stat lesson-finish__stat--pass"><b>70</b><span>to pass</span></li>
+              </ul>
+              <!-- data-unit-test-meter asks lesson-progress.js for the bar rather
+                   than the plain sentence the unit pages and the curriculum
+                   share. -->
+              <p class="unit-test-status" data-unit-test-status="8" data-unit-test-meter hidden></p>
               <a class="btn btn-primary route" data-unit-test-link="8" href="/unit-test.html?unit=8">Take the Unit 8 test</a>
             </div>
 
