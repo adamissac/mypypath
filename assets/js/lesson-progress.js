@@ -867,6 +867,60 @@
     };
   }
 
+  /* The score as a bar.
+   *
+   * The pass mark is drawn ON the track rather than left in the sentence.
+   * "Best score 42 out of 100. You need 70 to pass." asks a learner to hold
+   * two numbers and compare them; a notch at 70 with the fill stopping short
+   * of it is the same fact in one glance.
+   *
+   * The sentence stays, in a visually-hidden span. The bar is a picture of it,
+   * and a picture is not what a screen reader should be handed.
+   */
+  function paintScoreMeter(node, state) {
+    node.textContent = '';
+    var wrap = document.createElement('span');
+    wrap.className = 'ut-score';
+
+    var line = document.createElement('span');
+    line.className = 'ut-score__line';
+    var value = document.createElement('span');
+    value.className = 'ut-score__value';
+    value.textContent = state.best + ' / 100';
+    var note = document.createElement('span');
+    note.className = 'ut-score__note';
+    note.textContent = state.passed
+      ? 'Passed. A worse retake never takes this away.'
+      : UNIT_TEST_PASS_MARK + ' needed to pass.';
+    line.appendChild(value);
+    line.appendChild(note);
+    wrap.appendChild(line);
+
+    var track = document.createElement('span');
+    track.className = 'ut-score__track';
+    var fill = document.createElement('span');
+    fill.className = 'ut-score__fill' + (state.passed ? ' is-pass' : '');
+    fill.style.width = Math.max(0, Math.min(100, state.best)) + '%';
+    track.appendChild(fill);
+
+    // Not drawn once it is behind them: a pass mark marked on a bar that has
+    // already cleared it is a line pointing at nothing.
+    if (!state.passed) {
+      var mark = document.createElement('span');
+      mark.className = 'ut-score__mark';
+      mark.style.left = UNIT_TEST_PASS_MARK + '%';
+      track.appendChild(mark);
+    }
+    wrap.appendChild(track);
+
+    var sr = document.createElement('span');
+    sr.className = 'visually-hidden';
+    sr.textContent = state.text;
+    wrap.appendChild(sr);
+
+    node.appendChild(wrap);
+  }
+
   function paintTestEntries() {
     var nodes = document.querySelectorAll('[data-unit-test-status]');
     if (!nodes.length) return;
