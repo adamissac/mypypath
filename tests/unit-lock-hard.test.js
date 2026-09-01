@@ -321,6 +321,58 @@ describe('a teacher previewing their own class\'s curriculum', () => {
   });
 });
 
+describe('the blurred backdrop is a shape, not the lesson', () => {
+  /* The thing this design invites, and must not become. It LOOKS like blurred
+     lesson text, which is the point visually and the trap structurally: the
+     obvious "improvement" later is to blur the real lesson behind the card
+     instead of drawing an empty shape. That is the behaviour the rework this
+     belongs to removed -- a student turns CSS off and reads it. These pin the
+     backdrop as decorative and empty so that change cannot land quietly. */
+  it('carries no text of any kind', () => {
+    boot();
+    policyArrives(LOCKED);
+    const ghost = document.querySelector('.unit-lock-screen__ghost');
+    expect(ghost).not.toBe(null);
+    expect(ghost.textContent.trim()).toBe('');
+  });
+
+  it('holds no lesson nodes: the bars are empty elements', () => {
+    boot();
+    policyArrives(LOCKED);
+    const ghost = document.querySelector('.unit-lock-screen__ghost');
+    expect(ghost.querySelectorAll('[data-exercise-id], [data-editor-id]').length).toBe(0);
+    Array.from(ghost.querySelectorAll('*')).forEach((node) => {
+      expect(node.childElementCount === 0 || node.className.includes('ghost-page')).toBe(true);
+      if (node.childElementCount === 0) expect(node.textContent).toBe('');
+    });
+  });
+
+  it('is hidden from assistive tech, being decoration', () => {
+    boot();
+    policyArrives(LOCKED);
+    expect(document.querySelector('.unit-lock-screen__ghost').getAttribute('aria-hidden'))
+      .toBe('true');
+  });
+
+  it('is not drawn where there is no lesson to stand in for', () => {
+    // On a unit page the card sits above a real list of lessons. A decorative
+    // blur over content the student can actually use would read as that
+    // content being obscured.
+    boot();
+    policyArrives(OPEN_BY_MODE);
+    expect(document.querySelector('.unit-lock-screen__ghost')).toBe(null);
+  });
+
+  it('leads with a lock, and says which unit before it says anything else', () => {
+    boot();
+    policyArrives(LOCKED);
+    const card = document.querySelector('.unit-lock-screen__card');
+    expect(card.querySelector('.unit-lock-screen__badge svg')).not.toBe(null);
+    expect(card.querySelector('.unit-lock-screen__eyebrow').textContent)
+      .toMatch(/Locked .* Unit 2/);
+  });
+});
+
 describe('what the lock screen does not claim', () => {
   it('says in the code what tier of protection this is', () => {
     // The same disclosure maxTestAttempts and showSolutions make about

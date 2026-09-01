@@ -44,35 +44,214 @@
   }
 }
 
-/* The lock screen. It is not a banner over a lesson any more -- on a locked
-   lesson page it is what the page has instead of the lesson -- so it is given
-   a little more room and a little more weight than the notices above. */
+/* ------------------------------------------------------------- lock screen
+   What a locked unit shows instead of its lesson.
+
+   Not a banner. On a lesson page this IS the page, so it is built to fill the
+   column the lesson would have filled: a centred card on a soft, blurred
+   backdrop, with the lock as the first thing read.
+
+   The blur behind the card is decorative and empty -- see ghostHTML() in
+   lesson-progress.js. It is the shape of a page, not a page. Nothing readable
+   is under there, which is the whole point of the rework it belongs to. */
+
 .unit-lock-screen {
-  max-width: 68ch;
+  position: relative;
+  isolation: isolate;
+}
+
+/* The lesson-page case: the lesson is gone and this stands in its place. */
+.unit-lock-screen.is-stage {
+  display: grid;
+  place-items: center;
+  min-height: min(70vh, 42rem);
+  margin: clamp(1rem, 4vw, 2.5rem) 0;
+  padding: clamp(1.25rem, 4vw, 3rem) 0;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(120% 90% at 50% -10%, rgba(14, 165, 233, 0.09), transparent 70%),
+    var(--bg-elevated, #e8f4fb);
+  border: 1px solid var(--border, #d0e4ef);
+}
+
+/* The unit-page case: a card above a list of lessons the student can still
+   use. Compact, no backdrop, no screenful of empty space. */
+.unit-lock-screen.is-inline {
   margin: 24px 0 28px;
-  padding: 24px 26px;
-  border: 1px solid #f0d08a;
-  border-left: 4px solid #e0a72e;
-  border-radius: 12px;
-  background: rgba(224, 167, 46, 0.09);
+  max-width: 68ch;
+}
+
+/* ---- the empty page-shape behind the card ---- */
+
+.unit-lock-screen__ghost {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  /* Never let a screen reader announce a decoration, and never let a text
+     selection drag through it. */
+  user-select: none;
+}
+
+.unit-lock-screen__ghost-orb {
+  position: absolute;
+  width: 26rem;
+  height: 26rem;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.65;
+}
+
+.unit-lock-screen__ghost-orb:first-child {
+  top: -8rem;
+  left: -6rem;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.5), transparent 68%);
+}
+
+.unit-lock-screen__ghost-orb:nth-child(2) {
+  right: -7rem;
+  bottom: -9rem;
+  background: radial-gradient(circle, rgba(125, 211, 252, 0.45), transparent 68%);
+}
+
+/* Empty bars in the rhythm of a lesson: a heading, some paragraph lines, a
+   code block. Blurred hard enough that it reads as texture rather than as
+   content somebody is meant to squint at. */
+.unit-lock-screen__ghost-page {
+  /* Wider than the card on purpose: the point of the shape is the part of it
+     that shows past the card's edges. */
+  width: min(54rem, 92%);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  filter: blur(5px);
+  opacity: 0.9;
+}
+
+.unit-lock-screen__ghost-page > span {
+  display: block;
+  height: 0.8rem;
+  border-radius: 999px;
+  background: var(--pp-ink-soft, #165a7a);
+  opacity: 0.28;
+}
+
+/* Scoped through the parent rather than flagged: `.ghost-page > span` above is
+   a class-plus-type selector and would otherwise outrank a bare class. */
+.unit-lock-screen__ghost-page > .unit-lock-screen__ghost-head {
+  height: 1.75rem;
+  width: 55%;
+  opacity: 0.38;
+}
+
+.unit-lock-screen__ghost-page > .unit-lock-screen__ghost-block {
+  height: 6.5rem;
+  border-radius: 0.75rem;
+  margin-top: 0.6rem;
+  opacity: 0.2;
+}
+
+/* ---- the card ---- */
+
+.unit-lock-screen__card {
+  position: relative;
+  z-index: 1;
+  width: min(34rem, 100% - 2.5rem);
+  padding: clamp(1.75rem, 4vw, 2.5rem);
+  text-align: center;
+  border-radius: 1.25rem;
+  background: var(--panel, #fff);
+  border: 1px solid var(--border, #d0e4ef);
+  box-shadow: var(--shadow-strong, 0 12px 36px rgba(12, 69, 102, 0.12));
+}
+
+/* Frosted only on the stage, where there is something behind it to frost.
+   Guarded: a browser without backdrop-filter keeps the solid panel above and
+   the card stays readable rather than going translucent over the blur. */
+@supports (backdrop-filter: blur(1px)) {
+  .unit-lock-screen.is-stage .unit-lock-screen__card {
+    background: color-mix(in srgb, var(--panel, #fff) 82%, transparent);
+    backdrop-filter: blur(18px) saturate(1.3);
+  }
+}
+
+.unit-lock-screen__badge {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: 0 auto 1.1rem;
+  border-radius: 50%;
+  color: var(--primary-strong, #0284c7);
+  background: var(--pp-fog, #e8f4fb);
+  border: 1px solid var(--border, #d0e4ef);
+}
+
+.unit-lock-screen__badge svg {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.unit-lock-screen__eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted, #4a7390);
 }
 
 .unit-lock-screen__title {
-  margin: 0 0 8px;
-  font-weight: 700;
-  font-size: 1.15rem;
+  margin: 0 0 0.75rem;
+  font-family: var(--pp-display, inherit);
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  line-height: 1.2;
+  color: var(--text-strong, #0c4566);
 }
 
-.unit-lock-screen p { margin: 0 0 12px; }
-.unit-lock-screen p:last-child { margin-bottom: 0; }
+.unit-lock-screen__body {
+  margin: 0;
+  color: var(--muted, #4a7390);
+  line-height: 1.65;
+  text-wrap: pretty;
+}
 
-/* Two ways out, side by side and wrapping on a phone rather than stacking
-   into a column of full-width buttons. */
 .unit-lock-screen__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 16px;
+  gap: 0.6rem;
+  justify-content: center;
+  margin: 1.5rem 0 0;
+}
+
+/* The inline card keeps the lock and the type scale, drops the centring: it
+   sits in a column of left-aligned page text and should not fight it. */
+.unit-lock-screen.is-inline .unit-lock-screen__card { text-align: left; }
+.unit-lock-screen.is-inline .unit-lock-screen__badge { margin-left: 0; }
+.unit-lock-screen.is-inline .unit-lock-screen__actions { justify-content: flex-start; }
+
+@media (prefers-reduced-motion: reduce) {
+  /* Nothing here animates, but the heavy blur is a rendering cost on a weak
+     machine and buys nothing once motion is being asked to calm down. */
+  .unit-lock-screen__ghost { display: none; }
+}
+
+[data-theme="dark"] .unit-lock-screen.is-stage {
+  background:
+    radial-gradient(120% 90% at 50% -10%, rgba(56, 189, 248, 0.10), transparent 70%),
+    var(--bg-elevated, #101820);
+}
+
+[data-theme="dark"] .unit-lock-screen__ghost-page > span {
+  background: var(--pp-ink, #e8f4fb);
+}
+
+[data-theme="dark"] .unit-lock-screen__badge {
+  background: rgba(56, 189, 248, 0.12);
 }
 
 /* A locked unit stays clickable in the lists, and reads as not-yet-open:
