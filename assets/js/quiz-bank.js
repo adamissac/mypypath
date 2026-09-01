@@ -9,14 +9,15 @@
  *                                            which is why nothing here writes
  *                                            to it or changes its shape.
  *   assets/data/quiz-bank/unit-N.json        the newer kinds: match, order,
- *                                            blank, multi. Units 1-3 today.
+ *                                            blank, multi. All ten units.
  *
  * The second file exists because every question in the first is an mcq, so a
  * quiz drawn from the pool alone would never show a matching question and the
- * five kinds question-types.js can mark would stay invisible. Writing good
- * match/order/blank questions for all ten units is content work rather than
- * plumbing, and is called out as such in the design doc; the loader does not
- * care how many units have one.
+ * five kinds question-types.js can mark would stay invisible. It shipped
+ * seeded for units 1-3 with the rest called out as outstanding content work;
+ * all ten are authored now. The loader never cared how many units had one, so
+ * a unit whose file is missing still degrades to "fewer questions to choose
+ * from" rather than an error.
  *
  * Pure where it can be. The fetch is here; every judgement about a question is
  * question-types.js's, and every judgement about a quiz is quiz-page.js's.

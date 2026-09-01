@@ -1,0 +1,59 @@
+[
+  {
+    "id": "q4-match-1",
+    "kind": "match",
+    "prompt": "Match each data structure to how you write an empty one.",
+    "left": ["list", "tuple", "dict", "set"],
+    "right": ["{}", "set()", "[]", "()"],
+    "answer": [2, 3, 0, 1],
+    "explain": "{} is an empty dictionary, not an empty set — a set with nothing in it has to be written set()."
+  },
+  {
+    "id": "q4-match-2",
+    "kind": "match",
+    "prompt": "Match each expression to its result when nums = [10, 20, 30, 40, 50].",
+    "left": ["nums[0]", "nums[-1]", "nums[1:3]", "len(nums)"],
+    "right": ["[20, 30]", "10", "5", "50"],
+    "answer": [1, 3, 0, 2],
+    "explain": "A slice stops before its end index, so nums[1:3] is positions 1 and 2. Negative indexes count back from the end."
+  },
+  {
+    "id": "q4-multi-1",
+    "kind": "multi",
+    "prompt": "Which of these can be changed after they are created?",
+    "choices": ["A list", "A tuple", "A dictionary", "A string"],
+    "answers": [0, 2],
+    "explain": "Lists and dictionaries are mutable. Tuples and strings are not — operations on them build a new value instead."
+  },
+  {
+    "id": "q4-blank-1",
+    "kind": "blank",
+    "label": "Fill the blank so the item is added to the end of the list.",
+    "prompt": "Fill the blank so the item is added to the end of the list.",
+    "code": "scores = [10, 20]\nscores.___(30)",
+    "blanks": [{ "accept": ["append"] }],
+    "explain": "append() adds one item to the end. extend() would add each item of another list separately."
+  },
+  {
+    "id": "q4-blank-2",
+    "kind": "blank",
+    "label": "Fill both blanks so the loop prints every key and its value.",
+    "prompt": "Fill both blanks so the loop prints every key and its value.",
+    "code": "ages = {\"Ada\": 36, \"Alan\": 41}\nfor name, age in ages.___():\n    ___(name, age)",
+    "blanks": [{ "accept": ["items"] }, { "accept": ["print"] }],
+    "explain": "items() hands back each key and value together, which is what lets the loop unpack them into two names."
+  },
+  {
+    "id": "q4-order-1",
+    "kind": "order",
+    "prompt": "Put these lines in order so the program counts how many times each word appears.",
+    "items": [
+      "counts = {}",
+      "for word in words:",
+      "    counts[word] = counts.get(word, 0) + 1",
+      "print(counts)"
+    ],
+    "answer": [0, 1, 2, 3],
+    "explain": "The dictionary has to exist before the loop can add to it, and get(word, 0) supplies a starting count for a word seen for the first time."
+  }
+]
