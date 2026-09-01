@@ -119,8 +119,10 @@ describe('a student in a by-hand class, on a unit the teacher shut', () => {
   });
 
   it('may still record that they opened and read it', async () => {
-    // Refusing this would make the log lie about a thing the student did, and
-    // the lock was never about stopping anyone reading ahead.
+    // Refusing this would make the log lie about a thing the student did. The
+    // page they got was the lock screen rather than the lesson, but they did
+    // open it, and a teacher seeing that a student keeps trying a unit that is
+    // shut to them is worth more than a tidier log.
     await assertSucceeds(write(LOCKED_CLASS, 'lesson.opened', 3,
       { lessonPath: '/units/unit-3/lesson.html', unit: 3 }));
   });
