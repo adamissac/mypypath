@@ -1,0 +1,74 @@
+[
+  {
+    "id": "q8-match-1",
+    "kind": "match",
+    "prompt": "Match each kind of error to how you notice it.",
+    "left": ["Syntax error", "Runtime error", "Logic error", "Import error"],
+    "right": [
+      "It runs, finishes, and gives the wrong answer",
+      "Python refuses to run the file at all",
+      "A module could not be found",
+      "It starts, then stops partway with a traceback"
+    ],
+    "answer": [1, 3, 0, 2],
+    "explain": "The logic error is the dangerous one: nothing complains, so only a test or a careful read finds it."
+  },
+  {
+    "id": "q8-match-2",
+    "kind": "match",
+    "prompt": "Match each unittest piece to what it does.",
+    "left": ["assertEqual", "assertTrue", "setUp", "unittest.main()"],
+    "right": [
+      "Runs before every test in the class",
+      "Checks two values are the same",
+      "Finds and runs the tests",
+      "Checks a value is truthy"
+    ],
+    "answer": [1, 3, 0, 2],
+    "explain": "setUp runs before each test rather than once, so no test can be affected by what an earlier one left behind."
+  },
+  {
+    "id": "q8-multi-1",
+    "kind": "multi",
+    "prompt": "Which of these are good reasons to write a test?",
+    "choices": [
+      "It says what the code is supposed to do",
+      "It catches a change that breaks something you were not looking at",
+      "It proves the program has no bugs at all",
+      "It lets you change code without re-checking everything by hand"
+    ],
+    "answers": [0, 1, 3],
+    "explain": "Tests show the presence of the bugs they check for, never the absence of every bug."
+  },
+  {
+    "id": "q8-blank-1",
+    "kind": "blank",
+    "label": "Fill both blanks so the test checks that add(2, 3) gives 5.",
+    "prompt": "Fill both blanks so the test checks that add(2, 3) gives 5.",
+    "code": "def test_add(self):\n    self.___(add(2, 3), ___)",
+    "blanks": [{ "accept": ["assertEqual"] }, { "accept": ["5"] }],
+    "explain": "assertEqual takes what you got and what you expected, and reports both when they differ."
+  },
+  {
+    "id": "q8-blank-2",
+    "kind": "blank",
+    "label": "Complete the line that reads the last part of a traceback.",
+    "prompt": "In a traceback, the line that names what went wrong is the ___ line, and it is at the ___ of the message.",
+    "code": "In a traceback, the line naming what went wrong is the ___ line,\nand you find it at the ___ of the message.",
+    "blanks": [{ "accept": ["last", "final", "error"] }, { "accept": ["bottom", "end"] }],
+    "explain": "Read a traceback from the bottom up: the last line is the error, and the lines above it are how Python got there."
+  },
+  {
+    "id": "q8-order-1",
+    "kind": "order",
+    "prompt": "Put these steps in test-driven order.",
+    "items": [
+      "Write a test for behaviour that does not exist yet",
+      "Run it and watch it fail",
+      "Write the smallest code that makes it pass",
+      "Run it again and watch it pass"
+    ],
+    "answer": [0, 1, 2, 3],
+    "explain": "Watching it fail first is the step people skip, and it is the one that proves the test can fail at all."
+  }
+]
