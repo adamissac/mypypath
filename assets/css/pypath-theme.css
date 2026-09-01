@@ -1553,12 +1553,42 @@ main .container,
 .lesson-finish h2 { margin: 0 0 6px; }
 .lesson-finish p { margin: 0 auto 16px; max-width: 52ch; }
 
-/* The same card, used at the foot of the last lesson in every unit to hand the
-   learner the end of unit test instead of letting the nav skip past it. Warmer
-   than the certificate variant so two stacked cards on the capstone lesson do
-   not read as one block. */
+/* ------------------------------------------------- end of unit: the summit
+   The card at the foot of the last lesson in every unit, handing the learner
+   the end of unit test instead of letting the nav skip past it.
+
+   It used to be a wash of yellow -- rgba(250, 204, 21, 0.10) fading to nothing
+   -- picked only so that two stacked cards on the capstone lesson would not
+   read as one block. It solved that and nothing else: muddy against a
+   sky-blue site, and flat at the one moment in a unit that has earned some
+   ceremony. Two stacked cards still read as two, because this one is now a
+   dark panel and the certificate card above it is not. */
 .lesson-finish--test {
-  background: linear-gradient(180deg, rgba(250, 204, 21, 0.10), transparent);
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+  padding: clamp(1.5rem, 3.5vw, 2.25rem);
+  border: 0;
+  border-radius: 18px;
+  color: #eaf6fd;
+  background:
+    radial-gradient(120% 140% at 12% 0%, rgba(56, 189, 248, 0.28), transparent 58%),
+    linear-gradient(135deg, #0c4566 0%, #082f47 100%);
+  background-color: #0c3d5c;
+  box-shadow: 0 14px 40px rgba(9, 51, 76, 0.28);
+}
+
+.lesson-finish--test h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.35rem, 3vw, 1.9rem);
+  line-height: 1.15;
+}
+
+.lesson-finish--test p {
+  margin: 0;
+  max-width: 62ch;
+  color: rgba(234, 246, 253, 0.82);
 }
 .lesson-finish__eyebrow {
   margin: 0 0 4px;
@@ -1568,6 +1598,9 @@ main .container,
   text-transform: uppercase;
   color: var(--muted, #5b7c92);
 }
+
+.lesson-finish--test .lesson-finish__eyebrow { color: #7dd3fc; }
+
 /* The score line only appears once a paper has been sat, so it carries its own
    gap rather than the 16px every other paragraph in the card gets. */
-.lesson-finish--test .unit-test-status { margin: 0 auto 16px; }
+.lesson-finish--test .unit-test-status { margin: 1.35rem 0 0; }
