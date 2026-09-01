@@ -255,13 +255,49 @@ export async function refreshAssignmentUnlocks(classId, assignments) {
   return next;
 }
 
+/* The quiz half of an assignment draft, cleaned to the shape firestore.rules
+   will accept and the shape assignmentStatus() expects.
+ *
+ * Bounded on every axis, because this document is read by every student in the
+ * class: a teacher client that could write an unbounded blob here would be
+ * writing it into everyone's page. The caps match the rule, and the rule is
+ * the one that is actually enforced -- this function is the courtesy that
+ * turns a rejected write into a sentence a teacher can act on. */
+function cleanQuiz(quiz) {
+  if (!quiz) return null;
+  const unit = Number(quiz.unit);
+  if (!Number.isInteger(unit) || unit < 1 || unit > 10) {
+    throw new ClassroomError('quiz-unit', 'Choose which unit the quiz is about.');
+  }
+
+  const ids = Array.from(new Set((Array.isArray(quiz.questionIds) ? quiz.questionIds : [])
+    .map((id) => String(id || '').trim())
+    .filter((id) => id && id.length <= 40)));
+  if (!ids.length) throw new ClassroomError('quiz-empty', 'Pick at least one question.');
+  if (ids.length > 25) {
+    throw new ClassroomError('quiz-long', 'A quiz can hold at most 25 questions.');
+  }
+
+  const passMark = Number(quiz.passMark);
+  const attempts = Number(quiz.attempts);
+  return {
+    unit,
+    questionIds: ids,
+    passMark: Number.isFinite(passMark) ? Math.min(100, Math.max(0, Math.round(passMark))) : 70,
+    // 0 is unlimited, and is the default: the same default maxTestAttempts
+    // has, and the same behaviour as a class that never touches the setting.
+    attempts: Number.isInteger(attempts) && attempts > 0 ? Math.min(10, attempts) : 0,
+  };
+}
+
 export async function createAssignment(classId, draft) {
   const title = String((draft && draft.title) || '').trim().slice(0, 100);
   if (!title) throw new ClassroomError('no-title', 'Give the assignment a name.');
 
   const targets = cleanTargets(draft && draft.units, draft && draft.lessonPaths);
-  if (!targets.units.length && !targets.lessonPaths.length) {
-    throw new ClassroomError('no-targets', 'Choose at least one unit or lesson.');
+  const quiz = cleanQuiz(draft && draft.quiz);
+  if (!targets.units.length && !targets.lessonPaths.length && !quiz) {
+    throw new ClassroomError('no-targets', 'Choose at least one unit, lesson or quiz.');
   }
 
   const dueAt = Number(draft && draft.dueAt);
@@ -269,12 +305,20 @@ export async function createAssignment(classId, draft) {
     throw new ClassroomError('no-due-date', 'Give the assignment a due date.');
   }
 
-  // Before the assignment, never after: a student must never meet a unit that
-  // is assigned to them and locked against them.
-  await widenUnlocks(classId, unitsTargetedBy([targets]));
+  /* Before the assignment, never after: a student must never meet a unit that
+     is assigned to them and locked against them.
+
+     The quiz's own unit is widened too, and has to be. quiz.submitted counts
+     for credit in the rules, so a quiz on a unit the class has not opened
+     would be refused server-side -- a student sitting it, finishing it, and
+     losing the result to a permission error. That is precisely the failure the
+     ordering here already exists to prevent. */
+  const openUnits = unitsTargetedBy([targets]);
+  if (quiz) openUnits.push(quiz.unit);
+  await widenUnlocks(classId, openUnits);
 
   const ref = doc(collection(db, `classes/${classId}/assignments`));
-  await setDoc(ref, {
+  const record = {
     title,
     units: targets.units,
     lessonPaths: targets.lessonPaths,
@@ -282,8 +326,13 @@ export async function createAssignment(classId, draft) {
     createdAt: serverTimestamp(),
     archived: false,
     schemaVersion: version(),
-  });
-  return { id: ref.id, title, dueAt, ...targets };
+  };
+  // Absent rather than null when there is no quiz: the rule checks
+  // `'quiz' in resource.data`, and a null would satisfy that and then fail the
+  // shape check underneath it.
+  if (quiz) record.quiz = quiz;
+  await setDoc(ref, record);
+  return { id: ref.id, title, dueAt, ...targets, ...(quiz ? { quiz } : {}) };
 }
 
 export async function readAssignments(classId) {

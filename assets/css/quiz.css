@@ -1,0 +1,87 @@
+/* PyPath — the assigned quiz page.
+ *
+ * Deliberately built on unit-test.css's classes (.ut-intro, .ut-paper,
+ * .ut-gate, .ut-notice) rather than a parallel set. A student who has sat the
+ * end-of-unit test should recognise the furniture immediately; what has to
+ * differ is the one thing that IS different -- that a teacher set this, it has
+ * a due date, and it counts toward that. So the only new visual weight here is
+ * on saying so.
+ */
+
+.quiz-page .eyebrow {
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: var(--primary-strong, #0284c7);
+}
+
+/* The due date, given a little more presence than body text: it is the thing
+   that makes this different from the ungraded quiz at the foot of a lesson. */
+.quiz-due {
+  display: inline-block;
+  margin: 0.25rem 0 0.75rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--pp-ink, #0c4566);
+  background: var(--pp-fog, #e8f4fb);
+  border: 1px solid var(--border, #d0e4ef);
+}
+
+.quiz-result h2 {
+  margin: 0 0 0.25rem;
+  font-family: var(--pp-display, inherit);
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+}
+
+.quiz-result__sub { margin: 0 0 0.5rem; color: var(--muted, #4a7390); }
+
+.quiz-result__note {
+  margin: 0 0 1.5rem;
+  font-size: 0.9rem;
+  color: var(--muted, #4a7390);
+}
+
+.quiz-review {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.85rem;
+}
+
+/* A left rule rather than a fill, and a word in .quiz-review__mark either way:
+   the same rule MASTERY_MARK follows on the dashboard. Nothing here is only a
+   colour, because a colourblind student reading their own feedback is exactly
+   the person this page exists for. */
+.quiz-review__item {
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--border, #d0e4ef);
+  border-left-width: 4px;
+  border-radius: 0.6rem;
+  background: var(--panel, #fff);
+}
+
+.quiz-review__item.is-right { border-left-color: #2f9e6b; }
+.quiz-review__item.is-wrong { border-left-color: #d08a2e; }
+
+.quiz-review__prompt {
+  margin: 0 0 0.35rem;
+  font-weight: 600;
+  white-space: pre-wrap;
+}
+
+.quiz-review__mark { margin: 0 0 0.35rem; font-size: 0.9rem; font-weight: 600; }
+.quiz-review__item.is-right .quiz-review__mark { color: #21744d; }
+.quiz-review__item.is-wrong .quiz-review__mark { color: #8a5b12; }
+
+.quiz-review__explain { margin: 0; color: var(--muted, #4a7390); font-size: 0.92rem; }
+
+.quiz-result__actions { margin-top: 1.5rem; }
+
+[data-theme="dark"] .quiz-review__item { background: var(--bg-elevated, #101820); }
+[data-theme="dark"] .quiz-due { background: rgba(56, 189, 248, 0.12); }
+[data-theme="dark"] .quiz-review__item.is-right .quiz-review__mark { color: #6ee7b7; }
+[data-theme="dark"] .quiz-review__item.is-wrong .quiz-review__mark { color: #fbbf24; }

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <script src="/assets/js/theme-init.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Quiz • PyPath</title>
+    <meta name="description" content="Sit a quiz your teacher set for your class." />
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
+    <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/pypath-fast.css" />
+    <link rel="stylesheet" href="/assets/css/pypath-theme.css" />
+    <link rel="stylesheet" href="/assets/css/auth.css" />
+    <link rel="stylesheet" href="/assets/css/gate.css" />
+    <link rel="stylesheet" href="/assets/css/lesson-progress.css" />
+    <link rel="stylesheet" href="/assets/css/unit-test.css" />
+    <link rel="stylesheet" href="/assets/css/quiz.css" />
+
+<script defer src="/assets/js/theme.js"></script>
+    <script defer src="/assets/js/icons.js"></script>
+<script defer src="/assets/js/storage-keys.js"></script>
+<script defer src="/assets/js/unit-progress.js"></script>
+<script defer src="/assets/js/schema-version.js"></script>
+<script defer src="/assets/js/events.js"></script>
+    <script defer src="/assets/js/roles.js"></script>
+    <script defer src="/assets/js/activity-core.js"></script>
+    <script defer src="/assets/js/progress-store.js"></script>
+    <script defer src="/assets/js/merge.js"></script>
+    <script defer src="/assets/js/username.js"></script>
+    <script defer src="/assets/js/gate.js"></script>
+    <script defer src="/assets/js/curriculum.js"></script>
+    <script defer src="/assets/js/classroom-policy.js"></script>
+    <script defer src="/assets/js/question-types.js"></script>
+    <script defer src="/assets/js/question-render.js"></script>
+    <script defer src="/assets/js/classroom-core.js"></script>
+    <script defer src="/assets/js/quiz-bank.js"></script>
+    <script defer src="/assets/js/motion.js"></script>
+    <script defer src="/assets/js/core.js"></script>
+    <script type="module" src="/assets/js/auth.js"></script>
+    <script type="module" src="/assets/js/sync.js"></script>
+    <script type="module" src="/assets/js/event-sink.js"></script>
+    <script type="module" src="/assets/js/role-nav.js"></script>
+    <script type="module" src="/assets/js/activity.js"></script>
+    <script type="module" src="/assets/js/auth-ui.js"></script>
+    <script type="module" src="/assets/js/quiz-page.js"></script>
+  </head>
+  <body class="page page-quiz">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <div id="page-transition" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <div class="header-accent" aria-hidden="true"></div>
+      <div class="container header-inner">
+        <a class="brand route" href="/">
+          <img src="/assets/img/pyPathLogo.png" alt="PyPath Logo" class="logo" width="36" height="36">
+          <span class="brand-text">PyPath</span>
+        </a>
+        <div class="header-actions">
+          <nav class="primary-nav" aria-label="Primary">
+            <button type="button" class="mobile-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-menu">
+              <span class="mobile-toggle-bar" aria-hidden="true"></span>
+              <span class="mobile-toggle-bar" aria-hidden="true"></span>
+              <span class="mobile-toggle-bar" aria-hidden="true"></span>
+            </button>
+            <div class="nav-pill">
+              <ul class="menu" id="primary-menu">
+              <li><a href="/" class="route">Home</a></li>
+              <li class="dd dd--nav" data-dd>
+                <button type="button" class="dd-trigger" id="nav-units-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="nav-units-panel">
+                  <span>Units</span> <svg class="dd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <div class="dd-panel" id="nav-units-panel" role="menu" aria-labelledby="nav-units-btn" hidden>
+                  <div class="dd-panel__head">
+                    <span class="dd-panel__label">Curriculum</span>
+                    <span class="dd-panel__hint">10 units</span>
+                  </div>
+                  <ul class="dd-panel__list dd-panel__list--grid">
+            <li role="none"><a role="menuitem" href="/units/unit-1/what-is-python.html" class="dd-item route"><span class="dd-item__num">1</span><span class="dd-item__body"><span class="dd-item__title">Foundations</span><span class="dd-item__meta">Unit 1</span></span></a></li>
+            <li role="none"><a role="menuitem" href="/units/unit-2/understanding-control-flow.html" class="dd-item route"><span class="dd-item__num">2</span><span class="dd-item__body"><span class="dd-item__title">Control Flow</span><span class="dd-item__meta">Unit 2</span></span></a></li>
+            <li role="none"><a role="menuitem" href="/units/unit-3/what-are-functions.html" class="dd-item route"><span class="dd-item__num">3</span><span class="dd-item__body"><span class="dd-item__title">Functions</span><span class="dd-item__meta">Unit 3</span></span></a></li>
+            <li role="none"><a role="menuitem" href="/units/unit-4/introduction-data-structures.html" class="dd-item route"><span class="dd-item__num">4</span><span class="dd-item__body"><span class="dd-item__title">Data Structures</span><span class="dd-item__meta">Unit 4</span></span></a></li>
+            <li role="none"><a role="menuitem" href="/units/unit-5/what-are-modules.html" class="dd-item route"><span class="dd-item__num">5</span><span class="dd-item__body"><span class="dd-item__title">Modules & Packages</span><span class="dd-item__meta">Unit 5</span></span></a></li>
+            <li role="none"><a role="menuitem" href="/units/unit-6/introduction-oop-concepts.html" class="dd-item route"><span class="dd-item__num">6</span><span class="dd-item__body"><span class="dd-item__title">OOP</span><span class="dd-item__meta">Unit 6</span></span></a></li>
+            <li role="none"><a role="menuitem" href="/units/unit-7/introduction-file-handling.html" class="dd-item route"><span class="dd-item__num">7</span><span class="dd-item__body"><span class="dd-item__title">Files & Errors</span><span class="dd-item__meta">Unit 7</span></span></a></li>
+            <li role="none"><a role="menuitem" href="/units/unit-8/what-is-debugging.html" class="dd-item route"><span class="dd-item__num">8</span><span class="dd-item__body"><span class="dd-item__title">Testing</span><span class="dd-item__meta">Unit 8</span></span></a></li>
+            <li role="none"><a role="menuitem" href="/units/unit-9/recursion-problem-decomposition.html" class="dd-item route"><span class="dd-item__num">9</span><span class="dd-item__body"><span class="dd-item__title">Advanced Topics</span><span class="dd-item__meta">Unit 9</span></span></a></li>
+            <li role="none"><a role="menuitem" href="/units/unit-10/project-planning-brainstorming.html" class="dd-item route"><span class="dd-item__num">10</span><span class="dd-item__body"><span class="dd-item__title">Capstone Project</span><span class="dd-item__meta">Unit 10</span></span></a></li>
+                  </ul>
+                </div>
+              </li>
+              <li><a href="/sandbox.html" class="route">Sandbox</a></li>
+              <li data-account-classroom hidden><a href="/classroom.html" class="route">Classroom</a></li>
+              <li data-student-class hidden><a href="/progress.html" class="route">My class</a></li>
+              <li><a href="/settings.html" class="route">Settings</a></li>
+              </ul>
+            </div>
+          </nav>
+          <div class="header-end">
+          <a href="/units/unit-1/what-is-python.html" class="btn btn-primary header-cta route">Start learning</a>
+          <div class="account-menu" data-account-menu>
+            <a href="/login.html" class="btn btn-ghost account-signin route" data-account-signin>Sign in</a>
+            <button type="button" class="account-avatar" data-account-avatar hidden aria-haspopup="menu" aria-expanded="false">
+              <img src="/assets/img/placeholder-avatar.svg" alt="" width="28" height="28" data-account-photo>
+              <span class="account-username" data-account-username></span>
+            </button>
+            <div class="account-panel" data-account-panel role="menu" hidden>
+              <!-- Which kind of account this is, at the top of the menu it is
+                   asked from. Painted by role-nav.js, which already resolves
+                   the role for the classroom link below. -->
+              <p class="account-panel__role" data-account-role hidden></p>
+              <a href="/progress.html" class="route" role="menuitem">My progress</a>
+              <a href="/classroom.html" class="route" role="menuitem" data-account-classroom hidden>My classroom</a>
+              <a href="/account.html" class="route" role="menuitem">Account</a>
+              <button type="button" data-account-signout role="menuitem">Sign out</button>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main id="main-content" class="container quiz-page">
+      <p class="eyebrow" id="quiz-eyebrow" hidden></p>
+      <h1 class="page-title" id="quiz-title">Quiz</h1>
+
+      <div class="ut-notice" id="quiz-notice" role="status" aria-live="polite" hidden></div>
+
+      <noscript>
+        <p class="ut-notice ut-notice--error">A quiz needs JavaScript: the questions are
+           drawn and marked in your browser.</p>
+      </noscript>
+
+      <section class="ut-intro quiz-intro" id="quiz-intro" hidden>
+        <!-- Which of the three question surfaces this is. A student meets an
+             ungraded lesson quiz, this, and the end-of-unit test, and the one
+             that is set by their teacher has to say so before the first
+             question rather than leave it to be inferred. -->
+        <p id="quiz-count"></p>
+        <p class="quiz-due" id="quiz-due" hidden></p>
+        <p id="quiz-retakes"></p>
+        <p class="ut-best" id="quiz-best" hidden></p>
+        <!-- Why the button below is not there: a locked unit, or the teacher's
+             attempt limit reached. Never both -- see blockedReason(). -->
+        <p class="ut-gate" id="quiz-gate" role="note" hidden></p>
+        <p id="quiz-start-row"><button type="button" class="btn btn-primary" id="quiz-start">Start the quiz</button></p>
+      </section>
+
+      <form class="ut-paper quiz-paper" id="quiz-paper" hidden>
+        <div id="quiz-questions"></div>
+        <div class="ut-submit-row">
+          <button type="submit" class="btn btn-primary" id="quiz-submit">Submit the quiz</button>
+          <p class="ut-hint">Nothing is recorded until you submit.</p>
+        </div>
+      </form>
+
+      <section class="ut-result quiz-result" id="quiz-result" hidden></section>
+    </main>
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand small route" href="/">
+              <img src="/assets/img/pyPathLogo.png" alt="" class="logo small" width="28" height="28">
+              <span class="brand-text">PyPath</span>
+            </a>
+            <p class="footer-tagline">Learn Python with clarity — free, structured lessons from foundations to real projects.</p>
+            <p class="footer-copy muted">&copy; <span id="year"></span> PyPath &middot; <a href="/privacy.html" class="route">Privacy</a> &middot; <a href="/terms.html" class="route">Terms</a></p>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-heading">Learn</h4>
+            <ul class="footer-links">
+              <li><a href="/curriculum.html" class="route">Curriculum</a></li>
+              <li><a href="/sandbox.html" class="route">Sandbox</a></li>
+              <li><a href="/settings.html" class="route">Settings</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+  </html>

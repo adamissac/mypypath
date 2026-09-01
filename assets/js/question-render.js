@@ -25,12 +25,27 @@
     return node;
   }
 
+  /* The legend, which is the question as a screen reader announces it and as a
+     sighted learner reads the heading.
+
+     `label` wins where an author gave one, and a fill-the-blank question needs
+     to: its prompt IS the code, gaps and all, and renderBlank draws that code
+     underneath. Without a separate label the legend repeated the whole snippet
+     above the boxes -- "3. Fill the blank so the loop counts 0, 1, 2: for i in
+     ___(5): print(i)" -- which reads as a stutter and announces the gaps twice.
+     Falling back to the first line keeps every question authored before this
+     working unchanged. */
+  function legendText(question) {
+    if (question.label) return String(question.label);
+    return String(question.prompt || '').split('\n')[0];
+  }
+
   function fieldset(question, index) {
     var set = document.createElement('fieldset');
     set.className = 'quiz-q__set';
     var legend = document.createElement('legend');
     legend.className = 'quiz-q__prompt';
-    legend.textContent = (index + 1) + '. ' + (question.prompt || '');
+    legend.textContent = (index + 1) + '. ' + legendText(question);
     set.appendChild(legend);
     return set;
   }
@@ -201,7 +216,10 @@
     // The prompt is split on ___ so the boxes sit where the gaps are, rather
     // than in a list underneath asking the learner to count.
     var body = el('pre', 'quiz-blank');
-    var pieces = String(question.prompt || '').split('___');
+    // The code half only: the sentence before it is the legend's job, and
+    // printing it twice is what `label` exists to avoid.
+    var source = question.code != null ? String(question.code) : String(question.prompt || '');
+    var pieces = source.split('___');
     pieces.forEach(function (piece, i) {
       body.appendChild(document.createTextNode(piece));
       if (i >= pieces.length - 1) return;
@@ -254,6 +272,7 @@
     renderMulti: renderMulti,
     renderMatch: renderMatch,
     renderOrder: renderOrder,
-    renderBlank: renderBlank
+    renderBlank: renderBlank,
+    legendText: legendText
   };
 })();

@@ -255,7 +255,7 @@ describe('the writer itself', () => {
   });
 
   it('strips control characters Excel refuses to open a file over', () => {
-    expect(window.PyPathXlsx.xmlText('a bc')).toBe('abc');
+    expect(window.PyPathXlsx.xmlText('a' + String.fromCharCode(0) + 'b' + String.fromCharCode(7) + 'c')).toBe('abc');
     // Tab, newline and return are legal XML and are kept.
     expect(window.PyPathXlsx.xmlText('a\tb\nc')).toBe('a\tb\nc');
   });
