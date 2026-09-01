@@ -38,6 +38,21 @@ describe('end of unit test routing', () => {
       expect(html).toContain(`data-unit-test-status="${n}"`);
     });
 
+    it(`unit ${n} states the paper as facts, not a sentence of arithmetic`, () => {
+      const html = read(n);
+      expect(html).toContain('lesson-finish__stats');
+      // Authored, not injected, so the page still says what the test is with
+      // JavaScript off -- the same reason the test links are real markup.
+      expect(html).toContain('<b>100</b><span>points in total</span>');
+      expect(html).toContain('lesson-finish__stat--pass"><b>70</b><span>to pass</span>');
+    });
+
+    it(`unit ${n} asks for the score bar rather than the plain sentence`, () => {
+      // The unit pages and the curriculum share this status line and keep the
+      // sentence; only the end-of-unit card opts into the meter.
+      expect(read(n)).toContain('data-unit-test-meter');
+    });
+
     it(`unit ${n} does not let the foot nav outrank the test`, () => {
       const nav = read(n).match(/<div class="lesson-nav">[\s\S]*?<\/div>/);
       expect(nav).not.toBeNull();
