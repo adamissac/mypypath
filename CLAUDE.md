@@ -34,6 +34,22 @@ plans that led to this gap ended at "Commit."
 - `npm run test:rules` — Firestore rules against the local emulator (needs Java)
 - `npm run serve` — static server on :8080 for browser verification
 
+## Looking at a populated teacher dashboard
+
+The dashboard cannot be judged empty — every panel on it summarises a class that
+has done some work. To see it with a realistic class, in three terminals:
+
+```bash
+npm run emulators     # auth :9099, firestore :8081
+npm run seed          # 14 students, ~1000 events, 3 assignments
+npm run serve         # then sign in at /login.html
+```
+
+Sign in as `teacher@pypath.test` / `pypath123`. `firebase-config.js` points the
+site at the emulators automatically on localhost, so this is the real dashboard
+over invented data — nothing touches the live project. Re-running the seed is
+safe; clear it with the emulator's own wipe endpoint if you want a fresh start.
+
 ## Layout
 
 - `assets/js/` — app scripts, injected into pages by `scripts/bake_layout.py`
