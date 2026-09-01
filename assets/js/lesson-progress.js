@@ -695,6 +695,36 @@
     return first + progress;
   }
 
+  /* The decorative backdrop: a page-shaped blur behind the card.
+   *
+   * Worth being exact about what this is, because it looks like the thing the
+   * last rework deliberately stopped doing. It is not the lesson blurred. It is
+   * a handful of empty rounded bars, aria-hidden, carrying no text at all --
+   * the shape of a page rather than a page. Turning CSS off reveals nothing,
+   * because there is nothing under there to reveal.
+   *
+   * The auth gate in gate.css does blur real lesson text, which is a weaker
+   * position on a different question and not one to copy here. */
+  function ghostHTML() {
+    var bars = ['92%', '78%', '85%', '64%', '88%', '71%', '81%', '58%'];
+    var out = '<div class="unit-lock-screen__ghost" aria-hidden="true">' +
+      '<span class="unit-lock-screen__ghost-orb"></span>' +
+      '<span class="unit-lock-screen__ghost-orb"></span>' +
+      '<div class="unit-lock-screen__ghost-page">' +
+      '<span class="unit-lock-screen__ghost-head"></span>';
+    for (var i = 0; i < bars.length; i++) {
+      out += '<span class="unit-lock-screen__ghost-line" style="width:' + bars[i] + '"></span>';
+    }
+    return out + '<span class="unit-lock-screen__ghost-block"></span></div></div>';
+  }
+
+  // Lucide's lock, inlined. icons.js is not loaded on every page this can
+  // appear on, and one shape is not worth a dependency.
+  var LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+    'stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>' +
+    '<path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+
   function lockScreenHTML(teacherSet, hidLesson) {
     // Which sentence is true depends on why this unit is shut, and getting it
     // wrong is not a cosmetic slip.
@@ -716,21 +746,32 @@
       ? 'The lesson is not shown while the unit is shut.'
       : 'The lessons in it are not open yet.';
 
+    var title, body;
     if (teacherSet) {
-      return '<p class="unit-lock-screen__title">Unit ' + unit + ' is not open yet</p>' +
-        '<p>Your teacher chooses which units are open for your class, and this ' +
-        'one is not open at the moment. ' + gone + ' Nothing you have already ' +
-        'finished is affected, and nothing here has been taken off your record. ' +
-        'Ask your teacher if you think it should be open.</p>' +
-        '<p class="unit-lock-screen__actions">' + wayOut(true) + '</p>';
+      title = 'Unit ' + unit + ' is not open yet';
+      body = 'Your teacher chooses which units are open for your class, and ' +
+        'this one is not open at the moment. ' + gone + ' Nothing you have ' +
+        'already finished is affected, and nothing here has been taken off ' +
+        'your record. Ask your teacher if you think it should be open.';
+    } else {
+      var prev = unit - 1;
+      title = 'Unit ' + unit + ' is not unlocked yet';
+      body = 'Finish every lesson in Unit ' + prev + ' and score ' +
+        UNIT_TEST_PASS_MARK + ' or higher on the Unit ' + prev + ' test to ' +
+        'unlock it. ' + gone + ' Your progress counts from Unit ' + prev + '.';
     }
 
-    var prev = unit - 1;
-    return '<p class="unit-lock-screen__title">Unit ' + unit + ' is not unlocked yet</p>' +
-      '<p>Finish every lesson in Unit ' + prev + ' and score ' + UNIT_TEST_PASS_MARK +
-      ' or higher on the Unit ' + prev + ' test to unlock it. ' + gone +
-      ' Your progress counts from Unit ' + prev + '.</p>' +
-      '<p class="unit-lock-screen__actions">' + wayOut(false) + '</p>';
+    // The ghost only earns its place where a lesson was actually taken away. On
+    // a unit page the card sits above a real list of lessons, and a decorative
+    // blur above real content would read as that content being obscured.
+    return (hidLesson ? ghostHTML() : '') +
+      '<div class="unit-lock-screen__card">' +
+      '<span class="unit-lock-screen__badge">' + LOCK_SVG + '</span>' +
+      '<p class="unit-lock-screen__eyebrow">Locked &middot; Unit ' + unit + '</p>' +
+      '<h2 class="unit-lock-screen__title">' + title + '</h2>' +
+      '<p class="unit-lock-screen__body">' + body + '</p>' +
+      '<p class="unit-lock-screen__actions">' + wayOut(teacherSet) + '</p>' +
+      '</div>';
   }
 
   function paintLockScreen() {
@@ -769,7 +810,10 @@
     }
 
     var box = document.createElement('div');
-    box.className = 'unit-lock-screen';
+    // The full-height treatment only where the lesson is actually gone. On a
+    // unit page this is a card above a list, and a screenful of empty space
+    // above a list the student can use would be a worse page, not a nicer one.
+    box.className = 'unit-lock-screen' + (hidLesson ? ' is-stage' : ' is-inline');
     box.setAttribute('role', 'note');
     // What this screen is claiming, so a later pass can tell whether the
     // reason has changed under it.

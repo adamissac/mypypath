@@ -100,6 +100,16 @@ with sync_playwright() as p:
           return !/lesson-content|exercise-item|lesson-overview/.test(el.className || '');
         })"""))
 
+    # 6b. The backdrop looks like blurred lesson text and must never be it.
+    check("the blurred backdrop is empty of text", page.evaluate(
+        "(document.querySelector('.unit-lock-screen__ghost') || {textContent: 'x'})"
+        ".textContent.trim() === ''"))
+    check("the lock screen leads with a lock glyph",
+          page.locator(".unit-lock-screen__badge svg").count() > 0)
+    check("and fills the column rather than sitting in it as a strip",
+          page.evaluate("document.querySelector('.unit-lock-screen').getBoundingClientRect().height")
+          > 400)
+
     # 7. The title is not the content: a student may still know what is ahead.
     check("the lesson still says which lesson it is",
           page.locator(".lesson-title").count() > 0)
