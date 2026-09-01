@@ -259,6 +259,52 @@
                       aria-label="What each state means">i</button>
             </h2>
 
+            <!-- Two views of one dataset, because they answer different
+                 questions. The roster answers "who in my class of forty is
+                 behind" and is one row per student. The unit grid answers "how
+                 is the class doing on Unit 4" and is one cell per student per
+                 unit -- still the right tool for that, and the wrong thing to
+                 scan top to bottom for forty people. Roster leads because the
+                 first question is the common one. -->
+            <div class="cr-viewbar">
+              <fieldset class="cr-view">
+                <legend class="visually-hidden">How to show progress</legend>
+                <label><input type="radio" name="cr-view" value="roster" checked>
+                  <span>Roster</span></label>
+                <label><input type="radio" name="cr-view" value="grid">
+                  <span>Unit grid</span></label>
+                <button type="button" class="cr-info" data-cr-info="progressViews"
+                        aria-label="When to use each view">i</button>
+              </fieldset>
+
+              <!-- The drill-down, reachable without hunting for a row. Opens
+                   the same panel a roster row opens; student-detail.js owns
+                   what is in it. -->
+              <div class="cr-find">
+                <label for="cr-student-pick">Open a student</label>
+                <select id="cr-student-pick" data-cr-student-pick>
+                  <option value="">Choose a student…</option>
+                </select>
+              </div>
+            </div>
+
+            <div data-cr-pane="roster">
+              <div class="cr-tablewrap">
+                <table class="cr-table cr-roster" data-cr-roster>
+                  <caption class="visually-hidden">
+                    One row per student. Column headings sort the table; select a
+                    row to open that student's full detail.
+                  </caption>
+                  <thead><tr data-cr-roster-head></tr></thead>
+                  <tbody data-cr-roster-body></tbody>
+                </table>
+              </div>
+              <p class="cr-empty-note" data-cr-roster-empty hidden>
+                No students have joined yet. Share the join code above.
+              </p>
+            </div>
+
+            <div data-cr-pane="grid" hidden>
             <div class="cr-controls">
               <fieldset class="cr-scope">
                 <legend class="visually-hidden">Detail level</legend>
@@ -296,6 +342,7 @@
             <p class="cr-empty-note" data-cr-grid-empty hidden>
               No students have joined yet. Share the join code above.
             </p>
+            </div>
           </section>
 
           <!-- ============================================================
