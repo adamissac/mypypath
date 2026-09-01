@@ -35,25 +35,35 @@ beforeAll(() => {
 });
 
 /* A lesson page carrying the two things the lock has to reach: a reflection
-   that would tick the lesson off, and the buttons that would do the work. */
+   that would tick the lesson off, and the buttons that would do the work.
+   Shaped like a real page, because what the lock screen keeps and what it takes
+   away is a question about this structure. */
 const MARKUP = `
   <main>
-    <h1 class="lesson-title">A lesson</h1>
-    <div class="exercise-item">
-      <p class="exercise-prompt">Why?</p>
-      <textarea class="reflection-input" id="reflect-1"></textarea>
-      <button type="button" class="btn btn-primary submit-btn">Save</button>
-    </div>
-    <button type="button" class="btn-run">Run</button>
-    <button type="button" class="btn-check">Check</button>
+    <section class="course-main">
+      <h1 class="lesson-title">A lesson</h1>
+      <div class="lesson-content">
+        <div class="exercise-item" data-exercise-id="ex-1">
+          <p class="exercise-prompt">Why?</p>
+          <textarea class="code-editor-small" data-editor-id="editor-1"></textarea>
+          <textarea class="reflection-input" id="reflect-1"></textarea>
+          <button type="button" class="btn btn-primary submit-btn">Save</button>
+        </div>
+        <button type="button" class="btn-run">Run</button>
+        <button type="button" class="btn-check">Check</button>
+      </div>
+    </section>
   </main>`;
 
 function boot(path) {
   history.pushState({}, '', path);
   document.body.innerHTML = MARKUP;
+  window.runEditorCode = function () { return Promise.resolve(); };
   new Function(SRC).call(window);
   document.dispatchEvent(new Event('DOMContentLoaded'));
 }
+
+const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 function policyArrives(value) {
   document.dispatchEvent(new CustomEvent('pypath:policy', { detail: { policy: value } }));
@@ -189,59 +199,79 @@ describe('a self-study learner is held to the same rule', () => {
   });
 });
 
-describe('reading ahead is still allowed; only credit is gated', () => {
-  it('leaves the locked unit readable', () => {
+describe('under the mark, the unit is shut rather than readable', () => {
+  /* This used to say the opposite. Reading ahead was allowed and the lesson
+     stayed on the page under a banner; it is not, and it does not. The gate on
+     credit below is unchanged -- that half was never the question. */
+  it('shows no lesson at all, absent from the document rather than hidden', () => {
     unitOneDone(65);
     boot(UNIT_2);
     policyArrives(IN_ORDER);
-    expect(document.querySelector('.exercise-prompt').textContent).toBe('Why?');
-    expect(document.querySelector('.reflection-input')).not.toBe(null);
+    expect(document.querySelector('.lesson-content')).toBe(null);
+    expect(document.querySelector('.exercise-prompt')).toBe(null);
+    expect(document.querySelector('.reflection-input')).toBe(null);
+    expect(document.body.innerHTML).not.toMatch(/data-exercise-id/);
   });
 
-  it('turns off the controls that would count', () => {
+  it('takes the controls that would count with it', () => {
     unitOneDone(65);
     boot(UNIT_2);
     policyArrives(IN_ORDER);
-    buttons().forEach((btn) => expect(btn.disabled, btn.className).toBe(true));
+    expect(buttons().length).toBe(0);
   });
 
-  it('records nothing when a locked lesson is worked through anyway', () => {
+  it('records nothing when the guard is reached anyway', () => {
+    // The Save button is gone, so this goes in through the wrapped global a
+    // leftover Run button would call. The assertion is the one it always was.
     unitOneDone(65);
     boot(UNIT_2);
     policyArrives(IN_ORDER);
-    document.querySelector('.reflection-input').value =
-      'A loop repeats a block until its condition stops being true.';
-    document.querySelector('.submit-btn').click();
-    const raw = localStorage.getItem('pypath-progress-lessons');
-    expect(JSON.parse(raw)[UNIT_2]).toBe(undefined);
+    return window.runEditorCode('editor-1').then(settle).then(() => {
+      const raw = localStorage.getItem('pypath-progress-lessons');
+      expect(JSON.parse(raw)[UNIT_2]).toBe(undefined);
+    });
   });
 
-  it('gives the controls back the moment the mark is cleared', () => {
+  it('gives the lesson back the moment the mark is cleared', () => {
     unitOneDone(65);
     boot(UNIT_2);
     policyArrives(IN_ORDER);
-    expect(document.querySelector('.btn-run').disabled).toBe(true);
+    expect(document.querySelector('.lesson-content')).toBe(null);
 
     localStorage.setItem('pypath-unit-tests', JSON.stringify({
       1: { best: 74, passed: true, attempts: 2, lastAt: 2, last: null },
     }));
     window.PyPathLessonProgress.rollUpUnitNumber(1);
     policyArrives(IN_ORDER);
+    expect(document.querySelector('.lesson-content')).not.toBe(null);
     expect(document.querySelector('.btn-run').disabled).toBe(false);
   });
 });
 
-describe('the notice says the number rather than just "pass"', () => {
+describe('the lock screen says the number rather than just "pass"', () => {
   it('names the mark a learner has to clear', () => {
     unitOneDone(65);
     boot(UNIT_2);
     policyArrives(IN_ORDER);
-    const notice = document.querySelector('.unit-locked-notice');
-    expect(notice.getAttribute('data-lock-variant')).toBe('sequential');
-    const text = notice.textContent.replace(/\s+/g, ' ');
+    const screen = document.querySelector('.unit-lock-screen');
+    expect(screen.getAttribute('data-lock-variant')).toBe('sequential');
+    const text = screen.textContent.replace(/\s+/g, ' ');
     expect(text).toMatch(/score 70 or higher on the Unit 1 test/);
     // The old wording, which left a learner to guess what "pass" meant.
     expect(text).not.toMatch(/and pass the Unit 1 test/);
+    // And the older direction still, which offered the lesson to read.
+    expect(text).not.toMatch(/keep reading ahead/);
+  });
+
+  it('offers the way out: the test, and their own record', () => {
+    // Every lesson in unit 1 is done, so the only thing left is the mark.
+    unitOneDone(65);
+    boot(UNIT_2);
+    policyArrives(IN_ORDER);
+    const hrefs = Array.from(document.querySelectorAll('.unit-lock-screen a'))
+      .map((a) => a.getAttribute('href'));
+    expect(hrefs).toContain('/unit-test.html?unit=1');
+    expect(hrefs).toContain('/progress.html');
   });
 
   it('agrees with the number the test page prints back', () => {

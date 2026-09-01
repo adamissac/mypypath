@@ -966,7 +966,14 @@
       + 'hand: only the units you tick are open. Open: every unit is open to '
       + 'everyone. Assignments are unaffected by all three, so an open course '
       + 'still owes whatever you set, and a unit you assign is always reachable '
-      + 'even if the mode would otherwise keep it shut.',
+      + 'even if the mode would otherwise keep it shut. A student who opens a '
+      + 'lesson in a shut unit gets a page saying why it is shut and what they '
+      + 'can do instead -- the lesson itself is not shown. Worth knowing where '
+      + 'that is kept: lessons are pages of this site, and it is this site in '
+      + 'the student\'s browser that declines to show one, so this keeps a '
+      + 'class out of a unit you have not opened rather than putting the '
+      + 'material beyond reach of somebody who goes looking for the page '
+      + 'directly.',
     flagged: 'Three or more written answers that contained none of the words '
       + 'the lesson author listed as ideas a good answer touches. That is all '
       + 'this measures: it is a word check, not a marker, and a thoughtful '

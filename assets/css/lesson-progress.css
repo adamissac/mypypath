@@ -44,26 +44,39 @@
   }
 }
 
-.unit-locked-notice {
+/* The lock screen. It is not a banner over a lesson any more -- on a locked
+   lesson page it is what the page has instead of the lesson -- so it is given
+   a little more room and a little more weight than the notices above. */
+.unit-lock-screen {
   max-width: 68ch;
   margin: 24px 0 28px;
-  padding: 20px 22px;
+  padding: 24px 26px;
   border: 1px solid #f0d08a;
   border-left: 4px solid #e0a72e;
   border-radius: 12px;
   background: rgba(224, 167, 46, 0.09);
 }
 
-.unit-locked-notice__title {
-  margin: 0 0 6px;
+.unit-lock-screen__title {
+  margin: 0 0 8px;
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: 1.15rem;
 }
 
-.unit-locked-notice p { margin: 0 0 10px; }
-.unit-locked-notice p:last-child { margin-bottom: 0; }
+.unit-lock-screen p { margin: 0 0 12px; }
+.unit-lock-screen p:last-child { margin-bottom: 0; }
 
-/* A locked unit stays clickable under the soft lock, but reads as not-yet-open. */
+/* Two ways out, side by side and wrapping on a phone rather than stacking
+   into a column of full-width buttons. */
+.unit-lock-screen__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* A locked unit stays clickable in the lists, and reads as not-yet-open:
+   clicking one is how a student reaches the lock screen that explains it. */
 .unit-card.locked,
 .dd-panel a.locked {
   opacity: 0.55;
@@ -170,7 +183,7 @@
   color: var(--ok, #1f9d55);
 }
 
-/* Teacher view banner. Deliberately not the amber of .unit-locked-notice --
+/* Teacher view banner. Deliberately not the amber of .unit-lock-screen --
    nothing here is a warning, it is a statement of which view you are in. */
 .teacher-view-note {
   max-width: 68ch;
