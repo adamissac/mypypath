@@ -1,0 +1,74 @@
+[
+  {
+    "id": "q9-match-1",
+    "kind": "match",
+    "prompt": "Match each JSON function to what it does.",
+    "left": ["json.loads", "json.dumps", "json.load", "json.dump"],
+    "right": [
+      "Python object into a file",
+      "Text into a Python object",
+      "File into a Python object",
+      "Python object into text"
+    ],
+    "answer": [1, 3, 2, 0],
+    "explain": "The s means string. Without it you are handing the function a file instead of text."
+  },
+  {
+    "id": "q9-match-2",
+    "kind": "match",
+    "prompt": "Match each operation to roughly how its cost grows.",
+    "left": [
+      "Reading one item from a list by index",
+      "Looping over every item once",
+      "A loop inside a loop over the same list",
+      "Checking a key is in a dictionary"
+    ],
+    "right": ["O(n)", "O(1)", "O(1)", "O(n squared)"],
+    "answer": [1, 0, 3, 2],
+    "explain": "A dictionary lookup does not get slower as the dictionary grows, which is the main reason to reach for one."
+  },
+  {
+    "id": "q9-multi-1",
+    "kind": "multi",
+    "prompt": "Which are true about calling a web API?",
+    "choices": [
+      "The response has to be checked before it is trusted",
+      "It can fail for reasons that have nothing to do with your code",
+      "It always returns JSON",
+      "It is instant, so no waiting needs handling"
+    ],
+    "answers": [0, 1],
+    "explain": "The network is the part of your program you do not control. A request that worked yesterday can time out today."
+  },
+  {
+    "id": "q9-blank-1",
+    "kind": "blank",
+    "label": "Fill both blanks so the recursion stops.",
+    "prompt": "Fill both blanks so the recursion stops.",
+    "code": "def countdown(n):\n    if n ___ 0:\n        return\n    print(n)\n    countdown(n ___ 1)",
+    "blanks": [{ "accept": ["<=", "==", "<"] }, { "accept": ["-"] }],
+    "explain": "Every recursive function needs a base case and a step that moves toward it, or it runs until Python gives up."
+  },
+  {
+    "id": "q9-blank-2",
+    "kind": "blank",
+    "label": "Fill both blanks so the JSON text becomes a Python dictionary.",
+    "prompt": "Fill both blanks so the JSON text becomes a Python dictionary.",
+    "code": "import ___\ndata = json.___('{\"name\": \"Ada\"}')",
+    "blanks": [{ "accept": ["json"] }, { "accept": ["loads"] }],
+    "explain": "loads reads from a string. load would expect an open file instead."
+  },
+  {
+    "id": "q9-order-1",
+    "kind": "order",
+    "prompt": "Put these lines in order so the program fetches data and reads one field.",
+    "items": [
+      "import requests",
+      "response = requests.get(url)",
+      "data = response.json()",
+      "print(data[\"name\"])"
+    ],
+    "answer": [0, 1, 2, 3],
+    "explain": "You cannot parse a response before you have made the request, or read a field before it is parsed."
+  }
+]

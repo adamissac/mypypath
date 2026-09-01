@@ -1,0 +1,64 @@
+[
+  {
+    "id": "q5-match-1",
+    "kind": "match",
+    "prompt": "Match each standard library module to what it is for.",
+    "left": ["math", "random", "datetime", "os"],
+    "right": ["Picking or shuffling by chance", "Talking to the operating system", "Square roots, pi, rounding", "Dates and times"],
+    "answer": [2, 0, 3, 1],
+    "explain": "These four cover most of what a beginner reaches for, and all of them ship with Python — nothing to install."
+  },
+  {
+    "id": "q5-match-2",
+    "kind": "match",
+    "prompt": "Match each import line to what it makes available.",
+    "left": ["import math", "from math import sqrt", "import math as m", "from math import *"],
+    "right": ["m.sqrt(9)", "sqrt(9), and every other name at once", "math.sqrt(9)", "sqrt(9)"],
+    "answer": [2, 3, 0, 1],
+    "explain": "Only the plain import keeps the module name in front. The star import is the one to avoid: you can no longer tell where a name came from."
+  },
+  {
+    "id": "q5-multi-1",
+    "kind": "multi",
+    "prompt": "Which statements about a virtual environment are true?",
+    "choices": [
+      "It keeps one project's packages separate from another's",
+      "It has to be activated before pip installs into it",
+      "It is uploaded to GitHub with your code",
+      "It makes your program run faster"
+    ],
+    "answers": [0, 1],
+    "explain": "A virtual environment is a folder of installed packages, and it is rebuilt from requirements.txt rather than committed."
+  },
+  {
+    "id": "q5-blank-1",
+    "kind": "blank",
+    "label": "Fill both blanks so only sqrt is imported and then used.",
+    "prompt": "Fill both blanks so only sqrt is imported and then used.",
+    "code": "___ math import sqrt\nprint(___(16))",
+    "blanks": [{ "accept": ["from"] }, { "accept": ["sqrt"] }],
+    "explain": "A from-import brings the name itself into your file, so you call it without the module in front."
+  },
+  {
+    "id": "q5-blank-2",
+    "kind": "blank",
+    "label": "Complete the guard that stops this code running on import.",
+    "prompt": "Complete the guard that stops this code running on import.",
+    "code": "if __name__ == \"___\":\n    main()",
+    "blanks": [{ "accept": ["__main__", "main"] }],
+    "explain": "__name__ is \"__main__\" only when the file is run directly, so the guard keeps main() from firing when another file imports this one."
+  },
+  {
+    "id": "q5-order-1",
+    "kind": "order",
+    "prompt": "Put these lines in the order they belong in a Python file.",
+    "items": [
+      "import random",
+      "def pick(options):",
+      "    return random.choice(options)",
+      "print(pick([\"red\", \"blue\"]))"
+    ],
+    "answer": [0, 1, 2, 3],
+    "explain": "Imports go at the top, the definition next, and the call last — a function cannot be called on a line above the one that defines it."
+  }
+]
