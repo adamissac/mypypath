@@ -74,5 +74,71 @@ describe('role-gated markup', () => {
     it(`styles ${page}'s teacher note`, () => {
       expect(fs.readFileSync(page, 'utf8')).toContain('/assets/css/lesson-progress.css');
     });
+
+    it(`survives lesson-progress.js, which used to delete ${page}'s note`, () => {
+      /* The bug these two pages had from the day they shipped: the note was in
+         the file, sent to the browser, and removed before it could paint.
+
+         paintTeacherBanner() cleans up the banner IT injects whenever the page
+         is not a lesson or a unit -- and it looked that banner up by class
+         alone. On curriculum.html and progress.html, which are neither and
+         which author a note of their own, the first match was theirs. Nothing
+         caught it because the tests above assert the markup is in the file,
+         and it always was.
+
+         The fix is an ownership mark, so this asserts on the mark rather than
+         on the sentence around it. */
+      const src = fs.readFileSync('assets/js/lesson-progress.js', 'utf8');
+      expect(src).toMatch(/querySelector\('\.teacher-view-note\[data-injected-note\]'\)/);
+      expect(src).toMatch(/setAttribute\('data-injected-note'/);
+      // The authored notes carry no such mark, which is what keeps them.
+      expect(fs.readFileSync(page, 'utf8')).not.toContain('data-injected-note');
+    });
+  });
+
+  describe('the note is one component wherever it appears', () => {
+    /* Injected onto a lesson, or authored into these two pages -- a teacher
+       should meet one thing, not three that nearly match. */
+    ['progress.html', 'curriculum.html'].forEach((page) => {
+      it(`${page} uses the badge/text/action structure`, () => {
+        const html = fs.readFileSync(page, 'utf8');
+        expect(html).toContain('teacher-view-note__badge');
+        expect(html).toContain('teacher-view-note__text');
+        expect(html).toContain('teacher-view-note__title');
+        expect(html).toContain('teacher-view-note__body');
+        expect(html).toContain('teacher-view-note__actions');
+        // The action is the only thing to do here, so it is a button at the
+        // end of the bar rather than a link buried mid-sentence.
+        expect(html).toMatch(/teacher-view-note__actions[\s\S]{0,200}href="\/classroom\.html"/);
+      });
+    });
+
+    it('the injected one uses it too', () => {
+      const src = fs.readFileSync('assets/js/lesson-progress.js', 'utf8');
+      ['__badge', '__text', '__title', '__body', '__actions'].forEach((part) => {
+        expect(src).toContain('teacher-view-note' + part);
+      });
+    });
+
+    it('the bar spans the page instead of stopping at a 68ch measure', () => {
+      // What made it read as smushed into the left corner: a 796px box above
+      // content that ran to 1390px. The text keeps a measure; the bar does not.
+      const css = fs.readFileSync('assets/css/lesson-progress.css', 'utf8');
+      const rule = css.slice(css.indexOf('.teacher-view-note {'),
+        css.indexOf('.teacher-view-note__badge {'));
+      expect(rule).not.toMatch(/max-width:\s*68ch/);
+      expect(rule).toMatch(/grid-template-columns:\s*auto minmax\(0, 1fr\) auto/);
+      expect(css).toMatch(/\.teacher-view-note__text \{ max-width: 62ch; \}/);
+    });
+
+    it('the wrapper borrows the lesson grid\'s own gutters', () => {
+      // A 14px disagreement was invisible while the note was a narrow box and
+      // reads as a misaligned bar now that it spans.
+      const css = fs.readFileSync('assets/css/lesson-progress.css', 'utf8');
+      const theme = fs.readFileSync('assets/css/pypath-theme.css', 'utf8');
+      const gutter = 'clamp(1.5rem, 3.5vw, 4rem)';
+      expect(theme).toContain('padding-inline: ' + gutter);
+      expect(css).toContain('padding-inline: ' + gutter);
+    });
   });
 });
