@@ -44,6 +44,27 @@
   }
 }
 
+/* On a lesson page the wrapper has to agree with the lesson grid exactly.
+   It never did: above 981px .page-unit .layout-course uses
+   clamp(1.5rem, 3.5vw, 4rem) and gets a max-width and auto margins, while the
+   wrapper used its own gutter -- 50.4px against 64px at a 1440px window. That
+   was invisible while these notices were narrow boxes floating in the corner.
+   Now that they span the page, a 14px disagreement reads as a misaligned bar,
+   so the wrapper borrows the grid's own numbers rather than approximating
+   them. Kept beside the rule it mirrors: change one and change both. */
+@media (min-width: 981px) {
+  .page-unit .main-notice-wrap {
+    max-width: 2000px;
+    margin-inline: auto;
+    padding-inline: clamp(1.5rem, 3.5vw, 4rem);
+  }
+}
+
+@media (max-width: 980px) {
+  /* And the narrow layout's 1rem, for the same reason. */
+  .page-unit .main-notice-wrap { padding-inline: 1rem; }
+}
+
 /* ------------------------------------------------------------- lock screen
    What a locked unit shows instead of its lesson.
 
@@ -76,11 +97,13 @@
 }
 
 /* The unit-page case: a card above a list of lessons the student can still
-   use. Compact, no backdrop, no screenful of empty space. */
-.unit-lock-screen.is-inline {
-  margin: 24px 0 28px;
-  max-width: 68ch;
-}
+   use. Compact, no backdrop, no screenful of empty space -- but spanning the
+   page the way the teacher note beside it does, rather than stopping short in
+   the left corner. The card's own text keeps its measure. */
+.unit-lock-screen.is-inline { margin: 24px 0 28px; }
+.unit-lock-screen.is-inline .unit-lock-screen__card { width: 100%; max-width: none; }
+.unit-lock-screen.is-inline .unit-lock-screen__body,
+.unit-lock-screen.is-inline .unit-lock-screen__title { max-width: 62ch; }
 
 /* ---- the empty page-shape behind the card ---- */
 
@@ -362,25 +385,95 @@
   color: var(--ok, #1f9d55);
 }
 
-/* Teacher view banner. Deliberately not the amber of .unit-lock-screen --
-   nothing here is a warning, it is a statement of which view you are in. */
+/* ------------------------------------------------------- teacher view note
+   Deliberately not the amber of .unit-lock-screen: nothing here is a warning,
+   it is a statement of which view you are in.
+
+   It used to be capped at 68ch, which on a wide screen left a 796px box
+   floating above lesson content that ran to 1390px -- the note read as
+   orphaned in the corner rather than as a bar across the top of the page. The
+   fix is not to stretch one line of text to 1400px, which is unreadable; it is
+   to use the width structurally. Badge, text, action: three columns, so the
+   bar spans the page while the sentence keeps a readable measure of its own.
+
+   Same three columns wherever this appears -- injected onto a lesson by
+   lesson-progress.js, or authored into progress.html and curriculum.html --
+   so a teacher meets one component rather than three that nearly match. */
 .teacher-view-note {
-  max-width: 68ch;
-  margin: 24px 0 28px;
-  padding: 18px 22px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem 1.4rem;
+  margin: 20px 0 26px;
+  padding: 1.15rem 1.4rem;
   border: 1px solid var(--border, #cfe3f2);
   border-left: 4px solid var(--accent, #2f7ea8);
-  border-radius: 12px;
-  background: var(--surface, rgba(47, 126, 168, 0.07));
+  border-radius: 14px;
+  background:
+    linear-gradient(100deg,
+      rgba(14, 165, 233, 0.10) 0%,
+      rgba(14, 165, 233, 0.04) 42%,
+      transparent 78%),
+    var(--panel, #fff);
+  box-shadow: var(--shadow, 0 4px 20px rgba(12, 69, 102, 0.07));
 }
 
+/* The badge carries the meaning of the whole bar -- "you are looking at this
+   as somebody else" -- so it is an eye rather than a decorative dot. */
+.teacher-view-note__badge {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(135deg, var(--pp-line, #0ea5e9), var(--pp-line-deep, #0284c7));
+  box-shadow: 0 3px 10px rgba(2, 132, 199, 0.28);
+}
+
+.teacher-view-note__badge svg { width: 1.35rem; height: 1.35rem; }
+
+/* The measure the sentence is actually read at, independent of how wide the
+   bar has grown. */
+.teacher-view-note__text { max-width: 62ch; }
+
 .teacher-view-note__title {
-  margin: 0 0 6px;
+  margin: 0 0 3px;
+  font-family: var(--pp-display, inherit);
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: 1.08rem;
+  letter-spacing: 0.01em;
+  color: var(--text-strong, #0c4566);
 }
 
 .teacher-view-note p { margin: 0; }
+.teacher-view-note__body { color: var(--muted, #4a7390); line-height: 1.55; }
+
+.teacher-view-note__actions { justify-self: end; }
+.teacher-view-note__actions .btn { white-space: nowrap; }
+
+/* Narrow: the action stops being a third column and becomes a row of its own,
+   under the text rather than squeezed beside it. */
+@media (max-width: 720px) {
+  .teacher-view-note {
+    grid-template-columns: auto minmax(0, 1fr);
+    padding: 1rem 1.1rem;
+  }
+  .teacher-view-note__actions {
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin-top: 0.15rem;
+  }
+}
+
+[data-theme="dark"] .teacher-view-note {
+  background:
+    linear-gradient(100deg,
+      rgba(56, 189, 248, 0.14) 0%,
+      rgba(56, 189, 248, 0.05) 42%,
+      transparent 78%),
+    var(--bg-elevated, #101820);
+}
 
 /* ---------- your progress in this unit ---------- */
 
