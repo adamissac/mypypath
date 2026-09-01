@@ -1677,4 +1677,69 @@ main .container,
 
 /* The score line only appears once a paper has been sat, so it carries its own
    gap rather than the 16px every other paragraph in the card gets. */
-.lesson-finish--test .unit-test-status { margin: 1.35rem 0 0; }
+/* The score, once a paper has been sat.
+   It used to be a grey sentence under a grey paragraph -- the single most
+   useful thing on the card for a returning learner, styled as an aside. */
+.lesson-finish--test .unit-test-status {
+  display: block;
+  margin: 1.35rem 0 0;
+  color: rgba(234, 246, 253, 0.9);
+  font-size: 0.95rem;
+}
+
+.lesson-finish--test .unit-test-status.is-pass { color: #86efac; }
+
+.ut-score { display: block; }
+
+.ut-score__line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  max-width: 30rem;
+  margin-bottom: 0.5rem;
+}
+
+.ut-score__value {
+  font-family: var(--pp-display, inherit);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.ut-score__note { font-size: 0.9rem; color: rgba(186, 230, 253, 0.8); }
+
+.ut-score__track {
+  /* display:block matters. These are spans so the whole meter can live inside
+     the <p> the markup already had, and an inline span ignores height --
+     the track rendered as a 2px sliver until this line existed. */
+  display: block;
+  position: relative;
+  height: 10px;
+  max-width: 30rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  /* Not hidden: the pass-mark notch overhangs the track by 3px at each end on
+     purpose, so it reads as a line across it rather than a gap in it. */
+  overflow: visible;
+}
+
+.ut-score__fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #38bdf8, #7dd3fc);
+}
+
+.ut-score__fill.is-pass { background: linear-gradient(90deg, #34d399, #86efac); }
+
+/* The pass mark, drawn on the track. A notch rather than a colour change, so
+   it survives greyscale and a printout like every other mark on this site. */
+.ut-score__mark {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: #eaf6fd;
+  border-radius: 2px;
+}
