@@ -931,7 +931,14 @@
       if (!Number.isInteger(n) || n < 1) return;
 
       var state = testStatusLine(records, n);
-      node.textContent = state.text;
+      /* Only where the markup asks for it. The same status line appears on ten
+         unit pages and on the curriculum, where it is one sentence in a list
+         and a bar would be noise. */
+      if (node.hasAttribute('data-unit-test-meter') && state.attempted) {
+        paintScoreMeter(node, state);
+      } else {
+        node.textContent = state.text;
+      }
       node.classList.toggle('is-pass', state.passed);
       node.classList.toggle('is-attempted', state.attempted);
       node.hidden = false;
