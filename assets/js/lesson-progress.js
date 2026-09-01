@@ -718,6 +718,14 @@
     return out + '<span class="unit-lock-screen__ghost-block"></span></div></div>';
   }
 
+  // Lucide's eye, for the teacher banner. The badge carries the meaning of the
+  // whole bar -- you are looking at this as somebody else -- so it is an eye
+  // rather than a decorative dot.
+  var EYE_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+    'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/>' +
+    '<circle cx="12" cy="12" r="3"/></svg>';
+
   // Lucide's lock, inlined. icons.js is not loaded on every page this can
   // appear on, and one shape is not worth a dependency.
   var LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
@@ -1052,8 +1060,18 @@
   // Says out loud what the missing lock screen already implies: this account is
   // reading the course as a teacher, not working through it. Every unit is
   // open to a teacher, so nothing is ever taken off a page they are looking at.
+  /* Only ever the banner this file put there.
+   *
+   * It used to be `querySelector('.teacher-view-note')`, which on any page
+   * that is not a lesson or a unit meant "delete the first one you find" --
+   * and curriculum.html and progress.html each ship an authored one of their
+   * own, for role-nav.js to show or hide. So this ran on those pages, matched
+   * markup it had not written, and removed it. Neither banner had ever
+   * appeared: the note was in the file, shipped to the browser, and deleted
+   * before paint. tests/teacher-view.test.js asserts the markup is in the
+   * file, which it was, so nothing caught it. */
   function paintTeacherBanner() {
-    var existing = document.querySelector('.teacher-view-note');
+    var existing = document.querySelector('.teacher-view-note[data-injected-note]');
     if (!teaching() || !(isLessonPage() || isUnitPage())) {
       removeNotice(existing);
       return;
@@ -1063,12 +1081,25 @@
     var box = document.createElement('div');
     box.className = 'teacher-view-note';
     box.setAttribute('role', 'note');
+    // Whose banner this is, so the cleanup above can tell it from the ones
+    // curriculum.html and progress.html author for themselves.
+    box.setAttribute('data-injected-note', '');
+    /* Badge, text, action -- the same three columns the authored copies in
+       progress.html and curriculum.html use, so a teacher meets one component
+       rather than three that nearly match. The link becomes a button at the
+       end of the bar rather than sitting inside the sentence: it is the only
+       thing here to do, and a bar this wide should put it where the eye
+       finishes rather than hide it mid-paragraph. */
     box.innerHTML =
+      '<span class="teacher-view-note__badge">' + EYE_SVG + '</span>' +
+      '<div class="teacher-view-note__text">' +
       '<p class="teacher-view-note__title">Teacher view</p>' +
-      '<p>Every unit and lesson is open to you, and nothing you do here is ' +
-      'graded or counted as progress. ' +
-      '<a class="route" href="/classroom.html">Open your classroom</a> to see how ' +
-      'your students are doing.</p>';
+      '<p class="teacher-view-note__body">Every unit and lesson is open to you, ' +
+      'and nothing you do here is graded or counted as progress.</p>' +
+      '</div>' +
+      '<p class="teacher-view-note__actions">' +
+      '<a class="btn btn-ghost btn-small route" href="/classroom.html">Open your classroom</a>' +
+      '</p>';
 
     prependNotice(box);
   }
