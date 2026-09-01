@@ -1617,3 +1617,150 @@
 }
 
 .cr-zone .cr-solutions > h2 { font-size: 1.05rem; margin-top: 0; }
+
+
+/* ------------------------------------------------------------------ roster
+   One row per student, built to be scanned by a teacher standing up with a
+   class of forty on screen. The unit grid it sits beside is one cell per
+   student per unit and stays the right tool for reading a single unit down
+   the column; this is the one for reading people down the page.
+
+   Everything here is quiet on purpose. The bar, the one flag mark and the
+   below-70 dot are the only three things allowed to catch the eye, because a
+   table where six things compete is the density problem this view exists to
+   solve. */
+
+.cr-viewbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin: 0 0 1rem;
+}
+
+.cr-view {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* A segmented control rather than two loose radios: these are two views of one
+   thing, and the shared track says so. */
+.cr-view label {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--cr-line, rgba(0, 0, 0, 0.14));
+  cursor: pointer;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  background: transparent;
+}
+
+.cr-view label:first-of-type { border-radius: 999px 0 0 999px; }
+.cr-view label:last-of-type { border-radius: 0 999px 999px 0; margin-left: -1px; }
+.cr-view input { position: absolute; opacity: 0; pointer-events: none; }
+.cr-view label:has(input:checked) {
+  background: var(--cr-ink, #14202e);
+  border-color: var(--cr-ink, #14202e);
+  color: #fff;
+  font-weight: 600;
+}
+.cr-view label:has(input:focus-visible) { outline: 2px solid currentColor; outline-offset: 2px; }
+.cr-view .cr-info { margin-left: 0.5rem; }
+
+.cr-find { display: flex; align-items: center; gap: 0.5rem; }
+.cr-find label { font-size: 0.85rem; color: var(--cr-muted, #5b6b7c); }
+.cr-find select { min-width: 14rem; }
+
+.cr-roster { width: 100%; }
+
+.cr-roster__h { padding: 0; white-space: nowrap; }
+.cr-roster__h--right { text-align: right; }
+
+.cr-roster__sort {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0.5rem 0.65rem;
+  font: inherit;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--cr-muted, #5b6b7c);
+  cursor: pointer;
+  width: 100%;
+  text-align: inherit;
+}
+.cr-roster__sort:hover { color: inherit; }
+.cr-roster__sort.is-sorted { color: inherit; font-weight: 700; }
+.cr-roster__arrow { margin-left: 0.3rem; }
+
+.cr-roster__who { text-align: left; font-weight: 500; }
+.cr-roster__name {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: var(--cr-line, rgba(0, 0, 0, 0.25));
+  text-underline-offset: 3px;
+}
+.cr-roster__name:hover { text-decoration-color: currentColor; }
+
+.cr-roster__c { text-align: left; vertical-align: middle; }
+.cr-roster__c--right { text-align: right; font-variant-numeric: tabular-nums; }
+
+.cr-roster__row:hover { background: var(--cr-hover, rgba(0, 0, 0, 0.025)); }
+
+/* The number is the fact; the bar is what makes forty rows read as a
+   distribution rather than forty separate readings. */
+.cr-roster__num { display: block; font-variant-numeric: tabular-nums; }
+.cr-meter {
+  display: block;
+  width: 5.5rem;
+  height: 4px;
+  margin-left: auto;
+  margin-top: 0.25rem;
+  background: var(--cr-line, rgba(0, 0, 0, 0.12));
+  border-radius: 999px;
+  overflow: hidden;
+}
+.cr-meter__fill { display: block; height: 100%; background: var(--cr-ink, #14202e); }
+
+.cr-roster__score { font-weight: 600; }
+.cr-roster__score.is-below { color: var(--cr-warn-ink, #8a4b12); }
+.cr-roster__unit { color: var(--cr-muted, #5b6b7c); font-size: 0.85em; }
+
+.cr-roster__c.is-behind { color: var(--cr-warn-ink, #8a4b12); }
+.cr-roster__c.is-stale { color: var(--cr-muted, #5b6b7c); }
+
+.cr-roster__flag {
+  display: inline-block;
+  min-width: 1.25rem;
+  text-align: center;
+  font-weight: 700;
+  color: var(--cr-warn-ink, #8a4b12);
+  margin-right: 0.4rem;
+}
+.cr-roster__reason {
+  font-size: 0.85rem;
+  color: var(--cr-muted, #5b6b7c);
+}
+.cr-roster__pending { color: var(--cr-muted, #5b6b7c); font-size: 0.85rem; }
+
+@media (max-width: 640px) {
+  /* The two columns a phone can lose without changing what the table is for. */
+  .cr-roster__h:nth-child(5), .cr-roster__c:nth-child(5),
+  .cr-roster__h:nth-child(7), .cr-roster__c:nth-child(7) { display: none; }
+  .cr-find select { min-width: 0; }
+}
