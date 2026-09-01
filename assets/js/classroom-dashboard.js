@@ -1488,6 +1488,31 @@ function wire() {
     });
   }
 
+  /* The .xlsx download. Same rows as the CSV button above, same class, three
+     sheets instead of one flat table -- see masteryWorkbook() for why that is
+     worth a second button rather than replacing the first. CSV stays because
+     it is the format another program can definitely read. */
+  const xlsxBtn = $('[data-cr-export-xlsx]');
+  if (xlsxBtn) {
+    xlsxBtn.addEventListener('click', () => {
+      const klass = classes.filter((c) => c.id === activeClassId)[0];
+      const bytes = window.PyPathExport.masteryWorkbook(sortedStudents(), {
+        lessonsByUnit: lessonsByUnit(),
+        totalUnits: (CURRICULUM && CURRICULUM.TOTAL_UNITS) || 10,
+        assignments,
+        lessonTitles: lessonTitles(),
+        now: Date.now(),
+      });
+      // Built and downloaded in the browser; the export never leaves the
+      // teacher's machine.
+      window.PyPathExport.download(
+        'pypath-' + slug(klass ? klass.name : 'class') + '.xlsx',
+        bytes,
+        window.PyPathXlsx.MIME
+      );
+    });
+  }
+
   const digestBtn = $('[data-cr-digest]');
   if (digestBtn) {
     digestBtn.addEventListener('click', () => {
