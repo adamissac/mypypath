@@ -1,4 +1,76 @@
 {
+  "exercise1": {
+    "prompt": "comments for src, tests and docs, then an explanation",
+    "cases": [
+      {
+        "name": "prints an explanation",
+        "nonempty": true,
+        "describe": "a printed explanation"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a comment covers src",
+        "source_matches": "#[^\\n]*src",
+        "flags": "i",
+        "describe": "a comment about the src folder"
+      },
+      {
+        "name": "a comment covers tests",
+        "source_matches": "#[^\\n]*tests",
+        "flags": "i",
+        "describe": "a comment about the tests folder"
+      },
+      {
+        "name": "a comment covers docs",
+        "source_matches": "#[^\\n]*docs",
+        "flags": "i",
+        "describe": "a comment about the docs folder"
+      },
+      {
+        "name": "the explanation is printed",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "print"
+          ]
+        },
+        "describe": "a print statement"
+      }
+    ],
+    "hint": "Three comments, one per folder, saying what goes in it. Then a print saying why the split is worth having at all."
+  },
+  "exercise2": {
+    "prompt": "a well-named function that squares a number",
+    "cases": [
+      {
+        "name": "squaring 5 gives 25",
+        "expect_stdout": "25"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the work is done by a function",
+        "kind": "ast",
+        "requires": {
+          "functions": true,
+          "returns": 1
+        },
+        "describe": "a function that returns the square"
+      },
+      {
+        "name": "the name is lowercase with underscores",
+        "source_matches": "def\\s+[a-z][a-z0-9_]*\\s*\\(",
+        "describe": "a def whose name is lowercase, words joined by underscores"
+      },
+      {
+        "name": "a comment explains the naming choice",
+        "source_matches": "#[^\\n]*\\S",
+        "describe": "a comment about naming"
+      }
+    ],
+    "hint": "print(25) is the right number and none of the exercise. Write the function, give it a name like square_number, and call it with 5."
+  },
   "questions": [
     {
       "id": "u5-org-1",

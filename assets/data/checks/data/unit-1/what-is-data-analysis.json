@@ -1,0 +1,78 @@
+{
+  "exercise1": {
+    "prompt": "Four steps that turn a file of rows into an answer you can defend.",
+    "cases": [
+      {
+        "name": "produces the expected output",
+        "expect_stdout": "3\n92"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the count is measured, not typed",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "len"
+          ]
+        },
+        "describe": "len() counting the rows"
+      },
+      {
+        "name": "the highest score is found, not typed",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "max"
+          ]
+        },
+        "describe": "max() finding the top score"
+      }
+    ],
+    "hint": "print(3) is right today and wrong the moment a fourth student arrives. Ask len() and max() for the answers so the code still holds when the data changes."
+  },
+  "questions": [
+    {
+      "id": "d1-wda-1",
+      "prompt": "Which step of an analysis usually takes the longest?",
+      "choices": [
+        "Getting the data",
+        "Cleaning it",
+        "Summarising it",
+        "Presenting it"
+      ],
+      "answer": 1,
+      "explain": "Real data arrives with missing values, wrong types and duplicates. The summarising is often three lines; getting the data fit to summarise is the job."
+    },
+    {
+      "id": "d1-wda-2",
+      "prompt": "Why write the question down before looking at the data?",
+      "choices": [
+        "It is a formality",
+        "Without it you will find something that looks interesting and call it a finding",
+        "Python requires it",
+        "It makes the code faster"
+      ],
+      "answer": 1,
+      "explain": "A table will always yield some pattern if you look long enough. Deciding the question first is what makes the answer mean anything."
+    },
+    {
+      "id": "d1-wda-3",
+      "kind": "order",
+      "prompt": "Put the four steps of an analysis in order.",
+      "items": [
+        "Clean it",
+        "Get the data",
+        "Say what it means",
+        "Summarise it"
+      ],
+      "answer": [
+        1,
+        0,
+        3,
+        2
+      ],
+      "explain": "Summarising dirty data produces a confident wrong answer, which is the worst of the four outcomes."
+    }
+  ]
+}

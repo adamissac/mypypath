@@ -1,0 +1,87 @@
+{
+  "exercise1": {
+    "prompt": "Totals, averages and extremes, and what each one hides.",
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "average([2, 4])",
+        "expect": "3.0"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "an empty list averages to 0",
+        "call": "average([])",
+        "expect": "0"
+      },
+      {
+        "name": "one number averages to itself",
+        "call": "average([7])",
+        "expect": "7.0"
+      },
+      {
+        "kind": "generated",
+        "name": "works for any list of scores",
+        "entry": "average",
+        "reference": "def average(scores):\n    if not scores:\n        return 0\n    return sum(scores) / len(scores)\n",
+        "args": [
+          {
+            "type": "list",
+            "of": {
+              "type": "int",
+              "min": 0,
+              "max": 100
+            },
+            "minLength": 0,
+            "maxLength": 6
+          }
+        ],
+        "runs": 40
+      }
+    ],
+    "hint": "The empty case has to be handled before the division, not after it -- len([]) is 0 and dividing by it raises."
+  },
+  "questions": [
+    {
+      "id": "d1-sum-1",
+      "prompt": "What does sum(scores) / len(scores) do when scores is empty?",
+      "choices": [
+        "Returns 0",
+        "Returns None",
+        "Raises ZeroDivisionError",
+        "Returns an empty list"
+      ],
+      "answer": 2,
+      "explain": "len([]) is 0, and dividing by it raises. An empty column is common in real data, so this case has to be decided rather than discovered."
+    },
+    {
+      "id": "d1-sum-2",
+      "prompt": "Two classes both average 50. What does that tell you?",
+      "choices": [
+        "They performed the same",
+        "Almost nothing on its own",
+        "One had more students",
+        "Both had a top score of 50"
+      ],
+      "answer": 1,
+      "explain": "Everyone scoring 50 and half scoring 0 with half scoring 100 give the same average. The spread is the part the average threw away."
+    },
+    {
+      "id": "d1-sum-blank",
+      "kind": "blank",
+      "prompt": "Reporting the smallest and ___ value next to an average shows the spread the average hides.",
+      "blanks": [
+        {
+          "accept": [
+            "largest",
+            "biggest",
+            "highest",
+            "maximum",
+            "max"
+          ]
+        }
+      ],
+      "explain": "Two extra numbers turn a figure that can mislead into one that can be read."
+    }
+  ]
+}

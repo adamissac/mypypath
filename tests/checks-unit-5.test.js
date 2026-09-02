@@ -144,13 +144,26 @@ describe('the Unit 5 check files are valid', () => {
     }
   });
 
-  /* The three prose lessons are deliberately empty of code checks, and a later
-     author filling them in with something that cannot fail would be a
-     regression rather than an improvement. */
-  it('leaves the three ungradeable lessons with questions only', () => {
+  /* These three ask for comments and a printed explanation rather than a
+     calculation, so they were left unchecked at first. They are checked now,
+     and the instrument is source_matches -- the one place it is right, because
+     what the exercise asks for really is prose in the source. The AST analyzer
+     cannot see a comment, deliberately, so it cannot see these either.
+
+     Still pinned, but on the thing that matters: each one has to be able to
+     fail. A check on a prose exercise that accepts anything is worse than no
+     check, because it reports a pass nobody earned. */
+  it('checks the three prose lessons on their comments, and can fail them', () => {
     for (const slug of QUESTIONS_ONLY) {
       const spec = JSON.parse(fs.readFileSync(`assets/data/checks/unit-5/${slug}.json`, 'utf8'));
-      expect(Object.keys(spec), slug).toEqual(['questions']);
+      const exercises = Object.keys(spec).filter((k) => k !== 'questions' && k !== 'reflections');
+      expect(exercises.length, `${slug} has no graded exercise`).toBeGreaterThan(0);
+      for (const id of exercises) {
+        const all = [...(spec[id].cases || []), ...(spec[id].hiddenCases || [])];
+        const canFail = all.some((c) => c.source_matches || c.kind === 'ast'
+          || c.expect_stdout !== undefined || c.call);
+        expect(canFail, `${slug}/${id} has nothing that can fail`).toBe(true);
+      }
     }
   });
 });

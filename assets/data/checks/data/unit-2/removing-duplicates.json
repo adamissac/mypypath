@@ -1,0 +1,77 @@
+{
+  "exercise1": {
+    "prompt": "Deciding what counts as the same row is most of the work.",
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "unique_names([\"Ada\", \" ada \", \"Grace\"])",
+        "expect": "['Ada', 'Grace']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "nothing repeated keeps everything",
+        "call": "unique_names([\"Ada\", \"Grace\"])",
+        "expect": "['Ada', 'Grace']"
+      },
+      {
+        "name": "an empty list stays empty",
+        "call": "unique_names([])",
+        "expect": "[]"
+      },
+      {
+        "name": "the first spelling is the one kept",
+        "call": "unique_names([\"GRACE\", \"grace\"])",
+        "expect": "['GRACE']"
+      },
+      {
+        "name": "the order is not sorted away",
+        "call": "unique_names([\"Zoe\", \"Ada\"])",
+        "expect": "['Zoe', 'Ada']"
+      }
+    ],
+    "hint": "Two things at once: a normalised key for deciding sameness, and the original text for the output. Keep a set of keys you have already seen."
+  },
+  "questions": [
+    {
+      "id": "d2-rd-1",
+      "prompt": "What does set() cost you when you use it to remove duplicates?",
+      "choices": [
+        "Nothing",
+        "The order of the items",
+        "The values themselves",
+        "Speed"
+      ],
+      "answer": 1,
+      "explain": "A set has no order, so the output comes back in an arrangement you did not choose. When order carries meaning, that is a loss."
+    },
+    {
+      "id": "d2-rd-2",
+      "prompt": "Why normalise before comparing names?",
+      "choices": [
+        "It is faster",
+        "\"Ada\" and \" ada \" are one person and two strings",
+        "Python requires it",
+        "To sort them"
+      ],
+      "answer": 1,
+      "explain": "Case and stray spaces are the two most common ways the same value arrives looking different."
+    },
+    {
+      "id": "d2-rd-blank",
+      "kind": "blank",
+      "prompt": "To decide sameness you compare a normalised ___, while keeping the original text for the output.",
+      "blanks": [
+        {
+          "accept": [
+            "key",
+            "version",
+            "form",
+            "value"
+          ]
+        }
+      ],
+      "explain": "Two representations, one for deciding and one for showing. Collapsing them is what makes cleaned data unreadable."
+    }
+  ]
+}

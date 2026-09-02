@@ -1,4 +1,60 @@
 {
+  "practice1": {
+    "prompt": "find the one wrong line in initials()",
+    "cases": [
+      {
+        "name": "Ada Lovelace gives AL",
+        "call": "initials(\"Ada Lovelace\")",
+        "expect": "'AL'"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "one word gives one letter",
+        "call": "initials(\"Ada\")",
+        "expect": "'A'"
+      },
+      {
+        "name": "three words give three letters",
+        "call": "initials(\"Ada King Lovelace\")",
+        "expect": "'AKL'"
+      },
+      {
+        "kind": "generated",
+        "name": "works for any name",
+        "entry": "initials",
+        "reference": "def initials(name):\n    letters = \"\"\n    for word in name.split():\n        letters = letters + word[0]\n    return letters\n",
+        "args": [
+          {
+            "type": "choice",
+            "values": [
+              "Ada Lovelace",
+              "Grace Hopper",
+              "Alan Turing",
+              "Ada",
+              "Katherine Goble Johnson",
+              "Guido van Rossum"
+            ]
+          }
+        ],
+        "runs": 24
+      },
+      {
+        "name": "the loop still does the work",
+        "kind": "ast",
+        "requires": {
+          "loops": [
+            "for"
+          ],
+          "functions": [
+            "initials"
+          ]
+        },
+        "describe": "the same function, still looping"
+      }
+    ],
+    "hint": "Print what `word` holds on each pass. The loop is walking something smaller than you think it is, and one method call on `name` fixes it."
+  },
   "questions": [
     {
       "id": "u8-wid-1",

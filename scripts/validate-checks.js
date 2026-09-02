@@ -309,37 +309,68 @@ function validateQuestionKind(q, where, errors) {
   }
 }
 
+/* One entry per course: where its checks live, and the manifest that says which
+   lessons and editor ids really exist.
+
+   Foundations keeps checks/unit-N with no prefix. Ninety-nine files and every
+   stored check result are keyed off that path, and moving them to
+   checks/units/unit-N would buy symmetry at the cost of orphaning both. */
+const COURSES = [
+  { slug: 'foundations', dir: '', manifest: 'curriculum.json' },
+  { slug: 'data', dir: 'data', manifest: 'curriculum-data.json' },
+];
+
 export function validateChecks() {
-  const manifest = JSON.parse(
-    fs.readFileSync(path.join(ROOT, 'assets', 'data', 'curriculum.json'), 'utf8')
-  );
+  const errors = [];
+  const files = [];
+  if (!fs.existsSync(CHECKS_DIR)) return { errors, files };
+
+  for (const course of COURSES) {
+    const manifestPath = path.join(ROOT, 'assets', 'data', course.manifest);
+    const courseRoot = course.dir ? path.join(CHECKS_DIR, course.dir) : CHECKS_DIR;
+    if (!fs.existsSync(courseRoot)) continue;
+    if (!fs.existsSync(manifestPath)) {
+      errors.push(`${course.slug}: no manifest at assets/data/${course.manifest}`);
+      continue;
+    }
+    validateCourse(course, JSON.parse(fs.readFileSync(manifestPath, 'utf8')),
+      courseRoot, errors, files);
+  }
+
+  return { errors, files };
+}
+
+function validateCourse(course, manifest, courseRoot, errors, files) {
   const bySlug = new Map();
   for (const lesson of manifest.lessons) {
     bySlug.set(`${lesson.unit}/${lesson.slug}`, lesson);
   }
+  // Where a check file's path starts, for the messages and the file list.
+  const relBase = course.dir
+    ? `assets/data/checks/${course.dir}`
+    : 'assets/data/checks';
 
-  const errors = [];
-  const files = [];
+  {
+    const entries = fs.readdirSync(courseRoot).sort();
+    for (const unitDir of entries) {
+      // Another course's folder, validated on its own pass.
+      if (COURSES.some((c) => c.dir && c.dir === unitDir)) continue;
+      const unitMatch = /^unit-(\d+)$/.exec(unitDir);
+      if (!unitMatch) {
+        errors.push(`${unitDir}: not a unit-N directory`);
+        continue;
+      }
+      const unit = Number(unitMatch[1]);
 
-  if (!fs.existsSync(CHECKS_DIR)) return { errors, files };
-
-  for (const unitDir of fs.readdirSync(CHECKS_DIR).sort()) {
-    const unitMatch = /^unit-(\d+)$/.exec(unitDir);
-    if (!unitMatch) {
-      errors.push(`${unitDir}: not a unit-N directory`);
-      continue;
-    }
-    const unit = Number(unitMatch[1]);
-
-    for (const name of fs.readdirSync(path.join(CHECKS_DIR, unitDir)).sort()) {
+      for (const name of fs.readdirSync(path.join(courseRoot, unitDir)).sort()) {
       if (!name.endsWith('.json')) continue;
-      const rel = `assets/data/checks/${unitDir}/${name}`;
+      const rel = `${relBase}/${unitDir}/${name}`;
       const slug = name.replace(/\.json$/, '');
       files.push(rel);
 
       const lesson = bySlug.get(`${unit}/${slug}`);
       if (!lesson) {
-        errors.push(`${rel}: no lesson at units/unit-${unit}/${slug}.html`);
+        errors.push(`${rel}: no lesson at ${course.dir || 'units'}/unit-${unit}/${slug}.html`);
         continue;
       }
 
@@ -468,10 +499,9 @@ export function validateChecks() {
           errors.push(`${rel} / ${exerciseId}: no hint, so a stuck student gets nothing after two tries`);
         }
       }
+      }
     }
   }
-
-  return { errors, files };
 }
 
 function main() {

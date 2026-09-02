@@ -1,0 +1,80 @@
+{
+  "exercise1": {
+    "prompt": "The csv module turns a file of text into rows you can work with.",
+    "files": {
+      "scores.csv": "name,score\nAda,92\nGrace,88\nAlan,79\n"
+    },
+    "cases": [
+      {
+        "name": "produces the expected output",
+        "expect_stdout": "Ada 92\nGrace 88\nAlan 79"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a different file gives different output",
+        "files": {
+          "scores.csv": "name,score\nKatherine,99\nDorothy,95\n"
+        },
+        "expect_stdout": "Katherine 99\nDorothy 95"
+      },
+      {
+        "name": "the csv module does the reading",
+        "kind": "ast",
+        "requires": {
+          "imports": [
+            "csv"
+          ]
+        },
+        "describe": "the csv module imported and used"
+      },
+      {
+        "name": "the file is opened with a with statement",
+        "kind": "ast",
+        "requires": {
+          "withs": 1
+        },
+        "describe": "a with statement around the open"
+      }
+    ],
+    "hint": "DictReader reads the header for you, so row[\"name\"] and row[\"score\"] work straight away. Typing the three lines out passes the first check and fails the second."
+  },
+  "questions": [
+    {
+      "id": "d1-csv-1",
+      "prompt": "Why use the csv module instead of splitting each line on commas?",
+      "choices": [
+        "It is faster",
+        "A quoted field can contain a comma, and split would break the row there",
+        "split does not work on files",
+        "csv sorts the rows"
+      ],
+      "answer": 1,
+      "explain": "\"Lovelace, Ada\" is one field with a comma in it. csv knows about the quotes; split sees three fields where there are two."
+    },
+    {
+      "id": "d1-csv-2",
+      "prompt": "What does csv.DictReader use the first line of the file for?",
+      "choices": [
+        "It skips it",
+        "As the column names for every row after it",
+        "As the first row of data",
+        "To count the rows"
+      ],
+      "answer": 1,
+      "explain": "The header becomes the keys, which is why row[\"score\"] works without you saying which position that is."
+    },
+    {
+      "id": "d1-csv-3",
+      "prompt": "What type is row[\"score\"] straight out of a CSV file?",
+      "choices": [
+        "int",
+        "float",
+        "str",
+        "It depends on the value"
+      ],
+      "answer": 2,
+      "explain": "A file is text, so everything read out of one is text until you convert it. That is the source of more early bugs than anything else in this course."
+    }
+  ]
+}

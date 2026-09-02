@@ -1,0 +1,72 @@
+{
+  "exercise1": {
+    "prompt": "Find them, then decide between dropping and filling on purpose.",
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "len(drop_missing([{\"score\": \"92\"}, {\"score\": \"\"}, {\"score\": \"88\"}]))",
+        "expect": "2"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "nothing missing keeps everything",
+        "call": "len(drop_missing([{\"score\": \"1\"}, {\"score\": \"2\"}]))",
+        "expect": "2"
+      },
+      {
+        "name": "everything missing keeps nothing",
+        "call": "len(drop_missing([{\"score\": \"\"}]))",
+        "expect": "0"
+      },
+      {
+        "name": "the original list is not modified",
+        "call": "(lambda rows: (drop_missing(rows), len(rows))[-1])([{\"score\": \"\"}, {\"score\": \"5\"}])",
+        "expect": "2"
+      }
+    ],
+    "hint": "Build a new list rather than removing from the one you were given. Removing while looping skips rows, and a caller who still needs their data will not thank you."
+  },
+  "questions": [
+    {
+      "id": "d2-mv-1",
+      "prompt": "What does filling missing scores with the average do to the average?",
+      "choices": [
+        "Nothing",
+        "Leaves it the same but makes the spread look smaller",
+        "Raises it",
+        "Lowers it"
+      ],
+      "answer": 1,
+      "explain": "Every filled row sits exactly at the mean, so the mean does not move and the data looks less varied than it is."
+    },
+    {
+      "id": "d2-mv-2",
+      "prompt": "Why is removing items from a list while looping over it a bug?",
+      "choices": [
+        "It is slow",
+        "The loop skips the item after each removal",
+        "Python forbids it",
+        "It sorts the list"
+      ],
+      "answer": 1,
+      "explain": "Removing shifts everything left while the loop moves right, so every removal steps over its neighbour."
+    },
+    {
+      "id": "d2-mv-3",
+      "kind": "multi",
+      "prompt": "When is dropping rows with missing values reasonable?",
+      "choices": [
+        "Very few rows are affected",
+        "The missing column is the one you are analysing",
+        "Most of the file is missing that column",
+        "You need the row count to stay the same"
+      ],
+      "answers": [
+        0,
+        1
+      ],
+      "explain": "Dropping most of your data is not cleaning, it is selecting. If the column is mostly missing, that fact is the finding."
+    }
+  ]
+}

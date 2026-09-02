@@ -1,0 +1,78 @@
+{
+  "exercise1": {
+    "prompt": "Order by the value you mean, and remember that sorted returns a new list.",
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "top_names([{\"name\": \"Ada\", \"score\": 92}, {\"name\": \"Alan\", \"score\": 79}, {\"name\": \"Grace\", \"score\": 88}], 2)",
+        "expect": "['Ada', 'Grace']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "asking for none gives none",
+        "call": "top_names([{\"name\": \"Ada\", \"score\": 92}], 0)",
+        "expect": "[]"
+      },
+      {
+        "name": "asking for more than there is gives everyone",
+        "call": "top_names([{\"name\": \"Ada\", \"score\": 92}], 5)",
+        "expect": "['Ada']"
+      },
+      {
+        "name": "an empty table gives an empty list",
+        "call": "top_names([], 3)",
+        "expect": "[]"
+      },
+      {
+        "name": "the rows are sorted rather than assumed",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "sorted"
+          ]
+        },
+        "describe": "sorted() ordering the rows"
+      }
+    ],
+    "hint": "sorted with a key and reverse, then take a slice. A slice longer than the list is not an error, which is why asking for five out of one works."
+  },
+  "questions": [
+    {
+      "id": "d2-sr-1",
+      "prompt": "What does names.sort() return?",
+      "choices": [
+        "The sorted list",
+        "None",
+        "A copy",
+        "The original order"
+      ],
+      "answer": 1,
+      "explain": "It sorts in place and returns None. Assigning that result over your variable replaces the list with nothing, and nothing raises until later."
+    },
+    {
+      "id": "d2-sr-2",
+      "prompt": "What is the key argument to sorted for?",
+      "choices": [
+        "The column names",
+        "Deciding which part of each item to order by",
+        "Reversing the order",
+        "Removing duplicates"
+      ],
+      "answer": 1,
+      "explain": "It is a function applied to each item, and the result is what gets compared. That is how you sort dictionaries by one of their values."
+    },
+    {
+      "id": "d2-sr-3",
+      "prompt": "What does a slice of [:5] do to a list of one item?",
+      "choices": [
+        "Raises IndexError",
+        "Returns the one item",
+        "Returns five copies",
+        "Returns an empty list"
+      ],
+      "answer": 1,
+      "explain": "Slices clamp rather than raise, which is why taking the top ten of a short list needs no special case."
+    }
+  ]
+}
