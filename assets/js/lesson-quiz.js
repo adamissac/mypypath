@@ -22,9 +22,21 @@
     try { return location.pathname; } catch (e) { return ''; }
   }
 
+  /* Both courses. Foundations lessons live under /units/ with their checks in
+     checks/unit-N; Python for Data lives under /data/ and nests its checks
+     under checks/data/unit-N, because both courses have a unit 1 and one would
+     otherwise read the other's questions.
+
+     Kept identical to specUrl in check-ui.js and loadConceptSpec in
+     lesson-progress.js. A test asserts the three agree; when this was one
+     regex in three files, adding a course fixed one of them and left the
+     lesson quiz silently empty on every page of the new course. */
+  var COURSE_CHECK_DIR = { units: '', data: 'data/' };
+
   function specUrl() {
-    var m = /^\/units\/(unit-\d+)\/([a-z0-9-]+)\.html$/.exec(lessonPath());
-    return m ? '/assets/data/checks/' + m[1] + '/' + m[2] + '.json' : null;
+    var m = /^\/(units|data)\/(unit-\d+)\/([a-z0-9-]+)\.html$/.exec(lessonPath());
+    if (!m) return null;
+    return '/assets/data/checks/' + COURSE_CHECK_DIR[m[1]] + m[2] + '/' + m[3] + '.json';
   }
 
   function el(tag, className, text) {

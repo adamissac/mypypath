@@ -1091,10 +1091,14 @@
      is not a problem to report. */
   var conceptSpec = {};
 
+  // Same mapping as specUrl in check-ui.js and lesson-quiz.js: the course root
+  // is part of the path because both courses number their units from 1.
+  var COURSE_CHECK_DIR = { units: '', data: 'data/' };
+
   function loadConceptSpec() {
-    var m = /^\/units\/(unit-\d+)\/([a-z0-9-]+)\.html$/.exec(path);
+    var m = /^\/(units|data)\/(unit-\d+)\/([a-z0-9-]+)\.html$/.exec(path);
     if (!m || typeof fetch !== 'function') return;
-    fetch('/assets/data/checks/' + m[1] + '/' + m[2] + '.json')
+    fetch('/assets/data/checks/' + COURSE_CHECK_DIR[m[1]] + m[2] + '/' + m[3] + '.json')
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (spec) {
         var reflections = spec && spec.reflections;
