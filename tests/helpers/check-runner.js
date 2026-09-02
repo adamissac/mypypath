@@ -57,8 +57,32 @@ export function setup() {
   return state;
 }
 
+/* One interpreter run, retried once.
+ *
+ * Eight unit suites run in parallel and each case is its own `python3`, so a
+ * full run spawns thousands of processes in a few minutes. Occasionally the OS
+ * refuses one, execFileSync throws, and a check that is perfectly good reports
+ * as a failure -- worse, as a *flaky* failure, which teaches whoever sees it to
+ * re-run rather than to read.
+ *
+ * A refused spawn is not a verdict about the student's code, so it is retried
+ * rather than counted. A second refusal is left to throw: that is a machine
+ * problem and it should be loud. Only spawn failures are retried; Python
+ * running and printing something unparseable is a real bug and must not be
+ * papered over. */
 function python(script) {
-  return JSON.parse(execFileSync('python3', ['-c', script], { encoding: 'utf8' }).trim());
+  for (let attempt = 0; ; attempt++) {
+    let raw;
+    try {
+      raw = execFileSync('python3', ['-c', script], { encoding: 'utf8' });
+    } catch (e) {
+      // status === null means the process never ran; a non-null status is
+      // Python itself exiting badly, which is real and must surface.
+      if (attempt >= 1 || e.status !== null) throw e;
+      continue;
+    }
+    return JSON.parse(raw.trim());
+  }
 }
 
 /* The structural report, from real CPython's own ast module — the same source
@@ -88,16 +112,31 @@ export function runGenerated(code, testCase, attempt) {
   const { GEN } = setup();
   const rows = GEN.draw(testCase.args || [], testCase.runs || 20, (attempt || 1) * 7919);
   const calls = rows.map((row) => GEN.callFor(testCase.entry, row)).filter(Boolean);
+  /* The student's code is exec'd here, and a lesson about print debugging
+     produces code that prints. Its output would land on the same stdout this
+     function parses its JSON off, so stdout is swapped for a sink across the
+     whole run and restored only for the final line.
+
+     The browser does not need this: runPython hands the result back as a
+     return value, and Pyodide's stdout goes to the console where it is
+     harmless. Only the test harness reads an answer out of stdout. */
   const out = python([
-    'import json',
+    'import json, io, sys',
+    '_real_stdout = sys.stdout',
+    '_sink = io.StringIO()',
+    'sys.stdout = _sink',
     '_ref_ns = {}',
-    `exec(${JSON.stringify(testCase.reference)}, _ref_ns)`,
-    '_ns = {}',
     '_err = None',
     'try:',
-    `    exec(${JSON.stringify(code)}, _ns)`,
+    `    exec(${JSON.stringify(testCase.reference)}, _ref_ns)`,
     'except BaseException as e:',
-    '    _err = type(e).__name__',
+    '    _err = "ReferenceError"',
+    '_ns = {}',
+    'if _err is None:',
+    '    try:',
+    `        exec(${JSON.stringify(code)}, _ns)`,
+    '    except BaseException as e:',
+    '        _err = type(e).__name__',
     '_passed = 0',
     '_total = 0',
     `for _one in json.loads(${JSON.stringify(JSON.stringify(calls))}):`,
@@ -113,6 +152,7 @@ export function runGenerated(code, testCase, attempt) {
     '    except BaseException:',
     '        continue',
     '    if repr(_got) == repr(_want): _passed += 1',
+    'sys.stdout = _real_stdout',
     'print(json.dumps({"passed": _passed, "total": _total, "error": _err}))',
   ].join('\n'));
   return { ok: !out.error && out.total > 0 && out.passed === out.total, ...out };

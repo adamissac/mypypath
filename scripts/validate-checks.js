@@ -173,17 +173,38 @@ function validateCase(testCase, where, errors) {
 
 /* What a lesson's author says a good written answer touches. Optional
    throughout: almost every lesson has none, and that is a normal state. */
-function validateReflections(spec, rel, errors) {
+function validateReflections(spec, rel, errors, lessonPage) {
   const reflections = spec.reflections;
   if (reflections === undefined) return;
   if (!reflections || typeof reflections !== 'object' || Array.isArray(reflections)) {
     errors.push(`${rel} / reflections: expected an object keyed by reflection id`);
     return;
   }
+
+  /* The ids the page really has.
+   *
+   * This used to be a pattern -- `^reflection\d+$` -- and a pattern cannot
+   * know what is on a page. It matched one lesson in the whole repo. The
+   * shared template names its boxes `reflection-exercise1` and
+   * `reflection-exercise2`, on forty pages, and lesson-progress.js looks the
+   * spec up by the input's DOM id with no normalisation. So every id that
+   * validated was an id that never fired, and every id that would have fired
+   * failed validation. Twenty lessons shipped reflection checks that could
+   * not run.
+   *
+   * Reading the page is the only thing that can tell the difference. */
+  const onPage = lessonPage && fs.existsSync(lessonPage)
+    ? [...fs.readFileSync(lessonPage, 'utf8').matchAll(/id="(reflection[^"]*)"/g)]
+      .map((m) => m[1])
+    : null;
+
   for (const [id, entry] of Object.entries(reflections)) {
     const where = `${rel} / reflections.${id}`;
-    if (!/^reflection\d+$/.test(id)) {
-      errors.push(`${where}: id should match a reflection input on the page`);
+    if (onPage === null) {
+      errors.push(`${where}: the lesson page could not be read to check this id`);
+    } else if (!onPage.includes(id)) {
+      errors.push(`${where}: no input with that id on the page `
+        + `(it has: ${onPage.join(', ') || 'no reflection inputs at all'})`);
     }
     if (!Array.isArray(entry.expect_any) || !entry.expect_any.length) {
       errors.push(`${where}: needs an expect_any list of synonym groups`);
@@ -355,7 +376,8 @@ export function validateChecks() {
         }
       }
 
-      validateReflections(spec, rel, errors);
+      validateReflections(spec, rel, errors,
+        path.join(ROOT, lesson.path.replace(/^\//, '')));
 
       for (const [exerciseId, entry] of Object.entries(spec)) {
         // `questions` is the checks-for-understanding key and lives alongside
