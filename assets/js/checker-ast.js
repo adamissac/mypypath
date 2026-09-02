@@ -27,7 +27,8 @@
      generated case against a reference instead, which is a stronger check than
      any structural one. */
   var REQUIRE_KEYS = ['loops', 'conditionals', 'functions', 'calls', 'binop',
-    'names', 'returns', 'imports'];
+    'names', 'returns', 'imports', 'classes', 'raises', 'handlers', 'withs',
+    'decorators'];
 
   /* Builds the report. Returns a JSON string, so the JS side sees plain data.
 
@@ -46,8 +47,22 @@
     '        "parsed": True, "loops": [], "conditionals": 0, "functions": [],',
     '        "calls": [], "binop": [], "binops": [], "names": [], "returns": 0,',
     '        "imports": [],',
+    '        "classes": [], "raises": [], "handlers": [], "withs": 0,',
+    '        "decorators": [],',
     '        "maxNesting": 0, "hardcoded": [], "prints": 0,',
     '    }',
+    '',
+    '    def _name_of(node):',
+    '        # A base class or an exception is written as a bare name (ValueError)',
+    '        # or as an attribute (errors.ShapeError). Both are one thing to an',
+    '        # author, so both come back as the last segment they wrote.',
+    '        if isinstance(node, ast.Name):',
+    '            return node.id',
+    '        if isinstance(node, ast.Attribute):',
+    '            return node.attr',
+    '        if isinstance(node, ast.Call):',
+    '            return _name_of(node.func)',
+    '        return None',
     '',
     '    for node in ast.walk(tree):',
     '        if isinstance(node, (ast.For, ast.AsyncFor)):',
@@ -97,6 +112,47 @@
     '                "name": node.name,',
     '                "params": len(node.args.args),',
     '            })',
+    '            for dec in node.decorator_list:',
+    '                found = _name_of(dec)',
+    '                if found:',
+    '                    report["decorators"].append(found)',
+    '        elif isinstance(node, ast.ClassDef):',
+    '            # Methods, not every function in the file. "does Dog define',
+    '            # speak" is a question about the class body, and a module-level',
+    '            # def named speak is not an answer to it.',
+    '            methods = [b.name for b in node.body',
+    '                       if isinstance(b, (ast.FunctionDef, ast.AsyncFunctionDef))]',
+    '            report["classes"].append({',
+    '                "name": node.name,',
+    '                "bases": [b for b in (_name_of(x) for x in node.bases) if b],',
+    '                "methods": methods,',
+    '            })',
+    '            for dec in node.decorator_list:',
+    '                found = _name_of(dec)',
+    '                if found:',
+    '                    report["decorators"].append(found)',
+    '        elif isinstance(node, ast.Raise):',
+    '            found = _name_of(node.exc) if node.exc is not None else None',
+    '            # A bare `raise` re-raises whatever is being handled. It is a',
+    '            # raise, and recording it as one keeps "this code raises',
+    '            # something" honest.',
+    '            report["raises"].append(found or "raise")',
+    '        elif isinstance(node, ast.ExceptHandler):',
+    '            # `except (ValueError, TypeError)` is two handled types, and an',
+    '            # author asking for either should find either.',
+    '            if node.type is None:',
+    '                report["handlers"].append("bare")',
+    '            elif isinstance(node.type, ast.Tuple):',
+    '                for one in node.type.elts:',
+    '                    found = _name_of(one)',
+    '                    if found:',
+    '                        report["handlers"].append(found)',
+    '            else:',
+    '                found = _name_of(node.type)',
+    '                if found:',
+    '                    report["handlers"].append(found)',
+    '        elif isinstance(node, (ast.With, ast.AsyncWith)):',
+    '            report["withs"] += 1',
     '',
     '    def depth(node, level=0):',
     '        deepest = level',
@@ -166,9 +222,28 @@
   /* Reads one requirement off the report. `spec` is what the author wrote under
      `requires` or `forbids`; `true` means "any at all". */
   function satisfies(report, key, want) {
-    if (key === 'conditionals' || key === 'returns') {
+    if (key === 'conditionals' || key === 'returns' || key === 'withs') {
       var count = Number(report[key] || 0);
       return want === true ? count > 0 : count >= Number(want);
+    }
+    /* A class is asked about the way a function is: by name, and optionally by
+       what it is built from. `bases` is what makes an inheritance exercise
+       checkable at all -- "Dog extends Animal" is a fact about the class
+       statement, and no amount of running the code proves the student did not
+       copy Animal's methods into Dog by hand. */
+    if (key === 'classes') {
+      var classes = listOf(report, 'classes');
+      if (want === true) return classes.length > 0;
+      return (Array.isArray(want) ? want : [want]).every(function (spec) {
+        if (typeof spec === 'string') {
+          return classes.some(function (c) { return c.name === spec; });
+        }
+        return classes.some(function (c) {
+          return (!spec.name || c.name === spec.name)
+            && (!spec.bases || hasAll(c.bases || [], spec.bases))
+            && (!spec.methods || hasAll(c.methods || [], spec.methods));
+        });
+      });
     }
     if (key === 'functions') {
       var functions = listOf(report, 'functions');
@@ -205,11 +280,18 @@
   }
 
   function violates(report, key, want) {
-    if (key === 'conditionals' || key === 'returns') {
+    if (key === 'conditionals' || key === 'returns' || key === 'withs') {
       return Number(report[key] || 0) > 0;
     }
     if (key === 'functions') {
       return listOf(report, 'functions').length > 0;
+    }
+    // Named classes are forbidden by name; `true` forbids defining any at all.
+    if (key === 'classes') {
+      var classes = listOf(report, 'classes');
+      if (want === true) return classes.length > 0;
+      var names = classes.map(function (c) { return c.name; });
+      return hasAny(names, Array.isArray(want) ? want : [want]);
     }
     var present = listOf(report, key);
     if (want === true) return present.length > 0;

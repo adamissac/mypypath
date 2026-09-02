@@ -62,6 +62,12 @@
     if (spec.type === 'list') {
       return (spec.minLength || 0) === 0 ? [[]] : [];
     }
+    if (spec.type === 'dict') {
+      return (spec.minLength || 0) === 0 ? [{ __pytype: 'dict', entries: [] }] : [];
+    }
+    if (spec.type === 'set') {
+      return (spec.minLength || 0) === 0 ? [{ __pytype: 'set', items: [] }] : [];
+    }
     return [];
   }
 
@@ -95,6 +101,52 @@
         var items = [];
         for (var j = 0; j < n; j++) items.push(drawOne(s.of || { type: 'int' }, rand));
         return items;
+      }
+      /* Unit 4 asks about dictionaries, and a dictionary cannot be drawn as a
+         list of pairs and hoped for: the keys have to be unique or the literal
+         written from them has fewer entries than the draw thought it made, and
+         the reference and the student then disagree about a length neither of
+         them chose. Drawing until unique is the whole trick. */
+      case 'dict': {
+        var dmin = s.minLength === undefined ? 0 : s.minLength;
+        var dmax = s.maxLength === undefined ? 5 : s.maxLength;
+        var dn = intBetween(rand, dmin, Math.max(dmin, dmax));
+        var keySpec = s.keys || { type: 'str' };
+        var valueSpec = s.values || { type: 'int' };
+        var entries = [];
+        var seenKeys = {};
+        // Bounded, because a key space smaller than the requested length would
+        // otherwise spin here forever. A short dict is a fine draw; a hung tab
+        // is not.
+        for (var attempts = 0; entries.length < dn && attempts < dn * 20; attempts++) {
+          var key = drawOne(keySpec, rand);
+          var mark = typeof key + ':' + String(key);
+          if (seenKeys[mark]) continue;
+          seenKeys[mark] = true;
+          entries.push([key, drawOne(valueSpec, rand)]);
+        }
+        return { __pytype: 'dict', entries: entries };
+      }
+      /* Sets are drawn for what a function is *given*, not for what it returns.
+         Two sets with the same members compare equal in Python but their reprs
+         can be written in different orders, and the generated case compares
+         reprs. An exercise whose answer is a set should return a sorted list,
+         or use a `value` case with an explicit expectation. */
+      case 'set': {
+        var smin = s.minLength === undefined ? 0 : s.minLength;
+        var smax = s.maxLength === undefined ? 5 : s.maxLength;
+        var sn = intBetween(rand, smin, Math.max(smin, smax));
+        var itemSpec = s.of || { type: 'int' };
+        var items = [];
+        var seenItems = {};
+        for (var tries = 0; items.length < sn && tries < sn * 20; tries++) {
+          var item = drawOne(itemSpec, rand);
+          var tag = typeof item + ':' + String(item);
+          if (seenItems[tag]) continue;
+          seenItems[tag] = true;
+          items.push(item);
+        }
+        return { __pytype: 'set', items: items };
       }
       case 'choice': {
         var values = Array.isArray(s.values) && s.values.length ? s.values : [0];
@@ -149,6 +201,19 @@
     if (value === false) return 'False';
     if (typeof value === 'number') return String(value);
     if (Array.isArray(value)) return '[' + value.map(toPython).join(', ') + ']';
+    if (value && value.__pytype === 'dict') {
+      return '{' + (value.entries || []).map(function (pair) {
+        return toPython(pair[0]) + ': ' + toPython(pair[1]);
+      }).join(', ') + '}';
+    }
+    if (value && value.__pytype === 'set') {
+      // `{}` is an empty dict in Python, not an empty set, and a case that
+      // silently passed a dict where a set was meant would fail the student
+      // for the author's mistake.
+      var members = value.items || [];
+      if (!members.length) return 'set()';
+      return '{' + members.map(toPython).join(', ') + '}';
+    }
     return JSON.stringify(String(value));
   }
 
