@@ -1,4 +1,91 @@
 {
+  "exercise1": {
+    "prompt": "a calculator that branches on the operation",
+    "cases": [
+      {
+        "name": "15 times 3 is 45",
+        "stdout_matches": "45",
+        "describe": "the answer, 45"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "num1 holds 15",
+        "call": "num1",
+        "expect": "15"
+      },
+      {
+        "name": "the operation is multiplication",
+        "call": "operation",
+        "expect": "\"*\""
+      },
+      {
+        "kind": "ast",
+        "name": "every operation has a branch",
+        "describe": "if, elif and elif covering the four operations",
+        "requires": {
+          "conditionals": 3
+        }
+      },
+      {
+        "kind": "ast",
+        "name": "the answer is calculated from the two numbers",
+        "describe": "num1 multiplied by num2",
+        "requires": {
+          "binop": [
+            {
+              "op": "Mult",
+              "names": [
+                "num1",
+                "num2"
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "hint": "Write all four branches even though only one runs today. The exercise is the dispatch, not the 45."
+  },
+  "exercise2": {
+    "prompt": "print only the even numbers",
+    "cases": [
+      {
+        "name": "the five even numbers, in order",
+        "stdout_matches": "2[\\s\\S]*4[\\s\\S]*6[\\s\\S]*8[\\s\\S]*10",
+        "describe": "2, 4, 6, 8 and 10"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "five lines, so the odd ones were left out",
+        "min_lines": 5,
+        "max_lines": 5,
+        "describe": "five lines"
+      },
+      {
+        "kind": "ast",
+        "name": "a loop with a test inside it",
+        "describe": "a for loop with an if that picks the even numbers",
+        "requires": {
+          "loops": [
+            "for"
+          ],
+          "conditionals": 1
+        }
+      },
+      {
+        "kind": "ast",
+        "name": "evenness is decided with the remainder",
+        "describe": "the % operator deciding which numbers are even",
+        "requires": {
+          "binop": [
+            "Mod"
+          ]
+        }
+      }
+    ],
+    "hint": "A number is even when dividing it by two leaves nothing over, which is what % tests. Printing the five numbers you already know is not the exercise."
+  },
   "questions": [
     {
       "id": "u2-pcf-1",

@@ -1,4 +1,78 @@
 {
+  "exercise1": {
+    "prompt": "compare age against minimum_age with >=",
+    "cases": [
+      {
+        "name": "prints True",
+        "expect_stdout": "True"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "age holds 20",
+        "call": "age",
+        "expect": "20"
+      },
+      {
+        "name": "minimum_age holds 18",
+        "call": "minimum_age",
+        "expect": "18"
+      },
+      {
+        "name": "the comparison is between the two variables",
+        "call": "age >= minimum_age",
+        "expect": "True"
+      },
+      {
+        "kind": "ast",
+        "name": "the >= operator is used",
+        "describe": "a >= comparison rather than a hand-worked answer",
+        "requires": {
+          "compares": [
+            "GtE"
+          ]
+        }
+      }
+    ],
+    "hint": "Store both numbers first, then print the comparison itself. print(True) is the right answer written the wrong way: change either number and it stops being true."
+  },
+  "exercise2": {
+    "prompt": "combine a comparison and a flag with and",
+    "cases": [
+      {
+        "name": "prints True",
+        "expect_stdout": "True"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "has_ticket is True",
+        "call": "has_ticket",
+        "expect": "True"
+      },
+      {
+        "name": "both conditions are combined",
+        "call": "age >= 18 and has_ticket",
+        "expect": "True"
+      },
+      {
+        "kind": "ast",
+        "name": "the conditions are joined with and",
+        "describe": "and joining the two conditions",
+        "requires": {
+          "boolops": [
+            "And"
+          ]
+        },
+        "forbids": {
+          "boolops": [
+            "Or"
+          ]
+        }
+      }
+    ],
+    "hint": "and is true only when both sides are. With these values or gives the same answer and means something else entirely: it would let a 12 year old in with a ticket."
+  },
   "questions": [
     {
       "id": "u2-cmp-1",

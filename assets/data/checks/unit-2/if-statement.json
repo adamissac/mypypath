@@ -1,4 +1,74 @@
 {
+  "exercise1": {
+    "prompt": "an if statement on age",
+    "cases": [
+      {
+        "name": "prints the adult message",
+        "expect_stdout": "You are an adult!"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "age holds 20",
+        "call": "age",
+        "expect": "20"
+      },
+      {
+        "kind": "ast",
+        "name": "the message is inside an if",
+        "describe": "an if statement around the print",
+        "requires": {
+          "conditionals": 1
+        }
+      }
+    ],
+    "hint": "A bare print gives the same output today and would still print it if age were 5. The if is what makes the message depend on the age."
+  },
+  "exercise2": {
+    "prompt": "an if statement combining two conditions",
+    "cases": [
+      {
+        "name": "prints the hot message",
+        "expect_stdout": "It's hot!"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "temperature holds 85",
+        "call": "temperature",
+        "expect": "85"
+      },
+      {
+        "name": "is_summer is True",
+        "call": "is_summer",
+        "expect": "True"
+      },
+      {
+        "kind": "ast",
+        "name": "the print is inside an if",
+        "describe": "an if statement around the print",
+        "requires": {
+          "conditionals": 1
+        }
+      },
+      {
+        "kind": "ast",
+        "name": "the two tests are joined with and",
+        "describe": "and joining the temperature test to the summer flag",
+        "requires": {
+          "boolops": [
+            "And"
+          ]
+        },
+        "forbids": {
+          "boolops": [
+            "Or"
+          ]
+        }
+      }
+    ],
+    "hint": "One if, with and joining the two tests. Both have to hold before the message is printed, which is what makes or the wrong operator even though it prints the same thing today."
+  },
   "questions": [
     {
       "id": "u2-if-1",

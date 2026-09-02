@@ -30,7 +30,7 @@ export const CASE_KINDS = ['stdout', 'value', 'property', 'generated', 'ast',
 
 const AST_KEYS = ['loops', 'conditionals', 'functions', 'calls', 'binop',
   'names', 'returns', 'imports', 'classes', 'raises', 'handlers', 'withs',
-  'decorators'];
+  'decorators', 'boolops', 'compares'];
 
 const ARG_TYPES = ['int', 'float', 'str', 'bool', 'list', 'choice', 'dict', 'set'];
 

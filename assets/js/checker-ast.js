@@ -28,7 +28,7 @@
      any structural one. */
   var REQUIRE_KEYS = ['loops', 'conditionals', 'functions', 'calls', 'binop',
     'names', 'returns', 'imports', 'classes', 'raises', 'handlers', 'withs',
-    'decorators'];
+    'decorators', 'boolops', 'compares'];
 
   /* Builds the report. Returns a JSON string, so the JS side sees plain data.
 
@@ -48,7 +48,7 @@
     '        "calls": [], "binop": [], "binops": [], "names": [], "returns": 0,',
     '        "imports": [],',
     '        "classes": [], "raises": [], "handlers": [], "withs": 0,',
-    '        "decorators": [],',
+    '        "decorators": [], "boolops": [], "compares": [],',
     '        "maxNesting": 0, "hardcoded": [], "prints": 0,',
     '    }',
     '',
@@ -153,6 +153,14 @@
     '                    report["handlers"].append(found)',
     '        elif isinstance(node, (ast.With, ast.AsyncWith)):',
     '            report["withs"] += 1',
+    '        elif isinstance(node, ast.BoolOp):',
+    '            # Unit 2 asks for "age >= 18 AND has_ticket", and with a true',
+    '            # ticket an `or` returns the same answer. Only the operator',
+    '            # the student wrote tells the two apart, so it is recorded.',
+    '            report["boolops"].append(type(node.op).__name__)',
+    '        elif isinstance(node, ast.Compare):',
+    '            for op in node.ops:',
+    '                report["compares"].append(type(op).__name__)',
     '',
     '    def depth(node, level=0):',
     '        deepest = level',
