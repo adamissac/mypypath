@@ -1,0 +1,204 @@
+{
+  "exercise1": {
+    "prompt": "A Cat that extends Animal, calling super() in both __init__ and make_sound",
+    "cases": [
+      {
+        "kind": "ast",
+        "name": "Cat is built from Animal and writes its own __init__ and make_sound",
+        "requires": {
+          "classes": [
+            {
+              "name": "Cat",
+              "bases": [
+                "Animal"
+              ],
+              "methods": [
+                "__init__",
+                "make_sound"
+              ]
+            }
+          ]
+        },
+        "describe": "a Cat class written as class Cat(Animal) with __init__ and make_sound"
+      },
+      {
+        "name": "the cat has the name the parent was meant to set",
+        "call": "Cat(\"Whiskers\", \"orange\").name",
+        "expect": "'Whiskers'"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "the parent is reached through super, not by hand",
+        "requires": {
+          "calls": [
+            "super",
+            "__init__"
+          ]
+        },
+        "describe": "super().__init__(...) inside Cat's own __init__"
+      },
+      {
+        "kind": "ast",
+        "name": "Animal is the class that defines __init__ and make_sound first",
+        "requires": {
+          "classes": [
+            {
+              "name": "Animal",
+              "methods": [
+                "__init__",
+                "make_sound"
+              ]
+            }
+          ]
+        },
+        "describe": "an Animal class holding __init__ and make_sound"
+      },
+      {
+        "name": "the cat also has the colour Cat added",
+        "call": "Cat(\"Whiskers\", \"orange\").color",
+        "expect": "'orange'"
+      },
+      {
+        "name": "both sounds are printed, the parent's and then Meow",
+        "min_lines": 2,
+        "stdout_matches": "Meow",
+        "describe": "the parent's line followed by Meow"
+      }
+    ],
+    "hint": "Writing __init__ in the child replaces the parent's entirely, so anything the parent used to set is simply never set. super().__init__(...) is how you get that work done before adding your own."
+  },
+  "exercise2": {
+    "prompt": "A Manager that extends Employee, adding a team size to both __init__ and get_info",
+    "cases": [
+      {
+        "kind": "ast",
+        "name": "Manager is built from Employee and writes its own __init__ and get_info",
+        "requires": {
+          "classes": [
+            {
+              "name": "Manager",
+              "bases": [
+                "Employee"
+              ],
+              "methods": [
+                "__init__",
+                "get_info"
+              ]
+            }
+          ]
+        },
+        "describe": "a Manager class written as class Manager(Employee) with __init__ and get_info"
+      },
+      {
+        "name": "the manager has the name the parent was meant to set",
+        "call": "Manager(\"Sarah\", \"Project Manager\", 5).name",
+        "expect": "'Sarah'"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "the parent is reached through super, not by hand",
+        "requires": {
+          "calls": [
+            "super",
+            "__init__"
+          ]
+        },
+        "describe": "super().__init__(...) inside Manager's own __init__"
+      },
+      {
+        "kind": "ast",
+        "name": "Employee is the class that defines __init__ and get_info first",
+        "requires": {
+          "classes": [
+            {
+              "name": "Employee",
+              "methods": [
+                "__init__",
+                "get_info"
+              ]
+            }
+          ]
+        },
+        "describe": "an Employee class holding __init__ and get_info"
+      },
+      {
+        "name": "the manager also has the team size Manager added",
+        "call": "Manager(\"Sarah\", \"Project Manager\", 5).team_size",
+        "expect": "5"
+      },
+      {
+        "name": "get_info carries the parent's information as well as the team size",
+        "call": "all(part in Manager(\"Sarah\", \"Project Manager\", 4).get_info() for part in [\"Sarah\", \"Project Manager\", \"4\"])",
+        "expect": "True"
+      },
+      {
+        "name": "prints the manager's information",
+        "stdout_matches": "Sarah",
+        "describe": "the manager's details printed"
+      }
+    ],
+    "hint": "The child's get_info is meant to extend the parent's answer, not replace it. Ask the parent first, keep what it returns, then add the part only Manager knows about."
+  },
+  "questions": [
+    {
+      "id": "u6-sup-1",
+      "prompt": "A subclass defines __init__ and never calls super().__init__(). What goes wrong?",
+      "choices": [
+        "Nothing, the parent runs first automatically",
+        "Anything the parent's __init__ set is never set at all",
+        "Python raises an error when the class is defined",
+        "The parent's __init__ runs twice"
+      ],
+      "answer": 1,
+      "explain": "Defining __init__ in the child replaces the parent's. Nothing runs it for you, so the parent's attributes simply do not exist."
+    },
+    {
+      "id": "u6-sup-2",
+      "prompt": "What does super() give you?",
+      "choices": [
+        "A new object of the parent class",
+        "A way to call the parent's version of a method on this same object",
+        "The name of the parent class as a string",
+        "A copy of the parent's attributes"
+      ],
+      "answer": 1,
+      "explain": "No second object is made. super() reaches the parent's method and hands it the object you already have."
+    },
+    {
+      "id": "u6-sup-3",
+      "kind": "order",
+      "prompt": "Put the body of Manager.__init__ in the order that works.",
+      "items": [
+        "def __init__(self, name, position, team_size):",
+        "    super().__init__(name, position)",
+        "    self.team_size = team_size"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Let the parent finish setting up what it owns, then add what only the child knows about."
+    },
+    {
+      "id": "u6-sup-4",
+      "kind": "multi",
+      "prompt": "Which are true of super().get_info() inside Manager.get_info?",
+      "choices": [
+        "It runs Employee's get_info on this same manager",
+        "It returns a value you can build on",
+        "It calls Manager's get_info again, forever",
+        "It creates a new Employee object"
+      ],
+      "answers": [
+        0,
+        1
+      ],
+      "explain": "super() deliberately starts the lookup above the current class, which is what stops it finding itself and recursing."
+    }
+  ]
+}

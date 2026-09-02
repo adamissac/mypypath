@@ -1,0 +1,157 @@
+{
+  "exercise1": {
+    "prompt": "Import math and print the area of a circle of radius 7, rounded to 2 decimal places",
+    "cases": [
+      {
+        "name": "prints the area rounded to two decimals",
+        "stdout_matches": "153\\.94(?![0-9])",
+        "describe": "153.94"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "the math module is imported",
+        "requires": {
+          "imports": [
+            "math"
+          ]
+        },
+        "describe": "import math"
+      },
+      {
+        "kind": "ast",
+        "name": "pi comes from the module rather than being typed in",
+        "requires": {
+          "calls": [
+            "pi"
+          ]
+        },
+        "describe": "math.pi"
+      },
+      {
+        "kind": "ast",
+        "name": "the radius is squared in code",
+        "requires": {
+          "binop": [
+            {
+              "op": "Pow"
+            }
+          ]
+        },
+        "describe": "radius raised to the power of 2"
+      },
+      {
+        "name": "prints one line",
+        "nonempty": true,
+        "max_lines": 1
+      }
+    ],
+    "hint": "math.pi is the full value, so multiplying it out gives a long decimal. The exercise asks for two places, which is a formatting decision you have to make somewhere."
+  },
+  "exercise2": {
+    "prompt": "Use from random import randint to print a random number between 50 and 100",
+    "cases": [
+      {
+        "name": "prints a number between 50 and 100",
+        "stdout_matches": "(^|[^0-9])(100|[5-9][0-9])([^0-9]|$)",
+        "describe": "a single number from 50 to 100"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "randint is named in the import",
+        "requires": {
+          "imports": [
+            "random",
+            "randint"
+          ]
+        },
+        "describe": "from random import randint"
+      },
+      {
+        "kind": "ast",
+        "name": "randint is called with no module prefix",
+        "requires": {
+          "calls": [
+            "randint"
+          ]
+        },
+        "forbids": {
+          "names": [
+            "random"
+          ]
+        },
+        "describe": "randint(50, 100), not random.randint(50, 100)"
+      },
+      {
+        "name": "prints the one number and nothing else",
+        "nonempty": true,
+        "max_lines": 1
+      }
+    ],
+    "hint": "from ... import puts the name straight into your file. Once you have done that, writing the module name in front of it again is asking for something that is not there."
+  },
+  "questions": [
+    {
+      "id": "u5-imp-1",
+      "prompt": "After `import math`, which line finds the square root of 16?",
+      "choices": [
+        "sqrt(16)",
+        "math.sqrt(16)",
+        "math(sqrt(16))",
+        "import sqrt(16)"
+      ],
+      "answer": 1,
+      "explain": "A plain import gives you the module, not the names inside it. The dot is how you reach through the module to sqrt."
+    },
+    {
+      "id": "u5-imp-2",
+      "prompt": "After `from math import sqrt`, what does `math.sqrt(16)` do?",
+      "choices": [
+        "Returns 4.0",
+        "Raises NameError, because math itself was never imported",
+        "Returns 4",
+        "Imports math automatically"
+      ],
+      "answer": 1,
+      "explain": "from ... import brings in only the names you listed. The module's own name is not one of them, so math does not exist in your file."
+    },
+    {
+      "id": "u5-imp-3",
+      "kind": "order",
+      "prompt": "Put these lines in the order that prints the area of a circle.",
+      "items": [
+        "import math",
+        "radius = 5",
+        "area = math.pi * radius ** 2",
+        "print(area)"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "Imports come first because the rest of the file depends on them, and every name has to exist before the line that reads it."
+    },
+    {
+      "id": "u5-imp-4",
+      "kind": "multi",
+      "prompt": "Which of these import lines are valid Python?",
+      "choices": [
+        "import math",
+        "from math import sqrt, pi",
+        "import math as m",
+        "import sqrt from math"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "The last one is the order other languages use. Python always names the module first: from math import sqrt."
+    }
+  ]
+}

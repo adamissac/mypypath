@@ -292,6 +292,35 @@ print(f"DEBUG: result = {result}")</code></pre>
                 </div>
               </div>
 
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: Trace a Loop</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>The function below should add the numbers up, but it prints 3 instead of 6. Add a <code>DEBUG</code> print inside the loop that shows <code>running</code> on every pass, run it, and use what the trace tells you to fix the bug. Leave both the debug print and the last line in place.</p>
+
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Should print 6, but prints 3.\ndef running_total(numbers):\n    running = 0\n    for n in numbers:\n        running = n\n    return running\n\nprint(running_total([1, 2, 3]))')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Should print 6, but prints 3.
+def running_total(numbers):
+    running = 0
+    for n in numbers:
+        running = n
+    return running
+
+print(running_total([1, 2, 3]))</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Press Run to see output</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The trace shows <code>running</code> being replaced on every pass instead of added to. One print inside the loop turned an answer that was merely wrong into a sequence you can read.</p>
+              </div>
+
               <div class="content-section">
                 <h2>Summary</h2>
                 <p>In this lesson, you learned:</p>

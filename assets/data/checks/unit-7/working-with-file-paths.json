@@ -1,0 +1,168 @@
+{
+  "practice1": {
+    "prompt": "Use pathlib to build the path to report.txt inside a folder called data, then print the file name, the stem, the suffix and the parent folder's name, one per line",
+    "cases": [
+      {
+        "name": "prints the name, stem, suffix and parent folder",
+        "expect_stdout": "report.txt\nreport\n.txt\ndata"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "pathlib does the joining",
+        "requires": {
+          "imports": [
+            "pathlib"
+          ],
+          "calls": [
+            "Path"
+          ]
+        },
+        "describe": "Path imported from pathlib and used to build the path"
+      },
+      {
+        "kind": "ast",
+        "name": "the four parts are read off the path object",
+        "requires": {
+          "calls": [
+            "name",
+            "stem",
+            "suffix",
+            "parent"
+          ]
+        },
+        "describe": "path.name, path.stem, path.suffix and path.parent"
+      }
+    ],
+    "hint": "The four answers are all facts pathlib already knows about the path. Splitting a hardcoded string on a slash gets the same four lines here and the wrong ones on a machine that separates folders differently."
+  },
+  "questions": [
+    {
+      "id": "u7-wfp-1",
+      "prompt": "Why is \"data/report.txt\" written by hand a problem?",
+      "choices": [
+        "It is longer to type",
+        "Windows separates folders with a backslash, so the same string does not point at the same file everywhere",
+        "Python cannot open a path written as a string",
+        "It only works for .txt files"
+      ],
+      "answer": 1,
+      "explain": "The separator is an operating system detail. os.path.join and pathlib pick the right one, which is why the lesson insists on them."
+    },
+    {
+      "id": "u7-wfp-2",
+      "prompt": "What is the difference between a relative and an absolute path?",
+      "choices": [
+        "A relative path is shorter",
+        "A relative path is read from wherever the program is running; an absolute path starts at the root and means the same thing anywhere",
+        "An absolute path cannot be used with open()",
+        "There is no difference"
+      ],
+      "answer": 1,
+      "explain": "A relative path depends on the working directory, which is exactly why the same program can find a file in one place and not another."
+    },
+    {
+      "id": "u7-wfp-3",
+      "kind": "match",
+      "prompt": "For path = Path(\"data\") / \"report.txt\", match each attribute to what it gives.",
+      "left": [
+        "path.name",
+        "path.stem",
+        "path.suffix",
+        "path.parent"
+      ],
+      "right": [
+        "\".txt\"",
+        "\"report.txt\"",
+        "Path(\"data\")",
+        "\"report\""
+      ],
+      "answer": [
+        1,
+        3,
+        0,
+        2
+      ],
+      "explain": "name is the whole filename, stem is that without the extension, suffix is the extension including the dot, and parent is the folder it sits in."
+    },
+    {
+      "id": "u7-wfp-4",
+      "kind": "blank",
+      "prompt": "from pathlib import Path\npath = Path(\"data\") ___ \"report.txt\"\nprint(path.___)",
+      "blanks": [
+        {
+          "accept": [
+            "/"
+          ]
+        },
+        {
+          "accept": [
+            "name"
+          ]
+        }
+      ],
+      "explain": "pathlib overloads the slash operator to join path parts, and the right separator gets filled in for whichever system runs the code."
+    }
+  ],
+  "reflections": {
+    "reflection-exercise1": {
+      "expect_any": [
+        [
+          "relative",
+          "current",
+          "working directory",
+          "where",
+          "same folder"
+        ],
+        [
+          "absolute",
+          "root",
+          "full",
+          "complete",
+          "anywhere"
+        ],
+        [
+          "move",
+          "moved",
+          "moves",
+          "different",
+          "another computer",
+          "breaks",
+          "portable"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Say what each kind is measured from, and what happens to each when the program is run from somewhere else."
+    },
+    "reflection-exercise2": {
+      "expect_any": [
+        [
+          "separator",
+          "separators",
+          "slash",
+          "backslash"
+        ],
+        [
+          "windows",
+          "mac",
+          "linux",
+          "operating system",
+          "platform",
+          "cross-platform"
+        ],
+        [
+          "break",
+          "breaks",
+          "broken",
+          "fail",
+          "fails",
+          "not found",
+          "error"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Name the two separators, say which systems use which, and say what goes wrong when the wrong one is baked into the code."
+    }
+  }
+}

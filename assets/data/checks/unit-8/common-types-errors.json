@@ -1,0 +1,113 @@
+{
+  "practice1": {
+    "prompt": "let each mistake raise the error that names it",
+    "cases": [
+      {
+        "name": "student_score looks the name up",
+        "call": "student_score({\"Ada\": 90, \"Grace\": 95}, \"Ada\")",
+        "expect": "90"
+      },
+      {
+        "name": "share divides",
+        "call": "share(10, 4)",
+        "expect": "2.5"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "raises",
+        "name": "a missing name raises KeyError",
+        "call": "student_score({\"Ada\": 90}, \"Bo\")",
+        "expect": "KeyError"
+      },
+      {
+        "kind": "raises",
+        "name": "zero people raises ZeroDivisionError",
+        "call": "share(10, 0)",
+        "expect": "ZeroDivisionError"
+      },
+      {
+        "kind": "raises",
+        "name": "a total that is text raises TypeError",
+        "call": "share(\"10\", 2)",
+        "expect": "TypeError"
+      },
+      {
+        "kind": "ast",
+        "name": "the errors are let out, not caught",
+        "forbids": {
+          "handlers": true
+        },
+        "describe": "no try/except around either function, so the error can name itself"
+      }
+    ],
+    "hint": "Both functions are one line. The temptation is to guard against the bad case -- a missing name, zero people -- but a guard replaces an error you can read with a wrong answer you cannot. This exercise wants the error."
+  },
+  "questions": [
+    {
+      "id": "u8-cte-match",
+      "kind": "match",
+      "prompt": "Match each mistake to the error Python raises for it.",
+      "left": [
+        "Looking up a key that is not in the dictionary",
+        "Dividing by zero",
+        "Adding a string to a number",
+        "Using a variable that was never assigned"
+      ],
+      "right": [
+        "TypeError",
+        "KeyError",
+        "NameError",
+        "ZeroDivisionError"
+      ],
+      "answer": [
+        1,
+        3,
+        0,
+        2
+      ],
+      "explain": "The name of the error is the first real clue you get. Knowing which mistake produces which name turns a red block of text into a starting point."
+    },
+    {
+      "id": "u8-cte-2",
+      "prompt": "What is the difference between a SyntaxError and the errors above?",
+      "choices": [
+        "There is none",
+        "A SyntaxError stops the file before any of it runs",
+        "A SyntaxError only happens in functions",
+        "A SyntaxError can be caught with except"
+      ],
+      "answer": 1,
+      "explain": "Python parses the whole file before running a line of it, so a SyntaxError means nothing ran at all. The others happen partway through, with some work already done."
+    },
+    {
+      "id": "u8-cte-3",
+      "prompt": "Why does adding a guard for a missing dictionary key sometimes make debugging harder?",
+      "choices": [
+        "It makes the program slower",
+        "It replaces a KeyError that names the problem with a wrong answer that hides it",
+        "Python discourages it",
+        "It only works on strings"
+      ],
+      "answer": 1,
+      "explain": "A guard is right when you know what the missing case should do. Added early, before you know, it converts a loud failure into a quiet wrong answer that surfaces somewhere else entirely."
+    },
+    {
+      "id": "u8-cte-4",
+      "kind": "multi",
+      "prompt": "Which of these raise a TypeError?",
+      "choices": [
+        "\"10\" / 2",
+        "10 / 2",
+        "len(5)",
+        "[1, 2] + \"three\""
+      ],
+      "answers": [
+        0,
+        2,
+        3
+      ],
+      "explain": "TypeError is Python saying the operation is fine but these types cannot do it. Dividing two numbers is the one case here where the types match the operation."
+    }
+  ]
+}

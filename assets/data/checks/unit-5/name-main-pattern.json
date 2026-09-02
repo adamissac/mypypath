@@ -1,0 +1,144 @@
+{
+  "exercise1": {
+    "prompt": "Write double(n), then test it with 7 behind an if __name__ == \"__main__\": guard",
+    "cases": [
+      {
+        "name": "double(7) is 14",
+        "call": "double(7)",
+        "expect": "14"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "double works on numbers it was not shown",
+        "call": "double(-3)",
+        "expect": "-6"
+      },
+      {
+        "kind": "ast",
+        "name": "double is defined with one parameter",
+        "requires": {
+          "functions": [
+            {
+              "name": "double",
+              "params": 1
+            }
+          ]
+        },
+        "describe": "def double(n)"
+      },
+      {
+        "kind": "ast",
+        "name": "the test is behind a __name__ guard",
+        "requires": {
+          "names": [
+            "__name__"
+          ],
+          "conditionals": 1
+        },
+        "describe": "if __name__ == \"__main__\": around the test code"
+      },
+      {
+        "name": "the result shows when the file is run directly",
+        "stdout_matches": "(^|[^0-9])14([^0-9]|$)",
+        "describe": "14 in the output"
+      }
+    ],
+    "hint": "The guard is what separates \"this file is the program\" from \"this file is a library someone imported\". Test code that sits outside it runs in both situations."
+  },
+  "exercise2": {
+    "prompt": "Print __name__, then print \"Running directly\" or \"Imported as module\" depending on it",
+    "cases": [
+      {
+        "name": "reports __main__ and then that it is running directly",
+        "stdout_matches": "__main__[\\s\\S]*Running directly",
+        "describe": "the value of __name__, then Running directly"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "the branch is decided by __name__, not written out by hand",
+        "requires": {
+          "names": [
+            "__name__"
+          ],
+          "conditionals": 1
+        },
+        "describe": "an if that tests __name__"
+      },
+      {
+        "name": "only the branch that applies is printed",
+        "min_lines": 2,
+        "max_lines": 2
+      },
+      {
+        "name": "the imported-as-module message stays quiet",
+        "stdout_matches": "^(?![\\s\\S]*Imported as module)[\\s\\S]*$",
+        "describe": "no \"Imported as module\" while the file is being run directly"
+      }
+    ],
+    "hint": "Only one of the two messages can be true at a time. If both appear, the if is not deciding anything."
+  },
+  "questions": [
+    {
+      "id": "u5-main-1",
+      "prompt": "What is __name__ when you run a file directly?",
+      "choices": [
+        "The filename",
+        "\"__main__\"",
+        "\"__name__\"",
+        "None"
+      ],
+      "answer": 1,
+      "explain": "Python sets __name__ to \"__main__\" in whichever file it was told to run. That is the fact the whole pattern is built on."
+    },
+    {
+      "id": "u5-main-2",
+      "prompt": "What is __name__ inside greetings.py when another file does `import greetings`?",
+      "choices": [
+        "\"__main__\"",
+        "\"greetings\"",
+        "\"greetings.py\"",
+        "It is not set"
+      ],
+      "answer": 1,
+      "explain": "An imported module gets its own module name. That is how the guard can tell the two situations apart."
+    },
+    {
+      "id": "u5-main-3",
+      "kind": "order",
+      "prompt": "Put these lines in the order a module with a self-test uses.",
+      "items": [
+        "def double(n):",
+        "    return n * 2",
+        "if __name__ == \"__main__\":",
+        "    print(double(7))"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "The definitions come first so that both a direct run and an import get them, and the test sits at the bottom behind the guard."
+    },
+    {
+      "id": "u5-main-4",
+      "kind": "multi",
+      "prompt": "Which of these are true of code placed inside `if __name__ == \"__main__\":`?",
+      "choices": [
+        "It runs when the file is run directly",
+        "It is skipped when the file is imported",
+        "It is a good place for demo and test code",
+        "It makes the functions above it private"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "The guard only controls when that block runs. The functions above stay perfectly importable, which is the point."
+    }
+  ]
+}

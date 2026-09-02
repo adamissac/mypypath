@@ -1,0 +1,175 @@
+{
+  "practice1": {
+    "prompt": "Take the reading {\"temperature\": 72, \"humidity\": 50}, stamp it with datetime(2024, 1, 15, 9, 30).isoformat() under \"collected_at\", save it to reading.json with json.dump, read it back into a variable called saved with json.load, then print the temperature and the timestamp.",
+    "cases": [
+      {
+        "name": "prints the values it read back off disk",
+        "expect_stdout": "72\n2024-01-15T09:30:00"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "file",
+        "name": "reading.json is actually on disk",
+        "path": "reading.json",
+        "expect_matches": "\"temperature\": 72",
+        "describe": "reading.json holding the reading as JSON"
+      },
+      {
+        "kind": "file",
+        "name": "the timestamp was saved with the reading",
+        "path": "reading.json",
+        "expect_matches": "2024-01-15T09:30:00",
+        "describe": "the collected_at stamp inside the saved file"
+      },
+      {
+        "name": "the round trip kept the humidity a number",
+        "call": "saved[\"humidity\"] + 1",
+        "expect": "51"
+      },
+      {
+        "kind": "ast",
+        "name": "the file is written and read through the json module",
+        "requires": {
+          "imports": [
+            "json",
+            "datetime"
+          ],
+          "calls": [
+            "dump",
+            "load"
+          ],
+          "withs": true
+        },
+        "describe": "json.dump to write the file and json.load to read it back, both inside a with"
+      }
+    ],
+    "hint": "The pipeline is only finished when the data survives leaving the program. Formatting it into a string and printing it proves the first half; reading it back proves the rest."
+  },
+  "questions": [
+    {
+      "id": "u9-adv-1",
+      "prompt": "In the weather collector, why is the API call wrapped in try/except?",
+      "choices": [
+        "To make it faster",
+        "Because a network call can fail for reasons your code cannot prevent",
+        "Because json.loads always raises",
+        "To avoid importing requests"
+      ],
+      "answer": 1,
+      "explain": "A timeout, a dropped connection or a 500 are all outside your control. A collector meant to run unattended has to survive them rather than stop."
+    },
+    {
+      "id": "u9-adv-2",
+      "prompt": "Which does raise_for_status() save you from writing?",
+      "choices": [
+        "The import of requests",
+        "The if that checks response.status_code yourself",
+        "The call to response.json()",
+        "The timeout argument"
+      ],
+      "answer": 1,
+      "explain": "It turns a bad status into an exception, so the failure joins the except block you already have instead of needing a branch of its own."
+    },
+    {
+      "id": "u9-adv-order",
+      "kind": "order",
+      "prompt": "Put the steps of the data collection pipeline in order.",
+      "items": [
+        "Request the data from the API",
+        "Parse the JSON reply into Python objects",
+        "Add a timestamp to the record",
+        "Write the record to a file"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "Each step consumes what the one before it produced. That is also the order to build it in, testing each part before adding the next."
+    },
+    {
+      "id": "u9-adv-multi",
+      "kind": "multi",
+      "prompt": "Which Unit 9 pieces does the weather collector combine?",
+      "choices": [
+        "An HTTP request to an API",
+        "JSON parsing",
+        "Writing a file",
+        "Recursion"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Fetch, parse, stamp, save. There is nothing recursive in it, and reaching for recursion because the unit taught it would be the wrong instinct."
+    },
+    {
+      "id": "u9-adv-blank",
+      "kind": "blank",
+      "prompt": "Before building, break the project into ___ that can each be tested on their own.",
+      "blanks": [
+        {
+          "accept": [
+            "steps",
+            "parts",
+            "pieces",
+            "tasks"
+          ]
+        }
+      ],
+      "explain": "A pipeline built in one go fails as one thing, and you cannot tell which link broke. Testable parts are what makes the failure findable."
+    }
+  ],
+  "reflections": {
+    "reflection-exercise1": {
+      "expect_any": [
+        [
+          "api",
+          "request",
+          "fetch"
+        ],
+        [
+          "json",
+          "parse"
+        ],
+        [
+          "file",
+          "save",
+          "write",
+          "store"
+        ],
+        [
+          "error",
+          "try",
+          "except",
+          "fail"
+        ]
+      ],
+      "min_concepts": 3,
+      "hint": "Walk the data from the server to the disk and name each step, including what you do when a step fails."
+    },
+    "reflection-exercise2": {
+      "expect_any": [
+        [
+          "api",
+          "data",
+          "json",
+          "file",
+          "csv"
+        ],
+        [
+          "because",
+          "so that",
+          "would",
+          "use",
+          "useful"
+        ]
+      ],
+      "min_concepts": 1,
+      "hint": "Name the project and then the two or three Unit 9 pieces it would need. Being specific about the pieces is what makes it a plan."
+    }
+  }
+}

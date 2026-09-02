@@ -1,0 +1,58 @@
+{
+  "questions": [
+    {
+      "id": "u10-fmt-1",
+      "prompt": "Your task list prints with the columns out of line. Which fix still works when the data changes?",
+      "choices": [
+        "Install a table library",
+        "Give each field a width in the f-string, as in f\"{name:20}{status:10}\"",
+        "Print each field on its own line",
+        "Pad the short names with spaces by hand"
+      ],
+      "answer": 1,
+      "explain": "A width in the format spec does the padding for you and keeps working when the data changes. Padding by hand is right until the first long name."
+    },
+    {
+      "id": "u10-fmt-2",
+      "kind": "blank",
+      "prompt": "print(\"=\" ___ 50)\nprint(\"TASK MANAGER\")",
+      "blanks": [
+        {
+          "accept": [
+            "*"
+          ]
+        }
+      ],
+      "explain": "A string times a number repeats it, which is the whole trick behind a separator line."
+    },
+    {
+      "id": "u10-fmt-3",
+      "prompt": "When in a project is formatting worth spending time on?",
+      "choices": [
+        "First, so there is something good to show",
+        "After the core features work, because formatting changes what the output looks like and not what the program does",
+        "Never, it is decoration",
+        "Only if you are using a library for it"
+      ],
+      "answer": 1,
+      "explain": "Formatting is cheap to add and cheap to change late, which is exactly why it goes after the parts that are expensive to change."
+    },
+    {
+      "id": "u10-fmt-4",
+      "kind": "multi",
+      "prompt": "Which of these make terminal output easier to read?",
+      "choices": [
+        "A separator line between sections",
+        "Numbering the items in a list",
+        "Putting every field of every record on one long line",
+        "Aligning columns to a fixed width"
+      ],
+      "answers": [
+        0,
+        1,
+        3
+      ],
+      "explain": "Each of these gives the eye something to anchor on. One long line gives it nothing to find its place with."
+    }
+  ]
+}

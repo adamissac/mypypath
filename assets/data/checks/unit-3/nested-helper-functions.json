@@ -1,0 +1,144 @@
+{
+  "exercise1": {
+    "prompt": "calculate_discount(price, discount_percentage) with a nested apply_discount",
+    "cases": [
+      {
+        "name": "twenty percent off a hundred leaves eighty",
+        "call": "round(float(calculate_discount(100, 20)), 2)",
+        "expect": "80.0"
+      },
+      {
+        "name": "ten percent off fifty leaves forty-five",
+        "call": "round(float(calculate_discount(50, 10)), 2)",
+        "expect": "45.0"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "no discount leaves the price alone",
+        "call": "round(float(calculate_discount(200, 0)), 2)",
+        "expect": "200.0"
+      },
+      {
+        "name": "a full discount leaves nothing to pay",
+        "call": "round(float(calculate_discount(80, 100)), 2)",
+        "expect": "0.0"
+      },
+      {
+        "kind": "ast",
+        "name": "apply_discount exists and something returns its result",
+        "requires": {
+          "functions": [
+            { "name": "calculate_discount", "params": 2 },
+            { "name": "apply_discount" }
+          ],
+          "returns": 2
+        },
+        "describe": "an apply_discount defined inside calculate_discount, with each function returning a value"
+      }
+    ],
+    "hint": "Defining the helper is only half of it. Follow the value from the inner return all the way out of the outer one and check nothing is dropped on the way."
+  },
+  "exercise2": {
+    "prompt": "validate_password(password) with has_min_length and has_number helpers",
+    "cases": [
+      {
+        "name": "eight characters including a digit passes",
+        "call": "validate_password(\"abc12345\")",
+        "expect": "True"
+      },
+      {
+        "name": "a short password fails",
+        "call": "validate_password(\"abc\")",
+        "expect": "False"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "long enough but with no digit still fails",
+        "call": "validate_password(\"password\")",
+        "expect": "False"
+      },
+      {
+        "name": "all digits and long enough passes",
+        "call": "validate_password(\"12345678\")",
+        "expect": "True"
+      },
+      {
+        "kind": "generated",
+        "name": "both rules hold for any password",
+        "entry": "validate_password",
+        "reference": "def validate_password(password):\n    def has_min_length(value):\n        return len(value) >= 8\n\n    def has_number(value):\n        return any(character.isdigit() for character in value)\n\n    return has_min_length(password) and has_number(password)\n",
+        "args": [
+          { "type": "str", "minLength": 6, "maxLength": 12, "alphabet": "abcdefg1" }
+        ],
+        "runs": 40
+      },
+      {
+        "kind": "ast",
+        "name": "both helpers are defined inside validate_password",
+        "requires": {
+          "functions": [
+            { "name": "validate_password", "params": 1 },
+            { "name": "has_min_length" },
+            { "name": "has_number" }
+          ]
+        },
+        "describe": "has_min_length and has_number defined inside validate_password"
+      }
+    ],
+    "hint": "Two separate rules have to hold at once. A password that clears one of them is not a valid password, so check what your final return does when only one helper is happy."
+  },
+  "questions": [
+    {
+      "id": "u3-nhf-1",
+      "prompt": "A function inner is defined inside a function outer. Can inner be called from outside outer?",
+      "choices": [
+        "Yes, by writing inner()",
+        "Yes, by writing outer.inner()",
+        "No, the name only exists while outer is running",
+        "Only if inner returns a value"
+      ],
+      "answer": 2,
+      "explain": "The def statement runs when outer runs, and it creates a local name like any other. Once outer finishes, that name is gone."
+    },
+    {
+      "id": "u3-nhf-2",
+      "prompt": "Why break a long function into small helper functions?",
+      "choices": [
+        "It makes the program run faster",
+        "Each piece can be named, read and reasoned about on its own",
+        "Python has a limit on function length",
+        "Helpers do not need parameters"
+      ],
+      "answer": 1,
+      "explain": "The benefit is for the reader. A helper with a good name replaces a comment with something the code itself says, and a small piece is easier to be sure about than a long one."
+    },
+    {
+      "id": "u3-nhf-3",
+      "kind": "multi",
+      "prompt": "Which of these are true of a nested function?",
+      "choices": [
+        "It can read variables from the function that contains it",
+        "It is created afresh each time the outer function runs",
+        "It keeps the outer function's namespace tidy",
+        "It can be imported from another file"
+      ],
+      "answers": [0, 1, 2],
+      "explain": "A nested function sees the enclosing scope and is rebuilt on every call. It is invisible outside, which is the point, and that also means nothing else can import it."
+    },
+    {
+      "id": "u3-nhf-4",
+      "kind": "order",
+      "prompt": "Put these lines in order to make a working nested helper.",
+      "items": [
+        "def calculate_discount(price, percent):",
+        "    def apply_discount(amount, rate):",
+        "        return amount - (amount * rate / 100)",
+        "    return apply_discount(price, percent)"
+      ],
+      "answer": [0, 1, 2, 3],
+      "explain": "The helper has to be defined before the line that calls it, and both defs have to finish before the outer return can hand anything back."
+    }
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "exercise1": {
+    "prompt": "Write greet(name) and farewell(name) as a greetings package would hold them, then use both on \"Python\"",
+    "cases": [
+      {
+        "name": "both messages name who they are addressed to",
+        "stdout_matches": "Python[\\s\\S]*Python",
+        "describe": "a greeting and a farewell, each naming Python"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "greet gives back text that includes the name",
+        "call": "'Ada' in greet('Ada')",
+        "expect": "True"
+      },
+      {
+        "name": "farewell gives back text that includes the name",
+        "call": "'Ada' in farewell('Ada')",
+        "expect": "True"
+      },
+      {
+        "kind": "ast",
+        "name": "both functions take a name",
+        "requires": {
+          "functions": [
+            {
+              "name": "greet",
+              "params": 1
+            },
+            {
+              "name": "farewell",
+              "params": 1
+            }
+          ]
+        },
+        "describe": "def greet(name) and def farewell(name)"
+      },
+      {
+        "name": "both messages are printed",
+        "min_lines": 2
+      }
+    ],
+    "hint": "A parameter that never appears in the body is a parameter the function is ignoring. Check that each message is actually built from the name it was given."
+  },
+  "exercise2": {
+    "prompt": "Write square(n) and cube(n) as a package would organise them, then print square(5) and cube(3)",
+    "cases": [
+      {
+        "name": "square(5) is 25",
+        "call": "square(5)",
+        "expect": "25"
+      },
+      {
+        "name": "cube(3) is 27",
+        "call": "cube(3)",
+        "expect": "27"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "square works on numbers it was not shown",
+        "call": "square(9)",
+        "expect": "81"
+      },
+      {
+        "name": "cube works on numbers it was not shown",
+        "call": "cube(2)",
+        "expect": "8"
+      },
+      {
+        "kind": "ast",
+        "name": "both are one-parameter functions",
+        "requires": {
+          "functions": [
+            {
+              "name": "square",
+              "params": 1
+            },
+            {
+              "name": "cube",
+              "params": 1
+            }
+          ]
+        },
+        "describe": "def square(n) and def cube(n)"
+      },
+      {
+        "name": "both answers are printed",
+        "min_lines": 2
+      }
+    ],
+    "hint": "Cubing is not the same as multiplying by three. Try each function on a number other than the one in the prompt and see whether the answer still looks right."
+  },
+  "questions": [
+    {
+      "id": "u5-pkg-1",
+      "prompt": "What turns a folder of modules into a package?",
+      "choices": [
+        "Naming the folder with a capital letter",
+        "An __init__.py file inside it",
+        "A package.json file",
+        "Running pip on it"
+      ],
+      "answer": 1,
+      "explain": "__init__.py marks the folder as a package and runs when the package is first imported. It is allowed to be completely empty."
+    },
+    {
+      "id": "u5-pkg-2",
+      "kind": "blank",
+      "prompt": "# utils/math_utils.py holds add(a, b)\n\n___ utils.math_utils ___ add\n\nprint(add(2, 3))",
+      "blanks": [
+        {
+          "accept": [
+            "from"
+          ]
+        },
+        {
+          "accept": [
+            "import"
+          ]
+        }
+      ],
+      "explain": "The dotted path walks the folders down to the module, and the import names what you want out of it."
+    },
+    {
+      "id": "u5-pkg-3",
+      "kind": "match",
+      "prompt": "Match each name in `from utils.math_utils import add` to what it is.",
+      "left": [
+        "utils",
+        "math_utils",
+        "add"
+      ],
+      "right": [
+        "The package, a folder",
+        "The module, a file inside it",
+        "The function being imported"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explain": "The dots read left to right as folder, then file, then the name inside the file."
+    },
+    {
+      "id": "u5-pkg-4",
+      "kind": "multi",
+      "prompt": "Which of these are reasons to group modules into a package?",
+      "choices": [
+        "Related modules live together and are easy to find",
+        "The package name keeps its modules from clashing with others",
+        "You can ship the whole folder as one unit",
+        "Code in a package is checked for errors before it runs"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Packages are about organisation and naming. They change nothing about how Python checks or runs the code inside them."
+    }
+  ]
+}

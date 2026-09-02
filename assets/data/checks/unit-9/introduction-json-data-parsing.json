@@ -1,0 +1,162 @@
+{
+  "practice1": {
+    "prompt": "Parse '{\"name\": \"Alice\", \"age\": 25}' into a variable called data and print the name and the age, then turn {\"name\": \"Bob\", \"age\": 30} back into a JSON string and print it.",
+    "cases": [
+      {
+        "name": "prints the parsed values and then the JSON string",
+        "expect_stdout": "Name: Alice\nAge: 25\n\nJSON string: {\"name\": \"Bob\", \"age\": 30}"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "data is a dictionary you can look a key up in",
+        "call": "data[\"name\"]",
+        "expect": "'Alice'"
+      },
+      {
+        "name": "the age survived as a number, not as text",
+        "call": "data[\"age\"] + 1",
+        "expect": "26"
+      },
+      {
+        "kind": "ast",
+        "name": "both directions go through the json module",
+        "requires": {
+          "imports": [
+            "json"
+          ],
+          "calls": [
+            "loads",
+            "dumps"
+          ]
+        },
+        "describe": "json.loads to read the string and json.dumps to write one"
+      }
+    ],
+    "hint": "One of these two functions takes a string and one takes an open file. If Python complains that a str has no attribute 'read', you reached for the file one."
+  },
+  "questions": [
+    {
+      "id": "u9-json-1",
+      "prompt": "You have a JSON string in a variable. Which function turns it into a Python dictionary?",
+      "choices": [
+        "json.load()",
+        "json.loads()",
+        "json.dump()",
+        "json.dumps()"
+      ],
+      "answer": 1,
+      "explain": "The s stands for string. load and dump work on an open file; loads and dumps work on a string in memory."
+    },
+    {
+      "id": "u9-json-2",
+      "prompt": "A JSON file contains `true`. What does json.loads give you for it?",
+      "choices": [
+        "The string \"true\"",
+        "Python's True",
+        "1",
+        "An error, because Python spells it True"
+      ],
+      "answer": 1,
+      "explain": "The module translates between the two spellings in both directions. You never write JSON's true or null in Python yourself."
+    },
+    {
+      "id": "u9-json-match",
+      "kind": "match",
+      "prompt": "Match each JSON type to what Python turns it into.",
+      "left": [
+        "object",
+        "array",
+        "null",
+        "number"
+      ],
+      "right": [
+        "list",
+        "None",
+        "dict",
+        "int or float"
+      ],
+      "answer": [
+        2,
+        0,
+        1,
+        3
+      ],
+      "explain": "The two structured types are the ones that matter: an object becomes a dict and an array becomes a list, so nested JSON becomes nested dicts and lists."
+    },
+    {
+      "id": "u9-json-blank",
+      "kind": "blank",
+      "prompt": "To write a Python dictionary straight into an open file as JSON, call `json.___(data, file)`.",
+      "blanks": [
+        {
+          "accept": [
+            "dump"
+          ]
+        }
+      ],
+      "explain": "dump writes to the file for you. dumps would hand you back a string that you then still have to write yourself."
+    },
+    {
+      "id": "u9-json-multi",
+      "kind": "multi",
+      "prompt": "Which of these are valid JSON values?",
+      "choices": [
+        "\"hello\"",
+        "[1, 2, 3]",
+        "true",
+        "'hello'"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "JSON strings are always in double quotes. Single quotes are Python, and a JSON parser rejects them."
+    }
+  ],
+  "reflections": {
+    "reflection-exercise1": {
+      "expect_any": [
+        [
+          "readable",
+          "human",
+          "text",
+          "plain"
+        ],
+        [
+          "api",
+          "exchange",
+          "between programs",
+          "language"
+        ],
+        [
+          "string",
+          "number",
+          "boolean",
+          "object",
+          "array",
+          "null"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Say why a format that is just text gets used between programs written in different languages, and name a couple of the types it carries."
+    },
+    "reflection-exercise2": {
+      "expect_any": [
+        [
+          "string",
+          "str",
+          "text"
+        ],
+        [
+          "file",
+          "open",
+          "disk"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "The difference is what each one is handed. Say what that is for both, and the everyday situation each fits."
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "questions": [
+    {
+      "id": "u10-input-1",
+      "prompt": "What does input() hand back?",
+      "choices": [
+        "An int if the user typed digits, a string otherwise",
+        "Always a string",
+        "Whatever type the user typed",
+        "None, until you convert it"
+      ],
+      "answer": 1,
+      "explain": "input() always returns a string. That is why \"5\" + 1 is a TypeError, and why int() and a check around it come next."
+    },
+    {
+      "id": "u10-input-2",
+      "kind": "blank",
+      "prompt": "age = input(\"Age: \")\nif age.___():\n    age = ___(age)",
+      "blanks": [
+        {
+          "accept": [
+            "isdigit"
+          ]
+        },
+        {
+          "accept": [
+            "int"
+          ]
+        }
+      ],
+      "explain": "isdigit() asks whether the string is all digits before int() is trusted with it. Converting first and hoping is how a program crashes on a typo."
+    },
+    {
+      "id": "u10-input-3",
+      "prompt": "Which message is most useful to the person using your program?",
+      "choices": [
+        "Error",
+        "Invalid input",
+        "Please enter a whole number between 1 and 5.",
+        "ValueError: invalid literal for int() with base 10: 'abc'"
+      ],
+      "answer": 2,
+      "explain": "A message earns its place by saying what to do next. The traceback says what went wrong inside your code, which is your problem rather than theirs."
+    },
+    {
+      "id": "u10-input-4",
+      "kind": "multi",
+      "prompt": "Your menu asks for a number and the user types \"seven\". What should the program do?",
+      "choices": [
+        "Say that was not one of the options",
+        "Ask again rather than exiting",
+        "Crash, so the user knows something went wrong",
+        "Leave the rest of the program's state untouched"
+      ],
+      "answers": [
+        0,
+        1,
+        3
+      ],
+      "explain": "Bad input is ordinary, not exceptional. Handling it means saying what was wrong, asking again, and changing nothing else on the way through."
+    }
+  ]
+}

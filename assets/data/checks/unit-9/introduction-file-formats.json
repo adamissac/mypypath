@@ -1,0 +1,166 @@
+{
+  "practice1": {
+    "prompt": "data.csv holds a header row and two people. Read it with the csv module and print \"<name> is <age>\" for each person, then write the same header and rows back out to output.csv.",
+    "files": {
+      "data.csv": "name,age\nAlice,25\nBob,30\n"
+    },
+    "cases": [
+      {
+        "name": "prints one line per person and none for the header",
+        "expect_stdout": "Alice is 25\nBob is 30"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "file",
+        "name": "output.csv has the header and both rows",
+        "path": "output.csv",
+        "expect": "name,age\nAlice,25\nBob,30",
+        "describe": "output.csv written back in the same shape it was read"
+      },
+      {
+        "kind": "file",
+        "name": "the file it read is left alone",
+        "path": "data.csv",
+        "expect": "name,age\nAlice,25\nBob,30",
+        "describe": "data.csv unchanged, because reading a file should not rewrite it"
+      },
+      {
+        "kind": "ast",
+        "name": "the csv module does the reading and the writing",
+        "requires": {
+          "imports": [
+            "csv"
+          ],
+          "withs": true
+        },
+        "describe": "the csv module, with the files opened in a with block"
+      }
+    ],
+    "hint": "A CSV file's first line is usually names for the columns rather than data. Decide which reader you are using, then decide what that reader does with that first line."
+  },
+  "questions": [
+    {
+      "id": "u9-fmt-1",
+      "prompt": "What is the difference between csv.reader and csv.DictReader?",
+      "choices": [
+        "DictReader is faster",
+        "reader gives each row as a list; DictReader gives each row as a dict keyed by the header",
+        "reader cannot read files with headers",
+        "DictReader writes files, reader reads them"
+      ],
+      "answer": 1,
+      "explain": "DictReader also consumes the header row for you, so row['name'] works and you never count column positions."
+    },
+    {
+      "id": "u9-fmt-2",
+      "prompt": "You read a CSV with csv.reader. What type is the age in a row like ['Alice', '25']?",
+      "choices": [
+        "int",
+        "str",
+        "float",
+        "It depends on the file"
+      ],
+      "answer": 1,
+      "explain": "CSV is plain text and carries no types at all. Anything you want to do arithmetic with has to be converted with int() or float() yourself."
+    },
+    {
+      "id": "u9-fmt-match",
+      "kind": "match",
+      "prompt": "Match each format to what it suits.",
+      "left": [
+        "CSV",
+        "JSON",
+        "Excel"
+      ],
+      "right": [
+        "Nested data and API replies",
+        "Formatting, formulas and several sheets",
+        "Simple rows and columns anything can open"
+      ],
+      "answer": [
+        2,
+        0,
+        1
+      ],
+      "explain": "The choice is usually decided by the data's shape: flat rows fit CSV, anything nested fits JSON, and Excel is for when a person will open it."
+    },
+    {
+      "id": "u9-fmt-blank",
+      "kind": "blank",
+      "prompt": "Reading an .xlsx file in the lesson uses pandas: `df = pd.___('data.xlsx')`.",
+      "blanks": [
+        {
+          "accept": [
+            "read_excel"
+          ]
+        }
+      ],
+      "explain": "pandas and openpyxl both have to be installed first. Excel is a binary format, so there is no built-in module for it the way there is for CSV and JSON."
+    },
+    {
+      "id": "u9-fmt-multi",
+      "kind": "multi",
+      "prompt": "Which are true of JSON compared with CSV?",
+      "choices": [
+        "It can hold nested structures",
+        "It keeps numbers and booleans as numbers and booleans",
+        "It is what most APIs reply with",
+        "It is easier to open in a spreadsheet"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "A spreadsheet opens a CSV directly and makes hard work of JSON. That is the one thing CSV still wins on."
+    }
+  ],
+  "reflections": {
+    "reflection-exercise1": {
+      "expect_any": [
+        [
+          "csv",
+          "comma",
+          "tabular",
+          "rows"
+        ],
+        [
+          "json",
+          "nested",
+          "hierarchical",
+          "api"
+        ],
+        [
+          "excel",
+          "xlsx",
+          "spreadsheet",
+          "formula"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Say what shape of data each one holds well, and pick the situation you would reach for it in."
+    },
+    "reflection-exercise2": {
+      "expect_any": [
+        [
+          "csv module",
+          "csv.reader",
+          "dictreader",
+          "writer"
+        ],
+        [
+          "open",
+          "with"
+        ],
+        [
+          "pandas",
+          "read_excel",
+          "openpyxl"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "One of the three formats needs a library you install. Say which, and name the module you use for the other two."
+    }
+  }
+}

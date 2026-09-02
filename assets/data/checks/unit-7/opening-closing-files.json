@@ -1,0 +1,174 @@
+{
+  "practice1": {
+    "prompt": "Open notes.txt in write mode, write Hello, World! into it, close it, then print File created and closed successfully",
+    "cases": [
+      {
+        "name": "says the file was created and closed",
+        "expect_stdout": "File created and closed successfully"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "file",
+        "name": "notes.txt holds what was written",
+        "path": "notes.txt",
+        "expect": "Hello, World!",
+        "describe": "notes.txt containing Hello, World!"
+      },
+      {
+        "kind": "ast",
+        "name": "the file is closed, not just opened",
+        "requires": {
+          "calls": [
+            "open",
+            "close"
+          ]
+        },
+        "describe": "close() called on the file that open() returned"
+      }
+    ],
+    "hint": "The lesson's pattern is open, use, close. The message at the end is only true once all three have happened."
+  },
+  "questions": [
+    {
+      "id": "u7-ocf-1",
+      "prompt": "What does open(\"notes.txt\", \"w\") do to a file that already exists?",
+      "choices": [
+        "Adds to the end of it",
+        "Empties it and starts again",
+        "Raises an error",
+        "Leaves it alone until you write"
+      ],
+      "answer": 1,
+      "explain": "Write mode truncates. If the old contents matter, append mode is the one you want."
+    },
+    {
+      "id": "u7-ocf-2",
+      "prompt": "What happens with open(\"missing.txt\", \"r\") when the file is not there?",
+      "choices": [
+        "Python creates an empty file",
+        "FileNotFoundError",
+        "It returns None",
+        "It waits for the file to appear"
+      ],
+      "answer": 1,
+      "explain": "Read mode never creates anything. The file has to exist, and if it does not you get FileNotFoundError."
+    },
+    {
+      "id": "u7-ocf-3",
+      "kind": "match",
+      "prompt": "Match each mode to what it does.",
+      "left": [
+        "\"r\"",
+        "\"w\"",
+        "\"a\""
+      ],
+      "right": [
+        "Adds to the end, keeping what was there",
+        "Reads an existing file",
+        "Replaces the whole file"
+      ],
+      "answer": [
+        1,
+        2,
+        0
+      ],
+      "explain": "The three modes differ in what they do to the existing contents: read touches nothing, write throws it away, append keeps it and adds."
+    },
+    {
+      "id": "u7-ocf-4",
+      "kind": "blank",
+      "prompt": "file = ___(\"log.txt\", \"a\")\nfile.write(\"started\\n\")\nfile.___()",
+      "blanks": [
+        {
+          "accept": [
+            "open"
+          ]
+        },
+        {
+          "accept": [
+            "close"
+          ]
+        }
+      ],
+      "explain": "open() hands back a file object and close() releases it. Until close runs, what you wrote may still be sitting in a buffer rather than on disk."
+    },
+    {
+      "id": "u7-ocf-5",
+      "prompt": "Why does forgetting close() matter, even though the program still ends?",
+      "choices": [
+        "The file is deleted",
+        "What you wrote may never reach the disk, and the file stays locked while the program runs",
+        "Python refuses to open any more files",
+        "It does not matter at all"
+      ],
+      "answer": 1,
+      "explain": "Writes are buffered. Closing is what flushes them and hands the file back to the operating system."
+    }
+  ],
+  "reflections": {
+    "reflection-exercise1": {
+      "expect_any": [
+        [
+          "overwrite",
+          "overwrites",
+          "replace",
+          "replaces",
+          "erase",
+          "erases",
+          "wipe"
+        ],
+        [
+          "add",
+          "adds",
+          "append",
+          "appends",
+          "end",
+          "keeps"
+        ],
+        [
+          "log",
+          "logs",
+          "history",
+          "record",
+          "records",
+          "new file",
+          "start over"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Say what each mode does to the text that was already in the file, then name a job that wants each behaviour."
+    },
+    "reflection-exercise2": {
+      "expect_any": [
+        [
+          "save",
+          "saved",
+          "flush",
+          "flushed",
+          "written",
+          "disk",
+          "buffer"
+        ],
+        [
+          "lose",
+          "lost",
+          "missing",
+          "empty",
+          "incomplete"
+        ],
+        [
+          "resource",
+          "resources",
+          "memory",
+          "locked",
+          "lock",
+          "free",
+          "frees"
+        ]
+      ],
+      "min_concepts": 1,
+      "hint": "Think about where your text actually is between the write() call and the close() call."
+    }
+  }
+}

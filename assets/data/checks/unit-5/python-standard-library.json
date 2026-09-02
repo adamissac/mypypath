@@ -1,0 +1,148 @@
+{
+  "exercise1": {
+    "prompt": "Use the datetime module to print the current date and time with a label",
+    "cases": [
+      {
+        "name": "prints a real date and time",
+        "stdout_matches": "[0-9]{4}-[0-9]{2}-[0-9]{2}[\\s\\S]*[0-9]{2}:[0-9]{2}",
+        "describe": "a date and a time in the output"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "the datetime module is imported",
+        "requires": {
+          "imports": [
+            "datetime"
+          ]
+        },
+        "describe": "import datetime, or from datetime import datetime"
+      },
+      {
+        "kind": "ast",
+        "name": "the time is read when the program runs",
+        "requires": {
+          "calls": [
+            "now"
+          ]
+        },
+        "describe": "a call to now()"
+      },
+      {
+        "name": "the output says what the value is",
+        "stdout_matches": "current time",
+        "describe": "a label such as \"Current time:\""
+      }
+    ],
+    "hint": "datetime is both a module and a class inside that module, and they are not interchangeable. Look carefully at which one your import gave you a name for."
+  },
+  "exercise2": {
+    "prompt": "Import random, list its contents with dir(), and read the documentation for randint",
+    "cases": [
+      {
+        "name": "the listing shows what is inside the module",
+        "stdout_matches": "randint",
+        "describe": "the names dir(random) reports"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "the random module is imported",
+        "requires": {
+          "imports": [
+            "random"
+          ]
+        },
+        "describe": "import random"
+      },
+      {
+        "kind": "ast",
+        "name": "both dir and help are used, and help is asked about randint",
+        "requires": {
+          "calls": [
+            "dir",
+            "help",
+            "randint"
+          ]
+        },
+        "describe": "dir(random) and help(random.randint)"
+      },
+      {
+        "name": "the documentation for randint is shown",
+        "stdout_matches": "randint\\(",
+        "describe": "the signature help() prints for randint"
+      }
+    ],
+    "hint": "A list of names tells you what exists; it does not tell you what the arguments mean. The second half of the exercise is a different question and needs a different call."
+  },
+  "questions": [
+    {
+      "id": "u5-std-1",
+      "kind": "match",
+      "prompt": "Match each standard library module to the job it is for.",
+      "left": [
+        "datetime",
+        "json",
+        "csv",
+        "sys"
+      ],
+      "right": [
+        "Dates, times and the differences between them",
+        "Reading and writing structured text used by web APIs",
+        "Spreadsheet-style rows and columns",
+        "Information about the running interpreter"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "The standard library is a set of small, focused modules. Most of learning it is learning which one owns your problem."
+    },
+    {
+      "id": "u5-std-2",
+      "prompt": "What do you have to install before using the json module?",
+      "choices": [
+        "pip install json",
+        "Nothing: it ships with Python",
+        "pip install standard-library",
+        "A JSON parser of your choice"
+      ],
+      "answer": 1,
+      "explain": "Standard library modules come with Python itself. That is exactly what makes them worth reaching for first."
+    },
+    {
+      "id": "u5-std-3",
+      "prompt": "You know a module exists but not what its functions expect. Which do you use?",
+      "choices": [
+        "dir(module), which lists the names",
+        "help(module.function), which explains one of them",
+        "print(module), which shows the file it came from",
+        "type(module), which shows it is a module"
+      ],
+      "answer": 1,
+      "explain": "dir answers \"what is in here\" and help answers \"how do I use this one\". The question asked the second."
+    },
+    {
+      "id": "u5-std-4",
+      "kind": "blank",
+      "prompt": "from datetime ___ datetime\n\nnow = datetime.___()\nprint(now)",
+      "blanks": [
+        {
+          "accept": [
+            "import"
+          ]
+        },
+        {
+          "accept": [
+            "now"
+          ]
+        }
+      ],
+      "explain": "The class and the module share a name, which is why this import line looks like it repeats itself. now() is a class method that reads the clock."
+    }
+  ]
+}

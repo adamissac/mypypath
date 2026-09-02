@@ -1,0 +1,158 @@
+{
+  "practice1": {
+    "prompt": "Put birthday = datetime(2000, 5, 15) in a variable. Print it as \"May 15, 2000\", print the date 365 days later in the same format, then print how many days lie between datetime(2024, 1, 1) and datetime(2024, 1, 15).",
+    "cases": [
+      {
+        "name": "prints the date, the date a year on, and the gap in days",
+        "expect_stdout": "May 15, 2000\nMay 15, 2001\n14"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "birthday is a date object, not a string that looks like one",
+        "call": "birthday.year",
+        "expect": "2000"
+      },
+      {
+        "name": "the month is a real month, so the formatting was not typed by hand",
+        "call": "birthday.month",
+        "expect": "5"
+      },
+      {
+        "kind": "ast",
+        "name": "the datetime module does the formatting and the arithmetic",
+        "requires": {
+          "imports": [
+            "datetime"
+          ],
+          "calls": [
+            "strftime",
+            "timedelta",
+            "days"
+          ]
+        },
+        "describe": "strftime for the format, timedelta for the shift, and .days to read the difference"
+      }
+    ],
+    "hint": "Two dates written as strings can be sliced and subtracted, and for one fixed pair the number even comes out right. Ask what you would have to change to make it work for any two dates."
+  },
+  "questions": [
+    {
+      "id": "u9-date-1",
+      "prompt": "Which direction does strftime go?",
+      "choices": [
+        "String to datetime",
+        "Datetime to string",
+        "Datetime to timestamp",
+        "String to timestamp"
+      ],
+      "answer": 1,
+      "explain": "strftime formats a date for people to read. strptime parses a string back into a date. The p is for parse."
+    },
+    {
+      "id": "u9-date-2",
+      "prompt": "What is `datetime(2024, 1, 15) - datetime(2024, 1, 1)`?",
+      "choices": [
+        "The integer 14",
+        "A timedelta, whose .days is 14",
+        "The string \"14 days\"",
+        "An error: dates cannot be subtracted"
+      ],
+      "answer": 1,
+      "explain": "Subtracting two dates gives a duration object, not a number. .days pulls the whole days out of it."
+    },
+    {
+      "id": "u9-date-match",
+      "kind": "match",
+      "prompt": "Match each format code to what it produces.",
+      "left": [
+        "%Y",
+        "%B",
+        "%d",
+        "%A"
+      ],
+      "right": [
+        "January",
+        "Monday",
+        "2024",
+        "15"
+      ],
+      "answer": [
+        2,
+        0,
+        3,
+        1
+      ],
+      "explain": "Capital and lowercase mean different things: %M is minutes while %m is the month number, which is a common way to get a date off by a lot."
+    },
+    {
+      "id": "u9-date-blank",
+      "kind": "blank",
+      "prompt": "To get the date thirty days from now you write `datetime.now() + ___(days=30)`.",
+      "blanks": [
+        {
+          "accept": [
+            "timedelta"
+          ]
+        }
+      ],
+      "explain": "timedelta is the only thing you can add to a date. It handles month ends and leap years for you, which is exactly why you do not do this arithmetic yourself."
+    },
+    {
+      "id": "u9-date-multi",
+      "kind": "multi",
+      "prompt": "Which are classes the datetime module gives you?",
+      "choices": [
+        "date",
+        "time",
+        "timedelta",
+        "calendar"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "datetime, date, time and timedelta all live in the datetime module. calendar is a separate module of its own."
+    }
+  ],
+  "reflections": {
+    "reflection-exercise1": {
+      "expect_any": [
+        [
+          "datetime",
+          "date and time"
+        ],
+        [
+          "date",
+          "day",
+          "year"
+        ],
+        [
+          "timedelta",
+          "difference",
+          "duration"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Name the classes and say what each one holds. The one that is not a point in time is the interesting one."
+    },
+    "reflection-exercise2": {
+      "expect_any": [
+        [
+          "timedelta",
+          "add",
+          "30 days"
+        ],
+        [
+          "strftime",
+          "format",
+          "%b",
+          "%y"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Two separate steps: one moves the date, the other decides how it is written out. Name the tool for each."
+    }
+  }
+}

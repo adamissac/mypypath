@@ -1,0 +1,176 @@
+{
+  "practice1": {
+    "prompt": "Write read_total(filename) that adds up the numbers in the file and returns the total, and returns 0 when the file is not there. Print read_total(\"scores.txt\") then read_total(\"missing.txt\")",
+    "files": {
+      "scores.txt": "80\n95\n72\n"
+    },
+    "cases": [
+      {
+        "name": "totals the real file and survives the missing one",
+        "expect_stdout": "247\n0"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "works on a different set of scores",
+        "files": {
+          "scores.txt": "5\n5\n"
+        },
+        "expect_stdout": "10\n0"
+      },
+      {
+        "name": "any missing file gives back zero rather than crashing",
+        "call": "read_total(\"nowhere.txt\")",
+        "expect": "0"
+      },
+      {
+        "kind": "ast",
+        "name": "the missing file is caught by name",
+        "requires": {
+          "handlers": [
+            "FileNotFoundError"
+          ]
+        },
+        "forbids": {
+          "handlers": [
+            "bare"
+          ]
+        },
+        "describe": "except FileNotFoundError rather than a bare except"
+      }
+    ],
+    "hint": "A bare except returns 0 for a missing file and also for a typo in your own code, a file full of words, and every mistake you have not made yet. Name the one error you are ready for."
+  },
+  "questions": [
+    {
+      "id": "u7-tex-1",
+      "prompt": "What is wrong with `except:` on its own?",
+      "choices": [
+        "It is a syntax error",
+        "It catches every error, including bugs in your own code, and hides them",
+        "It only catches ValueError",
+        "It is slower"
+      ],
+      "answer": 1,
+      "explain": "A bare except swallows the error you were expecting and the one you were not, so a real bug quietly turns into a wrong answer."
+    },
+    {
+      "id": "u7-tex-2",
+      "prompt": "When does the else block of a try run?",
+      "choices": [
+        "Always",
+        "Only when the try block raised nothing",
+        "Only when the try block raised something",
+        "Instead of except"
+      ],
+      "answer": 1,
+      "explain": "else is the \"nothing went wrong\" branch. It keeps the code that depends on success out of the try, where it could raise and be caught by mistake."
+    },
+    {
+      "id": "u7-tex-3",
+      "prompt": "When does the finally block run?",
+      "choices": [
+        "Only after a successful try",
+        "Only after an exception",
+        "Every time, whichever of those happened",
+        "Only if you return"
+      ],
+      "answer": 2,
+      "explain": "finally is for the cleanup that has to happen either way, which is the same job the with statement does for files."
+    },
+    {
+      "id": "u7-tex-4",
+      "kind": "order",
+      "prompt": "Put these lines in order so a missing file is reported instead of crashing.",
+      "items": [
+        "try:",
+        "    with open(\"scores.txt\") as file:",
+        "        print(file.read())",
+        "except FileNotFoundError:",
+        "    print(\"No scores yet\")"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "explain": "The risky work goes inside try, and the except that names the error it might raise comes straight after the block, not before it."
+    },
+    {
+      "id": "u7-tex-5",
+      "kind": "multi",
+      "prompt": "Which of these belong inside the try block when reading a file that might be missing?",
+      "choices": [
+        "The open() call",
+        "The reading of the file",
+        "The import at the top of the program",
+        "The message printed when it all worked"
+      ],
+      "answers": [
+        0,
+        1
+      ],
+      "explain": "Only the lines that can raise the error you are handling. Anything else in there is a line whose own failures you have quietly agreed to ignore."
+    }
+  ],
+  "reflections": {
+    "reflection-exercise1": {
+      "expect_any": [
+        [
+          "missing",
+          "not exist",
+          "does not exist",
+          "filenotfounderror",
+          "deleted",
+          "moved"
+        ],
+        [
+          "crash",
+          "crashes",
+          "stop",
+          "stops",
+          "quit",
+          "quits"
+        ],
+        [
+          "message",
+          "helpful",
+          "keep going",
+          "continue",
+          "gracefully",
+          "handle"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Name something outside your control that can go wrong with a file, and say what the program does instead of stopping."
+    },
+    "reflection-exercise2": {
+      "expect_any": [
+        [
+          "try"
+        ],
+        [
+          "open",
+          "opens",
+          "read",
+          "reads"
+        ],
+        [
+          "except",
+          "catch",
+          "catches"
+        ],
+        [
+          "filenotfounderror",
+          "message",
+          "print",
+          "tell"
+        ]
+      ],
+      "min_concepts": 3,
+      "hint": "Your pseudocode needs the risky line inside try, and an except that names the one error you expect rather than all of them."
+    }
+  }
+}

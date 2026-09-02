@@ -1,0 +1,125 @@
+{
+  "exercise1": {
+    "prompt": "numbers = [10, 20, 30, 40, 50], print the first, the last with a negative index, and the middle",
+    "cases": [
+      {
+        "name": "numbers holds the five values",
+        "call": "numbers",
+        "expect": "[10, 20, 30, 40, 50]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "three values are printed",
+        "min_lines": 3
+      },
+      {
+        "name": "the first, then the last, then the middle",
+        "stdout_matches": "\\b10\\b[\\s\\S]*\\b50\\b[\\s\\S]*\\b30\\b",
+        "describe": "10, then 50, then 30"
+      },
+      {
+        "name": "nothing was added to or taken out of the list",
+        "call": "len(numbers)",
+        "expect": "5"
+      }
+    ],
+    "hint": "Indexes start at 0, so the first item is not numbers[1] and the fifth is not numbers[5]. A negative index counts back from the end, which saves you working out the length."
+  },
+  "exercise2": {
+    "prompt": "letters = [\"a\"..\"f\"], print the first three, the last two, and items 2 through 4",
+    "cases": [
+      {
+        "name": "letters holds the six letters",
+        "call": "letters",
+        "expect": "['a', 'b', 'c', 'd', 'e', 'f']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the first three letters",
+        "stdout_matches": "\\['a', 'b', 'c'\\]",
+        "describe": "['a', 'b', 'c']"
+      },
+      {
+        "name": "the last two letters",
+        "stdout_matches": "\\['e', 'f'\\]",
+        "describe": "['e', 'f']"
+      },
+      {
+        "name": "items 2 through 4",
+        "stdout_matches": "\\['c', 'd', 'e'\\]",
+        "describe": "['c', 'd', 'e']"
+      },
+      {
+        "name": "three slices are printed",
+        "min_lines": 3
+      }
+    ],
+    "hint": "The number after the colon says where to stop, and the slice stops before it. So a slice that should end at index 4 is written with a 5."
+  },
+  "questions": [
+    {
+      "id": "u4-slice-1",
+      "prompt": "For numbers = [10, 20, 30, 40, 50], what is numbers[-1]?",
+      "choices": [
+        "10",
+        "50",
+        "An error",
+        "40"
+      ],
+      "answer": 1,
+      "explain": "A negative index counts back from the end, and -1 is the last item. It is shorter and safer than numbers[len(numbers) - 1]."
+    },
+    {
+      "id": "u4-slice-2",
+      "prompt": "What does [\"a\", \"b\", \"c\", \"d\"][1:3] give?",
+      "choices": [
+        "['a', 'b', 'c']",
+        "['b', 'c']",
+        "['b', 'c', 'd']",
+        "['a', 'b']"
+      ],
+      "answer": 1,
+      "explain": "A slice starts at the first number and stops before the second, so 1:3 gives you indexes 1 and 2 and never index 3."
+    },
+    {
+      "id": "u4-slice-3",
+      "kind": "match",
+      "prompt": "For letters = [\"a\", \"b\", \"c\", \"d\", \"e\", \"f\"], match each slice to what it gives.",
+      "left": [
+        "letters[:3]",
+        "letters[-2:]",
+        "letters[2:5]",
+        "letters[:]"
+      ],
+      "right": [
+        "['a', 'b', 'c']",
+        "['e', 'f']",
+        "['c', 'd', 'e']",
+        "the whole list"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "A missing start means the beginning and a missing stop means the end, so [:] is the whole list -- and a fresh copy of it."
+    },
+    {
+      "id": "u4-slice-4",
+      "kind": "blank",
+      "prompt": "numbers[5] on a list of five items raises an ___ error, because the last index is 4.",
+      "blanks": [
+        {
+          "accept": [
+            "index",
+            "IndexError"
+          ]
+        }
+      ],
+      "explain": "Counting from 0 means the highest valid index is always one less than the length. Slices are forgiving about running past the end; plain indexing is not."
+    }
+  ]
+}

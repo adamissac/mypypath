@@ -1,0 +1,171 @@
+{
+  "practice1": {
+    "prompt": "Write the real request the lesson simulates: import requests, GET an endpoint, check response.status_code, and parse the reply with response.json().",
+    "cases": [
+      {
+        "kind": "ast",
+        "name": "the request is made with the requests library",
+        "requires": {
+          "imports": [
+            "requests"
+          ],
+          "calls": [
+            "get"
+          ]
+        },
+        "describe": "import requests, and a call to requests.get"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "the status code is looked at before the data is used",
+        "requires": {
+          "calls": [
+            "status_code"
+          ],
+          "conditionals": 1
+        },
+        "describe": "response.status_code read, and a decision made on it"
+      },
+      {
+        "kind": "ast",
+        "name": "the reply is parsed as JSON",
+        "requires": {
+          "calls": [
+            "json"
+          ]
+        },
+        "describe": "response.json() turning the reply into Python data"
+      }
+    ],
+    "hint": "There is no network here, so this exercise reads your code rather than running it. What it looks for is the three parts every real request has: the call, the check on what came back, and the parse."
+  },
+  "questions": [
+    {
+      "id": "u9-api-1",
+      "prompt": "Which status code means the request succeeded?",
+      "choices": [
+        "200",
+        "301",
+        "404",
+        "500"
+      ],
+      "answer": 0,
+      "explain": "200 is OK. The 400s are problems with the request you sent, the 500s are problems on the server."
+    },
+    {
+      "id": "u9-api-2",
+      "prompt": "What does response.json() give you?",
+      "choices": [
+        "The raw reply as one long string",
+        "A Python dictionary or list built from the JSON body",
+        "The status code",
+        "A file on disk"
+      ],
+      "answer": 1,
+      "explain": "It parses the body for you. response.text is the same reply left as a string, which you would then have to hand to json.loads yourself."
+    },
+    {
+      "id": "u9-api-match",
+      "kind": "match",
+      "prompt": "Match each status code to what it means.",
+      "left": [
+        "200",
+        "401",
+        "404",
+        "500"
+      ],
+      "right": [
+        "The server broke while handling it",
+        "Success",
+        "Nothing exists at that address",
+        "You are not authenticated"
+      ],
+      "answer": [
+        1,
+        3,
+        2,
+        0
+      ],
+      "explain": "The code tells you whose problem it is, which decides whether retrying could ever help."
+    },
+    {
+      "id": "u9-api-order",
+      "kind": "order",
+      "prompt": "Put the four steps of an API call in order.",
+      "items": [
+        "Your program sends an HTTP request to the endpoint",
+        "The server processes the request and gathers the data",
+        "The server sends back a status code and a JSON body",
+        "Your program parses the JSON and uses the data"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "Nothing can be parsed before it has arrived, and nothing arrives before it is asked for. Each step waits on the one before it."
+    },
+    {
+      "id": "u9-api-multi",
+      "kind": "multi",
+      "prompt": "Which of these make an API call safer to run unattended?",
+      "choices": [
+        "Passing a timeout so the call cannot hang forever",
+        "Checking the status code, or calling raise_for_status()",
+        "Catching requests.exceptions.RequestException",
+        "Calling the API more often so a failure matters less"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "A timeout bounds the wait, the status check bounds what you trust, and the except bounds the damage. Calling more often just fails more often."
+    }
+  ],
+  "reflections": {
+    "reflection-exercise1": {
+      "expect_any": [
+        [
+          "api",
+          "interface",
+          "endpoint"
+        ],
+        [
+          "request",
+          "get",
+          "ask",
+          "send"
+        ],
+        [
+          "response",
+          "json",
+          "parse",
+          "data back"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Describe the round trip: what you send, what comes back, and what you have to do to the reply before you can use it."
+    },
+    "reflection-exercise2": {
+      "expect_any": [
+        [
+          "get",
+          "retrieve",
+          "fetch",
+          "read"
+        ],
+        [
+          "200",
+          "ok",
+          "success"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Say what a GET asks the server to do, and name the code that says it worked."
+    }
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "exercise1": {
+    "prompt": "A list of three colours, a tuple of two coordinates, a dictionary of a name and an age, and a set of five numbers with duplicates",
+    "cases": [
+      {
+        "name": "all four structures are printed",
+        "min_lines": 4
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a list of three colours",
+        "stdout_matches": "\\[\\s*'[^']*'\\s*,\\s*'[^']*'\\s*,\\s*'[^']*'\\s*\\]",
+        "describe": "a list of three colours, printed with square brackets"
+      },
+      {
+        "name": "a tuple of two numbers",
+        "stdout_matches": "\\(\\s*-?\\d+(?:\\.\\d+)?\\s*,\\s*-?\\d+(?:\\.\\d+)?\\s*\\)",
+        "describe": "two coordinates, printed with parentheses"
+      },
+      {
+        "name": "a dictionary of a name and an age",
+        "stdout_matches": "\\{[^{}]*'[^']*'\\s*:\\s*[^{}]*\\}",
+        "describe": "key: value pairs inside curly braces"
+      },
+      {
+        "name": "a set, so the duplicates are gone",
+        "stdout_matches": "\\{\\s*\\d+(?:\\s*,\\s*\\d+)+\\s*\\}",
+        "describe": "numbers inside curly braces, each appearing once"
+      }
+    ],
+    "hint": "The four structures are told apart by their punctuation, and printing each one shows you which you actually built. A set is the only one that drops a value you put in twice."
+  },
+  "exercise2": {
+    "prompt": "A list of fruits, a tuple of coordinates, {\"city\": \"New York\"}, and the set {1, 2, 2, 3}, each labelled in a comment",
+    "cases": [
+      {
+        "name": "all four structures are printed",
+        "min_lines": 4
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a list of three fruits",
+        "stdout_matches": "\\[\\s*'[^']*'\\s*,\\s*'[^']*'\\s*,\\s*'[^']*'\\s*\\]",
+        "describe": "three fruits inside square brackets"
+      },
+      {
+        "name": "a tuple of two coordinates",
+        "stdout_matches": "\\(\\s*-?\\d+(?:\\.\\d+)?\\s*,\\s*-?\\d+(?:\\.\\d+)?\\s*\\)",
+        "describe": "two numbers inside parentheses"
+      },
+      {
+        "name": "the city dictionary",
+        "stdout_matches": "\\{'city': 'New York'\\}",
+        "describe": "{'city': 'New York'}"
+      },
+      {
+        "name": "the set keeps 1, 2 and 3 once each",
+        "stdout_matches": "\\{1, 2, 3\\}",
+        "describe": "{1, 2, 3} -- the second 2 is dropped"
+      },
+      {
+        "name": "each structure is labelled in a comment",
+        "source_matches": "#[\\s\\S]*#[\\s\\S]*#[\\s\\S]*#",
+        "describe": "a comment naming the type above each of the four structures"
+      }
+    ],
+    "hint": "Write each structure with the punctuation that belongs to it, then let the output tell you what you got. The set is the interesting one: give it 1, 2, 2, 3 and see how many values come back."
+  },
+  "questions": [
+    {
+      "id": "u4-intro-1",
+      "prompt": "Which structure refuses to hold the same value twice?",
+      "choices": [
+        "A list",
+        "A tuple",
+        "A set",
+        "A dictionary"
+      ],
+      "answer": 2,
+      "explain": "A set stores unique values, so {1, 2, 2, 3} holds three things, not four. That is what makes it the tool for removing duplicates."
+    },
+    {
+      "id": "u4-intro-2",
+      "kind": "match",
+      "prompt": "Match each piece of Python to the structure it creates.",
+      "left": [
+        "[1, 2, 3]",
+        "(1, 2, 3)",
+        "{\"a\": 1}",
+        "{1, 2, 3}"
+      ],
+      "right": [
+        "list",
+        "tuple",
+        "dictionary",
+        "set"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "The punctuation is the whole difference. Curly braces mean a dictionary when the values are written as key: value, and a set when they are not."
+    },
+    {
+      "id": "u4-intro-3",
+      "kind": "multi",
+      "prompt": "Which of these can be changed after they are created?",
+      "choices": [
+        "A list",
+        "A tuple",
+        "A dictionary",
+        "A set"
+      ],
+      "answers": [
+        0,
+        2,
+        3
+      ],
+      "explain": "Only the tuple is immutable. Once it exists you can read from it, but nothing can be added, removed or replaced."
+    },
+    {
+      "id": "u4-intro-4",
+      "kind": "blank",
+      "prompt": "To look a value up by a label rather than by a position, you reach for a ___.",
+      "blanks": [
+        {
+          "accept": [
+            "dictionary",
+            "dict"
+          ]
+        }
+      ],
+      "explain": "A list is indexed by position and a dictionary by key. Which one you want depends on how you already know the thing you are looking for."
+    },
+    {
+      "id": "u4-intro-5",
+      "prompt": "What does print({1, 2, 2, 3}) show?",
+      "choices": [
+        "{1, 2, 2, 3}",
+        "{1, 2, 3}",
+        "[1, 2, 3]",
+        "An error, because 2 is repeated"
+      ],
+      "answer": 1,
+      "explain": "The repeat is dropped as the set is built, so the set never contains it. It is not an error and nothing warns you about it."
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "exercise1": {
+    "prompt": "square_number(number) returns the square, with a docstring explaining it",
+    "cases": [
+      {
+        "name": "squares a positive number",
+        "call": "square_number(5)",
+        "expect": "25"
+      },
+      {
+        "name": "squares a negative number",
+        "call": "square_number(-3)",
+        "expect": "9"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "generated",
+        "name": "works for any number, not only the ones listed",
+        "entry": "square_number",
+        "reference": "def square_number(number):\n    return number * number\n",
+        "args": [{ "type": "int", "min": -30, "max": 30 }],
+        "runs": 40
+      },
+      {
+        "name": "the function carries a docstring",
+        "call": "square_number.__doc__ is not None",
+        "expect": "True"
+      },
+      {
+        "name": "the docstring says something about the function",
+        "call": "len(square_number.__doc__.strip()) > 10",
+        "expect": "True"
+      },
+      {
+        "kind": "ast",
+        "name": "square_number returns a value worked out from its parameter",
+        "requires": {
+          "functions": [{ "name": "square_number", "params": 1 }],
+          "returns": 1,
+          "names": ["number"]
+        },
+        "describe": "square_number returning something built from number"
+      }
+    ],
+    "hint": "A comment above the def and a docstring inside it look similar and are not the same thing. Only one of them is still there when the program is running, and that is the one Python can show to a reader."
+  },
+  "exercise2": {
+    "prompt": "calculate_total(price, tax_rate=0.08) with a multi-line docstring",
+    "cases": [
+      {
+        "name": "adds ten percent tax to a hundred",
+        "call": "round(calculate_total(100, 0.1), 2)",
+        "expect": "110.0"
+      },
+      {
+        "name": "uses the default tax rate when none is given",
+        "call": "round(calculate_total(50), 2)",
+        "expect": "54.0"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "works at a rate nobody mentioned in the lesson",
+        "call": "round(calculate_total(200, 0.25), 2)",
+        "expect": "250.0"
+      },
+      {
+        "name": "the function carries a docstring",
+        "call": "calculate_total.__doc__ is not None",
+        "expect": "True"
+      },
+      {
+        "name": "the docstring runs over several lines",
+        "call": "calculate_total.__doc__.strip().count(chr(10)) >= 2",
+        "expect": "True"
+      },
+      {
+        "name": "the docstring covers the parameters and the return value",
+        "call": "'param' in calculate_total.__doc__.lower() and 'return' in calculate_total.__doc__.lower()",
+        "expect": "True"
+      },
+      {
+        "kind": "ast",
+        "name": "the total is returned, not printed",
+        "requires": {
+          "functions": [{ "name": "calculate_total", "params": 2 }],
+          "returns": 1
+        },
+        "describe": "calculate_total with a return statement in it"
+      }
+    ],
+    "hint": "A one-line summary is a start, not the whole thing. The exercise asks for three pieces: what it does, what each parameter is, and what comes back."
+  },
+  "questions": [
+    {
+      "id": "u3-dd-1",
+      "prompt": "Where does a docstring go?",
+      "choices": [
+        "On the line above the def",
+        "As the first statement inside the function body",
+        "At the very end of the function",
+        "Anywhere, as long as it uses triple quotes"
+      ],
+      "answer": 1,
+      "explain": "Python keeps the first string in a function body as its documentation. A string anywhere else is just a string, and a line above the def is outside the function entirely."
+    },
+    {
+      "id": "u3-dd-2",
+      "prompt": "Which built-in shows you a function's documentation?",
+      "choices": ["show()", "docs()", "help()", "print()"],
+      "answer": 2,
+      "explain": "help() prints the signature and the docstring, which is why writing one pays off for anyone reading your code later, including you."
+    },
+    {
+      "id": "u3-dd-3",
+      "prompt": "What is the difference between a comment and a docstring?",
+      "choices": [
+        "There is none",
+        "A comment is discarded when the code is parsed; a docstring stays attached to the function",
+        "A docstring is discarded; a comment stays",
+        "Comments cannot span several lines"
+      ],
+      "answer": 1,
+      "explain": "The parser throws comments away, so nothing can read them back. A docstring becomes the function's __doc__ and is what help() prints."
+    },
+    {
+      "id": "u3-dd-4",
+      "kind": "multi",
+      "prompt": "What should a docstring for a function say?",
+      "choices": [
+        "What the function does",
+        "What each parameter is for",
+        "What it returns",
+        "Every line of the implementation, restated"
+      ],
+      "answers": [0, 1, 2],
+      "explain": "A docstring is for the person calling the function, so it describes the deal on offer. Restating the body helps nobody and goes stale the first time the body changes."
+    },
+    {
+      "id": "u3-dd-5",
+      "kind": "blank",
+      "prompt": "A docstring is written between triple ___ marks.",
+      "blanks": [
+        { "accept": ["quote", "quotes", "quotation"] }
+      ],
+      "explain": "Three quote marks let the string run over several lines, which is why docstrings use them even when they are short."
+    }
+  ]
+}

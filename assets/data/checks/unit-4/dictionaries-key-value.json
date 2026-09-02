@@ -1,0 +1,126 @@
+{
+  "exercise1": {
+    "prompt": "person with name Alice, age 25 and city Boston; print the name and the age",
+    "cases": [
+      {
+        "name": "person['name'] is Alice",
+        "call": "person['name']",
+        "expect": "'Alice'"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "person['age'] is 25",
+        "call": "person['age']",
+        "expect": "25"
+      },
+      {
+        "name": "person['city'] is Boston",
+        "call": "person['city']",
+        "expect": "'Boston'"
+      },
+      {
+        "name": "person has exactly three keys",
+        "call": "len(person)",
+        "expect": "3"
+      },
+      {
+        "name": "the name and the age are printed",
+        "stdout_matches": "alice[\\s\\S]*\\b25\\b",
+        "describe": "Alice, then 25"
+      }
+    ],
+    "hint": "A dictionary is written with curly braces and a colon between each key and its value. You reach a value by naming its key in square brackets, not by counting positions."
+  },
+  "exercise2": {
+    "prompt": "car with brand Toyota and model Camry; add year 2020, change model to Corolla, print it",
+    "cases": [
+      {
+        "name": "car ends up with brand, model and year",
+        "call": "car",
+        "expect": "{'brand': 'Toyota', 'model': 'Corolla', 'year': 2020}"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the model was changed, not added alongside",
+        "call": "car['model']",
+        "expect": "'Corolla'"
+      },
+      {
+        "name": "the year was added",
+        "call": "car['year']",
+        "expect": "2020"
+      },
+      {
+        "name": "car has three keys, not four",
+        "call": "len(car)",
+        "expect": "3"
+      },
+      {
+        "name": "the finished dictionary is printed",
+        "stdout_matches": "corolla",
+        "describe": "the updated dictionary"
+      }
+    ],
+    "hint": "Assigning to a key is both how you add one and how you replace one, and Python cannot tell you which you meant. Keys are case-sensitive, so \"Model\" and \"model\" are two different keys."
+  },
+  "questions": [
+    {
+      "id": "u4-dict-1",
+      "prompt": "What does person[\"height\"] do when person has no \"height\" key?",
+      "choices": [
+        "Returns None",
+        "Returns an empty string",
+        "Raises a KeyError",
+        "Adds the key with the value None"
+      ],
+      "answer": 2,
+      "explain": "Reading a missing key is an error, not a blank. person.get(\"height\") is the version that hands back None instead."
+    },
+    {
+      "id": "u4-dict-2",
+      "prompt": "car[\"year\"] = 2020 on a dictionary that has no \"year\" key does what?",
+      "choices": [
+        "Raises a KeyError",
+        "Adds the key with that value",
+        "Does nothing",
+        "Replaces the whole dictionary"
+      ],
+      "answer": 1,
+      "explain": "Assignment adds the key if it is missing and overwrites it if it is not. That is convenient, and it is also why a typo in a key name silently creates a second entry."
+    },
+    {
+      "id": "u4-dict-3",
+      "kind": "multi",
+      "prompt": "Which of these can be used as a dictionary key?",
+      "choices": [
+        "A string",
+        "A number",
+        "A tuple",
+        "A list"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "A key has to be immutable, so a list cannot be one. A tuple can, which is one of the quiet reasons tuples exist."
+    },
+    {
+      "id": "u4-dict-4",
+      "kind": "blank",
+      "prompt": "Given person = {\"name\": \"Alice\"}, you print the name with print(person[___]).",
+      "blanks": [
+        {
+          "accept": [
+            "\"name\"",
+            "'name'",
+            "name"
+          ]
+        }
+      ],
+      "explain": "The key goes inside the brackets, quoted, because it is a string. Without quotes Python looks for a variable called name instead."
+    }
+  ]
+}

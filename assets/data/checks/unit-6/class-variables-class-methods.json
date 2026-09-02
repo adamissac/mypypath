@@ -1,0 +1,160 @@
+{
+  "exercise1": {
+    "prompt": "A Car class with wheels shared by every car and a brand of its own",
+    "cases": [
+      {
+        "name": "wheels belongs to the class, not to one car",
+        "call": "Car.wheels",
+        "expect": "4"
+      },
+      {
+        "name": "prints both brands",
+        "stdout_matches": "Toyota",
+        "describe": "the first car's brand printed"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "Car is a class with an __init__",
+        "requires": {
+          "classes": [
+            {
+              "name": "Car",
+              "methods": [
+                "__init__"
+              ]
+            }
+          ]
+        },
+        "describe": "a Car class whose __init__ takes the brand"
+      },
+      {
+        "name": "each car keeps its own brand",
+        "call": "Car(\"Honda\").brand",
+        "expect": "'Honda'"
+      },
+      {
+        "name": "every car sees the same wheel count",
+        "call": "Car(\"Toyota\").wheels == Car(\"Honda\").wheels == 4",
+        "expect": "True"
+      },
+      {
+        "name": "the second car is printed too",
+        "stdout_matches": "Honda",
+        "describe": "the second car's brand printed"
+      }
+    ],
+    "hint": "Ask yourself whether the value would be the same for every car ever made. If it would, it goes in the class body; if it differs per car, it goes on self in __init__. Reading Car.wheels without making a car is the test of which one you wrote."
+  },
+  "exercise2": {
+    "prompt": "A Counter that counts how many of itself have been made, read back by a class method",
+    "cases": [
+      {
+        "name": "three counters were made and counted",
+        "call": "Counter.get_count()",
+        "expect": "3"
+      },
+      {
+        "name": "prints the total",
+        "stdout_matches": "3",
+        "describe": "the total count printed"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "get_count is a class method",
+        "requires": {
+          "classes": [
+            {
+              "name": "Counter",
+              "methods": [
+                "__init__",
+                "get_count"
+              ]
+            }
+          ],
+          "decorators": [
+            "classmethod"
+          ]
+        },
+        "describe": "a Counter class whose get_count is decorated with @classmethod"
+      },
+      {
+        "name": "the count really goes up with each new counter",
+        "call": "(Counter(), Counter.get_count())[-1]",
+        "expect": "4"
+      },
+      {
+        "name": "the tally is shared, not one per counter",
+        "call": "(Counter(), Counter(), Counter.get_count())[-1]",
+        "expect": "5"
+      }
+    ],
+    "hint": "self.count += 1 reads the shared value and then writes a new one onto that single counter, leaving the class variable where it was. The line has to change the value on the class itself."
+  },
+  "questions": [
+    {
+      "id": "u6-cls-1",
+      "prompt": "Where is a class variable written?",
+      "choices": [
+        "In the class body, outside any method",
+        "On self inside __init__",
+        "At the top of the file, before the class",
+        "Inside a class method only"
+      ],
+      "answer": 0,
+      "explain": "It sits in the class body and belongs to the class, so every object made from it sees the same value."
+    },
+    {
+      "id": "u6-cls-2",
+      "prompt": "What is cls in a class method?",
+      "choices": [
+        "The object the method was called on",
+        "The class itself",
+        "A copy of self",
+        "The module the class lives in"
+      ],
+      "answer": 1,
+      "explain": "A class method is handed the class rather than an instance, which is why it can be called as Counter.get_count() with no counter at all."
+    },
+    {
+      "id": "u6-cls-3",
+      "kind": "match",
+      "prompt": "Match each decorator to what its first parameter receives.",
+      "left": [
+        "@classmethod",
+        "@staticmethod",
+        "no decorator"
+      ],
+      "right": [
+        "the object it was called on",
+        "nothing special is passed in",
+        "the class"
+      ],
+      "answer": [
+        2,
+        1,
+        0
+      ],
+      "explain": "An ordinary method gets self, a class method gets cls, and a static method gets neither -- it just happens to live in the class."
+    },
+    {
+      "id": "u6-cls-4",
+      "kind": "multi",
+      "prompt": "Counter.count is a class variable. Which lines change the shared tally?",
+      "choices": [
+        "Counter.count += 1",
+        "cls.count += 1 inside a class method",
+        "self.count += 1 inside __init__",
+        "count += 1 inside __init__"
+      ],
+      "answers": [
+        0,
+        1
+      ],
+      "explain": "self.count += 1 reads the class value and then writes an instance attribute over it, so the class variable never moves. A bare count is a local name and would raise before it did anything."
+    }
+  ]
+}

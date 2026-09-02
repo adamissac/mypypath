@@ -1,0 +1,156 @@
+{
+  "exercise1": {
+    "prompt": "A BankAccount whose balance is protected and reached through methods",
+    "cases": [
+      {
+        "name": "the balance is stored as _balance and starts at zero",
+        "call": "BankAccount()._balance",
+        "expect": "0"
+      },
+      {
+        "name": "prints the balance after the deposit",
+        "stdout_matches": "100",
+        "describe": "the balance printed after depositing 100"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "the account is reached through get_balance and deposit",
+        "requires": {
+          "classes": [
+            {
+              "name": "BankAccount",
+              "methods": [
+                "__init__",
+                "get_balance",
+                "deposit"
+              ]
+            }
+          ]
+        },
+        "describe": "a BankAccount class with get_balance and deposit inside it"
+      },
+      {
+        "name": "get_balance reports what is actually stored",
+        "call": "(lambda a: (setattr(a, \"_balance\", 42), a.get_balance())[1])(BankAccount())",
+        "expect": "42"
+      },
+      {
+        "name": "two deposits add up",
+        "call": "(lambda a: (a.deposit(40), a.deposit(60), a.get_balance())[-1])(BankAccount())",
+        "expect": "100"
+      }
+    ],
+    "hint": "The single underscore is a message to the next programmer: this is ours, reach it through the methods. Python still lets anyone touch it, so the convention only works if you spell it the way everyone else does."
+  },
+  "exercise2": {
+    "prompt": "A Person whose age is private and set only through a method that checks it",
+    "cases": [
+      {
+        "name": "an age of 25 is accepted and read back",
+        "call": "(lambda p: (p.set_age(25), p.get_age())[1])(Person())",
+        "expect": "25"
+      },
+      {
+        "name": "prints the age",
+        "stdout_matches": "25",
+        "describe": "the age printed after it was set"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "the age is reached through get_age and set_age",
+        "requires": {
+          "classes": [
+            {
+              "name": "Person",
+              "methods": [
+                "__init__",
+                "get_age",
+                "set_age"
+              ]
+            }
+          ]
+        },
+        "describe": "a Person class with get_age and set_age inside it"
+      },
+      {
+        "name": "the age is written with two underscores, so Python mangles the name",
+        "call": "Person()._Person__age",
+        "expect": "0"
+      },
+      {
+        "name": "an impossible age is refused and the old one survives",
+        "call": "(lambda p: (p.set_age(25), p.set_age(200), p.get_age())[-1])(Person())",
+        "expect": "25"
+      },
+      {
+        "name": "a negative age is refused too",
+        "call": "(lambda p: (p.set_age(30), p.set_age(-5), p.get_age())[-1])(Person())",
+        "expect": "30"
+      }
+    ],
+    "hint": "A setter that stores whatever it is handed is only a longer way of assigning the attribute. The check inside it is the reason the attribute was made private in the first place, and a refused value must leave the old one alone."
+  },
+  "questions": [
+    {
+      "id": "u6-enc-1",
+      "prompt": "What does a single leading underscore, like _balance, do?",
+      "choices": [
+        "Stops any code outside the class reading it",
+        "Signals that it is internal, without enforcing anything",
+        "Makes it read-only",
+        "Renames it when the class is created"
+      ],
+      "answer": 1,
+      "explain": "It is a convention between programmers. Python will still let you read it, which is why a check file can look at it directly."
+    },
+    {
+      "id": "u6-enc-2",
+      "prompt": "What does Python do with self.__age inside class Person?",
+      "choices": [
+        "Nothing special, the name is just unusual",
+        "Renames it to _Person__age so subclasses do not collide with it",
+        "Refuses access from any method",
+        "Encrypts the value"
+      ],
+      "answer": 1,
+      "explain": "Name mangling exists to stop a subclass accidentally overwriting a parent's private attribute, not to make the value secret."
+    },
+    {
+      "id": "u6-enc-3",
+      "kind": "multi",
+      "prompt": "What does routing access through set_age let you do that a plain attribute does not?",
+      "choices": [
+        "Reject a value that makes no sense",
+        "Change how the age is stored without changing the callers",
+        "Make the attribute impossible to read",
+        "Make the class run faster"
+      ],
+      "answers": [
+        0,
+        1
+      ],
+      "explain": "A method is a place to put a rule, and it is a seam: the storage behind it can change while every caller stays as it was."
+    },
+    {
+      "id": "u6-enc-4",
+      "kind": "blank",
+      "prompt": "set_age should accept 25 and refuse ___, because the check is what makes the private attribute worth having.",
+      "blanks": [
+        {
+          "accept": [
+            "200",
+            "-5",
+            "-1",
+            "151",
+            "1000"
+          ]
+        }
+      ],
+      "explain": "Any age outside 0 to 150 is the answer. A setter with no rule inside it protects nothing."
+    }
+  ]
+}

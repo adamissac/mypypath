@@ -1,0 +1,69 @@
+{
+  "questions": [
+    {
+      "id": "u8-brk-1",
+      "prompt": "What does setting a breakpoint do?",
+      "choices": [
+        "Deletes the line it is on",
+        "Pauses the program just before that line runs, with everything still in memory",
+        "Prints the value of every variable",
+        "Stops the program permanently"
+      ],
+      "answer": 1,
+      "explain": "The value of a breakpoint is the pause, not the stop. The program is frozen mid-run with its variables intact, so you can ask questions you had not thought of in advance."
+    },
+    {
+      "id": "u8-brk-match",
+      "kind": "match",
+      "prompt": "Match each debugger control to what it does.",
+      "left": [
+        "Step over",
+        "Step into",
+        "Continue",
+        "Step out"
+      ],
+      "right": [
+        "Run to the end of the current function and stop after it returns",
+        "Run the next line, going inside any function it calls",
+        "Run the next line without descending into the functions it calls",
+        "Run until the next breakpoint"
+      ],
+      "answer": [
+        2,
+        1,
+        3,
+        0
+      ],
+      "explain": "Step over and step into differ only on whether you follow a call. Choosing the wrong one is how people end up several frames deep inside a library they did not mean to read."
+    },
+    {
+      "id": "u8-brk-3",
+      "prompt": "What can a debugger do that a print statement cannot?",
+      "choices": [
+        "Show the value of a variable",
+        "Let you inspect anything at all once stopped, without deciding in advance what mattered",
+        "Run inside a function",
+        "Work on large programs"
+      ],
+      "answer": 1,
+      "explain": "A print commits you to a guess about which variable is interesting. Stopped in a debugger you can look at all of them, including the one you had no reason to suspect."
+    },
+    {
+      "id": "u8-brk-4",
+      "kind": "multi",
+      "prompt": "When is reaching for the debugger a better first move than adding prints?",
+      "choices": [
+        "The bug is deep inside a chain of calls",
+        "You do not yet know which variable is wrong",
+        "The program is slow to restart, so each print costs a full re-run",
+        "You already know exactly which line to look at"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "The debugger earns its setup cost when you cannot yet name the question. If you already know the line and the variable, one print is faster than starting a session."
+    }
+  ]
+}

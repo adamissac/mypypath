@@ -1,0 +1,108 @@
+{
+  "practice1": {
+    "prompt": "fix the comparison so a score on the pass mark counts as a pass",
+    "cases": [
+      {
+        "name": "three of the four scores pass",
+        "call": "count_passing([4, 6, 6, 9], 6)",
+        "expect": "3"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a score exactly on the mark passes",
+        "call": "count_passing([6], 6)",
+        "expect": "1"
+      },
+      {
+        "name": "nobody passes an empty list",
+        "call": "count_passing([], 5)",
+        "expect": "0"
+      },
+      {
+        "kind": "generated",
+        "name": "works for any scores and any pass mark",
+        "entry": "count_passing",
+        "reference": "def count_passing(scores, pass_mark):\n    return len([s for s in scores if s >= pass_mark])\n",
+        "args": [
+          {
+            "type": "list",
+            "of": {
+              "type": "int",
+              "min": 0,
+              "max": 10
+            },
+            "minLength": 0,
+            "maxLength": 6
+          },
+          {
+            "type": "int",
+            "min": 0,
+            "max": 10
+          }
+        ],
+        "runs": 40
+      }
+    ],
+    "hint": "Nothing crashes, so the only evidence is the gap between 3 and 1. Two of the four scores are exactly 6. Ask which comparison lets a score equal to the pass mark through."
+  },
+  "questions": [
+    {
+      "id": "u8-dlr-1",
+      "prompt": "What makes a logical error harder to find than a runtime error?",
+      "choices": [
+        "It happens more often",
+        "The program runs cleanly and gives a wrong answer, so nothing points at the line",
+        "Python hides the traceback",
+        "It only appears in large programs"
+      ],
+      "answer": 1,
+      "explain": "A runtime error names a line for you. A logical error produces an answer, and the only clue is that the answer is not the one you expected."
+    },
+    {
+      "id": "u8-dlr-2",
+      "kind": "blank",
+      "prompt": "To count scores that reach the pass mark, the comparison must be ___ rather than a plain greater-than.",
+      "blanks": [
+        {
+          "accept": [
+            ">=",
+            "greater than or equal",
+            "greater than or equal to",
+            "at least"
+          ]
+        }
+      ],
+      "explain": "A score exactly on the mark is a pass. Plain greater-than silently excludes everyone sitting on the boundary, which is where off-by-one bugs live."
+    },
+    {
+      "id": "u8-dlr-3",
+      "prompt": "Why does the lesson insist you work out the expected answer before running the code?",
+      "choices": [
+        "It is a formality",
+        "Without a known right answer you cannot tell a wrong output from a correct one",
+        "It makes the program faster",
+        "Python needs it to run the function"
+      ],
+      "answer": 1,
+      "explain": "The bug here is only visible because 3 was expected and 1 arrived. Run it without knowing, and 1 looks like an answer."
+    },
+    {
+      "id": "u8-dlr-4",
+      "kind": "multi",
+      "prompt": "Which of these are classic off-by-one mistakes?",
+      "choices": [
+        "Using > where >= was meant",
+        "Stopping a range one item early",
+        "Starting a count at 1 when the list is indexed from 0",
+        "Naming a variable badly"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "All three are a boundary being crossed one step too early or too late. A bad name makes code harder to read but does not change what it computes."
+    }
+  ]
+}

@@ -326,6 +326,36 @@ ZeroDivisionError: division by zero</code></pre>
                 </div>
               </div>
 
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: Build the Call Chain</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Rebuild the chain from the traceback above. Write <code>calculate_average</code> so it divides the sum by the count, and <code>process_data</code> so it hands its numbers straight to <code>calculate_average</code>. Do not catch the error: an empty list should still raise <code>ZeroDivisionError</code>, and the traceback should name both functions.</p>
+
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Let the error out. Do not catch it.\ndef calculate_average(numbers):\n    return None\n\ndef process_data(numbers):\n    return None\n\nprint(process_data([2, 4, 6]))\nprint(process_data([]))')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Let the error out. Do not catch it.
+def calculate_average(numbers):
+    return None
+
+def process_data(numbers):
+    return None
+
+print(process_data([2, 4, 6]))
+print(process_data([]))</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Press Run to see output</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> The traceback names <code>process_data</code> as well as <code>calculate_average</code>, because the empty list was passed in one frame and divided by in another. The bottom line says what broke; the frames above it say who asked for it.</p>
+              </div>
+
               <div class="content-section">
                 <h2>Summary</h2>
                 <p>In this lesson, you learned:</p>

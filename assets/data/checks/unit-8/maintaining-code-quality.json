@@ -1,0 +1,72 @@
+{
+  "questions": [
+    {
+      "id": "u8-mcq-1",
+      "prompt": "What is the strongest argument for readable code?",
+      "choices": [
+        "It runs faster",
+        "You will be the one reading it when it breaks, months from now",
+        "Python enforces it",
+        "It uses less memory"
+      ],
+      "answer": 1,
+      "explain": "Code is read far more often than it is written, and usually by someone who has forgotten why it was written that way. That someone is normally you."
+    },
+    {
+      "id": "u8-mcq-2",
+      "kind": "multi",
+      "prompt": "Which of these make a function easier to test?",
+      "choices": [
+        "It returns a value rather than printing one",
+        "It does one job",
+        "It reads its inputs from parameters rather than from globals",
+        "It is as short as possible regardless of what it does"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "The first three each remove something a test would otherwise have to work around. Shortness for its own sake tends to split one clear function into two unclear ones."
+    },
+    {
+      "id": "u8-mcq-3",
+      "prompt": "When is a comment worth writing?",
+      "choices": [
+        "On every line",
+        "When it explains why the code does something, not what it does",
+        "Never, good code needs none",
+        "Only at the top of the file"
+      ],
+      "answer": 1,
+      "explain": "The what is already in the code and cannot go stale. The why -- the constraint, the bug this works around, the decision that was not obvious -- exists nowhere else."
+    },
+    {
+      "id": "u8-mcq-blank",
+      "kind": "blank",
+      "prompt": "Changing the shape of code without changing what it does is called ___.",
+      "blanks": [
+        {
+          "accept": [
+            "refactoring",
+            "refactor",
+            "refactoring it"
+          ]
+        }
+      ],
+      "explain": "Keeping behaviour fixed is what makes it safe. It is also why refactoring is the last step of the test-driven cycle rather than the first: the tests are what prove the behaviour did not move."
+    },
+    {
+      "id": "u8-mcq-5",
+      "prompt": "Why does the lesson pair code quality with testing rather than treating them separately?",
+      "choices": [
+        "They are the same thing",
+        "Tests are what let you improve code without fear of breaking it",
+        "Both are optional",
+        "Testing tools check style automatically"
+      ],
+      "answer": 1,
+      "explain": "Without tests, every tidy-up is a risk, so the code ossifies. The suite is what turns a change you are nervous about into one you can make and verify."
+    }
+  ]
+}

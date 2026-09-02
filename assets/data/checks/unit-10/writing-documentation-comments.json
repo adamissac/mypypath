@@ -1,0 +1,66 @@
+{
+  "questions": [
+    {
+      "id": "u10-doc-1",
+      "prompt": "Which comment earns its place?",
+      "choices": [
+        "# add one to i, above i = i + 1",
+        "# skip the header row, which the exporter always writes, above next(reader)",
+        "# this is a function, above a def",
+        "# variable, above an assignment"
+      ],
+      "answer": 1,
+      "explain": "The useful one says something the code cannot: that the header is there because of the exporter. The others restate the line below them."
+    },
+    {
+      "id": "u10-doc-2",
+      "kind": "match",
+      "prompt": "Match each kind of documentation to the reader it is written for.",
+      "left": [
+        "A comment",
+        "A docstring",
+        "A README"
+      ],
+      "right": [
+        "Someone who found your project and wants to install and run it",
+        "Whoever next edits this particular line and wonders why it is there",
+        "Whoever calls this function and needs to know what it takes and returns"
+      ],
+      "answer": [
+        1,
+        2,
+        0
+      ],
+      "explain": "They have three different readers, which is why the same sentence rarely works in more than one of them."
+    },
+    {
+      "id": "u10-doc-3",
+      "kind": "multi",
+      "prompt": "What belongs in the README of a command-line project?",
+      "choices": [
+        "What the project does, in a sentence or two",
+        "How to run it",
+        "Which Python version it needs",
+        "A line-by-line walkthrough of every function"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "A README answers what this is and how to run it. The line-by-line detail belongs in docstrings, next to the code it describes, where it can be kept true."
+    },
+    {
+      "id": "u10-doc-4",
+      "prompt": "Why is a comment that restates the code worse than no comment at all?",
+      "choices": [
+        "It makes the file longer",
+        "When the code changes and the comment does not, the comment is a false statement sitting next to a true one",
+        "Python parses comments slowly",
+        "It uses extra memory at run time"
+      ],
+      "answer": 1,
+      "explain": "A comment nobody updates outlives the line it described. That cost is what makes comment the why, not the what a rule rather than a preference."
+    }
+  ]
+}

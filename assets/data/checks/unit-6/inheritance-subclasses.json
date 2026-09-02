@@ -1,0 +1,184 @@
+{
+  "exercise1": {
+    "prompt": "A Person parent with introduce(), and a Student subclass that inherits it",
+    "cases": [
+      {
+        "kind": "ast",
+        "name": "Student is built from Person",
+        "requires": {
+          "classes": [
+            {
+              "name": "Student",
+              "bases": [
+                "Person"
+              ]
+            }
+          ]
+        },
+        "describe": "a Student class written as class Student(Person)"
+      },
+      {
+        "name": "a Student can introduce itself",
+        "call": "Student(\"Alice\").introduce()",
+        "expect": "\"Hi, I'm Alice\""
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "Person is the class that defines __init__ and introduce",
+        "requires": {
+          "classes": [
+            {
+              "name": "Person",
+              "methods": [
+                "__init__",
+                "introduce"
+              ]
+            }
+          ]
+        },
+        "describe": "a Person class holding __init__ and introduce"
+      },
+      {
+        "name": "the introduction uses the name it was given",
+        "call": "Student(\"Zed\").introduce().endswith(\"Zed\")",
+        "expect": "True"
+      },
+      {
+        "name": "a Student really is a Person",
+        "call": "isinstance(Student(\"Alice\"), Person)",
+        "expect": "True"
+      },
+      {
+        "name": "prints the introduction",
+        "stdout_matches": "Alice",
+        "describe": "the introduction printed"
+      }
+    ],
+    "hint": "Copying Person's methods into Student would run exactly the same, which is why the check reads the class statement rather than the output. The parentheses after the subclass name are the whole of what inheritance is."
+  },
+  "exercise2": {
+    "prompt": "An Animal parent with make_sound(), and a Dog subclass that overrides it",
+    "cases": [
+      {
+        "kind": "ast",
+        "name": "Dog is built from Animal and defines its own make_sound",
+        "requires": {
+          "classes": [
+            {
+              "name": "Dog",
+              "bases": [
+                "Animal"
+              ],
+              "methods": [
+                "make_sound"
+              ]
+            }
+          ]
+        },
+        "describe": "a Dog class written as class Dog(Animal) with its own make_sound"
+      },
+      {
+        "name": "a Dog says Woof",
+        "call": "Dog().make_sound()",
+        "expect": "'Woof!'"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "Animal is the class that defines make_sound first",
+        "requires": {
+          "classes": [
+            {
+              "name": "Animal",
+              "methods": [
+                "make_sound"
+              ]
+            }
+          ]
+        },
+        "describe": "an Animal class with a make_sound of its own"
+      },
+      {
+        "name": "the parent still says what it always said",
+        "call": "Animal().make_sound()",
+        "expect": "'Some sound'"
+      },
+      {
+        "name": "a Dog is still an Animal",
+        "call": "isinstance(Dog(), Animal)",
+        "expect": "True"
+      },
+      {
+        "name": "prints the dog's sound",
+        "stdout_matches": "Woof",
+        "describe": "the dog's sound printed"
+      }
+    ],
+    "hint": "Overriding means writing a method with the same name in the child. The parent's version has to survive untouched, so calling Animal directly should still give the old answer."
+  },
+  "questions": [
+    {
+      "id": "u6-inh-1",
+      "prompt": "What does class Student(Person): mean?",
+      "choices": [
+        "Student contains a Person",
+        "Student gets Person's methods and attributes without repeating them",
+        "Student is a copy of Person made at that moment",
+        "Person is defined inside Student"
+      ],
+      "answer": 1,
+      "explain": "The subclass keeps a live link to the parent. Change a method on Person later and every Student sees the change."
+    },
+    {
+      "id": "u6-inh-2",
+      "prompt": "A Student class copies Person's methods by hand instead of inheriting. What is wrong with that?",
+      "choices": [
+        "Nothing, it behaves the same",
+        "It behaves the same today, but the two copies drift apart the moment one is fixed",
+        "It raises an error at import time",
+        "Python forbids two classes having a method of the same name"
+      ],
+      "answer": 1,
+      "explain": "The behaviour is identical, which is exactly why the mistake survives testing. The cost arrives later, when a fix to one copy quietly misses the other."
+    },
+    {
+      "id": "u6-inh-3",
+      "kind": "order",
+      "prompt": "Put these lines in order so Student inherits from Person.",
+      "items": [
+        "class Person:",
+        "    def introduce(self):",
+        "        return \"Hi\"",
+        "class Student(Person):",
+        "    pass"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "explain": "Person has to be defined before the line that names it as a base, because that line runs when the class statement is read."
+    },
+    {
+      "id": "u6-inh-4",
+      "kind": "multi",
+      "prompt": "Student inherits from Person and adds nothing. Which are true?",
+      "choices": [
+        "Student objects can call Person's methods",
+        "isinstance(Student(), Person) is True",
+        "Person objects can call methods added to Student later",
+        "Student must redefine __init__"
+      ],
+      "answers": [
+        0,
+        1
+      ],
+      "explain": "Inheritance runs one way. The child sees everything the parent has; the parent knows nothing about the child."
+    }
+  ]
+}

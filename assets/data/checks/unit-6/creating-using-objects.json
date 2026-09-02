@@ -1,0 +1,146 @@
+{
+  "exercise1": {
+    "prompt": "A Person class, then Alice aged 25 and Bob aged 30",
+    "cases": [
+      {
+        "name": "a person keeps the name and age they were made with",
+        "call": "Person(\"Alice\", 25).age",
+        "expect": "25"
+      },
+      {
+        "name": "prints the first person",
+        "stdout_matches": "Alice",
+        "describe": "Alice's details printed"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "Person is a class with an __init__",
+        "requires": {
+          "classes": [
+            {
+              "name": "Person",
+              "methods": [
+                "__init__"
+              ]
+            }
+          ]
+        },
+        "describe": "a Person class whose __init__ takes a name and an age"
+      },
+      {
+        "name": "a third person would get their own name",
+        "call": "Person(\"Zed\", 99).name",
+        "expect": "'Zed'"
+      },
+      {
+        "name": "both people are printed, not just one",
+        "stdout_matches": "Bob",
+        "describe": "Bob's details printed as well as Alice's"
+      },
+      {
+        "name": "both ages are printed",
+        "stdout_matches": "30",
+        "describe": "Bob's age printed"
+      }
+    ],
+    "hint": "Two objects means calling the class twice and keeping each result in its own variable. Each one carries its own name and age; they do not share."
+  },
+  "exercise2": {
+    "prompt": "A Counter that starts at zero, then set to 5 and printed",
+    "cases": [
+      {
+        "name": "prints the changed count",
+        "stdout_matches": "5",
+        "describe": "the count after it was changed"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "Counter is a class with an __init__",
+        "requires": {
+          "classes": [
+            {
+              "name": "Counter",
+              "methods": [
+                "__init__"
+              ]
+            }
+          ]
+        },
+        "describe": "a Counter class whose __init__ sets the starting count"
+      },
+      {
+        "name": "a fresh counter starts at zero",
+        "call": "Counter().count",
+        "expect": "0"
+      },
+      {
+        "name": "the count can be set from outside",
+        "call": "(lambda c: (setattr(c, \"count\", 5), c.count)[1])(Counter())",
+        "expect": "5"
+      }
+    ],
+    "hint": "The 5 is not where the counter starts. __init__ sets it to 0 for every new counter, and the change to 5 happens afterwards, on the object you made."
+  },
+  "questions": [
+    {
+      "id": "u6-obj-1",
+      "prompt": "What does Person(\"Alice\", 25) do?",
+      "choices": [
+        "Defines a class called Person",
+        "Creates a new Person object and runs __init__ on it",
+        "Calls a function named Person",
+        "Prints Alice and 25"
+      ],
+      "answer": 1,
+      "explain": "Calling the class is how you make an object. Python builds the empty object first, then hands it to __init__ as self."
+    },
+    {
+      "id": "u6-obj-2",
+      "prompt": "Two Person objects were made from the same class. What happens if you change one's name?",
+      "choices": [
+        "Both change, because they share the class",
+        "Only that one changes",
+        "It raises an error",
+        "The class definition changes"
+      ],
+      "answer": 1,
+      "explain": "Instance attributes live on the object, not on the class, so each object's data is its own."
+    },
+    {
+      "id": "u6-obj-3",
+      "kind": "multi",
+      "prompt": "Which of these are valid ways to work with an object stored in `p`?",
+      "choices": [
+        "p.name",
+        "p.name = \"Bob\"",
+        "p->name",
+        "p[name]"
+      ],
+      "answers": [
+        0,
+        1
+      ],
+      "explain": "The dot reaches an attribute, both to read it and to assign to it. The arrow is from other languages, and the brackets are for things that hold items, like lists."
+    },
+    {
+      "id": "u6-obj-4",
+      "kind": "order",
+      "prompt": "Put these lines in order so the count is created, changed, then shown.",
+      "items": [
+        "counter = Counter()",
+        "counter.count = 5",
+        "print(counter.count)"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explain": "The object has to exist before an attribute on it can be changed, and the print has to come after the change or it shows the old value."
+    }
+  ]
+}

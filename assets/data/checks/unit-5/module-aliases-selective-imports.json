@@ -1,0 +1,167 @@
+{
+  "exercise1": {
+    "prompt": "Import math under the alias m and print the square root of 25",
+    "cases": [
+      {
+        "name": "prints 5.0",
+        "stdout_matches": "5\\.0(?![0-9])",
+        "describe": "5.0"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "the math module is imported",
+        "requires": {
+          "imports": [
+            "math"
+          ]
+        },
+        "describe": "import math as m"
+      },
+      {
+        "kind": "ast",
+        "name": "the alias is the name the code actually uses",
+        "requires": {
+          "names": [
+            "m"
+          ],
+          "calls": [
+            "sqrt"
+          ]
+        },
+        "forbids": {
+          "names": [
+            "math"
+          ]
+        },
+        "describe": "m.sqrt(25), using the alias rather than the original name"
+      },
+      {
+        "name": "prints one line",
+        "nonempty": true,
+        "max_lines": 1
+      }
+    ],
+    "hint": "An alias replaces the name; it does not add a second one. After importing as m, the old name is no longer defined in your file."
+  },
+  "exercise2": {
+    "prompt": "Import only randint from random and print a number between 1 and 100",
+    "cases": [
+      {
+        "name": "prints a number between 1 and 100",
+        "stdout_matches": "(^|[^0-9])(100|[1-9][0-9]?)([^0-9]|$)",
+        "describe": "a single number from 1 to 100"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "randint is named in the import",
+        "requires": {
+          "imports": [
+            "random",
+            "randint"
+          ]
+        },
+        "describe": "from random import randint"
+      },
+      {
+        "kind": "ast",
+        "name": "the import is selective, not everything at once",
+        "forbids": {
+          "imports": [
+            "*"
+          ]
+        },
+        "describe": "only the name you need, rather than from random import *"
+      },
+      {
+        "kind": "ast",
+        "name": "randint is called with no module prefix",
+        "requires": {
+          "calls": [
+            "randint"
+          ]
+        },
+        "forbids": {
+          "names": [
+            "random"
+          ]
+        },
+        "describe": "randint(1, 100), not random.randint(1, 100)"
+      },
+      {
+        "name": "prints the one number and nothing else",
+        "nonempty": true,
+        "max_lines": 1
+      }
+    ],
+    "hint": "\"Selective\" is the word to hold on to. A star brings in every name the module has, including ones you never meant to use and may already have."
+  },
+  "questions": [
+    {
+      "id": "u5-alias-1",
+      "prompt": "After `import math as m`, what does `math.pi` do?",
+      "choices": [
+        "Returns 3.14159...",
+        "Raises NameError, because math is no longer a name in this file",
+        "Returns m.pi",
+        "Imports math a second time"
+      ],
+      "answer": 1,
+      "explain": "The alias is the only name bound by that import. Writing the original name afterwards asks for something that was never defined."
+    },
+    {
+      "id": "u5-alias-2",
+      "kind": "multi",
+      "prompt": "Why is `from module import *` usually avoided?",
+      "choices": [
+        "It can silently overwrite names you already defined",
+        "A reader cannot tell which module a name came from",
+        "It brings in names you never intended to use",
+        "It is slower than importing the module"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Every objection is about clarity and collisions, not speed. The cost is that nobody reading the file can trace a name back to its module."
+    },
+    {
+      "id": "u5-alias-3",
+      "kind": "blank",
+      "prompt": "___ random import randint, choice\n\nprint(randint(1, 6))",
+      "blanks": [
+        {
+          "accept": [
+            "from"
+          ]
+        }
+      ],
+      "explain": "The selective form names the module first and the wanted names after import, separated by commas."
+    },
+    {
+      "id": "u5-alias-4",
+      "kind": "match",
+      "prompt": "Match each import line to what it makes available.",
+      "left": [
+        "import math",
+        "import math as m",
+        "from math import sqrt"
+      ],
+      "right": [
+        "The name math",
+        "The name m",
+        "The name sqrt"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Each form binds exactly one set of names. Knowing which names you now have is the whole difference between the three."
+    }
+  ]
+}

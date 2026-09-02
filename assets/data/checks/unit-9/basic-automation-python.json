@@ -1,0 +1,154 @@
+{
+  "practice1": {
+    "prompt": "The folder you are running in holds four files. Move each one into a folder named after its extension, so photo1.jpg ends up in jpg/. Move them, do not copy them.",
+    "files": {
+      "photo1.jpg": "first photo",
+      "photo2.png": "second photo",
+      "document.pdf": "a report",
+      "data.csv": "name,age\nAlice,25\n"
+    },
+    "cases": [
+      {
+        "kind": "file",
+        "name": "the jpg landed in a jpg folder",
+        "path": "jpg/photo1.jpg",
+        "expect": "first photo",
+        "describe": "photo1.jpg inside a jpg/ folder, unchanged"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "file",
+        "name": "the png landed in a png folder",
+        "path": "png/photo2.png",
+        "expect": "second photo",
+        "describe": "photo2.png inside a png/ folder"
+      },
+      {
+        "kind": "file",
+        "name": "the csv landed in a csv folder",
+        "path": "csv/data.csv",
+        "expect_matches": "alice",
+        "describe": "data.csv inside a csv/ folder"
+      },
+      {
+        "kind": "file",
+        "name": "the pdf landed in a pdf folder",
+        "path": "pdf/document.pdf",
+        "expect": "a report",
+        "describe": "document.pdf inside a pdf/ folder"
+      },
+      {
+        "kind": "file",
+        "name": "the originals were moved, not left behind",
+        "path": "photo1.jpg",
+        "exists": false,
+        "describe": "photo1.jpg gone from the top folder"
+      }
+    ],
+    "hint": "Copying leaves you with two of everything, which looks organised until you check the folder you started in. The last check is the one that notices."
+  },
+  "questions": [
+    {
+      "id": "u9-auto-1",
+      "prompt": "What does os.listdir('.') give you?",
+      "choices": [
+        "The contents of every file in the folder",
+        "The names of the entries in the current folder",
+        "Only the files, never the folders",
+        "The full path of each file"
+      ],
+      "answer": 1,
+      "explain": "Names only, and folders are in there too. That is why the examples test is_file() before touching anything."
+    },
+    {
+      "id": "u9-auto-2",
+      "prompt": "Why does the lesson's rename script offer a dry run?",
+      "choices": [
+        "It makes the script faster",
+        "It prints what would happen without changing anything, so a mistake is cheap",
+        "Python requires it before os.rename",
+        "It backs the files up"
+      ],
+      "answer": 1,
+      "explain": "An automation bug does its damage at machine speed and across every file at once. A dry run is how you find it while it is still only text on screen."
+    },
+    {
+      "id": "u9-auto-blank",
+      "kind": "blank",
+      "prompt": "For a Path called p, `p.___` gives you '.jpg' including the dot.",
+      "blanks": [
+        {
+          "accept": [
+            "suffix"
+          ]
+        }
+      ],
+      "explain": "It keeps the dot, which is why the examples slice it off with [1:] before using it as a folder name."
+    },
+    {
+      "id": "u9-auto-multi",
+      "kind": "multi",
+      "prompt": "Which of these belong in a script that changes files in bulk?",
+      "choices": [
+        "A backup, or a dry run, before the first real pass",
+        "try/except around the part that touches each file",
+        "Printing what it did to each file",
+        "Running it on every folder at once the first time"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "The first three limit and record the damage. Starting everywhere at once is how a small bug becomes an afternoon of manual repair."
+    }
+  ],
+  "reflections": {
+    "reflection-exercise1": {
+      "expect_any": [
+        [
+          "repetitive",
+          "repeat",
+          "same task",
+          "manual"
+        ],
+        [
+          "time",
+          "faster",
+          "quick"
+        ],
+        [
+          "error",
+          "mistake",
+          "consistent",
+          "reliable"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Say what kind of task is worth automating, and give one reason beyond speed."
+    },
+    "reflection-exercise2": {
+      "expect_any": [
+        [
+          "file",
+          "folder",
+          "rename",
+          "organise",
+          "organize",
+          "backup"
+        ],
+        [
+          "email",
+          "report",
+          "data",
+          "spreadsheet",
+          "download",
+          "photo"
+        ]
+      ],
+      "min_concepts": 1,
+      "hint": "Pick something you actually do more than once a week, and say which step of it a script could take over."
+    }
+  }
+}
