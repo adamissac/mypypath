@@ -133,12 +133,14 @@ describe('the Unit 8 check files are valid', () => {
   /* Three lessons are discussion, and inventing a code task for them would
      mean grading something the page never asked for. Pinned so that a later
      author adds an editor deliberately rather than by drift. */
-  it('leaves the three discussion lessons to questions alone', () => {
+  it('leaves the three discussion lessons without a code exercise', () => {
     for (const slug of QUESTIONS_ONLY) {
       const spec = JSON.parse(
         fs.readFileSync(`assets/data/checks/unit-8/${slug}.json`, 'utf8')
       );
-      expect(Object.keys(spec), slug).toEqual(['questions']);
+      // Questions and reflections need no editor. Anything else here would be
+      // an exercise id that no button on the page reaches.
+      expect(Object.keys(spec).sort(), slug).toEqual(['questions', 'reflections']);
     }
   });
 
