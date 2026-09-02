@@ -93,6 +93,44 @@ describe('reflection ids point at inputs that exist', () => {
   });
 });
 
+/* Every authored reflection, across every unit, against an answer that engaged
+ * with nothing.
+ *
+ * The failure mode a reflection spec has is being too generous: a synonym list
+ * wide enough to accept any sentence accepts a shrug, and then the box is
+ * theatre. Unit 10's suite pairs each of its own reflections with a written
+ * sample and checks both directions; this is the half that can be asserted for
+ * all of them without writing 44 more sample answers.
+ */
+describe('every reflection refuses an answer that says nothing', () => {
+  const EVASIVE = ['idk', 'i dont know', 'not sure', 'it was fine', 'good', 'n/a', '...'];
+
+  it('loads the concept checker', () => {
+    for (const dep of ['concept-check']) {
+      // eslint-disable-next-line no-new-func
+      new Function(fs.readFileSync(`assets/js/${dep}.js`, 'utf8')).call(window);
+    }
+    expect(window.PyPathConcepts).toBeTruthy();
+  });
+
+  it('accepts none of them, anywhere', () => {
+    // eslint-disable-next-line no-new-func
+    new Function(fs.readFileSync('assets/js/concept-check.js', 'utf8')).call(window);
+    const tooGenerous = [];
+    for (const row of authoredReflections()) {
+      const spec = JSON.parse(fs.readFileSync(row.file, 'utf8'));
+      for (const id of row.ids) {
+        for (const shrug of EVASIVE) {
+          if (window.PyPathConcepts.assess(shrug, spec.reflections[id]).ok) {
+            tooGenerous.push(`${row.file} ${id} accepted "${shrug}"`);
+          }
+        }
+      }
+    }
+    expect(tooGenerous).toEqual([]);
+  });
+});
+
 /* Not a failure, but worth counting: pages that offer a reflection box nobody
    authored a check for. The box still works -- the word floor in
    reflection-check.js applies -- but nothing looks at what was written. */

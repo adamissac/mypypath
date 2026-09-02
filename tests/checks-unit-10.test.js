@@ -177,7 +177,9 @@ describe('the check files', () => {
       const spec = specFor(lesson.slug);
       expect(lesson.exercises).toEqual([]);
       expect(lesson.editors).toEqual([]);
-      expect(Object.keys(spec).sort()).toEqual(['questions']);
+      // Reflections need no editor -- they attach to the written-answer boxes
+      // the page already has -- so they are the one other key allowed here.
+      expect(Object.keys(spec).sort()).toEqual(['questions', 'reflections']);
     }
   });
 });
@@ -253,12 +255,16 @@ describe('the reflection ids', () => {
     }
   });
 
-  /* The one that goes red when someone widens the pattern or renames the
-     inputs. At that point the expectations belong in the check files, and the
-     block below is already written to run them. */
-  it('mean no reflections can be authored yet', () => {
+  /* This used to assert that no reflections could be authored: the validator
+     enforced `^reflection\d+$` and these boxes are named reflection-exercise1
+     and reflection-exercise2, so an id that validated never fired and an id
+     that fired never validated. The validator reads the page now, and every
+     box on this unit has a spec against the id it really carries. */
+  it('are the ids the check files actually use', () => {
     for (const lesson of lessons) {
-      expect(specFor(lesson.slug).reflections, lesson.slug).toBeUndefined();
+      const authored = Object.keys(specFor(lesson.slug).reflections || {});
+      expect(authored.sort(), lesson.slug)
+        .toEqual(['reflection-exercise1', 'reflection-exercise2']);
     }
   });
 });
@@ -283,8 +289,11 @@ describe('any reflections that are authored', () => {
     expect(window.PyPathConcepts.assess('idk', entry).ok).toBe(false);
   });
 
-  it('is a list this unit is expected to be empty of for now', () => {
-    expect(authored).toEqual([]);
+  /* Was "expected to be empty for now". It is not empty any more, and the
+     useful assertion is the opposite one: every box on every lesson is
+     covered, so a later page that adds a third box shows up here. */
+  it('covers every written-answer box in the unit', () => {
+    expect(authored.length).toBe(lessons.length * 2);
   });
 });
 
