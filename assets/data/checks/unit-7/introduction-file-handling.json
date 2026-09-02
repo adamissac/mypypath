@@ -1,4 +1,36 @@
 {
+  "practice1": {
+    "prompt": "open notes.txt, read it, print what it says",
+    "files": {
+      "notes.txt": "shopping list\nmilk\nbread\n"
+    },
+    "cases": [
+      {
+        "name": "prints what the file says",
+        "expect_stdout": "shopping list\nmilk\nbread"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "reads the file rather than remembering it",
+        "files": {
+          "notes.txt": "packing list\ntent\nmap\n"
+        },
+        "expect_stdout": "packing list\ntent\nmap"
+      },
+      {
+        "name": "the file is opened",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "open"
+          ]
+        },
+        "describe": "a call to open()"
+      }
+    ],
+    "hint": "open() gives you the file, .read() gives you what is in it, and print puts it on screen. Typing the shopping list out yourself passes the first check and fails the second."
+  },
   "questions": [
     {
       "id": "u7-int-1",

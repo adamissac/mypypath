@@ -222,13 +222,21 @@ describe('the Unit 7 check files are valid', () => {
     expect(withEditors.filter((s) => !authored.includes(s))).toEqual([]);
   });
 
-  /* The lesson with no editor at all still gets the two things a page without
-     an editor can carry, and would be silently unchecked if it did not. */
-  it('gives the lesson with no editor questions and reflections instead', () => {
+  /* This lesson had no editor when the unit was first authored, so it carried
+     questions and reflections alone. It has one now -- open a seeded file and
+     print it -- and the check that matters is that it reads the file rather
+     than reciting it, which a second fixture behind the same name settles. */
+  it('grades the intro lesson on reading the file, not reciting it', () => {
     const file = JSON.parse(
       fs.readFileSync('assets/data/checks/unit-7/introduction-file-handling.json', 'utf8')
     );
-    expect(Object.keys(file).sort()).toEqual(['questions', 'reflections']);
+    expect(Object.keys(file)).toContain('practice1');
+    expect(file.practice1.files, 'the exercise needs a file to open').toBeTruthy();
+    const hidden = file.practice1.hiddenCases || [];
+    const reseeded = hidden.find((c) => c.files);
+    expect(reseeded, 'a second fixture is what catches a typed-out answer').toBeTruthy();
+    expect(reseeded.files['notes.txt'])
+      .not.toEqual(file.practice1.files['notes.txt']);
   });
 
   it('gives every exercise a hint', () => {

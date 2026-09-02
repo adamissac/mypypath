@@ -217,6 +217,15 @@ export function specFor(unit, slug, exerciseId) {
   return JSON.parse(fs.readFileSync(file, 'utf8'))[exerciseId];
 }
 
+/* The same, for a course whose checks are nested under a folder of their own.
+   Python for Data lives at checks/data/unit-N because both courses have a
+   unit 1 and one of them would otherwise read the other's checks. */
+export function specIn(courseDir, unit, slug, exerciseId) {
+  const dir = courseDir ? `assets/data/checks/${courseDir}` : 'assets/data/checks';
+  const file = path.join(ROOT, `${dir}/unit-${unit}/${slug}.json`);
+  return JSON.parse(fs.readFileSync(file, 'utf8'))[exerciseId];
+}
+
 /* The ids a lesson page actually has an editor for. A check file naming
    anything else is dead: no button appears and nothing fails. */
 export function editorsFor(unit, slug) {

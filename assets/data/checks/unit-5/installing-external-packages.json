@@ -1,4 +1,74 @@
 {
+  "exercise1": {
+    "prompt": "a comment about pip install, and a function standing in for requests.get",
+    "cases": [
+      {
+        "name": "the code runs and prints something",
+        "nonempty": true,
+        "describe": "some output"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a comment explains pip install",
+        "source_matches": "#[^\\n]*pip\\s+install",
+        "flags": "i",
+        "describe": "a comment mentioning pip install"
+      },
+      {
+        "name": "there is a function standing in for the request",
+        "kind": "ast",
+        "requires": {
+          "functions": true
+        },
+        "describe": "a function of your own"
+      },
+      {
+        "name": "the function is called",
+        "kind": "ast",
+        "requires": {
+          "returns": 1
+        },
+        "describe": "a function that returns something"
+      }
+    ],
+    "hint": "Two halves: a comment saying what pip install does, and a function you write yourself that pretends to fetch something. The comment is prose; the function has to be real code."
+  },
+  "exercise2": {
+    "prompt": "comments for pip install and pip uninstall, then an explanation",
+    "cases": [
+      {
+        "name": "prints an explanation",
+        "nonempty": true,
+        "describe": "a printed explanation"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a comment covers pip install",
+        "source_matches": "#[^\\n]*pip\\s+install",
+        "flags": "i",
+        "describe": "a comment about pip install"
+      },
+      {
+        "name": "a comment covers pip uninstall",
+        "source_matches": "#[^\\n]*pip\\s+uninstall",
+        "flags": "i",
+        "describe": "a comment about pip uninstall"
+      },
+      {
+        "name": "the explanation is printed",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "print"
+          ]
+        },
+        "describe": "a print statement"
+      }
+    ],
+    "hint": "One comment per command, then a print that says in your own words what pip is for."
+  },
   "questions": [
     {
       "id": "u5-pip-1",

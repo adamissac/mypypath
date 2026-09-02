@@ -1,0 +1,77 @@
+{
+  "exercise1": {
+    "prompt": "Name the columns, and the code stops depending on their order.",
+    "cases": [
+      {
+        "name": "produces the expected output",
+        "expect_stdout": "Ada\nGrace"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the rows are read by name, not by position",
+        "kind": "ast",
+        "requires": {
+          "loops": [
+            "for"
+          ],
+          "conditionals": 1
+        },
+        "describe": "a loop with a test on the score"
+      },
+      {
+        "name": "the boundary is included",
+        "kind": "ast",
+        "requires": {
+          "compares": [
+            "GtE"
+          ]
+        },
+        "describe": "a >= comparison, so exactly 85 counts"
+      }
+    ],
+    "hint": "At least 85 includes 85. Loop the rows, read row[\"score\"], and print row[\"name\"] when the test holds."
+  },
+  "questions": [
+    {
+      "id": "d1-rad-1",
+      "prompt": "What does a dictionary row give you that a list row does not?",
+      "choices": [
+        "Speed",
+        "Names for the columns, so order stops mattering",
+        "The ability to store text",
+        "Automatic sorting"
+      ],
+      "answer": 1,
+      "explain": "row[\"score\"] keeps working when a column is inserted before it. row[1] silently starts meaning something else."
+    },
+    {
+      "id": "d1-rad-2",
+      "prompt": "What does row.get(\"score\") do when there is no score key?",
+      "choices": [
+        "Raises KeyError",
+        "Returns None",
+        "Returns 0",
+        "Creates the key"
+      ],
+      "answer": 1,
+      "explain": "It hands back None, or whatever default you pass as a second argument. The bracket form raises instead."
+    },
+    {
+      "id": "d1-rad-3",
+      "kind": "multi",
+      "prompt": "Which are good reasons to prefer .get over brackets when reading real data?",
+      "choices": [
+        "The column is sometimes missing",
+        "You want a sensible default",
+        "You want the code to crash on a missing column",
+        "It is shorter to type"
+      ],
+      "answers": [
+        0,
+        1
+      ],
+      "explain": "Crashing is sometimes exactly right -- a missing column you did not expect should be loud. .get is for gaps you know about."
+    }
+  ]
+}

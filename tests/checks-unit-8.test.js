@@ -130,17 +130,27 @@ describe('the Unit 8 check files are valid', () => {
     }
   });
 
-  /* Three lessons are discussion, and inventing a code task for them would
-     mean grading something the page never asked for. Pinned so that a later
-     author adds an editor deliberately rather than by drift. */
-  it('leaves the three discussion lessons without a code exercise', () => {
+  /* These three were left as discussion when the unit was first authored. Two
+     of them do have a code task once you look for it -- a bug to find, a
+     duplication to pull out -- and they have editors now. what-is-debugging
+     keeps one too: the lesson is about the process, and the process ends in a
+     changed line.
+
+     What is pinned is that whatever they grade is reachable: an exercise id
+     here has to be an editor the page really has, or the button never appears
+     and the check is decoration. */
+  it('grades only ids the pages actually offer', () => {
+    const manifest = JSON.parse(fs.readFileSync('assets/data/curriculum.json', 'utf8'));
     for (const slug of QUESTIONS_ONLY) {
       const spec = JSON.parse(
         fs.readFileSync(`assets/data/checks/unit-8/${slug}.json`, 'utf8')
       );
-      // Questions and reflections need no editor. Anything else here would be
-      // an exercise id that no button on the page reaches.
-      expect(Object.keys(spec).sort(), slug).toEqual(['questions', 'reflections']);
+      const lesson = manifest.lessons.find((l) => l.unit === 8 && l.slug === slug);
+      const onPage = [...new Set([...(lesson.editors || []), ...(lesson.exercises || [])])];
+      for (const id of Object.keys(spec)) {
+        if (id === 'questions' || id === 'reflections') continue;
+        expect(onPage, `${slug} grades ${id}, which is not on the page`).toContain(id);
+      }
     }
   });
 

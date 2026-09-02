@@ -1,0 +1,88 @@
+{
+  "exercise1": {
+    "prompt": "Everything out of a file is text, and text sorts and adds in the wrong way.",
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "to_score(\"92\")",
+        "expect": "92"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "an empty string becomes 0",
+        "call": "to_score(\"\")",
+        "expect": "0"
+      },
+      {
+        "name": "text that is not a number becomes 0",
+        "call": "to_score(\"n/a\")",
+        "expect": "0"
+      },
+      {
+        "name": "a negative number still converts",
+        "call": "to_score(\"-5\")",
+        "expect": "-5"
+      },
+      {
+        "name": "the failure is handled rather than avoided",
+        "kind": "ast",
+        "requires": {
+          "handlers": [
+            "ValueError"
+          ]
+        },
+        "describe": "an except ValueError around the conversion"
+      },
+      {
+        "name": "nothing is swallowed by a bare except",
+        "kind": "ast",
+        "forbids": {
+          "handlers": [
+            "bare"
+          ]
+        },
+        "describe": "the specific error caught, not everything"
+      }
+    ],
+    "hint": "Try the conversion and catch ValueError. Testing the string yourself with isdigit() misses the minus sign on negative numbers."
+  },
+  "questions": [
+    {
+      "id": "d2-ft-1",
+      "prompt": "Why is \"9\" > \"10\" True?",
+      "choices": [
+        "It is a bug in Python",
+        "Text compares character by character, and \"9\" comes after \"1\"",
+        "Strings compare by length",
+        "It is False"
+      ],
+      "answer": 1,
+      "explain": "Comparison stops at the first character that differs. This is why a column of numbers left as text sorts wrongly and nothing raises."
+    },
+    {
+      "id": "d2-ft-2",
+      "prompt": "What does int(\"\") raise?",
+      "choices": [
+        "TypeError",
+        "ValueError",
+        "KeyError",
+        "Nothing, it returns 0"
+      ],
+      "answer": 1,
+      "explain": "The type is right -- it is a string, which int accepts -- but the value is not a number, so it is a ValueError."
+    },
+    {
+      "id": "d2-ft-3",
+      "prompt": "Why does isdigit() fail as a test for \"is this a number\"?",
+      "choices": [
+        "It is slow",
+        "It is False for negative numbers and decimals",
+        "It only works on integers above zero",
+        "It raises on empty strings"
+      ],
+      "answer": 1,
+      "explain": "\"-5\".isdigit() is False, and so is \"3.5\".isdigit(). Trying the conversion and catching the failure covers what the test misses."
+    }
+  ]
+}

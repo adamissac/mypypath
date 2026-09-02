@@ -1,0 +1,78 @@
+{
+  "exercise1": {
+    "prompt": "Selecting the rows you meant, and noticing how many you dropped.",
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "len(passing([{\"score\": 92}, {\"score\": 58}, {\"score\": 88}], 60))",
+        "expect": "2"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a score exactly on the mark passes",
+        "call": "len(passing([{\"score\": 60}], 60))",
+        "expect": "1"
+      },
+      {
+        "name": "nobody passes an empty table",
+        "call": "len(passing([], 50))",
+        "expect": "0"
+      },
+      {
+        "name": "the rows themselves come back",
+        "call": "passing([{\"score\": 92}], 60)",
+        "expect": "[{'score': 92}]"
+      },
+      {
+        "name": "the boundary is included",
+        "kind": "ast",
+        "requires": {
+          "compares": [
+            "GtE"
+          ]
+        },
+        "describe": "a >= comparison, so the mark itself counts"
+      }
+    ],
+    "hint": "At least the mark means the mark passes. A plain greater-than silently fails everyone sitting exactly on the boundary, which is where marks cluster."
+  },
+  "questions": [
+    {
+      "id": "d2-fr-1",
+      "prompt": "Why write a filter condition in one place rather than repeating it?",
+      "choices": [
+        "It is faster",
+        "Two copies can disagree after an edit, and both look right",
+        "Python requires it",
+        "It uses less memory"
+      ],
+      "answer": 1,
+      "explain": "The second copy is the one nobody updates. Two parts of the same analysis then quietly count different people."
+    },
+    {
+      "id": "d2-fr-2",
+      "prompt": "What should you check immediately after filtering?",
+      "choices": [
+        "The column types",
+        "How many rows you have left",
+        "The file size",
+        "Nothing"
+      ],
+      "answer": 1,
+      "explain": "A filter that keeps three rows out of nine hundred is a finding in itself, and usually a mistake in the condition."
+    },
+    {
+      "id": "d2-fr-3",
+      "prompt": "A pass mark of 60 with a > test does what?",
+      "choices": [
+        "Nothing different",
+        "Fails everyone who scored exactly 60",
+        "Fails everyone below 61",
+        "Raises an error"
+      ],
+      "answer": 1,
+      "explain": "Both wordings describe the same off-by-one, and marks bunch at the boundary, so it usually affects more rows than you would guess."
+    }
+  ]
+}

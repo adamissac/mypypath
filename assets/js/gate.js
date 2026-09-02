@@ -9,12 +9,31 @@
 
   var FREE_UNITS = 2;
   var FAIL_OPEN_MS = 3000;
-  var UNIT_RE = /^\/units\/unit-(\d+)(?:\.html|\/[^/]+\.html)$/;
+
+  /* One rule, both courses.
+   *
+   * Course roots are listed rather than matched with a wildcard: a pattern
+   * loose enough to catch any /<something>/unit-N/ would also gate a future
+   * page that happens to be laid out that way, and a gate that turns itself on
+   * for pages nobody meant is worse than one that misses. Adding a course means
+   * adding its root here and in assets/data/courses.json.
+   *
+   * The unit number is per course. Units 1 and 2 of Python for Data are free
+   * for the same reason units 1 and 2 of Foundations are. */
+  var COURSE_ROOTS = ['units', 'data'];
+  var UNIT_RE = new RegExp(
+    '^/(' + COURSE_ROOTS.join('|') + ')/unit-(\\d+)(?:\\.html|/[^/]+\\.html)$'
+  );
+
+  function courseFromPath(pathname) {
+    var m = UNIT_RE.exec(String(pathname || ''));
+    return m ? m[1] : null;
+  }
 
   function unitFromPath(pathname) {
     var m = UNIT_RE.exec(String(pathname || ''));
     if (!m) return null;
-    var n = parseInt(m[1], 10);
+    var n = parseInt(m[2], 10);
     return isNaN(n) ? null : n;
   }
 
@@ -84,6 +103,8 @@
   window.PyPathGate = {
     FREE_UNITS: FREE_UNITS,
     unitFromPath: unitFromPath,
+    courseFromPath: courseFromPath,
+    COURSE_ROOTS: COURSE_ROOTS,
     isLocked: isLocked,
     safeNext: safeNext,
     _apply: apply

@@ -1,0 +1,79 @@
+{
+  "exercise1": {
+    "prompt": "The four problems you will meet in almost every real file.",
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "count_missing([{\"score\": \"92\"}, {\"score\": \"\"}, {\"score\": \"\"}])",
+        "expect": "2"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "nothing missing counts zero",
+        "call": "count_missing([{\"score\": \"1\"}])",
+        "expect": "0"
+      },
+      {
+        "name": "an empty table counts zero",
+        "call": "count_missing([])",
+        "expect": "0"
+      },
+      {
+        "name": "the rows are actually inspected",
+        "kind": "ast",
+        "requires": {
+          "loops": true,
+          "functions": [
+            "count_missing"
+          ]
+        },
+        "describe": "a loop or comprehension over the rows"
+      }
+    ],
+    "hint": "An empty string is falsy, which is convenient and also a trap: 0 is falsy too. Compare against \"\" when that is what you mean."
+  },
+  "questions": [
+    {
+      "id": "d2-ddl-1",
+      "prompt": "What makes dirty data dangerous rather than merely annoying?",
+      "choices": [
+        "It is slow to load",
+        "Nothing raises -- the summary is simply wrong",
+        "It cannot be opened",
+        "It uses more memory"
+      ],
+      "answer": 1,
+      "explain": "A crash tells you where to look. A wrong average looks exactly like a right one."
+    },
+    {
+      "id": "d2-ddl-2",
+      "kind": "multi",
+      "prompt": "Which of these are the common problems in a real data file?",
+      "choices": [
+        "Missing values",
+        "Numbers stored as text",
+        "Duplicate rows",
+        "The file being sorted"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Sorting is a property of the file, not a fault in it. The other three change your answer without telling you."
+    },
+    {
+      "id": "d2-ddl-3",
+      "prompt": "What is a quick way to see the variety in a column?",
+      "choices": [
+        "len()",
+        "set()",
+        "sum()",
+        "sorted()"
+      ],
+      "answer": 1,
+      "explain": "A set collapses the column to its distinct values, which is where \"Maths\", \"maths\" and \"MATHS\" become visible as three things."
+    }
+  ]
+}

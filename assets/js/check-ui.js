@@ -30,9 +30,23 @@
   }
 
   /* /units/unit-3/return-statements.html -> assets/data/checks/unit-3/return-statements.json */
+  /* Where a lesson's checks live, for either course.
+   *
+   * Foundations lessons sit under /units/ and their checks under
+   * checks/unit-N/, which is the mapping this has always made. Python for Data
+   * sits under /data/, and its unit numbers start at 1 again -- so the course
+   * root has to be part of the path or the two courses' unit 1 would both ask
+   * for checks/unit-1 and get each other's.
+   *
+   * Foundations keeps its existing folder rather than moving to
+   * checks/units/unit-N: ninety-nine files and every stored check result are
+   * keyed off it, and renaming them buys symmetry and nothing else. */
+  var COURSE_CHECK_DIR = { units: '', data: 'data/' };
+
   function specUrl() {
-    var m = /^\/units\/(unit-\d+)\/([a-z0-9-]+)\.html$/.exec(lessonPath());
-    return m ? '/assets/data/checks/' + m[1] + '/' + m[2] + '.json' : null;
+    var m = /^\/(units|data)\/(unit-\d+)\/([a-z0-9-]+)\.html$/.exec(lessonPath());
+    if (!m) return null;
+    return '/assets/data/checks/' + COURSE_CHECK_DIR[m[1]] + m[2] + '/' + m[3] + '.json';
   }
 
   function loadSpecs() {

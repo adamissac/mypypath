@@ -10,6 +10,20 @@ UNIT_NAMES = [
     'Modules & Packages', 'OOP', 'Files & Errors', 'Testing', 'Advanced Topics', 'Capstone Project',
 ]
 
+# The nav lists courses, not units. With one course a ten-item unit menu was the
+# whole curriculum; with two it would be twenty items under a heading that could
+# only be right about one of them. So the menu names the courses and each course
+# page lists its own units, which is also the order a learner picks in: course
+# first, then where in it.
+#
+# Read from assets/data/courses.json rather than restated here, because gate.js
+# and the course pages read the same file and a second copy would drift.
+import json  # noqa: E402
+
+COURSES = json.loads(
+    (ROOT / 'assets' / 'data' / 'courses.json').read_text(encoding='utf-8')
+)['courses']
+
 FIRST_LESSON = {
     1: '/units/unit-1/what-is-python.html',
     2: '/units/unit-2/understanding-control-flow.html',
@@ -78,29 +92,51 @@ def nav_active(path: Path, pattern: str) -> bool:
     if pattern == 'settings':
         return path.name == 'settings.html'
     if pattern == 'units':
-        return '/units/' in rel
+        # Any lesson in any course, plus the pages that list them. The nav item
+        # is "Courses" now, and it is the current page whenever you are inside
+        # one of them.
+        if rel in ('/courses.html',):
+            return True
+        for course in COURSES:
+            if f"{course['root']}/" in rel or rel == course['curriculum']:
+                return True
+        return False
     return False
 
 
-def unit_menu_items(current_unit: int | None) -> str:
+def course_from_path(path: Path) -> str | None:
+    """Which course a page belongs to, by the root its URL sits under."""
+    posix = path.as_posix()
+    for course in COURSES:
+        root = course['root'].strip('/')
+        if f'/{root}/' in f'/{posix}' or posix == course['curriculum'].strip('/'):
+            return course['slug']
+    return None
+
+
+def course_menu_items(current_course: str | None) -> str:
     items = []
-    for i in range(10):
-        num = i + 1
-        href = FIRST_LESSON[num]
-        active = ' is-current' if current_unit == num else ''
+    for i, course in enumerate(COURSES):
+        active = ' is-current' if current_course == course['slug'] else ''
+        # A stub unit is a title with no lessons behind it yet, and counting it
+        # would promise a learner content that is not there.
+        ready = sum(1 for u in course['units'] if not u.get('stub'))
+        total = len(course['units'])
+        meta = f'{ready} of {total} units ready' if ready < total else f'{total} units'
         items.append(
-            f'<li role="none"><a role="menuitem" href="{href}" class="dd-item route{active}">'
-            f'<span class="dd-item__num">{num}</span>'
+            f'<li role="none"><a role="menuitem" href="{course["curriculum"]}" '
+            f'class="dd-item route{active}">'
+            f'<span class="dd-item__num">{i + 1}</span>'
             f'<span class="dd-item__body">'
-            f'<span class="dd-item__title">{UNIT_NAMES[i]}</span>'
-            f'<span class="dd-item__meta">Unit {num}</span>'
+            f'<span class="dd-item__title">{course["title"]}</span>'
+            f'<span class="dd-item__meta">{meta}</span>'
             f'</span></a></li>'
         )
     return '\n            '.join(items)
 
 
 def header_html(path: Path, show_progress: bool) -> str:
-    cu = current_unit_from_path(path)
+    cc = course_from_path(path)
     home_a = ' active' if nav_active(path, 'home') else ''
     sandbox_a = ' active' if nav_active(path, 'sandbox') else ''
     # The Classroom <li> is baked hidden and only role-nav.js reveals it, so a
@@ -137,21 +173,22 @@ def header_html(path: Path, show_progress: bool) -> str:
               <ul class="menu" id="primary-menu">
               <li><a href="/" class="route{home_a}">Home</a></li>
               <li class="dd dd--nav" data-dd>
-                <button type="button" class="dd-trigger" id="nav-units-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="nav-units-panel"{units_btn}>
-                  <span>Units</span> {CHEVRON}
+                <button type="button" class="dd-trigger" id="nav-courses-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="nav-courses-panel"{units_btn}>
+                  <span>Courses</span> {CHEVRON}
                 </button>
-                <div class="dd-panel" id="nav-units-panel" role="menu" aria-labelledby="nav-units-btn" hidden>
+                <div class="dd-panel" id="nav-courses-panel" role="menu" aria-labelledby="nav-courses-btn" hidden>
                   <div class="dd-panel__head">
-                    <span class="dd-panel__label">Curriculum</span>
-                    <span class="dd-panel__hint">10 units</span>
+                    <span class="dd-panel__label">Courses</span>
+                    <a class="dd-panel__hint route" href="/courses.html">See both</a>
                   </div>
                   <ul class="dd-panel__list dd-panel__list--grid">
-            {unit_menu_items(cu)}
+            {course_menu_items(cc)}
                   </ul>
                 </div>
               </li>
               <li><a href="/sandbox.html" class="route{sandbox_a}">Sandbox</a></li>
               <li data-account-classroom hidden><a href="/classroom.html" class="route{classroom_a}">Classroom</a></li>
+              <li data-student-class hidden><a href="/progress.html" class="route">My class</a></li>
               <li><a href="/settings.html" class="route{settings_a}">Settings</a></li>
               </ul>
             </div>

@@ -1,4 +1,51 @@
 {
+  "practice1": {
+    "prompt": "make first_negative return the index it found",
+    "cases": [
+      {
+        "name": "the first negative in [3, -1, 4] is at index 1",
+        "call": "first_negative([3, -1, 4])",
+        "expect": "1"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "no negatives gives -1",
+        "call": "first_negative([1, 2, 3])",
+        "expect": "-1"
+      },
+      {
+        "name": "a negative at the front is index 0",
+        "call": "first_negative([-5, 2])",
+        "expect": "0"
+      },
+      {
+        "name": "an empty list gives -1",
+        "call": "first_negative([])",
+        "expect": "-1"
+      },
+      {
+        "kind": "generated",
+        "name": "works for any list of numbers",
+        "entry": "first_negative",
+        "reference": "def first_negative(numbers):\n    for i in range(len(numbers)):\n        if numbers[i] < 0:\n            return i\n    return -1\n",
+        "args": [
+          {
+            "type": "list",
+            "of": {
+              "type": "int",
+              "min": -5,
+              "max": 5
+            },
+            "minLength": 0,
+            "maxLength": 6
+          }
+        ],
+        "runs": 40
+      }
+    ],
+    "hint": "Both returns hand back the same value, so the loop finds the answer and discards it. Stop on the line inside the if and look at what i holds."
+  },
   "questions": [
     {
       "id": "u8-brk-1",

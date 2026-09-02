@@ -1,0 +1,81 @@
+{
+  "exercise1": {
+    "prompt": "A dictionary is how you count things, and how you split a table into groups.",
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "count_subjects([(\"maths\", 92), (\"computing\", 88), (\"maths\", 79)])",
+        "expect": "{'maths': 2, 'computing': 1}"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "an empty list counts nothing",
+        "call": "count_subjects([])",
+        "expect": "{}"
+      },
+      {
+        "name": "one subject counts once",
+        "call": "count_subjects([(\"art\", 70)])",
+        "expect": "{'art': 1}"
+      },
+      {
+        "name": "the counting is done by a loop",
+        "kind": "ast",
+        "requires": {
+          "loops": [
+            "for"
+          ],
+          "functions": [
+            "count_subjects"
+          ]
+        },
+        "describe": "a loop building the dictionary up"
+      }
+    ],
+    "hint": "Start with an empty dictionary and walk the rows. counts.get(subject, 0) + 1 handles both the first sighting and every one after it."
+  },
+  "questions": [
+    {
+      "id": "d1-cag-1",
+      "prompt": "Why use counts.get(key, 0) + 1 rather than counts[key] + 1?",
+      "choices": [
+        "It is faster",
+        "The first time a key is seen it is not in the dictionary yet",
+        "It sorts the keys",
+        "They are the same"
+      ],
+      "answer": 1,
+      "explain": "The bracket form raises KeyError on the first sighting of every key, which is every key exactly once."
+    },
+    {
+      "id": "d1-cag-2",
+      "prompt": "What does setdefault(key, []).append(value) do?",
+      "choices": [
+        "Replaces the list each time",
+        "Makes the list if it is missing, then appends to it",
+        "Appends only if the key exists",
+        "Counts the values"
+      ],
+      "answer": 1,
+      "explain": "It is the grouping idiom: one line that handles both the first row of a group and all the others."
+    },
+    {
+      "id": "d1-cag-3",
+      "kind": "multi",
+      "prompt": "Which questions can a counting dictionary answer directly?",
+      "choices": [
+        "How many students take each subject",
+        "Which subject is most common",
+        "What the average score is",
+        "How many distinct subjects there are"
+      ],
+      "answers": [
+        0,
+        1,
+        3
+      ],
+      "explain": "Counts tell you about frequency. The average needs the scores themselves, which is grouping rather than counting."
+    }
+  ]
+}
