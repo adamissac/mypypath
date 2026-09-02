@@ -25,12 +25,14 @@ export const QUESTION_KINDS = ['mcq', 'multi', 'match', 'order', 'blank'];
    inferred from shape the way the older three can, so an author who mistypes
    `kind` gets a case that silently grades as something else unless this catches
    it. That is the whole reason the discriminator exists. */
-export const CASE_KINDS = ['stdout', 'value', 'property', 'generated', 'ast'];
+export const CASE_KINDS = ['stdout', 'value', 'property', 'generated', 'ast',
+  'raises', 'file', 'mutation'];
 
 const AST_KEYS = ['loops', 'conditionals', 'functions', 'calls', 'binop',
-  'names', 'returns', 'imports'];
+  'names', 'returns', 'imports', 'classes', 'raises', 'handlers', 'withs',
+  'decorators'];
 
-const ARG_TYPES = ['int', 'float', 'str', 'bool', 'list', 'choice'];
+const ARG_TYPES = ['int', 'float', 'str', 'bool', 'list', 'choice', 'dict', 'set'];
 
 function validateArgSpec(spec, where, errors) {
   if (!spec || typeof spec !== 'object') {
@@ -45,6 +47,18 @@ function validateArgSpec(spec, where, errors) {
     errors.push(`${where}: a choice arg needs a non-empty values list`);
   }
   if (spec.type === 'list') validateArgSpec(spec.of || { type: 'int' }, `${where}.of`, errors);
+  if (spec.type === 'set') validateArgSpec(spec.of || { type: 'int' }, `${where}.of`, errors);
+  if (spec.type === 'dict') {
+    validateArgSpec(spec.keys || { type: 'str' }, `${where}.keys`, errors);
+    validateArgSpec(spec.values || { type: 'int' }, `${where}.values`, errors);
+    // A dict cannot be drawn from a key space that has to repeat itself, and a
+    // spec that asks for one silently gets a shorter dict than it wrote.
+    const keyType = (spec.keys || { type: 'str' }).type;
+    if (keyType === 'bool' && Number(spec.minLength || 0) > 2) {
+      errors.push(`${where}.keys: bool has two values, so a dict of ` +
+        `${spec.minLength} unique keys cannot be drawn`);
+    }
+  }
   if (spec.min !== undefined && spec.max !== undefined && Number(spec.min) > Number(spec.max)) {
     errors.push(`${where}: min is above max, so nothing can be drawn`);
   }
@@ -78,6 +92,60 @@ function validateCase(testCase, where, errors) {
     if (testCase.runs !== undefined
         && (!Number.isInteger(testCase.runs) || testCase.runs < 1)) {
       errors.push(`${where}: runs must be a whole number of cases`);
+    }
+  }
+
+  /* An exception is named, not described. "expect": "raises an error" would
+     never match a type name and the case could only ever fail. */
+  if (kind === 'raises') {
+    if (typeof testCase.call !== 'string' || !testCase.call.trim()) {
+      errors.push(`${where}: a raises case needs a call to make the error happen`);
+    }
+    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(String(testCase.expect || ''))) {
+      errors.push(`${where}: expect must be an exception class name, like ValueError`);
+    }
+  }
+
+  if (kind === 'file') {
+    if (typeof testCase.path !== 'string' || !testCase.path.trim()) {
+      errors.push(`${where}: a file case needs the path it is checking`);
+    } else if (testCase.path.includes('..')) {
+      errors.push(`${where}: a file case path stays inside the exercise directory`);
+    }
+    // exists:false is the one shape with nothing to compare, because the
+    // question is whether the file is gone.
+    if (testCase.exists !== false
+        && testCase.expect === undefined && testCase.expect_matches === undefined) {
+      errors.push(`${where}: needs expect, expect_matches, or exists: false`);
+    }
+    if (typeof testCase.expect_matches === 'string') {
+      try {
+        new RegExp(testCase.expect_matches);
+      } catch (e) {
+        errors.push(`${where}: expect_matches is not a valid regular expression -- ${e.message}`);
+      }
+    }
+  }
+
+  /* The two-sided one. A mutation case with no mutants asks only "do your tests
+     pass", which `assert True` answers, and that is the exact thing this kind
+     exists to refuse. */
+  if (kind === 'mutation') {
+    if (typeof testCase.reference !== 'string' || !testCase.reference.trim()) {
+      errors.push(`${where}: a mutation case needs a working reference to pass against`);
+    }
+    if (!Array.isArray(testCase.mutants) || !testCase.mutants.length) {
+      errors.push(`${where}: a mutation case needs at least one broken version to catch`);
+    } else {
+      testCase.mutants.forEach((m, i) => {
+        if (typeof m !== 'string' || !m.trim()) {
+          errors.push(`${where}.mutants[${i}]: each mutant is a source string`);
+        } else if (m.trim() === String(testCase.reference || '').trim()) {
+          // Identical to the reference, so no suite on earth can tell them
+          // apart and every student fails for the author's slip.
+          errors.push(`${where}.mutants[${i}]: is the same as the reference, so nothing can catch it`);
+        }
+      });
     }
   }
 
@@ -311,6 +379,26 @@ export function validateChecks() {
           continue;
         }
 
+        // Starting files for the exercise, seeded into every case's own
+        // directory. Author-supplied and joined into a path at run time, so a
+        // name that climbs out of that directory is refused here rather than
+        // quietly dropped there.
+        if (entry.files !== undefined) {
+          if (!entry.files || typeof entry.files !== 'object' || Array.isArray(entry.files)) {
+            errors.push(`${rel} / ${exerciseId}: files must be an object of name to contents`);
+          } else {
+            for (const [name, body] of Object.entries(entry.files)) {
+              if (name.includes('..') || name.startsWith('/') || /^[A-Za-z]:/.test(name)) {
+                errors.push(`${rel} / ${exerciseId}: file "${name}" must be a relative path ` +
+                  `inside the exercise directory`);
+              }
+              if (body !== null && typeof body !== 'string') {
+                errors.push(`${rel} / ${exerciseId}: file "${name}" needs text contents`);
+              }
+            }
+          }
+        }
+
         const cases = entry.cases || [];
         const hidden = entry.hiddenCases || [];
         if (!cases.length) {
@@ -328,7 +416,8 @@ export function validateChecks() {
             // The two kinds that carry no property key and no call. They are
             // checked in full by validateCase above; here they only need to
             // not be mistaken for a case with nothing in it.
-            const isDeclared = c.kind === 'generated' || c.kind === 'ast';
+            const isDeclared = ['generated', 'ast', 'raises', 'file', 'mutation']
+              .includes(c.kind);
 
             if (!isExpression && !isStdout && !isProperty && !isDeclared) {
               errors.push(
