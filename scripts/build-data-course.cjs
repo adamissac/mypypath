@@ -1,4 +1,4 @@
-﻿/* Generates Python for Data: lesson pages, unit pages, the course page, the
+/* Generates Python for Data: lesson pages, unit pages, the course page, the
    course picker, its check files and its manifest.
 
    The head and script list are lifted from an existing Foundations lesson
