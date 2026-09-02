@@ -67,13 +67,32 @@ let dir;
 let file;
 let parts = {};
 
+/* An external unzip, not a JS reimplementation: a reimplementation that shares
+   a misunderstanding with the writer would open an archive Excel refuses.
+   `unzip` is not on a stock Windows box; `tar` is, and its libarchive backend
+   reads zip and rejects a malformed one just as flatly. Either will do, and
+   which one ran does not change what is being asserted. */
+const UNZIP = ['unzip', 'tar'].find((exe) => {
+  try {
+    execFileSync(exe, ['--version'], { stdio: 'ignore' });
+    return true;
+  } catch {
+    return false;
+  }
+});
+
 function unzipTo(bytes) {
   dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pypath-xlsx-'));
   file = path.join(dir, 'book.xlsx');
   fs.writeFileSync(file, Buffer.from(bytes));
-  // Real unzip, not a JS reimplementation: if the archive is malformed this
-  // fails here, which is exactly the signal wanted.
-  execFileSync('unzip', ['-o', '-q', file, '-d', path.join(dir, 'x')]);
+  const into = path.join(dir, 'x');
+  fs.mkdirSync(into, { recursive: true });
+  // If the archive is malformed this throws, which is exactly the signal wanted.
+  if (UNZIP === 'unzip') {
+    execFileSync('unzip', ['-o', '-q', file, '-d', into]);
+  } else {
+    execFileSync('tar', ['-xf', file, '-C', into]);
+  }
   const out = {};
   const walk = (base, rel = '') => {
     for (const entry of fs.readdirSync(path.join(base, rel), { withFileTypes: true })) {
@@ -88,9 +107,17 @@ function unzipTo(bytes) {
 
 beforeAll(() => {
   loadDeps();
+  if (!UNZIP) return;
   const bytes = window.PyPathExport.masteryWorkbook(sampleClass(), OPTIONS());
   parts = unzipTo(bytes);
 });
+
+/* Skipped rather than failed on a machine with neither tool. A red that means
+   "this computer has no unzip" teaches whoever sees it to ignore reds. */
+if (!UNZIP) {
+  // eslint-disable-next-line no-console
+  console.warn('xlsx-export: neither unzip nor tar found, archive tests skipped');
+}
 
 describe('the file is a real workbook, not a CSV with a new extension', () => {
   it('is a ZIP that a real unzip can open', () => {
