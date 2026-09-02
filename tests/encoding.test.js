@@ -67,6 +67,77 @@ describe('robots.txt', () => {
   });
 });
 
+/* The slip the checks above cannot see.
+ *
+ * README.md shipped with "MIT <mojibake> see LICENSE" where an em dash was
+ * meant. Every check above passes on it: there is no byte order mark, no NUL,
+ * and it decodes as UTF-8 perfectly, because it *is* valid UTF-8 -- of the
+ * wrong characters. A UTF-8 em dash was read back as cp1252, giving three
+ * characters, and those three were then saved as UTF-8 again.
+ *
+ * PowerShell's Set-Content does this by default on this project's usual
+ * machine, so it is not a hypothetical.
+ *
+ * The signatures below are written as escapes rather than as the characters
+ * themselves, so that this file does not contain the very sequences it fails
+ * other files for.
+ */
+const ch = (...codes) => String.fromCharCode(...codes);
+const anyOf = (codes) => `[${codes.map((c) => ch(c)).join('')}]`;
+
+/* Built from code points rather than written out, so that the source of this
+   file stays pure ASCII. A file that spelled these sequences literally would
+   be the first thing its own scan below reported. */
+const MOJIBAKE = [
+  // 'A with tilde' followed by what had been a UTF-8 continuation byte.
+  [new RegExp(ch(0x00c3) + `[${ch(0x0080)}-${ch(0x00bf)}]`),
+    'a UTF-8 byte pair read back as cp1252'],
+  // The cp1252 reading of the punctuation block: em dash, curly quotes.
+  [new RegExp(ch(0x00e2, 0x20ac)
+    + anyOf([0x009c, 0x009d, 0x2122, 0x201a, 0x201c, 0x201d, 0x00a2, 0x0153])),
+  'punctuation double-encoded through cp1252'],
+  // A non-breaking space that went through the same trip.
+  [new RegExp(ch(0x00c2) + `[${ch(0x00a0)}-${ch(0x00bf)}]`),
+    'a non-breaking space double-encoded through cp1252'],
+];
+
+function mojibakeIn(file) {
+  const text = fs.readFileSync(file, 'utf8');
+  for (const [pattern, why] of MOJIBAKE) {
+    const found = text.match(pattern);
+    if (found) {
+      const line = text.slice(0, found.index).split('\n').length;
+      return `line ${line}: ${why}`;
+    }
+  }
+  return null;
+}
+
+describe('text that decoded through the wrong codepage', () => {
+  it('catches the shape it exists for', () => {
+    // The exact sequence README.md carried, so this test cannot quietly stop
+    // matching anything at all.
+    const spoiled = 'MIT ' + ch(0x00c3, 0x00a2, 0x00e2, 0x201a, 0x00ac, 0x00e2, 0x20ac, 0x009d) + ' see';
+    const intended = 'MIT ' + ch(0x2014) + ' see';
+    expect(MOJIBAKE.some(([p]) => p.test(spoiled))).toBe(true);
+    expect(MOJIBAKE.some(([p]) => p.test(intended))).toBe(false);
+  });
+
+  it('finds none in any tracked text file', () => {
+    const tracked = execFileSync('git', ['ls-files'], { encoding: 'utf8' })
+      .split('\n')
+      .filter(Boolean)
+      .filter((f) => !BINARY.test(f) && fs.existsSync(f) && fs.statSync(f).isFile());
+    // This file included: the escapes above are why it can scan itself without
+    // reporting itself, and if that ever stops being true this is where it shows.
+    const offenders = tracked
+      .map((f) => [f, mojibakeIn(f)])
+      .filter(([, problem]) => problem !== null)
+      .map(([f, problem]) => `${f}: ${problem}`);
+    expect(offenders).toEqual([]);
+  });
+});
+
 describe('tracked text files', () => {
   it('are all plain UTF-8 outside of known binary assets', () => {
     const tracked = execFileSync('git', ['ls-files'], { encoding: 'utf8' })

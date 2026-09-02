@@ -1,6 +1,6 @@
 # MyPyPath
 
-Personalized academic and career guidance site with interactive Python lessons, curriculum pages, and a sandbox. Static HTML/CSS/JS Ã¢â‚¬â€ no build step required.
+Personalized academic and career guidance site with interactive Python lessons, curriculum pages, and a sandbox. Static HTML/CSS/JS — no build step required.
 
 **Live site:** https://www.mypypath.com
 
@@ -57,7 +57,7 @@ Prefer editing shared assets in `assets/` so changes apply site-wide.
 
 ## License
 
-MIT Ã¢â‚¬â€ see [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE).
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for local validation steps.
 ## Troubleshooting
