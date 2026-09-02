@@ -1,0 +1,129 @@
+{
+  "exercise1": {
+    "prompt": "Comment on the difference between a class and an object, then print the blueprint explanation",
+    "cases": [
+      {
+        "name": "prints an explanation built on the blueprint idea",
+        "nonempty": true,
+        "stdout_matches": "blueprint",
+        "describe": "a printed message that uses the blueprint idea"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the explanation covers the object side as well",
+        "stdout_matches": "object|house|instance",
+        "describe": "the message says what the object is, not only what the class is"
+      },
+      {
+        "name": "a comment says what a class is",
+        "source_matches": "^\\s*#.*\\bclass\\b",
+        "flags": "im",
+        "describe": "a comment about what a class is"
+      }
+    ],
+    "hint": "Two separate things are being asked for. A comment is for the reader of the code and starts with #; the printed message is for whoever runs it. Both have to be there."
+  },
+  "exercise2": {
+    "prompt": "Dog attributes as variables and a bark function, printed and called",
+    "cases": [
+      {
+        "name": "prints the dog information and the bark",
+        "nonempty": true,
+        "min_lines": 2
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "bark is a function, and it is actually called",
+        "requires": {
+          "functions": [
+            {
+              "name": "bark"
+            }
+          ],
+          "calls": [
+            "bark"
+          ]
+        },
+        "describe": "a bark function that is defined and then called"
+      }
+    ],
+    "hint": "Behaviour goes in a function; data goes in variables. Defining bark is only half of it -- something has to call it for the bark to happen."
+  },
+  "questions": [
+    {
+      "id": "u6-oop-1",
+      "prompt": "What is the relationship between a class and an object?",
+      "choices": [
+        "A class is one object out of many",
+        "A class is the blueprint, an object is one thing built from it",
+        "They are two words for the same thing",
+        "An object contains many classes"
+      ],
+      "answer": 1,
+      "explain": "One class can produce any number of objects. Each object carries its own data but shares the structure the class described."
+    },
+    {
+      "id": "u6-oop-2",
+      "kind": "multi",
+      "prompt": "Which of these are reasons to reach for a class rather than loose variables and functions?",
+      "choices": [
+        "The data and the behaviour that acts on it belong together",
+        "You need many things of the same shape, each with its own values",
+        "The program has more than ten lines",
+        "You want the code to run faster"
+      ],
+      "answers": [
+        0,
+        1
+      ],
+      "explain": "Classes are about grouping related data with the behaviour that uses it, and about making many of the same shape. Length and speed are not the reason."
+    },
+    {
+      "id": "u6-oop-3",
+      "kind": "match",
+      "prompt": "Match each OOP word to what it means.",
+      "left": [
+        "Class",
+        "Object",
+        "Attribute",
+        "Method"
+      ],
+      "right": [
+        "A function that belongs to a class",
+        "A blueprint describing what things of this kind have and do",
+        "A piece of data belonging to an object",
+        "One thing built from a blueprint"
+      ],
+      "answer": [
+        1,
+        3,
+        2,
+        0
+      ],
+      "explain": "Attributes are what an object has, methods are what it does, and the class is the description both come from."
+    },
+    {
+      "id": "u6-oop-4",
+      "kind": "blank",
+      "prompt": "A house built from a plan is to the plan as an ___ is to a ___.",
+      "blanks": [
+        {
+          "accept": [
+            "object",
+            "instance"
+          ]
+        },
+        {
+          "accept": [
+            "class",
+            "type"
+          ]
+        }
+      ],
+      "explain": "The plan exists once; the houses built from it are many, and each one has its own address and paint colour."
+    }
+  ]
+}

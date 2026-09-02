@@ -1,0 +1,189 @@
+{
+  "practice1": {
+    "prompt": "Write count_down(n) recursively: print n, then n-1, down to 1, then \"Done!\". Call it with 5.",
+    "cases": [
+      {
+        "name": "counts down from 5 and then stops",
+        "expect_stdout": "5\n4\n3\n2\n1\nDone!"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "count_down is a function that takes the number to count from",
+        "requires": {
+          "functions": [
+            {
+              "name": "count_down",
+              "params": 1
+            }
+          ]
+        },
+        "describe": "a function count_down(n) that takes one argument"
+      },
+      {
+        "kind": "ast",
+        "name": "there is a base case",
+        "requires": {
+          "conditionals": 1
+        },
+        "describe": "an if that stops the recursion when the number runs out"
+      },
+      {
+        "kind": "ast",
+        "name": "each call is made on a smaller number",
+        "requires": {
+          "binop": [
+            {
+              "op": "Sub",
+              "names": [
+                "n"
+              ]
+            }
+          ]
+        },
+        "describe": "the next call made with a smaller number, like count_down(n - 1)"
+      },
+      {
+        "kind": "ast",
+        "name": "the counting is done by recursion, not by a loop",
+        "requires": {
+          "calls": [
+            "count_down"
+          ]
+        },
+        "forbids": {
+          "loops": true
+        },
+        "describe": "count_down calling itself, with no for or while doing the counting"
+      }
+    ],
+    "hint": "A while loop that prints and decrements gives the same output, so the output alone cannot tell the two apart. Ask what makes the second number get printed: another call, or another turn of a loop."
+  },
+  "questions": [
+    {
+      "id": "u9-rec-1",
+      "prompt": "What happens if a recursive function has no base case?",
+      "choices": [
+        "It returns None",
+        "It calls itself until Python gives up and raises RecursionError",
+        "Python refuses to define it",
+        "It runs exactly once"
+      ],
+      "answer": 1,
+      "explain": "Nothing stops the descent, so each call makes another call. Python caps the depth and raises RecursionError rather than running out of memory."
+    },
+    {
+      "id": "u9-rec-2",
+      "prompt": "In the lesson's factorial, what does factorial(0) return?",
+      "choices": [
+        "0",
+        "1",
+        "None",
+        "It raises an error"
+      ],
+      "answer": 1,
+      "explain": "0 and 1 are the base cases and both return 1. That is what lets factorial(5) finish: the chain of multiplications has something to end on."
+    },
+    {
+      "id": "u9-rec-blank",
+      "kind": "blank",
+      "prompt": "Every recursive function needs a ___ case that stops it, and a ___ case that calls itself with a smaller problem.",
+      "blanks": [
+        {
+          "accept": [
+            "base",
+            "stopping"
+          ]
+        },
+        {
+          "accept": [
+            "recursive",
+            "recursion"
+          ]
+        }
+      ],
+      "explain": "The base case is the smallest version of the problem, solved directly. The recursive case is the step that gets closer to it."
+    },
+    {
+      "id": "u9-rec-order",
+      "kind": "order",
+      "prompt": "Put these lines in order so the function adds up a list recursively.",
+      "items": [
+        "def sum_list(numbers):",
+        "    if not numbers:",
+        "        return 0",
+        "    return numbers[0] + sum_list(numbers[1:])"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "The base case comes first so an empty list returns before anything is indexed. numbers[0] on an empty list would raise IndexError."
+    },
+    {
+      "id": "u9-rec-multi",
+      "kind": "multi",
+      "prompt": "Which of these problems fit recursion well?",
+      "choices": [
+        "Walking a directory tree",
+        "Adding up a list of prices",
+        "Binary search",
+        "Solving a maze by backtracking"
+      ],
+      "answers": [
+        0,
+        2,
+        3
+      ],
+      "explain": "Trees, divide-and-conquer and backtracking are recursive in shape, so the code follows the shape. Adding up a flat list is a single pass, and a loop says that more plainly."
+    }
+  ],
+  "reflections": {
+    "reflection-exercise1": {
+      "expect_any": [
+        [
+          "base case",
+          "base",
+          "stopping",
+          "stop"
+        ],
+        [
+          "recursive case",
+          "calls itself",
+          "smaller"
+        ],
+        [
+          "infinite",
+          "forever",
+          "recursionerror",
+          "never stop"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Name both parts, and say what goes wrong when the first one is missing."
+    },
+    "reflection-exercise2": {
+      "expect_any": [
+        [
+          "smaller",
+          "subproblem",
+          "sub-problem",
+          "same problem"
+        ],
+        [
+          "example",
+          "factorial",
+          "fibonacci",
+          "tree",
+          "sum",
+          "folder"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Say what a recursive call does to the size of the problem, then give one concrete problem it works on."
+    }
+  }
+}

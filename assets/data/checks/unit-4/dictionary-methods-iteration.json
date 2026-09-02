@@ -1,0 +1,137 @@
+{
+  "exercise1": {
+    "prompt": "inventory of apples, bananas and oranges; get() apples and get() grapes with a default of 0",
+    "cases": [
+      {
+        "name": "get('apples') gives 10",
+        "call": "inventory.get('apples')",
+        "expect": "10"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "get('grapes', 0) falls back to the default",
+        "call": "inventory.get('grapes', 0)",
+        "expect": "0"
+      },
+      {
+        "kind": "ast",
+        "name": "the lookup goes through get()",
+        "requires": {
+          "calls": [
+            "get"
+          ]
+        },
+        "describe": "inventory.get(...), rather than inventory[...]"
+      },
+      {
+        "name": "asking about grapes did not add grapes",
+        "call": "len(inventory)",
+        "expect": "3"
+      },
+      {
+        "name": "both values are printed",
+        "stdout_matches": "\\b10\\b[\\s\\S]*\\b0\\b",
+        "describe": "10, then 0"
+      }
+    ],
+    "hint": "Square brackets on a missing key stop the program. get() is the version that hands back a default instead, and the default is the second argument."
+  },
+  "exercise2": {
+    "prompt": "scores for Alice, Bob and Charlie; loop with items() printing \"Name: Score\"",
+    "cases": [
+      {
+        "name": "each name and score on its own line",
+        "expect_stdout": "Alice: 85\nBob: 92\nCharlie: 78"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "items() drives the loop",
+        "requires": {
+          "calls": [
+            "items"
+          ],
+          "loops": [
+            "for"
+          ]
+        },
+        "describe": "a for loop over scores.items()"
+      },
+      {
+        "name": "scores holds the three people",
+        "call": "scores",
+        "expect": "{'Alice': 85, 'Bob': 92, 'Charlie': 78}"
+      },
+      {
+        "name": "three lines of output",
+        "min_lines": 3
+      }
+    ],
+    "hint": "Looping over a dictionary on its own gives you keys and nothing else. items() is what hands you the key and the value together, so the loop can unpack two names at once."
+  },
+  "questions": [
+    {
+      "id": "u4-dictm-1",
+      "prompt": "What does for x in scores: give you on each pass?",
+      "choices": [
+        "A key",
+        "A value",
+        "A (key, value) pair",
+        "The whole dictionary"
+      ],
+      "answer": 0,
+      "explain": "Iterating a dictionary walks its keys. That is why for name, score in scores: fails and for name, score in scores.items(): works."
+    },
+    {
+      "id": "u4-dictm-2",
+      "kind": "match",
+      "prompt": "Match each dictionary method to what it hands back.",
+      "left": [
+        "keys()",
+        "values()",
+        "items()",
+        "get()"
+      ],
+      "right": [
+        "the labels",
+        "the stored values",
+        "key and value together",
+        "one value, or a default"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "The first three are views over the whole dictionary; get() answers about one key and is the only one that takes a fallback."
+    },
+    {
+      "id": "u4-dictm-3",
+      "prompt": "inventory.get(\"grapes\") on a dictionary with no grapes returns what?",
+      "choices": [
+        "0",
+        "None",
+        "An empty string",
+        "A KeyError"
+      ],
+      "answer": 1,
+      "explain": "With no default supplied, get() returns None. If you want 0, you have to say so: inventory.get(\"grapes\", 0)."
+    },
+    {
+      "id": "u4-dictm-4",
+      "kind": "blank",
+      "prompt": "for name, score in scores.___(): unpacks each pair as the loop runs.",
+      "blanks": [
+        {
+          "accept": [
+            "items"
+          ]
+        }
+      ],
+      "explain": "items() yields a two-item tuple each time round, and the two loop variables unpack it."
+    }
+  ]
+}

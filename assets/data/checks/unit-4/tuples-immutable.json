@@ -1,0 +1,130 @@
+{
+  "exercise1": {
+    "prompt": "coordinates = (10, 20), print the x and the y",
+    "cases": [
+      {
+        "name": "coordinates is the tuple (10, 20)",
+        "call": "coordinates",
+        "expect": "(10, 20)"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "raises",
+        "name": "coordinates is a tuple, so nothing can be appended to it",
+        "call": "coordinates.append(30)",
+        "expect": "AttributeError",
+        "describe": "a tuple has no append(), which is what makes it immutable"
+      },
+      {
+        "name": "both coordinates are printed",
+        "min_lines": 2
+      },
+      {
+        "name": "the x-coordinate, then the y-coordinate",
+        "stdout_matches": "\\b10\\b[\\s\\S]*\\b20\\b",
+        "describe": "10, then 20"
+      }
+    ],
+    "hint": "Parentheses are what make a tuple; square brackets would give you a list that looks almost the same and behaves differently. Reading from it works exactly as it does for a list."
+  },
+  "exercise2": {
+    "prompt": "info = (\"Python\", 3, \"Beginner\"), print its length, its first element, and every element via a loop",
+    "cases": [
+      {
+        "name": "info is the three-value tuple",
+        "call": "info",
+        "expect": "('Python', 3, 'Beginner')"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "raises",
+        "name": "info is a tuple, so it has no append",
+        "call": "info.append(\"Extra\")",
+        "expect": "AttributeError",
+        "describe": "a tuple cannot grow after it is made"
+      },
+      {
+        "kind": "ast",
+        "name": "len() for the length and a loop for the elements",
+        "requires": {
+          "calls": [
+            "len"
+          ],
+          "loops": [
+            "for"
+          ]
+        },
+        "describe": "len(info) for the length and a for loop over info"
+      },
+      {
+        "name": "the last element reaches the output",
+        "stdout_matches": "beginner",
+        "describe": "Beginner, which only the loop reaches"
+      },
+      {
+        "name": "the length, the first element and each item",
+        "min_lines": 4
+      }
+    ],
+    "hint": "A tuple answers len() and a for loop the same way a list does. The difference only shows up when you try to change it."
+  },
+  "questions": [
+    {
+      "id": "u4-tuple-1",
+      "prompt": "What happens when you run point = (1, 2) and then point[0] = 5?",
+      "choices": [
+        "point becomes (5, 2)",
+        "A TypeError, because a tuple cannot be changed",
+        "Nothing, the line is ignored",
+        "point becomes [5, 2]"
+      ],
+      "answer": 1,
+      "explain": "A tuple supports item assignment nowhere, so Python refuses rather than quietly making a copy. Build a new tuple if you need different values."
+    },
+    {
+      "id": "u4-tuple-2",
+      "kind": "multi",
+      "prompt": "Which of these are true of a tuple?",
+      "choices": [
+        "Its items stay in the order you wrote them",
+        "You can add items with append()",
+        "You can read items with an index",
+        "A for loop can walk it"
+      ],
+      "answers": [
+        0,
+        2,
+        3
+      ],
+      "explain": "Everything that only reads a tuple works. append() is the one that does not exist, because growing it would be a change."
+    },
+    {
+      "id": "u4-tuple-3",
+      "kind": "blank",
+      "prompt": "For coordinates = (10, 20), the y-coordinate is coordinates[___].",
+      "blanks": [
+        {
+          "accept": [
+            "1",
+            "-1"
+          ]
+        }
+      ],
+      "explain": "Tuples are indexed from 0 exactly as lists are, so the second value sits at index 1."
+    },
+    {
+      "id": "u4-tuple-4",
+      "prompt": "Why would you choose a tuple over a list?",
+      "choices": [
+        "It is always faster to write",
+        "Because the data should not change, and a tuple makes an accidental change impossible",
+        "Because tuples can hold more items",
+        "Because lists cannot hold strings"
+      ],
+      "answer": 1,
+      "explain": "The immutability is the point. Days of the week or a fixed coordinate should not be editable, and a tuple says so in the code itself."
+    }
+  ]
+}

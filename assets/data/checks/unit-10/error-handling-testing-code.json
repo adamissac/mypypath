@@ -1,0 +1,81 @@
+{
+  "questions": [
+    {
+      "id": "u10-err-1",
+      "prompt": "Your file-reading code catches `except Exception`. Why is that usually worse than catching `except FileNotFoundError`?",
+      "choices": [
+        "Exception is slower to catch",
+        "It also swallows the bugs you did not anticipate, and reports them as a missing file",
+        "Exception is not a real class",
+        "You can only use Exception once in a program"
+      ],
+      "answer": 1,
+      "explain": "A broad except hides the errors you have not thought of yet, behind a message that is now untrue."
+    },
+    {
+      "id": "u10-err-2",
+      "kind": "multi",
+      "prompt": "Which of these are edge cases for a task manager?",
+      "choices": [
+        "Viewing the list when there are no tasks",
+        "A task name that is an empty string",
+        "Adding one ordinary task",
+        "Marking a task number larger than the list"
+      ],
+      "answers": [
+        0,
+        1,
+        3
+      ],
+      "explain": "Adding one ordinary task is the normal case, and worth testing too, but it is not an edge. Edges are the empty, the oversized and the missing."
+    },
+    {
+      "id": "u10-err-3",
+      "kind": "blank",
+      "prompt": "___:\n    n = int(input(\"Number: \"))\n___ ValueError:\n    print(\"Please type a number.\")",
+      "blanks": [
+        {
+          "accept": [
+            "try"
+          ]
+        },
+        {
+          "accept": [
+            "except"
+          ]
+        }
+      ],
+      "explain": "The try holds the code that might fail; the except names the one failure you are ready for and says what to do about it."
+    },
+    {
+      "id": "u10-err-4",
+      "prompt": "Which of these tests would still pass if add_task were replaced by a function that does nothing?",
+      "choices": [
+        "Checking the list holds one task after adding one",
+        "Checking that add_task exists",
+        "Checking the added task has the name you passed in",
+        "Checking the call returns the list"
+      ],
+      "answer": 1,
+      "explain": "A test that only checks a function is there passes against any function at all, including one that does nothing. A test earns its place by failing when the behaviour is wrong."
+    },
+    {
+      "id": "u10-err-5",
+      "kind": "order",
+      "prompt": "Your program crashed. Put the steps in the order that finds the cause.",
+      "items": [
+        "Read the error and the line it names",
+        "Reproduce it on purpose with the input that caused it",
+        "Fix the cause",
+        "Run that case again, and the ones that already passed"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "Re-running the cases that already passed is the step people skip, and it is the one that catches a fix that broke something else."
+    }
+  ]
+}

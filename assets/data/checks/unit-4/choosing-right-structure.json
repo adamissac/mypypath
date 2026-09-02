@@ -1,0 +1,115 @@
+{
+  "exercise1": {
+    "prompt": "The seven days of the week, stored in whichever structure fits data that never changes",
+    "cases": [
+      {
+        "name": "the days are kept in a tuple, not a list",
+        "call": "[type(v).__name__ for v in list(globals().values()) if isinstance(v, (list, tuple, set)) and len(v) == 7]",
+        "expect": "['tuple']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "all seven days, in order",
+        "call": "[list(v) for v in list(globals().values()) if isinstance(v, tuple) and len(v) == 7]",
+        "expect": "[['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']]"
+      }
+    ],
+    "hint": "The exercise never asks you to add a day or take one away, and the hint on the page is asking you to notice that. Pick the structure whose punctuation says the data is fixed."
+  },
+  "exercise2": {
+    "prompt": "Count each word in [\"apple\", \"banana\", \"apple\", \"cherry\", \"banana\", \"apple\"] into a dictionary",
+    "cases": [
+      {
+        "name": "every word counted",
+        "call": "[v for v in list(globals().values()) if isinstance(v, dict) and 'apple' in v]",
+        "expect": "[{'apple': 3, 'banana': 2, 'cherry': 1}]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the six words from the exercise are the ones counted",
+        "call": "[len(v) for v in list(globals().values()) if isinstance(v, list) and 'apple' in v]",
+        "expect": "[6]"
+      },
+      {
+        "kind": "ast",
+        "name": "the counts come out of a loop",
+        "requires": {
+          "loops": [
+            "for"
+          ]
+        },
+        "describe": "a loop over the words, rather than three counts typed in by hand"
+      }
+    ],
+    "hint": "The first time you meet a word there is no count to add to yet, so the two cases are different: start it at 1, or add 1 to what is already there. Deciding which is what the `if` is for."
+  },
+  "questions": [
+    {
+      "id": "u4-choose-1",
+      "kind": "match",
+      "prompt": "Match each job to the structure that fits it best.",
+      "left": [
+        "A to-do list you keep adding to",
+        "The seven days of the week",
+        "Looking a phone number up by name",
+        "The unique visitors to a site"
+      ],
+      "right": [
+        "list",
+        "tuple",
+        "dictionary",
+        "set"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "Order plus change means a list, fixed order means a tuple, lookup by label means a dictionary, and uniqueness means a set."
+    },
+    {
+      "id": "u4-choose-2",
+      "prompt": "You need to check, many times, whether a username has been taken. Which structure?",
+      "choices": [
+        "A list",
+        "A set",
+        "A tuple",
+        "A nested list"
+      ],
+      "answer": 1,
+      "explain": "A set answers `in` without walking every item, and taken usernames are unique anyway, so nothing is lost by dropping the order."
+    },
+    {
+      "id": "u4-choose-3",
+      "prompt": "What is the shape of a word-count result?",
+      "choices": [
+        "A list of words",
+        "A set of words",
+        "A dictionary of word to count",
+        "A tuple of counts"
+      ],
+      "answer": 2,
+      "explain": "Every count belongs to a word, and a dictionary is what ties one value to one label. A list of counts would lose which word each belonged to."
+    },
+    {
+      "id": "u4-choose-4",
+      "kind": "multi",
+      "prompt": "Which questions actually decide which structure to use?",
+      "choices": [
+        "Does the order of the items matter?",
+        "Will the data change after it is created?",
+        "Do I look things up by position or by label?",
+        "Which one has the shortest name?"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Order, mutability and how you look things up are the three that separate the four structures. Everything else is preference."
+    }
+  ]
+}

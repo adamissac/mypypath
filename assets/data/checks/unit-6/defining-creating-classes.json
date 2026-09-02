@@ -1,0 +1,145 @@
+{
+  "exercise1": {
+    "prompt": "A Dog class with __init__(name, breed), then a Buddy the Golden Retriever",
+    "cases": [
+      {
+        "name": "the dog keeps the name it was given",
+        "call": "Dog(\"Buddy\", \"Golden Retriever\").name",
+        "expect": "'Buddy'"
+      },
+      {
+        "name": "prints the name and the breed",
+        "stdout_matches": "Buddy",
+        "describe": "the dog's details printed"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "Dog is a class with an __init__",
+        "requires": {
+          "classes": [
+            {
+              "name": "Dog",
+              "methods": [
+                "__init__"
+              ]
+            }
+          ]
+        },
+        "describe": "a Dog class whose __init__ sets up each new dog"
+      },
+      {
+        "name": "a different dog gets its own breed",
+        "call": "Dog(\"Rex\", \"Poodle\").breed",
+        "expect": "'Poodle'"
+      },
+      {
+        "name": "prints the breed too",
+        "stdout_matches": "Golden Retriever",
+        "describe": "the breed printed alongside the name"
+      }
+    ],
+    "hint": "__init__ receives the values as parameters, so the attributes have to be built from those parameters rather than written into the class. A second dog with different details is the test of that."
+  },
+  "exercise2": {
+    "prompt": "A Circle class taking radius, with color defaulting to Red",
+    "cases": [
+      {
+        "name": "the circle keeps the radius it was given",
+        "call": "Circle(5).radius",
+        "expect": "5"
+      },
+      {
+        "name": "prints the radius and the colour",
+        "stdout_matches": "Red",
+        "describe": "the colour printed"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "Circle is a class with an __init__",
+        "requires": {
+          "classes": [
+            {
+              "name": "Circle",
+              "methods": [
+                "__init__"
+              ]
+            }
+          ]
+        },
+        "describe": "a Circle class whose __init__ takes the radius"
+      },
+      {
+        "name": "every circle starts out red without being told to",
+        "call": "Circle(2).color",
+        "expect": "'Red'"
+      },
+      {
+        "name": "a different radius is kept as given",
+        "call": "Circle(9).radius",
+        "expect": "9"
+      }
+    ],
+    "hint": "The first parameter of every method is self, even when the method takes other things as well. Without it Python has no way to say which circle the radius belongs to."
+  },
+  "questions": [
+    {
+      "id": "u6-def-1",
+      "prompt": "When does __init__ run?",
+      "choices": [
+        "When the class statement is read",
+        "Every time an object is created from the class",
+        "Only when you call it by name",
+        "Once per program"
+      ],
+      "answer": 1,
+      "explain": "Creating an object is what calls __init__, which is why it is the place to set up that object's own data."
+    },
+    {
+      "id": "u6-def-2",
+      "prompt": "What is self?",
+      "choices": [
+        "The class itself",
+        "The particular object the method was called on",
+        "A keyword Python requires by that exact spelling",
+        "The value the method returns"
+      ],
+      "answer": 1,
+      "explain": "self is the object in front of the dot. It is an ordinary parameter name by convention, not a keyword, but everyone spells it self."
+    },
+    {
+      "id": "u6-def-3",
+      "kind": "order",
+      "prompt": "Put these lines in order so a Dog class is defined and one dog is made.",
+      "items": [
+        "class Dog:",
+        "    def __init__(self, name):",
+        "        self.name = name",
+        "dog = Dog(\"Buddy\")"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "The class has to exist before it can be called, and the assignment to self.name sits inside __init__, indented one level further."
+    },
+    {
+      "id": "u6-def-4",
+      "kind": "blank",
+      "prompt": "Inside __init__, the line that stores the name on this particular dog is ___ = name.",
+      "blanks": [
+        {
+          "accept": [
+            "self.name"
+          ]
+        }
+      ],
+      "explain": "Without the self. prefix you have created a local variable that disappears the moment __init__ returns."
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "questions": [
+    {
+      "id": "u7-int-1",
+      "prompt": "Why store data in a file instead of a variable?",
+      "choices": [
+        "Files are faster to read",
+        "A variable is gone when the program ends; a file is still there next time",
+        "Variables cannot hold text",
+        "Files use less memory while the program runs"
+      ],
+      "answer": 1,
+      "explain": "Everything in memory disappears when the process exits. Persistence is the whole reason files exist."
+    },
+    {
+      "id": "u7-int-2",
+      "prompt": "What makes a file a text file rather than a binary file?",
+      "choices": [
+        "It is small",
+        "Its contents are characters you could read in a text editor",
+        "It ends in .txt",
+        "It was written by Python"
+      ],
+      "answer": 1,
+      "explain": "The distinction is the encoding, not the extension. A .csv and a .py are both text; a .jpg opened in an editor is noise."
+    },
+    {
+      "id": "u7-int-3",
+      "kind": "order",
+      "prompt": "Put the file handling workflow in the order the lesson gives it.",
+      "items": [
+        "Open the file, choosing a mode",
+        "Read from it or write to it",
+        "Close it"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Nothing can be read or written before the file is open, and the changes are not guaranteed to be on disk until it is closed."
+    },
+    {
+      "id": "u7-int-4",
+      "kind": "multi",
+      "prompt": "Which of these are text files?",
+      "choices": [
+        "notes.txt",
+        "photo.jpg",
+        "scores.csv",
+        "program.exe"
+      ],
+      "answers": [
+        0,
+        2
+      ],
+      "explain": "A .csv is rows of characters separated by commas, so it is text. An image and an executable are bytes that only make sense to the program that reads them."
+    }
+  ],
+  "reflections": {
+    "reflection-exercise1": {
+      "expect_any": [
+        [
+          "save",
+          "saved",
+          "saving",
+          "store",
+          "stored",
+          "keep"
+        ],
+        [
+          "settings",
+          "scores",
+          "log",
+          "logs",
+          "notes",
+          "records",
+          "data"
+        ],
+        [
+          "closed",
+          "restart",
+          "again",
+          "later",
+          "next time",
+          "permanent",
+          "persist"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Name the kind of thing being stored, and say what would be lost if the program only kept it in a variable."
+    },
+    "reflection-exercise2": {
+      "expect_any": [
+        [
+          "txt",
+          "csv",
+          "py",
+          "html",
+          "json"
+        ],
+        [
+          "jpg",
+          "png",
+          "mp3",
+          "exe",
+          "pdf",
+          "zip"
+        ],
+        [
+          "read",
+          "readable",
+          "editor",
+          "characters",
+          "bytes"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Give real extensions for each side, and say what tells the two kinds apart when you open one."
+    }
+  }
+}

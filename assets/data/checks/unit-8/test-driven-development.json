@@ -1,0 +1,77 @@
+{
+  "practice1": {
+    "prompt": "write the tests for apply_discount before the function exists",
+    "cases": [
+      {
+        "kind": "mutation",
+        "name": "your tests pass the working version and catch all three bugs",
+        "reference": "def apply_discount(price, percent):\n    return price - price * percent / 100\n",
+        "mutants": [
+          "def apply_discount(price, percent):\n    return price - percent\n",
+          "def apply_discount(price, percent):\n    if percent == 0:\n        return 0\n    return price - price * percent / 100\n",
+          "def apply_discount(price, percent):\n    return round(price - price * percent / 100)\n"
+        ]
+      }
+    ],
+    "hint": "The starter test uses a price of 100 and a discount of 20, and every one of the three broken versions survives it -- 100 minus 20 is 80 either way. Change the numbers so the percentage and the amount are not the same, then add the two cases the lesson points at: a discount of nothing, and a price that does not divide evenly."
+  },
+  "questions": [
+    {
+      "id": "u8-tdd-order",
+      "kind": "order",
+      "prompt": "Put the test-driven development cycle in order.",
+      "items": [
+        "Write just enough code to make it pass",
+        "Write a failing test",
+        "Tidy the code up without changing what it does"
+      ],
+      "answer": [
+        1,
+        0,
+        2
+      ],
+      "explain": "Red, green, refactor. The test comes first so that it is seen to fail for the right reason before any code exists to make it pass."
+    },
+    {
+      "id": "u8-tdd-2",
+      "prompt": "Why does the cycle start with a test that fails?",
+      "choices": [
+        "To make sure the test can fail at all",
+        "Because Python requires it",
+        "To make the suite run faster",
+        "So the code can be written afterwards in any order"
+      ],
+      "answer": 0,
+      "explain": "A test written after the code and never seen red might be passing for a reason that has nothing to do with the code. Watching it fail first proves it is connected to the thing it claims to check."
+    },
+    {
+      "id": "u8-tdd-3",
+      "kind": "multi",
+      "prompt": "Which decisions did writing the discount tests first force you to make?",
+      "choices": [
+        "What a discount of zero percent should return",
+        "Whether the result is rounded",
+        "What colour the output is",
+        "Whether percent means a percentage or an amount off"
+      ],
+      "answers": [
+        0,
+        1,
+        3
+      ],
+      "explain": "Each of the three is a decision that would otherwise have been settled by accident, by whichever line of code happened to get typed first."
+    },
+    {
+      "id": "u8-tdd-4",
+      "prompt": "You write a test, and it passes immediately without any new code. What does that mean?",
+      "choices": [
+        "The feature is finished",
+        "Something is wrong: either the test does not check what you meant, or the behaviour already existed",
+        "You should delete the test",
+        "Python cached the result"
+      ],
+      "answer": 1,
+      "explain": "A green test at the Red step is a warning, not a shortcut. Usually the assertion is not reaching the code it was aimed at."
+    }
+  ]
+}

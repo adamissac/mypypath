@@ -1,0 +1,109 @@
+{
+  "practice1": {
+    "prompt": "trace the loop with a debug print, then fix the total",
+    "cases": [
+      {
+        "name": "the three numbers add up to 6",
+        "call": "running_total([1, 2, 3])",
+        "expect": "6"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "an empty list totals zero",
+        "call": "running_total([])",
+        "expect": "0"
+      },
+      {
+        "kind": "generated",
+        "name": "works for any list of numbers",
+        "entry": "running_total",
+        "reference": "def running_total(numbers):\n    total = 0\n    for n in numbers:\n        total = total + n\n    return total\n",
+        "args": [
+          {
+            "type": "list",
+            "of": {
+              "type": "int",
+              "min": -20,
+              "max": 20
+            },
+            "minLength": 0,
+            "maxLength": 6
+          }
+        ],
+        "runs": 40
+      },
+      {
+        "min_lines": 4,
+        "name": "the trace shows every pass through the loop",
+        "describe": "a debug line for each pass through the loop, as well as the result"
+      },
+      {
+        "kind": "ast",
+        "name": "the accumulation happens in a loop",
+        "requires": {
+          "loops": [
+            "for"
+          ]
+        },
+        "describe": "a for loop that builds the total up"
+      }
+    ],
+    "hint": "Two separate things are being asked for. The debug print goes inside the loop and stays there, so three numbers produce three trace lines before the answer. The bug is on the line that assigns to running -- read what your own trace prints and it names itself."
+  },
+  "questions": [
+    {
+      "id": "u8-psd-1",
+      "prompt": "Why put the debug print inside the loop rather than after it?",
+      "choices": [
+        "It runs faster there",
+        "Outside the loop you see one value; inside it you see the sequence, which is where the bug is",
+        "Python only allows prints inside loops",
+        "There is no difference"
+      ],
+      "answer": 1,
+      "explain": "The final value tells you the answer is wrong, which you already knew. The sequence tells you it was being replaced rather than added to, which is the bug itself."
+    },
+    {
+      "id": "u8-psd-2",
+      "kind": "multi",
+      "prompt": "What makes a debug print useful rather than noise?",
+      "choices": [
+        "It names the variable it is showing",
+        "It is marked so you can find and remove it later",
+        "It prints on every iteration when the bug is about a sequence",
+        "It prints as much of the program state as possible"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "A labelled, findable, well-placed print answers one question. Dumping everything produces output nobody reads, which is the same as no print at all."
+    },
+    {
+      "id": "u8-psd-3",
+      "prompt": "The trace shows running as 1, then 2, then 3. What does that tell you?",
+      "choices": [
+        "The loop runs too many times",
+        "running is being assigned each item rather than having each item added to it",
+        "The list is in the wrong order",
+        "The function returns too early"
+      ],
+      "answer": 1,
+      "explain": "A running total would show 1, then 3, then 6. Seeing the input values themselves come back means the assignment replaced the total instead of growing it."
+    },
+    {
+      "id": "u8-psd-4",
+      "prompt": "What is the main drawback of print debugging compared with a debugger?",
+      "choices": [
+        "It cannot show variable values",
+        "You have to decide in advance what to print, and change the code to change your mind",
+        "It only works on small programs",
+        "It cannot be used inside functions"
+      ],
+      "answer": 1,
+      "explain": "A debugger lets you look at anything once you are stopped. A print commits you to a guess about what mattered, and asking a different question means editing and re-running."
+    }
+  ]
+}

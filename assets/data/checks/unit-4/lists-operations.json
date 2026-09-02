@@ -1,0 +1,152 @@
+{
+  "exercise1": {
+    "prompt": "grades = [85, 90, 78], append 92, remove 78, print the list",
+    "cases": [
+      {
+        "name": "grades ends up as [85, 90, 92]",
+        "call": "grades",
+        "expect": "[85, 90, 92]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "the list is changed with append and remove",
+        "requires": {
+          "calls": [
+            "append",
+            "remove"
+          ]
+        },
+        "describe": "append() to add 92 and remove() to take 78 out"
+      },
+      {
+        "name": "the final list is printed",
+        "stdout_matches": "\\[85, 90, 92\\]",
+        "describe": "[85, 90, 92]"
+      },
+      {
+        "name": "grades still holds three numbers",
+        "call": "len(grades)",
+        "expect": "3"
+      }
+    ],
+    "hint": "append() and remove() change the list they are called on and hand back nothing. Watch what grades holds after each line rather than what the method returns."
+  },
+  "exercise2": {
+    "prompt": "numbers = [5, 2, 8, 2, 1], sort it, count the 2s, print both",
+    "cases": [
+      {
+        "name": "numbers is sorted in place",
+        "call": "numbers",
+        "expect": "[1, 2, 2, 5, 8]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "sort() orders the list and count() counts the 2s",
+        "requires": {
+          "calls": [
+            "sort",
+            "count"
+          ]
+        },
+        "describe": "numbers.sort() and numbers.count(2)"
+      },
+      {
+        "name": "the sorted list is printed",
+        "stdout_matches": "\\[1, 2, 2, 5, 8\\]",
+        "describe": "[1, 2, 2, 5, 8]"
+      },
+      {
+        "name": "the count of 2 is 2",
+        "call": "numbers.count(2)",
+        "expect": "2"
+      },
+      {
+        "name": "the list and the count are both printed",
+        "min_lines": 2
+      }
+    ],
+    "hint": "sort() rearranges the list itself and returns None, so assigning its result over the variable throws the list away. Sort first, then ask the list how many 2s it has."
+  },
+  "questions": [
+    {
+      "id": "u4-lists-1",
+      "prompt": "What is the value of numbers after numbers = numbers.sort()?",
+      "choices": [
+        "The sorted list",
+        "None",
+        "The original unsorted list",
+        "An error"
+      ],
+      "answer": 1,
+      "explain": "sort() rearranges the list in place and returns None, so the assignment replaces your list with None. Call numbers.sort() on its own line instead."
+    },
+    {
+      "id": "u4-lists-2",
+      "prompt": "What does [1, 2].append([3, 4]) leave the list holding?",
+      "choices": [
+        "[1, 2, 3, 4]",
+        "[1, 2, [3, 4]]",
+        "[[1, 2], [3, 4]]",
+        "An error"
+      ],
+      "answer": 1,
+      "explain": "append() adds exactly one item, and here that item is a list. extend() is the one that adds each element separately."
+    },
+    {
+      "id": "u4-lists-3",
+      "kind": "multi",
+      "prompt": "Which of these change the list they are called on?",
+      "choices": [
+        "append()",
+        "count()",
+        "remove()",
+        "index()"
+      ],
+      "answers": [
+        0,
+        2
+      ],
+      "explain": "append() and remove() modify the list and return None. count() and index() only look at it and hand back an answer."
+    },
+    {
+      "id": "u4-lists-4",
+      "kind": "order",
+      "prompt": "Put these lines in order so the final list is [85, 90, 92].",
+      "items": [
+        "grades = [85, 90, 78]",
+        "grades.append(92)",
+        "grades.remove(78)",
+        "print(grades)"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "The list has to exist before a method can be called on it, and the print has to come last or it shows a list that is not finished yet."
+    },
+    {
+      "id": "u4-lists-5",
+      "kind": "blank",
+      "prompt": "numbers.___(2) removes the first 2 from the list, and numbers.___(2) tells you how many 2s there are.",
+      "blanks": [
+        {
+          "accept": [
+            "remove"
+          ]
+        },
+        {
+          "accept": [
+            "count"
+          ]
+        }
+      ],
+      "explain": "remove() takes a value out and count() reports how often that value appears. Neither one takes an index."
+    }
+  ]
+}

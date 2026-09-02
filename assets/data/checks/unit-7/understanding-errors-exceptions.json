@@ -1,0 +1,154 @@
+{
+  "practice1": {
+    "prompt": "Write cause_error(kind) so that \"zero\" divides by zero, \"value\" calls int(\"abc\") and \"type\" adds \"hello\" to 5. Let Python's own error happen in each case, then print ready at the end",
+    "cases": [
+      {
+        "name": "the program itself runs cleanly",
+        "expect_stdout": "ready"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "raises",
+        "name": "\"zero\" divides by zero",
+        "call": "cause_error(\"zero\")",
+        "expect": "ZeroDivisionError"
+      },
+      {
+        "kind": "raises",
+        "name": "\"value\" asks int() for a word",
+        "call": "cause_error(\"value\")",
+        "expect": "ValueError"
+      },
+      {
+        "kind": "raises",
+        "name": "\"type\" adds a string to a number",
+        "call": "cause_error(\"type\")",
+        "expect": "TypeError"
+      },
+      {
+        "kind": "ast",
+        "name": "the errors are Python's own, not raised by hand",
+        "forbids": {
+          "raises": true
+        },
+        "describe": "the operations themselves failing, rather than a raise statement"
+      }
+    ],
+    "hint": "Every one of these is an error you can already write by accident. The question is which of the three operations produces which name in the table, and the way to find out is to let it happen."
+  },
+  "questions": [
+    {
+      "id": "u7-uee-1",
+      "prompt": "What is the difference between a syntax error and an exception?",
+      "choices": [
+        "There is none, they are two words for the same thing",
+        "A syntax error stops the program from running at all; an exception happens while it is running",
+        "An exception is always fatal",
+        "A syntax error only happens in files"
+      ],
+      "answer": 1,
+      "explain": "Python has to parse the whole file before running any of it, so a missing colon is caught before line one executes. An exception is a fact about a particular run."
+    },
+    {
+      "id": "u7-uee-2",
+      "prompt": "int(\"hello\") raises which exception?",
+      "choices": [
+        "TypeError",
+        "ValueError",
+        "SyntaxError",
+        "NameError"
+      ],
+      "answer": 1,
+      "explain": "A string is exactly the right type to hand int(); \"hello\" is the wrong value. Wrong type would be TypeError."
+    },
+    {
+      "id": "u7-uee-3",
+      "kind": "match",
+      "prompt": "Match each line to the exception it raises.",
+      "left": [
+        "open(\"missing.txt\")",
+        "10 / 0",
+        "\"hello\" + 5",
+        "[1, 2][7]"
+      ],
+      "right": [
+        "IndexError",
+        "TypeError",
+        "FileNotFoundError",
+        "ZeroDivisionError"
+      ],
+      "answer": [
+        2,
+        3,
+        1,
+        0
+      ],
+      "explain": "The name of the exception is the first thing that tells you what went wrong, which is why the lesson asks you to learn the common ones by sight."
+    },
+    {
+      "id": "u7-uee-4",
+      "prompt": "Where in a traceback is the exception type and message?",
+      "choices": [
+        "The first line",
+        "The last line",
+        "It is not shown",
+        "In the middle"
+      ],
+      "answer": 1,
+      "explain": "Read a traceback from the bottom. The lines above it are the route the program took to get there."
+    }
+  ],
+  "reflections": {
+    "reflection-exercise1": {
+      "expect_any": [
+        [
+          "syntax",
+          "parse",
+          "before",
+          "will not run",
+          "does not run",
+          "typo"
+        ],
+        [
+          "exception",
+          "runtime",
+          "while running",
+          "during"
+        ],
+        [
+          "colon",
+          "bracket",
+          "indent",
+          "zerodivisionerror",
+          "valueerror",
+          "typeerror",
+          "filenotfounderror"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Say when each one is discovered relative to the program starting, and give a concrete line that causes each."
+    },
+    "reflection-exercise2": {
+      "expect_any": [
+        [
+          "filenotfounderror",
+          "file not found",
+          "missing file"
+        ],
+        [
+          "permissionerror",
+          "permission"
+        ],
+        [
+          "valueerror",
+          "typeerror",
+          "unicodedecodeerror",
+          "isadirectoryerror"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Name the exceptions by their real names, and say what the program was trying to do at the moment each one appears."
+    }
+  }
+}

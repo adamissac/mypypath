@@ -303,6 +303,36 @@ print(result)  # Output: 2000 (wrong!)</code></pre>
                 </div>
               </div>
 
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: Find the Off-by-One</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Four students scored 4, 6, 6 and 9, and the pass mark is 6. Three of them passed, but the code below prints 1. Nothing crashes and no error is shown, so the only clue is the gap between the answer you expected and the answer you got. Work out which comparison is wrong and fix it.</p>
+
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Expected 3, prints 1.\ndef count_passing(scores, pass_mark):\n    total = 0\n    for score in scores:\n        if score &gt; pass_mark:\n            total = total + 1\n    return total\n\nprint(count_passing([4, 6, 6, 9], 6))')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Expected 3, prints 1.
+def count_passing(scores, pass_mark):
+    total = 0
+    for score in scores:
+        if score &gt; pass_mark:
+            total = total + 1
+    return total
+
+print(count_passing([4, 6, 6, 9], 6))</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Press Run to see output</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> A score exactly on the pass mark is a pass, and <code>&gt;</code> excluded it. One character separated a program that ran cleanly from a program that was wrong, which is why logical errors need a known answer to compare against.</p>
+              </div>
+
               <div class="content-section">
                 <h2>Summary</h2>
                 <p>In this lesson, you learned:</p>

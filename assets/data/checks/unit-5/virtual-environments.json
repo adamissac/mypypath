@@ -1,0 +1,72 @@
+{
+  "questions": [
+    {
+      "id": "u5-venv-1",
+      "prompt": "What problem does a virtual environment solve?",
+      "choices": [
+        "Python programs run faster inside one",
+        "Two projects can need different versions of the same package",
+        "It hides your source code from other users",
+        "It removes the need for pip"
+      ],
+      "answer": 1,
+      "explain": "One machine, one shared set of installed packages, two projects that disagree about a version. A virtual environment gives each project its own set."
+    },
+    {
+      "id": "u5-venv-2",
+      "kind": "order",
+      "prompt": "Put these steps in the order you would actually do them.",
+      "items": [
+        "python -m venv .venv",
+        "source .venv/bin/activate",
+        "pip install requests",
+        "pip freeze > requirements.txt"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "Create it, step into it, then install. Freezing before installing anything records an empty list, which helps nobody."
+    },
+    {
+      "id": "u5-venv-3",
+      "kind": "match",
+      "prompt": "Match each command to what it does.",
+      "left": [
+        "python -m venv .venv",
+        "pip freeze > requirements.txt",
+        "pip install -r requirements.txt"
+      ],
+      "right": [
+        "Creates a fresh, empty environment",
+        "Writes down what is installed right now",
+        "Installs everything the file lists"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explain": "The last two are a pair: one records the environment, the other rebuilds it somewhere else."
+    },
+    {
+      "id": "u5-venv-4",
+      "kind": "multi",
+      "prompt": "Why does a project commit requirements.txt but not the .venv folder?",
+      "choices": [
+        "The file is a short, readable list of what is needed",
+        "The folder holds installed binaries that differ between machines",
+        "Anyone can rebuild the folder from the file",
+        "Git refuses to store folders"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "The recipe is worth sharing; the meal is not. Anyone with the recipe can cook it on their own machine."
+    }
+  ]
+}

@@ -1,0 +1,164 @@
+{
+  "practice1": {
+    "prompt": "poem.txt sits next to your program. Open it with a with statement, print how many lines it has, and let the with statement do the closing",
+    "files": {
+      "poem.txt": "roses are red\nviolets are blue\n"
+    },
+    "cases": [
+      {
+        "name": "counts the lines",
+        "expect_stdout": "2"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "counts a longer file",
+        "files": {
+          "poem.txt": "a\nb\nc\nd\n"
+        },
+        "expect_stdout": "4"
+      },
+      {
+        "kind": "ast",
+        "name": "the file is opened with a with statement",
+        "requires": {
+          "withs": 1
+        },
+        "describe": "a with statement around the open"
+      },
+      {
+        "kind": "ast",
+        "name": "nothing is closed by hand",
+        "forbids": {
+          "calls": [
+            "close"
+          ]
+        },
+        "describe": "the with statement doing the closing instead of a close() call"
+      }
+    ],
+    "hint": "open, read, close by hand gives the same answer here and is not the same code. The difference only shows up on the run where something between the open and the close goes wrong."
+  },
+  "questions": [
+    {
+      "id": "u7-wsf-1",
+      "prompt": "What does the with statement do that a manual close() does not?",
+      "choices": [
+        "It reads the file faster",
+        "It closes the file even when the code inside raises an error",
+        "It opens the file in every mode at once",
+        "It stops errors from happening"
+      ],
+      "answer": 1,
+      "explain": "A close() on the line after a crash never runs. The with block closes on the way out either way, which is the whole reason it exists."
+    },
+    {
+      "id": "u7-wsf-2",
+      "prompt": "After a with block ends, what is the state of the file?",
+      "choices": [
+        "Still open until the program ends",
+        "Closed",
+        "Deleted",
+        "Open but empty"
+      ],
+      "answer": 1,
+      "explain": "Leaving the block is what closes it, whether you left normally or because of an exception."
+    },
+    {
+      "id": "u7-wsf-3",
+      "kind": "order",
+      "prompt": "Put these lines in order so the file is read and closed properly.",
+      "items": [
+        "with open(\"poem.txt\") as file:",
+        "    lines = file.readlines()",
+        "print(len(lines))"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explain": "The read happens inside the block, while the file is open. The print sits outside it, because by then the counting is done and the file can be closed."
+    },
+    {
+      "id": "u7-wsf-4",
+      "kind": "blank",
+      "prompt": "___ open(\"poem.txt\") ___ file:\n    print(file.read())",
+      "blanks": [
+        {
+          "accept": [
+            "with"
+          ]
+        },
+        {
+          "accept": [
+            "as"
+          ]
+        }
+      ],
+      "explain": "`as` names the object the with statement is managing, so file is what you read from inside the block."
+    }
+  ],
+  "reflections": {
+    "reflection-exercise1": {
+      "expect_any": [
+        [
+          "automatic",
+          "automatically",
+          "closes",
+          "close",
+          "closed"
+        ],
+        [
+          "error",
+          "errors",
+          "exception",
+          "crash",
+          "crashes",
+          "fails"
+        ],
+        [
+          "forget",
+          "forgets",
+          "forgetting",
+          "shorter",
+          "cleaner",
+          "fewer lines"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Say what the with statement guarantees, and name the situation where the manual version silently stops keeping that promise."
+    },
+    "reflection-exercise2": {
+      "expect_any": [
+        [
+          "with",
+          "open",
+          "opens"
+        ],
+        [
+          "read",
+          "reads",
+          "reading",
+          "line",
+          "lines"
+        ],
+        [
+          "write",
+          "writes",
+          "writing"
+        ],
+        [
+          "two",
+          "both",
+          "second",
+          "another",
+          "nested",
+          "comma"
+        ]
+      ],
+      "min_concepts": 3,
+      "hint": "Two files are open at once here. Say which is read and which is written, and how one with statement can manage both."
+    }
+  }
+}

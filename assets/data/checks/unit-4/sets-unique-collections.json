@@ -1,0 +1,144 @@
+{
+  "exercise1": {
+    "prompt": "colors = {\"red\", \"green\", \"blue\"}, add yellow, remove green, print the set",
+    "cases": [
+      {
+        "name": "blue, red and yellow are left",
+        "call": "sorted(colors)",
+        "expect": "['blue', 'red', 'yellow']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "colors really is a set",
+        "call": "type(colors).__name__",
+        "expect": "'set'"
+      },
+      {
+        "kind": "ast",
+        "name": "add() and remove() change the set",
+        "requires": {
+          "calls": [
+            "add",
+            "remove"
+          ]
+        },
+        "describe": "add() to put yellow in and remove() to take green out"
+      },
+      {
+        "name": "three colours are left",
+        "call": "len(colors)",
+        "expect": "3"
+      },
+      {
+        "name": "the final set is printed",
+        "nonempty": true
+      }
+    ],
+    "hint": "A set is built with curly braces and grows with add(), not append(). Sorting it is only a way to look at it here; a set itself keeps no order at all."
+  },
+  "exercise2": {
+    "prompt": "set1 = {1, 2, 3, 4}, set2 = {3, 4, 5, 6}; print the intersection and the union",
+    "cases": [
+      {
+        "name": "the intersection is printed",
+        "stdout_matches": "\\{3, 4\\}",
+        "describe": "{3, 4}, the values in both sets"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the union is printed",
+        "stdout_matches": "\\{1, 2, 3, 4, 5, 6\\}",
+        "describe": "{1, 2, 3, 4, 5, 6}, everything from either set"
+      },
+      {
+        "name": "set1 is unchanged",
+        "call": "sorted(set1)",
+        "expect": "[1, 2, 3, 4]"
+      },
+      {
+        "name": "set2 is unchanged",
+        "call": "sorted(set2)",
+        "expect": "[3, 4, 5, 6]"
+      },
+      {
+        "name": "set1 really is a set",
+        "call": "type(set1).__name__",
+        "expect": "'set'"
+      },
+      {
+        "name": "both results are printed",
+        "min_lines": 2
+      }
+    ],
+    "hint": "Three operators look alike and mean different things: & keeps what both have, | keeps everything, and - keeps what only the first one has. Say out loud which you want before picking the symbol."
+  },
+  "questions": [
+    {
+      "id": "u4-sets-1",
+      "prompt": "What is len({1, 2, 2, 3, 3, 3})?",
+      "choices": [
+        "6",
+        "3",
+        "2",
+        "1"
+      ],
+      "answer": 1,
+      "explain": "The repeats never make it into the set, so only 1, 2 and 3 are stored. That is the property you use to strip duplicates out of a list."
+    },
+    {
+      "id": "u4-sets-2",
+      "kind": "match",
+      "prompt": "For a = {1, 2, 3} and b = {3, 4}, match each operator to its result.",
+      "left": [
+        "a & b",
+        "a | b",
+        "a - b",
+        "3 in a"
+      ],
+      "right": [
+        "{3}",
+        "{1, 2, 3, 4}",
+        "{1, 2}",
+        "True"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "& is the overlap, | is everything, and - is what the first set has to itself. `in` asks about one value and answers with a boolean."
+    },
+    {
+      "id": "u4-sets-3",
+      "kind": "multi",
+      "prompt": "Which of these are true of a set?",
+      "choices": [
+        "It stores each value at most once",
+        "It keeps the order you added things in",
+        "Testing membership with `in` is quick",
+        "You can reach an item with an index"
+      ],
+      "answers": [
+        0,
+        2
+      ],
+      "explain": "A set trades order and indexing for uniqueness and fast membership tests. If you need position, you wanted a list."
+    },
+    {
+      "id": "u4-sets-4",
+      "kind": "blank",
+      "prompt": "colors.___(\"yellow\") puts one new colour into a set.",
+      "blanks": [
+        {
+          "accept": [
+            "add"
+          ]
+        }
+      ],
+      "explain": "append() belongs to lists. A set uses add(), and adding something it already holds changes nothing and raises nothing."
+    }
+  ]
+}

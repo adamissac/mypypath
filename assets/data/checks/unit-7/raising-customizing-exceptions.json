@@ -1,0 +1,179 @@
+{
+  "practice1": {
+    "prompt": "Define an exception class InvalidAgeError built on Exception, then write validate_age(age) that raises it when the age is below 0 or above 150 and returns the age otherwise. Print validate_age(30)",
+    "cases": [
+      {
+        "name": "a valid age comes straight back",
+        "expect_stdout": "30"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "raises",
+        "name": "rejects a negative age",
+        "call": "validate_age(-5)",
+        "expect": "InvalidAgeError"
+      },
+      {
+        "kind": "raises",
+        "name": "rejects an age above 150",
+        "call": "validate_age(200)",
+        "expect": "InvalidAgeError"
+      },
+      {
+        "name": "an age at the edge is still valid",
+        "call": "validate_age(150)",
+        "expect": "150"
+      },
+      {
+        "kind": "ast",
+        "name": "the error is a class of its own and is actually raised",
+        "requires": {
+          "classes": [
+            {
+              "name": "InvalidAgeError",
+              "bases": [
+                "Exception"
+              ]
+            }
+          ],
+          "raises": [
+            "InvalidAgeError"
+          ]
+        },
+        "describe": "class InvalidAgeError(Exception) and a raise that uses it"
+      }
+    ],
+    "hint": "Printing a complaint and carrying on leaves the caller holding the bad age and no way to know it. Raising hands the problem back to whoever asked, which is the only one who can decide what to do about it."
+  },
+  "questions": [
+    {
+      "id": "u7-rce-1",
+      "prompt": "Why raise an exception instead of printing a message and returning?",
+      "choices": [
+        "Printing is slower",
+        "The caller cannot tell a printed complaint from a good result, but it cannot ignore an exception",
+        "You cannot print inside a function",
+        "Exceptions look more professional"
+      ],
+      "answer": 1,
+      "explain": "A message goes to a human. An exception goes to the code, which is what has to stop and do something differently."
+    },
+    {
+      "id": "u7-rce-2",
+      "prompt": "What must a custom exception class inherit from?",
+      "choices": [
+        "object",
+        "Exception, or something that already inherits from it",
+        "Error",
+        "Nothing"
+      ],
+      "answer": 1,
+      "explain": "raise only accepts exception types. A class that inherits from Exception is what makes it one."
+    },
+    {
+      "id": "u7-rce-3",
+      "prompt": "Why write InvalidAgeError instead of using ValueError?",
+      "choices": [
+        "ValueError is deprecated",
+        "A caller can catch just this problem without catching every other bad value in the program",
+        "Custom exceptions are faster",
+        "ValueError cannot carry a message"
+      ],
+      "answer": 1,
+      "explain": "The type is the label. A name of its own is what lets one except clause mean this and not everything vaguely like it."
+    },
+    {
+      "id": "u7-rce-4",
+      "kind": "blank",
+      "prompt": "class InvalidAgeError(___):\n    pass\n\ndef validate_age(age):\n    if age < 0:\n        ___ InvalidAgeError(\"age cannot be negative\")\n    return age",
+      "blanks": [
+        {
+          "accept": [
+            "Exception"
+          ]
+        },
+        {
+          "accept": [
+            "raise"
+          ]
+        }
+      ],
+      "explain": "The base class is what makes it an exception, and raise is what actually stops the function and hands it to the caller."
+    },
+    {
+      "id": "u7-rce-5",
+      "prompt": "What does a bare `raise` inside an except block do?",
+      "choices": [
+        "Raises a new generic error",
+        "Re-raises the exception being handled, keeping its original traceback",
+        "Nothing",
+        "Ends the program silently"
+      ],
+      "answer": 1,
+      "explain": "It is how you log or clean up and still let the error carry on to whoever can actually deal with it."
+    }
+  ],
+  "reflections": {
+    "reflection-exercise1": {
+      "expect_any": [
+        [
+          "invalid",
+          "bad",
+          "wrong",
+          "negative",
+          "empty",
+          "out of range"
+        ],
+        [
+          "caller",
+          "calling",
+          "stop",
+          "stops",
+          "cannot continue",
+          "carry on"
+        ],
+        [
+          "validate",
+          "check",
+          "input",
+          "age",
+          "divide",
+          "withdraw",
+          "password"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Describe a moment where the function has been asked for something impossible, and say why returning any value at all would be a lie."
+    },
+    "reflection-exercise2": {
+      "expect_any": [
+        [
+          "specific",
+          "specifically",
+          "own",
+          "particular",
+          "precise"
+        ],
+        [
+          "catch",
+          "catches",
+          "caught",
+          "except",
+          "handle"
+        ],
+        [
+          "name",
+          "named",
+          "clear",
+          "clearer",
+          "readable",
+          "meaning",
+          "message"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Think about the except clause someone else will write. What does your own class let them say that ValueError does not?"
+    }
+  }
+}

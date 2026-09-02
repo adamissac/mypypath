@@ -1,0 +1,124 @@
+{
+  "practice1": {
+    "prompt": "write letter_grade so all four assertions in the test class hold",
+    "cases": [
+      {
+        "name": "95 is an A",
+        "call": "letter_grade(95)",
+        "expect": "'A'"
+      },
+      {
+        "name": "80 is a B, not a C",
+        "call": "letter_grade(80)",
+        "expect": "'B'"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "90 is the bottom of the A band",
+        "call": "letter_grade(90)",
+        "expect": "'A'"
+      },
+      {
+        "name": "70 is a C",
+        "call": "letter_grade(70)",
+        "expect": "'C'"
+      },
+      {
+        "name": "60 is a D",
+        "call": "letter_grade(60)",
+        "expect": "'D'"
+      },
+      {
+        "name": "12 is an F",
+        "call": "letter_grade(12)",
+        "expect": "'F'"
+      },
+      {
+        "name": "59 falls to F",
+        "call": "letter_grade(59)",
+        "expect": "'F'"
+      },
+      {
+        "kind": "raises",
+        "name": "a score above 100 is refused",
+        "call": "letter_grade(130)",
+        "expect": "ValueError"
+      },
+      {
+        "kind": "raises",
+        "name": "a negative score is refused",
+        "call": "letter_grade(-1)",
+        "expect": "ValueError"
+      }
+    ],
+    "hint": "assertRaises is asking the function to refuse, not to return a grade for nonsense. Check the range first, then work down the bands -- and note that every boundary in the list is itself a pass into the band above it."
+  },
+  "questions": [
+    {
+      "id": "u8-uni-match",
+      "kind": "match",
+      "prompt": "Match each unittest method to what it checks.",
+      "left": [
+        "assertEqual",
+        "assertRaises",
+        "assertTrue",
+        "assertIn"
+      ],
+      "right": [
+        "A value is somewhere in a collection",
+        "Two values are the same",
+        "The call throws the exception you named",
+        "An expression is truthy"
+      ],
+      "answer": [
+        1,
+        2,
+        3,
+        0
+      ],
+      "explain": "Each assertion says a different kind of thing. Reaching for assertTrue when you mean assertEqual costs you the failure message that would have told you both values."
+    },
+    {
+      "id": "u8-uni-2",
+      "prompt": "Why does assertRaises take the function and its arguments separately, rather than a call?",
+      "choices": [
+        "To make it shorter",
+        "So unittest can make the call itself inside a place where it can catch the exception",
+        "Because Python cannot pass calls",
+        "It is a historical accident with no reason"
+      ],
+      "answer": 1,
+      "explain": "If you called it yourself the exception would escape before assertRaises ever saw it. Handing over the function and its arguments lets unittest run it under a guard."
+    },
+    {
+      "id": "u8-uni-3",
+      "prompt": "What does it mean that a TestCase method must start with the word test?",
+      "choices": [
+        "It is a style convention only",
+        "unittest finds and runs methods by that prefix, so one without it is never run",
+        "Python requires the prefix on all methods",
+        "It controls the order they run in"
+      ],
+      "answer": 1,
+      "explain": "A helper method inside a TestCase is useful and deliberately not run. The consequence is that a typo in the prefix produces a test that silently never runs and never fails."
+    },
+    {
+      "id": "u8-uni-4",
+      "kind": "multi",
+      "prompt": "The four assertions in the lesson pin 95, 80, 12 and 130. Which behaviours are left unpinned by those four?",
+      "choices": [
+        "What 90 returns",
+        "What 70 returns",
+        "What a negative score does",
+        "What 95 returns"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "The four cases cover an A, a B, an F and one refusal. Every boundary between them, and the other end of the range, is a decision the suite has no opinion about."
+    }
+  ]
+}

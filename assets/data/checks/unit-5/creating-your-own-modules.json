@@ -1,0 +1,153 @@
+{
+  "exercise1": {
+    "prompt": "Write add(a, b) and subtract(a, b) as a calculator module would, then print 10 + 5 and 10 - 5",
+    "cases": [
+      {
+        "name": "add(10, 5) is 15",
+        "call": "add(10, 5)",
+        "expect": "15"
+      },
+      {
+        "name": "subtract(10, 5) is 5",
+        "call": "subtract(10, 5)",
+        "expect": "5"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "add works on numbers it was not shown",
+        "call": "add(2, 40)",
+        "expect": "42"
+      },
+      {
+        "name": "subtract takes the second number away from the first",
+        "call": "subtract(2, 40)",
+        "expect": "-38"
+      },
+      {
+        "kind": "ast",
+        "name": "both functions take two parameters",
+        "requires": {
+          "functions": [
+            {
+              "name": "add",
+              "params": 2
+            },
+            {
+              "name": "subtract",
+              "params": 2
+            }
+          ]
+        },
+        "describe": "def add(a, b) and def subtract(a, b)"
+      },
+      {
+        "name": "both results are printed",
+        "min_lines": 2
+      }
+    ],
+    "hint": "A module's functions are used by other people, who will pass the arguments in the order your parameters name them. Check which way round subtract takes them."
+  },
+  "exercise2": {
+    "prompt": "Write greet(name) returning \"Hello, {name}!\", then greet \"Python\" and print the result",
+    "cases": [
+      {
+        "name": "greet(\"Python\") gives back the greeting",
+        "call": "greet('Python')",
+        "expect": "\"Hello, Python!\""
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "greet works for any name",
+        "call": "greet('Ada')",
+        "expect": "\"Hello, Ada!\""
+      },
+      {
+        "kind": "ast",
+        "name": "greet hands the message back rather than printing it",
+        "requires": {
+          "functions": [
+            {
+              "name": "greet",
+              "params": 1
+            }
+          ],
+          "returns": 1
+        },
+        "describe": "def greet(name) with a return"
+      },
+      {
+        "name": "the greeting reaches the screen",
+        "stdout_matches": "Hello, Python!",
+        "describe": "Hello, Python! in the output"
+      }
+    ],
+    "hint": "A function in a module cannot know what the caller wants done with the answer, so it hands the answer back. Printing and returning are not the same thing."
+  },
+  "questions": [
+    {
+      "id": "u5-own-1",
+      "prompt": "What makes a file a module?",
+      "choices": [
+        "A special header at the top",
+        "Registering it with Python first",
+        "Nothing: any .py file is a module",
+        "Ending the filename in _module.py"
+      ],
+      "answer": 2,
+      "explain": "There is no ceremony. Save functions in greetings.py and import greetings is all it takes."
+    },
+    {
+      "id": "u5-own-2",
+      "prompt": "You saved functions in greetings.py. How do you import it?",
+      "choices": [
+        "import greetings.py",
+        "import greetings",
+        "import \"greetings.py\"",
+        "from greetings.py import *"
+      ],
+      "answer": 1,
+      "explain": "You import the module name, not the filename. The .py is how the file is stored, not what the module is called."
+    },
+    {
+      "id": "u5-own-3",
+      "kind": "blank",
+      "prompt": "# calculator.py holds add(a, b)\n\n___ calculator\n\nprint(calculator.___(10, 5))",
+      "blanks": [
+        {
+          "accept": [
+            "import"
+          ]
+        },
+        {
+          "accept": [
+            "add"
+          ]
+        }
+      ],
+      "explain": "The module name in front of the function is what says which file the function came from."
+    },
+    {
+      "id": "u5-own-4",
+      "kind": "match",
+      "prompt": "Match each piece to what it is.",
+      "left": [
+        "greetings.py",
+        "say_hello",
+        "greetings.say_hello(\"Ada\")"
+      ],
+      "right": [
+        "The module",
+        "A function defined inside it",
+        "A call that reaches through the module to the function"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explain": "The file is the module, the def is a name inside it, and the dot is how you get from one to the other."
+    }
+  ]
+}

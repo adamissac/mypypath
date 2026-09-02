@@ -1,0 +1,76 @@
+{
+  "practice1": {
+    "prompt": "write a test suite for find_max that catches all three seeded bugs",
+    "cases": [
+      {
+        "kind": "mutation",
+        "name": "your tests pass the working version and catch all three bugs",
+        "reference": "def find_max(numbers):\n    if not numbers:\n        return None\n    biggest = numbers[0]\n    for n in numbers:\n        if n > biggest:\n            biggest = n\n    return biggest\n",
+        "mutants": [
+          "def find_max(numbers):\n    biggest = numbers[0]\n    for n in numbers:\n        if n > biggest:\n            biggest = n\n    return biggest\n",
+          "def find_max(numbers):\n    if not numbers:\n        return None\n    biggest = numbers[0]\n    for n in numbers:\n        if n < biggest:\n            biggest = n\n    return biggest\n",
+          "def find_max(numbers):\n    if not numbers:\n        return None\n    ordered = sorted(numbers)\n    return ordered[-2] if len(ordered) > 1 else ordered[-1]\n"
+        ]
+      }
+    ],
+    "hint": "The starter test already catches two of the three. The one still standing is about the list with nothing in it: decide what find_max should do with [] and assert it."
+  },
+  "questions": [
+    {
+      "id": "u8-wrt-1",
+      "prompt": "What does a test suite that goes green actually tell you?",
+      "choices": [
+        "The code is correct",
+        "The code passes the cases you thought to write",
+        "The code has no bugs",
+        "Nothing at all"
+      ],
+      "answer": 1,
+      "explain": "Green means nothing you asked about was wrong. A bug in a case you never wrote is a bug your suite is silent about, which is why the cases you choose are the whole of the work."
+    },
+    {
+      "id": "u8-wrt-2",
+      "kind": "multi",
+      "prompt": "Which of these are worth a test of their own for a function that finds the largest number?",
+      "choices": [
+        "An empty list",
+        "A list with one item",
+        "A list where the largest is at the end",
+        "The same list tested three times"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Each of the first three can break independently. Repeating one list three times triples the running time and tests exactly as much as running it once."
+    },
+    {
+      "id": "u8-wrt-3",
+      "prompt": "Why is a test that says assert True worth nothing?",
+      "choices": [
+        "It is too short",
+        "It passes whether the code works or not, so it can never report a bug",
+        "Python refuses to run it",
+        "It only works on numbers"
+      ],
+      "answer": 1,
+      "explain": "A test earns its place by being able to fail. One that passes against every version of a function, working or broken, has no opinion about the code at all."
+    },
+    {
+      "id": "u8-wrt-blank",
+      "kind": "blank",
+      "prompt": "A test that cannot ___ cannot tell you anything when it passes.",
+      "blanks": [
+        {
+          "accept": [
+            "fail",
+            "break",
+            "go red"
+          ]
+        }
+      ],
+      "explain": "Passing is only informative next to the possibility of failing. That is the whole reason a suite is judged on the bugs it catches rather than on its colour."
+    }
+  ]
+}

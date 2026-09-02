@@ -1,0 +1,122 @@
+{
+  "exercise1": {
+    "prompt": "original = [1, 2, 3], copy_list = original.copy(), append 4 to the copy, print both",
+    "cases": [
+      {
+        "name": "original is untouched",
+        "call": "original",
+        "expect": "[1, 2, 3]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the copy got the 4",
+        "call": "copy_list",
+        "expect": "[1, 2, 3, 4]"
+      },
+      {
+        "name": "the two names point at two different lists",
+        "call": "original is copy_list",
+        "expect": "False"
+      },
+      {
+        "kind": "ast",
+        "name": "copy() makes the copy and append() adds to it",
+        "requires": {
+          "calls": [
+            "copy",
+            "append"
+          ]
+        },
+        "describe": "original.copy() and then copy_list.append(4)"
+      },
+      {
+        "name": "both lists are printed",
+        "min_lines": 2
+      }
+    ],
+    "hint": "copy_list = original does not make a second list; it makes a second name for the first one, and appending through either name shows up in both. The proof is what original holds at the end."
+  },
+  "exercise2": {
+    "prompt": "list1 = [1, 2, 3], list2 = [1, 2, 3]; print list1 == list2 and list1 is list2",
+    "cases": [
+      {
+        "name": "equal in value, but not the same object",
+        "stdout_matches": "true[\\s\\S]*false",
+        "describe": "True for ==, then False for is"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the two lists hold the same values",
+        "call": "list1 == list2",
+        "expect": "True"
+      },
+      {
+        "name": "the two lists are separate objects",
+        "call": "list1 is list2",
+        "expect": "False"
+      },
+      {
+        "name": "both answers are printed",
+        "min_lines": 2
+      }
+    ],
+    "hint": "== asks whether two things hold the same values; `is` asks whether they are one thing with two names. Two lists typed out separately answer those two questions differently."
+  },
+  "questions": [
+    {
+      "id": "u4-copy-1",
+      "prompt": "After b = a, where a = [1, 2, 3], what does a hold once you run b.append(4)?",
+      "choices": [
+        "[1, 2, 3]",
+        "[1, 2, 3, 4]",
+        "None",
+        "An error"
+      ],
+      "answer": 1,
+      "explain": "b = a copies the name, not the list, so both names refer to the same object and either one can change it."
+    },
+    {
+      "id": "u4-copy-2",
+      "prompt": "For list1 = [1, 2, 3] and list2 = [1, 2, 3], what are list1 == list2 and list1 is list2?",
+      "choices": [
+        "True and True",
+        "True and False",
+        "False and True",
+        "False and False"
+      ],
+      "answer": 1,
+      "explain": "The values match, so == is True. They were built separately, so they are two objects and `is` is False."
+    },
+    {
+      "id": "u4-copy-3",
+      "kind": "multi",
+      "prompt": "Which of these give you a list you can change without touching the original?",
+      "choices": [
+        "original.copy()",
+        "original",
+        "original[:]",
+        "list(original)"
+      ],
+      "answers": [
+        0,
+        2,
+        3
+      ],
+      "explain": "All three build a new list from the old one. Plain assignment is the only entry here that hands back the same object."
+    },
+    {
+      "id": "u4-copy-4",
+      "prompt": "You copy a list of lists with copy(), then change an inner list. What happens to the original?",
+      "choices": [
+        "Nothing, it is fully independent",
+        "The change shows up there too, because the inner lists are shared",
+        "It raises a TypeError",
+        "The original becomes empty"
+      ],
+      "answer": 1,
+      "explain": "copy() is shallow: it makes a new outer list holding the same inner lists. Only a deep copy separates every level."
+    }
+  ]
+}

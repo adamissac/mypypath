@@ -1,0 +1,171 @@
+{
+  "practice1": {
+    "prompt": "Write the real plot the lesson simulates: import matplotlib.pyplot as plt, plot x against y, label both axes, give the figure a title, and show it.",
+    "cases": [
+      {
+        "kind": "ast",
+        "name": "a plot is drawn and displayed",
+        "requires": {
+          "imports": [
+            "matplotlib.pyplot"
+          ],
+          "calls": [
+            "plot",
+            "show"
+          ]
+        },
+        "describe": "matplotlib.pyplot imported, with plot() to draw and show() to display"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "the reader is told what the axes are",
+        "requires": {
+          "calls": [
+            "xlabel",
+            "ylabel",
+            "title"
+          ]
+        },
+        "describe": "xlabel, ylabel and title, so the chart says what it shows"
+      }
+    ],
+    "hint": "matplotlib is not installed here, so this exercise reads your code instead of drawing anything. Write what you would run on your own machine, including the parts that make the picture readable to somebody who did not write it."
+  },
+  "questions": [
+    {
+      "id": "u9-plot-1",
+      "prompt": "What is the conventional import for matplotlib's plotting interface?",
+      "choices": [
+        "import matplotlib",
+        "import matplotlib.pyplot as plt",
+        "from matplotlib import *",
+        "import pyplot"
+      ],
+      "answer": 1,
+      "explain": "Almost every example you will read online uses plt, so following the convention makes other people's code readable to you and yours to them."
+    },
+    {
+      "id": "u9-plot-2",
+      "prompt": "What does plt.show() do?",
+      "choices": [
+        "Saves the figure to a file",
+        "Displays the figure that the earlier calls built up",
+        "Clears the figure",
+        "Prints the data as text"
+      ],
+      "answer": 1,
+      "explain": "The plot, label and title calls all add to a figure that is being assembled. show() is the point where it is put on screen."
+    },
+    {
+      "id": "u9-plot-match",
+      "kind": "match",
+      "prompt": "Match each plot type to the question it answers best.",
+      "left": [
+        "Line plot",
+        "Bar chart",
+        "Scatter plot",
+        "Histogram"
+      ],
+      "right": [
+        "How are these values spread out?",
+        "How does this change over time?",
+        "Do these two variables move together?",
+        "Which category is biggest?"
+      ],
+      "answer": [
+        1,
+        3,
+        2,
+        0
+      ],
+      "explain": "Picking the wrong type does not fail; it just answers a question nobody asked. The shape of the data decides the shape of the chart."
+    },
+    {
+      "id": "u9-plot-order",
+      "kind": "order",
+      "prompt": "Put the steps of building a simple plot in order.",
+      "items": [
+        "x = [1, 2, 3]; y = [2, 4, 6]",
+        "plt.plot(x, y)",
+        "plt.xlabel('X'); plt.ylabel('Y'); plt.title('My plot')",
+        "plt.show()"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "Everything before show() adds to the same figure. Calling show() first would display an empty one."
+    },
+    {
+      "id": "u9-plot-multi",
+      "kind": "multi",
+      "prompt": "Which of these change how a line is drawn?",
+      "choices": [
+        "color='red'",
+        "marker='o'",
+        "linewidth=2",
+        "bins=10"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "bins belongs to a histogram: it decides how the values are grouped, not how a line looks."
+    }
+  ],
+  "reflections": {
+    "reflection-exercise1": {
+      "expect_any": [
+        [
+          "pattern",
+          "trend",
+          "outlier",
+          "see",
+          "visible"
+        ],
+        [
+          "understand",
+          "communicate",
+          "explain",
+          "easier"
+        ],
+        [
+          "line",
+          "bar",
+          "scatter",
+          "histogram"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Say what a picture shows that a column of numbers does not, and name a plot type with the situation it suits."
+    },
+    "reflection-exercise2": {
+      "expect_any": [
+        [
+          "import",
+          "pyplot",
+          "plt"
+        ],
+        [
+          "plot",
+          "bar",
+          "scatter",
+          "data"
+        ],
+        [
+          "show",
+          "display",
+          "label",
+          "title"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Walk through it as steps: bring the library in, give it the data, then the two things you do before anything appears."
+    }
+  }
+}

@@ -1,0 +1,157 @@
+{
+  "practice1": {
+    "prompt": "scores.txt sits next to your program. Print every line in it without its newline, then print how many lines there were.",
+    "files": {
+      "scores.txt": "80\n95\n72\n"
+    },
+    "cases": [
+      {
+        "name": "prints each score, then the count",
+        "expect_stdout": "80\n95\n72\n3"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "works on a shorter file",
+        "files": {
+          "scores.txt": "41\n"
+        },
+        "expect_stdout": "41\n1"
+      },
+      {
+        "name": "works on a longer file",
+        "files": {
+          "scores.txt": "10\n20\n30\n40\n"
+        },
+        "expect_stdout": "10\n20\n30\n40\n4"
+      },
+      {
+        "kind": "ast",
+        "name": "the numbers come out of the file, not out of the code",
+        "requires": {
+          "calls": [
+            "open"
+          ]
+        },
+        "describe": "open() used to read scores.txt"
+      }
+    ],
+    "hint": "The lesson's own example builds a string with the lines in it, which is a stand-in for a file rather than a file. The numbers here are on disk, and only open() can reach them."
+  },
+  "questions": [
+    {
+      "id": "u7-rdf-1",
+      "prompt": "What does read() give you back?",
+      "choices": [
+        "The first line",
+        "The whole file as one string",
+        "A list of lines",
+        "The number of lines"
+      ],
+      "answer": 1,
+      "explain": "read() is everything at once. That is fine for a small file and a problem for a large one, which is why the lesson prefers the loop."
+    },
+    {
+      "id": "u7-rdf-2",
+      "prompt": "Why does printing the result of readlines() show a blank line between each one?",
+      "choices": [
+        "print adds two newlines",
+        "Each line still carries the newline it had in the file, and print adds another",
+        "readlines() adds a newline",
+        "The file has blank lines in it"
+      ],
+      "answer": 1,
+      "explain": "The newline is part of the line as it was stored. strip() is what takes it back off."
+    },
+    {
+      "id": "u7-rdf-3",
+      "prompt": "Why does the lesson call `for line in file:` the best way to read?",
+      "choices": [
+        "It is the shortest to type",
+        "It reads one line at a time, so the whole file never has to fit in memory",
+        "It is the only way that keeps the order",
+        "It closes the file for you"
+      ],
+      "answer": 1,
+      "explain": "read() and readlines() both load everything. Iterating the file object walks it a line at a time, so a huge file costs no more than a small one."
+    },
+    {
+      "id": "u7-rdf-4",
+      "kind": "blank",
+      "prompt": "file = open(\"scores.txt\")\nfor line in file:\n    print(line.___())\nfile.___()",
+      "blanks": [
+        {
+          "accept": [
+            "strip",
+            "rstrip"
+          ]
+        },
+        {
+          "accept": [
+            "close"
+          ]
+        }
+      ],
+      "explain": "strip() removes the newline the file stored, and close() releases the file once the loop has finished with it."
+    }
+  ],
+  "reflections": {
+    "reflection-exercise1": {
+      "expect_any": [
+        [
+          "read",
+          "whole",
+          "everything",
+          "one string",
+          "entire"
+        ],
+        [
+          "readlines",
+          "list",
+          "lines"
+        ],
+        [
+          "loop",
+          "for",
+          "one at a time",
+          "large",
+          "big",
+          "memory"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Say what shape each one hands back, and which of them still works when the file is far too big to hold in memory."
+    },
+    "reflection-exercise2": {
+      "expect_any": [
+        [
+          "open",
+          "opens"
+        ],
+        [
+          "loop",
+          "for",
+          "each line",
+          "every line"
+        ],
+        [
+          "count",
+          "counter",
+          "counts",
+          "add",
+          "increase",
+          "total"
+        ],
+        [
+          "in",
+          "contains",
+          "find",
+          "check",
+          "if"
+        ]
+      ],
+      "min_concepts": 3,
+      "hint": "Your pseudocode needs four moves: open the file, walk it a line at a time, test each line, and keep a running count."
+    }
+  }
+}

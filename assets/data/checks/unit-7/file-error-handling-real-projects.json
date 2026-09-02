@@ -1,0 +1,175 @@
+{
+  "practice1": {
+    "prompt": "save_note(note, filename=\"notes.txt\") raises ValueError(\"Note cannot be empty\") for an empty note, otherwise appends the note and a newline using a with statement and prints Saved: <note>. Call it with \"First note\" and then with \"\", inside a try that catches ValueError and prints Invalid input: <message>",
+    "files": {
+      "notes.txt": "Old note\n"
+    },
+    "cases": [
+      {
+        "name": "saves the good note and reports the empty one",
+        "stdout_matches": "^Saved: First note\nInvalid input: ",
+        "describe": "Saved: First note, then a line starting Invalid input:"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "file",
+        "name": "the new note is added, not written over the old one",
+        "path": "notes.txt",
+        "expect_matches": "Old note[\\s\\S]*First note",
+        "describe": "notes.txt keeping Old note and gaining First note"
+      },
+      {
+        "kind": "raises",
+        "name": "an empty note is refused",
+        "call": "save_note(\"\")",
+        "expect": "ValueError"
+      },
+      {
+        "kind": "ast",
+        "name": "a with statement holds the file and the error is caught by name",
+        "requires": {
+          "withs": 1,
+          "handlers": [
+            "ValueError"
+          ]
+        },
+        "forbids": {
+          "handlers": [
+            "bare"
+          ]
+        },
+        "describe": "a with statement around the open and an except that names ValueError"
+      }
+    ],
+    "hint": "Three habits from this unit have to hold at once here: the file is appended to rather than replaced, the with statement owns the closing, and the except names the one error the function is documented to raise."
+  },
+  "questions": [
+    {
+      "id": "u7-fer-1",
+      "prompt": "A note-saving function opens its file in \"w\" mode. What goes wrong?",
+      "choices": [
+        "Nothing",
+        "Every save destroys every note saved before it",
+        "The file is never created",
+        "The notes are saved twice"
+      ],
+      "answer": 1,
+      "explain": "Write mode empties the file on every open. A program that accumulates anything wants append mode."
+    },
+    {
+      "id": "u7-fer-2",
+      "prompt": "Where should save_note decide that an empty note is invalid?",
+      "choices": [
+        "After writing it, then delete it",
+        "Before opening the file, by raising",
+        "Inside the except block",
+        "It should not check"
+      ],
+      "answer": 1,
+      "explain": "Check before you touch the file. Once the file is open, undoing a bad write is far more work than refusing one."
+    },
+    {
+      "id": "u7-fer-3",
+      "kind": "multi",
+      "prompt": "Which of these are worth handling in a program that saves notes to disk?",
+      "choices": [
+        "FileNotFoundError, when the folder does not exist",
+        "PermissionError, when the file cannot be written",
+        "ValueError, when the note is empty",
+        "SyntaxError, when you mistyped your own code"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "The first three are things the world does to a running program. A syntax error is something you fix, not something you catch."
+    },
+    {
+      "id": "u7-fer-4",
+      "kind": "order",
+      "prompt": "Put the pieces of a robust save in order.",
+      "items": [
+        "Check the note is not empty, and raise if it is",
+        "Open the file with a with statement in append mode",
+        "Write the note and a newline",
+        "Catch the error in the caller and print a message"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "Validate, then open, then write, and let whoever called you decide what to say about a refusal."
+    }
+  ],
+  "reflections": {
+    "reflection-exercise1": {
+      "expect_any": [
+        [
+          "filenotfounderror",
+          "missing",
+          "not exist",
+          "does not exist"
+        ],
+        [
+          "valueerror",
+          "invalid",
+          "empty",
+          "not a number",
+          "bad data"
+        ],
+        [
+          "permissionerror",
+          "permission",
+          "read-only",
+          "cannot write"
+        ],
+        [
+          "with",
+          "try",
+          "except",
+          "handle",
+          "handled"
+        ]
+      ],
+      "min_concepts": 3,
+      "hint": "Walk the program from the file that might not be there to the line that might not be a number, and name the error waiting at each step."
+    },
+    "reflection-exercise2": {
+      "expect_any": [
+        [
+          "with",
+          "automatic",
+          "closes",
+          "closed"
+        ],
+        [
+          "specific",
+          "specifically",
+          "named",
+          "name",
+          "not bare",
+          "particular"
+        ],
+        [
+          "validate",
+          "check",
+          "raise",
+          "raising",
+          "before"
+        ],
+        [
+          "append",
+          "mode",
+          "overwrite",
+          "overwriting"
+        ]
+      ],
+      "min_concepts": 3,
+      "hint": "Pick three habits you would now use without being told, and say what each one prevents."
+    }
+  }
+}

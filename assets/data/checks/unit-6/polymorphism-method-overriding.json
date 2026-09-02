@@ -1,0 +1,203 @@
+{
+  "exercise1": {
+    "prompt": "A Shape parent with draw(), and a Circle subclass that overrides it",
+    "cases": [
+      {
+        "kind": "ast",
+        "name": "Circle is built from Shape and defines its own draw",
+        "requires": {
+          "classes": [
+            {
+              "name": "Circle",
+              "bases": [
+                "Shape"
+              ],
+              "methods": [
+                "draw"
+              ]
+            }
+          ]
+        },
+        "describe": "a Circle class written as class Circle(Shape) with draw inside it"
+      },
+      {
+        "name": "a Circle draws itself",
+        "call": "Circle().draw()",
+        "expect": "'Drawing circle'"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "Shape is the class that defines draw first",
+        "requires": {
+          "classes": [
+            {
+              "name": "Shape",
+              "methods": [
+                "draw"
+              ]
+            }
+          ]
+        },
+        "describe": "a Shape class with a draw of its own"
+      },
+      {
+        "name": "the parent's draw is left as it was",
+        "call": "Shape().draw()",
+        "expect": "'Drawing shape'"
+      },
+      {
+        "name": "a Circle is still a Shape",
+        "call": "isinstance(Circle(), Shape)",
+        "expect": "True"
+      },
+      {
+        "name": "prints what the circle drew",
+        "stdout_matches": "Drawing circle",
+        "describe": "the circle's own message printed"
+      }
+    ],
+    "hint": "The overriding method has to live inside Circle. A function of the same name written at the left margin is a different thing entirely, and Circle().draw() will still find the parent's."
+  },
+  "exercise2": {
+    "prompt": "A Payment parent with two subclasses, each processed through the same loop",
+    "cases": [
+      {
+        "kind": "ast",
+        "name": "both payment types are built from Payment and override process",
+        "requires": {
+          "classes": [
+            {
+              "name": "CreditCard",
+              "bases": [
+                "Payment"
+              ],
+              "methods": [
+                "process"
+              ]
+            },
+            {
+              "name": "PayPal",
+              "bases": [
+                "Payment"
+              ],
+              "methods": [
+                "process"
+              ]
+            }
+          ]
+        },
+        "describe": "CreditCard(Payment) and PayPal(Payment), each with its own process"
+      },
+      {
+        "name": "a card payment reports itself",
+        "call": "CreditCard().process()",
+        "expect": "'Processing credit card'"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "Payment is the class the two share",
+        "requires": {
+          "classes": [
+            {
+              "name": "Payment",
+              "methods": [
+                "process"
+              ]
+            }
+          ]
+        },
+        "describe": "a Payment class with a process of its own"
+      },
+      {
+        "name": "a PayPal payment reports itself differently",
+        "call": "PayPal().process()",
+        "expect": "'Processing PayPal'"
+      },
+      {
+        "name": "the same call gives a different answer per object",
+        "call": "[p.process() for p in [CreditCard(), PayPal()]]",
+        "expect": "['Processing credit card', 'Processing PayPal']"
+      },
+      {
+        "kind": "ast",
+        "name": "the payments are walked with a loop, not written out one by one",
+        "requires": {
+          "loops": [
+            "for"
+          ]
+        },
+        "describe": "a loop over the list of payments"
+      },
+      {
+        "name": "prints both results",
+        "stdout_matches": "Processing PayPal",
+        "describe": "the PayPal result printed"
+      }
+    ],
+    "hint": "The loop body does not know which kind of payment it is holding, and that is the point. Each subclass has to carry its own process for the same line to do different work."
+  },
+  "questions": [
+    {
+      "id": "u6-poly-1",
+      "prompt": "What is polymorphism, in one sentence?",
+      "choices": [
+        "One class having many parents",
+        "The same call doing the right thing for whichever object it lands on",
+        "A class that can change its own methods at runtime",
+        "Two functions with the same name in one file"
+      ],
+      "answer": 1,
+      "explain": "The caller writes payment.process() once. Which version runs is decided by the object, not by the calling code."
+    },
+    {
+      "id": "u6-poly-2",
+      "prompt": "A subclass defines a method with the same name as its parent's. What happens?",
+      "choices": [
+        "Python raises an error about the duplicate",
+        "The parent's version is deleted",
+        "The subclass's version is used for subclass objects, and the parent's is untouched",
+        "Both run, parent first"
+      ],
+      "answer": 2,
+      "explain": "Lookup starts at the object's own class and stops at the first match. The parent's method is still there for the parent's own objects."
+    },
+    {
+      "id": "u6-poly-3",
+      "kind": "match",
+      "prompt": "Match each object to what payment.process() returns for it.",
+      "left": [
+        "Payment()",
+        "CreditCard()",
+        "PayPal()"
+      ],
+      "right": [
+        "Processing credit card",
+        "Processing PayPal",
+        "Processing payment"
+      ],
+      "answer": [
+        2,
+        0,
+        1
+      ],
+      "explain": "Each object finds the process defined nearest to it, which is its own class's if it has one."
+    },
+    {
+      "id": "u6-poly-4",
+      "kind": "blank",
+      "prompt": "Writing the overriding method at the left margin instead of inside the class makes it an ordinary ___, and the object will still find the parent's method.",
+      "blanks": [
+        {
+          "accept": [
+            "function"
+          ]
+        }
+      ],
+      "explain": "A method is a function that lives in a class body. Indentation is the whole difference, and it changes what the object can find."
+    }
+  ]
+}

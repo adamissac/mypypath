@@ -1,0 +1,150 @@
+{
+  "exercise1": {
+    "prompt": "Import the random module and print a random number between 1 and 10",
+    "cases": [
+      {
+        "name": "prints a number between 1 and 10",
+        "stdout_matches": "(^|[^0-9])(10|[1-9])([^0-9]|$)",
+        "describe": "a single number from 1 to 10"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "the random module is imported",
+        "requires": {
+          "imports": [
+            "random"
+          ]
+        },
+        "describe": "import random"
+      },
+      {
+        "kind": "ast",
+        "name": "the number is drawn, not chosen by you",
+        "requires": {
+          "calls": [
+            "randint"
+          ]
+        },
+        "describe": "randint used to pick the number"
+      },
+      {
+        "name": "prints the one number and nothing else",
+        "nonempty": true,
+        "max_lines": 1
+      }
+    ],
+    "hint": "Importing a module makes its names available under the module's own name. Ask yourself what has to go in front of randint once the import line has run."
+  },
+  "exercise2": {
+    "prompt": "Import random, list its contents with dir(), and read the documentation for choice()",
+    "cases": [
+      {
+        "name": "the listing shows what is inside the module",
+        "stdout_matches": "randint",
+        "describe": "the names dir(random) reports"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "the random module is imported",
+        "requires": {
+          "imports": [
+            "random"
+          ]
+        },
+        "describe": "import random"
+      },
+      {
+        "kind": "ast",
+        "name": "both dir and help are used, and help is asked about choice",
+        "requires": {
+          "calls": [
+            "dir",
+            "help",
+            "choice"
+          ]
+        },
+        "describe": "dir(random) and help(random.choice)"
+      },
+      {
+        "name": "the documentation for choice is shown",
+        "stdout_matches": "choice\\(",
+        "describe": "the signature help() prints for choice"
+      }
+    ],
+    "hint": "dir() answers \"what is in here\" and help() answers \"what does this one do\". The exercise asks both questions, so it needs both calls."
+  },
+  "questions": [
+    {
+      "id": "u5-mod-1",
+      "prompt": "What does `import math` actually do?",
+      "choices": [
+        "Copies the math module's code into your file",
+        "Loads the module and binds the name math to it",
+        "Downloads math from the internet",
+        "Makes sqrt available as a bare name"
+      ],
+      "answer": 1,
+      "explain": "The import runs the module once and gives you one name for it. Everything inside stays behind that name, which is why it is math.sqrt and not sqrt."
+    },
+    {
+      "id": "u5-mod-2",
+      "kind": "blank",
+      "prompt": "___ random\n\nprint(random.___(1, 10))",
+      "blanks": [
+        {
+          "accept": [
+            "import"
+          ]
+        },
+        {
+          "accept": [
+            "randint"
+          ]
+        }
+      ],
+      "explain": "The import statement brings the module in, and the module prefix says where randint came from."
+    },
+    {
+      "id": "u5-mod-3",
+      "kind": "match",
+      "prompt": "Match each module to the kind of work it is for.",
+      "left": [
+        "math",
+        "random",
+        "os"
+      ],
+      "right": [
+        "Square roots, pi and rounding",
+        "Dice rolls and shuffling",
+        "Files, folders and the environment"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Each module gathers one area of work. Knowing which module owns a job is most of knowing where to look for the function."
+    },
+    {
+      "id": "u5-mod-4",
+      "kind": "multi",
+      "prompt": "Which of these are reasons to split code into modules?",
+      "choices": [
+        "The same function can be reused by several programs",
+        "A fix made in one place reaches everything that imports it",
+        "Two modules can each have a function called load without clashing",
+        "Code inside a module runs faster than code in the main file"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Reuse, one place to fix, and separate namespaces are all real. Speed is not: a module is the same code, just kept somewhere else."
+    }
+  ]
+}

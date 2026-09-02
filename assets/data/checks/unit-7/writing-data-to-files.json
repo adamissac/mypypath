@@ -1,0 +1,170 @@
+{
+  "practice1": {
+    "prompt": "Starting from names = [\"Alice\", \"Bob\", \"Cleo\"], write each name on its own line into names.txt, then print Wrote 3 names",
+    "cases": [
+      {
+        "name": "reports what it wrote",
+        "expect_stdout": "Wrote 3 names"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "file",
+        "name": "names.txt has all three names, one per line",
+        "path": "names.txt",
+        "expect": "Alice\nBob\nCleo",
+        "describe": "names.txt with Alice, Bob and Cleo on separate lines"
+      },
+      {
+        "kind": "ast",
+        "name": "the names are written to the file, not printed",
+        "requires": {
+          "calls": [
+            "open",
+            "write"
+          ]
+        },
+        "describe": "open() and write() putting the names in the file"
+      },
+      {
+        "kind": "ast",
+        "name": "the list is walked rather than typed out three times",
+        "requires": {
+          "loops": [
+            "for"
+          ]
+        },
+        "describe": "a for loop over the names"
+      }
+    ],
+    "hint": "Two things trip this up: write() does not add a newline of its own, and a file opened in write mode starts empty every single time it is opened."
+  },
+  "questions": [
+    {
+      "id": "u7-wdf-1",
+      "prompt": "What does file.write(\"Alice\") followed by file.write(\"Bob\") put in the file?",
+      "choices": [
+        "Alice\\nBob",
+        "AliceBob",
+        "Alice Bob",
+        "Bob"
+      ],
+      "answer": 1,
+      "explain": "write() writes exactly the characters you gave it. If you want a line break you have to write one."
+    },
+    {
+      "id": "u7-wdf-2",
+      "prompt": "You open a file in \"w\" mode inside a loop, once per name. What ends up in the file?",
+      "choices": [
+        "Every name",
+        "Only the last name",
+        "Only the first name",
+        "Nothing"
+      ],
+      "answer": 1,
+      "explain": "Each open in write mode empties the file again, so every pass throws away the pass before it. Open once, outside the loop."
+    },
+    {
+      "id": "u7-wdf-3",
+      "kind": "match",
+      "prompt": "Match each job to the mode that suits it.",
+      "left": [
+        "Adding a line to a log",
+        "Saving a report that replaces yesterday's",
+        "Loading saved settings"
+      ],
+      "right": [
+        "\"w\"",
+        "\"r\"",
+        "\"a\""
+      ],
+      "answer": [
+        2,
+        0,
+        1
+      ],
+      "explain": "A log grows, so it appends. A report supersedes the old one, so it writes. Settings are only being looked at, so they are read."
+    },
+    {
+      "id": "u7-wdf-4",
+      "prompt": "What does writelines(['a', 'b']) put in the file?",
+      "choices": [
+        "a\\nb\\n",
+        "ab",
+        "a b",
+        "['a', 'b']"
+      ],
+      "answer": 1,
+      "explain": "Despite the name, writelines adds no newlines. The strings you pass have to carry their own."
+    }
+  ],
+  "reflections": {
+    "reflection-exercise1": {
+      "expect_any": [
+        [
+          "overwrite",
+          "overwrites",
+          "replace",
+          "replaces",
+          "erase",
+          "empty",
+          "fresh"
+        ],
+        [
+          "append",
+          "appends",
+          "add",
+          "adds",
+          "end",
+          "keeps"
+        ],
+        [
+          "log",
+          "logs",
+          "diary",
+          "history",
+          "score",
+          "scores",
+          "report",
+          "settings"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Say what happens to yesterday's contents under each mode, then give a real file that would want each one."
+    },
+    "reflection-exercise2": {
+      "expect_any": [
+        [
+          "open",
+          "opens"
+        ],
+        [
+          "loop",
+          "for",
+          "each",
+          "every"
+        ],
+        [
+          "write",
+          "writes",
+          "writing"
+        ],
+        [
+          "newline",
+          "new line",
+          "\\n",
+          "line break",
+          "separate line"
+        ],
+        [
+          "close",
+          "closes",
+          "closing",
+          "with"
+        ]
+      ],
+      "min_concepts": 3,
+      "hint": "Walk the list, write each student, and say explicitly what puts the next one on a new line."
+    }
+  }
+}

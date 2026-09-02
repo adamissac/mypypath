@@ -402,6 +402,37 @@ print(result)</code></pre>
                 </div>
               </div>
 
+              <div class="practice-box interactive">
+                <div class="practice-header">
+                  <h4>Practice: Let the Error Speak</h4>
+                  <span class="practice-badge">Try It Yourself</span>
+                </div>
+                <p>Fill in the two functions below so each one does the obvious thing and nothing else: <code>student_score</code> looks the name up in the dictionary, and <code>share</code> divides. Do not add a guard for a missing name or for zero people. A guard turns a <code>KeyError</code> you can read into a wrong answer you cannot.</p>
+
+                <div class="interactive-editor" data-editor-id="practice1">
+                  <div class="editor-toolbar-small">
+                    <button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+                    <button class="btn-reset" onclick="resetEditor('practice1', '# Look the name up directly. Do not guard against a missing name.\ndef student_score(scores, name):\n    return None\n\n# Divide directly. Do not guard against zero people.\ndef share(total, people):\n    return None\n\nprint(student_score({&quot;Ada&quot;: 90, &quot;Grace&quot;: 95}, &quot;Ada&quot;))\nprint(share(10, 4))')">Reset</button>
+                    <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+                  </div>
+                  <textarea class="code-editor-small" id="editor-practice1"># Look the name up directly. Do not guard against a missing name.
+def student_score(scores, name):
+    return None
+
+# Divide directly. Do not guard against zero people.
+def share(total, people):
+    return None
+
+print(student_score({"Ada": 90, "Grace": 95}, "Ada"))
+print(share(10, 4))</textarea>
+                  <div class="editor-output" id="output-practice1">
+                    <div class="output-placeholder">Press Run to see output</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Each mistake now names itself: a missing key raises <code>KeyError</code>, zero people raises <code>ZeroDivisionError</code>, and a total that is text raises <code>TypeError</code>. That name is the first thing you have to go on when you debug.</p>
+              </div>
+
               <div class="content-section">
                 <h2>Summary</h2>
                 <p>In this lesson, you learned:</p>

@@ -1,0 +1,167 @@
+{
+  "practice1": {
+    "prompt": "Use Python's built-in math library: print the square root of 16, pi, the cosine of 0 and the factorial of 5.",
+    "cases": [
+      {
+        "name": "prints the four values the library gives back",
+        "expect_stdout": "Square root of 16: 4.0\nPi: 3.141592653589793\nCosine of 0: 1.0\nFactorial of 5: 120"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "the math library is imported",
+        "requires": {
+          "imports": [
+            "math"
+          ]
+        },
+        "describe": "an import of the math module"
+      },
+      {
+        "kind": "ast",
+        "name": "the values come from the library, not from typing",
+        "requires": {
+          "calls": [
+            "sqrt",
+            "cos",
+            "factorial"
+          ]
+        },
+        "describe": "sqrt, cos and factorial actually called"
+      }
+    ],
+    "hint": "math.sqrt returns a float, so the square root of 16 does not print the way the whole number 4 does. Let the library produce each value rather than typing what you expect it to say."
+  },
+  "questions": [
+    {
+      "id": "u9-lib-1",
+      "prompt": "Which of these comes with Python, with nothing to install?",
+      "choices": [
+        "requests",
+        "pandas",
+        "math",
+        "matplotlib"
+      ],
+      "answer": 2,
+      "explain": "math, random, datetime, json, csv and os are part of the standard library. The other three come from PyPI and have to be installed first."
+    },
+    {
+      "id": "u9-lib-2",
+      "prompt": "Where do you run `pip install requests`?",
+      "choices": [
+        "At the top of your Python file",
+        "In your terminal, before you run the program",
+        "Inside a function that needs it",
+        "Nowhere, pip is automatic"
+      ],
+      "answer": 1,
+      "explain": "pip is a command-line program, not Python syntax. Put it in a Python file and you get a SyntaxError."
+    },
+    {
+      "id": "u9-lib-match",
+      "kind": "match",
+      "prompt": "Match each external library to what it is for.",
+      "left": [
+        "requests",
+        "matplotlib",
+        "pandas",
+        "beautifulsoup4"
+      ],
+      "right": [
+        "Data analysis with tables",
+        "Charts and visualisations",
+        "Parsing HTML from web pages",
+        "HTTP requests to APIs"
+      ],
+      "answer": [
+        3,
+        1,
+        0,
+        2
+      ],
+      "explain": "Knowing which library covers which job is most of the work of finding one. The names rarely say it on their own."
+    },
+    {
+      "id": "u9-lib-blank",
+      "kind": "blank",
+      "prompt": "The conventional way to bring in the plotting library is `import matplotlib.pyplot ___ plt`.",
+      "blanks": [
+        {
+          "accept": [
+            "as"
+          ]
+        }
+      ],
+      "explain": "An alias shortens a long dotted name. plt is a convention rather than a rule, but almost every example you will read uses it."
+    },
+    {
+      "id": "u9-lib-multi",
+      "kind": "multi",
+      "prompt": "Which are reasonable ways to judge whether a library is worth using?",
+      "choices": [
+        "It has documentation with worked examples",
+        "It is downloaded and used widely",
+        "Its issues show it is still maintained",
+        "Its name is short"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Documentation, usage and recent activity all say something about whether you will be able to get unstuck. The name says nothing."
+    }
+  ],
+  "reflections": {
+    "reflection-exercise1": {
+      "expect_any": [
+        [
+          "built-in",
+          "built in",
+          "standard library",
+          "comes with"
+        ],
+        [
+          "install",
+          "pip",
+          "pypi",
+          "download"
+        ],
+        [
+          "math",
+          "random",
+          "datetime",
+          "requests",
+          "pandas",
+          "numpy",
+          "matplotlib"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "Say what has to happen before you can import each kind, and name one library on each side."
+    },
+    "reflection-exercise2": {
+      "expect_any": [
+        [
+          "import math",
+          "full import",
+          "whole module"
+        ],
+        [
+          "from",
+          "specific",
+          "only the function"
+        ],
+        [
+          "as",
+          "alias",
+          "nickname",
+          "shorter"
+        ]
+      ],
+      "min_concepts": 2,
+      "hint": "There are three forms worth knowing. Say what each one puts into your namespace, and when that is what you want."
+    }
+  }
+}

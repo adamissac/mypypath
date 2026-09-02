@@ -1,0 +1,131 @@
+{
+  "exercise1": {
+    "prompt": "calculate_perimeter(length, width) returns 2 x length + 2 x width",
+    "cases": [
+      {
+        "name": "a 5 by 3 rectangle has a perimeter of 16",
+        "call": "calculate_perimeter(5, 3)",
+        "expect": "16"
+      },
+      {
+        "name": "a rectangle with no size has a perimeter of 0",
+        "call": "calculate_perimeter(0, 0)",
+        "expect": "0"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "generated",
+        "name": "works for any two sides, not only the ones listed",
+        "entry": "calculate_perimeter",
+        "reference": "def calculate_perimeter(length, width):\n    return 2 * length + 2 * width\n",
+        "args": [
+          { "type": "int", "min": -50, "max": 50 },
+          { "type": "int", "min": -50, "max": 50 }
+        ],
+        "runs": 40
+      },
+      {
+        "kind": "ast",
+        "name": "the perimeter is handed back, not printed",
+        "requires": {
+          "functions": [{ "name": "calculate_perimeter", "params": 2 }],
+          "returns": 1
+        },
+        "describe": "calculate_perimeter with a return statement in it"
+      }
+    ],
+    "hint": "Printing a value and returning a value are different things. Only one of them lets the caller store the answer in a variable, and that is what this exercise asks for."
+  },
+  "exercise2": {
+    "prompt": "double(number) returns number * 2, used inside a larger expression",
+    "cases": [
+      {
+        "name": "doubling 5 gives 10",
+        "call": "double(5)",
+        "expect": "10"
+      },
+      {
+        "name": "doubling a negative number works too",
+        "call": "double(-4)",
+        "expect": "-8"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "generated",
+        "name": "works for any number, not only the ones listed",
+        "entry": "double",
+        "reference": "def double(number):\n    return number * 2\n",
+        "args": [{ "type": "int", "min": -100, "max": 100 }],
+        "runs": 40
+      },
+      {
+        "kind": "ast",
+        "name": "double returns a value built from its own parameter",
+        "requires": {
+          "functions": [{ "name": "double", "params": 1 }],
+          "returns": 1,
+          "names": ["number"]
+        },
+        "describe": "double returning something worked out from number"
+      }
+    ],
+    "hint": "double(5) + double(3) only makes sense if each call is worth a number. Work out what your function is worth when the call finishes, and whether that is the doubled value or nothing at all."
+  },
+  "questions": [
+    {
+      "id": "u3-rs-1",
+      "prompt": "What does a function return if it has no return statement?",
+      "choices": ["0", "An empty string", "None", "It raises an error"],
+      "answer": 2,
+      "explain": "Every function hands something back. With no return statement that something is None, which is why a missing return usually shows up as None appearing where a number was expected."
+    },
+    {
+      "id": "u3-rs-2",
+      "prompt": "What is the difference between print(x) and return x inside a function?",
+      "choices": [
+        "There is none, they both give the value back",
+        "print shows the value; return hands it back to whatever called the function",
+        "return shows the value; print hands it back",
+        "print works only for strings"
+      ],
+      "answer": 1,
+      "explain": "print puts characters on the screen and the value is gone afterwards. return gives the value to the caller, which can store it, add to it or pass it on."
+    },
+    {
+      "id": "u3-rs-3",
+      "prompt": "What happens to the lines after a return statement inside a function?",
+      "choices": [
+        "They run first",
+        "They run after the value is sent back",
+        "They never run, because return ends the function",
+        "Python refuses to define the function"
+      ],
+      "answer": 2,
+      "explain": "return leaves the function immediately. Code written after it in the same block is unreachable, which is a common cause of a loop that only ever handles its first item."
+    },
+    {
+      "id": "u3-rs-4",
+      "kind": "order",
+      "prompt": "Put these lines in order so the doubled value is printed.",
+      "items": [
+        "def double(number):",
+        "    return number * 2",
+        "answer = double(5)",
+        "print(answer)"
+      ],
+      "answer": [0, 1, 2, 3],
+      "explain": "The function has to exist before it is called, the call has to finish before its value can be stored, and only then is there something to print."
+    },
+    {
+      "id": "u3-rs-5",
+      "kind": "blank",
+      "prompt": "To send a value back out of a function, use the ___ keyword.",
+      "blanks": [
+        { "accept": ["return"] }
+      ],
+      "explain": "return is the keyword that ends the function and hands its value to the caller."
+    }
+  ]
+}

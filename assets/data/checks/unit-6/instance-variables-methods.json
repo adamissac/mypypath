@@ -1,0 +1,146 @@
+{
+  "exercise1": {
+    "prompt": "A Book class with title and author as instance variables",
+    "cases": [
+      {
+        "name": "the book keeps the title it was made with",
+        "call": "Book(\"Python Guide\", \"Jane Smith\").title",
+        "expect": "'Python Guide'"
+      },
+      {
+        "name": "prints the title and the author",
+        "stdout_matches": "Jane Smith",
+        "describe": "the author printed"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "Book is a class with an __init__",
+        "requires": {
+          "classes": [
+            {
+              "name": "Book",
+              "methods": [
+                "__init__"
+              ]
+            }
+          ]
+        },
+        "describe": "a Book class whose __init__ takes a title and an author"
+      },
+      {
+        "name": "a different book gets its own title",
+        "call": "Book(\"Dune\", \"Frank Herbert\").title",
+        "expect": "'Dune'"
+      },
+      {
+        "name": "a different book gets its own author",
+        "call": "Book(\"Dune\", \"Frank Herbert\").author",
+        "expect": "'Frank Herbert'"
+      }
+    ],
+    "hint": "Instance variables are set on self inside __init__, from the parameters. Values written directly in the class body are shared by every book, which is why a second book with different details catches that mistake."
+  },
+  "exercise2": {
+    "prompt": "A BankAccount with a balance, a deposit method and a get_balance method",
+    "cases": [
+      {
+        "name": "a new account starts at zero",
+        "call": "BankAccount().get_balance()",
+        "expect": "0"
+      },
+      {
+        "name": "prints the balance after the deposit",
+        "stdout_matches": "100",
+        "describe": "the balance printed after depositing 100"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "deposit and get_balance are methods on the class",
+        "requires": {
+          "classes": [
+            {
+              "name": "BankAccount",
+              "methods": [
+                "__init__",
+                "deposit",
+                "get_balance"
+              ]
+            }
+          ]
+        },
+        "describe": "a BankAccount class with deposit and get_balance inside it"
+      },
+      {
+        "name": "two deposits add up",
+        "call": "(lambda a: (a.deposit(40), a.deposit(60), a.get_balance())[-1])(BankAccount())",
+        "expect": "100"
+      },
+      {
+        "name": "each account has its own balance",
+        "call": "(lambda a, b: (a.deposit(70), b.get_balance())[-1])(BankAccount(), BankAccount())",
+        "expect": "0"
+      }
+    ],
+    "hint": "deposit has to add to what is already there rather than replace it, so two deposits in a row are what tells the two apart. Both methods go inside the class, each taking self first."
+  },
+  "questions": [
+    {
+      "id": "u6-inst-1",
+      "prompt": "Where does an instance variable get its value?",
+      "choices": [
+        "From the class body, once, for every object",
+        "From self inside a method, separately for each object",
+        "From a global variable of the same name",
+        "From the name of the class"
+      ],
+      "answer": 1,
+      "explain": "Anything assigned to self belongs to that one object. That is what makes two books able to have different titles."
+    },
+    {
+      "id": "u6-inst-2",
+      "prompt": "Why does deposit take self as its first parameter?",
+      "choices": [
+        "Python requires every function to have it",
+        "So the method can reach the balance of the account it was called on",
+        "To make the method faster",
+        "So the method can be called without an object"
+      ],
+      "answer": 1,
+      "explain": "account.deposit(100) passes account in as self. Without it the method has no account to add the money to."
+    },
+    {
+      "id": "u6-inst-3",
+      "kind": "multi",
+      "prompt": "Which lines belong inside the class body, indented under `class BankAccount:`?",
+      "choices": [
+        "def __init__(self):",
+        "def deposit(self, amount):",
+        "account = BankAccount()",
+        "print(account.get_balance())"
+      ],
+      "answers": [
+        0,
+        1
+      ],
+      "explain": "The methods are part of the class. Making an account and printing its balance are things the program does with the class, so they sit outside it."
+    },
+    {
+      "id": "u6-inst-4",
+      "kind": "blank",
+      "prompt": "To add to the balance rather than overwrite it, deposit does self.balance ___ amount.",
+      "blanks": [
+        {
+          "accept": [
+            "+=",
+            "+ ="
+          ]
+        }
+      ],
+      "explain": "Writing self.balance = amount throws away everything deposited before, and one deposit is not enough to notice."
+    }
+  ]
+}

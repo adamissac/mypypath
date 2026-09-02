@@ -1,0 +1,117 @@
+{
+  "exercise1": {
+    "prompt": "grid = [[1, 2, 3], [4, 5, 6]], print grid[0][1] and grid[1][2]",
+    "cases": [
+      {
+        "name": "grid is two rows of three",
+        "call": "grid",
+        "expect": "[[1, 2, 3], [4, 5, 6]]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "row 0 column 1, then row 1 column 2",
+        "stdout_matches": "\\b2\\b[\\s\\S]*\\b6\\b",
+        "describe": "2, then 6"
+      },
+      {
+        "name": "two values are printed",
+        "min_lines": 2
+      },
+      {
+        "name": "the second index reaches inside a row",
+        "call": "grid[1][2]",
+        "expect": "6"
+      }
+    ],
+    "hint": "grid[1] is a whole row, and a second index picks an item out of that row. Decide which number is the row and which is the column before you write either one."
+  },
+  "exercise2": {
+    "prompt": "table = [[10, 20], [30, 40], [50, 60]], nested loops printing each element on its own line",
+    "cases": [
+      {
+        "name": "every element on its own line",
+        "expect_stdout": "10\n20\n30\n40\n50\n60"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "table is three rows of two",
+        "call": "table",
+        "expect": "[[10, 20], [30, 40], [50, 60]]"
+      },
+      {
+        "kind": "ast",
+        "name": "a loop walks the table",
+        "requires": {
+          "loops": [
+            "for"
+          ]
+        },
+        "describe": "a for loop, rather than six print statements"
+      },
+      {
+        "name": "six lines of output",
+        "min_lines": 6
+      }
+    ],
+    "hint": "One loop hands you a row, which is itself a list. Printing that row gives you the brackets too, so a second loop is what gets you down to the numbers."
+  },
+  "questions": [
+    {
+      "id": "u4-nested-1",
+      "prompt": "For grid = [[1, 2, 3], [4, 5, 6]], what is grid[1][0]?",
+      "choices": [
+        "1",
+        "2",
+        "4",
+        "[4, 5, 6]"
+      ],
+      "answer": 2,
+      "explain": "The first index picks the row and the second picks the item inside it, so grid[1][0] is the first item of the second row."
+    },
+    {
+      "id": "u4-nested-2",
+      "prompt": "What does len(grid) report for grid = [[1, 2, 3], [4, 5, 6]]?",
+      "choices": [
+        "2",
+        "3",
+        "6",
+        "5"
+      ],
+      "answer": 0,
+      "explain": "len() counts the items of the outer list, which are the rows. The width of a row is len(grid[0])."
+    },
+    {
+      "id": "u4-nested-3",
+      "kind": "order",
+      "prompt": "Put these lines in order so every number in the table is printed on its own line.",
+      "items": [
+        "table = [[10, 20], [30, 40]]",
+        "for row in table:",
+        "    for element in row:",
+        "        print(element)"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "Each loop is indented inside the one above it, and the print sits deepest of all, so it runs once per element rather than once per row."
+    },
+    {
+      "id": "u4-nested-4",
+      "kind": "mcq",
+      "prompt": "A single loop, for row in table, prints what on each pass?",
+      "choices": [
+        "One number",
+        "A whole row, brackets and all",
+        "Nothing",
+        "The column index"
+      ],
+      "answer": 1,
+      "explain": "Each item of the outer list is a list, so printing it shows the brackets. That is the tell that you need the inner loop."
+    }
+  ]
+}

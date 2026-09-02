@@ -1,0 +1,102 @@
+{
+  "practice1": {
+    "prompt": "rebuild the call chain so the traceback names both functions",
+    "cases": [
+      {
+        "name": "the average of 2, 4 and 6",
+        "call": "process_data([2, 4, 6])",
+        "expect": "4.0"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a single number averages to itself",
+        "call": "process_data([7])",
+        "expect": "7.0"
+      },
+      {
+        "kind": "raises",
+        "name": "an empty list still raises ZeroDivisionError",
+        "call": "process_data([])",
+        "expect": "ZeroDivisionError"
+      },
+      {
+        "kind": "ast",
+        "name": "process_data hands its work to calculate_average",
+        "requires": {
+          "functions": [
+            "calculate_average",
+            "process_data"
+          ],
+          "calls": [
+            "calculate_average"
+          ]
+        },
+        "describe": "two functions, with process_data calling calculate_average"
+      },
+      {
+        "kind": "ast",
+        "name": "the error is let out, not caught",
+        "forbids": {
+          "handlers": true
+        },
+        "describe": "no try/except, so the traceback can show both frames"
+      }
+    ],
+    "hint": "Two frames is the whole point of the exercise: the empty list is passed in one function and divided by in another, so both names appear in the traceback. Catching the error would collapse that chain into nothing."
+  },
+  "questions": [
+    {
+      "id": "u8-utb-1",
+      "prompt": "Where in a traceback is the error that actually stopped the program?",
+      "choices": [
+        "The first line",
+        "The last line",
+        "The middle",
+        "It is not shown"
+      ],
+      "answer": 1,
+      "explain": "Python prints the frames oldest first and the error last. Reading from the bottom gives you what broke before you work back through who asked for it."
+    },
+    {
+      "id": "u8-utb-2",
+      "prompt": "What do the lines above the error message tell you?",
+      "choices": [
+        "Other errors that also happened",
+        "The chain of calls that led to the line that broke",
+        "Suggestions for fixing it",
+        "How long the program ran"
+      ],
+      "answer": 1,
+      "explain": "Each frame is one call still in progress. The chain is how a bad value that entered at the top ends up dividing by zero somewhere near the bottom."
+    },
+    {
+      "id": "u8-utb-3",
+      "kind": "order",
+      "prompt": "Put the steps of reading a traceback in the order the lesson recommends.",
+      "items": [
+        "Work back up the frames to find where the bad value came from",
+        "Read the last line for the error type and message",
+        "Look at the line just above it to see which line of your code raised it"
+      ],
+      "answer": [
+        1,
+        2,
+        0
+      ],
+      "explain": "What broke, then where, then why. Starting at the top of a long traceback usually means reading through library code that has nothing wrong with it."
+    },
+    {
+      "id": "u8-utb-4",
+      "prompt": "Why does catching the exception make this bug harder to diagnose?",
+      "choices": [
+        "It makes the program slower",
+        "The traceback is never printed, so the call chain that explains the failure is lost",
+        "Python stops recording line numbers",
+        "It does not, catching is always better"
+      ],
+      "answer": 1,
+      "explain": "The traceback is only produced when nothing handles the exception. Catching it early, before you understand it, discards the one report that named both functions."
+    }
+  ]
+}

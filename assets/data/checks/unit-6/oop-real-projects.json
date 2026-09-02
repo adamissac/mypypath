@@ -1,0 +1,194 @@
+{
+  "exercise1": {
+    "prompt": "A library system: a Book class, and a Library that guards its own collection",
+    "cases": [
+      {
+        "name": "a book keeps the details it was made with",
+        "call": "Book(\"Dune\", \"Frank Herbert\", \"111\").author",
+        "expect": "'Frank Herbert'"
+      },
+      {
+        "name": "the program shows the library doing something",
+        "nonempty": true
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "Library holds the four operations, and Book holds the details",
+        "requires": {
+          "classes": [
+            {
+              "name": "Book",
+              "methods": [
+                "__init__"
+              ]
+            },
+            {
+              "name": "Library",
+              "methods": [
+                "__init__",
+                "add_book",
+                "remove_book",
+                "find_book",
+                "list_books"
+              ]
+            }
+          ]
+        },
+        "describe": "a Book class and a Library class with add_book, remove_book, find_book and list_books"
+      },
+      {
+        "name": "a book that was added can be found again",
+        "call": "(lambda lib: (lib.add_book(Book(\"Dune\", \"Frank Herbert\", \"111\")), lib.find_book(\"Dune\").author)[-1])(Library())",
+        "expect": "'Frank Herbert'"
+      },
+      {
+        "name": "a book that was removed can no longer be found",
+        "call": "(lambda lib: (lib.add_book(Book(\"Dune\", \"Frank Herbert\", \"111\")), lib.remove_book(\"111\"), lib.find_book(\"Dune\"))[-1])(Library())",
+        "expect": "None"
+      },
+      {
+        "name": "the collection is not left open to the outside",
+        "call": "[a for a in vars(Library()) if not a.startswith(\"_\")]",
+        "expect": "[]"
+      }
+    ],
+    "hint": "Encapsulation here means the list of books is not something a caller can reach and reorder by hand; every change goes through a method. The name you give the attribute is what says so."
+  },
+  "exercise2": {
+    "prompt": "A Shape base class with Rectangle and Circle overriding area(), totalled over a list",
+    "cases": [
+      {
+        "kind": "ast",
+        "name": "Rectangle and Circle are both built from Shape and override area",
+        "requires": {
+          "classes": [
+            {
+              "name": "Rectangle",
+              "bases": [
+                "Shape"
+              ],
+              "methods": [
+                "area"
+              ]
+            },
+            {
+              "name": "Circle",
+              "bases": [
+                "Shape"
+              ],
+              "methods": [
+                "area"
+              ]
+            }
+          ]
+        },
+        "describe": "Rectangle(Shape) and Circle(Shape), each with its own area"
+      },
+      {
+        "name": "a rectangle knows its area",
+        "call": "Rectangle(5, 3).area()",
+        "expect": "15"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "Shape is the base the two shapes share",
+        "requires": {
+          "classes": [
+            {
+              "name": "Shape",
+              "methods": [
+                "area"
+              ]
+            }
+          ]
+        },
+        "describe": "a Shape class with an area of its own"
+      },
+      {
+        "name": "a circle knows its area",
+        "call": "round(Circle(4).area())",
+        "expect": "50"
+      },
+      {
+        "name": "a mixed list of shapes can be totalled without asking what each one is",
+        "call": "round(sum(s.area() for s in [Rectangle(2, 8), Circle(2)]))",
+        "expect": "29"
+      },
+      {
+        "name": "prints the total",
+        "nonempty": true
+      }
+    ],
+    "hint": "Area is width times height for one shape and pi times radius squared for the other, and the sum does not want to know which is which. If the total is wrong, check each area on its own first."
+  },
+  "questions": [
+    {
+      "id": "u6-real-1",
+      "prompt": "The Library stores its books in a private list. Why not just use a public one?",
+      "choices": [
+        "Private attributes are faster",
+        "Because every change then has to go through a method, which is where the rules live",
+        "Because Python requires it inside classes",
+        "To hide the books from other objects entirely"
+      ],
+      "answer": 1,
+      "explain": "A public list can be appended to from anywhere, so no rule about what a valid book is can be enforced. The methods are the only door."
+    },
+    {
+      "id": "u6-real-2",
+      "prompt": "sum(shape.area() for shape in shapes) works over a list of rectangles and circles. What makes that possible?",
+      "choices": [
+        "The shapes are all the same class",
+        "Every shape has an area method, so the same call is valid for each",
+        "sum knows how to measure shapes",
+        "Python checks the type of each object first"
+      ],
+      "answer": 1,
+      "explain": "The loop asks each object for its area and lets the object answer. Adding a Triangle later needs no change to this line."
+    },
+    {
+      "id": "u6-real-3",
+      "kind": "multi",
+      "prompt": "Which of these are signs a problem is better modelled with classes than with loose functions?",
+      "choices": [
+        "Several values always travel together and are always passed as a group",
+        "The same operations keep being written for things of different kinds",
+        "The script is one calculation on two numbers",
+        "You want to avoid using functions"
+      ],
+      "answers": [
+        0,
+        1
+      ],
+      "explain": "Data that travels together wants to be one object, and repeated operations across kinds want a shared base. A single calculation is better off as a function."
+    },
+    {
+      "id": "u6-real-4",
+      "kind": "match",
+      "prompt": "Match each Library method to the question it answers.",
+      "left": [
+        "add_book",
+        "remove_book",
+        "find_book",
+        "list_books"
+      ],
+      "right": [
+        "Which book is this one?",
+        "What is in here?",
+        "Take this one out",
+        "Put this one in"
+      ],
+      "answer": [
+        3,
+        2,
+        0,
+        1
+      ],
+      "explain": "Each method names one thing a caller wants to do, which is what keeps the collection itself out of reach."
+    }
+  ]
+}

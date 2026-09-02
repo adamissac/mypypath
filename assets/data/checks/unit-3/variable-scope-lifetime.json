@@ -1,0 +1,108 @@
+{
+  "exercise1": {
+    "prompt": "A global name and a local greeting, printed together from greet()",
+    "cases": [
+      {
+        "name": "prints the local greeting",
+        "stdout_matches": "hello",
+        "describe": "the greeting made inside the function"
+      },
+      {
+        "name": "prints the global name as well",
+        "stdout_matches": "python",
+        "describe": "the name made outside the function"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "greet reads both its own variable and the one outside it",
+        "requires": {
+          "functions": [{ "name": "greet", "params": 0 }],
+          "calls": ["greet"],
+          "names": ["name", "greeting"]
+        },
+        "describe": "a greet function that uses both greeting and name"
+      }
+    ],
+    "hint": "A function can read a variable made outside it without being handed it. Check that both values reach the print, and that greeting is created inside the function rather than beside it."
+  },
+  "exercise2": {
+    "prompt": "increment_counter() raises a global counter, called twice",
+    "cases": [
+      {
+        "name": "the counter reads 1 and then 2 across the two calls",
+        "expect_stdout": "1\n2"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "ast",
+        "name": "the counter is defined outside and changed inside",
+        "requires": {
+          "functions": [{ "name": "increment_counter", "params": 0 }],
+          "calls": ["increment_counter"],
+          "names": ["counter"]
+        },
+        "describe": "an increment_counter function that works on counter"
+      }
+    ],
+    "hint": "If the second call prints the same number as the first, the function is working on its own copy. Ask which counter the assignment inside the function is creating."
+  },
+  "questions": [
+    {
+      "id": "u3-vsl-1",
+      "prompt": "A variable is created inside a function. What happens if you print it after the function has finished?",
+      "choices": [
+        "It prints the last value it held",
+        "It prints None",
+        "Python raises a NameError",
+        "It prints an empty string"
+      ],
+      "answer": 2,
+      "explain": "A local variable stops existing when the function returns. Outside, the name was never defined at all, so Python says it does not know it."
+    },
+    {
+      "id": "u3-vsl-2",
+      "prompt": "What does the global keyword do inside a function?",
+      "choices": [
+        "It creates a new variable that other functions can read",
+        "It says that assignments to this name should change the variable outside the function",
+        "It makes the variable read-only",
+        "It imports the variable from another file"
+      ],
+      "answer": 1,
+      "explain": "Reading a global needs no keyword. global is only needed when you assign to one, because an assignment inside a function otherwise makes a new local of the same name."
+    },
+    {
+      "id": "u3-vsl-3",
+      "kind": "multi",
+      "prompt": "Which of these are true about local variables?",
+      "choices": [
+        "They are created each time the function runs",
+        "They disappear when the function finishes",
+        "Two functions may each have a local called total without clashing",
+        "They can be read from anywhere in the program"
+      ],
+      "answers": [0, 1, 2],
+      "explain": "Locals live and die with one run of one function, which is exactly why the same name can be reused safely elsewhere. The last option describes a global, not a local."
+    },
+    {
+      "id": "u3-vsl-4",
+      "kind": "match",
+      "prompt": "Match each piece of code to what it makes.",
+      "left": [
+        "count = 0 at the top of the file",
+        "count = 0 inside a function body",
+        "global count then count = 1 inside a function"
+      ],
+      "right": [
+        "a new local variable that hides the global",
+        "a global variable",
+        "a change to the existing global variable"
+      ],
+      "answer": [1, 0, 2],
+      "explain": "The same line means different things depending on where it sits, and global is what tells Python you meant the outer one."
+    }
+  ]
+}

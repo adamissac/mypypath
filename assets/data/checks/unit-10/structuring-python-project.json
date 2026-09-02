@@ -1,0 +1,70 @@
+{
+  "questions": [
+    {
+      "id": "u10-struct-1",
+      "prompt": "Your main.py has grown to 400 lines. Which split is most likely to help?",
+      "choices": [
+        "Cut it into four files of a hundred lines each",
+        "Move the functions that read and write the save file into their own module and import them",
+        "Put every function in its own file",
+        "Leave it alone, since splitting working code only risks breaking it"
+      ],
+      "answer": 1,
+      "explain": "A split is worth making where a seam already exists. Splitting by line count puts related code in different files and unrelated code in the same one."
+    },
+    {
+      "id": "u10-struct-2",
+      "kind": "blank",
+      "prompt": "# main.py\n___ utils ___ validate_input",
+      "blanks": [
+        {
+          "accept": [
+            "from"
+          ]
+        },
+        {
+          "accept": [
+            "import"
+          ]
+        }
+      ],
+      "explain": "from utils import validate_input pulls one name out of utils.py. The module name is the file name with the .py taken off."
+    },
+    {
+      "id": "u10-struct-3",
+      "prompt": "Why put tests in their own folder instead of at the bottom of main.py?",
+      "choices": [
+        "Python refuses to run tests in the same file as the program",
+        "Tests at the bottom of main.py run every time the program runs, and ship to whoever uses it",
+        "It makes the project look bigger",
+        "Tests have to live in a folder called tests"
+      ],
+      "answer": 1,
+      "explain": "Separating them means the program runs the program and the test run runs the tests. Nothing in Python forces the folder name; the separation is the point."
+    },
+    {
+      "id": "u10-struct-4",
+      "kind": "match",
+      "prompt": "Match each file to the job it does in a small project.",
+      "left": [
+        "main.py",
+        "utils.py",
+        "config.py",
+        "README.md"
+      ],
+      "right": [
+        "Settings the program reads, kept in one place so they are easy to change",
+        "How to install and run the project",
+        "The entry point that starts the program",
+        "Small helper functions called from several places"
+      ],
+      "answer": [
+        2,
+        3,
+        0,
+        1
+      ],
+      "explain": "Each file should have a job you can say in one sentence. Not being able to say what a file is for is the sign that the split was made by size rather than purpose."
+    }
+  ]
+}
