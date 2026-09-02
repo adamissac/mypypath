@@ -192,6 +192,50 @@ describe.skipIf(!havePython)('reading a class off the tree', () => {
   });
 });
 
+/* ------------------------------------- boolean and comparison operators (U2) */
+
+/* Unit 2 asks for "age >= 18 AND has_ticket". With a 20 year old holding a
+ * ticket, `or` returns True just as readily, prints the same word, and means
+ * something entirely different -- it would admit a twelve year old. Running the
+ * code cannot separate them at these values. The operator they wrote can.
+ */
+describe.skipIf(!havePython)('reading boolean and comparison operators', () => {
+  const AND = 'age = 20\nhas_ticket = True\nprint(age >= 18 and has_ticket)\n';
+  const OR = 'age = 20\nhas_ticket = True\nprint(age >= 18 or has_ticket)\n';
+
+  it('records which boolean operator was written', () => {
+    expect(analyze(AND).boolops).toEqual(['And']);
+    expect(analyze(OR).boolops).toEqual(['Or']);
+  });
+
+  it('records the comparison operators', () => {
+    expect(analyze(AND).compares).toEqual(['GtE']);
+    expect(analyze('print(1 < 2 <= 3)\n').compares).toEqual(['Lt', 'LtE']);
+  });
+
+  it('tells and from or, which the output at these values cannot', () => {
+    const testCase = { kind: 'ast', describe: 'and joining the two conditions',
+      requires: { boolops: ['And'] }, forbids: { boolops: ['Or'] } };
+    expect(AST.check(testCase, analyze(AND)).ok).toBe(true);
+    expect(AST.check(testCase, analyze(OR)).ok).toBe(false);
+  });
+
+  /* One Unit 2 exercise genuinely wants both: age AND (ticket OR vip). */
+  it('can require both operators together', () => {
+    const both = 'if age >= 18 and (has_ticket or is_vip):\n    print("in")\n';
+    const testCase = { kind: 'ast', describe: 'an and with a bracketed or',
+      requires: { boolops: ['And', 'Or'] } };
+    expect(AST.check(testCase, analyze(both)).ok).toBe(true);
+    expect(AST.check(testCase, analyze(AND)).ok).toBe(false);
+  });
+
+  it('finds no operators in code that printed the answer instead', () => {
+    const report = analyze('print(True)\n');
+    expect(report.boolops).toEqual([]);
+    expect(report.compares).toEqual([]);
+  });
+});
+
 /* ------------------------------------------ raising and handling (U7) */
 
 describe.skipIf(!havePython)('reading exception handling off the tree', () => {

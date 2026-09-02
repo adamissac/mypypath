@@ -1,4 +1,54 @@
 {
+  "exercise1": {
+    "prompt": "an if inside an if",
+    "cases": [
+      {
+        "name": "prints the driving message",
+        "expect_stdout": "You can drive!"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "has_license is True",
+        "call": "has_license",
+        "expect": "True"
+      },
+      {
+        "kind": "ast",
+        "name": "one condition inside another",
+        "describe": "an outer if for age with an inner if for the licence",
+        "requires": {
+          "conditionals": 2
+        }
+      }
+    ],
+    "hint": "The lesson is asking for one if inside another, not two joined with and. Both give the same answer here; only one of them is the shape being taught."
+  },
+  "exercise2": {
+    "prompt": "a nested if with an else on the inner test",
+    "cases": [
+      {
+        "name": "prints the swimming message",
+        "expect_stdout": "Perfect for swimming!"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "temperature holds 85",
+        "call": "temperature",
+        "expect": "85"
+      },
+      {
+        "kind": "ast",
+        "name": "one condition inside another",
+        "describe": "an outer if for temperature with an inner if-else",
+        "requires": {
+          "conditionals": 2
+        }
+      }
+    ],
+    "hint": "The inner if-else only runs when the outer test passed, which is why a cold day prints nothing at all rather than the second message."
+  },
   "questions": [
     {
       "id": "u2-nes-1",

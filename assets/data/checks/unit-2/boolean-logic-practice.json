@@ -1,4 +1,85 @@
 {
+  "exercise1": {
+    "prompt": "three conditions joined with and",
+    "cases": [
+      {
+        "name": "prints the legal message",
+        "expect_stdout": "You can drive legally!"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "all three conditions are combined",
+        "call": "age >= 18 and has_license and has_insurance",
+        "expect": "True"
+      },
+      {
+        "kind": "ast",
+        "name": "the print is inside an if",
+        "describe": "a single if with all three tests",
+        "requires": {
+          "conditionals": 1
+        }
+      },
+      {
+        "kind": "ast",
+        "name": "the three tests are joined with and",
+        "describe": "and joining all three conditions",
+        "requires": {
+          "boolops": [
+            "And"
+          ]
+        },
+        "forbids": {
+          "boolops": [
+            "Or"
+          ]
+        }
+      }
+    ],
+    "hint": "and chains: every one of the three has to hold. One if, not three nested ones."
+  },
+  "exercise2": {
+    "prompt": "and with a bracketed or",
+    "cases": [
+      {
+        "name": "prints the entry message",
+        "expect_stdout": "You can enter!"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "is_vip is False",
+        "call": "is_vip",
+        "expect": "False"
+      },
+      {
+        "name": "the or is grouped inside the and",
+        "call": "age >= 18 and (has_ticket or is_vip)",
+        "expect": "True"
+      },
+      {
+        "kind": "ast",
+        "name": "the print is inside an if",
+        "describe": "a single if",
+        "requires": {
+          "conditionals": 1
+        }
+      },
+      {
+        "kind": "ast",
+        "name": "both and and or are used",
+        "describe": "an and joining the age test to a bracketed or",
+        "requires": {
+          "boolops": [
+            "And",
+            "Or"
+          ]
+        }
+      }
+    ],
+    "hint": "Without the brackets Python binds and tighter than or, which asks a different question: age and ticket, or VIP alone. The brackets are what make the age required either way."
+  },
   "questions": [
     {
       "id": "u2-bool-1",
