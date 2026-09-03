@@ -1,0 +1,76 @@
+{
+  "exercise1": {
+    "prompt": "Three ways to say a condition that reads like the question.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "in_subjects(__import__(\"pandas\").DataFrame({\"subject\": [\"maths\", \"art\", \"computing\"]}), [\"maths\", \"computing\"])",
+        "expect": "2"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "nothing matching counts zero",
+        "call": "in_subjects(__import__(\"pandas\").DataFrame({\"subject\": [\"art\"]}), [\"maths\"])",
+        "expect": "0"
+      },
+      {
+        "name": "an empty list of subjects matches nothing",
+        "call": "in_subjects(__import__(\"pandas\").DataFrame({\"subject\": [\"art\"]}), [])",
+        "expect": "0"
+      },
+      {
+        "name": "isin does the testing",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "isin"
+          ]
+        },
+        "describe": "isin rather than a chain of comparisons"
+      }
+    ],
+    "hint": "df[\"subject\"].isin(subjects) is the mask. Its sum is the count, and int() makes it a plain number."
+  },
+  "questions": [
+    {
+      "id": "d6-ibq-1",
+      "prompt": "What does isin take?",
+      "choices": [
+        "A single value",
+        "A collection of values to test against",
+        "A condition",
+        "A column name"
+      ],
+      "answer": 1,
+      "explain": "It replaces a chain of == joined with |, and reads as the sentence you were trying to write."
+    },
+    {
+      "id": "d6-ibq-2",
+      "prompt": "Is between inclusive of its endpoints?",
+      "choices": [
+        "No",
+        "Yes, by default",
+        "Only the lower one",
+        "Only the upper one"
+      ],
+      "answer": 1,
+      "explain": "Both ends are included unless you say otherwise, which matches how a range usually reads in a question."
+    },
+    {
+      "id": "d6-ibq-3",
+      "prompt": "Why does an empty list passed to isin match nothing?",
+      "choices": [
+        "It is an error",
+        "No value is in an empty set",
+        "It matches everything",
+        "It matches the first row"
+      ],
+      "answer": 1,
+      "explain": "The condition is \"is this value one of these\", and there are none, so it is False everywhere. Worth knowing before you build the list from a filter that came back empty."
+    }
+  ]
+}

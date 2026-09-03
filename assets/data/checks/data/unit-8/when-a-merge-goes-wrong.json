@@ -1,0 +1,76 @@
+{
+  "exercise1": {
+    "prompt": "Duplicate keys multiply rows, and mismatched types match nothing.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "safe_merge(__import__(\"pandas\").DataFrame({\"id\": [\"1\"], \"name\": [\"Ada\"]}), __import__(\"pandas\").DataFrame({\"id\": [1], \"score\": [90]}))",
+        "expect": "1"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "matching types still match",
+        "call": "safe_merge(__import__(\"pandas\").DataFrame({\"id\": [1, 2], \"name\": [\"a\", \"b\"]}), __import__(\"pandas\").DataFrame({\"id\": [1, 2], \"score\": [1, 2]}))",
+        "expect": "2"
+      },
+      {
+        "name": "a genuinely absent key still matches nothing",
+        "call": "safe_merge(__import__(\"pandas\").DataFrame({\"id\": [1], \"name\": [\"a\"]}), __import__(\"pandas\").DataFrame({\"id\": [9], \"score\": [1]}))",
+        "expect": "0"
+      },
+      {
+        "name": "the ids are converted before the join",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "astype"
+          ]
+        },
+        "describe": "astype(str) on both id columns"
+      }
+    ],
+    "hint": "Convert both id columns with astype(str) on copies, then merge. Converting only one side leaves the mismatch exactly where it was."
+  },
+  "questions": [
+    {
+      "id": "d8-wmg-1",
+      "prompt": "The right-hand key repeats twice. What happens to a matching left row?",
+      "choices": [
+        "It is dropped",
+        "It appears twice in the result",
+        "It appears once",
+        "An error"
+      ],
+      "answer": 1,
+      "explain": "Every combination of matching rows is produced, so a small duplicate on one side can inflate the whole result."
+    },
+    {
+      "id": "d8-wmg-2",
+      "prompt": "The key is text on one side and integer on the other. What do you get?",
+      "choices": [
+        "An error",
+        "An empty result",
+        "A partial match",
+        "A warning and a match"
+      ],
+      "answer": 1,
+      "explain": "Nothing compares equal, so the join succeeds and matches nothing. Silence is what makes this one expensive to find."
+    },
+    {
+      "id": "d8-wmg-3",
+      "prompt": "What is the quickest guard against both of these?",
+      "choices": [
+        "Sorting first",
+        "Checking the row count before and after, and the key dtypes",
+        "Using outer joins",
+        "Dropping duplicates always"
+      ],
+      "answer": 1,
+      "explain": "Two numbers and two dtypes, checked in a line each, catch the multiplication and the type mismatch respectively."
+    }
+  ]
+}

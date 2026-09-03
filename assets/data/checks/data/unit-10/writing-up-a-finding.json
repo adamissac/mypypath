@@ -1,0 +1,81 @@
+{
+  "exercise1": {
+    "prompt": "A number, what it is compared with, and what it does not prove.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "finding(__import__(\"pandas\").DataFrame({\"team\": [\"a\", \"a\", \"b\"], \"score\": [90.0, 80.0, 70.0]}))",
+        "expect": "'a scores 15.0 above b (n=3)'"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the sample size is the row count",
+        "call": "finding(__import__(\"pandas\").DataFrame({\"team\": [\"a\", \"b\", \"b\", \"b\"], \"score\": [10.0, 4.0, 4.0, 4.0]}))",
+        "expect": "'a scores 6.0 above b (n=4)'"
+      },
+      {
+        "name": "the gap is between the group means",
+        "call": "finding(__import__(\"pandas\").DataFrame({\"team\": [\"x\", \"y\"], \"score\": [1.0, 3.0]}))",
+        "expect": "'y scores 2.0 above x (n=2)'"
+      },
+      {
+        "name": "the sample size is counted",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "len"
+          ]
+        },
+        "describe": "the row count reported alongside the claim"
+      }
+    ],
+    "hint": "Group to means, take idxmax and idxmin, subtract for the gap, and len(df) for n. Reporting n is what stops a difference between two rows reading like a result."
+  },
+  "questions": [
+    {
+      "id": "d10-wuf-1",
+      "kind": "multi",
+      "prompt": "What does a finding need beyond the number itself?",
+      "choices": [
+        "What it is being compared with",
+        "How much data it rests on",
+        "What it does not prove",
+        "The code that produced it"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Comparison, sample size and limits. The code belongs in the repository, not in the sentence."
+    },
+    {
+      "id": "d10-wuf-2",
+      "prompt": "Two columns correlate strongly. What have you shown?",
+      "choices": [
+        "One causes the other",
+        "That they move together in this data",
+        "Nothing",
+        "That the data is wrong"
+      ],
+      "answer": 1,
+      "explain": "Movement together is the observation. Cause is a separate claim needing evidence this table does not contain."
+    },
+    {
+      "id": "d10-wuf-3",
+      "prompt": "Why report n alongside a difference between groups?",
+      "choices": [
+        "Convention",
+        "A gap between two rows and a gap between two thousand are different claims",
+        "It fills space",
+        "For sorting"
+      ],
+      "answer": 1,
+      "explain": "Sample size is how a reader decides how much to believe. Leaving it out lets a coincidence read as a result."
+    }
+  ]
+}

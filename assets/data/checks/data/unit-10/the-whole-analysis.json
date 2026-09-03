@@ -1,0 +1,98 @@
+{
+  "exercise1": {
+    "prompt": "Load, clean, join, summarise, report -- in one function, from files.",
+    "packages": [
+      "pandas"
+    ],
+    "files": {
+      "people.csv": "id,team\n1,red\n2,red\n3,blue\n4,blue\n",
+      "scores.csv": "id,score\n1,90\n2,80\n3,70\n4,n/a\n"
+    },
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "report(\"people.csv\", \"scores.csv\")",
+        "expect": "('red', 85.0)"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "different files give a different winner",
+        "files": {
+          "people.csv": "id,team\n1,alpha\n2,beta\n",
+          "scores.csv": "id,score\n1,10\n2,90\n"
+        },
+        "call": "report(\"people.csv\", \"scores.csv\")",
+        "expect": "('beta', 90.0)"
+      },
+      {
+        "name": "a team whose only score is missing does not win on nothing",
+        "files": {
+          "people.csv": "id,team\n1,ghost\n2,real\n",
+          "scores.csv": "id,score\n1,n/a\n2,50\n"
+        },
+        "call": "report(\"people.csv\", \"scores.csv\")",
+        "expect": "('real', 50.0)"
+      },
+      {
+        "name": "the files are read and joined",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "read_csv",
+            "merge",
+            "groupby"
+          ]
+        },
+        "describe": "both files read, joined and grouped"
+      }
+    ],
+    "hint": "Read both, convert the score with to_numeric(errors=\"coerce\"), drop the missing rows, merge on id, group by team, take the mean, and pick the highest with idxmax."
+  },
+  "questions": [
+    {
+      "id": "d10-twa-1",
+      "kind": "order",
+      "prompt": "Put a two-file analysis in order.",
+      "items": [
+        "Join on the key",
+        "Read both files",
+        "Report the result",
+        "Group and summarise",
+        "Fix the types and the missing values"
+      ],
+      "answer": [
+        1,
+        4,
+        0,
+        3,
+        2
+      ],
+      "explain": "Clean before joining: a key with the wrong type matches nothing, and a missing value dropped after grouping has already moved the mean."
+    },
+    {
+      "id": "d10-twa-2",
+      "prompt": "Why drop the missing scores before grouping rather than after?",
+      "choices": [
+        "It is the same",
+        "A missing value included in a mean changes it, and dropping after cannot undo that",
+        "It is faster",
+        "pandas requires it"
+      ],
+      "answer": 1,
+      "explain": "pandas skips missing values in a mean, but a row you meant to exclude entirely -- for instance from the count -- has to go before the summary, not after."
+    },
+    {
+      "id": "d10-twa-3",
+      "prompt": "What is the last thing to do before showing the number to somebody?",
+      "choices": [
+        "Round it",
+        "Check the steps between: row counts and how much was dropped",
+        "Make a chart",
+        "Save the file"
+      ],
+      "answer": 1,
+      "explain": "The checks are what let you answer \"how do you know\". A number without them is a number you are hoping about."
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "exercise1": {
+    "prompt": "How many of each, and the difference between size and count.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "counts_by(__import__(\"pandas\").DataFrame({\"s\": [\"a\", \"a\", \"b\"]}), \"s\")",
+        "expect": "{'a': 2, 'b': 1}"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a single row counts once",
+        "call": "counts_by(__import__(\"pandas\").DataFrame({\"s\": [\"z\"]}), \"s\")",
+        "expect": "{'z': 1}"
+      },
+      {
+        "name": "it works on whichever column is named",
+        "call": "counts_by(__import__(\"pandas\").DataFrame({\"s\": [\"a\"], \"t\": [\"x\", ]}), \"t\")",
+        "expect": "{'x': 1}"
+      },
+      {
+        "name": "the counts are plain numbers",
+        "call": "type(list(counts_by(__import__(\"pandas\").DataFrame({\"s\": [\"a\"]}), \"s\").values())[0]).__name__",
+        "expect": "'int'"
+      }
+    ],
+    "hint": "value_counts on the column gives exactly this. to_dict() makes the keys and values plain, though the counts may need int() to shed their numpy type."
+  },
+  "questions": [
+    {
+      "id": "d7-cg-1",
+      "prompt": "How does value_counts order its result by default?",
+      "choices": [
+        "Alphabetically",
+        "Most frequent first",
+        "By the index",
+        "Randomly"
+      ],
+      "answer": 1,
+      "explain": "Frequency order, which is usually what you wanted to see. sort_index() gets you alphabetical when you need it."
+    },
+    {
+      "id": "d7-cg-2",
+      "prompt": "What is the difference between size and count on a group?",
+      "choices": [
+        "None",
+        "size counts rows, count counts non-missing values",
+        "count is faster",
+        "size sorts"
+      ],
+      "answer": 1,
+      "explain": "A group of three rows with one missing value has size 3 and count 2. Which is right depends on whether a gap is still a row to you."
+    },
+    {
+      "id": "d7-cg-3",
+      "prompt": "Why might a count come back as a numpy integer rather than a plain int?",
+      "choices": [
+        "A bug",
+        "pandas stores columns as numpy types, so the values it hands back carry them",
+        "It does not",
+        "Because of the index"
+      ],
+      "answer": 1,
+      "explain": "It behaves like an int almost everywhere, and it prints differently between library versions -- which is why the exercises here end in int()."
+    }
+  ]
+}

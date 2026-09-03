@@ -1,0 +1,77 @@
+{
+  "exercise1": {
+    "prompt": "Round at the end, and show the precision you actually have.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "summary_line(__import__(\"pandas\").Series([70.0, 81.0, 95.0]))",
+        "expect": "'mean 82.0 (min 70.0, max 95.0)'"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a single value is its own mean and both ends",
+        "call": "summary_line(__import__(\"pandas\").Series([5.0]))",
+        "expect": "'mean 5.0 (min 5.0, max 5.0)'"
+      },
+      {
+        "name": "the mean is computed, not copied from an end",
+        "call": "summary_line(__import__(\"pandas\").Series([0.0, 10.0]))",
+        "expect": "'mean 5.0 (min 0.0, max 10.0)'"
+      },
+      {
+        "name": "the spread is reported next to the middle",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "min",
+            "max"
+          ]
+        },
+        "describe": "the smallest and largest values alongside the mean"
+      }
+    ],
+    "hint": "Compute all three, round each to one place with float() so they print as plain numbers, and build the sentence with an f-string."
+  },
+  "questions": [
+    {
+      "id": "d10-fn-1",
+      "prompt": "Why round at the end rather than as you go?",
+      "choices": [
+        "It is faster",
+        "Rounding early loses precision that the later steps then compound",
+        "It is the same",
+        "pandas requires it"
+      ],
+      "answer": 1,
+      "explain": "Every intermediate rounding is an error carried forward. Rounding is a presentation step, not a calculation step."
+    },
+    {
+      "id": "d10-fn-2",
+      "prompt": "What does reporting a mean to six decimal places suggest?",
+      "choices": [
+        "Care",
+        "A precision the measurements do not support",
+        "Nothing",
+        "A larger sample"
+      ],
+      "answer": 1,
+      "explain": "Digits are a claim about accuracy. Showing more than you have is a quiet form of overstating the result."
+    },
+    {
+      "id": "d10-fn-3",
+      "prompt": "Why report the minimum and maximum next to a mean?",
+      "choices": [
+        "To fill space",
+        "Because the mean alone hides the spread",
+        "It is required",
+        "For sorting"
+      ],
+      "answer": 1,
+      "explain": "Two numbers turn a figure that can mislead into one a reader can weigh."
+    }
+  ]
+}

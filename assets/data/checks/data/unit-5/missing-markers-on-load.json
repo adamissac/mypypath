@@ -1,0 +1,75 @@
+{
+  "exercise1": {
+    "prompt": "Files write missing values in a dozen ways; na_values names yours.",
+    "packages": [
+      "pandas"
+    ],
+    "files": {
+      "scores.csv": "name,score\nAda,92\nGrace,n/a\nAlan,79\n"
+    },
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "known_scores(\"scores.csv\")",
+        "expect": "2"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a file with nothing missing counts them all",
+        "files": {
+          "scores.csv": "name,score\na,1\nb,2\n"
+        },
+        "call": "known_scores(\"scores.csv\")",
+        "expect": "2"
+      },
+      {
+        "name": "everything missing counts none",
+        "files": {
+          "scores.csv": "name,score\na,n/a\nb,n/a\n"
+        },
+        "call": "known_scores(\"scores.csv\")",
+        "expect": "0"
+      }
+    ],
+    "hint": "Name \"n/a\" in na_values so it loads as missing, then count what is left with notna().sum() or by dropping the missing rows."
+  },
+  "questions": [
+    {
+      "id": "d5-mm-1",
+      "prompt": "Which of these does pandas treat as missing without being told?",
+      "choices": [
+        "n/a",
+        "An empty field",
+        "unknown",
+        "999"
+      ],
+      "answer": 1,
+      "explain": "An empty field and a few spellings of NA are recognised. Anything your particular source invented has to be named in na_values."
+    },
+    {
+      "id": "d5-mm-2",
+      "prompt": "What does one unrecognised \"n/a\" do to a numeric column?",
+      "choices": [
+        "Nothing",
+        "Makes the whole column text",
+        "Removes that row",
+        "Becomes zero"
+      ],
+      "answer": 1,
+      "explain": "The column has to hold one type, and the only type that fits both numbers and \"n/a\" is text. Every calculation after that is affected."
+    },
+    {
+      "id": "d5-mm-3",
+      "prompt": "What does s.notna().sum() count?",
+      "choices": [
+        "The missing values",
+        "The values that are present",
+        "All rows",
+        "The distinct values"
+      ],
+      "answer": 1,
+      "explain": "notna is a mask of \"has a value\", and summing a mask counts the True entries."
+    }
+  ]
+}

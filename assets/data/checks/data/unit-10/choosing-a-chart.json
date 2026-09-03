@@ -1,0 +1,88 @@
+{
+  "exercise1": {
+    "prompt": "The shape of the question decides the shape of the picture.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "chart_data(__import__(\"pandas\").DataFrame({\"team\": [\"red\", \"red\", \"blue\"], \"score\": [90, 80, 70]}))",
+        "expect": "{'blue': 70.0, 'red': 85.0}"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "one team gives one bar",
+        "call": "chart_data(__import__(\"pandas\").DataFrame({\"team\": [\"solo\"], \"score\": [50]}))",
+        "expect": "{'solo': 50.0}"
+      },
+      {
+        "name": "each bar is its own team's mean",
+        "call": "chart_data(__import__(\"pandas\").DataFrame({\"team\": [\"a\", \"a\", \"b\"], \"score\": [0, 100, 50]}))",
+        "expect": "{'a': 50.0, 'b': 50.0}"
+      },
+      {
+        "name": "the summary is grouped",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "groupby"
+          ]
+        },
+        "describe": "a group-by behind the chart"
+      }
+    ],
+    "hint": "A bar chart of \"mean by team\" is a group-by with the means rounded for display. Get that table right and the chart is one more line."
+  },
+  "questions": [
+    {
+      "id": "d10-cac-1",
+      "kind": "match",
+      "prompt": "Match each question to the chart that answers it.",
+      "left": [
+        "How much per category",
+        "How something moved over time",
+        "How the values are spread",
+        "Whether two measurements move together"
+      ],
+      "right": [
+        "Line",
+        "Histogram",
+        "Bar",
+        "Scatter"
+      ],
+      "answer": [
+        2,
+        0,
+        1,
+        3
+      ],
+      "explain": "Choosing the chart is choosing the question. A bar chart of a time series is the most common mismatch, and it hides the trend it was meant to show."
+    },
+    {
+      "id": "d10-cac-2",
+      "prompt": "Why does this unit grade the summary rather than the picture?",
+      "choices": [
+        "Pictures do not matter",
+        "A chart can only be as honest as the table behind it",
+        "It is easier",
+        "Charts cannot be made here"
+      ],
+      "answer": 1,
+      "explain": "A beautiful chart of a wrong group-by is a wrong chart. The table is where the mistakes are, and where they are findable."
+    },
+    {
+      "id": "d10-cac-3",
+      "prompt": "What is wrong with a bar chart of daily visits over a year?",
+      "choices": [
+        "Nothing",
+        "Bars are for categories -- 365 of them hide the trend a line would show",
+        "Bars are slow",
+        "It needs more colours"
+      ],
+      "answer": 1,
+      "explain": "Time is continuous and ordered. A line says that; hundreds of bars say \"these are unrelated categories\"."
+    }
+  ]
+}

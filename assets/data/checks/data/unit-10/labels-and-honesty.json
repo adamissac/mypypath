@@ -1,0 +1,81 @@
+{
+  "exercise1": {
+    "prompt": "A chart without units is a decoration, and a cut axis is an argument.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "headline(__import__(\"pandas\").DataFrame({\"team\": [\"red\", \"red\", \"blue\"], \"score\": [90.0, 80.0, 70.0]}))",
+        "expect": "'red leads on 85.0, 15.0 ahead of blue'"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the gap is measured, not assumed",
+        "call": "headline(__import__(\"pandas\").DataFrame({\"team\": [\"a\", \"b\"], \"score\": [10.0, 4.0]}))",
+        "expect": "'a leads on 10.0, 6.0 ahead of b'"
+      },
+      {
+        "name": "the leader is whichever team is actually highest",
+        "call": "headline(__import__(\"pandas\").DataFrame({\"team\": [\"low\", \"high\"], \"score\": [1.0, 9.0]}))",
+        "expect": "'high leads on 9.0, 8.0 ahead of low'"
+      },
+      {
+        "name": "the means come from a group-by",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "groupby"
+          ]
+        },
+        "describe": "a grouped mean behind the sentence"
+      }
+    ],
+    "hint": "Group to a mean per team, round to one place, then use idxmax and idxmin for the names. The gap is the difference between the two means."
+  },
+  "questions": [
+    {
+      "id": "d10-lah-1",
+      "prompt": "Why does a bar chart's value axis normally start at zero?",
+      "choices": [
+        "Convention",
+        "The length of the bar is the quantity, so cutting the axis distorts the comparison",
+        "It looks better",
+        "It does not"
+      ],
+      "answer": 1,
+      "explain": "A bar encodes its value as length. Start at 98 and a one-point difference fills the chart, which is a claim the data did not make."
+    },
+    {
+      "id": "d10-lah-2",
+      "kind": "multi",
+      "prompt": "What belongs on a chart before anyone else sees it?",
+      "choices": [
+        "A title saying what it shows",
+        "Units on the value axis",
+        "The period covered",
+        "The code that made it"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "The first three let a reader act on it. The code belongs with the work, not on the picture."
+    },
+    {
+      "id": "d10-lah-3",
+      "prompt": "When is a non-zero axis defensible?",
+      "choices": [
+        "Never",
+        "On a line chart of a quantity that moves in a narrow band, where the change is the subject",
+        "Always",
+        "On bar charts"
+      ],
+      "answer": 1,
+      "explain": "A line encodes change as slope rather than length, so a tight band can be legitimate -- provided the axis is labelled and the reader can see it."
+    }
+  ]
+}

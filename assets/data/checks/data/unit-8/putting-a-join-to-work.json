@@ -1,0 +1,86 @@
+{
+  "exercise1": {
+    "prompt": "Two files, one question, and the checks that keep the answer honest.",
+    "packages": [
+      "pandas"
+    ],
+    "files": {
+      "people.csv": "id,team\n1,red\n2,red\n3,blue\n",
+      "scores.csv": "id,score\n1,90\n2,80\n3,70\n"
+    },
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "team_means(\"people.csv\", \"scores.csv\")",
+        "expect": "{'blue': 70.0, 'red': 85.0}"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "different files give a different answer",
+        "files": {
+          "people.csv": "id,team\n1,solo\n",
+          "scores.csv": "id,score\n1,50\n"
+        },
+        "call": "team_means(\"people.csv\", \"scores.csv\")",
+        "expect": "{'solo': 50.0}"
+      },
+      {
+        "name": "the two files are actually joined",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "merge",
+            "read_csv"
+          ]
+        },
+        "describe": "both files read and merged on id"
+      }
+    ],
+    "hint": "Read both, merge on id, group by team, take the mean of score, round it, then to_dict(). The second file set is different, so a typed-in answer fails."
+  },
+  "questions": [
+    {
+      "id": "d8-pjw-1",
+      "kind": "order",
+      "prompt": "Put the steps of a two-file analysis in the order this lesson recommends.",
+      "items": [
+        "Merge on the key",
+        "Load both files and look at them",
+        "Summarise",
+        "Check the row count survived the join"
+      ],
+      "answer": [
+        1,
+        0,
+        3,
+        2
+      ],
+      "explain": "The check sits between the join and the summary, because that is the point where a wrong join is still cheap to notice."
+    },
+    {
+      "id": "d8-pjw-2",
+      "prompt": "Why check the row count after a join rather than before?",
+      "choices": [
+        "It is the same",
+        "The join is what changes it, by dropping or multiplying rows",
+        "It is faster",
+        "You should not"
+      ],
+      "answer": 1,
+      "explain": "Before the join there is nothing to compare against. The pair of numbers is what tells you which of the two failure modes you have."
+    },
+    {
+      "id": "d8-pjw-3",
+      "prompt": "What does rounding the result at the end buy you?",
+      "choices": [
+        "Accuracy",
+        "A number a reader can take in, with the working left exact until the last step",
+        "Speed",
+        "Nothing"
+      ],
+      "answer": 1,
+      "explain": "Rounding early loses precision through the calculation; rounding at the end is presentation."
+    }
+  ]
+}

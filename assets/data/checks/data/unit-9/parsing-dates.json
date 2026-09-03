@@ -1,0 +1,76 @@
+{
+  "exercise1": {
+    "prompt": "A date read from a file is text until you say otherwise.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "earliest(__import__(\"pandas\").Series([\"2024-03-01\", \"2024-01-15\", \"2024-02-20\"]))",
+        "expect": "'2024-01-15'"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a single date is its own earliest",
+        "call": "earliest(__import__(\"pandas\").Series([\"2024-05-05\"]))",
+        "expect": "'2024-05-05'"
+      },
+      {
+        "name": "dates across a year boundary are ordered by time",
+        "call": "earliest(__import__(\"pandas\").Series([\"2024-01-01\", \"2023-12-31\"]))",
+        "expect": "'2023-12-31'"
+      },
+      {
+        "name": "the text is parsed into real dates",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "to_datetime"
+          ]
+        },
+        "describe": "pd.to_datetime"
+      }
+    ],
+    "hint": "Parse first, then take the minimum, then format it back. On ISO-formatted text the alphabetical answer happens to agree, which is exactly why the habit matters when the format changes."
+  },
+  "questions": [
+    {
+      "id": "d9-pd-1",
+      "prompt": "What is wrong with comparing dates as text?",
+      "choices": [
+        "Nothing",
+        "It compares character by character, so the order is only right for some formats",
+        "It is slow",
+        "It raises"
+      ],
+      "answer": 1,
+      "explain": "ISO dates happen to sort correctly as text. \"01/03/2024\" does not, and nothing tells you which kind you have."
+    },
+    {
+      "id": "d9-pd-2",
+      "prompt": "What does parse_dates on read_csv do?",
+      "choices": [
+        "Checks the dates are valid",
+        "Converts those columns to datetimes as the file loads",
+        "Sorts by date",
+        "Removes bad dates"
+      ],
+      "answer": 1,
+      "explain": "It does the conversion at load time, so there is no window in which the column is text and someone sorts it."
+    },
+    {
+      "id": "d9-pd-3",
+      "prompt": "What does .dt give you on a datetime Series?",
+      "choices": [
+        "The date only",
+        "Date parts and formatting for every value at once",
+        "A conversion",
+        "An error"
+      ],
+      "answer": 1,
+      "explain": "year, month, day, weekday and strftime, applied across the whole column -- the datetime counterpart of .str."
+    }
+  ]
+}

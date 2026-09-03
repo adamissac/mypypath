@@ -1,0 +1,80 @@
+{
+  "exercise1": {
+    "prompt": "Four questions to ask a new table before you trust a number from it.",
+    "packages": [
+      "pandas"
+    ],
+    "files": {
+      "scores.csv": "name,score\nAda,92\nGrace,\nAlan,79\n"
+    },
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "load_report(\"scores.csv\")",
+        "expect": "(3, ['name', 'score'], 1)"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a clean file reports nothing missing",
+        "files": {
+          "scores.csv": "name,score\na,1\nb,2\n"
+        },
+        "call": "load_report(\"scores.csv\")",
+        "expect": "(2, ['name', 'score'], 0)"
+      },
+      {
+        "name": "more gaps are counted",
+        "files": {
+          "scores.csv": "name,score\na,\nb,\n"
+        },
+        "call": "load_report(\"scores.csv\")",
+        "expect": "(2, ['name', 'score'], 2)"
+      }
+    ],
+    "hint": "df.isna().sum() gives a count per column; summing that again gives the total. int() at the end keeps it a plain number."
+  },
+  "questions": [
+    {
+      "id": "d5-cwl-1",
+      "kind": "multi",
+      "prompt": "Which of these should you check on a table you have just loaded?",
+      "choices": [
+        "Its shape",
+        "The dtype of each column",
+        "How much is missing",
+        "The file permissions"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Those three answer \"is this what I think it is\". Permissions are a different problem and the read already succeeded."
+    },
+    {
+      "id": "d5-cwl-2",
+      "prompt": "What does df.isna().sum() give you?",
+      "choices": [
+        "One total",
+        "A count of missing values per column",
+        "The missing rows",
+        "True or False"
+      ],
+      "answer": 1,
+      "explain": "isna is a table of masks and summing collapses each column, so you see which column has the gaps rather than just how many there are."
+    },
+    {
+      "id": "d5-cwl-3",
+      "prompt": "Why look at the distinct values of a category column?",
+      "choices": [
+        "To sort it",
+        "To find stray spellings and unexpected values",
+        "To count rows",
+        "To change its type"
+      ],
+      "answer": 1,
+      "explain": "\"maths\", \"Maths\" and \"MATHS\" are three categories to a computer and one to you. The set is where that becomes visible."
+    }
+  ]
+}

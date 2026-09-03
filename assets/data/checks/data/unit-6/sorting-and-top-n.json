@@ -1,0 +1,71 @@
+{
+  "exercise1": {
+    "prompt": "Ordering a table, and taking the few rows that matter.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "top_names(__import__(\"pandas\").DataFrame({\"name\": [\"Ada\", \"Grace\", \"Alan\"], \"score\": [92, 88, 79]}), 2)",
+        "expect": "['Ada', 'Grace']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "asking for none gives none",
+        "call": "top_names(__import__(\"pandas\").DataFrame({\"name\": [\"Ada\"], \"score\": [92]}), 0)",
+        "expect": "[]"
+      },
+      {
+        "name": "asking for more than there is gives everyone",
+        "call": "top_names(__import__(\"pandas\").DataFrame({\"name\": [\"Ada\"], \"score\": [92]}), 5)",
+        "expect": "['Ada']"
+      },
+      {
+        "name": "the order is highest first",
+        "call": "top_names(__import__(\"pandas\").DataFrame({\"name\": [\"Low\", \"High\"], \"score\": [1, 9]}), 2)",
+        "expect": "['High', 'Low']"
+      }
+    ],
+    "hint": "nlargest takes the count and the column and does both the sort and the slice. Sorting ascending and taking the head gives you the worst, not the best."
+  },
+  "questions": [
+    {
+      "id": "d6-stn-1",
+      "prompt": "What does sort_values do to the table you call it on?",
+      "choices": [
+        "Sorts it in place",
+        "Nothing -- it returns a sorted copy",
+        "Deletes it",
+        "Reindexes it"
+      ],
+      "answer": 1,
+      "explain": "Like drop and rename, it hands back a copy. Forgetting to reassign is why a sort can look as though it did nothing."
+    },
+    {
+      "id": "d6-stn-2",
+      "prompt": "What does ascending=False give you?",
+      "choices": [
+        "The smallest first",
+        "The largest first",
+        "Random order",
+        "The original order"
+      ],
+      "answer": 1,
+      "explain": "Descending, which is what \"top\" almost always means. The default is ascending, and forgetting it hands you the bottom of the table."
+    },
+    {
+      "id": "d6-stn-3",
+      "prompt": "Why prefer nlargest to sorting and slicing?",
+      "choices": [
+        "It is the only way",
+        "It states the question and does less work",
+        "It sorts better",
+        "No reason"
+      ],
+      "answer": 1,
+      "explain": "It says \"the biggest three\" in one call, and it does not have to order the rows you were never going to look at."
+    }
+  ]
+}

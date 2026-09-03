@@ -1,0 +1,76 @@
+{
+  "exercise1": {
+    "prompt": "The same idea as numpy, applied to whole rows.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "passing_names(__import__(\"pandas\").DataFrame({\"name\": [\"Ada\", \"Grace\", \"Alan\"], \"score\": [92, 88, 79]}), 85)",
+        "expect": "['Ada', 'Grace']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a score exactly on the mark passes",
+        "call": "passing_names(__import__(\"pandas\").DataFrame({\"name\": [\"Bo\"], \"score\": [85]}), 85)",
+        "expect": "['Bo']"
+      },
+      {
+        "name": "nobody passing gives an empty list",
+        "call": "passing_names(__import__(\"pandas\").DataFrame({\"name\": [\"Bo\"], \"score\": [10]}), 85)",
+        "expect": "[]"
+      },
+      {
+        "name": "the boundary is included",
+        "kind": "ast",
+        "requires": {
+          "compares": [
+            "GtE"
+          ]
+        },
+        "describe": "a >= comparison, so the mark itself counts"
+      }
+    ],
+    "hint": "Mask the table, then take the name column of what survives and turn it into a list with .tolist()."
+  },
+  "questions": [
+    {
+      "id": "d6-fwm-1",
+      "prompt": "Why use & rather than and to combine two conditions?",
+      "choices": [
+        "It is shorter",
+        "and wants one True or False, and a column is many",
+        "They are the same",
+        "and is slower"
+      ],
+      "answer": 1,
+      "explain": "A column of answers cannot collapse to a single truth value, so `and` raises. `&` combines the masks elementwise, which is what you meant."
+    },
+    {
+      "id": "d6-fwm-2",
+      "prompt": "Why bracket each condition when combining them?",
+      "choices": [
+        "Style",
+        "& binds tighter than the comparisons, so it would group them wrongly",
+        "pandas requires it",
+        "It is faster"
+      ],
+      "answer": 1,
+      "explain": "Without brackets the expression is parsed as something you did not write, and the error message is rarely obvious."
+    },
+    {
+      "id": "d6-fwm-3",
+      "prompt": "What does df[mask] return?",
+      "choices": [
+        "True or False",
+        "The rows the mask marked True",
+        "A count",
+        "A column"
+      ],
+      "answer": 1,
+      "explain": "The rows survive with their columns and their index labels intact."
+    }
+  ]
+}

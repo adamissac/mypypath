@@ -1,0 +1,76 @@
+{
+  "exercise1": {
+    "prompt": "Bringing two tables together on the column they share.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "with_scores(__import__(\"pandas\").DataFrame({\"id\": [1, 2, 3], \"name\": [\"a\", \"b\", \"c\"]}), __import__(\"pandas\").DataFrame({\"id\": [1], \"score\": [92]}))",
+        "expect": "2"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "everyone matched leaves nobody missing",
+        "call": "with_scores(__import__(\"pandas\").DataFrame({\"id\": [1], \"name\": [\"a\"]}), __import__(\"pandas\").DataFrame({\"id\": [1], \"score\": [1]}))",
+        "expect": "0"
+      },
+      {
+        "name": "nobody matched leaves everyone missing",
+        "call": "with_scores(__import__(\"pandas\").DataFrame({\"id\": [1, 2], \"name\": [\"a\", \"b\"]}), __import__(\"pandas\").DataFrame({\"id\": [9], \"score\": [1]}))",
+        "expect": "2"
+      },
+      {
+        "name": "the join keeps the left-hand rows",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "merge"
+          ]
+        },
+        "describe": "a merge with how=\"left\""
+      }
+    ],
+    "hint": "how=\"left\" keeps every person. The people who matched nothing have a missing score, and isna().sum() counts them."
+  },
+  "questions": [
+    {
+      "id": "d8-mok-1",
+      "prompt": "What does the default inner merge keep?",
+      "choices": [
+        "Everything",
+        "Only keys present in both tables",
+        "Only the left table",
+        "Only the right table"
+      ],
+      "answer": 1,
+      "explain": "Rows whose key is missing on either side disappear. That is why an inner join can silently shrink your population."
+    },
+    {
+      "id": "d8-mok-2",
+      "prompt": "You want every person, with a score where one exists. Which join?",
+      "choices": [
+        "inner",
+        "left",
+        "right",
+        "outer"
+      ],
+      "answer": 1,
+      "explain": "Left keeps the left table whole and fills gaps on the right, which is the shape of \"my population, plus what I know about them\"."
+    },
+    {
+      "id": "d8-mok-3",
+      "prompt": "What should you check immediately after a merge?",
+      "choices": [
+        "The column order",
+        "The row count",
+        "The file size",
+        "The dtypes only"
+      ],
+      "answer": 1,
+      "explain": "Fewer rows means an inner join dropped some; more means the key was not unique and rows multiplied. Both are worth catching at once."
+    }
+  ]
+}

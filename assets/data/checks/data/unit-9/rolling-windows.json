@@ -1,0 +1,76 @@
+{
+  "exercise1": {
+    "prompt": "Smoothing a noisy series to see the shape underneath.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "smoothed(__import__(\"pandas\").Series([1.0, 2.0, 3.0]), 2)",
+        "expect": "[1.5, 2.5]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a window of one changes nothing",
+        "call": "smoothed(__import__(\"pandas\").Series([1.0, 2.0]), 1)",
+        "expect": "[1.0, 2.0]"
+      },
+      {
+        "name": "a window as long as the series gives one value",
+        "call": "smoothed(__import__(\"pandas\").Series([1.0, 3.0]), 2)",
+        "expect": "[2.0]"
+      },
+      {
+        "name": "rolling does the smoothing",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "rolling"
+          ]
+        },
+        "describe": "a rolling window"
+      }
+    ],
+    "hint": "s.rolling(window).mean() gives the smoothed series with gaps at the front; dropna() removes them and tolist() hands back plain floats."
+  },
+  "questions": [
+    {
+      "id": "d9-rw-1",
+      "prompt": "Why do the first values of a rolling mean come back missing?",
+      "choices": [
+        "A bug",
+        "There are not enough earlier values to fill the window yet",
+        "They are zero",
+        "They are dropped"
+      ],
+      "answer": 1,
+      "explain": "A window of seven has no answer until the seventh value. Filling those with zero would invent a dip that never happened."
+    },
+    {
+      "id": "d9-rw-2",
+      "prompt": "What is a seven-day rolling mean good for on daily data?",
+      "choices": [
+        "Making it smaller",
+        "Removing the weekday pattern so the trend is visible",
+        "Filling gaps",
+        "Sorting"
+      ],
+      "answer": 1,
+      "explain": "A whole week per window averages out the weekly rhythm, which is usually noise relative to the question."
+    },
+    {
+      "id": "d9-rw-3",
+      "prompt": "What does a larger window do to the line?",
+      "choices": [
+        "Makes it noisier",
+        "Makes it smoother and slower to react",
+        "No change",
+        "Shortens it"
+      ],
+      "answer": 1,
+      "explain": "Smoothing is a trade: more window is less noise and more lag behind a real turn."
+    }
+  ]
+}

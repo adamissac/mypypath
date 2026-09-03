@@ -1,0 +1,76 @@
+{
+  "exercise1": {
+    "prompt": "More than one answer per group, named as you want them.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "range_by(__import__(\"pandas\").DataFrame({\"k\": [\"a\", \"a\", \"b\"], \"v\": [1, 4, 7]}))",
+        "expect": "{'a': 3, 'b': 0}"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a single row has no range",
+        "call": "range_by(__import__(\"pandas\").DataFrame({\"k\": [\"z\"], \"v\": [5]}))",
+        "expect": "{'z': 0}"
+      },
+      {
+        "name": "the range is within the group, not across the table",
+        "call": "range_by(__import__(\"pandas\").DataFrame({\"k\": [\"a\", \"b\"], \"v\": [0, 100]}))",
+        "expect": "{'a': 0, 'b': 0}"
+      },
+      {
+        "name": "the grouping is done by pandas",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "groupby"
+          ]
+        },
+        "describe": "a groupby"
+      }
+    ],
+    "hint": "Group, take max and min of v for each group, subtract one from the other, then to_dict(). The second hidden case is the whole point: the range is per group."
+  },
+  "questions": [
+    {
+      "id": "d7-agg-1",
+      "prompt": "What does agg([\"min\", \"max\"]) give you per group?",
+      "choices": [
+        "One value",
+        "One column for each summary",
+        "A list",
+        "An error"
+      ],
+      "answer": 1,
+      "explain": "One row per group and one column per summary, which is a small table rather than a single series."
+    },
+    {
+      "id": "d7-agg-2",
+      "prompt": "Why use named aggregation?",
+      "choices": [
+        "It is faster",
+        "The output columns say what they are",
+        "It sorts",
+        "It is required"
+      ],
+      "answer": 1,
+      "explain": "A column called \"highest\" needs no explanation; one called \"max\" sitting next to three others does."
+    },
+    {
+      "id": "d7-agg-3",
+      "prompt": "A group of one row: what is its max minus its min?",
+      "choices": [
+        "An error",
+        "Zero",
+        "Missing",
+        "The value itself"
+      ],
+      "answer": 1,
+      "explain": "The one value is both the largest and the smallest, so the range is zero. Worth checking, because a group of one is common in real data."
+    }
+  ]
+}

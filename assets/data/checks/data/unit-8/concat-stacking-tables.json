@@ -1,0 +1,76 @@
+{
+  "exercise1": {
+    "prompt": "Two tables of the same shape, one after the other.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "stack([__import__(\"pandas\").DataFrame({\"a\": [1, 2]}), __import__(\"pandas\").DataFrame({\"a\": [3]})])",
+        "expect": "3"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "one table stacks to itself",
+        "call": "stack([__import__(\"pandas\").DataFrame({\"a\": [1]})])",
+        "expect": "1"
+      },
+      {
+        "name": "the index is renumbered rather than repeated",
+        "call": "(lambda t: __import__(\"pandas\").concat(t, ignore_index=True).index.tolist())([__import__(\"pandas\").DataFrame({\"a\": [1]}), __import__(\"pandas\").DataFrame({\"a\": [2]})])",
+        "expect": "[0, 1]"
+      },
+      {
+        "name": "concat does the stacking",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "concat"
+          ]
+        },
+        "describe": "pd.concat"
+      }
+    ],
+    "hint": "pd.concat takes the list. ignore_index=True is what stops two rows both being numbered 0."
+  },
+  "questions": [
+    {
+      "id": "d8-cst-1",
+      "prompt": "What does ignore_index=True do?",
+      "choices": [
+        "Drops the index column",
+        "Renumbers the result from zero",
+        "Sorts the rows",
+        "Removes duplicates"
+      ],
+      "answer": 1,
+      "explain": "Without it each piece keeps its own numbering, so a stacked table can have several rows labelled 0 -- which then breaks anything that looks a row up by label."
+    },
+    {
+      "id": "d8-cst-2",
+      "prompt": "One table has a column the other lacks. What does concat do?",
+      "choices": [
+        "Raises",
+        "Includes the column, with gaps for the rows that lacked it",
+        "Drops the column",
+        "Drops those rows"
+      ],
+      "answer": 1,
+      "explain": "The result is the union of the columns. Checking for unexpected gaps afterwards is how you notice a source changed its schema."
+    },
+    {
+      "id": "d8-cst-3",
+      "prompt": "When is concat the right tool rather than merge?",
+      "choices": [
+        "Always",
+        "When the tables are the same shape and you want them end to end",
+        "When you have a key",
+        "Never"
+      ],
+      "answer": 1,
+      "explain": "concat stacks; merge matches on a key. Reaching for the wrong one usually shows up as a row count that makes no sense."
+    }
+  ]
+}

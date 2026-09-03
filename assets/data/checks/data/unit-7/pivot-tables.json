@@ -1,0 +1,76 @@
+{
+  "exercise1": {
+    "prompt": "A grouped summary laid out as a grid.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "grid_shape(__import__(\"pandas\").DataFrame({\"subject\": [\"m\", \"m\", \"a\"], \"year\": [10, 11, 10], \"score\": [90, 80, 70]}))",
+        "expect": "(2, 2)"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "one subject and one year is a single cell",
+        "call": "grid_shape(__import__(\"pandas\").DataFrame({\"subject\": [\"m\"], \"year\": [10], \"score\": [5]}))",
+        "expect": "(1, 1)"
+      },
+      {
+        "name": "the grid has a column per distinct year",
+        "call": "grid_shape(__import__(\"pandas\").DataFrame({\"subject\": [\"m\", \"m\"], \"year\": [10, 11], \"score\": [5, 6]}))",
+        "expect": "(1, 2)"
+      },
+      {
+        "name": "pandas does the pivoting",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "pivot_table"
+          ]
+        },
+        "describe": "pivot_table"
+      }
+    ],
+    "hint": "index is what goes down the side, columns is what goes across the top, values is what fills the cells. The shape is distinct subjects by distinct years."
+  },
+  "questions": [
+    {
+      "id": "d7-pt-1",
+      "prompt": "What does the index argument of pivot_table control?",
+      "choices": [
+        "The columns across the top",
+        "What goes down the rows",
+        "The values in the cells",
+        "The sort order"
+      ],
+      "answer": 1,
+      "explain": "index is the row key and columns is the top. Swapping them transposes the grid, which is the exercise's wrong answer."
+    },
+    {
+      "id": "d7-pt-2",
+      "prompt": "A subject and year pair with no rows becomes what cell?",
+      "choices": [
+        "Zero",
+        "Missing, unless fill_value says otherwise",
+        "Omitted",
+        "An error"
+      ],
+      "answer": 1,
+      "explain": "A grid has every cell whether the data did or not, so absent combinations arrive as gaps. Whether a gap should read as 0 is your decision."
+    },
+    {
+      "id": "d7-pt-3",
+      "prompt": "How does a pivot table relate to a group-by?",
+      "choices": [
+        "They are unrelated",
+        "It is the same summary laid out as a grid",
+        "It is faster",
+        "It only counts"
+      ],
+      "answer": 1,
+      "explain": "Same split-apply-combine underneath. The difference is the shape of the answer and therefore how easy it is to read."
+    }
+  ]
+}

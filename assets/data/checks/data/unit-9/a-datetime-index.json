@@ -1,0 +1,66 @@
+{
+  "exercise1": {
+    "prompt": "Putting time on the index unlocks slicing by period.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "month_total(__import__(\"pandas\").DataFrame({\"day\": __import__(\"pandas\").to_datetime([\"2024-01-05\", \"2024-01-20\", \"2024-02-01\"]), \"n\": [1, 2, 5]}), \"2024-01\")",
+        "expect": "3"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a month with nothing in it totals zero",
+        "call": "month_total(__import__(\"pandas\").DataFrame({\"day\": __import__(\"pandas\").to_datetime([\"2024-01-05\"]), \"n\": [1]}), \"2024-09\")",
+        "expect": "0"
+      },
+      {
+        "name": "the year is respected, not just the month",
+        "call": "month_total(__import__(\"pandas\").DataFrame({\"day\": __import__(\"pandas\").to_datetime([\"2023-01-05\", \"2024-01-05\"]), \"n\": [1, 9]}), \"2024-01\")",
+        "expect": "9"
+      }
+    ],
+    "hint": "Set the day as the index and sort it, then select the month string. An empty selection sums to 0, which is the answer the first hidden case wants."
+  },
+  "questions": [
+    {
+      "id": "d9-adi-1",
+      "prompt": "What does a datetime index let you do?",
+      "choices": [
+        "Nothing new",
+        "Select a period with a string like \"2024-01\"",
+        "Sort faster",
+        "Remove duplicates"
+      ],
+      "answer": 1,
+      "explain": "Partial string selection is the payoff, and it reads much better than a pair of comparisons against boundary dates."
+    },
+    {
+      "id": "d9-adi-2",
+      "prompt": "Why sort a time index after setting it?",
+      "choices": [
+        "Style",
+        "Slicing an unsorted time index can raise",
+        "It is faster to write",
+        "It removes gaps"
+      ],
+      "answer": 1,
+      "explain": "The slice assumes order. One sort_index after set_index avoids an error that otherwise appears much later."
+    },
+    {
+      "id": "d9-adi-3",
+      "prompt": "A month selection matches no rows. What does the total come to?",
+      "choices": [
+        "An error",
+        "Zero",
+        "Missing",
+        "The whole total"
+      ],
+      "answer": 1,
+      "explain": "Summing nothing gives 0, which is usually the honest answer for \"how much happened in a month with no data\" -- though it is worth knowing it is indistinguishable from a genuine zero."
+    }
+  ]
+}
