@@ -55,20 +55,22 @@
     return value;
   }
 
-  /* The wording is load-bearing.
+  /* The wording is load-bearing, and it now matches what happens.
    *
-   * It used to say an account "opens the rest", and it does not: units unlock
-   * one at a time as each is finished, so a student who signed up here landed
-   * back on this lesson and met a second lock telling them to go and finish
-   * unit 2. Two gates, one promise, and the promise was the one they had just
-   * acted on. An account is necessary and not sufficient, so it says that. */
+   * For a while this said an account "opens the rest" while a second lock
+   * behind it told the new account holder to go and finish the unit before --
+   * two gates, one promise, and the promise was the one they had just acted
+   * on. An account does open every unit now. What stays in order is credit: a
+   * unit is completed once the one before it is finished, which is the
+   * sentence below. */
   function paywallHtml(unit) {
     var next = encodeURIComponent(location.pathname);
     return '<div class="gate-paywall" data-gate-paywall>' +
       '<h2>Unit ' + unit + ' needs a free account</h2>' +
-      '<p>Units 1 and ' + FREE_UNITS + ' are free to everyone. An account keeps your ' +
-      'progress on every device and opens the rest of the course, a unit at a time ' +
-      'as you finish the one before it.</p>' +
+      '<p>Units 1 and ' + FREE_UNITS + ' are free to everyone. An account opens every ' +
+      'unit to read and work through, and keeps your progress on every device. ' +
+      'Units still count in order: each one is credited once you finish the one ' +
+      'before it.</p>' +
       '<div class="gate-paywall__actions">' +
       '<a class="btn btn-primary" href="/signup.html?next=' + next + '">Create free account</a>' +
       '<a class="btn btn-ghost" href="/login.html?next=' + next + '">Sign in</a>' +
