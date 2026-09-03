@@ -1,0 +1,85 @@
+{
+  "exercise1": {
+    "prompt": "Where an array comes from, and the type it settles on.",
+    "packages": [
+      "numpy"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "even_numbers(10).tolist()",
+        "expect": "[0, 2, 4, 6, 8]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "stopping at zero gives an empty array",
+        "call": "even_numbers(0).tolist()",
+        "expect": "[]"
+      },
+      {
+        "name": "an odd stop still stops below it",
+        "call": "even_numbers(7).tolist()",
+        "expect": "[0, 2, 4, 6]"
+      },
+      {
+        "name": "the result really is an array",
+        "call": "type(even_numbers(4)).__name__",
+        "expect": "'ndarray'"
+      },
+      {
+        "name": "numpy does the stepping",
+        "kind": "ast",
+        "requires": {
+          "imports": [
+            "numpy"
+          ]
+        },
+        "forbids": {
+          "loops": true
+        },
+        "describe": "arange rather than a loop"
+      }
+    ],
+    "hint": "np.arange takes a start, a stop and a step. The stop is exclusive, the same way range works."
+  },
+  "questions": [
+    {
+      "id": "d3-cad-1",
+      "prompt": "What dtype does np.array([1, 2, 3.0]) have?",
+      "choices": [
+        "int64",
+        "float64",
+        "object",
+        "It raises an error"
+      ],
+      "answer": 1,
+      "explain": "Everything in an array shares one type, so a single float widens all of it. This is why a column read from a messy file can quietly become float."
+    },
+    {
+      "id": "d3-cad-2",
+      "prompt": "What does np.arange(0, 10, 2) produce?",
+      "choices": [
+        "0 2 4 6 8 10",
+        "0 2 4 6 8",
+        "0 1 2 ... 9",
+        "2 4 6 8 10"
+      ],
+      "answer": 1,
+      "explain": "Start, stop, step, with the stop exclusive -- the same rule as range, which is deliberate."
+    },
+    {
+      "id": "d3-cad-blank",
+      "kind": "blank",
+      "prompt": "np.___(0, 1, 5) divides the interval from 0 to 1 into five evenly spaced values.",
+      "blanks": [
+        {
+          "accept": [
+            "linspace"
+          ]
+        }
+      ],
+      "explain": "arange takes a step and linspace takes a count. When you know how many points you want, linspace is the one that cannot land short."
+    }
+  ]
+}

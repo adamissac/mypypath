@@ -1,0 +1,66 @@
+{
+  "exercise1": {
+    "prompt": "loc goes by label, iloc goes by position, and the difference matters.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "score_for(__import__(\"pandas\").DataFrame({\"name\": [\"Ada\", \"Grace\", \"Alan\"], \"score\": [92, 88, 79]}), \"Alan\")",
+        "expect": "79"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the first row is found too",
+        "call": "score_for(__import__(\"pandas\").DataFrame({\"name\": [\"Ada\", \"Grace\"], \"score\": [92, 88]}), \"Ada\")",
+        "expect": "92"
+      },
+      {
+        "name": "the row is found by name, not by position",
+        "call": "score_for(__import__(\"pandas\").DataFrame({\"name\": [\"Zoe\", \"Ada\"], \"score\": [10, 92]}), \"Ada\")",
+        "expect": "92"
+      }
+    ],
+    "hint": "Mask on the name column, then read the score off what survives. Assuming a position is the bug the second hidden case is looking for."
+  },
+  "questions": [
+    {
+      "id": "d4-scr-1",
+      "prompt": "What is the difference between loc and iloc?",
+      "choices": [
+        "None",
+        "loc uses index labels, iloc uses positions",
+        "loc is faster",
+        "iloc works only on columns"
+      ],
+      "answer": 1,
+      "explain": "They look identical on a fresh table with a 0..n index and diverge the moment it is sorted or filtered, which is when the bug shows up."
+    },
+    {
+      "id": "d4-scr-2",
+      "prompt": "What does df[[\"name\", \"score\"]] return?",
+      "choices": [
+        "A Series",
+        "A DataFrame with those two columns",
+        "An error",
+        "The first two rows"
+      ],
+      "answer": 1,
+      "explain": "A list of names selects several columns, and several columns is a table. One name gives a Series instead."
+    },
+    {
+      "id": "d4-scr-3",
+      "prompt": "After sorting a table, what does df.iloc[0] give you?",
+      "choices": [
+        "The row that was first before sorting",
+        "The row that is first now",
+        "An error",
+        "The lowest index label"
+      ],
+      "answer": 1,
+      "explain": "Position follows the current order. The label that used to be first is still reachable through loc."
+    }
+  ]
+}

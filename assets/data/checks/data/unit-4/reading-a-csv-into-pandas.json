@@ -1,0 +1,85 @@
+{
+  "exercise1": {
+    "prompt": "One line replaces the whole of unit 1, and then you check what you got.",
+    "packages": [
+      "pandas"
+    ],
+    "files": {
+      "scores.csv": "name,score\nAda,92\nGrace,88\nAlan,79\n"
+    },
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "average_score(\"scores.csv\")",
+        "expect": "86.33"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a different file gives a different answer",
+        "files": {
+          "scores.csv": "name,score\nKatherine,100\nDorothy,90\n"
+        },
+        "call": "average_score(\"scores.csv\")",
+        "expect": "95.0"
+      },
+      {
+        "name": "pandas does the reading",
+        "kind": "ast",
+        "requires": {
+          "imports": [
+            "pandas"
+          ],
+          "calls": [
+            "read_csv"
+          ]
+        },
+        "describe": "pd.read_csv rather than the answer typed in"
+      }
+    ],
+    "hint": "pd.read_csv(path), then the mean of the score column, then round to two places. The second check swaps the file, so a typed-in answer fails."
+  },
+  "questions": [
+    {
+      "id": "d4-rcp-1",
+      "prompt": "What does read_csv do with the first line of the file?",
+      "choices": [
+        "Skips it",
+        "Uses it as the column names",
+        "Treats it as data",
+        "Counts it"
+      ],
+      "answer": 1,
+      "explain": "It is taken as the header by default. A file without one needs header=None, or the first row of data quietly becomes your column names."
+    },
+    {
+      "id": "d4-rcp-2",
+      "kind": "multi",
+      "prompt": "What is worth checking straight after read_csv?",
+      "choices": [
+        "shape",
+        "dtypes",
+        "head()",
+        "The file size"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "How much came in, what pandas thinks each column is, and what the first rows look like. All three take one line and catch most import problems."
+    },
+    {
+      "id": "d4-rcp-3",
+      "prompt": "read_csv guessed a numeric column as object. What is the likely cause?",
+      "choices": [
+        "The file is too big",
+        "Some values are not numbers -- blanks, n/a, or stray text",
+        "pandas is out of date",
+        "The column has a bad name"
+      ],
+      "answer": 1,
+      "explain": "One unparseable value in the column is enough. Finding which one is why you look at the distinct values before converting."
+    }
+  ]
+}

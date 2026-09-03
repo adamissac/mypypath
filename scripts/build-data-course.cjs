@@ -218,8 +218,13 @@ for (const unit of COURSE.units) {
     } else {
       cases.push({ name: 'returns the right answer', call: ex.call, expect: ex.expectValue });
     }
+    // Packages the exercise needs before it can run. Declared on the unit and
+    // inherited by its lessons, since a whole unit is about one library.
+    const packages = lesson.packages || C[`unit${unit.n}`].packages || null;
+
     const spec = { [`exercise1`]: {
       prompt: lesson.summary,
+      ...(packages ? { packages } : {}),
       ...(ex.files ? { files: ex.files } : {}),
       cases,
       hiddenCases: ex.hidden || [],

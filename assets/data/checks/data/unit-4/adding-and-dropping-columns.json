@@ -1,0 +1,78 @@
+{
+  "exercise1": {
+    "prompt": "A new column is an assignment, and drop returns a new table by default.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "add_total(__import__(\"pandas\").DataFrame({\"price\": [2.0, 5.0], \"quantity\": [3, 2]}))[\"total\"].tolist()",
+        "expect": "[6.0, 10.0]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the original table is left alone",
+        "call": "(lambda d: (add_total(d), list(d.columns))[-1])(__import__(\"pandas\").DataFrame({\"price\": [1.0], \"quantity\": [1]}))",
+        "expect": "['price', 'quantity']"
+      },
+      {
+        "name": "the other columns survive",
+        "call": "sorted(add_total(__import__(\"pandas\").DataFrame({\"price\": [1.0], \"quantity\": [2]})).columns)",
+        "expect": "['price', 'quantity', 'total']"
+      },
+      {
+        "name": "the total is computed from the two columns",
+        "kind": "ast",
+        "requires": {
+          "binop": [
+            {
+              "op": "Mult"
+            }
+          ]
+        },
+        "describe": "price multiplied by quantity"
+      }
+    ],
+    "hint": "Take a copy first, then assign the new column onto the copy. Assigning straight onto df would change the caller's table, which the hidden case checks."
+  },
+  "questions": [
+    {
+      "id": "d4-adc-1",
+      "prompt": "What does df.drop(columns=[\"b\"]) do to df?",
+      "choices": [
+        "Removes b from df",
+        "Nothing -- it returns a new table",
+        "Raises an error",
+        "Empties df"
+      ],
+      "answer": 1,
+      "explain": "It returns a copy without that column. Forgetting to reassign is why people report that drop \"did not work\"."
+    },
+    {
+      "id": "d4-adc-2",
+      "prompt": "How do you create a new column?",
+      "choices": [
+        "df.add(\"total\")",
+        "df[\"total\"] = ...",
+        "df.new(\"total\")",
+        "df.columns.append"
+      ],
+      "answer": 1,
+      "explain": "Assignment to a name that is not there yet creates it, the same way it does for a dictionary key."
+    },
+    {
+      "id": "d4-adc-3",
+      "prompt": "Why take a copy before adding a column inside a function?",
+      "choices": [
+        "It is faster",
+        "Otherwise you change the table the caller passed in",
+        "pandas requires it",
+        "To save memory"
+      ],
+      "answer": 1,
+      "explain": "A function that quietly rewrites its argument is the hardest kind of bug to find, because the damage shows up somewhere else entirely."
+    }
+  ]
+}

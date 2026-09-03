@@ -1,0 +1,73 @@
+{
+  "exercise1": {
+    "prompt": "One type and one block of memory buys arithmetic on the whole column.",
+    "packages": [
+      "numpy"
+    ],
+    "cases": [
+      {
+        "name": "produces the expected output",
+        "expect_stdout": "[97 93 84]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "numpy does the work",
+        "kind": "ast",
+        "requires": {
+          "imports": [
+            "numpy"
+          ]
+        },
+        "describe": "numpy imported and used"
+      },
+      {
+        "name": "no loop is needed",
+        "kind": "ast",
+        "forbids": {
+          "loops": true
+        },
+        "describe": "the arithmetic applied to the whole array at once"
+      }
+    ],
+    "hint": "np.array(scores) + 5. The addition reaches every element on its own, which is the point of the array."
+  },
+  "questions": [
+    {
+      "id": "d3-wab-1",
+      "prompt": "What does [1, 2, 3] * 2 give you in plain Python?",
+      "choices": [
+        "[2, 4, 6]",
+        "[1, 2, 3, 1, 2, 3]",
+        "An error",
+        "[1, 2, 3]"
+      ],
+      "answer": 1,
+      "explain": "Multiplying a list repeats it. Only an array reads * 2 as \"double every element\", which is the first thing that surprises people coming from lists."
+    },
+    {
+      "id": "d3-wab-2",
+      "prompt": "Why can numpy add a large array faster than a Python loop can?",
+      "choices": [
+        "It uses more memory",
+        "One type in one block of memory means the addition runs in compiled code, not per object",
+        "It skips some elements",
+        "It is not faster"
+      ],
+      "answer": 1,
+      "explain": "A list element is an object with its own type to check. An array is a known type laid out end to end, so the work happens once in C rather than a million times in Python."
+    },
+    {
+      "id": "d3-wab-3",
+      "prompt": "What does an array give up compared with a list?",
+      "choices": [
+        "Speed",
+        "Holding several different types at once",
+        "Indexing",
+        "Length"
+      ],
+      "answer": 1,
+      "explain": "The single dtype is the trade. An array of mixed types has to widen to something that fits everything, usually object, and the speed goes with it."
+    }
+  ]
+}

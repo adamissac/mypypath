@@ -432,6 +432,23 @@ function validateCourse(course, manifest, courseRoot, errors, files) {
           continue;
         }
 
+        /* Packages the exercise loads into Pyodide before it runs. Only the
+           ones the distribution actually ships are allowed: a name it does not
+           know makes loadPackage reject, and the student sees an exercise that
+           will not start with nothing saying why. */
+        if (entry.packages !== undefined) {
+          const KNOWN = ['numpy', 'pandas'];
+          if (!Array.isArray(entry.packages) || !entry.packages.length) {
+            errors.push(`${rel} / ${exerciseId}: packages must be a non-empty list`);
+          } else {
+            for (const name of entry.packages) {
+              if (!KNOWN.includes(name)) {
+                errors.push(`${rel} / ${exerciseId}: "${name}" is not one of ${KNOWN.join(', ')}`);
+              }
+            }
+          }
+        }
+
         // Starting files for the exercise, seeded into every case's own
         // directory. Author-supplied and joined into a path at run time, so a
         // name that climbs out of that directory is refused here rather than

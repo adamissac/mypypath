@@ -20,7 +20,14 @@ import { setup, havePython, score, specIn } from './helpers/check-runner.js';
 const require = createRequire(import.meta.url);
 const CONTENT = require('../scripts/data-course-content.cjs');
 
-const LESSONS = [1, 2].flatMap((n) =>
+/* Every unit the registry says is written, rather than a number typed here.
+   A unit that loses its `stub` flag has to arrive in this suite on the same
+   commit, or it ships ungraded and nothing says so. */
+const WRITTEN = JSON.parse(fs.readFileSync('assets/data/courses.json', 'utf8'))
+  .courses.find((c) => c.slug === 'data')
+  .units.filter((u) => !u.stub).map((u) => u.n);
+
+const LESSONS = WRITTEN.flatMap((n) =>
   CONTENT[`unit${n}`].lessons.map((lesson) => ({ unit: n, lesson })));
 
 beforeAll(() => setup());
@@ -36,7 +43,7 @@ describe('the Python for Data check files', () => {
       expect(fs.existsSync(file), file).toBe(true);
       expect(specIn('data', unit, lesson.slug, 'exercise1'), lesson.slug).toBeTruthy();
     }
-    expect(LESSONS.length).toBe(12);
+    expect(LESSONS.length).toBe(WRITTEN.length * 6);
   });
 
   it('gives every exercise a hint and some questions', () => {
@@ -65,7 +72,7 @@ describe('the Python for Data check files', () => {
      lessons actually live at. */
   it('has a manifest that matches the pages on disk', () => {
     const manifest = JSON.parse(fs.readFileSync('assets/data/curriculum-data.json', 'utf8'));
-    expect(manifest.lessonCount).toBe(12);
+    expect(manifest.lessonCount).toBe(WRITTEN.length * 6);
     for (const lesson of manifest.lessons) {
       expect(fs.existsSync(lesson.path.replace(/^\//, '')), lesson.path).toBe(true);
     }

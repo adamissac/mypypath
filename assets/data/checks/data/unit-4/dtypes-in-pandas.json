@@ -1,0 +1,71 @@
+{
+  "exercise1": {
+    "prompt": "What each column is holding, and how to change it on purpose.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "numeric_total(__import__(\"pandas\").DataFrame({\"score\": [\"92\", \"88\", \"79\"]}))",
+        "expect": "259"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "text that is not a number counts as zero",
+        "call": "numeric_total(__import__(\"pandas\").DataFrame({\"score\": [\"10\", \"n/a\", \"5\"]}))",
+        "expect": "15"
+      },
+      {
+        "name": "an empty string counts as zero",
+        "call": "numeric_total(__import__(\"pandas\").DataFrame({\"score\": [\"7\", \"\"]}))",
+        "expect": "7"
+      },
+      {
+        "name": "an empty table totals zero",
+        "call": "numeric_total(__import__(\"pandas\").DataFrame({\"score\": []}))",
+        "expect": "0"
+      }
+    ],
+    "hint": "to_numeric with errors=\"coerce\" turns the junk into missing values, and fillna(0) then makes them zero before you sum."
+  },
+  "questions": [
+    {
+      "id": "d4-dt-1",
+      "prompt": "A column read from a CSV shows dtype object. What does that usually mean?",
+      "choices": [
+        "It is empty",
+        "It is holding text",
+        "It is an index",
+        "It is corrupted"
+      ],
+      "answer": 1,
+      "explain": "object is pandas saying \"these are Python objects\", which for a data file almost always means strings that have not been converted yet."
+    },
+    {
+      "id": "d4-dt-2",
+      "prompt": "What does pd.to_numeric(s, errors=\"coerce\") do with \"n/a\"?",
+      "choices": [
+        "Raises",
+        "Turns it into a missing value",
+        "Turns it into 0",
+        "Leaves it as text"
+      ],
+      "answer": 1,
+      "explain": "It becomes NaN, which you then decide about -- drop it or fill it. That decision is yours rather than the parser's."
+    },
+    {
+      "id": "d4-dt-3",
+      "prompt": "Why does astype(int) fail on a column containing \"n/a\"?",
+      "choices": [
+        "It is too long",
+        "There is no integer that \"n/a\" means",
+        "astype only works on floats",
+        "It does not fail"
+      ],
+      "answer": 1,
+      "explain": "astype is the strict conversion: every value has to make the trip. When some cannot, to_numeric with coerce is the tool that keeps going."
+    }
+  ]
+}
