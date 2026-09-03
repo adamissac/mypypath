@@ -11,6 +11,23 @@
         "name": "ten percent off fifty leaves forty-five",
         "call": "round(float(calculate_discount(50, 10)), 2)",
         "expect": "45.0"
+      },
+      {
+        "kind": "ast",
+        "name": "apply_discount exists and something returns its result",
+        "requires": {
+          "functions": [
+            {
+              "name": "calculate_discount",
+              "params": 2
+            },
+            {
+              "name": "apply_discount"
+            }
+          ],
+          "returns": 2
+        },
+        "describe": "an apply_discount defined inside calculate_discount, with each function returning a value"
       }
     ],
     "hiddenCases": [
@@ -23,18 +40,6 @@
         "name": "a full discount leaves nothing to pay",
         "call": "round(float(calculate_discount(80, 100)), 2)",
         "expect": "0.0"
-      },
-      {
-        "kind": "ast",
-        "name": "apply_discount exists and something returns its result",
-        "requires": {
-          "functions": [
-            { "name": "calculate_discount", "params": 2 },
-            { "name": "apply_discount" }
-          ],
-          "returns": 2
-        },
-        "describe": "an apply_discount defined inside calculate_discount, with each function returning a value"
       }
     ],
     "hint": "Defining the helper is only half of it. Follow the value from the inner return all the way out of the outer one and check nothing is dropped on the way."
@@ -51,6 +56,25 @@
         "name": "a short password fails",
         "call": "validate_password(\"abc\")",
         "expect": "False"
+      },
+      {
+        "kind": "ast",
+        "name": "both helpers are defined inside validate_password",
+        "requires": {
+          "functions": [
+            {
+              "name": "validate_password",
+              "params": 1
+            },
+            {
+              "name": "has_min_length"
+            },
+            {
+              "name": "has_number"
+            }
+          ]
+        },
+        "describe": "has_min_length and has_number defined inside validate_password"
       }
     ],
     "hiddenCases": [
@@ -70,21 +94,14 @@
         "entry": "validate_password",
         "reference": "def validate_password(password):\n    def has_min_length(value):\n        return len(value) >= 8\n\n    def has_number(value):\n        return any(character.isdigit() for character in value)\n\n    return has_min_length(password) and has_number(password)\n",
         "args": [
-          { "type": "str", "minLength": 6, "maxLength": 12, "alphabet": "abcdefg1" }
+          {
+            "type": "str",
+            "minLength": 6,
+            "maxLength": 12,
+            "alphabet": "abcdefg1"
+          }
         ],
         "runs": 40
-      },
-      {
-        "kind": "ast",
-        "name": "both helpers are defined inside validate_password",
-        "requires": {
-          "functions": [
-            { "name": "validate_password", "params": 1 },
-            { "name": "has_min_length" },
-            { "name": "has_number" }
-          ]
-        },
-        "describe": "has_min_length and has_number defined inside validate_password"
       }
     ],
     "hint": "Two separate rules have to hold at once. A password that clears one of them is not a valid password, so check what your final return does when only one helper is happy."
@@ -124,7 +141,11 @@
         "It keeps the outer function's namespace tidy",
         "It can be imported from another file"
       ],
-      "answers": [0, 1, 2],
+      "answers": [
+        0,
+        1,
+        2
+      ],
       "explain": "A nested function sees the enclosing scope and is rebuilt on every call. It is invisible outside, which is the point, and that also means nothing else can import it."
     },
     {
@@ -137,7 +158,12 @@
         "        return amount - (amount * rate / 100)",
         "    return apply_discount(price, percent)"
       ],
-      "answer": [0, 1, 2, 3],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
       "explain": "The helper has to be defined before the line that calls it, and both defs have to finish before the outer return can hand anything back."
     }
   ]

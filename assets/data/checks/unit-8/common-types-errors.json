@@ -11,6 +11,14 @@
         "name": "share divides",
         "call": "share(10, 4)",
         "expect": "2.5"
+      },
+      {
+        "kind": "ast",
+        "name": "the errors are let out, not caught",
+        "forbids": {
+          "handlers": true
+        },
+        "describe": "no try/except around either function, so the error can name itself"
       }
     ],
     "hiddenCases": [
@@ -31,14 +39,6 @@
         "name": "a total that is text raises TypeError",
         "call": "share(\"10\", 2)",
         "expect": "TypeError"
-      },
-      {
-        "kind": "ast",
-        "name": "the errors are let out, not caught",
-        "forbids": {
-          "handlers": true
-        },
-        "describe": "no try/except around either function, so the error can name itself"
       }
     ],
     "hint": "Both functions are one line. The temptation is to guard against the bad case -- a missing name, zero people -- but a guard replaces an error you can read with a wrong answer you cannot. This exercise wants the error."

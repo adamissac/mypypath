@@ -6,14 +6,6 @@
         "name": "the numbers 1 to 5 in order",
         "stdout_matches": "1[\\s\\S]*2[\\s\\S]*3[\\s\\S]*4[\\s\\S]*5",
         "describe": "the numbers 1 through 5, in order"
-      }
-    ],
-    "hiddenCases": [
-      {
-        "name": "five lines, so 6 was not included",
-        "min_lines": 5,
-        "max_lines": 5,
-        "describe": "five lines, because range stops before its second number"
       },
       {
         "kind": "ast",
@@ -26,6 +18,14 @@
         }
       }
     ],
+    "hiddenCases": [
+      {
+        "name": "five lines, so 6 was not included",
+        "min_lines": 5,
+        "max_lines": 5,
+        "describe": "five lines, because range stops before its second number"
+      }
+    ],
     "hint": "range(1, 6) starts at 1 and stops before 6, which is how you get five numbers out of it."
   },
   "exercise2": {
@@ -35,6 +35,16 @@
         "name": "each colour in order",
         "stdout_matches": "red[\\s\\S]*blue[\\s\\S]*green",
         "describe": "red, blue and green, in that order"
+      },
+      {
+        "kind": "ast",
+        "name": "a for loop walks the list",
+        "describe": "a for loop over the list",
+        "requires": {
+          "loops": [
+            "for"
+          ]
+        }
       }
     ],
     "hiddenCases": [
@@ -48,16 +58,6 @@
         "min_lines": 3,
         "max_lines": 3,
         "describe": "one line per colour"
-      },
-      {
-        "kind": "ast",
-        "name": "a for loop walks the list",
-        "describe": "a for loop over the list",
-        "requires": {
-          "loops": [
-            "for"
-          ]
-        }
       }
     ],
     "hint": "A for loop can walk a list directly. You do not need range or an index to get at each colour."

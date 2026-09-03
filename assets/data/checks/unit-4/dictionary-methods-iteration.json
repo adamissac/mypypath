@@ -6,13 +6,6 @@
         "name": "get('apples') gives 10",
         "call": "inventory.get('apples')",
         "expect": "10"
-      }
-    ],
-    "hiddenCases": [
-      {
-        "name": "get('grapes', 0) falls back to the default",
-        "call": "inventory.get('grapes', 0)",
-        "expect": "0"
       },
       {
         "kind": "ast",
@@ -23,6 +16,13 @@
           ]
         },
         "describe": "inventory.get(...), rather than inventory[...]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "get('grapes', 0) falls back to the default",
+        "call": "inventory.get('grapes', 0)",
+        "expect": "0"
       },
       {
         "name": "asking about grapes did not add grapes",
@@ -43,9 +43,7 @@
       {
         "name": "each name and score on its own line",
         "expect_stdout": "Alice: 85\nBob: 92\nCharlie: 78"
-      }
-    ],
-    "hiddenCases": [
+      },
       {
         "kind": "ast",
         "name": "items() drives the loop",
@@ -58,7 +56,9 @@
           ]
         },
         "describe": "a for loop over scores.items()"
-      },
+      }
+    ],
+    "hiddenCases": [
       {
         "name": "scores holds the three people",
         "call": "scores",

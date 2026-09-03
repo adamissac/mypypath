@@ -11,6 +11,23 @@
         "name": "squares a negative number",
         "call": "square_number(-3)",
         "expect": "9"
+      },
+      {
+        "kind": "ast",
+        "name": "square_number returns a value worked out from its parameter",
+        "requires": {
+          "functions": [
+            {
+              "name": "square_number",
+              "params": 1
+            }
+          ],
+          "returns": 1,
+          "names": [
+            "number"
+          ]
+        },
+        "describe": "square_number returning something built from number"
       }
     ],
     "hiddenCases": [
@@ -19,7 +36,13 @@
         "name": "works for any number, not only the ones listed",
         "entry": "square_number",
         "reference": "def square_number(number):\n    return number * number\n",
-        "args": [{ "type": "int", "min": -30, "max": 30 }],
+        "args": [
+          {
+            "type": "int",
+            "min": -30,
+            "max": 30
+          }
+        ],
         "runs": 40
       },
       {
@@ -31,16 +54,6 @@
         "name": "the docstring says something about the function",
         "call": "len(square_number.__doc__.strip()) > 10",
         "expect": "True"
-      },
-      {
-        "kind": "ast",
-        "name": "square_number returns a value worked out from its parameter",
-        "requires": {
-          "functions": [{ "name": "square_number", "params": 1 }],
-          "returns": 1,
-          "names": ["number"]
-        },
-        "describe": "square_number returning something built from number"
       }
     ],
     "hint": "A comment above the def and a docstring inside it look similar and are not the same thing. Only one of them is still there when the program is running, and that is the one Python can show to a reader."
@@ -57,6 +70,20 @@
         "name": "uses the default tax rate when none is given",
         "call": "round(calculate_total(50), 2)",
         "expect": "54.0"
+      },
+      {
+        "kind": "ast",
+        "name": "the total is returned, not printed",
+        "requires": {
+          "functions": [
+            {
+              "name": "calculate_total",
+              "params": 2
+            }
+          ],
+          "returns": 1
+        },
+        "describe": "calculate_total with a return statement in it"
       }
     ],
     "hiddenCases": [
@@ -79,15 +106,6 @@
         "name": "the docstring covers the parameters and the return value",
         "call": "'param' in calculate_total.__doc__.lower() and 'return' in calculate_total.__doc__.lower()",
         "expect": "True"
-      },
-      {
-        "kind": "ast",
-        "name": "the total is returned, not printed",
-        "requires": {
-          "functions": [{ "name": "calculate_total", "params": 2 }],
-          "returns": 1
-        },
-        "describe": "calculate_total with a return statement in it"
       }
     ],
     "hint": "A one-line summary is a start, not the whole thing. The exercise asks for three pieces: what it does, what each parameter is, and what comes back."
@@ -108,7 +126,12 @@
     {
       "id": "u3-dd-2",
       "prompt": "Which built-in shows you a function's documentation?",
-      "choices": ["show()", "docs()", "help()", "print()"],
+      "choices": [
+        "show()",
+        "docs()",
+        "help()",
+        "print()"
+      ],
       "answer": 2,
       "explain": "help() prints the signature and the docstring, which is why writing one pays off for anyone reading your code later, including you."
     },
@@ -134,7 +157,11 @@
         "What it returns",
         "Every line of the implementation, restated"
       ],
-      "answers": [0, 1, 2],
+      "answers": [
+        0,
+        1,
+        2
+      ],
       "explain": "A docstring is for the person calling the function, so it describes the deal on offer. Restating the body helps nobody and goes stale the first time the body changes."
     },
     {
@@ -142,7 +169,13 @@
       "kind": "blank",
       "prompt": "A docstring is written between triple ___ marks.",
       "blanks": [
-        { "accept": ["quote", "quotes", "quotation"] }
+        {
+          "accept": [
+            "quote",
+            "quotes",
+            "quotation"
+          ]
+        }
       ],
       "explain": "Three quote marks let the string run over several lines, which is why docstrings use them even when they are short."
     }

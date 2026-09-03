@@ -11,6 +11,21 @@
         "name": "divides, and division gives a float",
         "call": "calculate(10, \"/\", 4)",
         "expect": "2.5"
+      },
+      {
+        "kind": "ast",
+        "name": "the operation is chosen between and the result returned",
+        "requires": {
+          "functions": [
+            {
+              "name": "calculate",
+              "params": 3
+            }
+          ],
+          "conditionals": 3,
+          "returns": 1
+        },
+        "describe": "calculate testing the operation and returning the answer"
       }
     ],
     "hiddenCases": [
@@ -30,9 +45,25 @@
         "entry": "calculate",
         "reference": "def calculate(num1, operation, num2):\n    \"\"\"Return the result of applying operation to num1 and num2.\"\"\"\n    if operation == \"+\":\n        return num1 + num2\n    elif operation == \"-\":\n        return num1 - num2\n    elif operation == \"*\":\n        return num1 * num2\n    else:\n        return num1 / num2\n",
         "args": [
-          { "type": "int", "min": -20, "max": 20 },
-          { "type": "choice", "values": ["+", "-", "*", "/"] },
-          { "type": "int", "min": 1, "max": 20 }
+          {
+            "type": "int",
+            "min": -20,
+            "max": 20
+          },
+          {
+            "type": "choice",
+            "values": [
+              "+",
+              "-",
+              "*",
+              "/"
+            ]
+          },
+          {
+            "type": "int",
+            "min": 1,
+            "max": 20
+          }
         ],
         "runs": 40
       },
@@ -40,16 +71,6 @@
         "name": "the function carries a docstring",
         "call": "calculate.__doc__ is not None",
         "expect": "True"
-      },
-      {
-        "kind": "ast",
-        "name": "the operation is chosen between and the result returned",
-        "requires": {
-          "functions": [{ "name": "calculate", "params": 3 }],
-          "conditionals": 3,
-          "returns": 1
-        },
-        "describe": "calculate testing the operation and returning the answer"
       }
     ],
     "hint": "Four operations means four ways through the function, and every one of them has to end with a value going back to the caller. Check the branch you wrote last."
@@ -66,6 +87,25 @@
         "name": "uppercase=True raises the case",
         "call": "process_text(\"hello\", True)",
         "expect": "'HELLO'"
+      },
+      {
+        "kind": "ast",
+        "name": "the two transformations live in helpers of their own",
+        "requires": {
+          "functions": [
+            {
+              "name": "process_text",
+              "params": 3
+            },
+            {
+              "name": "to_uppercase"
+            },
+            {
+              "name": "reverse_text"
+            }
+          ]
+        },
+        "describe": "to_uppercase and reverse_text defined as helper functions"
       }
     ],
     "hiddenCases": [
@@ -85,9 +125,17 @@
         "entry": "process_text",
         "reference": "def process_text(text, uppercase=False, reverse=False):\n    \"\"\"Return the text with the requested transformations applied.\"\"\"\n    def to_uppercase(value):\n        return value.upper()\n\n    def reverse_text(value):\n        return value[::-1]\n\n    result = text\n    if uppercase:\n        result = to_uppercase(result)\n    if reverse:\n        result = reverse_text(result)\n    return result\n",
         "args": [
-          { "type": "str", "minLength": 0, "maxLength": 10 },
-          { "type": "bool" },
-          { "type": "bool" }
+          {
+            "type": "str",
+            "minLength": 0,
+            "maxLength": 10
+          },
+          {
+            "type": "bool"
+          },
+          {
+            "type": "bool"
+          }
         ],
         "runs": 40
       },
@@ -95,18 +143,6 @@
         "name": "the function carries a docstring",
         "call": "process_text.__doc__ is not None",
         "expect": "True"
-      },
-      {
-        "kind": "ast",
-        "name": "the two transformations live in helpers of their own",
-        "requires": {
-          "functions": [
-            { "name": "process_text", "params": 3 },
-            { "name": "to_uppercase" },
-            { "name": "reverse_text" }
-          ]
-        },
-        "describe": "to_uppercase and reverse_text defined as helper functions"
       }
     ],
     "hint": "The two flags are independent, so there are four cases to get right and one of them is doing nothing at all. Work out what the function should return when both are left at their defaults."
@@ -115,7 +151,12 @@
     {
       "id": "u3-pfe-1",
       "prompt": "A function has four if branches and none of them matches. What does it return?",
-      "choices": ["0", "The last value it worked out", "None", "It raises a ValueError"],
+      "choices": [
+        "0",
+        "The last value it worked out",
+        "None",
+        "It raises a ValueError"
+      ],
       "answer": 2,
       "explain": "Falling off the end of a function returns None. A branch you forgot shows up as None reaching the caller, not as an error at the point of the mistake."
     },
@@ -141,21 +182,35 @@
         "Returning a value rather than printing it",
         "Doing as many unrelated jobs as possible in one function"
       ],
-      "answers": [0, 1, 2],
+      "answers": [
+        0,
+        1,
+        2
+      ],
       "explain": "The first three tell the caller what the deal is and leave them in charge of the result. A function that does several unrelated jobs can only be used when you want all of them."
     },
     {
       "id": "u3-pfe-4",
       "kind": "match",
       "prompt": "Match each piece of a well-built function to the job it does.",
-      "left": ["docstring", "default parameter", "helper function", "return"],
+      "left": [
+        "docstring",
+        "default parameter",
+        "helper function",
+        "return"
+      ],
       "right": [
         "keeps one step small and separately named",
         "explains the function to whoever calls it",
         "hands the result back to the caller",
         "lets a caller leave an option out"
       ],
-      "answer": [1, 3, 0, 2],
+      "answer": [
+        1,
+        3,
+        0,
+        2
+      ],
       "explain": "Each one solves a different problem: explaining, simplifying the call, simplifying the body, and delivering the answer."
     }
   ]

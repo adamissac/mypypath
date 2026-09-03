@@ -99,7 +99,93 @@
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', render);
+    /* The second course.
+   *
+   * Foundations progress is a list of completed unit numbers, because a unit
+   * is finished by passing its test. Python for Data has no tests yet, so
+   * there is nothing to complete a unit with -- what exists is lesson
+   * progress, which is keyed by lesson path and therefore already recorded
+   * for both courses.
+   *
+   * So this reports what is true rather than borrowing a shape that is not:
+   * lessons done per unit, and nothing about units being "complete". A
+   * student who has been working through Data used to see no trace of it
+   * here at all.
+   */
+  function renderDataCourse() {
+    var host = document.getElementById('progress-data-course');
+    if (!host || typeof fetch !== 'function') return;
+
+    fetch('/assets/data/curriculum-data.json')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (manifest) {
+        if (!manifest || !manifest.lessons || !manifest.lessons.length) return;
+
+        var done = {};
+        try {
+          var raw = window.ProgressStore.getItem('pypath-progress-lessons');
+          var parsed = raw ? JSON.parse(raw) : {};
+          if (parsed && typeof parsed === 'object') done = parsed;
+        } catch (e) {
+          done = {};
+        }
+
+        var byUnit = {};
+        manifest.lessons.forEach(function (lesson) {
+          var row = byUnit[lesson.unit] || (byUnit[lesson.unit] = { total: 0, done: 0,
+            title: lesson.unitTitle });
+          row.total += 1;
+          if (done[lesson.path]) row.done += 1;
+        });
+
+        var units = Object.keys(byUnit).map(Number).sort(function (a, b) { return a - b; });
+        if (!units.length) return;
+
+        var list = document.createElement('ul');
+        list.className = 'progress-units';
+        var totalDone = 0;
+        var totalLessons = 0;
+
+        units.forEach(function (n) {
+          var row = byUnit[n];
+          totalDone += row.done;
+          totalLessons += row.total;
+          var item = document.createElement('li');
+          item.className = 'progress-unit';
+          var link = document.createElement('a');
+          link.className = 'route';
+          link.href = '/data/unit-' + n + '.html';
+          link.textContent = 'Unit ' + n + ' · ' + row.title;
+          var meta = document.createElement('span');
+          meta.className = 'progress-unit__meta muted';
+          meta.textContent = row.done + ' of ' + row.total + ' lessons done';
+          item.appendChild(link);
+          item.appendChild(meta);
+          list.appendChild(item);
+        });
+
+        var heading = document.createElement('h2');
+        heading.textContent = 'Python for Data';
+        var lead = document.createElement('p');
+        lead.className = 'muted';
+        lead.textContent = totalDone + ' of ' + totalLessons
+          + ' lessons done. Units 3 onward are not written yet.';
+
+        host.innerHTML = '';
+        host.appendChild(heading);
+        host.appendChild(lead);
+        host.appendChild(list);
+        host.hidden = false;
+      })
+      .catch(function () {
+        // No second course on this deploy is a normal state, not an error.
+      });
+  }
+
+  document.addEventListener('DOMContentLoaded', renderDataCourse);
+  if (document.readyState !== 'loading') renderDataCourse();
+
+  document.addEventListener('DOMContentLoaded', render);
   } else {
     render();
   }

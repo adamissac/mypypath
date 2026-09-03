@@ -9,21 +9,6 @@
         "name": "saves the good note and reports the empty one",
         "stdout_matches": "^Saved: First note\nInvalid input: ",
         "describe": "Saved: First note, then a line starting Invalid input:"
-      }
-    ],
-    "hiddenCases": [
-      {
-        "kind": "file",
-        "name": "the new note is added, not written over the old one",
-        "path": "notes.txt",
-        "expect_matches": "Old note[\\s\\S]*First note",
-        "describe": "notes.txt keeping Old note and gaining First note"
-      },
-      {
-        "kind": "raises",
-        "name": "an empty note is refused",
-        "call": "save_note(\"\")",
-        "expect": "ValueError"
       },
       {
         "kind": "ast",
@@ -40,6 +25,21 @@
           ]
         },
         "describe": "a with statement around the open and an except that names ValueError"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "file",
+        "name": "the new note is added, not written over the old one",
+        "path": "notes.txt",
+        "expect_matches": "Old note[\\s\\S]*First note",
+        "describe": "notes.txt keeping Old note and gaining First note"
+      },
+      {
+        "kind": "raises",
+        "name": "an empty note is refused",
+        "call": "save_note(\"\")",
+        "expect": "ValueError"
       }
     ],
     "hint": "Three habits from this unit have to hold at once here: the file is appended to rather than replaced, the with statement owns the closing, and the except names the one error the function is documented to raise."

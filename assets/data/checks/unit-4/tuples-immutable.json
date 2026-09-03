@@ -35,15 +35,6 @@
         "name": "info is the three-value tuple",
         "call": "info",
         "expect": "('Python', 3, 'Beginner')"
-      }
-    ],
-    "hiddenCases": [
-      {
-        "kind": "raises",
-        "name": "info is a tuple, so it has no append",
-        "call": "info.append(\"Extra\")",
-        "expect": "AttributeError",
-        "describe": "a tuple cannot grow after it is made"
       },
       {
         "kind": "ast",
@@ -57,6 +48,15 @@
           ]
         },
         "describe": "len(info) for the length and a for loop over info"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "kind": "raises",
+        "name": "info is a tuple, so it has no append",
+        "call": "info.append(\"Extra\")",
+        "expect": "AttributeError",
+        "describe": "a tuple cannot grow after it is made"
       },
       {
         "name": "the last element reaches the output",

@@ -11,25 +11,33 @@
         "name": "prints the type of the string",
         "stdout_matches": "<class 'str'>",
         "describe": "what type() says about a string"
-      }
-    ],
-    "hiddenCases": [
+      },
       {
         "kind": "ast",
         "name": "the answers come from the built-in functions, not from typing them out",
         "requires": {
-          "calls": ["print", "len", "type"]
+          "calls": [
+            "print",
+            "len",
+            "type"
+          ]
         },
         "describe": "print(), len() and type() all called in your code"
       }
     ],
+    "hiddenCases": [],
     "hint": "The two answers are things Python can work out for you. If either number or word is typed into your code as a literal, the built-in function that produces it is missing."
   },
   "questions": [
     {
       "id": "u3-waf-1",
       "prompt": "What does len(\"Python\") return?",
-      "choices": ["5", "6", "7", "\"Python\""],
+      "choices": [
+        "5",
+        "6",
+        "7",
+        "\"Python\""
+      ],
       "answer": 1,
       "explain": "len counts the characters. \"Python\" has six of them, and the count is a number rather than the word itself."
     },
@@ -49,21 +57,38 @@
       "id": "u3-waf-3",
       "kind": "multi",
       "prompt": "Which of these are functions Python gives you without any import?",
-      "choices": ["print", "len", "type", "def"],
-      "answers": [0, 1, 2],
+      "choices": [
+        "print",
+        "len",
+        "type",
+        "def"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
       "explain": "print, len and type are built-in functions. def is a keyword: it is how you write a function of your own, not a function you call."
     },
     {
       "id": "u3-waf-4",
       "kind": "match",
       "prompt": "Match each built-in function to what it does.",
-      "left": ["print()", "len()", "type()"],
+      "left": [
+        "print()",
+        "len()",
+        "type()"
+      ],
       "right": [
         "counts the items in something",
         "shows a value on the screen",
         "says what kind of value something is"
       ],
-      "answer": [1, 0, 2],
+      "answer": [
+        1,
+        0,
+        2
+      ],
       "explain": "print shows a value, len measures one, and type describes one. Only print puts anything on the screen; the other two hand a value back for you to use."
     },
     {
@@ -71,7 +96,11 @@
       "kind": "blank",
       "prompt": "Fill in the built-in function that reports how many characters are in a string: ___(\"Python\")",
       "blanks": [
-        { "accept": ["len"] }
+        {
+          "accept": [
+            "len"
+          ]
+        }
       ],
       "explain": "len is the built-in that measures the size of a string, a list or any other collection."
     }

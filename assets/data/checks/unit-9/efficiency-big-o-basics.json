@@ -20,6 +20,20 @@
           }
         ],
         "runs": 30
+      },
+      {
+        "kind": "ast",
+        "name": "one pass, not a loop inside a loop",
+        "max_nesting": 2,
+        "requires": {
+          "functions": [
+            {
+              "name": "has_duplicate",
+              "params": 1
+            }
+          ]
+        },
+        "describe": "has_duplicate(items) that walks the list once"
       }
     ],
     "hiddenCases": [
@@ -41,20 +55,6 @@
           }
         ],
         "runs": 20
-      },
-      {
-        "kind": "ast",
-        "name": "one pass, not a loop inside a loop",
-        "max_nesting": 2,
-        "requires": {
-          "functions": [
-            {
-              "name": "has_duplicate",
-              "params": 1
-            }
-          ]
-        },
-        "describe": "has_duplicate(items) that walks the list once"
       }
     ],
     "hint": "Comparing every item against every other item gives the right answer and is the slow answer. The lesson's optimisation tips name the data structure that lets you ask \"have I seen this already\" without a second loop."

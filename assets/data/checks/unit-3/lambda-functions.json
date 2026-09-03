@@ -6,6 +6,19 @@
         "name": "tripling 7 gives 21",
         "call": "triple(7)",
         "expect": "21"
+      },
+      {
+        "kind": "ast",
+        "name": "triple is written as a lambda, not with def",
+        "requires": {
+          "names": [
+            "triple"
+          ]
+        },
+        "forbids": {
+          "functions": true
+        },
+        "describe": "triple made from a lambda expression rather than a def statement"
       }
     ],
     "hiddenCases": [
@@ -19,19 +32,14 @@
         "name": "works for any number, not only the one listed",
         "entry": "triple",
         "reference": "triple = lambda number: number * 3\n",
-        "args": [{ "type": "int", "min": -50, "max": 50 }],
+        "args": [
+          {
+            "type": "int",
+            "min": -50,
+            "max": 50
+          }
+        ],
         "runs": 40
-      },
-      {
-        "kind": "ast",
-        "name": "triple is written as a lambda, not with def",
-        "requires": {
-          "names": ["triple"]
-        },
-        "forbids": {
-          "functions": true
-        },
-        "describe": "triple made from a lambda expression rather than a def statement"
       }
     ],
     "hint": "A lambda is an expression, so it can sit on the right of an equals sign the way a number can. If your solution has the word def in it, it is not the shape this exercise is asking for."
@@ -42,14 +50,15 @@
       {
         "name": "prints the squared list",
         "expect_stdout": "[1, 4, 9, 16, 25]"
-      }
-    ],
-    "hiddenCases": [
+      },
       {
         "kind": "ast",
         "name": "the squaring is done by map, not by a loop or a named function",
         "requires": {
-          "calls": ["map", "list"]
+          "calls": [
+            "map",
+            "list"
+          ]
         },
         "forbids": {
           "loops": true,
@@ -58,20 +67,31 @@
         "describe": "list(map(...)) with a lambda, and no loop or def doing the work instead"
       }
     ],
+    "hiddenCases": [],
     "hint": "A loop and a comprehension both produce the right list, and neither is what this exercise is practising. map applies one function to every item for you; the lambda is that function."
   },
   "questions": [
     {
       "id": "u3-lf-1",
       "prompt": "How many expressions can the body of a lambda contain?",
-      "choices": ["One", "Two", "As many as you like", "None"],
+      "choices": [
+        "One",
+        "Two",
+        "As many as you like",
+        "None"
+      ],
       "answer": 0,
       "explain": "A lambda is a single expression, and its value is what the lambda returns. Anything needing statements, a loop or several steps wants a def."
     },
     {
       "id": "u3-lf-2",
       "prompt": "What does (lambda x: x * 2)(5) evaluate to?",
-      "choices": ["10", "x * 2", "None", "5"],
+      "choices": [
+        "10",
+        "x * 2",
+        "None",
+        "5"
+      ],
       "answer": 0,
       "explain": "The lambda is a function like any other, so calling it with 5 substitutes 5 for x and hands back the value of the expression."
     },
@@ -85,7 +105,11 @@
         "The function will be called from several places and needs a clear name",
         "The function takes two arguments"
       ],
-      "answers": [0, 1, 2],
+      "answers": [
+        0,
+        1,
+        2
+      ],
       "explain": "Lambdas are for short throwaway functions passed to something else. Taking two arguments is fine for a lambda; needing statements, documentation or a name is not."
     },
     {
@@ -93,7 +117,11 @@
       "kind": "blank",
       "prompt": "Complete the assignment so square holds a one-line function: square = ___ x: x * x",
       "blanks": [
-        { "accept": ["lambda"] }
+        {
+          "accept": [
+            "lambda"
+          ]
+        }
       ],
       "explain": "lambda introduces the parameter list, then a colon, then the single expression the function returns."
     }

@@ -7,6 +7,12 @@
         "nonempty": true,
         "stdout_matches": "blueprint",
         "describe": "a printed message that uses the blueprint idea"
+      },
+      {
+        "name": "a comment says what a class is",
+        "source_matches": "^\\s*#.*\\bclass\\b",
+        "flags": "im",
+        "describe": "a comment about what a class is"
       }
     ],
     "hiddenCases": [
@@ -14,12 +20,6 @@
         "name": "the explanation covers the object side as well",
         "stdout_matches": "object|house|instance",
         "describe": "the message says what the object is, not only what the class is"
-      },
-      {
-        "name": "a comment says what a class is",
-        "source_matches": "^\\s*#.*\\bclass\\b",
-        "flags": "im",
-        "describe": "a comment about what a class is"
       }
     ],
     "hint": "Two separate things are being asked for. A comment is for the reader of the code and starts with #; the printed message is for whoever runs it. Both have to be there."
@@ -31,9 +31,7 @@
         "name": "prints the dog information and the bark",
         "nonempty": true,
         "min_lines": 2
-      }
-    ],
-    "hiddenCases": [
+      },
       {
         "kind": "ast",
         "name": "bark is a function, and it is actually called",
@@ -50,6 +48,7 @@
         "describe": "a bark function that is defined and then called"
       }
     ],
+    "hiddenCases": [],
     "hint": "Behaviour goes in a function; data goes in variables. Defining bark is only half of it -- something has to call it for the bark to happen."
   },
   "questions": [

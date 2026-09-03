@@ -7,20 +7,28 @@
         "stdout_matches": "^hello, .+!$",
         "flags": "im",
         "describe": "a line like Hello, Ada!"
-      }
-    ],
-    "hiddenCases": [
+      },
       {
         "kind": "ast",
         "name": "the greeting is built from the parameter, not from a fixed name",
         "requires": {
-          "functions": [{ "name": "say_hello", "params": 1 }],
-          "calls": ["say_hello"],
-          "names": ["name"]
+          "functions": [
+            {
+              "name": "say_hello",
+              "params": 1
+            }
+          ],
+          "calls": [
+            "say_hello"
+          ],
+          "names": [
+            "name"
+          ]
         },
         "describe": "say_hello using the value of name inside its body"
       }
     ],
+    "hiddenCases": [],
     "hint": "A parameter is only useful if the body reads it. If the name appears inside the quotes rather than being joined to them, the function will greet the same person whatever it is passed."
   },
   "exercise2": {
@@ -30,34 +38,58 @@
         "name": "prints the area of a 5 by 3 rectangle",
         "stdout_matches": "\\b15\\b",
         "describe": "15, the area of a 5 by 3 rectangle"
-      }
-    ],
-    "hiddenCases": [
+      },
       {
         "kind": "ast",
         "name": "the area is multiplied out of the two parameters",
         "requires": {
-          "functions": [{ "name": "calculate_area", "params": 2 }],
-          "calls": ["calculate_area"],
-          "binop": [{ "op": "Mult", "names": ["length", "width"] }]
+          "functions": [
+            {
+              "name": "calculate_area",
+              "params": 2
+            }
+          ],
+          "calls": [
+            "calculate_area"
+          ],
+          "binop": [
+            {
+              "op": "Mult",
+              "names": [
+                "length",
+                "width"
+              ]
+            }
+          ]
         },
         "describe": "length multiplied by width inside calculate_area"
       }
     ],
+    "hiddenCases": [],
     "hint": "The function has to work for any rectangle, not only for the one you were asked to test with. Check that the multiplication uses the two parameter names."
   },
   "questions": [
     {
       "id": "u3-pa-1",
       "prompt": "In def say_hello(name):, what is name?",
-      "choices": ["An argument", "A parameter", "A return value", "A global variable"],
+      "choices": [
+        "An argument",
+        "A parameter",
+        "A return value",
+        "A global variable"
+      ],
       "answer": 1,
       "explain": "A parameter is the name in the def line. It is a placeholder that gets its value when the function is called."
     },
     {
       "id": "u3-pa-2",
       "prompt": "In say_hello(\"Ada\"), what is \"Ada\"?",
-      "choices": ["A parameter", "An argument", "A docstring", "A keyword"],
+      "choices": [
+        "A parameter",
+        "An argument",
+        "A docstring",
+        "A keyword"
+      ],
       "answer": 1,
       "explain": "An argument is the actual value handed over at the call. The parameter is the name that receives it."
     },
@@ -77,13 +109,21 @@
       "id": "u3-pa-4",
       "kind": "match",
       "prompt": "Match each term to what it describes.",
-      "left": ["parameter", "argument", "call"],
+      "left": [
+        "parameter",
+        "argument",
+        "call"
+      ],
       "right": [
         "the value passed in when the function is used",
         "the name listed in the def line",
         "writing the function name with parentheses to run it"
       ],
-      "answer": [1, 0, 2],
+      "answer": [
+        1,
+        0,
+        2
+      ],
       "explain": "Parameters are written once, in the def. Arguments are written every time you call. The call is the act of running it."
     }
   ]

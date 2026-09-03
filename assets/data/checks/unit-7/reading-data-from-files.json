@@ -8,6 +8,16 @@
       {
         "name": "prints each score, then the count",
         "expect_stdout": "80\n95\n72\n3"
+      },
+      {
+        "kind": "ast",
+        "name": "the numbers come out of the file, not out of the code",
+        "requires": {
+          "calls": [
+            "open"
+          ]
+        },
+        "describe": "open() used to read scores.txt"
       }
     ],
     "hiddenCases": [
@@ -24,16 +34,6 @@
           "scores.txt": "10\n20\n30\n40\n"
         },
         "expect_stdout": "10\n20\n30\n40\n4"
-      },
-      {
-        "kind": "ast",
-        "name": "the numbers come out of the file, not out of the code",
-        "requires": {
-          "calls": [
-            "open"
-          ]
-        },
-        "describe": "open() used to read scores.txt"
       }
     ],
     "hint": "The lesson's own example builds a string with the lines in it, which is a stand-in for a file rather than a file. The numbers here are on disk, and only open() can reach them."

@@ -5,18 +5,6 @@
       {
         "name": "prints the parsed values and then the JSON string",
         "expect_stdout": "Name: Alice\nAge: 25\n\nJSON string: {\"name\": \"Bob\", \"age\": 30}"
-      }
-    ],
-    "hiddenCases": [
-      {
-        "name": "data is a dictionary you can look a key up in",
-        "call": "data[\"name\"]",
-        "expect": "'Alice'"
-      },
-      {
-        "name": "the age survived as a number, not as text",
-        "call": "data[\"age\"] + 1",
-        "expect": "26"
       },
       {
         "kind": "ast",
@@ -31,6 +19,18 @@
           ]
         },
         "describe": "json.loads to read the string and json.dumps to write one"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "data is a dictionary you can look a key up in",
+        "call": "data[\"name\"]",
+        "expect": "'Alice'"
+      },
+      {
+        "name": "the age survived as a number, not as text",
+        "call": "data[\"age\"] + 1",
+        "expect": "26"
       }
     ],
     "hint": "One of these two functions takes a string and one takes an open file. If Python complains that a str has no attribute 'read', you reached for the file one."

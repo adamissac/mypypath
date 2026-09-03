@@ -5,6 +5,14 @@
       {
         "name": "the program itself runs cleanly",
         "expect_stdout": "ready"
+      },
+      {
+        "kind": "ast",
+        "name": "the errors are Python's own, not raised by hand",
+        "forbids": {
+          "raises": true
+        },
+        "describe": "the operations themselves failing, rather than a raise statement"
       }
     ],
     "hiddenCases": [
@@ -25,14 +33,6 @@
         "name": "\"type\" adds a string to a number",
         "call": "cause_error(\"type\")",
         "expect": "TypeError"
-      },
-      {
-        "kind": "ast",
-        "name": "the errors are Python's own, not raised by hand",
-        "forbids": {
-          "raises": true
-        },
-        "describe": "the operations themselves failing, rather than a raise statement"
       }
     ],
     "hint": "Every one of these is an error you can already write by accident. The question is which of the three operations produces which name in the table, and the way to find out is to let it happen."

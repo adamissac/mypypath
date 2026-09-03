@@ -9,18 +9,25 @@
       {
         "name": "two calls, so at least two lines of output",
         "min_lines": 2
-      }
-    ],
-    "hiddenCases": [
+      },
       {
         "kind": "ast",
         "name": "introduce is defined and then called",
         "requires": {
-          "functions": [{ "name": "introduce", "params": 0 }],
-          "calls": ["introduce"]
+          "functions": [
+            {
+              "name": "introduce",
+              "params": 0
+            }
+          ],
+          "calls": [
+            "introduce"
+          ]
         },
         "describe": "a function named introduce, and a line that calls it"
-      },
+      }
+    ],
+    "hiddenCases": [
       {
         "name": "the same output appears a second time",
         "stdout_matches": "^(.+)\\n(?:[\\s\\S]*\\n)?\\1$",
@@ -40,26 +47,38 @@
       {
         "name": "three pieces of information, so three lines",
         "min_lines": 3
-      }
-    ],
-    "hiddenCases": [
+      },
       {
         "kind": "ast",
         "name": "the three prints live inside display_info, which is then called",
         "requires": {
-          "functions": [{ "name": "display_info", "params": 0 }],
-          "calls": ["display_info", "print"]
+          "functions": [
+            {
+              "name": "display_info",
+              "params": 0
+            }
+          ],
+          "calls": [
+            "display_info",
+            "print"
+          ]
         },
         "describe": "a function named display_info, and a line that calls it"
       }
     ],
+    "hiddenCases": [],
     "hint": "Three prints one after another do produce three lines, but that is not what was asked. Check that the prints are indented under the def and that something calls the function."
   },
   "questions": [
     {
       "id": "u3-dcf-1",
       "prompt": "Which keyword begins a function definition?",
-      "choices": ["func", "define", "def", "function"],
+      "choices": [
+        "func",
+        "define",
+        "def",
+        "function"
+      ],
       "answer": 2,
       "explain": "Python uses def, followed by the name, the parentheses and a colon."
     },
@@ -84,7 +103,11 @@
         "    print(\"My name is Ada\")",
         "introduce()"
       ],
-      "answer": [0, 1, 2],
+      "answer": [
+        0,
+        1,
+        2
+      ],
       "explain": "The def comes first, the indented body belongs to it, and the call sits back at the left margin so it is not part of the function it is calling."
     },
     {
@@ -92,7 +115,15 @@
       "kind": "blank",
       "prompt": "A function is run by writing its name followed by ___",
       "blanks": [
-        { "accept": ["()", "parentheses", "parenthesis", "brackets", "round brackets"] }
+        {
+          "accept": [
+            "()",
+            "parentheses",
+            "parenthesis",
+            "brackets",
+            "round brackets"
+          ]
+        }
       ],
       "explain": "The parentheses are what turn a name into a call. Writing introduce on its own just mentions the function; introduce() runs it."
     }

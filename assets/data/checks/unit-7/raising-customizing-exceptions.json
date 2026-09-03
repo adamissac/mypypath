@@ -5,6 +5,24 @@
       {
         "name": "a valid age comes straight back",
         "expect_stdout": "30"
+      },
+      {
+        "kind": "ast",
+        "name": "the error is a class of its own and is actually raised",
+        "requires": {
+          "classes": [
+            {
+              "name": "InvalidAgeError",
+              "bases": [
+                "Exception"
+              ]
+            }
+          ],
+          "raises": [
+            "InvalidAgeError"
+          ]
+        },
+        "describe": "class InvalidAgeError(Exception) and a raise that uses it"
       }
     ],
     "hiddenCases": [
@@ -24,24 +42,6 @@
         "name": "an age at the edge is still valid",
         "call": "validate_age(150)",
         "expect": "150"
-      },
-      {
-        "kind": "ast",
-        "name": "the error is a class of its own and is actually raised",
-        "requires": {
-          "classes": [
-            {
-              "name": "InvalidAgeError",
-              "bases": [
-                "Exception"
-              ]
-            }
-          ],
-          "raises": [
-            "InvalidAgeError"
-          ]
-        },
-        "describe": "class InvalidAgeError(Exception) and a raise that uses it"
       }
     ],
     "hint": "Printing a complaint and carrying on leaves the caller holding the bad age and no way to know it. Raising hands the problem back to whoever asked, which is the only one who can decide what to do about it."

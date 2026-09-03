@@ -8,20 +8,6 @@
       {
         "name": "totals the real file and survives the missing one",
         "expect_stdout": "247\n0"
-      }
-    ],
-    "hiddenCases": [
-      {
-        "name": "works on a different set of scores",
-        "files": {
-          "scores.txt": "5\n5\n"
-        },
-        "expect_stdout": "10\n0"
-      },
-      {
-        "name": "any missing file gives back zero rather than crashing",
-        "call": "read_total(\"nowhere.txt\")",
-        "expect": "0"
       },
       {
         "kind": "ast",
@@ -37,6 +23,20 @@
           ]
         },
         "describe": "except FileNotFoundError rather than a bare except"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "works on a different set of scores",
+        "files": {
+          "scores.txt": "5\n5\n"
+        },
+        "expect_stdout": "10\n0"
+      },
+      {
+        "name": "any missing file gives back zero rather than crashing",
+        "call": "read_total(\"nowhere.txt\")",
+        "expect": "0"
       }
     ],
     "hint": "A bare except returns 0 for a missing file and also for a typo in your own code, a file full of words, and every mistake you have not made yet. Name the one error you are ready for."

@@ -104,6 +104,22 @@ describe('summarizing a run', () => {
     expect(C.summarize([fail('a')], [], spec, 2).hint).toBe('Check your indentation.');
   });
 
+  /* Walking the course as a student turned this up: fail on the first attempt
+     and you were told nothing; pass on the second and you were handed a hint
+     for the exercise you had just solved. The attempt count was the only
+     condition, so the advice arrived exactly when it was no longer wanted. */
+  it('does not hand out a hint to someone who has just passed', () => {
+    const spec = { hint: 'Check your indentation.' };
+    expect(C.summarize([pass('a')], [], spec, 2).hint).toBe('');
+    expect(C.summarize([pass('a')], [], spec, 5).hint).toBe('');
+  });
+
+  it('still hints someone who is still stuck', () => {
+    const spec = { hint: 'Check your indentation.' };
+    expect(C.summarize([pass('a'), fail('b')], [], spec, 2).hint)
+      .toBe('Check your indentation.');
+  });
+
   it('does not call an empty run a pass', () => {
     expect(C.summarize([], [], {}, 1).allPassed).toBe(false);
   });

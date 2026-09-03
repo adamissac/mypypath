@@ -6,19 +6,6 @@
         "name": "the average of 2, 4 and 6",
         "call": "process_data([2, 4, 6])",
         "expect": "4.0"
-      }
-    ],
-    "hiddenCases": [
-      {
-        "name": "a single number averages to itself",
-        "call": "process_data([7])",
-        "expect": "7.0"
-      },
-      {
-        "kind": "raises",
-        "name": "an empty list still raises ZeroDivisionError",
-        "call": "process_data([])",
-        "expect": "ZeroDivisionError"
       },
       {
         "kind": "ast",
@@ -41,6 +28,19 @@
           "handlers": true
         },
         "describe": "no try/except, so the traceback can show both frames"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a single number averages to itself",
+        "call": "process_data([7])",
+        "expect": "7.0"
+      },
+      {
+        "kind": "raises",
+        "name": "an empty list still raises ZeroDivisionError",
+        "call": "process_data([])",
+        "expect": "ZeroDivisionError"
       }
     ],
     "hint": "Two frames is the whole point of the exercise: the empty list is passed in one function and divided by in another, so both names appear in the traceback. Catching the error would collapse that chain into nothing."
