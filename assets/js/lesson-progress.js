@@ -309,6 +309,31 @@
     return !isUnitUnlocked(unit, completedUnits(), teaching(), classPolicy);
   }
 
+  function lockIsTeacherSet() {
+    return !!(classPolicy && window.PyPathPolicy
+      && window.PyPathPolicy.normalizeMode(classPolicy.mode) === 'manual');
+  }
+
+  /* Whether the lock shuts the unit or only advises about it.
+   *
+   * A class policy is a decision a teacher made about this learner: "in order"
+   * and a manual list are both choices, and both are enforced exactly as
+   * before. A learner with no class has had no such decision made about them,
+   * and for them the chain is the course's default order rather than a door.
+   *
+   * So on their own, an account opens every unit to read and to work through.
+   * What the chain still governs for them is *credit*: rollUpUnitNumber
+   * refuses to complete a unit until the one before it is finished, and that
+   * half is untouched. Reading ahead is allowed; skipping ahead is not. */
+  function lockIsEnforced() {
+    return !!classPolicy;
+  }
+
+  // Access, as opposed to credit.
+  function unitHardLocked() {
+    return unitLocked() && lockIsEnforced();
+  }
+
   // Required item ids, read from the page itself so no manifest can drift.
   function requiredItems() {
     var exercises = Array.prototype.map.call(
@@ -399,12 +424,18 @@
 
   function markItem(id) {
     if (!id || required.indexOf(id) === -1) return;
-    // Nothing on a locked unit is ticked off. The lock screen means a student
-    // is not normally holding an exercise to tick in the first place, but this
-    // is the guard that does not depend on the DOM: it still covers the moment
-    // between the page parsing and the screen painting, a control left over
-    // from an earlier paint, and anything driven from the console.
-    if (unitLocked()) return;
+    // Nothing on a unit a teacher has shut is ticked off. The lock screen means
+    // such a student is not normally holding an exercise to tick in the first
+    // place, but this is the guard that does not depend on the DOM: it still
+    // covers the moment between the page parsing and the screen painting, a
+    // control left over from an earlier paint, and anything from the console.
+    //
+    // A unit merely ahead in the chain does record. Throwing the work away
+    // would mean a student who read ahead had to do it twice, and the rule is
+    // that it does not *count* yet, not that it did not happen:
+    // rollUpUnitNumber still refuses the unit credit until the one before it is
+    // finished, and picks this work up the moment that happens.
+    if (unitHardLocked()) return;
     var map = readMap();
     var entry = map[path];
     var done = entry ? entry.done.slice() : [];
@@ -733,7 +764,7 @@
     '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>' +
     '<path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
 
-  function lockScreenHTML(teacherSet, hidLesson) {
+  function lockScreenHTML(teacherSet, hidLesson, enforced) {
     // Which sentence is true depends on why this unit is shut, and getting it
     // wrong is not a cosmetic slip.
     //
@@ -761,21 +792,41 @@
         'this one is not open at the moment. ' + gone + ' Nothing you have ' +
         'already finished is affected, and nothing here has been taken off ' +
         'your record. Ask your teacher if you think it should be open.';
-    } else {
-      var prev = unit - 1;
+    } else if (enforced) {
+      // A class set to "in order". The teacher chose the chain, so it shuts.
+      var seqPrev = unit - 1;
       title = 'Unit ' + unit + ' is not unlocked yet';
-      body = 'Finish every lesson in Unit ' + prev + ' and score ' +
-        UNIT_TEST_PASS_MARK + ' or higher on the Unit ' + prev + ' test to ' +
-        'unlock it. ' + gone + ' Your progress counts from Unit ' + prev + '.';
+      body = 'Finish every lesson in Unit ' + seqPrev + ' and score ' +
+        UNIT_TEST_PASS_MARK + ' or higher on the Unit ' + seqPrev + ' test to ' +
+        'unlock it. ' + gone + ' Your progress counts from Unit ' + seqPrev + '.';
+    } else {
+      // On your own, where the chain advises rather than shuts. The lesson is
+      // still on the page underneath this, so the sentence has to be about
+      // credit and not about access -- telling someone a unit is closed while
+      // they are reading it is the one wording that cannot be true.
+      var prev = unit - 1;
+      title = 'You are reading ahead';
+      body = 'Unit ' + unit + ' is open, and everything you do here is saved. ' +
+        'It counts towards your progress once you finish Unit ' + prev +
+        ' and score ' + UNIT_TEST_PASS_MARK + ' or higher on the Unit ' + prev +
+        ' test. Nothing is lost in the meantime: this work is credited the ' +
+        'moment Unit ' + prev + ' is done.';
     }
 
     // The ghost only earns its place where a lesson was actually taken away. On
     // a unit page the card sits above a real list of lessons, and a decorative
     // blur above real content would read as that content being obscured.
+    // A padlock over a lesson somebody is allowed to read would say the
+    // opposite of the words beside it.
+    var eyebrow = enforced === false
+      ? '<p class="unit-lock-screen__eyebrow">Ahead of your progress &middot; Unit '
+        + unit + '</p>'
+      : '<span class="unit-lock-screen__badge">' + LOCK_SVG + '</span>' +
+        '<p class="unit-lock-screen__eyebrow">Locked &middot; Unit ' + unit + '</p>';
+
     return (hidLesson ? ghostHTML() : '') +
       '<div class="unit-lock-screen__card">' +
-      '<span class="unit-lock-screen__badge">' + LOCK_SVG + '</span>' +
-      '<p class="unit-lock-screen__eyebrow">Locked &middot; Unit ' + unit + '</p>' +
+      eyebrow +
       '<h2 class="unit-lock-screen__title">' + title + '</h2>' +
       '<p class="unit-lock-screen__body">' + body + '</p>' +
       '<p class="unit-lock-screen__actions">' + wayOut(teacherSet) + '</p>' +
@@ -795,14 +846,20 @@
       return;
     }
 
-    var teacherSet = classPolicy && window.PyPathPolicy
-      && window.PyPathPolicy.normalizeMode(classPolicy.mode) === 'manual';
-    var variant = teacherSet ? 'teacher' : 'sequential';
+    var teacherSet = lockIsTeacherSet();
+    var enforced = lockIsEnforced();
+    var variant = teacherSet ? 'teacher' : (enforced ? 'sequential' : 'advisory');
 
     // Take the lesson away first, so that on the frame this paints there is no
     // window in which both the lesson and the screen explaining its absence
     // are on the page together.
-    if (isLessonPage()) stowLessonBody();
+    //
+    // Only where the lock is enforced. For a learner on their own the lesson
+    // stays where it is with a note above it -- and a lesson stowed by an
+    // earlier paint, before the class policy resolved to "no class", has to be
+    // given back.
+    if (enforced && isLessonPage()) stowLessonBody();
+    else restoreLessonBody();
     var hidLesson = !!(stowed && stowed.items.length);
 
     // The class policy is fetched after this first runs, so the screen is
@@ -829,7 +886,7 @@
     // Whether a lesson was actually taken off this page, so a test can tell
     // the lesson-page case from the unit-page one without reading the copy.
     box.setAttribute('data-lesson-hidden', hidLesson ? 'true' : 'false');
-    box.innerHTML = lockScreenHTML(teacherSet, hidLesson);
+    box.innerHTML = lockScreenHTML(teacherSet, hidLesson, enforced);
 
     placeLockScreen(box);
   }
@@ -1188,7 +1245,9 @@
    */
   function paintLockedControls() {
     if (!isLessonPage()) return;
-    var locked = unitLocked();
+    // Only a teacher's closed unit takes the controls away. A unit ahead in the
+    // chain is readable and workable; the notice on it says what it counts for.
+    var locked = unitHardLocked();
     var nodes = document.querySelectorAll('.btn-run, .btn-check, .submit-btn');
     for (var i = 0; i < nodes.length; i++) {
       var btn = nodes[i];

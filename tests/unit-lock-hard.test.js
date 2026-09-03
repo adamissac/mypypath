@@ -270,16 +270,42 @@ describe('a classroom student whose teacher has opened the unit', () => {
   });
 });
 
-describe('a learner in no class is untouched', () => {
-  it('follows the sequential chain and nothing else', () => {
-    // null policy is the guest, the offline page, the denied read and the
-    // learner with no teacher. Unit 2 with unit 1 unfinished is shut by the
-    // chain that existed before any of this, not by a class.
+describe('a learner in no class can read ahead but not skip ahead', () => {
+  /* The rule changed here, deliberately: an account opens every unit.
+   *
+   * A null policy is the guest, the offline page, the denied read and the
+   * learner with no teacher -- nobody has made a decision about them, so the
+   * chain is the course's default order rather than a door. They get the
+   * lesson, the controls, and a note saying what it counts for.
+   *
+   * The other half of the chain is untouched and is pinned below: the unit
+   * still does not complete until the one before it is finished. Reading
+   * ahead is allowed; skipping ahead is not. A class set to "in order" is a
+   * teacher's decision and is still enforced -- see sequential-pass-mark. */
+  it('keeps the lesson and the controls, and says what they count for', () => {
     boot();
     policyArrives(null);
-    expect(document.querySelector('.btn-run')).toBe(null);
-    expect(document.querySelector('.unit-lock-screen').getAttribute('data-lock-variant'))
-      .toBe('sequential');
+    expect(document.querySelector('.lesson-content')).not.toBe(null);
+    expect(document.querySelector('.btn-run')).not.toBe(null);
+    expect(document.querySelector('.btn-run').disabled).toBe(false);
+
+    const note = document.querySelector('.unit-lock-screen');
+    expect(note.getAttribute('data-lock-variant')).toBe('advisory');
+    expect(note.innerHTML).not.toContain('is not unlocked yet');
+    expect(note.textContent).toMatch(/counts towards your progress once you finish Unit 1/);
+  });
+
+  /* The half that did not change. Work done ahead is recorded -- throwing it
+     away would make a reader do it twice -- and the unit still does not
+     complete, because rollUpUnitNumber refuses credit until unit 1 is done. */
+  it('records the work but does not complete the unit', () => {
+    boot();
+    policyArrives(null);
+    document.querySelector('.reflection-input').value =
+      'A loop repeats a block of code until its condition stops being true.';
+    saveReflection();
+    expect(lessonRecord().done).toContain('reflect-1');
+    expect(window.ProgressStore.getCompletedUnits()).not.toContain(2);
   });
 
   it('works normally once they have earned the unit', () => {
