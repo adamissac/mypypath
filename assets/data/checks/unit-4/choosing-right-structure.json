@@ -24,13 +24,6 @@
         "name": "every word counted",
         "call": "[v for v in list(globals().values()) if isinstance(v, dict) and 'apple' in v]",
         "expect": "[{'apple': 3, 'banana': 2, 'cherry': 1}]"
-      }
-    ],
-    "hiddenCases": [
-      {
-        "name": "the six words from the exercise are the ones counted",
-        "call": "[len(v) for v in list(globals().values()) if isinstance(v, list) and 'apple' in v]",
-        "expect": "[6]"
       },
       {
         "kind": "ast",
@@ -41,6 +34,13 @@
           ]
         },
         "describe": "a loop over the words, rather than three counts typed in by hand"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the six words from the exercise are the ones counted",
+        "call": "[len(v) for v in list(globals().values()) if isinstance(v, list) and 'apple' in v]",
+        "expect": "[6]"
       }
     ],
     "hint": "The first time you meet a word there is no count to add to yet, so the two cases are different: start it at 1, or add 1 to what is already there. Deciding which is what the `if` is for."

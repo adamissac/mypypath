@@ -6,6 +6,19 @@
         "name": "Ada Lovelace gives AL",
         "call": "initials(\"Ada Lovelace\")",
         "expect": "'AL'"
+      },
+      {
+        "name": "the loop still does the work",
+        "kind": "ast",
+        "requires": {
+          "loops": [
+            "for"
+          ],
+          "functions": [
+            "initials"
+          ]
+        },
+        "describe": "the same function, still looping"
       }
     ],
     "hiddenCases": [
@@ -38,19 +51,6 @@
           }
         ],
         "runs": 24
-      },
-      {
-        "name": "the loop still does the work",
-        "kind": "ast",
-        "requires": {
-          "loops": [
-            "for"
-          ],
-          "functions": [
-            "initials"
-          ]
-        },
-        "describe": "the same function, still looping"
       }
     ],
     "hint": "Print what `word` holds on each pass. The loop is walking something smaller than you think it is, and one method call on `name` fixes it."

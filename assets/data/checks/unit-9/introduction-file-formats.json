@@ -8,6 +8,17 @@
       {
         "name": "prints one line per person and none for the header",
         "expect_stdout": "Alice is 25\nBob is 30"
+      },
+      {
+        "kind": "ast",
+        "name": "the csv module does the reading and the writing",
+        "requires": {
+          "imports": [
+            "csv"
+          ],
+          "withs": true
+        },
+        "describe": "the csv module, with the files opened in a with block"
       }
     ],
     "hiddenCases": [
@@ -24,17 +35,6 @@
         "path": "data.csv",
         "expect": "name,age\nAlice,25\nBob,30",
         "describe": "data.csv unchanged, because reading a file should not rewrite it"
-      },
-      {
-        "kind": "ast",
-        "name": "the csv module does the reading and the writing",
-        "requires": {
-          "imports": [
-            "csv"
-          ],
-          "withs": true
-        },
-        "describe": "the csv module, with the files opened in a with block"
       }
     ],
     "hint": "A CSV file's first line is usually names for the columns rather than data. Decide which reader you are using, then decide what that reader does with that first line."

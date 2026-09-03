@@ -24,9 +24,7 @@
         "name": "a Circle draws itself",
         "call": "Circle().draw()",
         "expect": "'Drawing circle'"
-      }
-    ],
-    "hiddenCases": [
+      },
       {
         "kind": "ast",
         "name": "Shape is the class that defines draw first",
@@ -41,7 +39,9 @@
           ]
         },
         "describe": "a Shape class with a draw of its own"
-      },
+      }
+    ],
+    "hiddenCases": [
       {
         "name": "the parent's draw is left as it was",
         "call": "Shape().draw()",
@@ -94,9 +94,7 @@
         "name": "a card payment reports itself",
         "call": "CreditCard().process()",
         "expect": "'Processing credit card'"
-      }
-    ],
-    "hiddenCases": [
+      },
       {
         "kind": "ast",
         "name": "Payment is the class the two share",
@@ -113,16 +111,6 @@
         "describe": "a Payment class with a process of its own"
       },
       {
-        "name": "a PayPal payment reports itself differently",
-        "call": "PayPal().process()",
-        "expect": "'Processing PayPal'"
-      },
-      {
-        "name": "the same call gives a different answer per object",
-        "call": "[p.process() for p in [CreditCard(), PayPal()]]",
-        "expect": "['Processing credit card', 'Processing PayPal']"
-      },
-      {
         "kind": "ast",
         "name": "the payments are walked with a loop, not written out one by one",
         "requires": {
@@ -131,6 +119,18 @@
           ]
         },
         "describe": "a loop over the list of payments"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a PayPal payment reports itself differently",
+        "call": "PayPal().process()",
+        "expect": "'Processing PayPal'"
+      },
+      {
+        "name": "the same call gives a different answer per object",
+        "call": "[p.process() for p in [CreditCard(), PayPal()]]",
+        "expect": "['Processing credit card', 'Processing PayPal']"
       },
       {
         "name": "prints both results",

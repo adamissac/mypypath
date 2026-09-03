@@ -6,13 +6,6 @@
         "name": "double(7) is 14",
         "call": "double(7)",
         "expect": "14"
-      }
-    ],
-    "hiddenCases": [
-      {
-        "name": "double works on numbers it was not shown",
-        "call": "double(-3)",
-        "expect": "-6"
       },
       {
         "kind": "ast",
@@ -37,6 +30,13 @@
           "conditionals": 1
         },
         "describe": "if __name__ == \"__main__\": around the test code"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "double works on numbers it was not shown",
+        "call": "double(-3)",
+        "expect": "-6"
       },
       {
         "name": "the result shows when the file is run directly",
@@ -53,9 +53,7 @@
         "name": "reports __main__ and then that it is running directly",
         "stdout_matches": "__main__[\\s\\S]*Running directly",
         "describe": "the value of __name__, then Running directly"
-      }
-    ],
-    "hiddenCases": [
+      },
       {
         "kind": "ast",
         "name": "the branch is decided by __name__, not written out by hand",
@@ -66,7 +64,9 @@
           "conditionals": 1
         },
         "describe": "an if that tests __name__"
-      },
+      }
+    ],
+    "hiddenCases": [
       {
         "name": "only the branch that applies is printed",
         "min_lines": 2,

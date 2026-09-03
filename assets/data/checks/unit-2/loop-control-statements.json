@@ -6,14 +6,6 @@
         "name": "stops after 7",
         "stdout_matches": "1[\\s\\S]*7",
         "describe": "the numbers up to and including 7"
-      }
-    ],
-    "hiddenCases": [
-      {
-        "name": "seven lines, so it stopped rather than finished",
-        "min_lines": 7,
-        "max_lines": 7,
-        "describe": "seven lines: 8, 9 and 10 were never reached"
       },
       {
         "kind": "ast",
@@ -27,6 +19,14 @@
         }
       }
     ],
+    "hiddenCases": [
+      {
+        "name": "seven lines, so it stopped rather than finished",
+        "min_lines": 7,
+        "max_lines": 7,
+        "describe": "seven lines: 8, 9 and 10 were never reached"
+      }
+    ],
     "hint": "range(1, 8) prints the same seven numbers and never breaks out of anything. The exercise is about leaving a loop early, so the range stays 1 to 11 and the if is what stops it."
   },
   "exercise2": {
@@ -36,14 +36,6 @@
         "name": "the multiples of three are missing",
         "stdout_matches": "1[\\s\\S]*2[\\s\\S]*4[\\s\\S]*5[\\s\\S]*7[\\s\\S]*8[\\s\\S]*10",
         "describe": "1, 2, 4, 5, 7, 8 and 10"
-      }
-    ],
-    "hiddenCases": [
-      {
-        "name": "seven lines, so three of the ten were skipped",
-        "min_lines": 7,
-        "max_lines": 7,
-        "describe": "seven lines out of ten numbers"
       },
       {
         "kind": "ast",
@@ -55,6 +47,14 @@
           ],
           "conditionals": 1
         }
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "seven lines, so three of the ten were skipped",
+        "min_lines": 7,
+        "max_lines": 7,
+        "describe": "seven lines out of ten numbers"
       }
     ],
     "hint": "continue abandons the current pass and starts the next one, so the print has to come after the test rather than before it."

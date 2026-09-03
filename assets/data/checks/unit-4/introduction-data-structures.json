@@ -37,6 +37,11 @@
       {
         "name": "all four structures are printed",
         "min_lines": 4
+      },
+      {
+        "name": "each structure is labelled in a comment",
+        "source_matches": "#[\\s\\S]*#[\\s\\S]*#[\\s\\S]*#",
+        "describe": "a comment naming the type above each of the four structures"
       }
     ],
     "hiddenCases": [
@@ -59,11 +64,6 @@
         "name": "the set keeps 1, 2 and 3 once each",
         "stdout_matches": "\\{1, 2, 3\\}",
         "describe": "{1, 2, 3} -- the second 2 is dropped"
-      },
-      {
-        "name": "each structure is labelled in a comment",
-        "source_matches": "#[\\s\\S]*#[\\s\\S]*#[\\s\\S]*#",
-        "describe": "a comment naming the type above each of the four structures"
       }
     ],
     "hint": "Write each structure with the punctuation that belongs to it, then let the output tell you what you got. The set is the interesting one: give it 1, 2, 2, 3 and see how many values come back."

@@ -34,6 +34,24 @@ const COURSE = JSON.parse(fs.readFileSync('assets/data/courses.json', 'utf8'))
 
 /* ------------------------------------------------------------- lesson pages */
 
+/* The lesson list every Foundations lesson carries. Without it a learner can
+   see the lesson they are on and nothing either side of it, which is most of
+   what makes a course feel like a course rather than a page. */
+function sidebar(unitN, lessons, currentSlug) {
+  const items = lessons.map((l, i) => {
+    const here = l.slug === currentSlug ? ' class="is-current" aria-current="page"' : '';
+    return `<li><a href="/data/unit-${unitN}/${l.slug}.html"${here}>${i + 1}. ${esc(l.title)}</a></li>`;
+  }).join('\n');
+  return `<aside class="course-sidebar" id="lesson-sidebar">
+<p class="sidebar-unit-label">Unit ${unitN} &middot; ${esc(C[`unit${unitN}`].title)}</p>
+<nav>
+<ul>
+${items}
+</ul>
+</nav>
+</aside>`;
+}
+
 function lessonMain(unitN, unit, i, lesson, prev, next) {
   const sections = lesson.sections.map(([heading, prose, code]) => `
 <div class="content-section">
@@ -55,6 +73,7 @@ function lessonMain(unitN, unit, i, lesson, prev, next) {
 </section>
 <section class="course-main">
 <div class="container">
+${sidebar(unitN, C[`unit${unitN}`].lessons, lesson.slug)}
 <section class="lesson-body">
 ${sections}
 

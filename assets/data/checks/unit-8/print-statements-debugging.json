@@ -6,6 +6,16 @@
         "name": "the three numbers add up to 6",
         "call": "running_total([1, 2, 3])",
         "expect": "6"
+      },
+      {
+        "kind": "ast",
+        "name": "the accumulation happens in a loop",
+        "requires": {
+          "loops": [
+            "for"
+          ]
+        },
+        "describe": "a for loop that builds the total up"
       }
     ],
     "hiddenCases": [
@@ -37,16 +47,6 @@
         "min_lines": 4,
         "name": "the trace shows every pass through the loop",
         "describe": "a debug line for each pass through the loop, as well as the result"
-      },
-      {
-        "kind": "ast",
-        "name": "the accumulation happens in a loop",
-        "requires": {
-          "loops": [
-            "for"
-          ]
-        },
-        "describe": "a for loop that builds the total up"
       }
     ],
     "hint": "Two separate things are being asked for. The debug print goes inside the loop and stays there, so three numbers produce three trace lines before the answer. The bug is on the line that assigns to running -- read what your own trace prints and it names itself."

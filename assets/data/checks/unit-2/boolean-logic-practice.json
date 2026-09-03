@@ -5,13 +5,6 @@
       {
         "name": "prints the legal message",
         "expect_stdout": "You can drive legally!"
-      }
-    ],
-    "hiddenCases": [
-      {
-        "name": "all three conditions are combined",
-        "call": "age >= 18 and has_license and has_insurance",
-        "expect": "True"
       },
       {
         "kind": "ast",
@@ -37,6 +30,13 @@
         }
       }
     ],
+    "hiddenCases": [
+      {
+        "name": "all three conditions are combined",
+        "call": "age >= 18 and has_license and has_insurance",
+        "expect": "True"
+      }
+    ],
     "hint": "and chains: every one of the three has to hold. One if, not three nested ones."
   },
   "exercise2": {
@@ -45,18 +45,6 @@
       {
         "name": "prints the entry message",
         "expect_stdout": "You can enter!"
-      }
-    ],
-    "hiddenCases": [
-      {
-        "name": "is_vip is False",
-        "call": "is_vip",
-        "expect": "False"
-      },
-      {
-        "name": "the or is grouped inside the and",
-        "call": "age >= 18 and (has_ticket or is_vip)",
-        "expect": "True"
       },
       {
         "kind": "ast",
@@ -76,6 +64,18 @@
             "Or"
           ]
         }
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "is_vip is False",
+        "call": "is_vip",
+        "expect": "False"
+      },
+      {
+        "name": "the or is grouped inside the and",
+        "call": "age >= 18 and (has_ticket or is_vip)",
+        "expect": "True"
       }
     ],
     "hint": "Without the brackets Python binds and tighter than or, which asks a different question: age and ticket, or VIP alone. The brackets are what make the age required either way."

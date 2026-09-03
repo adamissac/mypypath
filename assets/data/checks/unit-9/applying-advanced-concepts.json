@@ -5,6 +5,22 @@
       {
         "name": "prints the values it read back off disk",
         "expect_stdout": "72\n2024-01-15T09:30:00"
+      },
+      {
+        "kind": "ast",
+        "name": "the file is written and read through the json module",
+        "requires": {
+          "imports": [
+            "json",
+            "datetime"
+          ],
+          "calls": [
+            "dump",
+            "load"
+          ],
+          "withs": true
+        },
+        "describe": "json.dump to write the file and json.load to read it back, both inside a with"
       }
     ],
     "hiddenCases": [
@@ -26,22 +42,6 @@
         "name": "the round trip kept the humidity a number",
         "call": "saved[\"humidity\"] + 1",
         "expect": "51"
-      },
-      {
-        "kind": "ast",
-        "name": "the file is written and read through the json module",
-        "requires": {
-          "imports": [
-            "json",
-            "datetime"
-          ],
-          "calls": [
-            "dump",
-            "load"
-          ],
-          "withs": true
-        },
-        "describe": "json.dump to write the file and json.load to read it back, both inside a with"
       }
     ],
     "hint": "The pipeline is only finished when the data survives leaving the program. Formatting it into a string and printing it proves the first half; reading it back proves the rest."

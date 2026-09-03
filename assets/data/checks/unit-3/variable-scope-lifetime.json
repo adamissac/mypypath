@@ -11,20 +11,29 @@
         "name": "prints the global name as well",
         "stdout_matches": "python",
         "describe": "the name made outside the function"
-      }
-    ],
-    "hiddenCases": [
+      },
       {
         "kind": "ast",
         "name": "greet reads both its own variable and the one outside it",
         "requires": {
-          "functions": [{ "name": "greet", "params": 0 }],
-          "calls": ["greet"],
-          "names": ["name", "greeting"]
+          "functions": [
+            {
+              "name": "greet",
+              "params": 0
+            }
+          ],
+          "calls": [
+            "greet"
+          ],
+          "names": [
+            "name",
+            "greeting"
+          ]
         },
         "describe": "a greet function that uses both greeting and name"
       }
     ],
+    "hiddenCases": [],
     "hint": "A function can read a variable made outside it without being handed it. Check that both values reach the print, and that greeting is created inside the function rather than beside it."
   },
   "exercise2": {
@@ -33,20 +42,28 @@
       {
         "name": "the counter reads 1 and then 2 across the two calls",
         "expect_stdout": "1\n2"
-      }
-    ],
-    "hiddenCases": [
+      },
       {
         "kind": "ast",
         "name": "the counter is defined outside and changed inside",
         "requires": {
-          "functions": [{ "name": "increment_counter", "params": 0 }],
-          "calls": ["increment_counter"],
-          "names": ["counter"]
+          "functions": [
+            {
+              "name": "increment_counter",
+              "params": 0
+            }
+          ],
+          "calls": [
+            "increment_counter"
+          ],
+          "names": [
+            "counter"
+          ]
         },
         "describe": "an increment_counter function that works on counter"
       }
     ],
+    "hiddenCases": [],
     "hint": "If the second call prints the same number as the first, the function is working on its own copy. Ask which counter the assignment inside the function is creating."
   },
   "questions": [
@@ -84,7 +101,11 @@
         "Two functions may each have a local called total without clashing",
         "They can be read from anywhere in the program"
       ],
-      "answers": [0, 1, 2],
+      "answers": [
+        0,
+        1,
+        2
+      ],
       "explain": "Locals live and die with one run of one function, which is exactly why the same name can be reused safely elsewhere. The last option describes a global, not a local."
     },
     {
@@ -101,7 +122,11 @@
         "a global variable",
         "a change to the existing global variable"
       ],
-      "answer": [1, 0, 2],
+      "answer": [
+        1,
+        0,
+        2
+      ],
       "explain": "The same line means different things depending on where it sits, and global is what tells Python you meant the outer one."
     }
   ]

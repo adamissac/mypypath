@@ -11,9 +11,7 @@
         "name": "prints the balance after the deposit",
         "stdout_matches": "100",
         "describe": "the balance printed after depositing 100"
-      }
-    ],
-    "hiddenCases": [
+      },
       {
         "kind": "ast",
         "name": "the account is reached through get_balance and deposit",
@@ -30,7 +28,9 @@
           ]
         },
         "describe": "a BankAccount class with get_balance and deposit inside it"
-      },
+      }
+    ],
+    "hiddenCases": [
       {
         "name": "get_balance reports what is actually stored",
         "call": "(lambda a: (setattr(a, \"_balance\", 42), a.get_balance())[1])(BankAccount())",
@@ -56,9 +56,7 @@
         "name": "prints the age",
         "stdout_matches": "25",
         "describe": "the age printed after it was set"
-      }
-    ],
-    "hiddenCases": [
+      },
       {
         "kind": "ast",
         "name": "the age is reached through get_age and set_age",
@@ -75,7 +73,9 @@
           ]
         },
         "describe": "a Person class with get_age and set_age inside it"
-      },
+      }
+    ],
+    "hiddenCases": [
       {
         "name": "the age is written with two underscores, so Python mangles the name",
         "call": "Person()._Person__age",

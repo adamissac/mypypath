@@ -6,6 +6,19 @@
         "name": "both totals still print",
         "stdout_matches": "21\\.6[\\s\\S]*3\\.78",
         "describe": "21.6 and 3.78, the same two totals as before"
+      },
+      {
+        "name": "the function exists and is used twice",
+        "kind": "ast",
+        "requires": {
+          "functions": [
+            "with_tax"
+          ],
+          "calls": [
+            "with_tax"
+          ]
+        },
+        "describe": "a with_tax function, called for both items"
       }
     ],
     "hiddenCases": [
@@ -32,19 +45,6 @@
           }
         ],
         "runs": 40
-      },
-      {
-        "name": "the function exists and is used twice",
-        "kind": "ast",
-        "requires": {
-          "functions": [
-            "with_tax"
-          ],
-          "calls": [
-            "with_tax"
-          ]
-        },
-        "describe": "a with_tax function, called for both items"
       }
     ],
     "hint": "The formula appears twice today. Write it once as with_tax(price) and call it for the book and for the pen -- the printed numbers should not change at all."

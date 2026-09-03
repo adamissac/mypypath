@@ -6,6 +6,17 @@
         "name": "original is untouched",
         "call": "original",
         "expect": "[1, 2, 3]"
+      },
+      {
+        "kind": "ast",
+        "name": "copy() makes the copy and append() adds to it",
+        "requires": {
+          "calls": [
+            "copy",
+            "append"
+          ]
+        },
+        "describe": "original.copy() and then copy_list.append(4)"
       }
     ],
     "hiddenCases": [
@@ -18,17 +29,6 @@
         "name": "the two names point at two different lists",
         "call": "original is copy_list",
         "expect": "False"
-      },
-      {
-        "kind": "ast",
-        "name": "copy() makes the copy and append() adds to it",
-        "requires": {
-          "calls": [
-            "copy",
-            "append"
-          ]
-        },
-        "describe": "original.copy() and then copy_list.append(4)"
       },
       {
         "name": "both lists are printed",

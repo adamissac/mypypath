@@ -8,15 +8,6 @@
       {
         "name": "prints what the file says",
         "expect_stdout": "shopping list\nmilk\nbread"
-      }
-    ],
-    "hiddenCases": [
-      {
-        "name": "reads the file rather than remembering it",
-        "files": {
-          "notes.txt": "packing list\ntent\nmap\n"
-        },
-        "expect_stdout": "packing list\ntent\nmap"
       },
       {
         "name": "the file is opened",
@@ -27,6 +18,15 @@
           ]
         },
         "describe": "a call to open()"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "reads the file rather than remembering it",
+        "files": {
+          "notes.txt": "packing list\ntent\nmap\n"
+        },
+        "expect_stdout": "packing list\ntent\nmap"
       }
     ],
     "hint": "open() gives you the file, .read() gives you what is in it, and print puts it on screen. Typing the shopping list out yourself passes the first check and fails the second."

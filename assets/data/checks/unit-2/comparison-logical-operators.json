@@ -5,6 +5,16 @@
       {
         "name": "prints True",
         "expect_stdout": "True"
+      },
+      {
+        "kind": "ast",
+        "name": "the >= operator is used",
+        "describe": "a >= comparison rather than a hand-worked answer",
+        "requires": {
+          "compares": [
+            "GtE"
+          ]
+        }
       }
     ],
     "hiddenCases": [
@@ -22,16 +32,6 @@
         "name": "the comparison is between the two variables",
         "call": "age >= minimum_age",
         "expect": "True"
-      },
-      {
-        "kind": "ast",
-        "name": "the >= operator is used",
-        "describe": "a >= comparison rather than a hand-worked answer",
-        "requires": {
-          "compares": [
-            "GtE"
-          ]
-        }
       }
     ],
     "hint": "Store both numbers first, then print the comparison itself. print(True) is the right answer written the wrong way: change either number and it stops being true."
@@ -42,18 +42,6 @@
       {
         "name": "prints True",
         "expect_stdout": "True"
-      }
-    ],
-    "hiddenCases": [
-      {
-        "name": "has_ticket is True",
-        "call": "has_ticket",
-        "expect": "True"
-      },
-      {
-        "name": "both conditions are combined",
-        "call": "age >= 18 and has_ticket",
-        "expect": "True"
       },
       {
         "kind": "ast",
@@ -69,6 +57,18 @@
             "Or"
           ]
         }
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "has_ticket is True",
+        "call": "has_ticket",
+        "expect": "True"
+      },
+      {
+        "name": "both conditions are combined",
+        "call": "age >= 18 and has_ticket",
+        "expect": "True"
       }
     ],
     "hint": "and is true only when both sides are. With these values or gives the same answer and means something else entirely: it would let a 12 year old in with a ticket."

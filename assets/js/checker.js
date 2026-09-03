@@ -424,11 +424,12 @@
     var hiddenFailed = hidden.filter(function (r) { return !r.ok; }).length;
     var passed = visible.filter(function (r) { return r.ok; }).length +
       (hidden.length - hiddenFailed);
+    var allPassed = passed === visible.length + hidden.length && passed > 0;
 
     return {
       passed: passed,
       total: visible.length + hidden.length,
-      allPassed: passed === visible.length + hidden.length && passed > 0,
+      allPassed: allPassed,
       hiddenTotal: hidden.length,
       hiddenPassed: hidden.length - hiddenFailed,
       failures: failures.map(function (r) {
@@ -436,9 +437,13 @@
       }),
       timedOut: visible.concat(hidden).some(function (r) { return r.timeout; }),
       errorType: firstErrorType(visible.concat(hidden)),
-      // Held back until someone has actually tried twice. Offered sooner it is
-      // read before the thinking; offered never it is just a wall.
-      hint: attempt >= 2 ? (spec && spec.hint) || '' : ''
+      /* Held back until someone has actually tried twice, and only while they
+         are still stuck. Offered sooner it is read before the thinking.
+         Offered after a pass -- which is what happened before `allPassed` was
+         part of this -- it tells a student who has just solved the exercise
+         how to solve the exercise, and the one who failed on their first
+         attempt gets nothing at the moment they need it most. */
+      hint: (attempt >= 2 && !allPassed) ? (spec && spec.hint) || '' : ''
     };
   }
 

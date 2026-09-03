@@ -5,18 +5,6 @@
       {
         "name": "prints the date, the date a year on, and the gap in days",
         "expect_stdout": "May 15, 2000\nMay 15, 2001\n14"
-      }
-    ],
-    "hiddenCases": [
-      {
-        "name": "birthday is a date object, not a string that looks like one",
-        "call": "birthday.year",
-        "expect": "2000"
-      },
-      {
-        "name": "the month is a real month, so the formatting was not typed by hand",
-        "call": "birthday.month",
-        "expect": "5"
       },
       {
         "kind": "ast",
@@ -32,6 +20,18 @@
           ]
         },
         "describe": "strftime for the format, timedelta for the shift, and .days to read the difference"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "birthday is a date object, not a string that looks like one",
+        "call": "birthday.year",
+        "expect": "2000"
+      },
+      {
+        "name": "the month is a real month, so the formatting was not typed by hand",
+        "call": "birthday.month",
+        "expect": "5"
       }
     ],
     "hint": "Two dates written as strings can be sliced and subtracted, and for one fixed pair the number even comes out right. Ask what you would have to change to make it work for any two dates."

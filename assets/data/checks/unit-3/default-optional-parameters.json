@@ -10,6 +10,27 @@
         "name": "the default greeting shows up when only a name is given",
         "stdout_matches": "hello",
         "describe": "Hello, which is the greeting nobody passed in"
+      },
+      {
+        "kind": "ast",
+        "name": "greet takes two parameters and prints both of them",
+        "requires": {
+          "functions": [
+            {
+              "name": "greet",
+              "params": 2
+            }
+          ],
+          "calls": [
+            "greet",
+            "print"
+          ],
+          "names": [
+            "name",
+            "greeting"
+          ]
+        },
+        "describe": "a greet function that uses both name and greeting"
       }
     ],
     "hiddenCases": [
@@ -17,16 +38,6 @@
         "name": "greet can be called with only a name",
         "call": "greet(\"Ada\")",
         "expect": "None"
-      },
-      {
-        "kind": "ast",
-        "name": "greet takes two parameters and prints both of them",
-        "requires": {
-          "functions": [{ "name": "greet", "params": 2 }],
-          "calls": ["greet", "print"],
-          "names": ["name", "greeting"]
-        },
-        "describe": "a greet function that uses both name and greeting"
       }
     ],
     "hint": "The point of a default is that the caller may leave the argument out. Try calling your function with one argument only and see whether Python accepts it."
@@ -43,6 +54,20 @@
         "name": "a supplied prefix replaces the default",
         "call": "create_message(\"Ada\", \"Hello\")",
         "expect": "'Hello, Ada!'"
+      },
+      {
+        "kind": "ast",
+        "name": "the message is returned, not printed",
+        "requires": {
+          "functions": [
+            {
+              "name": "create_message",
+              "params": 3
+            }
+          ],
+          "returns": 1
+        },
+        "describe": "create_message with a return statement in it"
       }
     ],
     "hiddenCases": [
@@ -57,20 +82,23 @@
         "entry": "create_message",
         "reference": "def create_message(name, prefix=\"Hi\", suffix=\"!\"):\n    return prefix + \", \" + name + suffix\n",
         "args": [
-          { "type": "str", "minLength": 1, "maxLength": 6 },
-          { "type": "str", "minLength": 1, "maxLength": 4 },
-          { "type": "str", "minLength": 1, "maxLength": 2 }
+          {
+            "type": "str",
+            "minLength": 1,
+            "maxLength": 6
+          },
+          {
+            "type": "str",
+            "minLength": 1,
+            "maxLength": 4
+          },
+          {
+            "type": "str",
+            "minLength": 1,
+            "maxLength": 2
+          }
         ],
         "runs": 30
-      },
-      {
-        "kind": "ast",
-        "name": "the message is returned, not printed",
-        "requires": {
-          "functions": [{ "name": "create_message", "params": 3 }],
-          "returns": 1
-        },
-        "describe": "create_message with a return statement in it"
       }
     ],
     "hint": "Every piece of the format string has to survive into the result, including the comma, the space and the suffix. Compare your output to the pattern character by character."
@@ -91,7 +119,12 @@
     {
       "id": "u3-dop-2",
       "prompt": "With def greet(name, greeting=\"Hello\"):, what does greet(\"Ada\") print?",
-      "choices": ["Ada", "Hello, Ada", "greeting, Ada", "It raises a TypeError"],
+      "choices": [
+        "Ada",
+        "Hello, Ada",
+        "greeting, Ada",
+        "It raises a TypeError"
+      ],
       "answer": 1,
       "explain": "The missing argument falls back to the default written in the def line, so greeting is \"Hello\" for that call."
     },
@@ -105,7 +138,11 @@
         "order(\"book\", gift=True)",
         "order()"
       ],
-      "answers": [0, 1, 2],
+      "answers": [
+        0,
+        1,
+        2
+      ],
       "explain": "Only item is required. A keyword argument can skip over a defaulted parameter, which is why the third call works without mentioning quantity. The last call leaves out the one argument that has no default."
     },
     {
@@ -113,7 +150,11 @@
       "kind": "blank",
       "prompt": "A parameter is made optional by giving it a ___ value in the def line.",
       "blanks": [
-        { "accept": ["default"] }
+        {
+          "accept": [
+            "default"
+          ]
+        }
       ],
       "explain": "The value written after the equals sign in the def line is the default, used whenever the caller does not supply one."
     }
