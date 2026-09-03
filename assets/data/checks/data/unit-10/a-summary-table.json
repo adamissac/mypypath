@@ -1,0 +1,71 @@
+{
+  "exercise1": {
+    "prompt": "The small table that goes under the chart.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "summary_table(__import__(\"pandas\").DataFrame({\"team\": [\"a\", \"a\", \"b\"], \"score\": [90.0, 80.0, 95.0]}))",
+        "expect": "[('b', 1, 95.0), ('a', 2, 85.0)]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a single group is a single row",
+        "call": "summary_table(__import__(\"pandas\").DataFrame({\"team\": [\"solo\"], \"score\": [7.0]}))",
+        "expect": "[('solo', 1, 7.0)]"
+      },
+      {
+        "name": "the counts are per group",
+        "call": "[row[1] for row in summary_table(__import__(\"pandas\").DataFrame({\"team\": [\"a\", \"a\", \"b\"], \"score\": [1.0, 2.0, 3.0]}))]",
+        "expect": "[1, 2]"
+      },
+      {
+        "name": "the order is by mean, not by name",
+        "call": "[row[0] for row in summary_table(__import__(\"pandas\").DataFrame({\"team\": [\"z\", \"a\"], \"score\": [99.0, 1.0]}))]",
+        "expect": "['z', 'a']"
+      }
+    ],
+    "hint": "Group once and ask for count and mean together, sort by the mean descending, then build plain tuples so the result is easy to compare."
+  },
+  "questions": [
+    {
+      "id": "d10-ast-1",
+      "prompt": "Why sort a summary table by the number being discussed?",
+      "choices": [
+        "It looks tidy",
+        "The reader's eye lands on the comparison you are making",
+        "It is faster",
+        "pandas defaults to it"
+      ],
+      "answer": 1,
+      "explain": "Alphabetical order is an arbitrary order. Sorting by the measure puts the argument at the top."
+    },
+    {
+      "id": "d10-ast-2",
+      "prompt": "Why include the count next to each mean?",
+      "choices": [
+        "To fill the table",
+        "A mean of two is a much weaker claim than a mean of two hundred",
+        "It is required",
+        "For sorting"
+      ],
+      "answer": 1,
+      "explain": "Group size is how a reader weighs the difference. Without it, a group of one can look like a finding."
+    },
+    {
+      "id": "d10-ast-3",
+      "prompt": "How big should a summary table be?",
+      "choices": [
+        "As big as possible",
+        "Small enough to read entirely",
+        "One row",
+        "It does not matter"
+      ],
+      "answer": 1,
+      "explain": "A table nobody reads all of is a table making no argument. If it needs scrolling, it is data rather than a summary."
+    }
+  ]
+}

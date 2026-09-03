@@ -1,0 +1,66 @@
+{
+  "exercise1": {
+    "prompt": "Year, month and weekday are columns you can group by.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "by_month(__import__(\"pandas\").DataFrame({\"day\": __import__(\"pandas\").to_datetime([\"2024-01-05\", \"2024-01-20\", \"2024-02-01\"]), \"n\": [1, 2, 5]}))",
+        "expect": "{1: 3, 2: 5}"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a single month gives a single entry",
+        "call": "by_month(__import__(\"pandas\").DataFrame({\"day\": __import__(\"pandas\").to_datetime([\"2024-06-01\"]), \"n\": [7]}))",
+        "expect": "{6: 7}"
+      },
+      {
+        "name": "the same month in different years still shares a bucket",
+        "call": "by_month(__import__(\"pandas\").DataFrame({\"day\": __import__(\"pandas\").to_datetime([\"2023-03-01\", \"2024-03-01\"]), \"n\": [1, 1]}))",
+        "expect": "{3: 2}"
+      }
+    ],
+    "hint": "Group by df[\"day\"].dt.month and sum n. The second hidden case is a warning about that: month alone ignores the year, which is sometimes what you want and sometimes a bug."
+  },
+  "questions": [
+    {
+      "id": "d9-dp-1",
+      "prompt": "Grouping by month alone across two years does what?",
+      "choices": [
+        "Keeps the years separate",
+        "Puts both Marches in the same bucket",
+        "Raises",
+        "Sorts by year"
+      ],
+      "answer": 1,
+      "explain": "The month number carries no year. Grouping by year and month together is what you want for a timeline."
+    },
+    {
+      "id": "d9-dp-2",
+      "prompt": "What does s.dt.weekday give you?",
+      "choices": [
+        "The day name",
+        "A number for the day of the week",
+        "The week number",
+        "The date"
+      ],
+      "answer": 1,
+      "explain": "Monday is 0. day_name() gives the text when you want it readable."
+    },
+    {
+      "id": "d9-dp-3",
+      "prompt": "Why is a date part just an ordinary column?",
+      "choices": [
+        "It is not",
+        "Because it is values, so everything that works on a column works on it",
+        "It is faster",
+        "It is an index"
+      ],
+      "answer": 1,
+      "explain": "Once the part is a value you can group, filter, sort and plot with it exactly as with anything else."
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "exercise1": {
+    "prompt": "Read the columns you want, and stop carrying the ones you do not.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "list(tidy_columns(__import__(\"pandas\").DataFrame({\"Full Name\": [1], \"SCORE\": [2]})).columns)",
+        "expect": "['full_name', 'score']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "already tidy names are left alone",
+        "call": "list(tidy_columns(__import__(\"pandas\").DataFrame({\"name\": [1]})).columns)",
+        "expect": "['name']"
+      },
+      {
+        "name": "several spaces are all replaced",
+        "call": "list(tidy_columns(__import__(\"pandas\").DataFrame({\"A B C\": [1]})).columns)",
+        "expect": "['a_b_c']"
+      },
+      {
+        "name": "the data survives the rename",
+        "call": "tidy_columns(__import__(\"pandas\").DataFrame({\"A B\": [7]}))[\"a_b\"].tolist()",
+        "expect": "[7]"
+      }
+    ],
+    "hint": "Build a dictionary from each existing name to its tidy version, then hand it to rename. str.lower() and str.replace(\" \", \"_\") do the work."
+  },
+  "questions": [
+    {
+      "id": "d5-swn-1",
+      "prompt": "What does usecols do?",
+      "choices": [
+        "Renames columns",
+        "Reads only the columns you name",
+        "Sorts columns",
+        "Drops rows"
+      ],
+      "answer": 1,
+      "explain": "It filters on the way in, so the columns you do not want are never built at all."
+    },
+    {
+      "id": "d5-swn-2",
+      "prompt": "What does df.rename(columns={...}) return?",
+      "choices": [
+        "Nothing, it renames in place",
+        "A new table with the new names",
+        "A list of names",
+        "An error"
+      ],
+      "answer": 1,
+      "explain": "Like drop, it hands back a copy. Forgetting to reassign is why a rename can appear to do nothing."
+    },
+    {
+      "id": "d5-swn-3",
+      "prompt": "Why tidy column names at all?",
+      "choices": [
+        "pandas requires it",
+        "So every later line can use the same predictable name",
+        "It saves memory",
+        "It sorts the table"
+      ],
+      "answer": 1,
+      "explain": "A name with a space or a capital has to be quoted and remembered exactly. Tidying once means the rest of the analysis stops thinking about it."
+    }
+  ]
+}

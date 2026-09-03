@@ -1,0 +1,76 @@
+{
+  "exercise1": {
+    "prompt": "One answer per group, or one answer per row.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "above_group_mean(__import__(\"pandas\").DataFrame({\"k\": [\"a\", \"a\", \"b\", \"b\"], \"v\": [1, 3, 10, 20]}))",
+        "expect": "2"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a group of one is never above its own mean",
+        "call": "above_group_mean(__import__(\"pandas\").DataFrame({\"k\": [\"a\"], \"v\": [5]}))",
+        "expect": "0"
+      },
+      {
+        "name": "the comparison is against the group, not the table",
+        "call": "above_group_mean(__import__(\"pandas\").DataFrame({\"k\": [\"low\", \"low\", \"high\"], \"v\": [1, 2, 100]}))",
+        "expect": "1"
+      },
+      {
+        "name": "transform keeps the row count",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "transform"
+          ]
+        },
+        "describe": "transform rather than an aggregate"
+      }
+    ],
+    "hint": "transform(\"mean\") gives each row its group average, which lines up with the table so you can compare row by row. An aggregate would collapse the groups and leave you nothing to compare against."
+  },
+  "questions": [
+    {
+      "id": "d7-tva-1",
+      "prompt": "What does transform return?",
+      "choices": [
+        "One row per group",
+        "One value per original row",
+        "A dictionary",
+        "A smaller table"
+      ],
+      "answer": 1,
+      "explain": "It keeps the shape of the input, which is exactly what lets the result be assigned back as a column."
+    },
+    {
+      "id": "d7-tva-2",
+      "prompt": "You want a column holding each row's group average. Which do you use?",
+      "choices": [
+        "aggregate",
+        "transform",
+        "apply",
+        "count"
+      ],
+      "answer": 1,
+      "explain": "An aggregate gives one row per group and will not line up with the table you want to attach it to."
+    },
+    {
+      "id": "d7-tva-3",
+      "prompt": "Comparing rows to the whole table's mean instead of their group's does what?",
+      "choices": [
+        "The same thing",
+        "Answers a different question, usually wrongly",
+        "Raises",
+        "Is faster and equivalent"
+      ],
+      "answer": 1,
+      "explain": "One high group can drag the overall mean above every row of a low group, so \"above average\" quietly starts meaning \"in the good group\"."
+    }
+  ]
+}

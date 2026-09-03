@@ -1,0 +1,66 @@
+{
+  "exercise1": {
+    "prompt": "Two keys give a row per combination, and an index with two levels.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "pairs_counted(__import__(\"pandas\").DataFrame({\"subject\": [\"m\", \"m\", \"a\"], \"year\": [10, 10, 11]}))",
+        "expect": "{('a', 11): 1, ('m', 10): 2}"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "each distinct pair gets its own entry",
+        "call": "len(pairs_counted(__import__(\"pandas\").DataFrame({\"subject\": [\"m\", \"m\"], \"year\": [10, 11]})))",
+        "expect": "2"
+      },
+      {
+        "name": "pairs that never occur are absent",
+        "call": "len(pairs_counted(__import__(\"pandas\").DataFrame({\"subject\": [\"m\"], \"year\": [10]})))",
+        "expect": "1"
+      }
+    ],
+    "hint": "Group by both columns and ask for size. to_dict() on a two-level index gives tuple keys, and the counts want int() to shed their numpy type."
+  },
+  "questions": [
+    {
+      "id": "d7-gsk-1",
+      "prompt": "Grouping by two columns gives you a row per what?",
+      "choices": [
+        "Column",
+        "Combination that actually occurs in the data",
+        "Possible combination",
+        "Row"
+      ],
+      "answer": 1,
+      "explain": "Only the pairs present are there. A pair with no rows is absent rather than zero, which matters when you expected a full grid."
+    },
+    {
+      "id": "d7-gsk-2",
+      "prompt": "What does reset_index do to a grouped result?",
+      "choices": [
+        "Sorts it",
+        "Turns the group keys back into ordinary columns",
+        "Removes them",
+        "Renumbers the rows only"
+      ],
+      "answer": 1,
+      "explain": "It flattens the index into columns, which is what you want before writing the result to a file or merging it with something else."
+    },
+    {
+      "id": "d7-gsk-3",
+      "prompt": "What shape are the keys of a two-level grouped result?",
+      "choices": [
+        "Strings",
+        "Tuples of the two values",
+        "Lists",
+        "Integers"
+      ],
+      "answer": 1,
+      "explain": "One tuple per group, in the order you named the keys."
+    }
+  ]
+}

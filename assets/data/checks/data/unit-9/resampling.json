@@ -1,0 +1,76 @@
+{
+  "exercise1": {
+    "prompt": "Group by time period without building the key yourself.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "monthly_totals(__import__(\"pandas\").Series([1, 1], index=__import__(\"pandas\").to_datetime([\"2024-01-01\", \"2024-03-01\"])))",
+        "expect": "[1, 0, 1]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "two rows in one month make one bucket",
+        "call": "monthly_totals(__import__(\"pandas\").Series([1, 2], index=__import__(\"pandas\").to_datetime([\"2024-01-01\", \"2024-01-15\"])))",
+        "expect": "[3]"
+      },
+      {
+        "name": "a single row is a single month",
+        "call": "monthly_totals(__import__(\"pandas\").Series([7], index=__import__(\"pandas\").to_datetime([\"2024-05-05\"])))",
+        "expect": "[7]"
+      },
+      {
+        "name": "resample does the bucketing",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "resample"
+          ]
+        },
+        "describe": "resample rather than a group-by on the month"
+      }
+    ],
+    "hint": "resample(\"MS\") buckets by month start. The quiet month in the middle is the whole point: a group-by would skip it and the timeline would lie."
+  },
+  "questions": [
+    {
+      "id": "d9-rs-1",
+      "prompt": "What does resample do that a group-by on the month does not?",
+      "choices": [
+        "Nothing",
+        "Produces every period in the range, including empty ones",
+        "Sorts",
+        "Handles missing values"
+      ],
+      "answer": 1,
+      "explain": "A group-by only knows about months that have rows. A chart drawn from it silently closes the gap where nothing happened."
+    },
+    {
+      "id": "d9-rs-2",
+      "prompt": "What does resample need to work?",
+      "choices": [
+        "A sorted table",
+        "A datetime index",
+        "A numeric column",
+        "A key column"
+      ],
+      "answer": 1,
+      "explain": "It buckets on the index, so the index has to be time. That is what set_index was for in the previous lesson."
+    },
+    {
+      "id": "d9-rs-3",
+      "prompt": "Why does an empty period matter on a chart?",
+      "choices": [
+        "It does not",
+        "A gap closed up makes a quiet period look like it never existed",
+        "It looks untidy",
+        "It breaks the axis"
+      ],
+      "answer": 1,
+      "explain": "The reader sees a continuous line and assumes continuous activity. That is a chart telling them something untrue."
+    }
+  ]
+}

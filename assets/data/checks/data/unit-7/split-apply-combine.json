@@ -1,0 +1,80 @@
+{
+  "exercise1": {
+    "prompt": "The shape of every group-by, named once so the rest makes sense.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "mean_by_subject(__import__(\"pandas\").DataFrame({\"subject\": [\"maths\", \"art\", \"maths\"], \"score\": [90, 70, 80]}))",
+        "expect": "{'art': 70.0, 'maths': 85.0}"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "one subject gives one entry",
+        "call": "mean_by_subject(__import__(\"pandas\").DataFrame({\"subject\": [\"art\"], \"score\": [70]}))",
+        "expect": "{'art': 70.0}"
+      },
+      {
+        "name": "the mean is of the group, not the whole table",
+        "call": "mean_by_subject(__import__(\"pandas\").DataFrame({\"subject\": [\"a\", \"a\", \"b\"], \"score\": [0, 100, 50]}))",
+        "expect": "{'a': 50.0, 'b': 50.0}"
+      },
+      {
+        "name": "groupby does the splitting",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "groupby"
+          ]
+        },
+        "describe": "a groupby rather than a hand-written loop"
+      }
+    ],
+    "hint": "groupby the subject, take the score column, ask for the mean, round it, and to_dict() at the end gives plain keys and values."
+  },
+  "questions": [
+    {
+      "id": "d7-sac-1",
+      "kind": "order",
+      "prompt": "Put the three steps of a group-by in order.",
+      "items": [
+        "Combine the answers into one result",
+        "Split the rows by a key",
+        "Apply a summary to each group"
+      ],
+      "answer": [
+        1,
+        2,
+        0
+      ],
+      "explain": "Split, apply, combine. Naming the three makes the shape of every group-by recognisable, however complicated the summary is."
+    },
+    {
+      "id": "d7-sac-2",
+      "prompt": "What becomes the index of a group-by result?",
+      "choices": [
+        "The row numbers",
+        "The values you grouped by",
+        "The column you summarised",
+        "Nothing"
+      ],
+      "answer": 1,
+      "explain": "One row per group, labelled by the group key, which is why the result reads as a lookup table."
+    },
+    {
+      "id": "d7-sac-3",
+      "prompt": "Why is a group-by better than looping over the distinct values yourself?",
+      "choices": [
+        "It is not",
+        "It does the split once, and it is easy to get the loop subtly wrong",
+        "It sorts",
+        "It uses less memory"
+      ],
+      "answer": 1,
+      "explain": "The common bug in the hand-written version is summarising the whole table inside the loop instead of the group -- which is exactly the wrong answer the exercise checks for."
+    }
+  ]
+}

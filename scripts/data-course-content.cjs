@@ -10,7 +10,11 @@
 /* Units 3 onward live in files of their own. They are where numpy and pandas
    begin, they are much longer than the standard-library units, and keeping
    them here would make one file nobody can hold in their head. */
-const later = require('./data-course-units-3-6.cjs');
+const later = {
+  ...require('./data-course-units-3-6.cjs'),
+  ...require('./data-course-units-5-7.cjs'),
+  ...require('./data-course-units-8-10.cjs'),
+};
 
 module.exports = {
   ...later,

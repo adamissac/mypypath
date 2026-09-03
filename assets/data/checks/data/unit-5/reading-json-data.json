@@ -1,0 +1,76 @@
+{
+  "exercise1": {
+    "prompt": "A list of records is a table waiting to happen.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "from_records([{\"name\": \"Ada\", \"score\": 92}, {\"name\": \"Grace\", \"score\": 88}])",
+        "expect": "['name', 'score']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a key only some records have still becomes a column",
+        "call": "from_records([{\"a\": 1}, {\"a\": 2, \"b\": 3}])",
+        "expect": "['a', 'b']"
+      },
+      {
+        "name": "no records means no columns",
+        "call": "from_records([])",
+        "expect": "[]"
+      },
+      {
+        "name": "pandas builds the table",
+        "kind": "ast",
+        "requires": {
+          "imports": [
+            "pandas"
+          ]
+        },
+        "describe": "a DataFrame built from the records"
+      }
+    ],
+    "hint": "pd.DataFrame takes the list of dictionaries directly. sorted(df.columns) then gives plain strings in a predictable order."
+  },
+  "questions": [
+    {
+      "id": "d5-rjd-1",
+      "prompt": "A JSON list of objects maps onto a table how?",
+      "choices": [
+        "One object per column",
+        "One object per row",
+        "One object per cell",
+        "It does not"
+      ],
+      "answer": 1,
+      "explain": "Each object is a record, and its keys are the columns. That is why API responses drop straight into a DataFrame."
+    },
+    {
+      "id": "d5-rjd-2",
+      "prompt": "One record is missing the \"score\" key. What happens?",
+      "choices": [
+        "An error",
+        "That row gets a missing value in the score column",
+        "The column is dropped",
+        "The record is skipped"
+      ],
+      "answer": 1,
+      "explain": "The table is the union of all keys, and any record without one simply has a gap there."
+    },
+    {
+      "id": "d5-rjd-3",
+      "prompt": "Why not just read the first record's keys to learn the columns?",
+      "choices": [
+        "It is slower",
+        "Later records can carry keys the first one does not",
+        "It raises",
+        "It is fine"
+      ],
+      "answer": 1,
+      "explain": "The first row is not a schema. Any record can introduce a column, which is exactly what the hidden case in the exercise checks."
+    }
+  ]
+}

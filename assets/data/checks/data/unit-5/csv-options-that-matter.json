@@ -1,0 +1,77 @@
+{
+  "exercise1": {
+    "prompt": "Separators, headers and the arguments you reach for on a real file.",
+    "packages": [
+      "pandas"
+    ],
+    "files": {
+      "scores.tsv": "name\tscore\nAda\t92\nGrace\t88\nAlan\t79\n"
+    },
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "row_count(\"scores.tsv\")",
+        "expect": "3"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a longer file counts higher",
+        "files": {
+          "scores.tsv": "name\tscore\na\t1\nb\t2\nc\t3\nd\t4\n"
+        },
+        "call": "row_count(\"scores.tsv\")",
+        "expect": "4"
+      },
+      {
+        "name": "the separator is actually given",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "read_csv"
+          ]
+        },
+        "describe": "read_csv with the tab separator"
+      }
+    ],
+    "hint": "Without sep=\"\\t\" the whole line lands in one column and you get one column and three rows -- the row count would look right and the table would be wrong. len(df) or df.shape[0] counts the rows."
+  },
+  "questions": [
+    {
+      "id": "d5-cot-1",
+      "prompt": "What happens if you read a tab separated file without sep=\"\\t\"?",
+      "choices": [
+        "An error",
+        "One very wide column holding the whole line",
+        "The tabs are removed",
+        "The rows are skipped"
+      ],
+      "answer": 1,
+      "explain": "pandas splits on commas and finds none, so each line becomes a single value. shape tells you immediately: one column where you expected several."
+    },
+    {
+      "id": "d5-cot-2",
+      "prompt": "What does header=None do?",
+      "choices": [
+        "Removes the header row",
+        "Stops the first row being used as column names",
+        "Hides the columns",
+        "Skips the first row"
+      ],
+      "answer": 1,
+      "explain": "Without it, a file that has no header loses its first row of data to the column names, quietly."
+    },
+    {
+      "id": "d5-cot-3",
+      "prompt": "How do you check the separator was right?",
+      "choices": [
+        "Read the file again",
+        "Look at df.shape and the column names",
+        "Count the bytes",
+        "You cannot"
+      ],
+      "answer": 1,
+      "explain": "One column where you expected five is the signature of a wrong separator, and shape shows it in one line."
+    }
+  ]
+}

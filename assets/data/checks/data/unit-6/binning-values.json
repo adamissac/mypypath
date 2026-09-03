@@ -1,0 +1,71 @@
+{
+  "exercise1": {
+    "prompt": "Turning a measurement into a band you can count.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "grade(__import__(\"pandas\").Series([95, 85, 75, 60]))",
+        "expect": "['A', 'B', 'C', 'F']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the boundaries land in the right band",
+        "call": "grade(__import__(\"pandas\").Series([90, 80, 70]))",
+        "expect": "['A', 'B', 'C']"
+      },
+      {
+        "name": "a perfect score is still an A",
+        "call": "grade(__import__(\"pandas\").Series([100]))",
+        "expect": "['A']"
+      },
+      {
+        "name": "the bottom of the range is an F",
+        "call": "grade(__import__(\"pandas\").Series([0]))",
+        "expect": "['F']"
+      }
+    ],
+    "hint": "cut with edges at -1, 69, 79, 89 and 100 puts each boundary score in the band above it, because the right-hand edge belongs to its band."
+  },
+  "questions": [
+    {
+      "id": "d6-bv-1",
+      "prompt": "What does pd.cut do?",
+      "choices": [
+        "Removes rows",
+        "Sorts values into labelled bands",
+        "Trims text",
+        "Splits a table"
+      ],
+      "answer": 1,
+      "explain": "It converts a continuous measurement into a category you can count and group by."
+    },
+    {
+      "id": "d6-bv-2",
+      "prompt": "With the default right=True, which band does a value equal to an edge fall into?",
+      "choices": [
+        "The band below the edge",
+        "The band above it",
+        "Neither",
+        "Both"
+      ],
+      "answer": 0,
+      "explain": "The right-hand edge belongs to its own band, so a score of 89 with an edge at 89 is in the band that ends there. Getting this backwards moves everyone on a boundary."
+    },
+    {
+      "id": "d6-bv-3",
+      "prompt": "Why does binning make the boundary decision explicit?",
+      "choices": [
+        "It does not",
+        "You have to write the edges down, so the choice is visible and reviewable",
+        "pandas picks them",
+        "It rounds"
+      ],
+      "answer": 1,
+      "explain": "A grade boundary buried in a chain of if statements is a decision nobody can find later. The bins list is that decision, written once."
+    }
+  ]
+}

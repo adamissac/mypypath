@@ -1,0 +1,76 @@
+{
+  "exercise1": {
+    "prompt": "Saving a result, and the index that gets written with it.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "save_scores(__import__(\"pandas\").DataFrame({\"name\": [\"Ada\"], \"score\": [92]}), \"out.csv\")",
+        "expect": "'name,score'"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the row is written with two fields, so no index came along",
+        "call": "(save_scores(__import__(\"pandas\").DataFrame({\"name\": [\"Ada\"], \"score\": [92]}), \"out.csv\"), open(\"out.csv\").read().strip().split(\"\\n\")[1])[-1]",
+        "expect": "'Ada,92'"
+      },
+      {
+        "name": "a second table overwrites cleanly",
+        "call": "(save_scores(__import__(\"pandas\").DataFrame({\"name\": [\"Bo\"], \"score\": [1]}), \"out.csv\"), open(\"out.csv\").read().strip().split(\"\\n\")[1])[-1]",
+        "expect": "'Bo,1'"
+      },
+      {
+        "name": "to_csv does the writing",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "to_csv"
+          ]
+        },
+        "describe": "df.to_csv rather than hand-built text"
+      }
+    ],
+    "hint": "index=False is the argument that keeps the row numbers out. Reading the first line back is what proves it worked."
+  },
+  "questions": [
+    {
+      "id": "d5-wdo-1",
+      "prompt": "What does to_csv write by default that you usually do not want?",
+      "choices": [
+        "The column names",
+        "The index, as an unnamed first column",
+        "The dtypes",
+        "Nothing"
+      ],
+      "answer": 1,
+      "explain": "That unnamed column comes back as \"Unnamed: 0\" when the file is read again, and it accumulates every time the file makes another round trip."
+    },
+    {
+      "id": "d5-wdo-2",
+      "prompt": "When is index=True the right choice?",
+      "choices": [
+        "Never",
+        "When the index carries meaning, like a date or an id",
+        "Always",
+        "Only for small files"
+      ],
+      "answer": 1,
+      "explain": "A meaningful index is data and belongs in the file. Row numbers are not, and writing them is what makes the round trip messy."
+    },
+    {
+      "id": "d5-wdo-3",
+      "prompt": "What does columns=[\"name\", \"score\"] do on to_csv?",
+      "choices": [
+        "Renames them",
+        "Writes only those columns",
+        "Sorts by them",
+        "Indexes by them"
+      ],
+      "answer": 1,
+      "explain": "It selects what goes out, which is how you publish a result without publishing your working columns."
+    }
+  ]
+}

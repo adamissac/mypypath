@@ -1,0 +1,76 @@
+{
+  "exercise1": {
+    "prompt": "The other direction, for when a person should be one row.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "month_columns(__import__(\"pandas\").DataFrame({\"name\": [\"Ada\", \"Ada\"], \"month\": [\"jan\", \"feb\"], \"score\": [90, 80]}))",
+        "expect": "['feb', 'jan']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a single month gives a single column",
+        "call": "month_columns(__import__(\"pandas\").DataFrame({\"name\": [\"Ada\"], \"month\": [\"jan\"], \"score\": [1]}))",
+        "expect": "['jan']"
+      },
+      {
+        "name": "several people share the same columns",
+        "call": "month_columns(__import__(\"pandas\").DataFrame({\"name\": [\"a\", \"b\"], \"month\": [\"jan\", \"jan\"], \"score\": [1, 2]}))",
+        "expect": "['jan']"
+      },
+      {
+        "name": "the spreading is done by pandas",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "pivot"
+          ]
+        },
+        "describe": "pivot or pivot_table"
+      }
+    ],
+    "hint": "index is what stays down the side, columns is what spreads across the top, values fills the cells. sorted() on the result keeps the answer stable."
+  },
+  "questions": [
+    {
+      "id": "d8-ltw-1",
+      "prompt": "What is pivot to melt?",
+      "choices": [
+        "The same thing",
+        "The opposite direction",
+        "Faster",
+        "Unrelated"
+      ],
+      "answer": 1,
+      "explain": "melt goes wide to long, pivot goes long to wide. Knowing you can go both ways is most of reshaping."
+    },
+    {
+      "id": "d8-ltw-2",
+      "prompt": "Two rows share the same index and column pair. What does pivot do?",
+      "choices": [
+        "Averages them",
+        "Raises, because it has no way to choose",
+        "Keeps the first",
+        "Keeps the last"
+      ],
+      "answer": 1,
+      "explain": "It refuses rather than guessing. pivot_table exists for the case where you want to say how to combine them."
+    },
+    {
+      "id": "d8-ltw-3",
+      "prompt": "When is wide the better shape?",
+      "choices": [
+        "Always",
+        "For reading and for reports, where one row per subject is easiest to scan",
+        "Never",
+        "For grouping"
+      ],
+      "answer": 1,
+      "explain": "Long is easier to compute with; wide is easier to read. Analyses often go long to work and wide to present."
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "exercise1": {
+    "prompt": "Turning a column per month into a column that says which month.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "to_long(__import__(\"pandas\").DataFrame({\"name\": [\"Ada\", \"Bo\"], \"jan\": [90, 70], \"feb\": [80, 60]}))",
+        "expect": "4"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "one person and two months gives two rows",
+        "call": "to_long(__import__(\"pandas\").DataFrame({\"name\": [\"Ada\"], \"jan\": [1], \"feb\": [2]}))",
+        "expect": "2"
+      },
+      {
+        "name": "the month names land in a column",
+        "call": "sorted(__import__(\"pandas\").DataFrame({\"name\": [\"Ada\"], \"jan\": [1], \"feb\": [2]}).melt(id_vars=[\"name\"], var_name=\"month\", value_name=\"score\")[\"month\"].tolist())",
+        "expect": "['feb', 'jan']"
+      },
+      {
+        "name": "melt does the reshaping",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "melt"
+          ]
+        },
+        "describe": "melt rather than a hand-built table"
+      }
+    ],
+    "hint": "id_vars=[\"name\"] keeps the name and folds every other column down. The row count is people times months."
+  },
+  "questions": [
+    {
+      "id": "d8-wtl-1",
+      "prompt": "Why can you not group a wide table by month?",
+      "choices": [
+        "It is too big",
+        "The month is in the column names, not in the data",
+        "pandas forbids it",
+        "You can"
+      ],
+      "answer": 1,
+      "explain": "groupby works on values. A month that only exists as a header is not a value yet, which is exactly what melt fixes."
+    },
+    {
+      "id": "d8-wtl-2",
+      "prompt": "What does id_vars name?",
+      "choices": [
+        "The columns to fold down",
+        "The columns that stay as they are",
+        "The new column names",
+        "The index"
+      ],
+      "answer": 1,
+      "explain": "Identifiers stay; everything else is melted. Forgetting one turns an identifier into data."
+    },
+    {
+      "id": "d8-wtl-3",
+      "prompt": "Three people and four months melted gives how many rows?",
+      "choices": [
+        "3",
+        "4",
+        "7",
+        "12"
+      ],
+      "answer": 3,
+      "explain": "One row per person per month. A row count that is not the product is the quickest sign the melt did not do what you meant."
+    }
+  ]
+}

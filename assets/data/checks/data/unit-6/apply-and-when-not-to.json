@@ -1,0 +1,76 @@
+{
+  "exercise1": {
+    "prompt": "A general escape hatch that is slower than the thing it usually replaces.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "clean_names(__import__(\"pandas\").Series([\" Ada \", \"GRACE\"]))",
+        "expect": "['ada', 'grace']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "already clean names are unchanged",
+        "call": "clean_names(__import__(\"pandas\").Series([\"bo\"]))",
+        "expect": "['bo']"
+      },
+      {
+        "name": "an empty Series stays empty",
+        "call": "clean_names(__import__(\"pandas\").Series([], dtype=\"object\"))",
+        "expect": "[]"
+      },
+      {
+        "name": "the vectorised string methods do the work",
+        "kind": "ast",
+        "forbids": {
+          "calls": [
+            "apply"
+          ]
+        },
+        "describe": ".str methods rather than apply"
+      }
+    ],
+    "hint": "names.str.strip().str.lower() does both steps to the whole column, and .tolist() hands back plain strings."
+  },
+  "questions": [
+    {
+      "id": "d6-awn-1",
+      "prompt": "Why is apply usually slower than the vectorised equivalent?",
+      "choices": [
+        "It copies the data",
+        "It calls your Python function once per value",
+        "It sorts first",
+        "It is not slower"
+      ],
+      "answer": 1,
+      "explain": "The vectorised version does the work once in compiled code; apply pays the Python call overhead for every row."
+    },
+    {
+      "id": "d6-awn-2",
+      "prompt": "When is apply the right tool?",
+      "choices": [
+        "Always",
+        "When the logic genuinely has no vectorised form",
+        "Never",
+        "Only on small tables"
+      ],
+      "answer": 1,
+      "explain": "It is an escape hatch, not a default. Reaching for it first is how people conclude that pandas is slow."
+    },
+    {
+      "id": "d6-awn-3",
+      "prompt": "What does .str give you on a Series?",
+      "choices": [
+        "The text of the whole column",
+        "String methods applied to every value",
+        "A conversion to text",
+        "An error"
+      ],
+      "answer": 1,
+      "explain": "strip, lower, replace, contains and the rest, each running across the whole column at once."
+    }
+  ]
+}

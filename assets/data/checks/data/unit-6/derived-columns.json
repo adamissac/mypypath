@@ -1,0 +1,76 @@
+{
+  "exercise1": {
+    "prompt": "The column that answers your question usually is not in the file.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "percent_of_total(__import__(\"pandas\").DataFrame({\"amount\": [25.0, 75.0]}))",
+        "expect": "[25.0, 75.0]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a single row is all of the total",
+        "call": "percent_of_total(__import__(\"pandas\").DataFrame({\"amount\": [8.0]}))",
+        "expect": "[100.0]"
+      },
+      {
+        "name": "equal amounts split evenly",
+        "call": "percent_of_total(__import__(\"pandas\").DataFrame({\"amount\": [1.0, 1.0, 2.0]}))",
+        "expect": "[25.0, 25.0, 50.0]"
+      },
+      {
+        "name": "the total is computed from the column",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "sum"
+          ]
+        },
+        "describe": "the column total, rather than a number typed in"
+      }
+    ],
+    "hint": "Divide the column by its own sum and multiply by 100. The division broadcasts the single total across every row."
+  },
+  "questions": [
+    {
+      "id": "d6-dc-1",
+      "prompt": "What happens when you divide a column by a single number?",
+      "choices": [
+        "An error",
+        "Every value is divided by it",
+        "Only the first row",
+        "The column is replaced"
+      ],
+      "answer": 1,
+      "explain": "Broadcasting again: the single value meets every row. A column total divided into the column is the standard \"share of the whole\" line."
+    },
+    {
+      "id": "d6-dc-2",
+      "prompt": "What does assign return?",
+      "choices": [
+        "Nothing",
+        "A new table with the column added",
+        "The column",
+        "The original table changed"
+      ],
+      "answer": 1,
+      "explain": "It leaves your table alone and hands back a new one, which is what lets it sit in the middle of a chain."
+    },
+    {
+      "id": "d6-dc-3",
+      "prompt": "Why is the column you need often not in the file?",
+      "choices": [
+        "Files are badly made",
+        "Files record what happened; the question asks about a rate, a share or a difference",
+        "It is a bug",
+        "It always is"
+      ],
+      "answer": 1,
+      "explain": "A file stores facts. Analysis is mostly the arithmetic between them."
+    }
+  ]
+}
