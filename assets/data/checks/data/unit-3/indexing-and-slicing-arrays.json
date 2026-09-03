@@ -1,0 +1,71 @@
+{
+  "exercise1": {
+    "prompt": "Slices look like list slices and behave differently in one important way.",
+    "packages": [
+      "numpy"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "middle(__import__(\"numpy\").array([1, 2, 3, 4, 5]))",
+        "expect": "[2, 3, 4]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "three items leave one in the middle",
+        "call": "middle(__import__(\"numpy\").array([1, 2, 3]))",
+        "expect": "[2]"
+      },
+      {
+        "name": "two items leave nothing",
+        "call": "middle(__import__(\"numpy\").array([1, 2]))",
+        "expect": "[]"
+      },
+      {
+        "name": "an empty array stays empty",
+        "call": "middle(__import__(\"numpy\").array([]))",
+        "expect": "[]"
+      }
+    ],
+    "hint": "A slice from 1 to -1 drops one from each end, and slices clamp rather than raise when there is nothing left to take."
+  },
+  "questions": [
+    {
+      "id": "d3-ias-1",
+      "prompt": "What is a numpy slice?",
+      "choices": [
+        "A copy of the data",
+        "A view onto the same data",
+        "A list",
+        "An error"
+      ],
+      "answer": 1,
+      "explain": "Writing into the slice writes into the original. It is the single biggest behavioural difference from list slicing, and it is a feature: no copy is made."
+    },
+    {
+      "id": "d3-ias-2",
+      "prompt": "How do you take a slice you can safely modify?",
+      "choices": [
+        "a[1:3]",
+        "a[1:3].copy()",
+        "list(a)[1:3]",
+        "Both the second and third"
+      ],
+      "answer": 3,
+      "explain": "copy() makes a new array; building a list first also detaches from the buffer. Either gives you something of your own."
+    },
+    {
+      "id": "d3-ias-3",
+      "prompt": "What does a[-1] give you?",
+      "choices": [
+        "The first item",
+        "The last item",
+        "An error",
+        "Everything but the last"
+      ],
+      "answer": 1,
+      "explain": "Negative indexes count from the end, exactly as in lists."
+    }
+  ]
+}

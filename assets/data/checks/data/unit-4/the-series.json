@@ -1,0 +1,71 @@
+{
+  "exercise1": {
+    "prompt": "A column with labels attached, and the labels travel with the data.",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "top_scorer(__import__(\"pandas\").Series([92, 88, 79], index=[\"Ada\", \"Grace\", \"Alan\"]))",
+        "expect": "'Ada'"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the winner can be anywhere in the Series",
+        "call": "top_scorer(__import__(\"pandas\").Series([70, 99, 80], index=[\"a\", \"b\", \"c\"]))",
+        "expect": "'b'"
+      },
+      {
+        "name": "one entry wins by default",
+        "call": "top_scorer(__import__(\"pandas\").Series([5], index=[\"solo\"]))",
+        "expect": "'solo'"
+      },
+      {
+        "name": "the label is returned, not the score",
+        "call": "type(top_scorer(__import__(\"pandas\").Series([1], index=[\"x\"]))).__name__",
+        "expect": "'str'"
+      }
+    ],
+    "hint": "idxmax gives the label of the largest value; max would give you the value itself, which is the other question."
+  },
+  "questions": [
+    {
+      "id": "d4-ser-1",
+      "prompt": "What does a Series have that a numpy array does not?",
+      "choices": [
+        "Speed",
+        "An index of labels",
+        "Arithmetic",
+        "A length"
+      ],
+      "answer": 1,
+      "explain": "The index is the whole difference, and it is why two Series added together align on labels rather than on position."
+    },
+    {
+      "id": "d4-ser-2",
+      "prompt": "What is the difference between s.max() and s.idxmax()?",
+      "choices": [
+        "None",
+        "max gives the value, idxmax gives its label",
+        "max is faster",
+        "idxmax sorts first"
+      ],
+      "answer": 1,
+      "explain": "\"How high was the best score\" and \"who got it\" are different questions, and mixing them up is a common early bug."
+    },
+    {
+      "id": "d4-ser-3",
+      "prompt": "What does scores[scores > 85] return?",
+      "choices": [
+        "True and False",
+        "The scores above 85, with their labels",
+        "A count",
+        "An error"
+      ],
+      "answer": 1,
+      "explain": "Masking works exactly as it does in numpy, and the labels come along with the values that survive."
+    }
+  ]
+}

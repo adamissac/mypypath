@@ -1,0 +1,79 @@
+{
+  "exercise1": {
+    "prompt": "A comparison over an array gives an array of answers, and that array selects.",
+    "packages": [
+      "numpy"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "passing(__import__(\"numpy\").array([92, 88, 79]), 85)",
+        "expect": "[92, 88]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a score exactly on the mark is kept",
+        "call": "passing(__import__(\"numpy\").array([85]), 85)",
+        "expect": "[85]"
+      },
+      {
+        "name": "nothing qualifying gives an empty list",
+        "call": "passing(__import__(\"numpy\").array([10, 20]), 85)",
+        "expect": "[]"
+      },
+      {
+        "name": "the mask does the selecting, not a loop",
+        "kind": "ast",
+        "forbids": {
+          "loops": true
+        },
+        "describe": "a boolean mask rather than a loop or comprehension"
+      }
+    ],
+    "hint": "scores >= mark gives you an array of True and False. Put that inside the square brackets."
+  },
+  "questions": [
+    {
+      "id": "d3-bm-1",
+      "prompt": "What does scores > 85 evaluate to when scores is an array?",
+      "choices": [
+        "One True or False",
+        "An array of True and False, one per element",
+        "The matching scores",
+        "A count"
+      ],
+      "answer": 1,
+      "explain": "The comparison applies elementwise like the arithmetic does. The array of answers is then what you index with."
+    },
+    {
+      "id": "d3-bm-2",
+      "prompt": "What does (scores > 85).sum() tell you?",
+      "choices": [
+        "The total of the high scores",
+        "How many scores are above 85",
+        "The highest score",
+        "Nothing useful"
+      ],
+      "answer": 1,
+      "explain": "True counts as 1 and False as 0, so summing a mask counts the matches. It is the quickest \"how many rows satisfy this\" there is."
+    },
+    {
+      "id": "d3-bm-3",
+      "kind": "multi",
+      "prompt": "Which are true of masking?",
+      "choices": [
+        "It needs no loop",
+        "It works on whole columns in pandas too",
+        "It returns only the elements marked True",
+        "It sorts the result"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Order is untouched -- masking selects, it does not rearrange."
+    }
+  ]
+}

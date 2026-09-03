@@ -1,0 +1,71 @@
+{
+  "exercise1": {
+    "prompt": "In two dimensions, the question is always which way you are collapsing.",
+    "packages": [
+      "numpy"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "student_totals(__import__(\"numpy\").array([[1, 2], [3, 4]]))",
+        "expect": "[3, 7]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a single row totals on its own",
+        "call": "student_totals(__import__(\"numpy\").array([[5, 5, 5]]))",
+        "expect": "[15]"
+      },
+      {
+        "name": "three students give three totals",
+        "call": "len(student_totals(__import__(\"numpy\").array([[1], [2], [3]])))",
+        "expect": "3"
+      },
+      {
+        "name": "the totals are per row, not per column",
+        "call": "student_totals(__import__(\"numpy\").array([[1, 100], [2, 200]]))",
+        "expect": "[101, 202]"
+      }
+    ],
+    "hint": "One total per student means one per row, so the sum has to collapse across the columns. That is axis=1."
+  },
+  "questions": [
+    {
+      "id": "d3-sa-1",
+      "prompt": "In a table of rows and columns, what does axis=0 collapse?",
+      "choices": [
+        "The columns, leaving one value per row",
+        "The rows, leaving one value per column",
+        "Everything",
+        "Nothing"
+      ],
+      "answer": 1,
+      "explain": "axis=0 runs down the rows, so what survives is one number per column. The name refers to the axis being removed."
+    },
+    {
+      "id": "d3-sa-2",
+      "prompt": "You want each student's average across their tests. Which axis?",
+      "choices": [
+        "axis=0",
+        "axis=1",
+        "No axis",
+        "Both"
+      ],
+      "answer": 1,
+      "explain": "Students are rows, so you collapse across their columns: axis=1."
+    },
+    {
+      "id": "d3-sa-3",
+      "prompt": "What does a.sum() with no axis give you?",
+      "choices": [
+        "One number for the whole array",
+        "One per row",
+        "One per column",
+        "An error"
+      ],
+      "answer": 0,
+      "explain": "With no axis named, everything is reduced to a single total."
+    }
+  ]
+}

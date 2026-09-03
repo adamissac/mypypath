@@ -672,9 +672,26 @@
 
   /* Runs every case and returns the summary. Rejects only if Pyodide itself
      could not be reached; a student's code failing is a result, not an error. */
+  /* Packages an exercise needs before any of its cases can run.
+   *
+   * Units 1 and 2 of Python for Data use the standard library and need none of
+   * this. From unit 3 the subject *is* numpy and pandas, and neither is in the
+   * base interpreter. loadPackage fetches them from the same CDN Pyodide came
+   * from and caches them for the session -- about two seconds the first time on
+   * a warm connection, nothing afterwards.
+   *
+   * Declared per exercise rather than loaded for everyone, because a student on
+   * unit 1 of Foundations should not pay for pandas to learn print(). */
+  async function ensurePackages(pyodide, spec) {
+    var wanted = (spec && spec.packages) || [];
+    if (!wanted.length || typeof pyodide.loadPackage !== 'function') return;
+    await pyodide.loadPackage(wanted);
+  }
+
   async function run(code, spec, attempt) {
     if (!window.Pyodide) throw new Error('Python is not loaded on this page.');
     var pyodide = await window.Pyodide.ensureReady();
+    await ensurePackages(pyodide, spec);
     ensureHarness(pyodide);
 
     var visible = (spec && spec.cases) || [];

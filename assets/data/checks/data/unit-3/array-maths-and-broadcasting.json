@@ -1,0 +1,74 @@
+{
+  "exercise1": {
+    "prompt": "Arrays of different shapes can still meet, under one clear rule.",
+    "packages": [
+      "numpy"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "centred(__import__(\"numpy\").array([1.0, 2.0, 3.0]))",
+        "expect": "[-1.0, 0.0, 1.0]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "identical values centre on zero",
+        "call": "centred(__import__(\"numpy\").array([5.0, 5.0]))",
+        "expect": "[0.0, 0.0]"
+      },
+      {
+        "name": "one value is its own mean",
+        "call": "centred(__import__(\"numpy\").array([7.0]))",
+        "expect": "[0.0]"
+      },
+      {
+        "name": "the subtraction reaches the whole array at once",
+        "kind": "ast",
+        "forbids": {
+          "loops": true
+        },
+        "describe": "broadcasting rather than a loop"
+      }
+    ],
+    "hint": "values - values.mean() does the whole thing. np.round then rounds the array, and list() turns it back into plain numbers."
+  },
+  "questions": [
+    {
+      "id": "d3-amb-1",
+      "prompt": "What is broadcasting?",
+      "choices": [
+        "Sending data over a network",
+        "Stretching a smaller shape so it can meet a larger one",
+        "Sorting two arrays together",
+        "Copying an array"
+      ],
+      "answer": 1,
+      "explain": "A single number meeting an array is the simplest case, and the rule extends to a row meeting a table."
+    },
+    {
+      "id": "d3-amb-2",
+      "prompt": "What does prices - prices.mean() give you?",
+      "choices": [
+        "One number",
+        "An array of distances from the average",
+        "The average",
+        "An error"
+      ],
+      "answer": 1,
+      "explain": "The mean is one number broadcast across every element, so each result says how far that price sits from the middle."
+    },
+    {
+      "id": "d3-amb-3",
+      "prompt": "Two arrays of the same length are added. What happens?",
+      "choices": [
+        "They are joined end to end",
+        "They are added position by position",
+        "The first is returned",
+        "An error"
+      ],
+      "answer": 1,
+      "explain": "Elementwise, unlike lists, where + concatenates. Getting these two the wrong way round is the most common early mistake."
+    }
+  ]
+}

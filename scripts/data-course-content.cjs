@@ -7,7 +7,13 @@
  * csv module. Every exercise here runs and is graded today. Units 3 onward are
  * where numpy and pandas begin, and they wait on that loader.
  */
+/* Units 3 onward live in files of their own. They are where numpy and pandas
+   begin, they are much longer than the standard-library units, and keeping
+   them here would make one file nobody can hold in their head. */
+const later = require('./data-course-units-3-6.cjs');
+
 module.exports = {
+  ...later,
   unit1: {
     title: 'Data in Plain Python',
     blurb: 'Rows, records, files and summaries, using nothing but the standard library.',
