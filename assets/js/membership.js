@@ -10,10 +10,7 @@
  * every page load would otherwise pay a document read to find out that
  * nothing has changed.
  */
-import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
-
-const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
-const { doc, getDoc } = await import(`${BASE}/firebase-firestore.js`);
+import { loadProfile } from '/assets/js/profile.js';
 
 const CACHE_PREFIX = 'pypath-class:';
 
@@ -60,9 +57,29 @@ export async function loadMembership(uid, force) {
     }
   }
 
+  /* Through profile.js rather than a getDoc of its own.
+   *
+   * This file used to read users/{uid} directly, which looked harmless -- it
+   * wants one field, classId, and has nothing to do with roles. It was the
+   * sixth independent reader of that document, and it inherited the same
+   * hazard as the other five: sync.js merges identity onto users/{uid} on the
+   * same pypath:auth event this runs on, and against a cold cache that merge
+   * synthesizes a local document holding only the merged fields. getDoc()
+   * resolves happily from that view. There is no classId on it.
+   *
+   * The failure that produces is quieter than the role one and worse to
+   * diagnose: not an error, just a learner who is in a class being told they
+   * are in none, with their work syncing nowhere their teacher can see it,
+   * until they reload. Exactly the shape of the role bug -- broken cold,
+   * correct on reload -- which is why it survived this long unnoticed.
+   *
+   * loadProfile() refuses to answer from a view carrying unacknowledged local
+   * writes, and shares one read with every other caller on the page, so this
+   * is now the same read classroom-page.js and role-nav.js were already
+   * making rather than a seventh round trip. */
   try {
-    const snap = await getDoc(doc(db, `users/${uid}`));
-    classId = (snap.exists() && snap.data().classId) || null;
+    const profile = await loadProfile(uid);
+    classId = profile.classId || null;
     writeCache(uid, classId);
   } catch (e) {
     // Offline, or no account document yet. Deliberately not cached: offline is
