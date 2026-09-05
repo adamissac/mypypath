@@ -158,3 +158,32 @@ describe('the lock screen says why the unit is shut', () => {
     expect(lp).toContain('is not unlocked yet');
   });
 });
+
+describe('the dashboard does not read what it never uses', () => {
+  const dash = fs.readFileSync('assets/js/classroom-dashboard.js', 'utf8');
+  const code = dash.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+
+  /* loadClassData used to fetch readMirror(classId, uid) for every student on
+     every load, into a field nothing on the page read. The one consumer of the
+     progress mirror is student-detail.js, which builds its own `student` with
+     its own reads when a teacher opens the drill-down.
+
+     readMirror is an UNBOUNDED getDocs over a collection that grows with every
+     syncable key a student writes across ~80 lessons, so this was an unbounded
+     per-student query paid on every load for a panel nobody had opened. */
+
+  it('loadClassData does not read the progress mirror', () => {
+    expect(code).not.toMatch(/readMirror/);
+  });
+
+  it('does not import readMirror at all', () => {
+    expect(code).not.toMatch(/readMirror.*from|from.*readMirror/);
+  });
+
+  it('the drill-down still reads its own mirror', () => {
+    // The deletion must not have taken the feature with it. student-detail.js
+    // is where the mirror is genuinely needed, and it costs one student.
+    const detail = fs.readFileSync('assets/js/student-detail.js', 'utf8');
+    expect(detail).toMatch(/mirror:\s*await readMirror\(classId, uid\)/);
+  });
+});
