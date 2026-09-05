@@ -28,6 +28,7 @@ import json
 import sys
 import threading
 import urllib.request
+import urllib.error
 import http.server
 import socketserver
 import functools
@@ -64,10 +65,22 @@ def patch(url, body):
 
 def seed_teacher():
     """A real Auth account with a real users/{uid} saying role: teacher."""
-    out = post(
-        f"{AUTH}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=fake",
-        {"email": EMAIL, "password": PASSWORD, "returnSecureToken": True},
-    )
+    try:
+        out = post(
+            f"{AUTH}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=fake",
+            {"email": EMAIL, "password": PASSWORD, "returnSecureToken": True},
+        )
+    except urllib.error.HTTPError:
+        # EMAIL_EXISTS. The emulator keeps its data for as long as it is up, so
+        # the second run of this script in one emulator session used to die at
+        # the seed with a bare HTTP 400 -- which reads like a broken harness
+        # rather than "you already seeded this". Signing in is the same seed
+        # minus the account creation; the document patches below are
+        # idempotent, so the state ends up identical either way.
+        out = post(
+            f"{AUTH}/identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=fake",
+            {"email": EMAIL, "password": PASSWORD, "returnSecureToken": True},
+        )
     uid = out["localId"]
     post(
         f"{AUTH}/identitytoolkit.googleapis.com/v1/accounts:update",
