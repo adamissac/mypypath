@@ -69,7 +69,12 @@ describe('the flow writes both schemas', () => {
       store.indexOf('export async function joinClass'),
       store.indexOf('export async function leaveClass')
     );
-    expect(join).toMatch(/const already = await getDoc\(seat\)/);
+    // Matched loosely enough to survive the read being wrapped for
+    // instrumentation (read-counter.js) but tightly enough to still say what
+    // it means: the seat is READ, and the read is awaited, before anything is
+    // written. A regex pinned to the exact expression was asserting on
+    // formatting rather than on behaviour.
+    expect(join).toMatch(/const already =[\s\S]{0,40}await getDoc\(seat\)/);
     expect(join).toMatch(/if \(!already\.exists\(\)\) \{/);
     // The account pointer is written either way -- it is the half a
     // legacy-only student is missing, and re-entering the code is their repair.
