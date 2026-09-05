@@ -7,7 +7,7 @@
 import { currentUser } from '/assets/js/auth.js';
 import { readProfile } from '/assets/js/class-join.js';
 import {
-  classesFor, createClass, readRoster, readEvents, readMirror, addCoTeacher,
+  classesFor, createClass, readRoster, readEvents, addCoTeacher,
   setArchived, purgeArchivedClass, createAssignment, readAssignments,
   deleteAssignment, setLockPolicy, watchRoster, readCertificates,
   setCertificateDecision, setShowSolutions, setMaxTestAttempts,
@@ -88,9 +88,24 @@ async function loadClassData(classId) {
   // where it is stored and does not need to be.
   const user = currentUser();
   certificates = user ? await readCertificates(user.uid).catch(() => ({})) : {};
-  // One student at a time rather than one query: the rules scope reads to a
-  // single student's subcollection, which is the same property that stops a
-  // teacher reading a class they do not own.
+  /* One student at a time rather than one query: the rules scope reads to a
+     single student's subcollection, which is the same property that stops a
+     teacher reading a class they do not own.
+
+     NO MIRROR READ HERE, and its absence is the point. This used to fetch
+     readMirror(classId, uid) for every student on every load. Nothing on this
+     page ever read it. The progress mirror is consumed by exactly one thing,
+     student-detail.js's drill-down, and that builds its own `student` with its
+     own reads when a teacher opens it -- it never looked at the copy this
+     function was assembling.
+
+     It was not a cheap mistake. readMirror is an UNBOUNDED getDocs over a
+     collection that grows with every syncable progress key a student writes
+     across ~80 lessons, so the dashboard was paying an unbounded per-student
+     query, on every load, to populate a field with no readers, for a panel the
+     teacher had not opened. Against a Spark budget of 50,000 document reads
+     per day for the entire project, that is the kind of waste that takes the
+     site down for everybody rather than making one page slow. */
   return Promise.all(
     roster.map(async (row) => ({
       uid: row.uid,
@@ -98,7 +113,6 @@ async function loadClassData(classId) {
       joinedAt: CORE.toMillis(row.joinedAt),
       lastActiveAt: CORE.toMillis(row.lastActiveAt),
       events: await readEvents(classId, row.uid, 500).catch(() => []),
-      mirror: await readMirror(classId, row.uid).catch(() => ({})),
       certificate: certificates[row.uid] || {},
     }))
   );
@@ -143,7 +157,6 @@ function mergeRoster(rows) {
       joinedAt: CORE.toMillis(row.joinedAt),
       lastActiveAt: CORE.toMillis(row.lastActiveAt),
       events: [],
-      mirror: {},
       certificate: certificates[row.uid] || {},
       pending: true,
     };
