@@ -438,6 +438,78 @@ service cloud.firestore {
             || (isTeacherOf(classId) && classDoc(classId).archived == true);
         }
 
+        /* THE ROSTER SUMMARY — a cache of what the grid renders, written by
+         * the student it describes.
+         *
+         * WHY IT EXISTS. The teacher dashboard used to derive every cell by
+         * replaying up to 500 events per student, so one dashboard open cost
+         * (500 + |mirror|) reads per student -- roughly 25,000 for a class of
+         * fifty, against a Spark budget of 50,000 per DAY for the entire
+         * project across all its users. Two opens exhausted everybody's quota.
+         * The summary is one document holding exactly what the grid needs, so
+         * the same open costs one read per student.
+         *
+         * WHY THE STUDENT WRITES IT. There is nowhere else. This project has no
+         * Cloud Functions and the owner has declined the Blaze plan, so every
+         * write in the system is made by a client under its own credentials.
+         * The alternative -- the teacher writing it -- would mean the teacher
+         * doing the 500-read replay in order to avoid the 500-read replay.
+         *
+         * WHAT A DETERMINED STUDENT CAN FORGE: everything in it.
+         *
+         * That is not a gap to be closed later, it is a property of the
+         * architecture, and it is stated here in the same register as
+         * maxTestAttempts and the sequential-unlock note below. A rule cannot
+         * tell a real firstPassAt from an invented one, because the only
+         * evidence for either is a document this student's own browser wrote.
+         * A student who opens the console can claim every lesson passed and
+         * every test full marks.
+         *
+         * WHAT LIMITS THE DAMAGE is that this is a CACHE and not the record.
+         * The event log below is the record: append-only, with `at` pinned to
+         * request.time by its own rule, and it is what the per-student
+         * drill-down and both exports read. A forged summary changes what the
+         * grid shows at a glance; it does not change the evidence a teacher
+         * looks at when the glance matters, and the dashboard offers a rebuild
+         * from the event log for a row that looks wrong. "Evidence for a
+         * conversation, not a grade" is exactly the framing under which that
+         * trade is acceptable.
+         *
+         * SO WHAT THIS RULE IS ACTUALLY FOR, given it cannot stop forgery:
+         * keeping one student out of another student's summary, keeping a
+         * teacher from writing into a student's record, pinning the document id
+         * so the collection cannot be used as free storage, pinning the key set
+         * so it cannot grow into one, and server-stamping updatedAt so a
+         * completion cannot be BACKDATED past a due date. That last one is the
+         * only forgery the rules can actually prevent, and it is worth having:
+         * inflating your own progress is visible in the drill-down, while
+         * quietly moving a completion to before Friday is not. */
+        match /summary/{docId} {
+          allow read: if isOwner(uid) || isTeacherOf(classId);
+
+          allow create, update: if isOwner(uid)
+            && isEnrolled(classId, uid)
+            // One document, named. A wildcard collection a student may write
+            // is a free storage bucket attached to a teacher's class.
+            && docId == 'current'
+            && request.resource.data.updatedAt == request.time
+            && request.resource.data.schemaVersion is int
+            && request.resource.data.lessons is map
+            && request.resource.data.units is map
+            && request.resource.data.quizzes is map
+            && request.resource.data.lastEventAt is number
+            && request.resource.data.keys().hasOnly(
+                 ['schemaVersion', 'updatedAt', 'lessons', 'units', 'quizzes',
+                  'lastEventAt']);
+
+          // Same shape as the mirror above: a teacher never writes into a
+          // student's record, and the one exception is purging an archived
+          // class, because a student who never returns cannot run their own
+          // expiry.
+          allow delete: if isOwner(uid)
+            || (isTeacherOf(classId) && classDoc(classId).archived == true);
+        }
+
         match /events/{eventId} {
           /* THE UNIT LOCK, enforced rather than announced.
            *
