@@ -28,6 +28,33 @@ When writing a plan under `docs/superpowers/plans/` that touches
 `firestore.rules`, put the rules deploy in the verification task explicitly. The
 plans that led to this gap ended at "Commit."
 
+## The Firestore cache is multi-tab, and the warning about it is a bug
+
+`firebase-config.js` configures `persistentLocalCache({ tabManager:
+persistentMultipleTabManager() })`. The `tabManager` is not decoration. The
+no-argument `persistentLocalCache()` resolves, inside the SDK, to
+`persistentSingleTabManager()` — one tab holds an exclusive IndexedDB lock and
+every other tab silently drops to a **memory-only, empty** cache. An empty
+cache is the precondition behind "a real teacher is told they are a student";
+`assets/js/profile.js` documents the mechanism at length.
+
+So if you see this in a console:
+
+```
+failed-precondition: Failed to obtain exclusive access to the persistence layer
+```
+
+that is a **regression, not background noise**. It was ambient on essentially
+every page for weeks before anyone read it as a cause. `scripts/verify-multi-tab-cache.py`
+asserts it is absent with three tabs open, and is confirmed to fail when the
+configuration is reverted.
+
+The related rule, enforced by `tests/role-reader-discipline.test.js`: outside
+`profile.js`, never read the `users/{uid}` document. Write it freely, read the
+subcollections beneath it freely, but route reads of the account record itself
+through `loadProfile()` — it shares one server-confirmed read per page and
+refuses to answer from a view carrying our own unacknowledged writes.
+
 ## Checks
 
 - `npm test` — unit tests (vitest)
