@@ -90,18 +90,60 @@ const { doc, onSnapshot } = await import(`${BASE}/firebase-firestore.js`);
 
 /* How long to wait for an answer before giving up on the network.
  *
- * Twenty seconds, and the number is the whole point of this round. 47533a6
- * used four, and under four tabs contending for the persistence lock the
- * confirmed snapshot regularly arrived later than that -- so the deadline
- * rejected a read that was still making progress and every one of those tabs
- * reported "Could not reach your account record" on a working connection.
+ * Eight seconds, and this round of the number is the first one backed by a
+ * measurement rather than by a bad experience.
  *
- * A page that is genuinely offline does not wait this out: the navigator.onLine
- * check below takes the cached answer as soon as a cache-only snapshot arrives.
- * This is the ceiling for "online, but something is badly wrong", where being
- * slow and right beats being fast and wrong -- the page says "Loading your
- * class" throughout, which is true. */
-const SERVER_WAIT_MS = 20000;
+ * THE HISTORY, because the number has moved twice and both moves were reactions
+ * to a cause nobody had found yet. 47533a6 used four seconds. Under four tabs
+ * contending for the persistence lock the confirmed snapshot regularly arrived
+ * later than that, so the deadline rejected reads that were still making
+ * progress and 0 of 32 cold tabs rendered the dashboard -- every one reporting
+ * "Could not reach your account record" on a working connection. The answer was
+ * to raise the ceiling to twenty, explicitly documented as untunable: the
+ * multi-tab harness produced bimodal results, 0.2 seconds or 20 seconds and
+ * nothing in between, and there is no honest way to pick a deadline out of a
+ * distribution shaped like that.
+ *
+ * The bimodality was the cache misconfiguration. firebase-config.js was calling
+ * persistentLocalCache() with no tabManager, which is single-tab persistence, so
+ * every tab past the first lost the IndexedDB lock and ran on an empty
+ * memory-only cache -- and the slow mode of that distribution was those tabs
+ * racing an identity merge write into nothing. See the comment in
+ * firebase-config.js for the mechanism.
+ *
+ * THE MEASUREMENT, with the cache fixed. scripts/measure-profile-wait.py, cold
+ * tabs opened against an already-signed-in tab so the contention is still real:
+ *
+ *     unthrottled          12 trials   min 11.1ms  median 12.0ms  p95 13.0ms  max 13.5ms
+ *     Slow 3G (400ms RTT)  10 trials   min 14.9ms  median 15.5ms  p95 24.2ms  max 24.2ms
+ *
+ * Zero of 22 exceeded even the old four-second deadline. The distribution has
+ * one mode now.
+ *
+ * WHAT THAT DOES AND DOES NOT LICENCE. It does not licence reading 24ms off the
+ * table and setting the constant near it. Those trials talk to a Firestore
+ * emulator on localhost; the network emulation throttles the page's own fetches
+ * but cannot invent the real distance to firestore.googleapis.com, so the
+ * absolute numbers are a floor and not a forecast. What the measurement does
+ * establish is the thing that actually mattered: the slow mode is gone, so a
+ * deadline is once again a statement about a broken connection rather than a
+ * coin flip against our own bug.
+ *
+ * Eight seconds is chosen against the two ways this constant fails, not against
+ * the measurement. Too low tells a working-but-slow connection it is broken --
+ * that was the four-second failure, and its cause is now fixed at the root
+ * rather than papered over. Too high is the one the twenty was quietly paying:
+ * this product is used in schools, where firestore.googleapis.com behind a
+ * content filter is an ordinary Tuesday, and twenty seconds of "Loading your
+ * class" in front of a room of teenagers is worse than an honest error at
+ * eight. Eight is roughly 300x the measured p95, which is headroom for a real
+ * network many times slower than anything measurable here, and it is half the
+ * time a person will sit in front of a spinner before reloading anyway.
+ *
+ * A page that is genuinely offline does not wait this out at all: the
+ * navigator.onLine check below takes the cached answer as soon as a cache-only
+ * snapshot arrives. */
+const SERVER_WAIT_MS = 8000;
 
 /* Cached for the page rather than for the session.
 
