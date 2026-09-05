@@ -219,6 +219,29 @@ const STUDENTS = [
   { name: 'Noah Petersen', units: 4, into: 10, lastSeen: 0.4, kind: 'finished' },
 ];
 
+/* The class size is variable, because two different jobs need two different
+   classes out of this one script.
+ *
+ * Fourteen hand-written profiles is the right fixture for LOOKING at the
+ * dashboard: every panel has something worth reading in it and no two rows are
+ * the same. It is the wrong fixture for MEASURING it, where what matters is
+ * the row count -- the per-student fan-out this project's read cost is made of
+ * only shows its shape at thirty or fifty.
+ *
+ * So STUDENTS=30 cycles the fourteen profiles to fill the roster. The extra
+ * rows are repeats with distinct names and uids, which is fine for a cost
+ * measurement and is why the default stays at fourteen for everything else. */
+const CLASS_SIZE = Math.max(1, Number(process.env.STUDENTS) || 0);
+
+function roster() {
+  if (!CLASS_SIZE || CLASS_SIZE === STUDENTS.length) return STUDENTS;
+  return Array.from({ length: CLASS_SIZE }, (_, i) => {
+    const base = STUDENTS[i % STUDENTS.length];
+    if (i < STUDENTS.length) return base;
+    return { ...base, name: `${base.name} ${Math.floor(i / STUDENTS.length) + 1}` };
+  });
+}
+
 let eventSeq = 0;
 
 /* How often each kind of student passes an exercise on the first go.
@@ -429,7 +452,8 @@ async function main() {
   });
 
   let events = 0;
-  for (const [i, profile] of STUDENTS.entries()) {
+  const CLASS = roster();
+  for (const [i, profile] of CLASS.entries()) {
     const email = `student${String(i + 1).padStart(2, '0')}@pypath.test`;
     const uid = await createUser(email, profile.name);
 
@@ -484,7 +508,7 @@ async function main() {
     console.log(`  ${profile.name.padEnd(18)} ${String(profile.units).padStart(2)} units  ${profile.kind}`);
   }
 
-  console.log(`\n${STUDENTS.length} students, ${events} events, 3 assignments.\n`);
+  console.log(`\n${CLASS.length} students, ${events} events, 3 assignments.\n`);
   console.log('Sign in to the dashboard as:');
   console.log(`  ${TEACHER_EMAIL}  /  ${PASSWORD}`);
   console.log(`  join code: ${JOIN_CODE}`);
