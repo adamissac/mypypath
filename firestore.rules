@@ -497,10 +497,18 @@ service cloud.firestore {
             && request.resource.data.lessons is map
             && request.resource.data.units is map
             && request.resource.data.quizzes is map
+            // The attention panel's inputs. Bounded by construction: one entry
+            // per exercise the student has touched, and roster-summary.js caps
+            // the flagged list at FLAGGED_CAP.
+            && request.resource.data.exercises is map
+            && request.resource.data.flagged is list
+            && request.resource.data.flagged.size() <= 40
+            && request.resource.data.lastLessonPath is string
+            && request.resource.data.lastLessonPath.size() <= 300
             && request.resource.data.lastEventAt is number
             && request.resource.data.keys().hasOnly(
                  ['schemaVersion', 'updatedAt', 'lessons', 'units', 'quizzes',
-                  'lastEventAt']);
+                  'exercises', 'flagged', 'lastLessonPath', 'lastEventAt']);
 
           // Same shape as the mirror above: a teacher never writes into a
           // student's record, and the one exception is purging an archived

@@ -69,6 +69,7 @@ function loadFold() {
   const body = src
     .replace(/^import \{[^}]*\} from '\/assets\/js\/firebase-config\.js';$/m, '')
     .replace(/^const BASE = [\s\S]*?firebase-firestore\.js`\);$/m, '')
+    .replace(/^import \{ counted \} from '\/assets\/js\/read-counter\.js';$/m, '')
     .replace(/\bexport (async function|function|const)/g, '$1');
   if (/\bimport\b/.test(body.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, ''))) {
     throw new Error('roster-summary.js imports could not be stripped; this script needs updating');

@@ -40,6 +40,7 @@ beforeAll(async () => {
   const body = src
     .replace(/^import \{[^}]*\} from '\/assets\/js\/firebase-config\.js';$/m, '')
     .replace(/^const BASE = [\s\S]*?firebase-firestore\.js`\);$/m, '')
+    .replace(/^import \{ counted \} from '\/assets\/js\/read-counter\.js';$/m, '')
     .replace(/\bexport (async function|function|const)/g, '$1');
 
   const code = body.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
@@ -48,7 +49,8 @@ beforeAll(async () => {
 
   RS = new Function(
     'db', 'doc', 'getDoc', 'setDoc', 'serverTimestamp', 'setTimeout', 'clearTimeout',
-    `${body}\nreturn { applyEvents, emptySummary, lessonKey, SUMMARY_SCHEMA, WRITE_DEBOUNCE_MS };`
+    `${body}\nreturn { applyEvents, emptySummary, lessonKey, eventsFromSummary,
+                        SUMMARY_SCHEMA, WRITE_DEBOUNCE_MS, FLAGGED_CAP };`
   )({}, () => ({}), async () => ({ exists: () => false }), async () => {}, () => 'ts',
     globalThis.setTimeout, globalThis.clearTimeout);
 });
@@ -231,7 +233,8 @@ describe('the shape matches what the rules will accept', () => {
   it('carries exactly the keys firestore.rules pins', () => {
     const summary = RS.applyEvents(RS.emptySummary(), [checked(1, 5, 5)]);
     expect(Object.keys(summary).sort())
-      .toEqual(['lastEventAt', 'lessons', 'quizzes', 'schemaVersion', 'units']);
+      .toEqual(['exercises', 'flagged', 'lastEventAt', 'lastLessonPath',
+                'lessons', 'quizzes', 'schemaVersion', 'units']);
   });
 
   it('the rules pin the same key set this file writes', () => {
@@ -239,7 +242,8 @@ describe('the shape matches what the rules will accept', () => {
     // dashboard that silently stops updating for every student at once.
     const rules = fs.readFileSync('firestore.rules', 'utf8');
     const block = rules.slice(rules.indexOf('match /summary/{docId}'));
-    for (const key of ['schemaVersion', 'updatedAt', 'lessons', 'units', 'quizzes', 'lastEventAt']) {
+    for (const key of ['schemaVersion', 'updatedAt', 'lessons', 'units', 'quizzes',
+                       'exercises', 'flagged', 'lastLessonPath', 'lastEventAt']) {
       expect(block.slice(0, 2000)).toContain(`'${key}'`);
     }
   });
@@ -293,5 +297,232 @@ describe('lastEventAt', () => {
 
   it('is zero for a student who has done nothing', () => {
     expect(RS.applyEvents(RS.emptySummary(), []).lastEventAt).toBe(0);
+  });
+});
+
+describe('the canonical log answers every question the real one does', () => {
+  /* THE TEST THAT DECIDES WHETHER ANY OF THIS IS SAFE.
+   *
+   * The dashboard does not read summaries directly. It expands one back into
+   * the smallest event log that produces the same answers, and hands that to
+   * classroom-core.js exactly as before -- so there is one implementation of
+   * unitState, one of percentComplete, one of assignmentStatus, rather than a
+   * parallel set to keep in agreement forever.
+   *
+   * That is only legitimate if the canonical log really is answer-for-answer
+   * identical. So: build a realistic log, fold it, expand it, and run every
+   * function the dashboard calls over BOTH, asserting they agree.
+   */
+
+  const LESSONS = {
+    1: [L1, L2],
+    2: [L3],
+  };
+
+  const events = [
+    opened(20, L1), ran(19, L1), checked(18, 3, 5, L1), checked(17, 5, 5, L1),
+    opened(16, L2), ran(15, L2), ran(14, L2), checked(13, 5, 5, L2),
+    opened(10, L3), ran(9, L3), ran(8, L3), ran(7, L3),
+    tested(12, 1, 18, 20),
+    verified(12, 1),
+    tested(6, 2, 9, 20),
+    ev('answer.submitted', 11, { lessonPath: L1, itemId: 'r1', missedConcepts: true }),
+    ev('answer.submitted', 5, { lessonPath: L3, itemId: 'r2', missedConcepts: true }),
+    ev('quiz.submitted', 4, { assignmentId: 'a1', unit: 2, score: 70, total: 10 }),
+  ];
+
+  let real;
+  let canonical;
+
+  beforeEach(() => {
+    real = events;
+    canonical = RS.eventsFromSummary(RS.applyEvents(RS.emptySummary(), events));
+  });
+
+  it('is very much smaller', () => {
+    // The point of the exercise. Not asserted as a ratio, because the ratio
+    // grows with the student -- a term of work is 500 events and roughly the
+    // same canonical log.
+    expect(canonical.length).toBeLessThan(real.length);
+  });
+
+  it('agrees on every lesson state', () => {
+    for (const path of [L1, L2, L3, '/units/unit-9/never.html']) {
+      for (const verifiedFlag of [false, true]) {
+        expect(K.lessonState(canonical, path, verifiedFlag), path)
+          .toBe(K.lessonState(real, path, verifiedFlag));
+      }
+    }
+  });
+
+  it('agrees on verified units', () => {
+    expect(K.verifiedUnits(canonical)).toEqual(K.verifiedUnits(real));
+  });
+
+  it('agrees on every unit state', () => {
+    for (const unit of [1, 2, 3]) {
+      expect(K.unitState(canonical, LESSONS[unit] || [], unit), `unit ${unit}`)
+        .toBe(K.unitState(real, LESSONS[unit] || [], unit));
+    }
+  });
+
+  it('agrees on unit progress, including the test flag', () => {
+    for (const unit of [1, 2]) {
+      const a = K.unitProgress(canonical, LESSONS[unit], unit);
+      const b = K.unitProgress(real, LESSONS[unit], unit);
+      expect(a.lessonsPassed, `unit ${unit} passed`).toBe(b.lessonsPassed);
+      expect(a.lessonsStarted, `unit ${unit} started`).toBe(b.lessonsStarted);
+      expect(a.testPassed, `unit ${unit} testPassed`).toBe(b.testPassed);
+      expect(a.percent, `unit ${unit} percent`).toBe(b.percent);
+      expect(a.state, `unit ${unit} state`).toBe(b.state);
+    }
+  });
+
+  it('agrees on the overall percentage', () => {
+    expect(K.percentComplete(canonical, LESSONS)).toBe(K.percentComplete(real, LESSONS));
+  });
+
+  it('agrees on lastEventAt', () => {
+    expect(K.lastEventAt(canonical)).toBe(K.lastEventAt(real));
+  });
+
+  it('agrees on every completion date', () => {
+    const targets = [
+      { kind: 'lesson', path: L1 },
+      { kind: 'lesson', path: L2 },
+      { kind: 'lesson', path: L3 },
+      { kind: 'unit', unit: 1, lessonPaths: LESSONS[1] },
+      { kind: 'unit', unit: 2, lessonPaths: LESSONS[2] },
+      { kind: 'quiz', assignmentId: 'a1' },
+    ];
+    for (const t of targets) {
+      expect(K.completedAt(canonical, t), JSON.stringify(t))
+        .toBe(K.completedAt(real, t));
+    }
+  });
+
+  it('agrees on assignment status, which is what lateness is computed from', () => {
+    const assignment = {
+      id: 'a1', units: [1], lessonPaths: [L3],
+      quiz: { unit: 2 }, dueAt: NOW - 8 * DAY,
+    };
+    const opts = { now: NOW, lessonsByUnit: LESSONS, lessonTitles: {} };
+    const a = K.assignmentStatus(assignment, canonical, opts);
+    const b = K.assignmentStatus(assignment, real, opts);
+    expect(a.state).toBe(b.state);
+    expect(a.parts.map((p) => [p.kind, p.done, p.completedAt]))
+      .toEqual(b.parts.map((p) => [p.kind, p.done, p.completedAt]));
+  });
+
+  it('agrees on attempts per exercise, which the attention panel reads', () => {
+    // Compared on the fields needsAttention uses. The synthetic log cannot
+    // reproduce WHICH editor a student used on which day, and nothing reads
+    // that; it must reproduce the counts and the first-try flag, and does.
+    const strip = (index) => Object.values(index)
+      .map((e) => [e.lessonPath, e.exerciseId, e.attempts, e.passed, e.firstTryPassed])
+      .sort();
+    expect(strip(K.attemptsByExercise(canonical))).toEqual(strip(K.attemptsByExercise(real)));
+  });
+
+  it('agrees on the first-try rate per unit', () => {
+    for (const unit of [1, 2]) {
+      expect(K.firstTryRate(canonical, unit), `unit ${unit}`)
+        .toBe(K.firstTryRate(real, unit));
+    }
+  });
+
+  it('agrees on flagged answers', () => {
+    const strip = (list) => list.map((f) => [f.lessonPath, f.itemId, f.at]).sort();
+    expect(strip(K.flaggedAnswers(canonical))).toEqual(strip(K.flaggedAnswers(real)));
+  });
+
+  it('agrees on the whole attention table', () => {
+    // The end-to-end assertion: same rows, same kinds, same priorities, same
+    // wording. This is what a teacher actually reads.
+    const student = (evts) => ({
+      uid: 'u1', displayName: 'A Student', events: evts, certificate: {},
+    });
+    const opts = { now: NOW, lessonTitles: {} };
+    expect(K.needsAttention([student(canonical)], opts))
+      .toEqual(K.needsAttention([student(real)], opts));
+  });
+
+  it('marks every synthetic event as synthetic', () => {
+    for (const e of canonical) expect(e.synthetic).toBe(true);
+  });
+});
+
+describe('a stuck student survives the round trip, because that row is the point', () => {
+  /* The attention panel's most valuable row is "has retried this exercise N
+     times without passing". It is also the one most easily lost by an
+     incremental summary, because it is a COUNT rather than a best or an
+     earliest. */
+  const stuck = [];
+  for (let i = 0; i < 9; i += 1) {
+    stuck.push(ev('code.run', 5, { lessonPath: L1, editorId: 'practice1', ok: false }));
+  }
+
+  it('keeps the attempt count', () => {
+    const summary = RS.applyEvents(RS.emptySummary(), stuck);
+    const canonical = RS.eventsFromSummary(summary);
+    const index = K.attemptsByExercise(canonical);
+    const entry = Object.values(index)[0];
+    expect(entry.attempts).toBe(9);
+    expect(entry.passed).toBe(false);
+  });
+
+  it('and raises the same row', () => {
+    const summary = RS.applyEvents(RS.emptySummary(), stuck);
+    const student = (evts) => ({ uid: 'u1', displayName: 'A', events: evts, certificate: {} });
+    const opts = { now: NOW, lessonTitles: {} };
+    const fromCanonical = K.needsAttention([student(RS.eventsFromSummary(summary))], opts);
+    const fromReal = K.needsAttention([student(stuck)], opts);
+    expect(fromCanonical.filter((r) => r.kind === 'stuck'))
+      .toEqual(fromReal.filter((r) => r.kind === 'stuck'));
+  });
+
+  it('a first-try pass stays a first-try pass', () => {
+    const first = [checked(3, 5, 5, L1)];
+    // The order matters: attemptsByExercise sets firstTryPassed only when the
+    // pass is attempt number one, so the expansion has to emit it first.
+    const canonical = RS.eventsFromSummary(RS.applyEvents(RS.emptySummary(), [
+      ev('code.tests_passed', 3, { lessonPath: L1, editorId: 'p1', passed: 5, total: 5 }),
+    ]));
+    const entry = Object.values(K.attemptsByExercise(canonical))[0];
+    expect(entry.firstTryPassed).toBe(true);
+  });
+
+  it('a pass after failures does not become one', () => {
+    const real = [
+      ev('code.run', 5, { lessonPath: L1, editorId: 'p1', ok: false }),
+      ev('code.run', 4, { lessonPath: L1, editorId: 'p1', ok: false }),
+      ev('code.tests_passed', 3, { lessonPath: L1, editorId: 'p1', passed: 5, total: 5 }),
+    ];
+    const canonical = RS.eventsFromSummary(RS.applyEvents(RS.emptySummary(), real));
+    const entry = Object.values(K.attemptsByExercise(canonical))[0];
+    expect(entry.firstTryPassed).toBe(false);
+    expect(entry.passed).toBe(true);
+    expect(entry.attempts).toBe(3);
+  });
+});
+
+describe('the flagged list is capped', () => {
+  it('keeps the most recent FLAGGED_CAP and no more', () => {
+    const many = [];
+    for (let i = 0; i < RS.FLAGGED_CAP + 15; i += 1) {
+      many.push(ev('answer.submitted', 60 - i * 0.5,
+        { lessonPath: L1, itemId: `r${i}`, missedConcepts: true }));
+    }
+    const summary = RS.applyEvents(RS.emptySummary(), many);
+    expect(summary.flagged).toHaveLength(RS.FLAGGED_CAP);
+    // The most recent, because the panel links to the last one.
+    expect(summary.flagged[summary.flagged.length - 1].itemId)
+      .toBe(`r${RS.FLAGGED_CAP + 14}`);
+  });
+
+  it('the rules cap it at the same number', () => {
+    const rules = fs.readFileSync('firestore.rules', 'utf8');
+    const block = rules.slice(rules.indexOf('match /summary/{docId}'));
+    expect(block.slice(0, 2000)).toContain(`flagged.size() <= ${RS.FLAGGED_CAP}`);
   });
 });

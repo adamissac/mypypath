@@ -44,6 +44,11 @@ import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const { doc, getDoc, setDoc, serverTimestamp } =
   await import(`${BASE}/firebase-firestore.js`);
+/* Dev-only, off unless ?readcount=1. The summary read has to appear in the
+   count or the measurement it exists to improve would be flattering rather
+   than true -- a dashboard that reports 65 reads while making 30 uncounted
+   ones is worse than no instrument. */
+import { counted } from '/assets/js/read-counter.js';
 
 export const SUMMARY_SCHEMA = 3;
 
@@ -70,9 +75,27 @@ export function emptySummary() {
     lessons: {},
     units: {},
     quizzes: {},
+    /* The attention panel's inputs, kept here rather than left to the event
+       log, because the alternative was worse than it looks. needsAttention()
+       reads per-exercise attempt counts and flagged written answers, which the
+       grid's own fields cannot reconstruct. Leaving them out would have meant
+       either an attention panel that silently emptied when the dashboard
+       stopped reading events, or one hidden behind a click that costs 15,000
+       reads -- and "who is stuck" is the single most useful thing on the page.
+       Both are bounded: one entry per exercise the student has touched, and a
+       capped list of flagged answers. */
+    exercises: {},
+    flagged: [],
+    lastLessonPath: '',
     lastEventAt: 0,
   };
 }
+
+/* Flagged answers are a list rather than a count, because the panel links to
+   the most recent one. Capped so a student who triggers it every lesson for a
+   term cannot grow the document without bound -- the panel only ever reads the
+   length and the last entry, and AI_FLAG_RUN is far below this. */
+export const FLAGGED_CAP = 40;
 
 /* The same escaping the progress mirror uses for its document ids, so a lesson
    path is a legal map key and the mapping stays injective. Firestore map keys
@@ -126,6 +149,9 @@ export function applyEvents(summary, events) {
     lessons: { ...((summary && summary.lessons) || {}) },
     units: { ...((summary && summary.units) || {}) },
     quizzes: { ...((summary && summary.quizzes) || {}) },
+    exercises: { ...((summary && summary.exercises) || {}) },
+    flagged: [...((summary && summary.flagged) || [])],
+    lastLessonPath: (summary && summary.lastLessonPath) || '',
     lastEventAt: (summary && summary.lastEventAt) || 0,
   };
 
@@ -136,6 +162,7 @@ export function applyEvents(summary, events) {
     if (at > out.lastEventAt) out.lastEventAt = at;
 
     const path = e.lessonPath || p.lessonPath;
+    if (path && at >= out.lastEventAt) out.lastLessonPath = path;
     if (path) {
       const key = lessonKey(path);
       const prev = out.lessons[key] || {
@@ -161,6 +188,32 @@ export function applyEvents(summary, events) {
         lesson.state = strongest(lesson.state, 'attempted');
       }
       out.lessons[key] = lesson;
+    }
+
+    /* Per exercise, mirroring classroom-core.js's attemptsByExercise exactly:
+       the same three event types, the same key, and firstTryPassed set only
+       when the pass IS the first attempt. */
+    const exerciseId = p.editorId || p.exerciseId;
+    if (exerciseId
+        && (e.type === 'code.tests_passed' || e.type === 'answer.submitted'
+            || e.type === 'code.run')) {
+      const key = lessonKey(`${path || ''}#${exerciseId}`);
+      const prev = out.exercises[key] || {
+        lessonPath: path || '', exerciseId, attempts: 0,
+        passed: false, firstTryPassed: false,
+      };
+      const entry = { ...prev, attempts: prev.attempts + 1 };
+      if (e.type === 'code.tests_passed' && p.total && p.passed >= p.total) {
+        entry.passed = true;
+        if (entry.attempts === 1) entry.firstTryPassed = true;
+      }
+      out.exercises[key] = entry;
+    }
+
+    if (e.type === 'answer.submitted' && p.missedConcepts === true) {
+      out.flagged = out.flagged
+        .concat([{ lessonPath: path || '', itemId: p.itemId || '', at }])
+        .slice(-FLAGGED_CAP);
     }
 
     if (e.type === 'unit.completed' && p.verified === true && p.unit) {
@@ -205,7 +258,7 @@ function ref(classId, uid) {
 }
 
 export async function readSummary(classId, uid) {
-  const snap = await getDoc(ref(classId, uid));
+  const snap = counted(await getDoc(ref(classId, uid)), 'readSummary');
   return snap.exists() ? snap.data() : null;
 }
 
@@ -216,6 +269,9 @@ export async function writeSummary(classId, uid, summary) {
     lessons: summary.lessons || {},
     units: summary.units || {},
     quizzes: summary.quizzes || {},
+    exercises: summary.exercises || {},
+    flagged: summary.flagged || [],
+    lastLessonPath: summary.lastLessonPath || '',
     lastEventAt: summary.lastEventAt || 0,
   });
 }
@@ -303,4 +359,119 @@ export function flushSummary(classId, uid) {
     timer = null;
   }
   return commit(classId, uid).catch(() => {});
+}
+
+/* ------------------------------------------------- back to events, canonically */
+
+/* Rebuilds a CANONICAL event log from a summary.
+ *
+ * WHY THIS EXISTS RATHER THAN A SECOND RENDERING PATH. The dashboard derives
+ * every cell through classroom-core.js, which takes an event array. The
+ * alternative to this function was to give classroom-core a parallel set of
+ * functions that read a summary instead -- two implementations of unitState,
+ * two of percentComplete, two of assignmentStatus -- and keep them in
+ * agreement forever. That is exactly the "grid says one thing, drill-down says
+ * another" failure the summary exists to avoid, installed deliberately.
+ *
+ * So instead the summary is expanded back into the smallest event log that
+ * produces the same answers, and every reader stays exactly as it was.
+ *
+ * WHAT "CANONICAL" MEANS AND WHERE IT STOPS. These are not the student's
+ * events. They are a representative log chosen so that every function
+ * classroom-core.js exposes returns the same value it would have over the real
+ * one. That holds because those functions only ever ask for a best, an
+ * earliest, or a count -- lessonState wants the best ratio, completedAt wants
+ * the earliest full pass, attemptsByExercise wants a count and whether the
+ * first attempt passed. None of them cares which particular Tuesday an
+ * attempt happened on, except through a date the summary already stores.
+ *
+ * It stops at anything that reads an individual event's identity or ordering
+ * beyond that. groupByDay() is the clear example: it buckets events by day to
+ * draw a timeline, and over a canonical log it would draw a shape that never
+ * happened. So the drill-down, which is where the timeline lives, keeps
+ * reading the real log -- it is one student, and it costs one student's reads.
+ *
+ * Every event carries `synthetic: true`. Nothing reads it today; it is there so
+ * that a future reader debugging a strange number in the grid finds the answer
+ * in the object rather than in this comment.
+ */
+export function eventsFromSummary(summary) {
+  const s = summary || {};
+  const out = [];
+  const push = (type, at, lessonPath, payload) => {
+    out.push({ type, at: at || 0, lessonPath: lessonPath || '', synthetic: true, payload });
+  };
+
+  const unescape = (key) => String(key).replace(/__/g, '/').replace(/_5F/g, '_');
+
+  for (const [key, lesson] of Object.entries(s.lessons || {})) {
+    const path = unescape(key);
+    const at = lesson.touchedAt || 0;
+    switch (lesson.state) {
+      case 'passed':
+        // The date matters: completedAt reads it, and an assignment is late or
+        // not on the strength of it.
+        push('code.tests_passed', lesson.firstPassAt || at, path,
+          { lessonPath: path, passed: 1, total: 1 });
+        break;
+      case 'attempted':
+        // bestRatio is preserved so lessonState still distinguishes "tried the
+        // checks and did not pass" from "ran some code", which it does by
+        // whether any code.tests_passed exists at all.
+        if (lesson.bestRatio > 0) {
+          push('code.tests_passed', at, path,
+            { lessonPath: path, passed: Math.round(lesson.bestRatio * 100), total: 100 });
+        } else {
+          push('code.run', at, path, { lessonPath: path, ok: true });
+        }
+        break;
+      default:
+        push('lesson.opened', at, path, { lessonPath: path });
+    }
+  }
+
+  for (const [unit, u] of Object.entries(s.units || {})) {
+    const n = Number(unit);
+    if (u.verifiedAt) {
+      push('unit.completed', u.verifiedAt, '', { unit: n, verified: true });
+    }
+    if (u.testBest && u.testBest.total) {
+      push('test.submitted', u.firstTestPassAt || s.lastEventAt || 0, '',
+        { unit: n, score: u.testBest.score, total: u.testBest.total });
+    }
+  }
+
+  for (const [assignmentId, at] of Object.entries(s.quizzes || {})) {
+    push('quiz.submitted', at, '', { assignmentId, score: 0, total: 0 });
+  }
+
+  /* Exercise attempts, replayed in the order that reproduces firstTryPassed.
+   * attemptsByExercise sets it only when the pass is the FIRST attempt, so a
+   * student who passed first time gets the pass first and a student who did
+   * not gets their failures first. */
+  for (const entry of Object.values(s.exercises || {})) {
+    const base = { lessonPath: entry.lessonPath, editorId: entry.exerciseId };
+    const at = s.lastEventAt || 0;
+    const pass = () => push('code.tests_passed', at, entry.lessonPath,
+      { ...base, passed: 1, total: 1 });
+    const miss = () => push('code.run', at, entry.lessonPath, { ...base, ok: false });
+
+    if (entry.passed && entry.firstTryPassed) {
+      pass();
+      for (let i = 1; i < entry.attempts; i += 1) miss();
+    } else {
+      const misses = entry.passed ? entry.attempts - 1 : entry.attempts;
+      for (let i = 0; i < misses; i += 1) miss();
+      if (entry.passed) pass();
+    }
+  }
+
+  for (const f of s.flagged || []) {
+    push('answer.submitted', f.at, f.lessonPath,
+      { lessonPath: f.lessonPath, itemId: f.itemId, missedConcepts: true });
+  }
+
+  // Descending by time, the order readEvents returns and the order
+  // lastLessonPath() assumes.
+  return out.sort((a, b) => b.at - a.at);
 }
