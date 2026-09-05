@@ -55,6 +55,48 @@ subcollections beneath it freely, but route reads of the account record itself
 through `loadProfile()` — it shares one server-confirmed read per page and
 refuses to answer from a view carrying our own unacknowledged writes.
 
+## Outstanding: a rules deploy (as of 2026-09-05)
+
+`firestore.rules` gained `classes/{classId}/roster/{uid}/summary/{docId}` in
+`7b3c086`, and that rule's key set grew again in `592eddd`. **Neither is
+deployed.** Until someone runs
+
+```bash
+npx firebase deploy --only firestore:rules
+```
+
+every roster-summary write fails with `permission-denied`. That is harmless by
+construction — the write path swallows the error and the dashboard falls back
+to the old event replay — but the read-cost fix does nothing until it lands.
+
+A previous session's rules deploy for the quiz feature may also still be
+pending; check before assuming production matches the file.
+
+## The teacher dashboard reads summaries, not events
+
+`classroom-dashboard.js` reads one `summary/current` per student and expands it
+back into a canonical event log, so every derivation still runs through the same
+`classroom-core.js` functions. Measured on a seeded 30-student class:
+**2,451 reads per open → 95**.
+
+Two rules follow from that, and breaking either reintroduces the bug:
+
+- **Never add a second implementation of a `classroom-core.js` derivation that
+  reads a summary directly.** The expansion exists so there is one `unitState`,
+  one `percentComplete`, one `assignmentStatus`. `tests/roster-summary.test.js`
+  asserts the canonical log answers every one of them identically to a real one.
+- **The fallback is missing-only, never staleness-based.** A summary that looks
+  old is still the student's own account of themselves; re-reading 500 events
+  because a timestamp looked stale reintroduces the whole cost on exactly the
+  classes with the most data.
+
+The canonical log is *not* a substitute for the real one where individual events
+matter — `groupByDay()`'s timeline is the clear case. The drill-down and both
+exports keep reading events, and should.
+
+Measure, do not estimate: `?readcount=1` switches on `assets/js/read-counter.js`,
+and `scripts/measure-dashboard-reads.py` reports a whole dashboard open.
+
 ## Checks
 
 - `npm test` — unit tests (vitest)
