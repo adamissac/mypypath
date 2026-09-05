@@ -34,7 +34,15 @@ function compileProfile(onSnapshot) {
 
   // Proof the strip actually happened, so a refactor cannot leave this suite
   // silently evaluating a module with its real imports still in it.
-  expect(body).not.toContain('firebase-config.js');
+  //
+  // Asserted against the code with comments removed, not against the raw text.
+  // profile.js's header discusses firebase-config.js by name -- that is the
+  // whole subject of the bug it documents -- and a guard that fires on the
+  // module explaining itself is a guard that punishes writing the explanation
+  // down. What must be gone is the import machinery, which is what these two
+  // assertions now say.
+  const code = body.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+  expect(code).not.toMatch(/\bimport\b/);
   expect(body).toContain('function loadProfile');
 
   const db = {};
@@ -140,12 +148,12 @@ describe('a slow answer is not an absent one', () => {
      a working connection -- 0 of 32 cold tabs rendered the dashboard.
 
      This is that case, and it fails against 47533a6. */
-  it('waits for a server snapshot that takes six seconds', async () => {
+  it('waits for a server snapshot that takes three seconds', async () => {
     const P = compileProfile(scripted([
       { data: HALF_BUILT, fromCache: true, hasPendingWrites: true, after: 5 },
-      { data: REAL, fromCache: false, hasPendingWrites: false, after: 6000 },
+      { data: REAL, fromCache: false, hasPendingWrites: false, after: 3000 },
     ]));
-    const out = await settle(P.loadProfile('u1'), 8000);
+    const out = await settle(P.loadProfile('u1'), 4000);
     expect(out.err).toBe(undefined);
     expect(out.ok.role).toBe('teacher');
   });
@@ -160,9 +168,9 @@ describe('a slow answer is not an absent one', () => {
 });
 
 describe('a browser that says it has no network is believed at once', () => {
-  /* The other half of moving the deadline out. Twenty seconds is the right
-     ceiling for "online but struggling" and the wrong one for a learner on a
-     train, who can be answered immediately from a copy we already hold. */
+  /* The other half of having a deadline at all. Whatever ceiling is right for
+     "online but struggling" is the wrong one for a learner on a train, who can
+     be answered immediately from a copy we already hold. */
   function offline(value) {
     Object.defineProperty(window.navigator, 'onLine', {
       value, configurable: true, writable: true,
@@ -200,9 +208,9 @@ describe('offline is reported as offline, never as "not a teacher"', () => {
     const P = compileProfile(scripted([
       { data: HALF_BUILT, fromCache: true, hasPendingWrites: true, after: 5 },
     ]));
-    // 25s, not 5s: the deadline moved out to twenty seconds because four was
-    // rejecting reads that were still making progress. See the slow-answer
-    // group above.
+    // 25s of clock, comfortably past the deadline whatever it currently is.
+    // The deadline's actual value is pinned by its own group at the bottom of
+    // this file; here all that matters is that it fires.
     const out = await settle(P.loadProfile('u1'), 25000);
     expect(out.ok).toBe(undefined);
     expect(out.err.code).toBe('unavailable');
@@ -359,5 +367,47 @@ describe('every role check goes through it', () => {
     const fn = sync.slice(sync.indexOf('async function fullSync'));
     expect(fn.indexOf('await loadProfile(')).toBeGreaterThan(-1);
     expect(fn.indexOf('await loadProfile(')).toBeLessThan(fn.indexOf('identity(user)'));
+  });
+});
+
+describe('the deadline is eight seconds, and that number was measured', () => {
+  /* WHY THIS GROUP EXISTS. The constant has moved twice, and both moves were
+     reactions rather than measurements: four seconds was a guess that turned
+     out to reject reads still making progress, and twenty was a ceiling picked
+     because the harness produced a bimodal distribution -- 0.2s or 20s+, with
+     nothing in between -- that nobody could pick a number out of honestly.
+
+     The bimodality was the cache misconfiguration in firebase-config.js:
+     persistentLocalCache() with no tabManager is single-tab persistence, so
+     every tab past the first ran on an empty memory cache, and the slow mode
+     was those tabs racing an identity merge write into nothing.
+
+     With that fixed, scripts/measure-profile-wait.py measured 22 cold tabs
+     against an already-signed-in tab: p95 13.0ms unthrottled, 24.2ms on
+     Slow 3G, zero over even the old four-second deadline. One mode.
+
+     Eight seconds is then chosen against the two failure modes rather than off
+     that table -- see the constant's comment in profile.js. These two tests
+     pin it so that moving it again is a deliberate act with a diff, which is
+     precisely what the last two moves were not. */
+
+  it('waits for a server snapshot that arrives just inside the deadline', async () => {
+    const P = compileProfile(scripted([
+      { data: HALF_BUILT, fromCache: true, hasPendingWrites: true, after: 5 },
+      { data: REAL, fromCache: false, hasPendingWrites: false, after: 7800 },
+    ]));
+    const out = await settle(P.loadProfile('u1'), 7900);
+    expect(out.err).toBe(undefined);
+    expect(out.ok.role).toBe('teacher');
+  });
+
+  it('gives up on one that arrives just outside it', async () => {
+    const P = compileProfile(scripted([
+      { data: HALF_BUILT, fromCache: true, hasPendingWrites: true, after: 5 },
+      { data: REAL, fromCache: false, hasPendingWrites: false, after: 8200 },
+    ]));
+    const out = await settle(P.loadProfile('u1'), 8300);
+    expect(out.ok).toBe(undefined);
+    expect(out.err.code).toBe('unavailable');
   });
 });
