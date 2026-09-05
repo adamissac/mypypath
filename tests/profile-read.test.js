@@ -411,3 +411,46 @@ describe('the deadline is eight seconds, and that number was measured', () => {
     expect(out.err.code).toBe('unavailable');
   });
 });
+
+describe('the invariant is not a workaround for the cache bug, and outlives it', () => {
+  /* THE COMMIT THIS GUARDS AGAINST is the reasonable-sounding one: multi-tab
+     persistence landed, the "Failed to obtain exclusive access" warning is
+     gone, so the machinery in profile.js was working around a misconfiguration
+     and can be deleted.
+
+     It cannot. The persistence fallback was the loudest way to get a cold
+     cache, not the only one -- a first visit, cleared storage, private
+     browsing and storage-pressure eviction all still produce one, and every
+     one of those is an ordinary first-day-of-term scenario for a teacher
+     signing in on a new browser.
+
+     These two tests do not need a cold cache to exist in the wild to be
+     meaningful. They script the snapshot sequence a cold cache produces and
+     assert this module still refuses it, which is exactly what a future
+     simplification would break. */
+
+  it('still refuses a half-built document even though tabs no longer contend', async () => {
+    const P = compileProfile(scripted([
+      { data: HALF_BUILT, fromCache: false, hasPendingWrites: true, after: 5 },
+      { data: REAL, fromCache: false, hasPendingWrites: false, after: 40 },
+    ]));
+    // fromCache is FALSE on that first snapshot on purpose. It is the shape
+    // measured on a contended load and the one that defeated the first fix:
+    // the backend has acknowledged our own merge write, so the client counts
+    // itself in sync, while the document view is still nothing but the fields
+    // we just merged. Only hasPendingWrites separates it from an answer.
+    const out = await settle(P.loadProfile('u1'), 100);
+    expect(out.ok.role).toBe('teacher');
+  });
+
+  it('does not decide a role from a cache-only view when the server may still answer', async () => {
+    // A clean cached copy is a legitimate offline fallback, but not while the
+    // read is still in progress and the browser believes it has a network.
+    const P = compileProfile(scripted([
+      { data: { role: 'student' }, fromCache: true, hasPendingWrites: false, after: 5 },
+      { data: REAL, fromCache: false, hasPendingWrites: false, after: 60 },
+    ]));
+    const out = await settle(P.loadProfile('u1'), 200);
+    expect(out.ok.role).toBe('teacher');
+  });
+});

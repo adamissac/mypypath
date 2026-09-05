@@ -13,11 +13,11 @@
  *
  * WHAT WENT WRONG, because it is not obvious from the SDK's surface:
  *
- * The Firestore client is configured with persistentLocalCache(). On a fresh
- * load that cache can be cold -- a first visit, a cleared browser, or the
- * "Failed to obtain exclusive access to the persistence layer" fallback to an
- * in-memory cache when another tab holds the lock. In the same tick as those
- * role reads, sync.js's fullSync() issues
+ * The Firestore client is configured with a persistent local cache. On a fresh
+ * load that cache can be cold -- a first visit, a cleared browser, private
+ * browsing, or (until c3934ed) the "Failed to obtain exclusive access to the
+ * persistence layer" fallback to an in-memory cache when another tab held the
+ * lock. In the same tick as those role reads, sync.js's fullSync() issues
  *
  *     setDoc(users/{uid}, identity(user), { merge: true })
  *
@@ -77,6 +77,50 @@
  * working connection. Twenty seconds is the ceiling now, and a page that really
  * is offline no longer waits it out -- navigator.onLine settles that case as
  * soon as a cache-only snapshot arrives.
+ *
+ * WHAT SURVIVED THE RE-EXAMINATION, and this is the honest accounting rather
+ * than a claim that everything here is still necessary.
+ *
+ * c3934ed fixed the cache misconfiguration behind the loudest trigger:
+ * firebase-config.js was asking for single-tab persistence, so every tab past
+ * the first ran on an empty memory cache. Three tabs on the site is not an edge
+ * case, it is a teacher with a dashboard and two lessons open, so that was the
+ * path this bug actually arrived by. It is gone. The obvious next move is to
+ * delete the machinery below, and it is the wrong move.
+ *
+ * There are three independent layers standing between a cold cache and a
+ * teacher being told they are a student, and only one of them just changed:
+ *
+ *   1. sync.js's fullSync() now awaits loadProfile() BEFORE its merge write, so
+ *      in the common path there is no unacknowledged write for the read to be
+ *      poisoned by. This is the layer that removes the race rather than
+ *      surviving it -- but it only covers fullSync, which is rate-limited by
+ *      dueForSync() and is not the only thing that ever writes this document.
+ *      It also proceeds to the write when the read fails, by design.
+ *
+ *   2. The rule in this file: never answer a role question from a snapshot
+ *      carrying unacknowledged local writes. This is the backstop, and it is
+ *      the only layer that holds when a caller other than fullSync writes
+ *      users/{uid} while a read is outstanding.
+ *
+ *   3. Multi-tab persistence, which removes the most common way the cache is
+ *      cold in the first place.
+ *
+ * Layer 3 is what changed. Layers 1 and 2 are untouched by it, and layer 2's
+ * precondition -- a genuinely cold cache -- is still perfectly reachable: a
+ * first visit, cleared storage, private browsing, a device that has evicted the
+ * cache under storage pressure. Every one of those is a real first-day-of-term
+ * scenario for this product, which is the day a teacher is most likely to be
+ * signing in to a new browser in front of a room.
+ *
+ * So nothing below was removed. Measured rather than assumed: with the cache
+ * fixed, the authoritative read now settles at a p95 of 13ms unthrottled and
+ * 24ms on an emulated slow connection (scripts/measure-profile-wait.py). The
+ * cost of keeping this machinery is that a page waits those milliseconds for a
+ * confirmed snapshot instead of taking a cache-only one. That is not a cost
+ * worth trading a correctness invariant for. What the measurement DID buy is
+ * the deadline: SERVER_WAIT_MS moved from an undefendable 20s to a measured 8s,
+ * which is the one number here that was genuinely improvable.
  *
  * Failing is still allowed, and still means what it meant. Offline falls back
  * to the cache, and only to a cached view the server confirmed at some point;
