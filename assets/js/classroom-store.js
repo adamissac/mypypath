@@ -18,6 +18,10 @@
  */
 import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
 import { loadProfile, invalidateProfile } from '/assets/js/profile.js';
+/* Dev-only, off unless ?readcount=1. Every call below is a no-op returning its
+   argument until it is switched on -- see the header of read-counter.js for why
+   this file is instrumented at all. */
+import { counted } from '/assets/js/read-counter.js';
 
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const {
@@ -73,7 +77,7 @@ export async function resolveJoinCode(rawCode) {
   if (!ROLES.isValidCode(code)) {
     throw new ClassroomError('invalid-format', 'That join code does not look right.');
   }
-  const snap = await getDoc(doc(db, `joinCodes/${code}`));
+  const snap = counted(await getDoc(doc(db, `joinCodes/${code}`)), 'resolveJoinCode');
   if (!snap.exists()) {
     throw new ClassroomError('not-found', 'No class has that join code. Check it with your teacher.');
   }
@@ -121,7 +125,7 @@ export async function createClass(uid, name) {
 }
 
 export async function readClass(classId) {
-  const snap = await getDoc(doc(db, `classes/${classId}`));
+  const snap = counted(await getDoc(doc(db, `classes/${classId}`)), 'readClass');
   return snap.exists() ? { id: classId, ...snap.data() } : null;
 }
 
@@ -336,7 +340,8 @@ export async function createAssignment(classId, draft) {
 }
 
 export async function readAssignments(classId) {
-  const snap = await getDocs(collection(db, `classes/${classId}/assignments`));
+  const snap = counted(
+    await getDocs(collection(db, `classes/${classId}/assignments`)), 'readAssignments');
   return snap.docs
     .map((d) => ({ id: d.id, ...d.data() }))
     .sort((a, b) => Number(a.dueAt || 0) - Number(b.dueAt || 0));
@@ -443,7 +448,7 @@ export async function joinClass(uid, rawCode, displayName) {
   // shipped has the legacy roster document and not this one, so for them this
   // is still a create and re-entering their code is how they fix themselves.
   const seat = doc(db, `classes/${resolved.classId}/roster/${uid}`);
-  const already = await getDoc(seat);
+  const already = counted(await getDoc(seat), 'joinClass');
   if (!already.exists()) {
     // displayName is a username. A legal name must never reach this collection,
     // and the rules refuse the fields one would arrive in.
@@ -508,7 +513,8 @@ export async function setMaxTestAttempts(classId, cap) {
 }
 
 export async function readRoster(classId) {
-  const snap = await getDocs(collection(db, `classes/${classId}/roster`));
+  const snap = counted(
+    await getDocs(collection(db, `classes/${classId}/roster`)), 'readRoster');
   return snap.docs.map((d) => ({ uid: d.id, ...d.data() }));
 }
 
@@ -558,9 +564,9 @@ export async function touchLastActive(classId, uid) {
  * replaces used.
  */
 export async function readCertificates(teacherUid) {
-  const snap = await getDocs(
+  const snap = counted(await getDocs(
     query(collection(db, 'roster'), where('teacherUid', '==', teacherUid))
-  );
+  ), 'readCertificates');
   const out = {};
   snap.forEach((d) => {
     const v = d.data() || {};
@@ -611,13 +617,13 @@ export async function writeEvents(classId, uid, events) {
 }
 
 export async function readEvents(classId, uid, max) {
-  const snap = await getDocs(
+  const snap = counted(await getDocs(
     query(
       collection(db, `classes/${classId}/roster/${uid}/events`),
       orderBy('at', 'desc'),
       limit(max || 500)
     )
-  );
+  ), 'readEvents');
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
 
@@ -647,7 +653,8 @@ export function makeClassAdapter(classId, uid) {
 }
 
 export async function readMirror(classId, uid) {
-  const snap = await getDocs(collection(db, `classes/${classId}/roster/${uid}/progress`));
+  const snap = counted(
+    await getDocs(collection(db, `classes/${classId}/roster/${uid}/progress`)), 'readMirror');
   const out = {};
   for (const d of snap.docs) {
     const data = d.data();
