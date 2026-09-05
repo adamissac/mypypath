@@ -19,6 +19,10 @@ import { loadMembership, setClassId } from '/assets/js/membership.js';
 // and is already inert for anyone not in a class, which is exactly the set of
 // people who have a lock policy to read.
 import { loadPolicy } from '/assets/js/class-policy.js';
+/* The roster summary is maintained from the same batch that goes to the event
+   log, which is what makes it a cache of the log rather than a second,
+   independent account of what happened. See roster-summary.js. */
+import { noteEvents, flushSummary } from '/assets/js/roster-summary.js';
 
 const EVENTS = window.PyPathEvents;
 const STORE = window.ProgressStore;
@@ -40,6 +44,11 @@ async function flush() {
   const batch = EVENTS.drain();
   try {
     await writeEvents(classId, uid, batch);
+    /* Only after the log write succeeds. The summary is a cache OF the event
+       log; summarising a batch that never reached the log would make the grid
+       claim work the drill-down cannot show, which is the one way this cache
+       can actively mislead a teacher rather than merely lag. */
+    noteEvents(classId, uid, batch);
   } catch (e) {
     // Deliberately not re-queued. These are telemetry: losing a batch costs a
     // teacher a slightly thinner picture, while retrying forever is how a
@@ -57,6 +66,11 @@ async function flush() {
    visibilitychange fires earlier and reliably. */
 function flushSoon() {
   flush();
+  // The summary's own debounce is fifteen seconds, which a page that is going
+  // away does not have. Without this, closing the tab at the end of a lesson
+  // loses the last batch from the grid until the student's next visit -- the
+  // events themselves are already safe in the log.
+  if (classId && uid) flushSummary(classId, uid);
 }
 
 function start() {
