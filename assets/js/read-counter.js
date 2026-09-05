@@ -65,6 +65,23 @@ export function counted(snap, label) {
   return snap;
 }
 
+/* A listener delivery, which is billed differently from a query.
+ *
+ * Firestore bills a listener's FIRST snapshot at one read per document and
+ * every later delivery at one read per CHANGED document. A delivery served
+ * from the local cache is not billed at all, and a delivery carrying no
+ * changes costs nothing -- which is why this does not apply docs()'s
+ * empty-query-is-one-read rule. That rule is about queries; applying it here
+ * reported an idle listener as costing a read every time it woke up, which is
+ * the opposite of the fact the instrument exists to establish. */
+export function delivery(changed, fromCache, label) {
+  if (!ON || fromCache) return;
+  const n = Number(changed) || 0;
+  if (!n) return;
+  tally.set(label, (tally.get(label) || 0) + n);
+  total += n;
+}
+
 export function enabled() {
   return ON;
 }

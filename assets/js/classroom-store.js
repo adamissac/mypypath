@@ -21,7 +21,7 @@ import { loadProfile, invalidateProfile } from '/assets/js/profile.js';
 /* Dev-only, off unless ?readcount=1. Every call below is a no-op returning its
    argument until it is switched on -- see the header of read-counter.js for why
    this file is instrumented at all. */
-import { counted } from '/assets/js/read-counter.js';
+import { counted, delivery } from '/assets/js/read-counter.js';
 
 const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const {
@@ -539,7 +539,18 @@ export async function readRoster(classId) {
 export function watchRoster(classId, onChange) {
   return onSnapshot(
     collection(db, `classes/${classId}/roster`),
-    (snap) => onChange(snap.docs.map((d) => ({ uid: d.id, ...d.data() }))),
+    (snap) => {
+      /* Counted, because a listener is not free and this is the one read on
+         the dashboard that keeps happening after the page has finished
+         loading. Firestore bills the initial snapshot at one read per
+         document, and every later delivery at one read per CHANGED document
+         -- docChanges(), not docs. Counting snap.docs on every delivery would
+         report a class of thirty as costing thirty reads every time one
+         student's heartbeat landed, which is four times the truth and would
+         send someone optimising the wrong thing. */
+      delivery(snap.docChanges().length, snap.metadata.fromCache, 'watchRoster');
+      onChange(snap.docs.map((d) => ({ uid: d.id, ...d.data() })));
+    },
     () => {}
   );
 }
