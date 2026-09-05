@@ -88,6 +88,14 @@ function summaryDoc(extra) {
     lessons: { 'units__unit-1__what-is-python': { state: 'passed', bestRatio: 1 } },
     units: { 1: { testBest: { score: 18, total: 20 } } },
     quizzes: {},
+    exercises: {
+      'units__unit-1__what-is-python#practice1': {
+        lessonPath: '/units/unit-1/what-is-python.html', exerciseId: 'practice1',
+        attempts: 2, passed: true, firstTryPassed: false,
+      },
+    },
+    flagged: [],
+    lastLessonPath: '/units/unit-1/what-is-python.html',
     lastEventAt: 1756000000000,
     ...extra,
   };
@@ -146,7 +154,7 @@ describe('a teacher reads, and only reads', () => {
     await env.withSecurityRulesDisabled(async (ctx) => {
       await setDoc(doc(ctx.firestore(), path('ann')), {
         schemaVersion: 3, updatedAt: new Date(), lessons: {}, units: {},
-        quizzes: {}, lastEventAt: 0,
+        quizzes: {}, exercises: {}, flagged: [], lastLessonPath: '', lastEventAt: 0,
       });
     });
   });
@@ -264,5 +272,40 @@ describe('what these rules deliberately do NOT prevent', () => {
       payload: { lessonPath: '/units/unit-9/anything.html', passed: 5, total: 5 },
       schemaVersion: 1,
     }));
+  });
+});
+
+describe('the attention panel\'s inputs are bounded', () => {
+  /* exercises and flagged exist so the whole dashboard costs one read per
+     student rather than the grid costing one and the attention panel costing
+     five hundred. They are the only two fields that grow with USE rather than
+     with the size of the course, so they are the two the rules have to bound. */
+
+  it('refuses a flagged list longer than the cap', () => {
+    const many = Array.from({ length: 41 }, (_, i) => ({
+      lessonPath: '/units/unit-1/x.html', itemId: `r${i}`, at: 1756000000000,
+    }));
+    return assertFails(setDoc(doc(as('ann'), path('ann')), summaryDoc({ flagged: many })));
+  });
+
+  it('accepts one exactly at the cap', () => {
+    const exact = Array.from({ length: 40 }, (_, i) => ({
+      lessonPath: '/units/unit-1/x.html', itemId: `r${i}`, at: 1756000000000,
+    }));
+    return assertSucceeds(setDoc(doc(as('ann'), path('ann')), summaryDoc({ flagged: exact })));
+  });
+
+  it('refuses a flagged value that is not a list', () => {
+    return assertFails(setDoc(doc(as('ann'), path('ann')), summaryDoc({ flagged: 'lots' })));
+  });
+
+  it('refuses an over-long lastLessonPath', () => {
+    return assertFails(setDoc(doc(as('ann'), path('ann')), summaryDoc({
+      lastLessonPath: '/units/' + 'x'.repeat(400),
+    })));
+  });
+
+  it('refuses exercises that is not a map', () => {
+    return assertFails(setDoc(doc(as('ann'), path('ann')), summaryDoc({ exercises: [] })));
   });
 });

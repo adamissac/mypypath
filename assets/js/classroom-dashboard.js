@@ -6,6 +6,7 @@
  */
 import { currentUser } from '/assets/js/auth.js';
 import { readProfile } from '/assets/js/class-join.js';
+import { readSummary, eventsFromSummary } from '/assets/js/roster-summary.js';
 import {
   classesFor, createClass, readRoster, readEvents, addCoTeacher,
   setArchived, purgeArchivedClass, createAssignment, readAssignments,
@@ -112,10 +113,48 @@ async function loadClassData(classId) {
       displayName: row.displayName || row.uid,
       joinedAt: CORE.toMillis(row.joinedAt),
       lastActiveAt: CORE.toMillis(row.lastActiveAt),
-      events: await readEvents(classId, row.uid, 500).catch(() => []),
+      ...(await progressFor(classId, row.uid)),
       certificate: certificates[row.uid] || {},
     }))
   );
+}
+
+/* One read per student, or five hundred.
+ *
+ * The summary is a single document holding what this page renders, maintained
+ * by the student as they work (roster-summary.js). Expanded back into a
+ * canonical event log so that every derivation on this page -- the grid, the
+ * percentages, assignment lateness, the attention table -- runs through
+ * exactly the same classroom-core.js functions it always did, rather than
+ * through a second implementation that would have to be kept in agreement
+ * forever. tests/roster-summary.test.js asserts the canonical log answers
+ * every one of those functions identically to the real one.
+ *
+ * THE FALLBACK IS MISSING-ONLY, NEVER STALENESS-BASED, and that is a decision
+ * rather than an omission. A summary that exists but looks old is still the
+ * student's own account of themselves, and quietly re-reading five hundred
+ * events because a timestamp looked stale would reintroduce the entire cost on
+ * exactly the classes that have the most data -- the ones this is for.
+ *
+ * A student with no summary yet -- enrolled but not back since the feature
+ * shipped, and not caught by scripts/backfill-roster-summaries.mjs -- costs
+ * what they always did, for that one student, and the page is unchanged. So
+ * the rollout has no flag day.
+ */
+async function progressFor(classId, uid) {
+  let summary = null;
+  try {
+    summary = await readSummary(classId, uid);
+  } catch (e) {
+    // A summary that cannot be read is treated as one that is not there. The
+    // fallback below is correct, merely expensive, and a dashboard that failed
+    // closed here would show a working student as having done nothing.
+  }
+  if (summary) return { events: eventsFromSummary(summary), fromSummary: true };
+  return {
+    events: await readEvents(classId, uid, 500).catch(() => []),
+    fromSummary: false,
+  };
 }
 
 /* ---------------------------------------------------------- live roster */
