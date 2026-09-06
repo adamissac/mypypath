@@ -75,7 +75,7 @@ h1, h2, h3, h4, h5, h6,
 .brand-text, .founder-showcase-name,
 .section-head h2, .feature h3,
 .about-mission-headline, .team-card-name,
-.unit-card h3, .cofounder-name {
+.unit-card h3, .unit-card h2.h3, .cofounder-name {
   font-family: var(--pp-display);
   color: var(--pp-ink);
   letter-spacing: -0.03em;
@@ -593,8 +593,19 @@ html.reduced-motion.js-enabled [data-reveal] {
   color: var(--pp-ink);
 }
 
+/* The footer column heading is an h2, not an h4, and this rule is what keeps
+   that from being a visual change.
+
+   It became an h2 because an h4 in the footer follows the page's h1 or h2 and
+   skips a level -- a heading-order violation on every page of the site at
+   once, since there is one shared footer. Level is an outline fact and size is
+   a design fact, and the outline was the one that was wrong. Pinned to the
+   20px the h4 rule in style.css was giving it, so nothing moves. */
 .footer-heading {
   font-family: var(--pp-display);
+  font-size: 20px;
+  line-height: 1.3;
+  margin: 0 0 6px;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--pp-ink);
@@ -703,7 +714,8 @@ main .container,
   border-radius: 10px;
 }
 
-.unit-card h3 {
+.unit-card h3,
+.unit-card h2.h3 {
   letter-spacing: -0.03em;
 }
 
@@ -832,11 +844,13 @@ main .container,
 .page-unit .lesson-title,
 .page-unit .lesson-content h2,
 .page-unit .lesson-content h3,
+.page-unit .lesson-content h3.h4,
 .page-unit .lesson-overview h2,
 .page-unit .gradient-text,
 .page-unit .content-section h2,
 .page-unit .content-section h3,
-.page-unit .info-card h4 {
+.page-unit .info-card h4,
+.page-unit .info-card h3.h4 {
   font-family: var(--pp-body) !important;
   letter-spacing: -0.02em;
   color: var(--pp-ink) !important;
@@ -871,8 +885,20 @@ main .container,
   }
 }
 
-.page-unit .lesson-content h3,
-.page-unit .content-section h3 {
+/* :not(.h4) matters, and this comment is the reason it is not tidied away.
+ *
+ * 475 card titles across the lesson pages were <h4> following an <h2>, which
+ * skips a level. They became real <h3 class="h4"> so the outline is right --
+ * but they are still card titles and must keep looking like card titles, sized
+ * by their container's own rule in style.css (.info-card, .feature-card,
+ * .practice-header). Without this exclusion, this rule -- which is the SECTION
+ * heading size for a lesson -- wins on cascade order and shrinks every card
+ * title on the site from 20px/700 to 16.8px/650.
+ *
+ * Caught by measuring before and after rather than by looking at the page,
+ * which is the only way a four-pixel regression across 98 pages gets found. */
+.page-unit .lesson-content h3:not(.h4),
+.page-unit .content-section h3:not(.h4) {
   font-size: 1.05rem;
   font-weight: 650;
   line-height: 1.35;
@@ -932,6 +958,7 @@ main .container,
 [data-theme="dark"] .page-unit .content-section h2,
 [data-theme="dark"] .page-unit .content-section h3,
 [data-theme="dark"] .page-unit .info-card h4,
+[data-theme="dark"] .page-unit .info-card h3.h4,
 [data-theme="dark"] .page-unit .gradient-text {
   color: var(--pp-ink) !important;
 }
