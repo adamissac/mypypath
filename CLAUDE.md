@@ -55,22 +55,26 @@ subcollections beneath it freely, but route reads of the account record itself
 through `loadProfile()` — it shares one server-confirmed read per page and
 refuses to answer from a view carrying our own unacknowledged writes.
 
-## Outstanding: a rules deploy (as of 2026-09-05)
+## Rules and site are in sync (checked 2026-09-06)
 
-`firestore.rules` gained `classes/{classId}/roster/{uid}/summary/{docId}` in
-`7b3c086`, and that rule's key set grew again in `592eddd`. **Neither is
-deployed.** Until someone runs
+The deployed Firestore ruleset is byte-identical to `firestore.rules`, and the
+site on Vercel is current with `main`. Both were verified rather than assumed:
+the ruleset was fetched back from the Firebase Rules API and diffed against the
+working tree, and the deployed JS was fetched from mypypath.com.
+
+That is worth re-checking, the same way, whenever `firestore.rules` changes,
+because nothing catches the gap on its own — `npm run test:rules` passes against
+the working tree, CI stays green, and Vercel reports a clean deploy because its
+half succeeded. To check:
 
 ```bash
-npx firebase deploy --only firestore:rules
+npx firebase deploy --only firestore:rules     # the rules half; main only does the site
 ```
 
-every roster-summary write fails with `permission-denied`. That is harmless by
-construction — the write path swallows the error and the dashboard falls back
-to the old event replay — but the read-cost fix does nothing until it lands.
-
-A previous session's rules deploy for the quiz feature may also still be
-pending; check before assuming production matches the file.
+A note that lived here previously said a quiz-feature rules deploy "may still be
+pending". It was not — that ruleset went out on 2026-08-19. Removed rather than
+left, because a stale warning about production state is worse than none: it
+teaches the next person to discount the section.
 
 ## The teacher dashboard reads summaries, not events
 
