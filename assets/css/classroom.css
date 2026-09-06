@@ -1819,3 +1819,69 @@
 .cr-quiz__count.is-over { color: var(--cr-warn-ink, #8a4b12); font-weight: 600; }
 
 .cr-quiz__setting { margin-top: 0.6rem; }
+
+/* ------------------------------------------------------------- segments */
+
+/* Each button is a question a teacher asks standing in front of a class, with
+   its answer already on it. Sized past the 24px WCAG 2.2 target minimum
+   because this is a control someone jabs at on a laptop trackpad between
+   sentences. */
+.cr-segments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem;
+}
+
+.cr-seg {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.25rem;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--cr-line, #d8dce3);
+  border-radius: 999px;
+  background: var(--cr-surface, #fff);
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.cr-seg:hover { border-color: var(--cr-line-strong, #aab1bd); }
+
+.cr-seg [data-cr-seg-n] {
+  min-width: 1.4em;
+  padding: 0 0.35em;
+  border-radius: 999px;
+  background: var(--cr-chip, #eef0f4);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8125rem;
+  text-align: center;
+}
+
+/* The selected segment is marked by weight and a border as well as colour --
+   this page is printed in greyscale and the promise holds here too. */
+.cr-seg.is-on {
+  border-color: currentColor;
+  border-width: 2px;
+  padding: calc(0.35rem - 1px) calc(0.8rem - 1px);
+  font-weight: 600;
+}
+
+.cr-seg.is-on [data-cr-seg-n] { background: var(--cr-chip-on, #dde3ee); }
+
+/* Zero is an answer, not a disabled state: it stays clickable and legible,
+   just quieter, so "nobody is overdue" reads at a glance. */
+.cr-seg.is-zero { opacity: 0.62; }
+.cr-seg.is-zero.is-on { opacity: 1; }
+
+.cr-segnote {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cr-seg { transition: border-color 120ms ease, background-color 120ms ease; }
+}
