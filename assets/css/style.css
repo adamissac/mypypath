@@ -1016,7 +1016,8 @@ pre code { display: block; overflow-x: auto; }
   box-shadow: var(--shadow-strong); 
 }
 .unit-card:hover::after { opacity: 1; transform: translateY(0); }
-.unit-card h3 { 
+.unit-card h3,
+.unit-card h2.h3 { 
   margin: 0; 
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   font-weight: 700;
@@ -2665,7 +2666,19 @@ pre code { display: block; overflow-x: auto; }
   letter-spacing: -0.01em;
 }
 
-.lesson-content h4 {
+/* A card title that is an h3 in the outline and an h4 to the eye.
+ *
+ * 475 of these across 98 lesson pages were <h4> following an <h2>, skipping a
+ * level. The level was the thing that was wrong -- a screen-reader user
+ * navigating by heading heard a gap that was not in the content -- and the
+ * size was not. So the element became a real h3 and kept its dimensions,
+ * which is the only change invisible to a sighted reader and correct for a
+ * screen-reader one.
+ *
+ * Deliberately NOT the other fix: restyling an h3 to look like an h4 would
+ * have left the outline broken and merely hidden it. */
+.lesson-content h4,
+.lesson-content h3.h4 {
   font-size: 18px;
   font-weight: 600;
   margin: 24px 0 12px 0;
@@ -2740,7 +2753,8 @@ pre code { display: block; overflow-x: auto; }
   z-index: 1;
 }
 
-.practice-header h4 {
+.practice-header h4,
+.practice-header h3.h4 {
   margin: 0;
   color: var(--primary);
   font-size: 22px;
@@ -3412,7 +3426,8 @@ pre code { display: block; overflow-x: auto; }
   pointer-events: none;
 }
 
-.info-card h4 {
+.info-card h4,
+.info-card h3.h4 {
   margin: 0 0 12px 0;
   color: var(--primary);
   font-size: 20px;
@@ -3510,7 +3525,8 @@ pre code { display: block; overflow-x: auto; }
   transform: scaleX(1);
 }
 
-.feature-card h4 {
+.feature-card h4,
+.feature-card h3.h4 {
   margin: 0 0 14px 0;
   color: var(--primary);
   font-size: 20px;
@@ -3520,7 +3536,8 @@ pre code { display: block; overflow-x: auto; }
   gap: 10px;
 }
 
-.feature-card h4::before {
+.feature-card h4::before,
+.feature-card h3.h4::before {
   content: "";
   color: var(--accent);
   font-weight: 800;
