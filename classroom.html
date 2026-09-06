@@ -280,6 +280,24 @@
             </div>
 
             <div data-cr-pane="roster">
+              <!-- Segments, not filters, and the distinction is the point: each
+                   one is a question a teacher actually asks standing in front of
+                   a class, and the count is on the control so "is anyone
+                   overdue" is answered without clicking it. -->
+              <div class="cr-segments" data-cr-segments role="group"
+                   aria-label="Show only students who">
+                <button type="button" class="cr-seg is-on" data-cr-seg="all"
+                        aria-pressed="true">Everyone <span data-cr-seg-n></span></button>
+                <button type="button" class="cr-seg" data-cr-seg="attention"
+                        aria-pressed="false">Needs attention <span data-cr-seg-n></span></button>
+                <button type="button" class="cr-seg" data-cr-seg="overdue"
+                        aria-pressed="false">Overdue <span data-cr-seg-n></span></button>
+                <button type="button" class="cr-seg" data-cr-seg="notstarted"
+                        aria-pressed="false">Not started <span data-cr-seg-n></span></button>
+                <button type="button" class="cr-seg" data-cr-seg="idle"
+                        aria-pressed="false">Inactive 7+ days <span data-cr-seg-n></span></button>
+              </div>
+              <p class="cr-segnote" data-cr-segnote hidden aria-live="polite"></p>
               <div class="cr-tablewrap">
                 <table class="cr-table cr-roster" data-cr-roster>
                   <caption class="visually-hidden">
@@ -293,6 +311,9 @@
               <p class="cr-empty-note" data-cr-roster-empty hidden>
                 No students have joined yet. Share the join code above.
               </p>
+              <!-- A segment matching nobody is good news, and says so in its
+                   own words rather than reusing "no students have joined". -->
+              <p class="cr-empty-note" data-cr-roster-none hidden></p>
             </div>
 
             <div data-cr-pane="grid" hidden>

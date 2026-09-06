@@ -653,9 +653,14 @@ function rosterRows() {
     }
 
     let workDone = 0;
+    let overdue = 0;
     for (const assignment of assignments) {
       const state = statusFor(assignment, student).state;
       if (state === 'done-on-time' || state === 'done-late') workDone += 1;
+      // Late and still not done. Deliberately not counting 'done-late': that
+      // student handed it in, and a segment called Overdue that keeps showing
+      // them after they have finished is a segment a teacher stops trusting.
+      if (state === 'overdue') overdue += 1;
     }
 
     return {
@@ -669,6 +674,7 @@ function rosterRows() {
       test: student.pending ? null : latestTest(events),
       work: workDone,
       workTotal: assignments.length,
+      overdue,
       active: CORE.lastEventAt(events) || student.lastActiveAt || 0,
       flag: flags.get(student.uid) || null,
     };
@@ -730,6 +736,87 @@ function percentCell(row) {
   return td;
 }
 
+/* Which segment the roster is showing. Not persisted: a segment is a question
+   a teacher is asking right now, and coming back tomorrow to a roster still
+   hiding two thirds of the class -- with the reason three scrolls up -- is a
+   worse failure than re-clicking a button. */
+let rosterSegment = 'all';
+
+/* THE SEGMENTS, each one a question rather than a property.
+ *
+ * A teacher's real question is almost never "show me everything"; it is "who is
+ * stuck", "who is behind on what I set", "who never started", "who has gone
+ * quiet". The full grid answers all four badly at once, which is what makes 50
+ * students x 10 units unreadable -- everything shown, nothing prioritised.
+ *
+ * Each predicate reads the row the roster already computed, so a segment can
+ * never disagree with the column next to it. `attention` in particular reuses
+ * the very same flag the "Needs attention" table at the top of the page is
+ * built from, rather than recomputing something similar. */
+const SEGMENTS = {
+  all: {
+    label: 'Everyone',
+    test: () => true,
+    empty: '',
+  },
+  attention: {
+    label: 'Needs attention',
+    test: (row) => !!row.flag,
+    empty: 'Nobody is flagged. Nothing here needs you right now.',
+  },
+  overdue: {
+    label: 'Overdue',
+    test: (row) => row.overdue > 0,
+    empty: 'Nobody is overdue on the work that has been set.',
+  },
+  notstarted: {
+    label: 'Not started',
+    // Joined and has done nothing at all -- distinct from "behind", which is
+    // someone who is working and slowly.
+    test: (row) => !row.active || row.percent === 0,
+    empty: 'Everyone in this class has started.',
+  },
+  idle: {
+    label: 'Inactive 7+ days',
+    test: (row, now) => {
+      const days = daysSince(row.active, now);
+      return days === null || days >= (CORE.IDLE_DAYS || 7);
+    },
+    empty: 'Everyone has been active in the last week.',
+  },
+};
+
+function paintSegments(rows, now) {
+  const wrap = $('[data-cr-segments]');
+  if (!wrap) return;
+  for (const btn of wrap.querySelectorAll('[data-cr-seg]')) {
+    const key = btn.getAttribute('data-cr-seg');
+    const seg = SEGMENTS[key];
+    if (!seg) continue;
+    const n = rows.filter((r) => seg.test(r, now)).length;
+    const slot = btn.querySelector('[data-cr-seg-n]');
+    // The count lives ON the control so "is anyone overdue" is answered
+    // without clicking it. A segment that reads zero is the answer.
+    if (slot) slot.textContent = String(n);
+    btn.classList.toggle('is-on', key === rosterSegment);
+    btn.classList.toggle('is-zero', n === 0 && key !== 'all');
+    btn.setAttribute('aria-pressed', key === rosterSegment ? 'true' : 'false');
+  }
+}
+
+/* Segment buttons. Delegated from the document like every other control on
+   this page, so a repaint cannot leave a dead button behind. */
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest && e.target.closest('[data-cr-seg]');
+  if (!btn) return;
+  const key = btn.getAttribute('data-cr-seg');
+  if (!SEGMENTS[key]) return;
+  // Clicking the segment you are already in returns you to everyone, so the
+  // control is its own undo and there is no separate "clear" to hunt for.
+  rosterSegment = rosterSegment === key ? 'all' : key;
+  paintRoster();
+});
+
 function paintRoster() {
   const head = $('[data-cr-roster-head]');
   const body = $('[data-cr-roster-body]');
@@ -737,15 +824,42 @@ function paintRoster() {
   const empty = $('[data-cr-roster-empty]');
   if (!head || !body) return;
 
-  const rows = sortRoster(rosterRows());
+  const now = Date.now();
+  const all = sortRoster(rosterRows());
+  paintSegments(all, now);
+
+  const seg = SEGMENTS[rosterSegment] || SEGMENTS.all;
+  const rows = all.filter((r) => seg.test(r, now));
+
+  /* Says what is being hidden, and does so in the live region rather than only
+     by the pressed button. A roster showing four of thirty students with no
+     explanation is the single most confusing state this page can be in, and it
+     is exactly the state someone lands in after switching tabs and coming
+     back. */
+  const note = $('[data-cr-segnote]');
+  if (note) {
+    const hidden = all.length - rows.length;
+    show(note, rosterSegment !== 'all');
+    note.textContent = rosterSegment === 'all' ? ''
+      : `${seg.label}: ${rows.length} of ${all.length} students`
+        + (hidden ? ` (${hidden} hidden)` : '');
+  }
+
   show(table, rows.length > 0);
-  show(empty, rows.length === 0);
+  show(empty, all.length === 0);
+
+  // A segment that matches nobody is good news, not an error, and says so in
+  // its own words rather than reusing "no students have joined yet".
+  const none = $('[data-cr-roster-none]');
+  if (none) {
+    show(none, all.length > 0 && rows.length === 0);
+    none.textContent = seg.empty;
+  }
 
   head.innerHTML = '';
   ROSTER_COLUMNS.forEach((col) => head.appendChild(rosterHeadCell(col)));
 
   body.innerHTML = '';
-  const now = Date.now();
 
   for (const row of rows) {
     const tr = el('tr', 'cr-roster__row');

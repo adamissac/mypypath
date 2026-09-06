@@ -101,3 +101,73 @@ describe('the go-to column tells the truth', () => {
     expect(dash).toMatch(/const fold = \$\('\[data-cr-fold="certs"\]'\)/);
   });
 });
+
+describe('roster segments answer the question a teacher is actually asking', () => {
+  const html = fs.readFileSync('classroom.html', 'utf8');
+  const js = fs.readFileSync('assets/js/classroom-dashboard.js', 'utf8');
+
+  /* At fifty students the grid is 500 cells with nothing prioritised. The
+     roster view fixed the density; these fix the question. A teacher standing
+     in a room almost never wants "show me everything" -- they want who is
+     stuck, who is behind on what was set, who never started, who has gone
+     quiet. */
+
+  it('offers the four questions plus everyone', () => {
+    for (const key of ['all', 'attention', 'overdue', 'notstarted', 'idle']) {
+      expect(html, key).toContain(`data-cr-seg="${key}"`);
+    }
+  });
+
+  it('each segment carries its own count', () => {
+    // The count is on the control so "is anyone overdue" is answered without
+    // clicking it.
+    expect(html.match(/data-cr-seg-n/g).length).toBeGreaterThanOrEqual(5);
+  });
+
+  it('the buttons report their state to assistive tech', () => {
+    expect(html).toContain('aria-pressed="true"');
+    expect(html).toContain('aria-pressed="false"');
+    expect(js).toContain("setAttribute('aria-pressed'");
+  });
+
+  it('the group is labelled', () => {
+    expect(html).toMatch(/data-cr-segments[^>]*role="group"/);
+    expect(html).toMatch(/aria-label="Show only students who"/);
+  });
+
+  it('says what it is hiding, in a live region', () => {
+    // A roster showing four of thirty with no explanation is the most
+    // confusing state this page can be in, and the one you land in after
+    // switching tabs and coming back.
+    expect(html).toMatch(/data-cr-segnote[^>]*aria-live="polite"/);
+    expect(js).toContain('hidden)');
+  });
+
+  it('a segment matching nobody gets its own words, not "nobody has joined"', () => {
+    expect(html).toContain('data-cr-roster-none');
+    expect(js).toContain('Nobody is flagged');
+    expect(js).toContain('Nobody is overdue');
+  });
+
+  it('Overdue does not count work that was handed in late', () => {
+    // A segment that keeps showing a student after they finished is one a
+    // teacher stops trusting.
+    expect(js).toMatch(/state === 'overdue'\) overdue \+= 1/);
+    expect(js).not.toMatch(/state === 'done-late'\) overdue/);
+  });
+
+  it('Needs attention reuses the flag the attention table is built from', () => {
+    // Not something similar. The two must never disagree.
+    expect(js).toMatch(/attention:[\s\S]{0,200}test: \(row\) => !!row\.flag/);
+  });
+
+  it('the segment is not persisted across sessions', () => {
+    // Coming back tomorrow to a roster still hiding two thirds of the class,
+    // with the reason three scrolls up, is worse than re-clicking a button.
+    expect(js).not.toMatch(/rosterSegment[\s\S]{0,120}(localStorage|sessionStorage)/);
+  });
+
+  it('clicking the active segment clears it', () => {
+    expect(js).toContain("rosterSegment = rosterSegment === key ? 'all' : key");
+  });
+});
