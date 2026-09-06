@@ -452,6 +452,28 @@
     var titles = opts.lessonTitles || {};
     var dueAt = toMillis(a.dueAt);
 
+    /* A per-student extension replaces the class date for THIS student only.
+     *
+     * Applied here rather than by editing the assignment, because the class
+     * date is a fact about the assignment and the extension is a fact about
+     * one student -- and because a student with an IEP or 504 plan is entitled
+     * to extended time without their whole class silently getting it too.
+     *
+     * The override is reported alongside the state, not folded silently into
+     * it. A row that reads "on time" with no indication that its deadline was
+     * moved is a row that misleads whoever reads it next, including the
+     * teacher who granted the extension and has since forgotten. */
+    var extended = null;
+    (opts.overrides || []).forEach(function (o) {
+      if (!o || o.kind !== 'due' || o.assignmentId !== a.id) return;
+      var when = toMillis(o.dueAt);
+      // Later only. The rules and the store both enforce this; honoured here
+      // too so that a document written before those existed cannot shorten
+      // somebody's deadline.
+      if (when && when > dueAt) extended = o;
+    });
+    if (extended) dueAt = toMillis(extended.dueAt);
+
     var parts = [];
     (a.units || []).forEach(function (unit) {
       var n = Number(unit);
@@ -524,7 +546,12 @@
       completedAt: finishedAt,
       dueAt: dueAt,
       state: state,
-      daysLate: daysLate
+      daysLate: daysLate,
+      /* Reported, never folded silently into the state. A row reading "on
+         time" with no sign its deadline was moved misleads whoever reads it
+         next -- including the teacher who granted the extension and has since
+         forgotten they did. */
+      extended: extended
     };
   }
 

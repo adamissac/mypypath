@@ -162,7 +162,19 @@ describe('the classroom modules that do touch Firebase are modules', () => {
   it('never reach for Firebase outside the shared config', () => {
     for (const file of MODULES) {
       const src = fs.readFileSync(file, 'utf8');
-      const imports = [...src.matchAll(/from '([^']+)'/g)].map((m) => m[1]);
+      /* Matched as an IMPORT STATEMENT, not as the two words "from '"
+         appearing anywhere in the file. The looser version matched inside a
+         string literal -- `'Adjusted from ' + row.test.original` -- and
+         reported the module as importing " + row.test.original + ", which is
+         a confusing way to fail for a reason that is not true.
+
+         Anchored at the start of a line, because that is where an import
+         statement lives in every file in this directory and a dynamic import
+         mid-expression is a different thing this test does not police. */
+      const imports = [...src.matchAll(/^import\s[\s\S]*?from '([^']+)';/gm)]
+        .map((m) => m[1]);
+      expect(imports.length, `${file} has no imports; the scan is broken`)
+        .toBeGreaterThan(0);
       for (const spec of imports) {
         expect(spec.startsWith('/assets/js/'), `${file} imports ${spec}`).toBe(true);
       }
