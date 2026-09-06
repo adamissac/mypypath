@@ -8,7 +8,7 @@ import { currentUser } from '/assets/js/auth.js';
 import { readProfile } from '/assets/js/class-join.js';
 import { readSummary, eventsFromSummary } from '/assets/js/roster-summary.js';
 import {
-  classesFor, createClass, readRoster, readEvents, addCoTeacher,
+  classesFor, createClass, readRoster, readEvents, readOverrides, addCoTeacher,
   setArchived, purgeArchivedClass, createAssignment, readAssignments,
   deleteAssignment, setLockPolicy, watchRoster, readCertificates,
   setCertificateDecision, setShowSolutions, setMaxTestAttempts,
@@ -114,6 +114,13 @@ async function loadClassData(classId) {
       joinedAt: CORE.toMillis(row.joinedAt),
       lastActiveAt: CORE.toMillis(row.lastActiveAt),
       ...(await progressFor(classId, row.uid)),
+      /* One more read per student, and it is worth stating why that is
+         acceptable right after a commit that spent real effort getting to one.
+         An override is the mechanism a student's legal accommodation is
+         expressed through; a dashboard that skipped reading them to save a
+         read would show a 504 student as late on work they were given until
+         Friday to do. 2 reads per student is still 40x better than 82. */
+      overrides: await readOverrides(classId, row.uid).catch(() => []),
       certificate: certificates[row.uid] || {},
     }))
   );
@@ -278,7 +285,12 @@ function assignOptions() {
 }
 
 function statusFor(assignment, student) {
-  return CORE.assignmentStatus(assignment, student.events, assignOptions());
+  // The student's own overrides travel with the options, so an extension
+  // applies to the one student who was granted it and to nobody else.
+  return CORE.assignmentStatus(assignment, student.events, {
+    ...assignOptions(),
+    overrides: student.overrides || [],
+  });
 }
 
 function shortDate(millis) {
@@ -681,7 +693,7 @@ function agoLabel(millis, now) {
  * The most recent rather than the best: this column is "how did that go", and a
  * teacher who wants the best score has the student's own detail panel a click
  * away. The mark is out of 100 the same way the test page reports it. */
-function latestTest(events) {
+function latestTest(events, overrides) {
   let best = null;
   for (const event of events || []) {
     if (event.type !== 'test.submitted') continue;
@@ -689,6 +701,27 @@ function latestTest(events) {
     if (best && at <= best.at) continue;
     const p = (event.payload || {});
     best = { at, unit: Number(p.unit) || 0, score: Number(p.score) || 0 };
+  }
+
+  /* A teacher's correction, applied on top and SAID SO.
+   *
+   * The original is kept on the row rather than replaced, because a corrected
+   * score that hid what the student actually scored would destroy the evidence
+   * this page exists to provide -- and one that hid who corrected it would be
+   * worse. The cell shows the adjusted mark, marks it as adjusted, and names
+   * the person and the reason in its title. */
+  if (best) {
+    for (const o of overrides || []) {
+      if (!o || o.kind !== 'grade' || Number(o.unit) !== best.unit) continue;
+      const outOf = Number(o.outOf) || 100;
+      best = {
+        ...best,
+        score: Math.round((Number(o.score) / outOf) * 100),
+        original: best.score,
+        adjustedBy: o.byName || 'a teacher',
+        reason: o.reason || '',
+      };
+    }
   }
   return best;
 }
@@ -736,7 +769,7 @@ function rosterRows() {
       percent: student.pending ? null : CORE.percentComplete(events, byUnit),
       units: student.pending ? null : unitsDone,
       unitsTotal: total,
-      test: student.pending ? null : latestTest(events),
+      test: student.pending ? null : latestTest(events, student.overrides),
       work: workDone,
       workTotal: assignments.length,
       overdue,
@@ -956,6 +989,19 @@ function paintRoster() {
       test.title = 'Unit ' + row.test.unit + ' test, most recent sitting: '
         + row.test.score + ' out of 100'
         + (passed ? '' : ' (below the 70 needed to pass)');
+      /* An adjusted score says so on the cell, not only in a tooltip. A mark
+         a teacher changed and a mark a student earned are different facts and
+         must not look identical. */
+      if (row.test.original != null) {
+        const mark = el('abbr', 'cr-roster__adj', '\u2020');
+        mark.title = 'Adjusted from ' + row.test.original + ' by '
+          + row.test.adjustedBy
+          + (row.test.reason ? ' \u2014 ' + row.test.reason : '');
+        test.appendChild(mark);
+        test.title += '. Adjusted from ' + row.test.original + ' by '
+          + row.test.adjustedBy
+          + (row.test.reason ? ': ' + row.test.reason : '');
+      }
     }
     tr.appendChild(test);
 

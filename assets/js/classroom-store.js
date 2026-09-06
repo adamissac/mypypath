@@ -339,6 +339,124 @@ export async function createAssignment(classId, draft) {
   return { id: ref.id, title, dueAt, ...targets, ...(quiz ? { quiz } : {}) };
 }
 
+/* ------------------------------------------------------------ overrides */
+
+/* A teacher's adjustment to one student, kept OUTSIDE that student's record.
+ *
+ * Everywhere else in this module a teacher reads and never writes: the grid is
+ * a view of what the student did, and a teacher who could edit it is a teacher
+ * who could be blamed for it. These two functions are the deliberate exception,
+ * and they are shaped so they do not actually break that rule -- nothing here
+ * mutates an event or a summary. An override is a separate, attributed document
+ * that the dashboard applies on top. The student's own account of themselves
+ * stays exactly as they wrote it.
+ *
+ * WHY THE EXCEPTION EXISTS. Two things a school requires that were impossible:
+ * extended time for a student with an IEP or 504 plan, which they are legally
+ * entitled to and which PyPath could not express at all; and correcting a
+ * score, whose absence does not keep the record pure -- it just moves the real
+ * marks into a spreadsheet and makes this decoration.
+ *
+ * `at` and `byUid` are pinned by the rules, not merely set here, so an
+ * extension cannot be backdated to look like it predated the deadline it
+ * excuses and an adjustment cannot be attributed to a colleague.
+ */
+
+function overrideId(kind, key) {
+  // One override per kind per target, so setting an extension twice replaces
+  // it rather than accumulating two answers to the same question.
+  return `${kind}__${String(key).replace(/[^A-Za-z0-9_-]/g, '_')}`;
+}
+
+/* Extended time for one student on one assignment.
+ *
+ * A later date only. An override that could move a deadline EARLIER for one
+ * student is a punishment with no name in any policy, and the accommodation
+ * this exists for is by definition more time -- so the direction is enforced
+ * rather than trusted to the UI.
+ */
+export async function setDueOverride(classId, uid, assignmentId, dueAt, reason, by) {
+  const when = Number(dueAt);
+  if (!isFinite(when) || when <= 0) {
+    throw new ClassroomError('no-due-date', 'Give the extension a date.');
+  }
+  const assignment = counted(
+    await getDoc(doc(db, `classes/${classId}/assignments/${assignmentId}`)),
+    'setDueOverride');
+  if (!assignment.exists()) {
+    throw new ClassroomError('not-found', 'That assignment no longer exists.');
+  }
+  if (when <= Number(assignment.data().dueAt || 0)) {
+    throw new ClassroomError('not-later',
+      'An extension has to be later than the date set for the class.');
+  }
+
+  const id = overrideId('due', assignmentId);
+  await setDoc(doc(db, `classes/${classId}/roster/${uid}/overrides/${id}`), {
+    kind: 'due',
+    assignmentId,
+    dueAt: when,
+    reason: String(reason || '').slice(0, 500),
+    byUid: (by && by.uid) || '',
+    byName: String((by && by.name) || '').slice(0, 100),
+    at: serverTimestamp(),
+  });
+  return { id, kind: 'due', assignmentId, dueAt: when };
+}
+
+/* A corrected mark for one student on one unit test.
+ *
+ * The original stays. The dashboard shows the adjusted score AND says it was
+ * adjusted, by whom -- a corrected score that hid the original would destroy
+ * the evidence this project exists to provide, and one that hid who corrected
+ * it would be worse.
+ *
+ * A reason is required. Not for bureaucracy: this record is the thing a
+ * teacher will be asked about in a parents' evening eighteen months from now,
+ * and "37 -> 62, no reason given, by someone" is not a defensible answer.
+ */
+export async function setGradeOverride(classId, uid, unit, score, outOf, reason, by) {
+  const n = Number(unit);
+  const marks = Number(score);
+  const total = Number(outOf) || 100;
+  if (!isFinite(n) || n <= 0) throw new ClassroomError('no-unit', 'Which unit?');
+  if (!isFinite(marks) || marks < 0 || marks > total) {
+    throw new ClassroomError('bad-score', `Give a score between 0 and ${total}.`);
+  }
+  const why = String(reason || '').trim().slice(0, 500);
+  if (!why) {
+    throw new ClassroomError('no-reason', 'Say why the score was changed.');
+  }
+
+  const id = overrideId('grade', `u${n}`);
+  await setDoc(doc(db, `classes/${classId}/roster/${uid}/overrides/${id}`), {
+    kind: 'grade',
+    unit: n,
+    score: marks,
+    outOf: total,
+    reason: why,
+    byUid: (by && by.uid) || '',
+    byName: String((by && by.name) || '').slice(0, 100),
+    at: serverTimestamp(),
+  });
+  return { id, kind: 'grade', unit: n, score: marks, outOf: total };
+}
+
+export async function readOverrides(classId, uid) {
+  const snap = counted(
+    await getDocs(collection(db, `classes/${classId}/roster/${uid}/overrides`)),
+    'readOverrides');
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+
+/* Withdrawing an adjustment deletes it rather than writing a counter-override.
+   The student's own record was never touched, so removing the override simply
+   returns the view to what they actually did -- which is the correct meaning
+   of "I was wrong about that extension". */
+export async function clearOverride(classId, uid, id) {
+  await deleteDoc(doc(db, `classes/${classId}/roster/${uid}/overrides/${id}`));
+}
+
 /* ------------------------------------------------- bulk and rollover */
 
 /* The same work, set for several classes at once.

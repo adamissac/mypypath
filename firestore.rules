@@ -518,6 +518,65 @@ service cloud.firestore {
             || (isTeacherOf(classId) && classDoc(classId).archived == true);
         }
 
+        /* TEACHER OVERRIDES — the one place a teacher may write about a
+         * student, and the only teacher-writable document under a roster row.
+         *
+         * WHY IT HAD TO EXIST, having been deliberately absent until now. The
+         * rule everywhere else here is that a teacher never writes into a
+         * student's record: the grid is a view of what the student did, and a
+         * teacher who could edit it is a teacher who could be blamed for it.
+         * That rule is right and stays right for events, progress and the
+         * summary. It also made two things impossible that a school actually
+         * requires:
+         *
+         *   Extended time. Students with an IEP or a 504 plan are legally
+         *   entitled to it in a US public school. With no per-student due
+         *   date, PyPath cannot honestly be used as a graded system in one --
+         *   the choice was give the whole class the accommodation or give the
+         *   student a late mark they are entitled not to have.
+         *
+         *   Correcting a score. A teacher must be able to fix a mark. The
+         *   alternative is not "the record stays pure", it is the teacher
+         *   keeping the real marks in a spreadsheet and this becoming
+         *   decoration.
+         *
+         * SO THE RULE IS: overrides live OUTSIDE the record rather than
+         * editing it. Nothing here mutates an event or a summary. An override
+         * is a separate, clearly-attributed document that the dashboard
+         * applies ON TOP of what the student did, and it carries who made it
+         * and when. The student's own account of themselves stays exactly as
+         * they wrote it, and the teacher's adjustment stays visibly theirs.
+         *
+         * That is what makes this compatible with "evidence for a
+         * conversation, not a grade": a corrected score that hid the original
+         * would destroy the evidence, and one that hid WHO corrected it would
+         * be worse.
+         *
+         * byUid is pinned to the requester so an override cannot be attributed
+         * to a colleague, and at is pinned to request.time so an extension
+         * cannot be backdated to look like it predated the deadline it
+         * excuses. A student may READ their own -- being told you have until
+         * Friday is the entire point of an extension -- and may never write
+         * one.
+         */
+        match /overrides/{overrideId} {
+          allow read: if isOwner(uid) || isTeacherOf(classId);
+
+          allow create, update: if isTeacherOf(classId)
+            && request.resource.data.byUid == request.auth.uid
+            && request.resource.data.at == request.time
+            && request.resource.data.kind in ['due', 'grade']
+            && request.resource.data.reason is string
+            && request.resource.data.reason.size() <= 500
+            && request.resource.data.keys().hasOnly(
+                 ['kind', 'assignmentId', 'unit', 'dueAt', 'score', 'outOf',
+                  'reason', 'byUid', 'byName', 'at']);
+
+          // A teacher may withdraw their own adjustment. The student may not,
+          // for the same reason they may not write one.
+          allow delete: if isTeacherOf(classId);
+        }
+
         match /events/{eventId} {
           /* THE UNIT LOCK, enforced rather than announced.
            *
