@@ -339,6 +339,159 @@ export async function createAssignment(classId, draft) {
   return { id: ref.id, title, dueAt, ...targets, ...(quiz ? { quiz } : {}) };
 }
 
+/* ------------------------------------------------- bulk and rollover */
+
+/* The same work, set for several classes at once.
+ *
+ * A teacher with three periods of the same course sets the same assignment
+ * three times, and every LMS in the world has this because that is a
+ * ridiculous thing to make someone do. It is genuinely three assignments --
+ * one per class, each with its own id, its own completion state and its own
+ * later edits -- and not one shared object, because two periods diverge the
+ * moment one of them has a fire drill.
+ *
+ * PARTIAL SUCCESS IS THE NORMAL CASE and is reported rather than thrown. A
+ * co-teacher may have archived one of the three classes since the picker was
+ * drawn; failing the whole call would throw away two assignments that were
+ * created perfectly well and leave the teacher unable to tell which. So each
+ * class is attempted independently and the caller is told exactly what
+ * happened to each.
+ */
+export async function createAssignmentIn(classIds, draft) {
+  const ids = Array.from(new Set(classIds || [])).filter(Boolean);
+  if (!ids.length) throw new ClassroomError('no-classes', 'Choose at least one class.');
+
+  const results = [];
+  for (const classId of ids) {
+    try {
+      const made = await createAssignment(classId, draft);
+      results.push({ classId, ok: true, assignment: made });
+    } catch (e) {
+      results.push({
+        classId,
+        ok: false,
+        code: e && e.code,
+        message: (e && e.message) || 'Could not set this assignment.',
+      });
+    }
+  }
+  return results;
+}
+
+/* Copy an assignment, into this class or another one.
+ *
+ * The copy is a NEW assignment with a new id and no completion state. Nothing
+ * about who has done what travels with it, which is the whole point: a
+ * duplicate exists so last term's carefully chosen set of lessons can be given
+ * to a class that has not done them.
+ *
+ * The due date is the caller's to supply and is not copied by default. A
+ * duplicate that silently inherits a date three weeks in the past would land
+ * in every student's list already overdue, which is the single most likely way
+ * this feature could hurt somebody.
+ */
+export async function duplicateAssignment(fromClassId, assignmentId, toClassId, overrides) {
+  const snap = counted(
+    await getDoc(doc(db, `classes/${fromClassId}/assignments/${assignmentId}`)),
+    'duplicateAssignment');
+  if (!snap.exists()) {
+    throw new ClassroomError('not-found', 'That assignment no longer exists.');
+  }
+  const source = snap.data();
+  const o = overrides || {};
+  const draft = {
+    title: o.title != null ? o.title : source.title,
+    units: source.units || [],
+    lessonPaths: source.lessonPaths || [],
+    quiz: source.quiz,
+    dueAt: o.dueAt,
+  };
+  if (!draft.dueAt) {
+    throw new ClassroomError('no-due-date', 'Give the copy its own due date.');
+  }
+  return createAssignment(toClassId || fromClassId, draft);
+}
+
+/* Roll a class into a new term: same settings, same work, none of the students.
+ *
+ * Archive already exists and is the wrong tool for September. Archiving Period
+ * 1 preserves last year's record, which is correct, and leaves the teacher
+ * rebuilding the same class from scratch -- name, lock mode, solutions policy,
+ * attempt cap, and every assignment -- for a room of new students. Every
+ * teacher does this in August and nobody should be doing it by hand.
+ *
+ * WHAT TRAVELS: the class settings, and the assignments as fresh copies.
+ * WHAT DOES NOT: the roster, and every student's events, progress mirror,
+ * summary and certificate state. A new class is a new group of people. Copying
+ * a roster would enroll last year's students in this year's class without
+ * their consent and would show their work to a teacher who is no longer
+ * theirs -- the enrollment-is-consent boundary this whole model rests on.
+ *
+ * The new class gets its own join code, because a code is a credential and
+ * last year's is on a whiteboard photo in forty camera rolls.
+ *
+ * Due dates are shifted by `shiftMs` rather than copied. A term's worth of
+ * assignments landing in a new class all already overdue is not a rollover,
+ * it is a mess someone has to clean up before they can teach.
+ */
+export async function rolloverClass(uid, fromClassId, options) {
+  const opts = options || {};
+  const source = await readClass(fromClassId);
+  if (!source) throw new ClassroomError('not-found', 'That class no longer exists.');
+
+  const name = String(opts.name || '').trim().slice(0, 100)
+    || `${source.name} (new term)`.slice(0, 100);
+
+  const made = await createClass(uid, name);
+
+  /* Settings copied one at a time through their own setters, not as a blind
+     document write. Each setter validates -- setLockPolicy checks the mode is
+     one of the three the rules accept -- and a class document written wholesale
+     from another one would carry its teacherUids, its join code and its
+     createdAt, which is three ways to corrupt the new class at once. */
+  const patch = {};
+  if (source.showSolutions != null) patch.showSolutions = source.showSolutions === true;
+  if (source.maxTestAttempts != null) {
+    patch.maxTestAttempts = Number(source.maxTestAttempts) || 0;
+  }
+  if (Object.keys(patch).length) {
+    await updateDoc(doc(db, `classes/${made.classId}`), patch).catch(() => {});
+  }
+  if (source.lockMode) {
+    await setLockPolicy(made.classId, source.lockMode, source.manualUnlocks || [])
+      .catch(() => {});
+  }
+
+  const copied = [];
+  const failed = [];
+  if (opts.withAssignments !== false) {
+    const shift = Number(opts.shiftMs) || 0;
+    for (const a of await readAssignments(fromClassId)) {
+      if (a.archived) continue;
+      try {
+        copied.push(await createAssignment(made.classId, {
+          title: a.title,
+          units: a.units || [],
+          lessonPaths: a.lessonPaths || [],
+          quiz: a.quiz,
+          // Shifted, never copied. See the note above.
+          dueAt: Number(a.dueAt || 0) + shift,
+        }));
+      } catch (e) {
+        failed.push({ title: a.title, message: (e && e.message) || 'Could not copy.' });
+      }
+    }
+  }
+
+  return {
+    classId: made.classId,
+    joinCode: made.joinCode,
+    name,
+    copied: copied.length,
+    failed,
+  };
+}
+
 export async function readAssignments(classId) {
   const snap = counted(
     await getDocs(collection(db, `classes/${classId}/assignments`)), 'readAssignments');
