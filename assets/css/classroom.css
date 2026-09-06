@@ -1885,3 +1885,58 @@
 @media (prefers-reduced-motion: no-preference) {
   .cr-seg { transition: border-color 120ms ease, background-color 120ms ease; }
 }
+
+/* --------------------------------------------- assignment card density */
+
+/* A count, with the titles behind a native disclosure. Four full lesson titles
+   joined with commas wrapped over three lines and buried the counts under
+   them; the count is the answer to "what did I set", and "which four?" is one
+   click away. */
+.cr-assign__what--many > .cr-assign__whatsum {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 1.75rem;
+  padding: 0.125rem 0.25rem;
+  margin-left: -0.25rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+/* Safari still needs the WebKit pseudo-element to drop the default marker. */
+.cr-assign__what--many > summary::-webkit-details-marker { display: none; }
+
+.cr-assign__what--many > .cr-assign__whatsum::before {
+  content: '\25B8';                 /* right-pointing triangle */
+  display: inline-block;
+  font-size: 0.8em;
+  opacity: 0.7;
+}
+
+.cr-assign__what--many[open] > .cr-assign__whatsum::before {
+  transform: rotate(90deg);
+}
+
+.cr-assign__what--many > .cr-assign__whatsum:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.cr-assign__whatlist {
+  margin: 0.35rem 0 0;
+  padding: 0 0 0 1.35rem;
+  list-style: disc;
+}
+
+.cr-assign__whatitem {
+  font-size: 0.875rem;
+  line-height: 1.45;
+  opacity: 0.9;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cr-assign__what--many > .cr-assign__whatsum::before {
+    transition: transform 120ms ease;
+  }
+}

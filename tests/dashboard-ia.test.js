@@ -171,3 +171,90 @@ describe('roster segments answer the question a teacher is actually asking', () 
     expect(js).toContain("rosterSegment = rosterSegment === key ? 'all' : key");
   });
 });
+
+describe('an assignment card states a count, not four titles in a row', () => {
+  const js = fs.readFileSync('assets/js/classroom-dashboard.js', 'utf8');
+
+  /* Observed live on the deployed site: an assignment targeting four lessons
+     rendered every title inline as one run-on line --
+
+       Writing and Running Your First Program, Set Up Your Python Environment
+       (Python + VS Code/IDLE), Python Syntax and Indentation, Introduction to
+       Python — What It Is and How It Runs
+
+     -- which answers neither "what did I set" nor "how is it going" while
+     wrapping over three lines and burying the counts underneath. */
+
+  it('no longer joins titles with commas', () => {
+    expect(js).not.toMatch(/parts\.join\(', '\)/);
+  });
+
+  it('counts units, lessons and quizzes separately', () => {
+    // A teacher sets units and lessons as different kinds of thing and counts
+    // them separately in their head; "5 items" is not what they asked.
+    expect(js).toContain("say(n('unit'), 'unit', 'units')");
+    expect(js).toContain("say(n('lesson'), 'lesson', 'lessons')");
+    expect(js).toContain("say(n('quiz'), 'quiz', 'quizzes')");
+  });
+
+  it('uses a native details element for the disclosure', () => {
+    // Keyboard-operable, announced correctly, and works with no JavaScript --
+    // none of which a div with a click handler gets for free.
+    expect(js).toContain("document.createElement('details')");
+    expect(js).toContain("document.createElement('summary')");
+  });
+
+  it('does not hide a single target behind a disclosure', () => {
+    // A click that buys nothing.
+    expect(js).toMatch(/parts\.length <= 1/);
+  });
+
+  it('an assignment with nothing set says so', () => {
+    expect(js).toContain("'Nothing set'");
+  });
+});
+
+describe('requiredSummary phrasing', () => {
+  /* Compiled rather than imported: classroom-dashboard.js is an ES module that
+     imports the Firebase SDK. Only the pure phrasing helper is exercised. */
+  function summarise(assignment, titles) {
+    const parts = (assignment.units || []).map((u) => ({ kind: 'unit', label: 'Unit ' + u }))
+      .concat((assignment.lessonPaths || []).map((p) => ({
+        kind: 'lesson', label: (titles || {})[p] || p,
+      })))
+      .concat(assignment.quiz ? [{ kind: 'quiz', label: 'q' }] : []);
+    if (!parts.length) return 'Nothing set';
+    const n = (kind) => parts.filter((x) => x.kind === kind).length;
+    const say = (c, one, many) => c + ' ' + (c === 1 ? one : many);
+    const bits = [];
+    if (n('unit')) bits.push(say(n('unit'), 'unit', 'units'));
+    if (n('lesson')) bits.push(say(n('lesson'), 'lesson', 'lessons'));
+    if (n('quiz')) bits.push(say(n('quiz'), 'quiz', 'quizzes'));
+    if (bits.length === 1) return bits[0];
+    return bits.slice(0, -1).join(', ') + ' and ' + bits[bits.length - 1];
+  }
+
+  it('singular and plural', () => {
+    expect(summarise({ units: [1] })).toBe('1 unit');
+    expect(summarise({ units: [1, 2] })).toBe('2 units');
+    expect(summarise({ lessonPaths: ['/a'] })).toBe('1 lesson');
+  });
+
+  it('joins two kinds with "and", not a comma', () => {
+    expect(summarise({ units: [1, 2], lessonPaths: ['/a', '/b', '/c'] }))
+      .toBe('2 units and 3 lessons');
+  });
+
+  it('joins three kinds with commas and a final "and"', () => {
+    expect(summarise({ units: [1], lessonPaths: ['/a'], quiz: { unit: 2 } }))
+      .toBe('1 unit, 1 lesson and 1 quiz');
+  });
+
+  it('the four-lesson case from the live site', () => {
+    expect(summarise({ lessonPaths: ['/a', '/b', '/c', '/d'] })).toBe('4 lessons');
+  });
+
+  it('nothing set', () => {
+    expect(summarise({})).toBe('Nothing set');
+  });
+});
