@@ -288,11 +288,76 @@ function shortDate(millis) {
   });
 }
 
-function requiredSummary(assignment) {
+/* What an assignment asks for: a count first, the list behind a disclosure.
+ *
+ * It used to be titles joined with commas, which is fine for one lesson and
+ * unreadable at four. Observed live on the deployed site, as a single run-on
+ * line:
+ *
+ *   Writing and Running Your First Program, Set Up Your Python Environment
+ *   (Python + VS Code/IDLE), Python Syntax and Indentation, Introduction to
+ *   Python — What It Is and How It Runs
+ *
+ * A teacher scanning the Work set panel is asking "what did I set and how is it
+ * going", and four full lesson titles wrapped over three lines answers neither
+ * while burying the counts underneath. The count answers it; the titles are
+ * still one click away for the moment the answer is "which four?".
+ *
+ * Returns the parts rather than a string, because the caller needs to build a
+ * <details> and a joined string cannot become one. */
+function requiredParts(assignment) {
   const titles = lessonTitles();
-  const parts = (assignment.units || []).map((u) => 'Unit ' + u)
-    .concat((assignment.lessonPaths || []).map((p) => titles[p] || p));
-  return parts.join(', ');
+  return (assignment.units || []).map((u) => ({ kind: 'unit', label: 'Unit ' + u }))
+    .concat((assignment.lessonPaths || []).map((p) => ({
+      kind: 'lesson', label: titles[p] || p,
+    })))
+    .concat(assignment.quiz
+      ? [{ kind: 'quiz', label: 'Quiz on Unit ' + (Number(assignment.quiz.unit) || 0) }]
+      : []);
+}
+
+/* "2 units and 3 lessons", not "5 items". A teacher sets units and lessons as
+   different kinds of thing and counts them separately in their head. */
+function requiredSummary(assignment) {
+  const parts = requiredParts(assignment);
+  if (!parts.length) return 'Nothing set';
+  const n = (kind) => parts.filter((x) => x.kind === kind).length;
+  const say = (count, one, many) => count + ' ' + (count === 1 ? one : many);
+  const bits = [];
+  if (n('unit')) bits.push(say(n('unit'), 'unit', 'units'));
+  if (n('lesson')) bits.push(say(n('lesson'), 'lesson', 'lessons'));
+  if (n('quiz')) bits.push(say(n('quiz'), 'quiz', 'quizzes'));
+  if (bits.length === 1) return bits[0];
+  return bits.slice(0, -1).join(', ') + ' and ' + bits[bits.length - 1];
+}
+
+/* The count, with the titles behind a native <details>.
+ *
+ * Native rather than a custom disclosure: it is keyboard-operable, announced
+ * correctly, and works with no JavaScript, none of which a div with a click
+ * handler would have been without work. A single-target assignment shows its
+ * one title outright -- a disclosure hiding one line is a click that buys
+ * nothing. */
+function requiredNode(assignment) {
+  const parts = requiredParts(assignment);
+
+  if (parts.length <= 1) {
+    return el('p', 'cr-assign__what', parts.length ? parts[0].label : 'Nothing set');
+  }
+
+  const details = document.createElement('details');
+  details.className = 'cr-assign__what cr-assign__what--many';
+  const summary = document.createElement('summary');
+  summary.className = 'cr-assign__whatsum';
+  summary.textContent = requiredSummary(assignment);
+  details.appendChild(summary);
+
+  const ul = el('ul', 'cr-assign__whatlist');
+  for (const part of parts) {
+    ul.appendChild(el('li', 'cr-assign__whatitem is-' + part.kind, part.label));
+  }
+  details.appendChild(ul);
+  return details;
 }
 
 function paintAssignments() {
@@ -313,7 +378,7 @@ function paintAssignments() {
     head.appendChild(el('p', 'cr-assign__due', 'Due ' + shortDate(CORE.toMillis(assignment.dueAt))));
     item.appendChild(head);
 
-    item.appendChild(el('p', 'cr-assign__what', requiredSummary(assignment)));
+    item.appendChild(requiredNode(assignment));
 
     // Not-done past due and not-done not-yet-due are separate facts and are
     // counted separately, never rolled into one "outstanding" number.
