@@ -13,6 +13,10 @@
   --pp-paper: #f7fbfe;
   --pp-line: #0ea5e9;
   --pp-line-deep: #0284c7;
+  /* The ink variant of the trail colours, for the same reason style.css has
+     one: #0ea5e9 as a LINE on the page tint is fine and as TEXT is 2.61:1.
+     Used only where these tokens set `color:`. */
+  --pp-line-ink: #0369a1;
   --pp-mark: #0ea5e9;
   --pp-muted: #4a7390;
   --pp-border: #d0e4ef;
@@ -174,7 +178,7 @@ body.page:not(.page-home) > .site-footer {
 }
 
 .inspire-banner__link {
-  color: #ffffff !important; /* beat global `a { color: var(--primary) }` */
+  color: #ffffff !important; /* beat global `a { color: var(--primary-ink) }` */
   text-decoration: underline;
   text-decoration-thickness: 1.5px;
   text-underline-offset: 0.18em;
@@ -544,7 +548,7 @@ html.reduced-motion.js-enabled [data-reveal] {
 
 [data-theme="dark"] .btn-primary {
   background: var(--pp-line);
-  border-color: var(--pp-line);
+  border-color: var(--pp-line-ink);
   color: #04202c;
 }
 
@@ -556,7 +560,7 @@ html.reduced-motion.js-enabled [data-reveal] {
 
 .btn-ghost:hover {
   border-color: color-mix(in srgb, var(--pp-line) 50%, transparent);
-  color: var(--pp-line-deep);
+  color: var(--pp-line-ink);
 }
 
 /* ── Footer ─────────────────────────────────────────────── */
@@ -617,7 +621,7 @@ html.reduced-motion.js-enabled [data-reveal] {
 }
 
 .footer-links a:hover {
-  color: var(--pp-line-deep);
+  color: var(--pp-line-ink);
 }
 
 .site-footer .footer-grid {
@@ -708,7 +712,7 @@ main .container,
 
 .unit-ribbon {
   background: color-mix(in srgb, var(--pp-line) 16%, transparent);
-  color: var(--pp-line-deep);
+  color: var(--pp-line-ink);
   font-family: var(--pp-display);
   font-weight: 750;
   border-radius: 10px;
@@ -814,7 +818,7 @@ main .container,
 .page-unit .course-sidebar a.active,
 .page-unit .course-sidebar a[aria-current="page"] {
   background: color-mix(in srgb, var(--pp-line) 14%, transparent);
-  color: var(--pp-line-deep);
+  color: var(--pp-line-ink);
   font-weight: 650;
 }
 
@@ -973,7 +977,7 @@ main .container,
 [data-theme="dark"] .page-unit .lesson-overview .pill,
 [data-theme="dark"] .page-unit .pill {
   background: color-mix(in srgb, var(--pp-line) 18%, transparent);
-  color: var(--pp-line);
+  color: var(--pp-line-ink);
 }
 
 .page-unit .content-section {
@@ -1049,7 +1053,7 @@ main .container,
 }
 
 .page-about .about-eyebrow {
-  color: var(--pp-line-deep);
+  color: var(--pp-line-ink);
   font-family: var(--pp-body);
   font-weight: 700;
 }
@@ -1116,7 +1120,7 @@ main .container,
 }
 
 .page-about .team-card-role {
-  color: var(--pp-line-deep);
+  color: var(--pp-line-ink);
 }
 
 .page-about .team-card-bio {
@@ -1245,7 +1249,7 @@ main .container,
 
 .dd-item__num {
   background: color-mix(in srgb, var(--pp-line) 14%, transparent);
-  color: var(--pp-line-deep);
+  color: var(--pp-line-ink);
   font-family: var(--pp-display);
   font-weight: 700;
   border-radius: 8px;
@@ -1411,8 +1415,8 @@ main .container,
 }
 
 .pp-boot-console .pp-line { display: block; }
-.pp-boot-console .pp-ok { color: var(--pp-line, #0ea5e9); }
-.pp-boot-console .pp-ready { color: var(--pp-line-deep, #0284c7); }
+.pp-boot-console .pp-ok { color: var(--pp-line-ink, #0ea5e9); }
+.pp-boot-console .pp-ready { color: var(--pp-line-ink, #0284c7); }
 .pp-boot-console .pp-err { color: #d64545; }
 
 .pp-boot-retry {
@@ -1420,7 +1424,7 @@ main .container,
   padding: 4px 12px;
   font: inherit;
   font-size: 0.9em;
-  color: var(--pp-line-deep, #0284c7);
+  color: var(--pp-line-ink, #0284c7);
   background: transparent;
   border: 1px solid var(--pp-border, #d0e4ef);
   border-radius: 8px;
@@ -1428,7 +1432,7 @@ main .container,
 }
 
 .pp-boot-retry:hover {
-  border-color: var(--pp-line, #0ea5e9);
+  border-color: var(--pp-line-ink, #0ea5e9);
 }
 
 @media (prefers-reduced-motion: no-preference) {

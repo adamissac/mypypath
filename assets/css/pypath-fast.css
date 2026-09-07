@@ -111,11 +111,11 @@ p, li, .subhead, .founders-cta-subtitle {
 }
 
 a {
-  color: var(--primary);
+  color: var(--primary-ink);
 }
 
 a:hover {
-  color: var(--primary-strong);
+  color: var(--primary-ink);
 }
 
 pre.code,
@@ -561,7 +561,7 @@ body.nav-open::before {
 .primary-nav a.active,
 .primary-nav .dd-trigger[aria-current="page"],
 .primary-nav .dd.is-open > .dd-trigger {
-  color: var(--primary-strong);
+  color: var(--primary-ink);
   background: var(--panel);
   box-shadow:
     0 1px 0 color-mix(in srgb, #fff 50%, transparent),
@@ -753,7 +753,7 @@ body.nav-open::before {
 }
 
 .footer-col .footer-links a:hover {
-  color: var(--primary);
+  color: var(--primary-ink);
 }
 
 @media (max-width: 720px) {
@@ -780,7 +780,7 @@ body.nav-open::before {
 
 .btn-primary {
   background: var(--primary);
-  border-color: var(--primary-strong);
+  border-color: var(--primary);
   color: #fff;
 }
 
@@ -798,7 +798,7 @@ body.nav-open::before {
 }
 
 .btn-ghost:hover {
-  color: var(--primary-strong);
+  color: var(--primary-ink);
   border-color: color-mix(in srgb, var(--primary) 50%, var(--border));
   background: color-mix(in srgb, var(--primary) 6%, var(--panel));
   transform: translateY(-1px);
@@ -1237,7 +1237,7 @@ html.reduced-motion .page-home .hero-live-output.is-active {
 }
 
 .unit-lesson-list a:hover {
-  color: var(--primary-strong);
+  color: var(--primary-ink);
   text-decoration: underline;
 }
 
@@ -1291,7 +1291,7 @@ html.reduced-motion .page-home .hero-live-output.is-active {
   place-items: center;
   border-radius: 12px;
   background: color-mix(in srgb, var(--primary) 14%, var(--panel));
-  color: var(--primary-strong);
+  color: var(--primary-ink);
   margin-bottom: 14px;
   transition: transform var(--dur-base) var(--ease-out);
 }
@@ -1420,7 +1420,7 @@ html.reduced-motion .page-home .hero-live-output.is-active {
 }
 
 .sidebar-collapse-btn:hover {
-  color: var(--primary-strong);
+  color: var(--primary-ink);
   border-color: color-mix(in srgb, var(--primary) 35%, var(--border));
   background: color-mix(in srgb, var(--primary) 8%, var(--panel));
 }
@@ -1456,7 +1456,7 @@ html.reduced-motion .page-home .hero-live-output.is-active {
 }
 
 .sidebar-reopen-btn:hover {
-  color: var(--primary-strong);
+  color: var(--primary-ink);
   border-color: color-mix(in srgb, var(--primary) 35%, var(--border));
   box-shadow: var(--shadow-strong);
 }
@@ -1620,7 +1620,18 @@ html.reduced-motion .page-home .hero-live-output.is-active {
   cursor: pointer;
   /* Quiet until wanted, but never invisible: a control you cannot see is a
      control nobody finds. */
-  opacity: 0.62;
+  /* Was 0.62, which composited #4a7390 on white down to 2.49:1 -- under half
+     the 4.5:1 that 11px bold text needs. A control that is legible only once
+     you have found it is a control you have to already know about.
+     
+     0.9 was still only 4.16:1 -- measured, not estimated, which is the whole
+     reason the audit script exists. Opacity is the wrong knob here: the button
+     is already recessive by being small, muted-coloured and bordered against
+     the code block, and dimming it further was buying a little visual quiet at
+     the cost of legibility. Full opacity measures 5.06:1, and the hover and
+     focus states still change the background and border, so the affordance is
+     unchanged for anyone who was relying on it. */
+  opacity: 1;
   box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 8%, transparent);
   transition:
     opacity var(--dur-fast) ease,
@@ -1647,7 +1658,7 @@ html.reduced-motion .page-home .hero-live-output.is-active {
 
 .copy-snippet-btn:hover {
   opacity: 1;
-  color: var(--primary-strong);
+  color: var(--primary-ink);
   border-color: color-mix(in srgb, var(--primary) 45%, var(--border));
   background: color-mix(in srgb, var(--primary) 8%, var(--panel));
   box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 18%, transparent);
@@ -1960,7 +1971,7 @@ html.reduced-motion.page-from-nav main {
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--primary-strong);
+  color: var(--primary-ink);
 }
 
 .page-about .about-mission-grid {
@@ -2064,7 +2075,7 @@ html.reduced-motion.page-from-nav main {
   font-size: 0.72rem;
   font-weight: 600;
   line-height: 1.35;
-  color: var(--primary-strong);
+  color: var(--primary-ink);
 }
 
 .page-about .team-card-school {
@@ -2183,7 +2194,7 @@ html.reduced-motion.page-from-nav main {
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--primary-strong);
+  color: var(--primary-ink);
 }
 
 .page-sandbox .sandbox-title {
@@ -2429,7 +2440,7 @@ html.reduced-motion.page-from-nav main {
 }
 
 .page-sandbox .sandbox-export-dd.is-open > .sandbox-export-trigger {
-  color: var(--primary);
+  color: var(--primary-ink);
   background: color-mix(in srgb, var(--primary) 10%, transparent);
 }
 
@@ -2502,7 +2513,7 @@ html.reduced-motion.page-from-nav main {
 
 .page-sandbox .sandbox-export-item:hover {
   background: var(--bg-elevated);
-  color: var(--primary);
+  color: var(--primary-ink);
 }
 
 .page-sandbox .sandbox-export-item:focus-visible {
@@ -2815,7 +2826,7 @@ html.reduced-motion.page-from-nav main {
 /* The chosen row keeps a tick, because on a highlighted row the fill alone
    cannot say which of the two states you are looking at. */
 .sel__option[aria-selected="true"] {
-  color: var(--primary-strong, #0284c7);
+  color: var(--primary-ink, #0284c7);
 }
 
 .sel__option[aria-selected="true"]::after {

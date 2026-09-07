@@ -18,6 +18,39 @@
     if (window.ProgressStore) window.ProgressStore.removeItem(storageKey(type, id));
   }
 
+
+/* Give CodeMirror's own input field an accessible name.
+ *
+ * fromTextArea() hides the authored <textarea> and creates its own, which is
+ * the element that actually receives typing and focus. That one has no label,
+ * no aria-label and no wrapping <label>, because the page never wrote it --
+ * CodeMirror did. axe reports it as a critical "Form elements must have
+ * labels", and it is right: a screen-reader user tabbing into a code exercise
+ * hears "edit text, blank".
+ *
+ * The name has to come from us because only we know what the editor is FOR.
+ * "Code editor" would be true and useless on a page with four of them, so the
+ * exercise's own heading is used where there is one.
+ */
+function nameEditor(cm, label) {
+  try {
+    var input = cm.getInputField && cm.getInputField();
+    if (!input) return;
+    input.setAttribute('aria-label', label || 'Code editor');
+    // The wrapper is what a screen reader lands on when navigating by region,
+    // and an unlabelled group of controls there is the same problem one level
+    // up.
+    var wrap = cm.getWrapperElement && cm.getWrapperElement();
+    if (wrap) {
+      wrap.setAttribute('role', 'group');
+      wrap.setAttribute('aria-label', label || 'Code editor');
+    }
+  } catch (e) {
+    // An editor without a label is worse than one with; an exception here
+    // that stopped the lesson loading would be worse than both.
+  }
+}
+
   // Default practice-editor source, captured before CodeMirror replaces textareas.
   window.editorDefaults = window.editorDefaults || {};
 
@@ -392,6 +425,17 @@
         autoCloseBrackets: true,
         value: initial
       });
+
+      /* Named from the nearest heading, so four editors on one page are four
+         distinct things to a screen reader rather than four "Code editor"s. */
+      var section = textarea.closest && textarea.closest(
+        '.practice-box, .exercise-box, .content-section, section'
+      );
+      var heading = section && section.querySelector('h1, h2, h3, h4, h5, h6');
+      nameEditor(
+        window.editors[editorId],
+        heading ? 'Code editor: ' + heading.textContent.trim() : 'Code editor'
+      );
 
       window.editors[editorId].setSize(null, isExercise ? 180 : 150);
       window.editors[editorId].on('change', function () {
