@@ -4848,3 +4848,49 @@ body.page > footer {
 .copy-snippet-btn__label {
   font-size: max(12px, 0.72rem);
 }
+
+/* ------------------------------------------- the reduced-motion backstop */
+
+/* A visitor who has asked their operating system to reduce motion has told us
+ * something specific and often medical: vestibular disorders make drifting,
+ * parallax and large entrance animations genuinely unpleasant, not merely
+ * unwanted.
+ *
+ * There are already a dozen `prefers-reduced-motion` blocks across these
+ * stylesheets and they are individually correct. The problem with that shape
+ * is that it is opt-IN: every new animation is honoured by default and has to
+ * remember to exclude itself, so the set of animations that respect the
+ * preference only ever drifts out of date. Measured with the preference on,
+ * three were still running:
+ *
+ *   home-dash-drift   an 18-SECOND infinite drift on the homepage trail
+ *   lessonIn          a 0.4s entrance on every lesson page
+ *   .path-journey__map  a 0.5s transition
+ *
+ * So this is the backstop: with the preference set, animation and transition
+ * are off unless a rule explicitly opts back in. New motion is now opt-out,
+ * which is the direction that stays correct without anyone remembering.
+ *
+ * Not `animation: none`. Removing an animation outright can leave an element
+ * stuck in its starting state -- a fade-in that never fades leaves the element
+ * at opacity 0, which is worse than the animation. A 0.01ms duration runs it
+ * instantly to its end state instead, which is the standard technique and the
+ * reason for the odd number.
+ *
+ * `scroll-behavior: auto` because a smooth-scrolled jump is motion too, and a
+ * long one is the most disorienting kind.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *:not([data-motion-keep]),
+  *:not([data-motion-keep])::before,
+  *:not([data-motion-keep])::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  html {
+    scroll-behavior: auto !important;
+  }
+}
