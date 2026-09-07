@@ -29,12 +29,58 @@
     }
   }
 
+  /* three.min.js is 618KB -- by a wide margin the largest asset this site
+   * serves, and it is decoration. The static summit.png underneath it is a
+   * complete picture of the same mountain, which is why the <img> stays in the
+   * markup: nothing is missing while this loads, or if it never does.
+   *
+   * So it is fetched OFF THE CRITICAL PATH rather than at DOMContentLoaded.
+   * Measured: /index.html pulls 908KB of JavaScript and 618 of those are this
+   * file, competing for bandwidth with the stylesheets and scripts that decide
+   * when the page is usable. requestIdleCallback hands it the connection once
+   * the browser has nothing more urgent, with a timeout so it still arrives
+   * promptly on a fast machine that never goes idle.
+   *
+   * It is also skipped outright in two cases the old code did not consider,
+   * both of which are someone telling us not to:
+   *
+   *   Save-Data. A header that exists precisely to mean "do not send me
+   *   decorative payloads". 618KB of rotating mountain is the canonical thing
+   *   it is asking us not to send.
+   *
+   *   A 2G or slow-3G connection. On those, 618KB is measured in tens of
+   *   seconds, during which it is stealing bandwidth from the lesson the
+   *   visitor came for.
+   *
+   * Both fall back to the <img>, which is what a reduced-motion or WebGL-less
+   * visitor already gets. */
+  function shouldSkipHeavyScene() {
+    var c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (!c) return false;
+    if (c.saveData === true) return true;
+    return c.effectiveType === 'slow-2g' || c.effectiveType === '2g' || c.effectiveType === '3g';
+  }
+
   function loadThree(cb) {
     if (window.THREE) { cb(); return; }
-    var s = document.createElement('script');
-    s.src = THREE_SRC;
-    s.onload = function () { if (window.THREE) cb(); };
-    document.head.appendChild(s);
+    if (shouldSkipHeavyScene()) return;
+
+    function fetchIt() {
+      var s = document.createElement('script');
+      s.src = THREE_SRC;
+      s.onload = function () { if (window.THREE) cb(); };
+      document.head.appendChild(s);
+    }
+
+    if (window.requestIdleCallback) {
+      // The timeout is the point of the second argument: a page that never
+      // reaches idle would otherwise never get its mountain.
+      window.requestIdleCallback(fetchIt, { timeout: 2500 });
+    } else {
+      // Safari has no requestIdleCallback. A timeout past first paint is the
+      // closest equivalent and is still far better than blocking on it.
+      window.setTimeout(fetchIt, 600);
+    }
   }
 
   /* Canvas-drawn numbered stop marker, used as an always-facing sprite */
