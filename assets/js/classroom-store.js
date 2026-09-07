@@ -668,6 +668,26 @@ export async function rolloverClass(uid, fromClassId, options) {
   };
 }
 
+/* Is this learner actually still enrolled?
+ *
+ * users/{uid}.classId is a POINTER, and it can outlive the thing it points at.
+ * leaveClass() clears it, but a teacher removing a student from the roster
+ * deletes the seat and cannot write to that student's account document -- the
+ * rules quite rightly do not let them. So a removed student walks around with
+ * a classId naming a class they are no longer in.
+ *
+ * Measured consequence: /progress.html went on listing that class's
+ * assignments as work they owed. The reads succeed, because a teacher's
+ * assignments stay readable; it is the ENROLMENT that is gone, and enrolment
+ * is the thing that decides whether any of it is theirs.
+ */
+export async function isEnrolled(classId, uid) {
+  if (!classId || !uid) return false;
+  const snap = counted(
+    await getDoc(doc(db, `classes/${classId}/roster/${uid}`)), 'isEnrolled');
+  return snap.exists();
+}
+
 export async function readAssignments(classId) {
   const snap = counted(
     await getDocs(collection(db, `classes/${classId}/assignments`)), 'readAssignments');

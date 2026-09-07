@@ -14,7 +14,7 @@
  */
 import { currentUser } from '/assets/js/auth.js';
 import { loadMembership, currentClassId } from '/assets/js/membership.js';
-import { readAssignments, readEvents, readClass } from '/assets/js/classroom-store.js';
+import { readAssignments, readEvents, readClass, isEnrolled } from '/assets/js/classroom-store.js';
 
 const CORE = window.PyPathClassroom;
 
@@ -195,8 +195,17 @@ async function paint(uid, classId) {
   // Cleared on every successful paint, so a recovered connection does not
   // leave a stale alert above real work.
   show($('[data-sw-error]'), false);
+
+  /* An archived class is a finished term, not a broken one. The work stays
+     listed because it is still the record of what was set -- deleting it from
+     view would lose a student their own history -- but "nothing outstanding"
+     would be the wrong reassurance and an overdue count would be a deadline
+     that no longer exists. So it says which it is. */
+  const closed = !!(klass && klass.archived);
+  show($('[data-sw-closed]'), closed && rows.length > 0);
+
   show(none, rows.length === 0);
-  show(empty, rows.length > 0 && outstanding === 0);
+  show(empty, !closed && rows.length > 0 && outstanding === 0);
   show(list, rows.length > 0);
   show(section, true);
 
@@ -222,6 +231,28 @@ async function boot(user) {
     show(section, false);
     return;
   }
+  /* THE POINTER CAN OUTLIVE THE ENROLMENT.
+   *
+   * users/{uid}.classId is written by the student when they join and cleared
+   * when they leave. A TEACHER removing a student deletes the roster seat and
+   * cannot touch that student's account document -- the rules do not let them,
+   * correctly -- so a removed student keeps a classId naming a class they are
+   * no longer in.
+   *
+   * Measured: this panel went on listing that class's assignments as work they
+   * owed. The reads all succeed, because a teacher's assignments stay
+   * readable; what is gone is the ENROLMENT, and enrolment is the only thing
+   * that makes any of it theirs.
+   *
+   * Treated exactly as "in no class", because that is what it is: the panel
+   * disappears rather than showing an error, since being out of a class is not
+   * a failure and a learner working alone has nothing owed to anyone. */
+  const stillIn = await isEnrolled(classId, user.uid).catch(() => true);
+  if (!stillIn) {
+    show(section, false);
+    return;
+  }
+
   await loadManifest();
   try {
     await paint(user.uid, classId);
