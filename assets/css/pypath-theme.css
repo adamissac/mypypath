@@ -263,7 +263,21 @@ html {
 
 body.page {
   height: auto !important;
-  min-height: 100%;
+  /* 100%, not 100dvh, was the bug behind the floating footer.
+     
+     min-height: 100% resolves against the parent's height, and html's height
+     is auto, so this computed to "as tall as the content" -- which is exactly
+     what it already was. /quiz.html's footer sat at y=476 in a 900px viewport
+     with 424px of blank white beneath it, reading as a page that had failed to
+     finish loading.
+     
+     The sticky-footer flex column is set in style.css; this file loads after
+     it and was quietly overriding the one declaration that made it work.
+     100dvh with a 100vh fallback: on mobile 100vh is the viewport with the URL
+     bar hidden, so a 100vh column overflows by the bar's height and gives
+     every short page a pointless scroll. */
+  min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: clip;
   overflow-y: visible !important;
   padding-top: var(--header-height) !important;
