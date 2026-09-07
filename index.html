@@ -8,32 +8,73 @@
       /* Boot-intro gate — must run before first paint. Sets:
          pp-wait  → entrance choreography pending (motion allowed)
          pp-boot  → terminal overlay plays (cover painted via CSS)
-         The intro plays on fresh opens and reloads, but NOT when the
-         visitor arrives by clicking an internal link (core.js marks
-         those with sessionStorage 'pypath-nav', cleared after entry —
-         this script runs before the clear) or via back/forward. Any
-         click, key, or scroll skips it. Reduced-motion users skip both. */
+
+         THE ESCAPE HATCH IS ATTACHED HERE, not in motion.js, and that is the
+         whole point of this version. The cover is painted from this script,
+         before first paint. The skip listeners used to be attached by
+         motion.js — one of forty-odd scripts on this page — so between first
+         paint and motion.js executing there was a black screen with NO WAY
+         OUT. Clicking did nothing, scrolling did nothing, and the only thing
+         that ended it was the watchdog. Measured on the deployed site at ~7
+         seconds against a dclMs of 208: the page was ready almost immediately
+         and the animation held it hostage. A first-time visitor staring at a
+         black screen is a bounced visitor.
+
+         So: anything that covers the page is dismissible by the same script
+         that put it there. motion.js still attaches its own listeners, which
+         are then a harmless refinement rather than the only way out.
+
+         HARD CAP 1500ms, down from a 5500ms watchdog. The animation's own
+         choreography is ~2.9s, which was always longer than anyone wants to
+         look at a terminal they did not ask for; it now plays as far as it
+         gets and leaves on time.
+
+         ONCE PER SESSION. It played on every fresh open and every reload, so
+         a visitor who opened the site, read a lesson, and came back to the
+         homepage in a new tab saw it again. A flourish is charming once.
+
+         Not shown at all to reduced-motion users, or to anyone arriving by an
+         internal link (core.js marks those with sessionStorage 'pypath-nav'). */
       (function () {
         try {
           var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
           if (reduce) return;
           var root = document.documentElement;
           root.classList.add('pp-wait');
+
           var entry = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || null;
           var navType = entry ? entry.type : 'navigate';
           var fromLink = false;
-          try { fromLink = sessionStorage.getItem('pypath-nav') === '1'; } catch (e) {}
-          if (navType === 'reload' || (navType === 'navigate' && !fromLink)) {
-            root.classList.add('pp-boot');
-          }
-          /* Watchdog: if motion.js never lands, force the page visible. */
-          window.setTimeout(function () {
-            if (root.classList.contains('pp-go')) return;
+          var seen = false;
+          try {
+            fromLink = sessionStorage.getItem('pypath-nav') === '1';
+            seen = sessionStorage.getItem('pypath-boot-seen') === '1';
+          } catch (e) {}
+
+          if (seen || fromLink || (navType !== 'reload' && navType !== 'navigate')) return;
+          root.classList.add('pp-boot');
+          try { sessionStorage.setItem('pypath-boot-seen', '1'); } catch (e) {}
+
+          function clear() {
+            if (!root.classList.contains('pp-boot') && root.classList.contains('pp-go')) return;
             root.classList.remove('pp-boot');
             root.classList.add('pp-go');
             var ov = document.querySelector('.pp-boot-overlay');
             if (ov && ov.parentNode) ov.parentNode.removeChild(ov);
-          }, 5500);
+            window.removeEventListener('pointerdown', clear, true);
+            window.removeEventListener('keydown', clear, true);
+            window.removeEventListener('wheel', clear, true);
+            window.removeEventListener('touchstart', clear, true);
+            window.removeEventListener('scroll', clear, true);
+          }
+
+          window.addEventListener('pointerdown', clear, true);
+          window.addEventListener('keydown', clear, true);
+          window.addEventListener('wheel', clear, { capture: true, passive: true });
+          window.addEventListener('touchstart', clear, { capture: true, passive: true });
+          window.addEventListener('scroll', clear, { capture: true, passive: true });
+
+          window.setTimeout(clear, 1500);
         } catch (e) { /* no classes added — page renders statically */ }
       })();
     </script>
