@@ -183,6 +183,8 @@ async function run() {
           id: v.id, impact: v.impact, n: v.nodes.length,
           help: v.help,
           sample: v.nodes.slice(0, 2).map((n) => n.html.slice(0, 110)),
+          why: v.nodes.slice(0, 2).map((n) =>
+            (n.any || []).concat(n.all || []).map((c) => c.message).join(' | ').slice(0, 220)),
         })),
         smallTargets: targets,
       });

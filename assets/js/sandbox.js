@@ -600,6 +600,39 @@ for i in range(3):
     }
   }
 
+
+/* Give CodeMirror's own input field an accessible name.
+ *
+ * fromTextArea() hides the authored <textarea> and creates its own, which is
+ * the element that actually receives typing and focus. That one has no label,
+ * no aria-label and no wrapping <label>, because the page never wrote it --
+ * CodeMirror did. axe reports it as a critical "Form elements must have
+ * labels", and it is right: a screen-reader user tabbing into a code exercise
+ * hears "edit text, blank".
+ *
+ * The name has to come from us because only we know what the editor is FOR.
+ * "Code editor" would be true and useless on a page with four of them, so the
+ * exercise's own heading is used where there is one.
+ */
+function nameEditor(cm, label) {
+  try {
+    var input = cm.getInputField && cm.getInputField();
+    if (!input) return;
+    input.setAttribute('aria-label', label || 'Code editor');
+    // The wrapper is what a screen reader lands on when navigating by region,
+    // and an unlabelled group of controls there is the same problem one level
+    // up.
+    var wrap = cm.getWrapperElement && cm.getWrapperElement();
+    if (wrap) {
+      wrap.setAttribute('role', 'group');
+      wrap.setAttribute('aria-label', label || 'Code editor');
+    }
+  } catch (e) {
+    // An editor without a label is worse than one with; an exception here
+    // that stopped the lesson loading would be worse than both.
+  }
+}
+
   function initEditor() {
     const textarea = $('code-editor');
     if (!textarea || !document.body.classList.contains('page-sandbox')) return false;
@@ -637,6 +670,10 @@ for i in range(3):
         },
       },
     });
+
+    /* The sandbox has exactly one editor and it is the whole page, so the name
+       says that rather than repeating the page title. */
+    nameEditor(editor, 'Python code editor');
 
     editor.setValue(DEFAULT_CODE);
     setFilename('untitled');

@@ -11,12 +11,18 @@
   border-radius: .4rem;
   cursor: pointer;
   color: var(--panel, #fff);
-  background: var(--primary, #0ea5e9);
-  border: 1px solid var(--primary-strong, #0284c7);
+  /* White on sky-500 is 2.77:1. This is the button a student presses to have
+     their work graded, so it is not a place to be 40% short of the minimum.
+     The ink variant is the same hue further down the ramp: 5.93:1. */
+  background: var(--primary-ink, #0369a1);
+  border: 1px solid var(--primary-ink, #0369a1);
 }
 
 .btn-check-work:hover:not(:disabled) {
-  background: var(--primary-strong, #0284c7);
+  /* Hover has to go DARKER now that the resting state is already sky-700;
+     lifting to sky-600 would have made the hover state the failing one. */
+  background: #075985;
+  border-color: #075985;
 }
 
 .btn-check-work:disabled {
