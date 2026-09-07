@@ -51,6 +51,58 @@ function nameEditor(cm, label) {
   }
 }
 
+/* ESCAPING A CODE EDITOR WITH THE KEYBOARD.
+ *
+ * CodeMirror binds Tab to indentation, which is right for writing Python and
+ * is a WCAG 2.1.2 keyboard trap as it stands: focus goes in with Tab and
+ * cannot come out with Tab. Measured -- a keyboard walk of a lesson page
+ * stopped dead at the first editor, leaving every control below it unreachable,
+ * and the sandbox reached 7 of its 23 controls.
+ *
+ * 2.1.2 does not require Tab itself to be the way out; it requires that there
+ * IS a way out using only the keyboard, and that the user is told what it is.
+ * So: Escape moves focus to the next element, and the editor advertises that
+ * on itself so a screen reader announces it on arrival.
+ *
+ * Escape rather than a chord because it is what every other "get me out of
+ * this" affordance on the site already uses, and because a chord nobody is
+ * told about is not an escape.
+ */
+function makeEscapable(cm, label) {
+  try {
+    var input = cm.getInputField && cm.getInputField();
+    var wrap = cm.getWrapperElement && cm.getWrapperElement();
+    if (!input) return;
+
+    var hint = 'Press Escape to leave the editor.';
+    var described = (label ? label + '. ' : '') + hint;
+    input.setAttribute('aria-label', described);
+    if (wrap) wrap.setAttribute('aria-label', described);
+
+    cm.setOption('extraKeys', Object.assign({}, cm.getOption('extraKeys') || {}, {
+      Esc: function () {
+        /* Hand focus to the next thing in the document, rather than merely
+           blurring: blurring alone drops the visitor at the top of the page on
+           their next Tab, which is a worse place to be than the editor. */
+        var all = Array.prototype.slice.call(document.querySelectorAll(
+          'a[href], button, input:not([type=hidden]), select, textarea, summary,'
+          + ' [tabindex]:not([tabindex="-1"])'
+        )).filter(function (el) {
+          if (el.disabled) return false;
+          var r = el.getBoundingClientRect();
+          return r.width > 0 && r.height > 0;
+        });
+        var here = all.indexOf(input);
+        var next = here === -1 ? null : all[here + 1];
+        input.blur();
+        if (next && next.focus) next.focus();
+      },
+    }));
+  } catch (e) {
+    // An editor without an escape is bad; a lesson that fails to load is worse.
+  }
+}
+
   // Default practice-editor source, captured before CodeMirror replaces textareas.
   window.editorDefaults = window.editorDefaults || {};
 
@@ -432,10 +484,13 @@ function nameEditor(cm, label) {
         '.practice-box, .exercise-box, .content-section, section'
       );
       var heading = section && section.querySelector('h1, h2, h3, h4, h5, h6');
-      nameEditor(
-        window.editors[editorId],
-        heading ? 'Code editor: ' + heading.textContent.trim() : 'Code editor'
-      );
+      var editorLabel = heading
+        ? 'Code editor: ' + heading.textContent.trim()
+        : 'Code editor';
+      nameEditor(window.editors[editorId], editorLabel);
+      // Tab indents inside a code editor, which makes it a keyboard trap
+      // without this. See makeEscapable.
+      makeEscapable(window.editors[editorId], editorLabel);
 
       window.editors[editorId].setSize(null, isExercise ? 180 : 150);
       window.editors[editorId].on('change', function () {

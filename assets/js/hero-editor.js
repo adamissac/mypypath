@@ -186,7 +186,37 @@
 
     runBtn.addEventListener('click', runCode);
 
+    /* The homepage's hero editor binds Tab to indentation, which is right for
+       writing Python and is a WCAG 2.1.2 keyboard trap without a way out:
+       measured, a keyboard walk of the homepage stopped here and never reached
+       the eight controls below it, which is the whole footer.
+       
+       2.1.2 does not require Tab to be the exit -- it requires that one exists
+       and that the visitor is told. Escape is the exit and the textarea says so
+       in its own accessible name, matching the lesson and sandbox editors. */
+    var heroLabel = 'Python code editor. Press Escape to leave the editor.';
+    codeEl.setAttribute('aria-label', heroLabel);
+
     codeEl.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        /* Move focus on rather than merely blurring: a bare blur drops the
+           visitor at the top of the document on their next Tab, which is a
+           worse place to be than the editor they were trying to leave. */
+        var all = Array.prototype.slice.call(document.querySelectorAll(
+          'a[href], button, input:not([type=hidden]), select, textarea, summary,'
+          + ' [tabindex]:not([tabindex="-1"])'
+        )).filter(function (el) {
+          if (el.disabled) return false;
+          var r = el.getBoundingClientRect();
+          return r.width > 0 && r.height > 0;
+        });
+        var here = all.indexOf(codeEl);
+        var next = here === -1 ? null : all[here + 1];
+        codeEl.blur();
+        if (next && next.focus) next.focus();
+        return;
+      }
       if (e.key === 'Tab') {
         e.preventDefault();
         var start = codeEl.selectionStart;
