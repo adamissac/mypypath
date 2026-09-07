@@ -224,6 +224,19 @@ async function run() {
     }
   }
   console.log(`\nTOTAL: ${totalV} axe violations, ${totalT} targets under 24x24`);
+
+  /* Exits non-zero so CI fails on a regression.
+   *
+   * The budget is ZERO, deliberately, and it is only defensible because the
+   * site is actually at zero. A ratcheting budget ("no worse than 92") is the
+   * shape that lets a number sit at 92 forever; a budget of zero is a
+   * statement that any new violation is a bug, and it is enforceable now that
+   * there are none to grandfather. */
+  if (totalV || totalT) {
+    console.error(`\nFAIL: accessibility budget is 0 and this run found `
+      + `${totalV} violation(s) and ${totalT} undersized target(s).`);
+    process.exitCode = 1;
+  }
   return report;
 }
 
