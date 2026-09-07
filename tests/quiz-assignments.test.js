@@ -399,3 +399,56 @@ describe('the three question surfaces stay distinguishable', () => {
     expect(spec).toMatch(/It does \*not\* inherit `maxTestAttempts`/);
   });
 });
+
+describe('quiz-page.js boots even though its module finishes after DOMContentLoaded', () => {
+  const src = fs.readFileSync('assets/js/quiz-page.js', 'utf8');
+
+  /* THE BUG THIS GUARDS, which produced the single worst page state on the
+     site. /quiz.html rendered its heading, its footer, and nothing at all in
+     between -- on a URL that is in production and that a student reaches by
+     opening a stale link from their work list.
+     
+     quiz-page.js is an ES module whose import chain reaches firebase-config.js,
+     which top-level-awaits the Firebase SDK from gstatic. A module that
+     top-level-awaits finishes executing AFTER DOMContentLoaded has fired. The
+     listener was therefore registered for an event already in the past, boot()
+     never ran, and five carefully written failure messages were unreachable:
+     the missing-id one, the signed-out one, the not-in-a-class one, the
+     quiz-no-longer-set one, and the catch-all.
+     
+     Nothing errored. The page just said "Quiz". */
+
+  it('does not register the boot on a bare DOMContentLoaded listener', () => {
+    expect(src).not.toMatch(/document\.addEventListener\('DOMContentLoaded', \(\) => \{[\s\S]{0,200}boot\(\)/);
+  });
+
+  it('checks readyState, so it runs whichever finishes first', () => {
+    // Both orderings are real: on a warm cache with the SDK already resolved
+    // the module can finish before parsing does.
+    expect(src).toContain("document.readyState === 'loading'");
+    expect(src).toContain('function ready(fn)');
+  });
+
+  it('still binds the start and submit handlers', () => {
+    expect(src).toContain("start.addEventListener('click', buildPaper)");
+    expect(src).toContain("paper.addEventListener('submit', submit)");
+  });
+
+  it('every failure path says something, rather than leaving the page blank', () => {
+    for (const message of [
+      'This link is missing which quiz to open',
+      'Sign in to sit a quiz your teacher set',
+      'You are not in a class',
+      'That quiz is not set for your class any more',
+      'That quiz could not be opened',
+    ]) {
+      expect(src, message).toContain(message);
+    }
+  });
+
+  it('the notice it writes into is a live region', () => {
+    // A message that appears after load has to be announced, not just painted.
+    const html = fs.readFileSync('quiz.html', 'utf8');
+    expect(html).toMatch(/id="quiz-notice"[^>]*aria-live="polite"/);
+  });
+});

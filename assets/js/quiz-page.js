@@ -315,7 +315,34 @@ async function boot() {
   paintIntro(assignment.quiz, blocked, state.attemptsUsed, best);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+/* NOT a bare DOMContentLoaded listener, and the difference is the whole reason
+ * /quiz.html rendered as the word "Quiz" and nothing else.
+ *
+ * This file is an ES module, and its import chain reaches firebase-config.js,
+ * which top-level-awaits the Firebase SDK from gstatic. A module that
+ * top-level-awaits finishes executing AFTER DOMContentLoaded has already
+ * fired. So this listener was registered for an event that was already in the
+ * past, boot() never ran, and every one of its carefully worded failure
+ * messages -- "This link is missing which quiz to open", "Sign in to sit a
+ * quiz your teacher set", "You are not in a class" -- was unreachable.
+ *
+ * The page did not error. It rendered its heading, its footer, and nothing in
+ * between, on a URL that is in production and that a student reaches by
+ * opening a stale link. A silent empty page is indistinguishable from a broken
+ * one, and this one had five good explanations it could not deliver.
+ *
+ * readyState is checked because both orderings are real: the module can also
+ * finish before parsing does, on a warm cache with the SDK already resolved.
+ */
+function ready(fn) {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fn, { once: true });
+  } else {
+    fn();
+  }
+}
+
+ready(() => {
   const start = $('#quiz-start');
   if (start) start.addEventListener('click', buildPaper);
   const paper = $('#quiz-paper');
