@@ -192,6 +192,9 @@ async function paint(uid, classId) {
 
   // Nothing due is good news and gets said as good news. An empty box would
   // read as something failing to load.
+  // Cleared on every successful paint, so a recovered connection does not
+  // leave a stale alert above real work.
+  show($('[data-sw-error]'), false);
   show(none, rows.length === 0);
   show(empty, rows.length > 0 && outstanding === 0);
   show(list, rows.length > 0);
@@ -223,7 +226,24 @@ async function boot(user) {
   try {
     await paint(user.uid, classId);
   } catch (e) {
-    show(section, false);
+    /* A READ FAILURE IS NOT AN EMPTY LIST, and hiding the section made those
+       two indistinguishable.
+     *
+     * This panel is where a student finds out what has been set for them. When
+     * the read failed it disappeared entirely, so the page said, in effect,
+     * "your teacher has set you nothing" -- to a student who may well have
+     * work due tomorrow. That is the worst possible reading of a network
+     * error, and it was silent: no console message, no state, nothing to
+     * distinguish it from a class with no assignments.
+     *
+     * The section now stays and says what happened, whose fault it is, and
+     * that the deadline has not moved. */
+    show(section, true);
+    show($('[data-sw-list]'), false);
+    show($('[data-sw-empty]'), false);
+    show($('[data-sw-none]'), false);
+    show($('[data-sw-how]'), false);
+    show($('[data-sw-error]'), true);
   }
 }
 

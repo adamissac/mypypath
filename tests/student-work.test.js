@@ -98,3 +98,55 @@ describe('the page is wired', () => {
     expect(page).toContain('data-student-class');
   });
 });
+
+describe('a read failure is not an empty list', () => {
+  const js = fs.readFileSync('assets/js/student-work.js', 'utf8');
+  const html = fs.readFileSync('progress.html', 'utf8');
+
+  /* THE BUG. This panel is where a student finds out what has been set for
+     them. When the read failed, boot()'s catch did `show(section, false)` and
+     the whole thing disappeared -- so the page said, in effect, "your teacher
+     has set you nothing" to a student who may have had work due tomorrow.
+     
+     Silent, too: no console message, no state, nothing at all distinguishing
+     it from a class with no assignments. A silent failure is indistinguishable
+     from "you have nothing", which is exactly the pattern the audit named. */
+
+  it('no longer hides the section on failure', () => {
+    const boot = js.slice(js.indexOf('async function boot'));
+    const code = boot.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+    const catchBlock = code.slice(code.indexOf('} catch (e) {'));
+    expect(catchBlock).not.toMatch(/^\s*show\(section, false\);/m);
+    expect(catchBlock).toContain('show(section, true)');
+  });
+
+  it('shows a real error state instead', () => {
+    expect(js).toContain("show($('[data-sw-error]'), true)");
+    expect(html).toContain('data-sw-error');
+  });
+
+  it('and hides the states that would contradict it', () => {
+    // "Nothing outstanding" next to "we could not load your work" is worse
+    // than either alone.
+    for (const sel of ['data-sw-list', 'data-sw-empty', 'data-sw-none', 'data-sw-how']) {
+      expect(js, sel).toContain(`show($('[${sel}]'), false)`);
+    }
+  });
+
+  it('the message says whose fault it is and that the deadline stands', () => {
+    /* A student reading this needs two things a generic error does not give
+       them: that they have not done anything wrong, and that the work is still
+       due. */
+    expect(html).toContain('not yours');
+    expect(html).toContain('still due');
+  });
+
+  it('is announced, not just painted', () => {
+    expect(html).toMatch(/data-sw-error[^>]*role="alert"/);
+  });
+
+  it('clears on a successful paint', () => {
+    // A recovered connection must not leave a stale alert above real work.
+    expect(js).toContain("show($('[data-sw-error]'), false)");
+  });
+});
