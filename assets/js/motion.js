@@ -307,6 +307,11 @@
     }
 
     if (!root.classList.contains('pp-boot')) {
+      /* Already cleared -- by the inline gate's own cap or by the visitor
+         touching something before this script arrived. That is now the common
+         case rather than the exception, and it is the point: the gate that
+         paints the cover is the one that removes it, so this file is a
+         refinement of the animation rather than the only way out of it. */
       if (root.classList.contains('pp-wait')) requestAnimationFrame(go);
       return;
     }
@@ -366,10 +371,16 @@
     window.addEventListener('wheel', skip, { capture: true, passive: true });
     window.addEventListener('touchstart', skip, { capture: true, passive: true });
 
-    /* Type the command (input is typed; output just prints — like a
-       real terminal). Deliberately unhurried: ~510ms type + banner +
-       ~550ms progress + compile + ready + 380ms hold + 320ms wipe
-       ≈ 2.9s. Any input skips straight to the page. */
+    /* Type the command (input is typed; output just prints — like a real
+       terminal). The choreography below runs ~2.9s if left alone, and it is
+       NOT left alone: index.html's gate caps the whole thing at 1500ms and
+       clears it on any input. What plays is therefore as much of this as fits,
+       which is the command, the banner and most of the progress bar.
+
+       Deliberately not re-timed to fit exactly. A visitor who has already
+       moved on should not be waiting for a tidier ending, and one who has not
+       gets a terminal that was clearly mid-thought when the page arrived --
+       which is what a real one looks like. */
     var i = 0;
     function typeChar() {
       if (finished) return;
