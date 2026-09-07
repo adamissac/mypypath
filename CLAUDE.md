@@ -101,6 +101,39 @@ exports keep reading events, and should.
 Measure, do not estimate: `?readcount=1` switches on `assets/js/read-counter.js`,
 and `scripts/measure-dashboard-reads.py` reports a whole dashboard open.
 
+## Two browser checks that are not in `npm test`
+
+Most of what WCAG and mobile layout ask about is a property of RENDERED output,
+which a jsdom test cannot see. Both of these run a real browser and exit
+non-zero on a regression:
+
+```bash
+npm run test:a11y      # axe-core over 12 page shapes. Budget is ZERO.
+npm run test:mobile    # 390x844 and 768x1024. Overflow, tap size, tiny text.
+```
+
+Run them after any CSS or template change. The a11y budget is zero rather than
+"no worse than before" because the site is genuinely at zero — a ratcheting
+budget is the shape that lets a number sit at 92 for a year.
+
+`npm run test:a11y` is not yet a CI job: the token this was built with lacked
+GitHub's `workflow` scope. The job is written out ready to paste in
+`docs/ci-a11y-job.md`.
+
+## Two cascade traps this codebase has already sprung twice
+
+`pypath-theme.css` and `home-path.css` load **after** `style.css`, so a
+correct-looking rule in the shared sheet can be silently inert:
+
+- the sticky-footer flex column was right and did nothing, because the theme
+  set `min-height: 100%` on the same selector;
+- a 12px font-size floor was right and did nothing for one component, because
+  `home-path.css` set its own `0.72rem`.
+
+Both were invisible on the page and obvious the moment anything was measured.
+If a style change appears to have no effect, check what loads after it before
+concluding the selector is wrong.
+
 ## Checks
 
 - `npm test` — unit tests (vitest)
