@@ -179,6 +179,15 @@ body.page:not(.page-home) > .site-footer {
 
 .inspire-banner__link {
   color: #ffffff !important; /* beat global `a { color: var(--primary-ink) }` */
+  /* 24px tall minimum. Measured on a phone at 101x16 -- the only genuine
+     WCAG 2.2 target-size failure on the site, and it is on the one link that
+     appears at the top of every lesson page. inline-block plus vertical
+     padding, so it grows the hit area without moving the banner text or
+     changing the line box the sentence sits in. */
+  display: inline-block;
+  min-height: 24px;
+  padding: 4px 2px;
+  margin: -4px -2px;
   text-decoration: underline;
   text-decoration-thickness: 1.5px;
   text-underline-offset: 0.18em;

@@ -4827,3 +4827,24 @@ body.page > footer {
   font-size: 0.95rem;
   line-height: 1.6;
 }
+
+/* ------------------------------------------------- a floor on text size */
+
+/* 12px minimum for anything a reader is meant to read.
+ *
+ * Not a WCAG rule -- there is no minimum font size in WCAG -- and very much a
+ * phone rule. Measured at 390x844: badges and terminal status lines rendered
+ * at 11px to 11.5px, which is legible on a laptop held at arm's length and is
+ * not legible on a phone held in one hand on a bus.
+ *
+ * Applied as a floor with clamp() rather than a flat override so a component
+ * that has deliberately chosen 13px keeps it. Only the ones below 12 move. */
+.practice-badge,
+.pp-line,
+.pp-boot-status,
+.pp-ready,
+.path-panel__kicker,
+.copy-snippet-btn,
+.copy-snippet-btn__label {
+  font-size: max(12px, 0.72rem);
+}
