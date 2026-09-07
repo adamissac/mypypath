@@ -252,12 +252,50 @@ async function storedOrDerivedUnlocks(classId, klass) {
   return unitsTargetedBy(await readAssignments(classId).catch(() => []));
 }
 
-/* Opens these units before the assignment that needs them exists. */
+/* Opens these units before the assignment that needs them exists.
+ *
+ * arrayUnion, NOT a read-merge-write, and the difference is a real bug rather
+ * than tidiness.
+ *
+ * This used to read the stored list, merge in the new units, and write the
+ * whole array back. Two co-teachers creating assignments at the same moment
+ * each read the same base and each wrote a different merged list; the second
+ * write won and the first teacher's units were silently gone from it.
+ *
+ * The consequence is exactly the failure this function exists to prevent. The
+ * rules read assignmentUnlocks off the class document to decide whether a
+ * student may record work in a unit, so the losing teacher's class meets an
+ * assignment that is set for them and locked against them -- a student doing
+ * the work and having it refused server-side.
+ *
+ * arrayUnion is applied by the server to whatever the document holds at the
+ * moment it lands, so two concurrent widenings both take effect regardless of
+ * order. It is the same primitive teacherUids and classIds already use in this
+ * file, and widening is precisely a union, which is why the name fits.
+ *
+ * The first write for a class still has to go through the read: arrayUnion on
+ * an absent field creates an array holding only the new units, which would
+ * drop the unlocks every existing assignment was already relying on. So a
+ * class with no stored field gets one derived write, and every write after
+ * that is atomic. */
 async function widenUnlocks(classId, units) {
   const want = (units || []).map(Number)
     .filter((n) => Number.isInteger(n) && n >= 1 && n <= MAX_UNIT);
   if (!want.length) return;
-  const base = await storedOrDerivedUnlocks(classId);
+
+  const klass = await readClass(classId);
+  if (klass && Array.isArray(klass.assignmentUnlocks)) {
+    const base = klass.assignmentUnlocks.map(Number);
+    if (want.every((n) => base.includes(n))) return;
+    await updateDoc(doc(db, `classes/${classId}`), {
+      assignmentUnlocks: arrayUnion(...want),
+    });
+    return;
+  }
+
+  // No stored field yet: derive the full list once, so this first write does
+  // not drop what the existing assignments already hold open.
+  const base = await storedOrDerivedUnlocks(classId, klass);
   const merged = Array.from(new Set(base.concat(want))).sort((a, b) => a - b);
   if (sameUnits(merged, base)) return;
   await updateDoc(doc(db, `classes/${classId}`), { assignmentUnlocks: merged });
