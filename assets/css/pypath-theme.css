@@ -868,19 +868,39 @@ main .container,
 }
 
 /* Readable lesson type — body font, not display Syne */
+/* EVERY heading inside a lesson uses the body face. Not a list of the ones
+   someone remembered.
+
+   Measured on a lesson page: 15 headings in Plus Jakarta Sans and 7 in Syne,
+   interleaved. The Syne ones were bare <h4> sub-headings -- "2. Extremely
+   Versatile", "Python Reads It" -- falling through to the global
+   `h1..h6 { font-family: var(--pp-display) }`, because every other lesson
+   heading level was enumerated here and h4 was not. A numbered sub-heading in
+   the display face directly beneath a section heading in the body face reads
+   as a different kind of thing, which it is not.
+
+   The first fix was to add h4, and the second course immediately showed why
+   that is the wrong shape: /data/ lessons use their own containers
+   (.exercise-section, .quiz__heading, .practice-header) and came back mixed
+   across THREE faces. An enumeration of containers is a list that is wrong
+   again the next time somebody adds one.
+
+   So the rule is scoped to the lesson body instead: inside <main> on a
+   .page-unit page, headings are body-face, full stop. Syne remains the display
+   face for the marketing pages, where it belongs. */
+.page-unit main h1,
+.page-unit main h2,
+.page-unit main h3,
+.page-unit main h4,
+.page-unit main h5,
+.page-unit main h6,
 .page-unit .lesson-title,
-.page-unit .lesson-content h2,
-.page-unit .lesson-content h3,
-.page-unit .lesson-content h3.h4,
-.page-unit .lesson-overview h2,
-.page-unit .gradient-text,
-.page-unit .content-section h2,
-.page-unit .content-section h3,
-.page-unit .info-card h4,
-.page-unit .info-card h3.h4 {
+.page-unit .gradient-text {
   font-family: var(--pp-body) !important;
   letter-spacing: -0.02em;
   color: var(--pp-ink) !important;
+  /* The gradient-text treatment is a marketing-page flourish; inside a lesson
+     it makes a heading unreadable against the content around it. */
   background: none !important;
   -webkit-text-fill-color: unset !important;
 }
