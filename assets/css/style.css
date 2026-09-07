@@ -4773,3 +4773,41 @@ pre.code[data-theme="dark"] code,
 
 /* The "Join a class" dialog and the class card live in auth.css, next to the
    account menu that opens them. */
+
+/* ------------------------------------------- the footer sits at the bottom */
+
+/* Verified on the deployed site: /quiz.html put its footer at y=464 in a
+   900px viewport, leaving 436px of blank white beneath it. Same on
+   /certificate.html (246px), /404.html (184px) and /unit-test.html (137px).
+   A footer floating mid-screen with nothing under it reads as a page that
+   failed to finish loading, which on /quiz.html -- whose empty state was
+   already almost nothing -- is exactly the wrong impression.
+   
+   Every page in this site is body > header + main + footer, so one rule fixes
+   all of them rather than each page growing its own min-height.
+   
+   100dvh with a 100vh fallback: on mobile browsers 100vh is the viewport with
+   the URL bar HIDDEN, so a 100vh column overflows by the height of the bar and
+   gives every short page a pointless scroll. dvh is the dynamic value and is
+   what this actually wants; the vh line above it is what older browsers get,
+   and being slightly too tall is a much smaller problem than a footer in the
+   middle of the screen. */
+body.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Takes the slack, so the footer is pushed down rather than centred. */
+body.page > main {
+  flex: 1 0 auto;
+}
+
+/* Header and footer keep their natural height; without this a flex parent
+   would happily squash them to fit. */
+body.page > header,
+body.page > .site-footer,
+body.page > footer {
+  flex-shrink: 0;
+}
