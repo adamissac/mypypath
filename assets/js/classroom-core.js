@@ -294,6 +294,95 @@
     return total ? Math.round((done / total) * 100) : 0;
   }
 
+  /* --------------------------------------------------------- timezones */
+
+  /* A due date is the end of a calendar day IN THE CLASS'S TIMEZONE, stored as
+   * an absolute instant. Full argument in
+   * docs/superpowers/specs/2026-09-07-due-dates-and-timezones-design.md.
+   *
+   * WHY THIS IS NOT new Date(str + 'T23:59:59'). That form has no zone suffix,
+   * so it is parsed in the BROWSER's timezone -- which makes the meaning of a
+   * deadline a property of whoever happened to type it. A teacher in New York
+   * sets "due Friday"; the instant is Saturday 03:59 UTC; a student in London
+   * is shown Saturday and is not late until 05:00 their Saturday morning. And
+   * a co-teacher in Los Angeles picking the same calendar date sets a deadline
+   * three hours later than their colleague would have, with nobody told.
+   *
+   * WHY AN IANA NAME AND NOT AN OFFSET. '-04:00' is not a timezone, it is what
+   * a timezone was on one particular day. A class that sets an April deadline
+   * in March crosses a DST boundary, and a stored offset would be an hour
+   * wrong on the far side of it.
+   */
+
+  /* The zone's offset from UTC, in milliseconds, at a given instant.
+   *
+   * Intl is the only thing in the platform that knows the rules, and it will
+   * only format -- so this formats the instant in the target zone, reads the
+   * wall-clock numbers back, and measures how far they are from the same
+   * numbers read as UTC. That difference IS the offset. */
+  function zoneOffsetAt(ms, timeZone) {
+    if (!timeZone) return -new Date(ms).getTimezoneOffset() * 60000;
+    var dtf;
+    try {
+      dtf = new Intl.DateTimeFormat('en-US', {
+        timeZone: timeZone,
+        hour12: false,
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      });
+    } catch (e) {
+      // An unknown zone name is not a reason to lose a deadline. Fall back to
+      // the reader's zone, which is exactly the old behaviour.
+      return -new Date(ms).getTimezoneOffset() * 60000;
+    }
+    var parts = {};
+    dtf.formatToParts(new Date(ms)).forEach(function (p) { parts[p.type] = p.value; });
+    var asUTC = Date.UTC(
+      Number(parts.year),
+      Number(parts.month) - 1,
+      Number(parts.day),
+      // hour12:false still yields '24' for midnight in some engines.
+      Number(parts.hour) % 24,
+      Number(parts.minute),
+      Number(parts.second)
+    );
+    /* The milliseconds are subtracted back out because Intl only formats to
+       SECOND precision, so asUTC is the whole second containing `ms`. Without
+       this the offset comes back up to 999ms short, and endOfDayIn -- which is
+       built on 23:59:59.999 exactly -- lands one second PAST midnight, giving
+       every student an extra second and the wrong calendar date. Found by
+       reading a due date back in its own zone and getting the next day. */
+    return asUTC - (ms - (ms % 1000 + 1000) % 1000);
+  }
+
+  /* 'YYYY-MM-DD' -> the epoch millisecond at 23:59:59.999 on that date in
+   * `timeZone`.
+   *
+   * Corrected TWICE on purpose. The first guess uses the offset at the naive
+   * UTC instant, which is the wrong offset whenever the true answer lands on
+   * the other side of a DST transition -- a date in late March or late October
+   * in a zone that observes one. Re-reading the offset at the corrected
+   * instant and applying it again lands on the right side. A third pass never
+   * changes anything, because no zone shifts twice within a day. */
+  function endOfDayIn(dateStr, timeZone) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(dateStr || ''));
+    if (!m) return 0;
+    var naive = Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 23, 59, 59, 999);
+    var guess = naive - zoneOffsetAt(naive, timeZone);
+    return naive - zoneOffsetAt(guess, timeZone);
+  }
+
+  /* The calendar date an instant falls on, in a given zone -- so the date a
+     teacher set and the date a student reads are the same string, whatever
+     browser each of them is using. */
+  function dateInZone(ms, timeZone) {
+    if (!ms) return '';
+    var d = new Date(ms + zoneOffsetAt(ms, timeZone));
+    return d.getUTCFullYear() + '-'
+      + String(d.getUTCMonth() + 1).padStart(2, '0') + '-'
+      + String(d.getUTCDate()).padStart(2, '0');
+  }
+
   /* ------------------------------------------------------- assignments */
 
   /* When a student first satisfied something, rather than whether they have.
@@ -1096,6 +1185,9 @@
     STRUGGLE_RATE: STRUGGLE_RATE,
     EXPLANATIONS: EXPLANATIONS,
     toMillis: toMillis,
+    zoneOffsetAt: zoneOffsetAt,
+    endOfDayIn: endOfDayIn,
+    dateInZone: dateInZone,
     quizScore: quizScore,
     lessonState: lessonState,
     unitState: unitState,

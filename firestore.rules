@@ -236,8 +236,16 @@ service cloud.firestore {
         && request.resource.data.joinCode.size() == 6
         && request.resource.data.archived == false
         && request.resource.data.createdAt == request.time
+        // timezone is the class's IANA zone name, and it is what makes a due
+        // date mean the end of a day in the ROOM rather than in whichever
+        // browser typed it. Optional: every class created before this field
+        // existed has none and keeps working.
+        && (!('timezone' in request.resource.data)
+            || (request.resource.data.timezone is string
+                && request.resource.data.timezone.size() <= 64))
         && request.resource.data.keys().hasOnly(
-             ['name', 'joinCode', 'teacherUids', 'createdAt', 'archived', 'schemaVersion']);
+             ['name', 'joinCode', 'teacherUids', 'createdAt', 'archived',
+              'timezone', 'schemaVersion']);
 
       // A teacher may rename, archive, rotate the code, and add a co-teacher.
       // They may not write themselves out of the list: an update that drops
