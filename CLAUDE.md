@@ -101,24 +101,56 @@ exports keep reading events, and should.
 Measure, do not estimate: `?readcount=1` switches on `assets/js/read-counter.js`,
 and `scripts/measure-dashboard-reads.py` reports a whole dashboard open.
 
-## Two browser checks that are not in `npm test`
+## Five browser checks that are not in `npm test`
 
-Most of what WCAG and mobile layout ask about is a property of RENDERED output,
-which a jsdom test cannot see. Both of these run a real browser and exit
-non-zero on a regression:
+Most of what accessibility, layout and performance ask about is a property of
+RENDERED output, which a jsdom test cannot see. Each of these drives a real
+browser and exits non-zero on a regression:
 
 ```bash
 npm run test:a11y      # axe-core over 12 page shapes. Budget is ZERO.
 npm run test:mobile    # 390x844 and 768x1024. Overflow, tap size, tiny text.
+npm run test:keyboard  # tab order, focus rings, keyboard traps.
+npm run test:motion    # nothing may animate under prefers-reduced-motion.
+npm run test:perf      # page weight and request count, critical vs deferred.
 ```
 
 Run them after any CSS or template change. The a11y budget is zero rather than
 "no worse than before" because the site is genuinely at zero — a ratcheting
 budget is the shape that lets a number sit at 92 for a year.
 
-`npm run test:a11y` is not yet a CI job: the token this was built with lacked
-GitHub's `workflow` scope. The job is written out ready to paste in
-`docs/ci-a11y-job.md`.
+Two more need an emulator and a seeded class:
+
+```bash
+npm run emulators                              # terminal 1
+STUDENTS=30 node scripts/seed-classroom.mjs    # terminal 2
+node scripts/measure-dashboard-reads.py        # what a dashboard open costs
+node scripts/verify-student-paths.mjs          # the four student states
+```
+
+None of these is a CI job yet: the token this was built with lacked GitHub's
+`workflow` scope, so `.github/workflows/ci.yml` could not be written. The a11y
+job is ready to paste in `docs/ci-a11y-job.md`; the other four follow the same
+shape.
+
+## Measure before concluding
+
+Almost every number in the audit that prompted this work was wrong in a way
+that changed what needed doing, and the pattern is worth knowing:
+
+- "43 script tags on a lesson page" — the file has 7. It makes **67 requests**,
+  because ES modules fan out. Requests are what a browser pays.
+- "17 undersized tap targets" — **one**, once WCAG's spacing and inline
+  exceptions are applied. The one is real and was on every lesson page.
+- "two files both named main.css" — there is no `main.css` in this repo.
+- "~10 breakpoints" — 14 media queries; a naive grep says 30 because it counts
+  element `max-width` properties too. See `docs/css-breakpoints.md`.
+- "`/quiz.html` has no empty state" — it had five, all unreachable, because the
+  module top-level-awaits Firebase and its `DOMContentLoaded` listener was
+  registered after the event had fired.
+
+The scripts above exist so the next question of this kind is answered with a
+number rather than a grep.
 
 ## Two cascade traps this codebase has already sprung twice
 
