@@ -293,11 +293,32 @@ function statusFor(assignment, student) {
   });
 }
 
+/* The active class's zone, or '' for a class that predates the field -- which
+   falls back to the reader's zone, exactly as it behaves today. Deliberately
+   not defaulted to the current teacher's zone: that would silently reinterpret
+   the due dates of every existing class, moving deadlines under students who
+   are already working to them. */
+function classTimezone() {
+  const klass = classes.filter((c) => c.id === activeClassId)[0];
+  return (klass && klass.timezone) || '';
+}
+
+/* Formatted in the CLASS's zone, so the date a teacher set and the date a
+   student is shown are the same string whatever browser each of them uses.
+   Without this the instant was right and the two of them still read different
+   days off it. */
 function shortDate(millis) {
   if (!millis) return '';
-  return new Date(millis).toLocaleDateString(undefined, {
-    year: 'numeric', month: 'short', day: 'numeric',
-  });
+  const tz = classTimezone();
+  const opts = { year: 'numeric', month: 'short', day: 'numeric' };
+  if (tz) opts.timeZone = tz;
+  try {
+    return new Date(millis).toLocaleDateString(undefined, opts);
+  } catch (e) {
+    // An unrecognised zone must not cost the teacher the date entirely.
+    return new Date(millis).toLocaleDateString(undefined,
+      { year: 'numeric', month: 'short', day: 'numeric' });
+  }
 }
 
 /* What an assignment asks for: a count first, the list behind a disclosure.
@@ -1784,10 +1805,14 @@ function wire() {
 
       const title = $('#cr-assign-title').value;
       const raw = $('#cr-assign-due').value;
-      // A date input gives midnight. Work due "on Friday" is due at the end of
-      // Friday, not at the start of it, so the deadline is the end of that day
-      // in the teacher's own timezone.
-      const due = raw ? new Date(raw + 'T23:59:59').getTime() : 0;
+      /* A date input gives a calendar day. Work due "on Friday" is due at the
+         END of Friday -- and end of Friday WHERE is the part that used to be
+         accidental. new Date(raw + 'T23:59:59') has no zone suffix and is
+         parsed in the browser's zone, so a co-teacher in Los Angeles setting
+         the same date as their colleague in New York set a deadline three
+         hours later, and neither was told. It is now the end of that day in
+         the CLASS's zone, for everyone who sets it. */
+      const due = raw ? CORE.endOfDayIn(raw, classTimezone()) : 0;
 
       const units = $$('[data-cr-assign-unit]:checked').map((b) => Number(b.value));
       const lessonPaths = $$('[data-cr-assign-lesson]:checked').map((b) => b.value);

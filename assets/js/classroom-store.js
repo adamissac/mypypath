@@ -36,6 +36,18 @@ const SCHEMA = window.PyPathSchema;
 
 const MAX_CODE_ATTEMPTS = 6;
 
+/* The zone this browser is in, as an IANA name. Guarded because a browser that
+   cannot answer must not stop a teacher creating a class -- a class with no
+   timezone falls back to the reader's, which is exactly the behaviour every
+   class created before this field existed already has. */
+function classTimezone() {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+  } catch (e) {
+    return '';
+  }
+}
+
 function version() {
   return SCHEMA ? SCHEMA.SCHEMA_VERSION : 1;
 }
@@ -106,6 +118,14 @@ export async function createClass(uid, name) {
     name: clean,
     joinCode: code,
     teacherUids: [uid],
+    /* The class's timezone, so a due date means the end of a calendar day in
+       the ROOM rather than in whichever browser typed it. An IANA name, never
+       an offset: '-04:00' is what a zone was on one particular day, and a
+       class setting an April deadline in March would be an hour wrong across
+       the boundary. Defaults to the creating teacher's zone, which is right
+       far more often than not -- a class is usually created from the room it
+       will be taught in. */
+    timezone: classTimezone(),
     createdAt: serverTimestamp(),
     archived: false,
     schemaVersion: version(),
