@@ -4894,3 +4894,51 @@ body.page > footer {
     scroll-behavior: auto !important;
   }
 }
+
+/* ---------------------------------------------- the last row of a grid */
+
+/* One rule for the trailing row, applied to every lesson card grid.
+ *
+ * These were `grid-template-columns: repeat(auto-fit, minmax(180px, 1fr))`,
+ * which lays out beautifully until the item count is not a multiple of the
+ * column count. Measured on a lesson page at 1100px: the "what Python is used
+ * for" grid ran 3, 3, 2 and the feature grid ran 2, 1 -- each trailing row
+ * left-aligned with a column-sized hole beside it, which reads as a missing
+ * card rather than as the end of a list.
+ *
+ * THE RULE: the last row stretches. Flexbox rather than grid, because grid
+ * cannot express "the items in whatever turns out to be the final row should
+ * share the leftover width" -- there is no selector for a row. `flex: 1 1
+ * <basis>` gives exactly that, and only the short row is affected because a
+ * full row has no leftover width to share.
+ *
+ * The alternative rule was to centre the remainder. Rejected because it leaves
+ * the trailing cards misaligned with the columns above them, which is a second
+ * kind of untidy rather than a fix for the first.
+ *
+ * max-width caps the growth. Without it a single trailing card becomes a
+ * full-width banner, which is a different item to the eye rather than the last
+ * one in a set. Twice the basis is enough to close any gap and not enough to
+ * change what the card looks like it is.
+ */
+.uses-grid,
+.feature-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+.uses-grid > * {
+  flex: 1 1 180px;
+  max-width: 360px;
+}
+
+.feature-grid > * {
+  flex: 1 1 260px;
+  /* No cap here, unlike .uses-grid. A feature card is substantial content --
+     a heading and a paragraph -- and a lone one filling the row reads as the
+     last item in a set. A 285px hole beside it, which is what a 520px cap
+     produced at 1200px, reads as a card that failed to render. The small
+     chips in .uses-grid are the opposite case: one of those stretched across
+     a whole row would look like a different kind of thing. */
+}
