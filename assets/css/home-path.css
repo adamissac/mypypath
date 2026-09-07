@@ -623,7 +623,7 @@ html.reduced-motion .path-journey.is-active .path-map--alive {
 .path-stop-num {
   fill: color-mix(in srgb, var(--home-ink) 45%, transparent);
   font-family: var(--home-display);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   text-anchor: middle;
   dominant-baseline: central;
@@ -695,7 +695,10 @@ html.reduced-motion .path-journey.is-active .path-map--alive {
 
 .path-panel__kicker {
   margin: 0 0 0.5rem;
-  font-size: 0.72rem;
+  /* Floored at 12px. 0.72rem is 11.5px, which reads on a laptop and does not
+     on a phone held in one hand -- and this is the label telling someone where
+     they are on the trail. See the note in style.css. */
+  font-size: max(12px, 0.72rem);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
