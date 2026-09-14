@@ -20,6 +20,7 @@ const later = {
   // Units rewritten to the richer lesson schema live in a file each and are
   // spread last, so they replace the first-draft version of the same unit.
   ...require('./data-course-unit-3.cjs'),
+  ...require('./data-course-unit-4.cjs'),
 };
 
 module.exports = {

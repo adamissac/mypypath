@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "A new column is an assignment, and drop returns a new table by default.",
+    "prompt": "Adding and Dropping Columns: Add a total, leave the original alone",
     "packages": [
       "pandas"
     ],
@@ -37,42 +37,90 @@
     ],
     "hint": "Take a copy first, then assign the new column onto the copy. Assigning straight onto df would change the caller's table, which the hidden case checks."
   },
+  "exercise2": {
+    "prompt": "Adding and Dropping Columns: Keep only what you need",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "list(only(__import__(\"pandas\").DataFrame({\"a\": [1], \"b\": [2], \"c\": [3]}), [\"c\", \"a\"]).columns)",
+        "expect": "['c', 'a']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the original keeps all its columns",
+        "call": "(lambda d: (only(d, [\"a\"]), list(d.columns))[-1])(__import__(\"pandas\").DataFrame({\"a\": [1], \"b\": [2]}))",
+        "expect": "['a', 'b']"
+      },
+      {
+        "name": "one column is a valid request",
+        "call": "list(only(__import__(\"pandas\").DataFrame({\"a\": [1], \"b\": [2]}), [\"b\"]).columns)",
+        "expect": "['b']"
+      },
+      {
+        "name": "the rows come with the columns",
+        "call": "only(__import__(\"pandas\").DataFrame({\"a\": [1, 2], \"b\": [3, 4]}), [\"b\"])[\"b\"].tolist()",
+        "expect": "[3, 4]"
+      },
+      {
+        "name": "the result is a table, not a Series",
+        "call": "type(only(__import__(\"pandas\").DataFrame({\"a\": [1]}), [\"a\"])).__name__",
+        "expect": "'DataFrame'"
+      }
+    ],
+    "hint": "df[keep] with a list of names already gives a new table in the order you asked for. Add .copy() so later edits to the result cannot reach back."
+  },
   "questions": [
     {
       "id": "d4-adc-1",
       "prompt": "What does df.drop(columns=[\"b\"]) do to df?",
       "choices": [
         "Removes b from df",
-        "Nothing -- it returns a new table",
-        "Raises an error",
-        "Empties df"
+        "Nothing — it returns a new table",
+        "Raises",
+        "Renames b"
       ],
       "answer": 1,
-      "explain": "It returns a copy without that column. Forgetting to reassign is why people report that drop \"did not work\"."
+      "explain": "Assign the result or pass inplace=True. Calling it and ignoring the return is a no-op that looks like a bug elsewhere."
     },
     {
       "id": "d4-adc-2",
       "prompt": "How do you create a new column?",
       "choices": [
-        "df.add(\"total\")",
-        "df[\"total\"] = ...",
-        "df.new(\"total\")",
-        "df.columns.append"
+        "df.add(\"x\", values)",
+        "df[\"x\"] = values",
+        "df.insert_column(\"x\")",
+        "df.new(\"x\")"
       ],
       "answer": 1,
-      "explain": "Assignment to a name that is not there yet creates it, the same way it does for a dictionary key."
+      "explain": "Assignment to a name that does not exist yet creates it."
     },
     {
       "id": "d4-adc-3",
       "prompt": "Why take a copy before adding a column inside a function?",
       "choices": [
-        "It is faster",
-        "Otherwise you change the table the caller passed in",
-        "pandas requires it",
-        "To save memory"
+        "For speed",
+        "Otherwise you change the caller’s table",
+        "To fix the dtype",
+        "copy() is never needed"
       ],
       "answer": 1,
-      "explain": "A function that quietly rewrites its argument is the hardest kind of bug to find, because the damage shows up somewhere else entirely."
+      "explain": "A DataFrame passed in is the same object, not a copy, so assigning onto it is visible to whoever handed it over."
+    },
+    {
+      "id": "d4-adc-4",
+      "prompt": "What does df.rename(columns={\"n\": \"count\"}) return?",
+      "choices": [
+        "None",
+        "A new table with the column renamed",
+        "The renamed column",
+        "The old name"
+      ],
+      "answer": 1,
+      "explain": "Like drop, it hands back a new table and leaves yours alone unless you reassign or pass inplace."
     }
   ]
 }

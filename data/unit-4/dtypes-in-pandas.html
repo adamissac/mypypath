@@ -173,37 +173,140 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Read <code>dtypes</code> and say what each answer means.</li>
+<li>Explain why one bad value turns a numeric column into <code>object</code>.</li>
+<li>Convert with <code>astype</code>, and with <code>to_numeric</code> when the data is messy.</li>
+<li>Find the values that would not convert, rather than guessing.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>A numeric column read as text sorts alphabetically, sums by concatenating and compares wrongly — and none of that raises. The dtype is the single cheapest thing to check after a load, and this lesson is the one that makes the rest of the course's numbers trustworthy.</p>
+</div>
 
 <div class="content-section">
 <h2>Ask before you calculate</h2>
-<p>dtypes tells you what every column is. A column of numbers read from a file is very often object, which means text, and averaging it will either fail or lie.</p>
+<p><code>dtypes</code> tells you what every column is. A column of numbers read from a file is very often text, and nothing about printing it will show you that.</p>
+<h3 class="h4">What the answers mean</h3>
+<p><code>int64</code> and <code>float64</code> are numbers. <code>object</code> means Python objects, which for a data file almost always means strings. <code>bool</code> and <code>datetime64</code> say what they look like.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"score": ["92", "88"], "n": [1, 2]})
-print(df.dtypes)</code></pre>
+print(df.dtypes)
+print(df)</code></pre>
+<p class="note">Printed, the two columns look identical. Only the dtypes line tells you one of them is text.</p>
+<h3 class="h4">What text does to arithmetic</h3>
+<p>Summing a text column concatenates it. Sorting it puts "100" before "20". Neither raises, and both are wrong.</p>
+<pre class="code"><code>import pandas as pd
 
+text = pd.Series(["92", "88"])
+nums = pd.Series([92, 88])
+print(text.sum())
+print(nums.sum())
+print(sorted(["100", "20"]))</code></pre>
+<h3 class="h4">Why one bad value spoils the column</h3>
+<p>A column has one dtype. If a single value cannot be a number, the whole column falls back to object — so one stray "n/a" in ten thousand rows costs you the entire column.</p>
+<pre class="code"><code>import pandas as pd
+
+print(pd.Series([1, 2, 3]).dtype)
+print(pd.Series([1, 2, "n/a"]).dtype)</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Two columns that print the same</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>These two columns look identical printed. Show that they are not, three different ways.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;a&quot;: [&quot;1&quot;, &quot;2&quot;], &quot;b&quot;: [1, 2]})\n\nprint(df)\nprint(df.dtypes)\nprint(df[&quot;a&quot;].sum())\nprint(df[&quot;b&quot;].sum())\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+df = pd.DataFrame({"a": ["1", "2"], "b": [1, 2]})
+
+print(df)
+print(df.dtypes)
+print(df["a"].sum())
+print(df["b"].sum())
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Converting a column</h2>
-<p>astype changes a column's type when every value can make the trip. to_numeric with errors="coerce" is the forgiving version: anything it cannot convert becomes missing rather than raising.</p>
+<p><code>astype</code> changes a column's type when every value can make the trip. <code>to_numeric</code> with <code>errors="coerce"</code> is for when they cannot.</p>
+<h3 class="h4">astype, when the data is clean</h3>
+<p>Direct and strict. If anything in the column cannot convert, it raises — which is the right behaviour when you believe the column is clean and want to be told if it is not.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"score": ["92", "88"]})
 df["score"] = df["score"].astype(int)
-print(df["score"].sum())
+print(df["score"].sum())</code></pre>
+<h3 class="h4">to_numeric, when it is not</h3>
+<p><code>errors="coerce"</code> turns anything unconvertible into NaN instead of raising. You then decide what the NaN means — dropped, or filled — rather than having the decision made for you.</p>
+<pre class="code"><code>import pandas as pd
 
-messy = pd.Series(["92", "n/a"])
-print(pd.to_numeric(messy, errors="coerce").tolist())</code></pre>
+messy = pd.Series(["10", "n/a", "5"])
+numbers = pd.to_numeric(messy, errors="coerce")
+print(numbers)
+print(numbers.sum())        # NaN is skipped by sum
+print(numbers.fillna(0).sum())</code></pre>
+<h3 class="h4">Find what would not convert</h3>
+<p>Before filling anything, look at what failed. Coerce, then mask for the new NaNs against the original column — that is the list of values worth reading with your own eyes.</p>
+<pre class="code"><code>import pandas as pd
 
+messy = pd.Series(["10", "n/a", "5", ""])
+bad = messy[pd.to_numeric(messy, errors="coerce").isna()]
+print(bad.tolist())</code></pre>
+<p class="note">Usually this is a short list of two or three markers — "n/a", "-", a stray header repeated mid-file — and knowing them lets you name them at load time with na_values instead.</p>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Which values failed</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Coerce this column to numbers and print the values that did not survive, before deciding what to do about them.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\nmessy = pd.Series([&quot;10&quot;, &quot;n/a&quot;, &quot;5&quot;, &quot;-&quot;, &quot;7&quot;])\nnumbers = pd.to_numeric(messy, errors=&quot;coerce&quot;)\n\nprint(numbers.tolist())\nprint(None)   # the original values that became NaN\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+messy = pd.Series(["10", "n/a", "5", "-", "7"])
+numbers = pd.to_numeric(messy, errors="coerce")
+
+print(numbers.tolist())
+print(None)   # the original values that became NaN
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Total a messy column</h3>
 <p>Write <code>numeric_total(df)</code> that returns the sum of the <code>score</code> column, where the scores arrived as text and anything that is not a number counts as zero.</p>
 <p class="hint-text">to_numeric with errors="coerce" turns the junk into missing values, and fillna(0) then makes them zero before you sum.</p>
 
@@ -225,6 +328,32 @@ print(numeric_total(pd.DataFrame({"score": ["92", "88"]})))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Report what would not convert</h3>
+<p>Write <code>unconvertible(df)</code> that returns a list of the values in the <code>score</code> column that cannot be read as numbers, in the order they appear. Report them rather than silently replacing them.</p>
+<p class="hint-text">Coerce the column, ask which results are NaN with .isna(), and use that mask on the original column rather than on the converted one.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef unconvertible(df):\n    # The original values that fail to become numbers.\n    return []\n\nprint(unconvertible(pd.DataFrame({&quot;score&quot;: [&quot;10&quot;, &quot;n/a&quot;, &quot;5&quot;]})))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def unconvertible(df):
+    # The original values that fail to become numbers.
+    return []
+
+print(unconvertible(pd.DataFrame({"score": ["10", "n/a", "5"]})))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

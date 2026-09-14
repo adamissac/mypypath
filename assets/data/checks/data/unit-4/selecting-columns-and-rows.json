@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "loc goes by label, iloc goes by position, and the difference matters.",
+    "prompt": "Selecting Columns and Rows: The score belonging to a name",
     "packages": [
       "pandas"
     ],
@@ -25,18 +25,49 @@
     ],
     "hint": "Mask on the name column, then read the score off what survives. Assuming a position is the bug the second hidden case is looking for."
   },
+  "exercise2": {
+    "prompt": "Selecting Columns and Rows: The top row, by position",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "best_name(__import__(\"pandas\").DataFrame({\"name\": [\"Zoe\", \"Ada\"], \"score\": [10, 92]}))",
+        "expect": "'Ada'"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the winner is not assumed to be first",
+        "call": "best_name(__import__(\"pandas\").DataFrame({\"name\": [\"a\", \"b\", \"c\"], \"score\": [1, 50, 2]}))",
+        "expect": "'b'"
+      },
+      {
+        "name": "an already-sorted table still works",
+        "call": "best_name(__import__(\"pandas\").DataFrame({\"name\": [\"x\", \"y\"], \"score\": [9, 1]}))",
+        "expect": "'x'"
+      },
+      {
+        "name": "one row is its own winner",
+        "call": "best_name(__import__(\"pandas\").DataFrame({\"name\": [\"solo\"], \"score\": [3]}))",
+        "expect": "'solo'"
+      }
+    ],
+    "hint": "sort_values(\"score\", ascending=False) then .iloc[0][\"name\"]. Using .loc[0] would give you the original row 0, which the first hidden case is checking."
+  },
   "questions": [
     {
       "id": "d4-scr-1",
       "prompt": "What is the difference between loc and iloc?",
       "choices": [
-        "None",
-        "loc uses index labels, iloc uses positions",
         "loc is faster",
-        "iloc works only on columns"
+        "loc goes by label, iloc by position",
+        "loc is for columns",
+        "There is none"
       ],
       "answer": 1,
-      "explain": "They look identical on a fresh table with a 0..n index and diverge the moment it is sorted or filtered, which is when the bug shows up."
+      "explain": "They agree on a default index and stop agreeing the moment you sort or filter."
     },
     {
       "id": "d4-scr-2",
@@ -44,23 +75,35 @@
       "choices": [
         "A Series",
         "A DataFrame with those two columns",
-        "An error",
-        "The first two rows"
+        "A list",
+        "An error"
       ],
       "answer": 1,
-      "explain": "A list of names selects several columns, and several columns is a table. One name gives a Series instead."
+      "explain": "The inner brackets are a list of names, and asking for a list of columns gives a table back."
     },
     {
       "id": "d4-scr-3",
       "prompt": "After sorting a table, what does df.iloc[0] give you?",
       "choices": [
-        "The row that was first before sorting",
-        "The row that is first now",
+        "The original first row",
+        "The row now at the top",
         "An error",
-        "The lowest index label"
+        "The index"
       ],
       "answer": 1,
-      "explain": "Position follows the current order. The label that used to be first is still reachable through loc."
+      "explain": "Positions follow the new order; labels stay with their rows. That is precisely the difference."
+    },
+    {
+      "id": "d4-scr-4",
+      "prompt": "How many rows does df.loc[0:2] return on a default index?",
+      "choices": [
+        "Two",
+        "Three",
+        "Zero",
+        "It raises"
+      ],
+      "answer": 1,
+      "explain": "A loc slice includes its end label, unlike every other slice in Python."
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "What each column is holding, and how to change it on purpose.",
+    "prompt": "dtypes in pandas: Total a messy column",
     "packages": [
       "pandas"
     ],
@@ -30,42 +30,90 @@
     ],
     "hint": "to_numeric with errors=\"coerce\" turns the junk into missing values, and fillna(0) then makes them zero before you sum."
   },
+  "exercise2": {
+    "prompt": "dtypes in pandas: Report what would not convert",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "unconvertible(__import__(\"pandas\").DataFrame({\"score\": [\"10\", \"n/a\", \"5\", \"-\"]}))",
+        "expect": "['n/a', '-']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a clean column reports nothing",
+        "call": "unconvertible(__import__(\"pandas\").DataFrame({\"score\": [\"1\", \"2\"]}))",
+        "expect": "[]"
+      },
+      {
+        "name": "an empty string does not convert",
+        "call": "unconvertible(__import__(\"pandas\").DataFrame({\"score\": [\"\", \"3\"]}))",
+        "expect": "['']"
+      },
+      {
+        "name": "the original order is kept",
+        "call": "unconvertible(__import__(\"pandas\").DataFrame({\"score\": [\"x\", \"1\", \"y\"]}))",
+        "expect": "['x', 'y']"
+      },
+      {
+        "name": "an empty table reports nothing",
+        "call": "unconvertible(__import__(\"pandas\").DataFrame({\"score\": []}))",
+        "expect": "[]"
+      }
+    ],
+    "hint": "Coerce the column, ask which results are NaN with .isna(), and use that mask on the original column rather than on the converted one."
+  },
   "questions": [
     {
       "id": "d4-dt-1",
       "prompt": "A column read from a CSV shows dtype object. What does that usually mean?",
       "choices": [
         "It is empty",
-        "It is holding text",
-        "It is an index",
-        "It is corrupted"
+        "It is holding strings",
+        "It is a date",
+        "It is boolean"
       ],
       "answer": 1,
-      "explain": "object is pandas saying \"these are Python objects\", which for a data file almost always means strings that have not been converted yet."
+      "explain": "object means Python objects, and for a data file that is almost always text — often because one value would not parse."
     },
     {
       "id": "d4-dt-2",
       "prompt": "What does pd.to_numeric(s, errors=\"coerce\") do with \"n/a\"?",
       "choices": [
         "Raises",
-        "Turns it into a missing value",
-        "Turns it into 0",
+        "Makes it NaN",
+        "Makes it 0",
         "Leaves it as text"
       ],
       "answer": 1,
-      "explain": "It becomes NaN, which you then decide about -- drop it or fill it. That decision is yours rather than the parser's."
+      "explain": "Which lets you count the failures and decide, rather than having the decision made by an exception."
     },
     {
       "id": "d4-dt-3",
       "prompt": "Why does astype(int) fail on a column containing \"n/a\"?",
       "choices": [
         "It is too long",
-        "There is no integer that \"n/a\" means",
-        "astype only works on floats",
+        "There is no integer for it, and astype does not skip",
+        "astype only takes floats",
         "It does not fail"
       ],
       "answer": 1,
-      "explain": "astype is the strict conversion: every value has to make the trip. When some cannot, to_numeric with coerce is the tool that keeps going."
+      "explain": "astype is strict on purpose. That strictness is useful when you believe the column is clean."
+    },
+    {
+      "id": "d4-dt-4",
+      "prompt": "What does pd.Series([\"92\", \"88\"]).sum() give you?",
+      "choices": [
+        "180",
+        "\"9288\"",
+        "An error",
+        "NaN"
+      ],
+      "answer": 1,
+      "explain": "Summing strings concatenates them. The answer is wrong and nothing raises, which is why the dtype check matters."
     }
   ]
 }

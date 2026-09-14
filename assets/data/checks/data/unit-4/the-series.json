@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "A column with labels attached, and the labels travel with the data.",
+    "prompt": "The Series: Who scored highest",
     "packages": [
       "pandas"
     ],
@@ -30,18 +30,54 @@
     ],
     "hint": "idxmax gives the label of the largest value; max would give you the value itself, which is the other question."
   },
+  "exercise2": {
+    "prompt": "The Series: Above their own average",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "above_average(__import__(\"pandas\").Series([90, 80, 70], index=[\"Ada\", \"Grace\", \"Alan\"]))",
+        "expect": "['Ada']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "more than one name can qualify",
+        "call": "above_average(__import__(\"pandas\").Series([10, 10, 1], index=[\"a\", \"b\", \"c\"]))",
+        "expect": "['a', 'b']"
+      },
+      {
+        "name": "identical scores put nobody above the mean",
+        "call": "above_average(__import__(\"pandas\").Series([5, 5], index=[\"x\", \"y\"]))",
+        "expect": "[]"
+      },
+      {
+        "name": "a single entry is its own mean",
+        "call": "above_average(__import__(\"pandas\").Series([7], index=[\"solo\"]))",
+        "expect": "[]"
+      },
+      {
+        "name": "the labels come from the index",
+        "call": "above_average(__import__(\"pandas\").Series([1, 9], index=[\"low\", \"high\"]))",
+        "expect": "['high']"
+      }
+    ],
+    "hint": "Mask the Series with scores > scores.mean(), then read .index off what survives and turn it into a list."
+  },
   "questions": [
     {
       "id": "d4-ser-1",
       "prompt": "What does a Series have that a numpy array does not?",
       "choices": [
-        "Speed",
+        "A dtype",
         "An index of labels",
-        "Arithmetic",
+        "Elementwise arithmetic",
         "A length"
       ],
       "answer": 1,
-      "explain": "The index is the whole difference, and it is why two Series added together align on labels rather than on position."
+      "explain": "The labels are the addition, and they survive filtering and align on arithmetic."
     },
     {
       "id": "d4-ser-2",
@@ -49,23 +85,35 @@
       "choices": [
         "None",
         "max gives the value, idxmax gives its label",
-        "max is faster",
-        "idxmax sorts first"
+        "idxmax is faster",
+        "max only works on numbers"
       ],
       "answer": 1,
-      "explain": "\"How high was the best score\" and \"who got it\" are different questions, and mixing them up is a common early bug."
+      "explain": "\"What was the best score\" and \"who got it\" are different questions, and neither call errors when you pick the wrong one."
     },
     {
       "id": "d4-ser-3",
       "prompt": "What does scores[scores > 85] return?",
       "choices": [
-        "True and False",
+        "True or False",
         "The scores above 85, with their labels",
-        "A count",
+        "The labels only",
+        "The count"
+      ],
+      "answer": 1,
+      "explain": "The same mask idea as numpy, except the index comes along with the values that survive."
+    },
+    {
+      "id": "d4-ser-4",
+      "prompt": "Adding two Series with partly different indexes gives what for a label in only one?",
+      "choices": [
+        "0",
+        "NaN",
+        "The value it does have",
         "An error"
       ],
       "answer": 1,
-      "explain": "Masking works exactly as it does in numpy, and the labels come along with the values that survive."
+      "explain": "Alignment is by label. A label with no partner has nothing to add, so the result is missing rather than wrong."
     }
   ]
 }

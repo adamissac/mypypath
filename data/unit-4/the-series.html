@@ -173,35 +173,129 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Build a Series with an index and read a value by its label.</li>
+<li>Say what a Series has that a numpy array does not.</li>
+<li>Use the numpy operations you already know on a Series.</li>
+<li>Tell <code>max</code> from <code>idxmax</code>, and know which question each answers.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>A DataFrame is a collection of Series, so everything here is the foundation for the next six units. The index in particular is not decoration: it is what survives a filter, what lines two columns up when you add them, and what turns "the highest score" into "who got the highest score".</p>
+</div>
 
 <div class="content-section">
 <h2>A labelled column</h2>
-<p>A Series is one column of values plus an index. The index is not decoration: it is how values line up when two Series meet.</p>
+<p>A Series is one column of values plus an index. Build one from a list and pandas supplies 0, 1, 2 as the index; supply your own and the labels become how you reach the values.</p>
+<h3 class="h4">Values and labels together</h3>
+<p>The index is printed down the left. Reaching for a label gives you the value beside it, in the same way a dictionary key would.</p>
 <pre class="code"><code>import pandas as pd
 
 scores = pd.Series([92, 88, 79], index=["Ada", "Grace", "Alan"])
 print(scores)
 print(scores["Grace"])</code></pre>
+<h3 class="h4">The labels survive what you do to it</h3>
+<p>This is the part that matters. Filter the Series and the surviving values keep their own labels, so you never have to track which position belonged to whom.</p>
+<pre class="code"><code>import pandas as pd
 
+scores = pd.Series([92, 88, 79], index=["Ada", "Grace", "Alan"])
+high = scores[scores &gt; 85]
+print(high)
+print(list(high.index))</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Reach by label</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print Alan’s score, then every score above 80 with its label, then the list of labels that survived.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\nscores = pd.Series([92, 88, 79], index=[&quot;Ada&quot;, &quot;Grace&quot;, &quot;Alan&quot;])\n\nprint(scores[&quot;Alan&quot;])\nprint(None)   # the scores above 80\nprint(None)   # just their labels\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+scores = pd.Series([92, 88, 79], index=["Ada", "Grace", "Alan"])
+
+print(scores["Alan"])
+print(None)   # the scores above 80
+print(None)   # just their labels
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Everything numpy did, a Series does too</h2>
-<p>Masks, arithmetic and aggregation all carry over. What is added is that the labels survive the operation.</p>
+<p>Masks, arithmetic and aggregation all carry over unchanged. What is added is that the labels come with them.</p>
+<h3 class="h4">The familiar operations</h3>
+<p>If unit 3 made sense, none of this is new. A Series is an array with an index bolted on.</p>
 <pre class="code"><code>import pandas as pd
 
 scores = pd.Series([92, 88, 79], index=["Ada", "Grace", "Alan"])
 print(scores.mean())
+print(scores + 5)
 print(scores[scores &gt; 85])</code></pre>
+<h3 class="h4">Two different questions</h3>
+<p><code>max</code> gives the value. <code>idxmax</code> gives the label of the row it was on. Confusing them is easy and the wrong one is never an error, just a wrong answer.</p>
+<pre class="code"><code>import pandas as pd
 
+scores = pd.Series([92, 88, 79], index=["Ada", "Grace", "Alan"])
+print(scores.max())      # what the best score was
+print(scores.idxmax())   # who got it</code></pre>
+<h3 class="h4">Alignment, and where NaN comes from</h3>
+<p>Adding two Series matches them on their labels, not their positions. A label present in one and missing from the other gives NaN — which is either exactly what you wanted or the quietest bug in pandas.</p>
+<pre class="code"><code>import pandas as pd
+
+term1 = pd.Series([90, 80], index=["Ada", "Grace"])
+term2 = pd.Series([70, 60], index=["Grace", "Alan"])
+print(term1 + term2)</code></pre>
+<p class="note">Nothing is out of order and nothing raised. Ada and Alan are NaN because each appears in only one of the two terms.</p>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Watch the alignment</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Predict what this prints before you run it. Then reorder the second Series and confirm the answer does not change.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\na = pd.Series([1, 2, 3], index=[&quot;x&quot;, &quot;y&quot;, &quot;z&quot;])\nb = pd.Series([10, 20, 30], index=[&quot;z&quot;, &quot;y&quot;, &quot;x&quot;])\n\nprint(a + b)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+a = pd.Series([1, 2, 3], index=["x", "y", "z"])
+b = pd.Series([10, 20, 30], index=["z", "y", "x"])
+
+print(a + b)
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Who scored highest</h3>
 <p>Write <code>top_scorer(scores)</code> that takes a Series of scores indexed by name and returns the name of the highest scorer.</p>
 <p class="hint-text">idxmax gives the label of the largest value; max would give you the value itself, which is the other question.</p>
 
@@ -223,6 +317,32 @@ print(top_scorer(pd.Series([92, 88], index=["Ada", "Grace"])))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Above their own average</h3>
+<p>Write <code>above_average(scores)</code> that takes a Series indexed by name and returns a list of the names whose score is strictly above the mean of the Series. Keep the labels; do not work with positions.</p>
+<p class="hint-text">Mask the Series with scores &gt; scores.mean(), then read .index off what survives and turn it into a list.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef above_average(scores):\n    # The names scoring above the mean, as a list.\n    return []\n\nprint(above_average(pd.Series([90, 80, 70], index=[&quot;Ada&quot;, &quot;Grace&quot;, &quot;Alan&quot;])))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def above_average(scores):
+    # The names scoring above the mean, as a list.
+    return []
+
+print(above_average(pd.Series([90, 80, 70], index=["Ada", "Grace", "Alan"])))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

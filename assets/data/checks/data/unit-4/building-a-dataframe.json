@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "A table is a dictionary of columns that share one index.",
+    "prompt": "Building a DataFrame: Describe a table",
     "packages": [
       "pandas"
     ],
@@ -33,18 +33,59 @@
     ],
     "hint": "df.shape is a tuple of rows and columns. list(df.columns) turns the column index into plain names."
   },
+  "exercise2": {
+    "prompt": "Building a DataFrame: One index, shared by every column",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "labelled({\"score\": [92, 88]}, [\"Ada\", \"Grace\"])",
+        "expect": "['Ada', 'Grace']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "every column gets the same index",
+        "call": "labelled({\"a\": [1, 2], \"b\": [3, 4]}, [\"x\", \"y\"])",
+        "expect": "['x', 'y']"
+      },
+      {
+        "name": "the index really is on the table",
+        "call": "list(__import__(\"pandas\").DataFrame({\"s\": [1, 2]}, index=[\"p\", \"q\"]).index) == labelled({\"s\": [1, 2]}, [\"p\", \"q\"])",
+        "expect": "True"
+      },
+      {
+        "name": "one row is a valid table",
+        "call": "labelled({\"a\": [7]}, [\"solo\"])",
+        "expect": "['solo']"
+      },
+      {
+        "name": "the table is built with pandas",
+        "kind": "ast",
+        "requires": {
+          "imports": [
+            "pandas"
+          ]
+        },
+        "describe": "pandas rather than plain Python"
+      }
+    ],
+    "hint": "pd.DataFrame takes an index= argument. Build the table with it, then return list(df.index) rather than handing back the labels you were given."
+  },
   "questions": [
     {
       "id": "d4-bdf-1",
       "prompt": "What does df.shape give you?",
       "choices": [
-        "(columns, rows)",
-        "(rows, columns)",
         "The column names",
+        "A (rows, columns) tuple",
+        "The dtypes",
         "The number of cells"
       ],
       "answer": 1,
-      "explain": "Rows first, the same order as everything else in pandas. Reading it the wrong way round is a quiet source of wrong answers."
+      "explain": "Rows first, the same order as indexing."
     },
     {
       "id": "d4-bdf-2",
@@ -53,27 +94,34 @@
         "A row label",
         "The column name",
         "The index",
-        "A value"
+        "A dtype"
       ],
       "answer": 1,
-      "explain": "Keys are columns and the lists under them are the data down each column."
+      "explain": "A DataFrame is a dictionary of columns, so the keys are the column names."
     },
     {
       "id": "d4-bdf-3",
-      "kind": "multi",
-      "prompt": "Which are worth doing before you summarise a table you have just loaded?",
+      "prompt": "Which are worth doing before you summarise a table?",
       "choices": [
-        "Look at head()",
-        "Check shape",
-        "Check the column types",
-        "Delete the index"
+        "Nothing, just summarise",
+        "shape, columns, head and dtypes",
+        "Sort it",
+        "Drop the index"
       ],
-      "answers": [
-        0,
-        1,
-        2
+      "answer": 1,
+      "explain": "Two lines that catch a wrong separator, a missing header and a numeric column read as text."
+    },
+    {
+      "id": "d4-bdf-4",
+      "prompt": "You expected six columns and shape says (1000, 1). What happened?",
+      "choices": [
+        "The file is empty",
+        "The separator was wrong, so each line became one value",
+        "The header is missing",
+        "The dtypes are wrong"
       ],
-      "explain": "The first three tell you whether the table is what you think it is. Nothing about the index needs removing."
+      "answer": 1,
+      "explain": "Every line arrived as a single unsplit string. The shape said so before any of the values did."
     }
   ]
 }

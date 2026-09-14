@@ -173,36 +173,148 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Create a derived column from the columns you already have.</li>
+<li>Say what <code>drop</code> returns, and what it leaves behind.</li>
+<li>Take a copy before modifying a table a caller still owns.</li>
+<li>Rename a column without rebuilding the table.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>The column that answers your question is usually not in the file — it is a rate, a difference, a share. Deriving one is a single assignment, and the only real trap is that half of these operations return a new table while the other half change yours, and the difference is not visible until something downstream is wrong.</p>
+</div>
 
 <div class="content-section">
 <h2>A derived column</h2>
-<p>Assigning to a name that does not exist creates it. The right-hand side is an ordinary column expression, so it lines up row by row.</p>
+<p>Assigning to a name that does not exist creates it. The right-hand side is ordinary column arithmetic, applied to the whole column at once.</p>
+<h3 class="h4">Create by assigning</h3>
+<p>No method call and no declaration. If the name exists it is replaced; if not, it is added at the end.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"price": [10.0, 20.0]})
 df["with_tax"] = df["price"] * 1.08
 print(df)</code></pre>
+<h3 class="h4">From two columns</h3>
+<p>The arithmetic aligns on the index, so the rows always line up with themselves. This is the everyday case: a total, a rate, a difference from a target.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"price": [2.0, 5.0], "quantity": [3, 2]})
+df["total"] = df["price"] * df["quantity"]
+print(df)</code></pre>
+<h3 class="h4">Renaming</h3>
+<p><code>rename</code> takes a mapping and, like drop, hands back a new table unless you tell it otherwise.</p>
+<pre class="code"><code>import pandas as pd
+
+df = pd.DataFrame({"n": [1, 2]})
+print(df.rename(columns={"n": "count"}).columns.tolist())
+print(df.columns.tolist())   # unchanged</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: A rate per head</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Add a <code>per_person</code> column equal to total divided by people, then a <code>rounded</code> column holding it to one decimal place.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;total&quot;: [100.0, 90.0], &quot;people&quot;: [4, 3]})\n\ndf[&quot;per_person&quot;] = df[&quot;total&quot;] / df[&quot;people&quot;]\ndf[&quot;rounded&quot;] = None\nprint(df)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+df = pd.DataFrame({"total": [100.0, 90.0], "people": [4, 3]})
+
+df["per_person"] = df["total"] / df["people"]
+df["rounded"] = None
+print(df)
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Dropping returns a copy</h2>
-<p>drop hands back a new table and leaves yours alone unless you reassign. This surprises people who expect it to act in place.</p>
+<p><code>drop</code> hands back a new table and leaves yours alone unless you reassign. This surprises people who expect it to behave like a list method.</p>
+<h3 class="h4">The result is the point</h3>
+<p>Calling drop and ignoring what it returns looks exactly like a no-op, because it is one.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"a": [1], "b": [2]})
 smaller = df.drop(columns=["b"])
 print(list(smaller.columns))
-print(list(df.columns))</code></pre>
+print(list(df.columns))      # still both</code></pre>
+<h3 class="h4">Assignment is not a copy</h3>
+<p>Two names for the same table are still one table. A function that assigns a column onto the DataFrame it was handed has changed its caller's data, and nothing says so.</p>
+<pre class="code"><code>import pandas as pd
 
+def add_flag(table):
+    table["flag"] = True        # edits the caller's table
+    return table
+
+df = pd.DataFrame({"a": [1]})
+add_flag(df)
+print(list(df.columns))</code></pre>
+<h3 class="h4">Copy first</h3>
+<p>One extra line makes the function honest: it returns something new and leaves what it was given alone.</p>
+<pre class="code"><code>import pandas as pd
+
+def add_flag(table):
+    out = table.copy()
+    out["flag"] = True
+    return out
+
+df = pd.DataFrame({"a": [1]})
+add_flag(df)
+print(list(df.columns))      # untouched</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Which one changed</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Run this and note which of the two prints shows the extra column. Then add <code>.copy()</code> and run it again.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndef add_flag(table):\n    table[&quot;flag&quot;] = True\n    return table\n\ndf = pd.DataFrame({&quot;a&quot;: [1]})\nresult = add_flag(df)\n\nprint(list(result.columns))\nprint(list(df.columns))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+def add_flag(table):
+    table["flag"] = True
+    return table
+
+df = pd.DataFrame({"a": [1]})
+result = add_flag(df)
+
+print(list(result.columns))
+print(list(df.columns))
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Add a total, leave the original alone</h3>
 <p>Write <code>add_total(df)</code> that returns a new table with a <code>total</code> column equal to <code>price</code> times <code>quantity</code>, leaving the table it was given unchanged.</p>
 <p class="hint-text">Take a copy first, then assign the new column onto the copy. Assigning straight onto df would change the caller's table, which the hidden case checks.</p>
 
@@ -224,6 +336,32 @@ print(add_total(pd.DataFrame({"price": [2.0], "quantity": [3]})))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Keep only what you need</h3>
+<p>Write <code>only(df, keep)</code> that returns a new table holding just the columns named in <code>keep</code>, in that order, without changing the table it was given.</p>
+<p class="hint-text">df[keep] with a list of names already gives a new table in the order you asked for. Add .copy() so later edits to the result cannot reach back.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef only(df, keep):\n    # A new table with just those columns, in that order.\n    return df\n\nprint(only(pd.DataFrame({&quot;a&quot;: [1], &quot;b&quot;: [2], &quot;c&quot;: [3]}), [&quot;c&quot;, &quot;a&quot;]))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def only(df, keep):
+    # A new table with just those columns, in that order.
+    return df
+
+print(only(pd.DataFrame({"a": [1], "b": [2], "c": [3]}), ["c", "a"]))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

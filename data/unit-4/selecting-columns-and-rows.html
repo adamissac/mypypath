@@ -173,27 +173,130 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Take one column as a Series and several as a smaller table.</li>
+<li>Say what <code>loc</code> and <code>iloc</code> each read.</li>
+<li>Explain why they stop agreeing after a filter or a sort.</li>
+<li>Find a row by what it contains rather than by where it sits.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Almost every "why is this the wrong row" question comes from reaching for a position when you meant a label, or the reverse. The two look interchangeable on a freshly loaded table and stop being interchangeable the moment you sort or filter it — which is to say, immediately.</p>
+</div>
 
 <div class="content-section">
 <h2>Columns by name</h2>
-<p>One name gives a Series; a list of names gives a smaller DataFrame. The double brackets are a list inside the brackets, not special syntax.</p>
+<p>One name gives a Series; a list of names gives a smaller DataFrame. The double brackets are not a typo — the inner pair is the list.</p>
+<h3 class="h4">One column, or several</h3>
+<p>Single brackets with one name give the column itself. Wrap the name in a list and you get a table back, with one column in it.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"name": ["Ada", "Grace"], "score": [92, 88]})
-print(df["score"])
+print(type(df["score"]).__name__)
+print(type(df[["score"]]).__name__)
 print(df[["name", "score"]])</code></pre>
 
 </div>
 
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Series or table</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print the type of each of these three. Two of them are the same and one is not.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;], &quot;score&quot;: [92]})\n\nprint(type(df[&quot;score&quot;]).__name__)\nprint(type(df[[&quot;score&quot;]]).__name__)\nprint(type(df[[&quot;name&quot;, &quot;score&quot;]]).__name__)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+df = pd.DataFrame({"name": ["Ada"], "score": [92]})
+
+print(type(df["score"]).__name__)
+print(type(df[["score"]]).__name__)
+print(type(df[["name", "score"]]).__name__)
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
 <div class="content-section">
 <h2>Rows by label or by position</h2>
-<p>loc reads the index label, iloc reads the position. They agree on a default index and disagree the moment you sort or filter, which is exactly when the bug appears.</p>
+<p><code>loc</code> reads the index label; <code>iloc</code> reads the position. They agree on a default index and disagree the moment it changes.</p>
+<h3 class="h4">The two accessors</h3>
+<p>Both take a row and optionally a column. loc names them; iloc counts them.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"score": [92, 88, 79]}, index=["a", "b", "c"])
-print(df.loc["b", "score"])
-print(df.iloc[1]["score"])</code></pre>
+print(df.loc["b", "score"])    # by label
+print(df.iloc[1]["score"])     # by position</code></pre>
+<h3 class="h4">Where they part company</h3>
+<p>Sort the table and the labels travel with their rows while the positions do not. After this sort, position 0 and label 0 are different rows.</p>
+<pre class="code"><code>import pandas as pd
+
+df = pd.DataFrame({"score": [70, 99, 80]})
+best = df.sort_values("score", ascending=False)
+print(best)
+print("iloc[0]:", best.iloc[0]["score"])   # the top score
+print("loc[0]:", best.loc[0]["score"])     # still the original row 0</code></pre>
+<p class="note">Neither is wrong. They are answering different questions, and a filtered or sorted table is where the difference becomes visible.</p>
+<h3 class="h4">One more asymmetry</h3>
+<p>A loc slice includes its end label; an iloc slice excludes its end position, like every other slice in Python. This is worth knowing once rather than debugging twice.</p>
+<pre class="code"><code>import pandas as pd
+
+df = pd.DataFrame({"score": [10, 20, 30, 40]})
+print(len(df.loc[0:2]))    # 3 -- inclusive
+print(len(df.iloc[0:2]))   # 2 -- exclusive</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: After a sort they disagree</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Sort this table by score descending, then print <code>iloc[0]</code> and <code>loc[0]</code>. Say which one is "the best score" before you run it.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;score&quot;: [70, 99, 80]})\nbest = df.sort_values(&quot;score&quot;, ascending=False)\n\nprint(best.iloc[0][&quot;score&quot;])\nprint(best.loc[0][&quot;score&quot;])\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+df = pd.DataFrame({"score": [70, 99, 80]})
+best = df.sort_values("score", ascending=False)
+
+print(best.iloc[0]["score"])
+print(best.loc[0]["score"])
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Finding a row by what is in it</h2>
+<p>Usually you do not know either the label or the position — you know a value. Mask first, then read off what survives.</p>
+<h3 class="h4">Mask, then take</h3>
+<p>The mask keeps the rows you meant. <code>.iloc[0]</code> on the survivors takes the first of them, which is safe because you are indexing into the filtered result, not the original table.</p>
+<pre class="code"><code>import pandas as pd
+
+df = pd.DataFrame({"name": ["Zoe", "Ada"], "score": [10, 92]})
+match = df[df["name"] == "Ada"]
+print(match)
+print(int(match["score"].iloc[0]))</code></pre>
 
 </div>
 
@@ -201,7 +304,7 @@ print(df.iloc[1]["score"])</code></pre>
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: The score belonging to a name</h3>
 <p>Write <code>score_for(df, name)</code> that returns the score belonging to <code>name</code>, where the table has a <code>name</code> column and a <code>score</code> column.</p>
 <p class="hint-text">Mask on the name column, then read the score off what survives. Assuming a position is the bug the second hidden case is looking for.</p>
 
@@ -224,6 +327,32 @@ print(score_for(df, "Grace"))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: The top row, by position</h3>
+<p>Write <code>best_name(df)</code> that sorts the table by score descending and returns the name on the top row. Take the row by position on the sorted table, not by label.</p>
+<p class="hint-text">sort_values("score", ascending=False) then .iloc[0]["name"]. Using .loc[0] would give you the original row 0, which the first hidden case is checking.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef best_name(df):\n    # Sort by score, return the name at the top.\n    return None\n\nprint(best_name(pd.DataFrame({&quot;name&quot;: [&quot;Zoe&quot;, &quot;Ada&quot;], &quot;score&quot;: [10, 92]})))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def best_name(df):
+    # Sort by score, return the name at the top.
+    return None
+
+print(best_name(pd.DataFrame({"name": ["Zoe", "Ada"], "score": [10, 92]})))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

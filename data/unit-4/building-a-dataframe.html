@@ -173,11 +173,26 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Build a DataFrame from a dictionary of columns and from a list of records.</li>
+<li>Read <code>shape</code>, <code>columns</code>, <code>head</code> and <code>info</code> as the first four questions.</li>
+<li>Explain why every column shares one index.</li>
+<li>Spot a load that went wrong from its shape alone.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Every table you meet for the rest of this course is a DataFrame, and almost every confusing result comes from not having looked at it first. The four checks in this lesson take two lines and catch a wrong separator, a missing header and a numeric column read as text.</p>
+</div>
 
 <div class="content-section">
 <h2>From a dictionary of columns</h2>
-<p>The keys become column names and the values become the columns. Every column shares the same index, which is what makes it a table rather than a bag of Series.</p>
+<p>The keys become column names and the values become the columns. Every column shares the same index, which is what makes a row a row.</p>
+<h3 class="h4">Columns first</h3>
+<p>This is the shape pandas thinks in. A DataFrame is not a list of rows that happens to be rectangular; it is a set of columns that happen to line up.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({
@@ -186,26 +201,102 @@ df = pd.DataFrame({
 })
 print(df)
 print(df.shape)</code></pre>
+<h3 class="h4">From records, when that is what you have</h3>
+<p>A list of dictionaries works too, and it is what an API usually hands you. The union of the keys becomes the columns, and a record missing a key gets NaN.</p>
+<pre class="code"><code>import pandas as pd
 
+records = [{"name": "Ada", "score": 92}, {"name": "Grace"}]
+print(pd.DataFrame(records))</code></pre>
+<h3 class="h4">One index, shared</h3>
+<p>Both columns are Series over the same index. Pull one out and the index comes with it — which is why a filtered column still knows which rows it came from.</p>
+<pre class="code"><code>import pandas as pd
+
+df = pd.DataFrame({"name": ["Ada", "Grace"], "score": [92, 88]})
+print(df["score"].index)
+print(df.index)</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Two ways in</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Build the same table twice — once from a dictionary of columns and once from a list of records — and check the shapes match.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\nby_column = pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;, &quot;Grace&quot;], &quot;score&quot;: [92, 88]})\nby_record = None   # the same table, from a list of dicts\n\nprint(by_column.shape)\nprint(by_record)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+by_column = pd.DataFrame({"name": ["Ada", "Grace"], "score": [92, 88]})
+by_record = None   # the same table, from a list of dicts
+
+print(by_column.shape)
+print(by_record)
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>The first four things to ask it</h2>
-<p>shape, columns, head and info answer "what am I holding" before you do anything else. Skipping this step is how people summarise a column that is not what they think it is.</p>
+<p><code>shape</code>, <code>columns</code>, <code>head</code> and <code>info</code> answer "what am I holding" before you do anything else. Skipping them is where most confusing results begin.</p>
+<h3 class="h4">How much, and what of</h3>
+<p>Shape first, because a number you did not expect here means the rest is not worth reading yet.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"name": ["Ada"], "score": [92]})
 print(df.shape)
 print(list(df.columns))
 print(df.head())</code></pre>
+<h3 class="h4">info answers two questions at once</h3>
+<p>It gives the dtype of every column and how many non-null values each holds, which is the fastest way to see both a text column that should be numeric and a column full of holes.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"score": ["92", "88"], "n": [1, None]})
+df.info()</code></pre>
+<div class="info-card"><p>A one-column DataFrame where you expected six is the signature of the wrong separator. The shape told you before any of the numbers did.</p></div>
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Four questions</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Ask this table all four questions in turn. One of the columns is not the type you would want.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;, &quot;Grace&quot;], &quot;score&quot;: [&quot;92&quot;, &quot;88&quot;]})\n\nprint(df.shape)\nprint(list(df.columns))\nprint(df.head())\nprint(df.dtypes)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+df = pd.DataFrame({"name": ["Ada", "Grace"], "score": ["92", "88"]})
+
+print(df.shape)
+print(list(df.columns))
+print(df.head())
+print(df.dtypes)
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Describe a table</h3>
 <p>Write <code>describe_table(df)</code> that returns a tuple of the number of rows, the number of columns, and the column names as a list.</p>
 <p class="hint-text">df.shape is a tuple of rows and columns. list(df.columns) turns the column index into plain names.</p>
 
@@ -227,6 +318,32 @@ print(describe_table(pd.DataFrame({"a": [1, 2]})))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: One index, shared by every column</h3>
+<p>Write <code>labelled(columns, labels)</code> that builds a DataFrame from a dictionary of columns, using <code>labels</code> as the index, and returns the index labels as a list. Every column shares that one index.</p>
+<p class="hint-text">pd.DataFrame takes an index= argument. Build the table with it, then return list(df.index) rather than handing back the labels you were given.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef labelled(columns, labels):\n    # Build the table with labels as its index, return the labels.\n    return []\n\nprint(labelled({&quot;score&quot;: [92, 88]}, [&quot;Ada&quot;, &quot;Grace&quot;]))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def labelled(columns, labels):
+    # Build the table with labels as its index, return the labels.
+    return []
+
+print(labelled({"score": [92, 88]}, ["Ada", "Grace"]))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

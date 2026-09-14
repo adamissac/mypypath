@@ -173,35 +173,134 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Read a CSV into a DataFrame in one call.</li>
+<li>Say what <code>read_csv</code> decides for you, and what it cannot know.</li>
+<li>Run the same four checks on every table you load.</li>
+<li>Recognise the shape of a load that went wrong.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Unit 1 built a table out of lists and dicts by hand so that you know what a table is. This lesson replaces all of it with one line — and the point of having done it by hand is that you now know what that line is deciding on your behalf, and which of those decisions to check.</p>
+</div>
 
 <div class="content-section">
 <h2>read_csv</h2>
-<p>It reads the header, splits the rows, and guesses each column's type. What it cannot do is know which guesses were wrong, which is why the next line is always a look at the result.</p>
+<p>It reads the header, splits the rows, and guesses each column's type. What it cannot do is know what your file means.</p>
+<h3 class="h4">The whole of unit 1, in one call</h3>
+<p>Opening the file, reading the header, splitting each line, converting the numbers — all of it, in the one call.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.read_csv("scores.csv")
 print(df.shape)
 print(df.dtypes)</code></pre>
+<h3 class="h4">What it decided for you</h3>
+<p>Three decisions, every time: the first line is column names, the separator is a comma, and each column's type is inferred from what it saw. Each is usually right and each is occasionally wrong.</p>
+<pre class="code"><code>import pandas as pd
 
+# Each of these overrides one of those three decisions.
+# df = pd.read_csv("f.csv", header=None)
+# df = pd.read_csv("f.csv", sep=";")
+# df = pd.read_csv("f.csv", dtype={"id": str})
+print("the defaults are decisions, not facts")</code></pre>
+<p class="note">Keeping an id column as text with <code>dtype={"id": str}</code> is the common one. An id that looks numeric loses its leading zeros the moment pandas reads it as a number.</p>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Read from a string</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p><code>StringIO</code> lets you practise read_csv without a file. Read this text and print its shape and dtypes.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\nfrom io import StringIO\n\ntext = &quot;name,score\\nAda,92\\nGrace,88\\n&quot;\ndf = pd.read_csv(StringIO(text))\n\nprint(df)\nprint(df.shape)\nprint(df.dtypes)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+from io import StringIO
+
+text = "name,score\nAda,92\nGrace,88\n"
+df = pd.read_csv(StringIO(text))
+
+print(df)
+print(df.shape)
+print(df.dtypes)
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Check before you trust</h2>
-<p>head shows you the first rows and dtypes shows you what pandas decided. Two lines, and they catch most of what would otherwise go wrong later.</p>
+<p><code>head</code> shows you the first rows and <code>dtypes</code> shows you what pandas decided. Two lines, and they catch most of what goes wrong.</p>
+<h3 class="h4">The four questions again</h3>
+<p>The same four from lesson two, now on a table you did not build. This is the habit worth keeping for the rest of the course.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.read_csv("scores.csv")
-print(df.head(2))
-print(df["score"].mean())</code></pre>
+print(df.shape)            # how much
+print(df.dtypes)           # what kind
+print(df.head(2))          # does it line up
+print(df.isna().sum())     # how much is missing</code></pre>
+<h3 class="h4">What a failed load looks like</h3>
+<p>A wrong separator does not raise. Every line arrives as one long string, so you get one column and a shape that tells you immediately.</p>
+<pre class="code"><code>import pandas as pd
+from io import StringIO
 
+text = "name;score\nAda;92\nGrace;88\n"
+wrong = pd.read_csv(StringIO(text))
+print(wrong.shape)
+print(list(wrong.columns))
+
+right = pd.read_csv(StringIO(text), sep=";")
+print(right.shape)
+print(list(right.columns))</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Diagnose the load</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>This load produces one column where there should be three. Fix it with one argument.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\nfrom io import StringIO\n\ntext = &quot;name;city;score\\nAda;Leeds;92\\n&quot;\ndf = pd.read_csv(StringIO(text))\n\nprint(df.shape)\nprint(list(df.columns))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+from io import StringIO
+
+text = "name;city;score\nAda;Leeds;92\n"
+df = pd.read_csv(StringIO(text))
+
+print(df.shape)
+print(list(df.columns))
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: The average from a file</h3>
 <p>A file <code>scores.csv</code> is supplied when your work is checked, with <code>name</code> and <code>score</code> columns. Write <code>average_score(path)</code> that reads it and returns the mean score, rounded to two decimal places.</p>
 <p class="hint-text">pd.read_csv(path), then the mean of the score column, then round to two places. The second check swaps the file, so a typed-in answer fails.</p>
 
@@ -223,6 +322,32 @@ print(average_score("scores.csv"))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Report on a loaded file</h3>
+<p>Write <code>load_report(path)</code> that reads the file and returns a tuple of (row count, column count, sorted column names). Read it rather than assuming what is in it.</p>
+<p class="hint-text">Read once into a variable, then take shape[0], shape[1] and sorted(df.columns) off it.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef load_report(path):\n    # (rows, columns, [sorted names])\n    return None\n\nprint(load_report(&quot;scores.csv&quot;))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def load_report(path):
+    # (rows, columns, [sorted names])
+    return None
+
+print(load_report("scores.csv"))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>
