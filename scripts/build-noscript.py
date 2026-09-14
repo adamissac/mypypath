@@ -63,7 +63,10 @@ APP = {
 LESSON = ("This lesson's text is readable without JavaScript, but the code editors, "
           "the checks and your saved progress will not work until it is switched on.")
 
-SKIP_DIRS = {".git", "node_modules", "lesson-format-kit", "REVIEW", "docs"}
+# .claude holds skills, not site pages. Both of these scripts walked into
+# it and stamped site metadata onto a skill's own HTML.
+SKIP_DIRS = {".git", ".claude", "node_modules", "lesson-format-kit", "REVIEW",
+             "docs"}
 
 
 def is_lesson(path: Path) -> bool:

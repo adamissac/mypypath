@@ -35,7 +35,10 @@ ROOT = Path(__file__).resolve().parent.parent
 SITE = "https://mypypath.com"
 APPLY = "--apply" in sys.argv
 
-SKIP_DIRS = {".git", "node_modules", "lesson-format-kit", "REVIEW", "docs"}
+# .claude holds skills, not site pages. Both of these scripts walked into
+# it and stamped site metadata onto a skill's own HTML.
+SKIP_DIRS = {".git", ".claude", "node_modules", "lesson-format-kit", "REVIEW",
+             "docs"}
 # Pages that must never advertise themselves to a crawler or a card scraper.
 SKIP_FILES = {"404.html", "admin.html", "sandbox-export.html"}
 
