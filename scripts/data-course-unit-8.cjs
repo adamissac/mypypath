@@ -3,8 +3,9 @@
  * Rich lesson schema; see scripts/data-course-unit-3.cjs for the shape.
  *
  * Joins are where silent wrongness is cheapest to produce. A duplicate key
- * multiplies rows and the total goes up; a type mismatch matches nothing and
- * the result is empty; neither raises. So every lesson here pairs the operation
+ * multiplies rows and the total goes up; ids written two ways ("007" and "7")
+ * match nothing and the result is empty; neither raises. A plain type mismatch
+ * -- an int key against a text key -- does raise, and the lesson says so. So every lesson here pairs the operation
  * with the check that catches its failure: compare the row count with what you
  * predicted, and compare the key columns before you join on them.
  */
@@ -262,21 +263,21 @@ module.exports = {
             explain: 'isna().sum() on one of those columns counts them, and that number is usually worth reporting.' },
           { id: 'd8-mok-4', prompt: 'An inner join returns fewer rows than the left table. What does that mean?',
             choices: ['A bug in pandas', 'Some keys did not match', 'The tables were sorted', 'Duplicates were removed'], answer: 1,
-            explain: 'Worth checking rather than accepting — the cause is often a type mismatch rather than genuinely absent data.' },
+            explain: 'Worth checking rather than accepting — the cause is often ids written differently on each side rather than genuinely absent data.' },
         ],
       },
       /* ---------------------------------------------------------------- 3 */
       {
         slug: 'when-a-merge-goes-wrong',
         title: 'When a Merge Goes Wrong',
-        summary: 'Duplicate keys multiply rows, and mismatched types match nothing.',
+        summary: 'Duplicate keys multiply rows, and ids written two ways match nothing.',
         objectives: [
           'Predict the row count of a join before running it.',
           'Explain why a duplicate key multiplies rows.',
-          'Spot a type mismatch that makes a join match nothing.',
+          'Tell a type mismatch, which raises, from text ids that silently match nothing.',
           'Have pandas check your assumption with <code>validate</code>.',
         ],
-        why: 'These are the two failures that produce a wrong number rather than an error. A duplicated key inflates a total silently; a type mismatch empties the result silently. Both are cheap to check for and expensive to discover later, which is the whole argument of this lesson.',
+        why: 'These are the two failures that produce a wrong number rather than an error. A duplicated key inflates a total silently; the same id written two ways — <code>"007"</code> and <code>"7"</code>, or with a trailing space — empties the result silently. Both are cheap to check for and expensive to discover later, which is the whole argument of this lesson.',
         sections: [
           {
             heading: 'A key that repeats multiplies',
@@ -301,22 +302,22 @@ module.exports = {
             ],
           },
           {
-            heading: 'Types have to match too',
-            intro: 'An id read as a number in one file and as text in another matches nothing, and the merge succeeds with an empty result.',
+            heading: 'Keys have to be written the same way',
+            intro: 'A join compares key values exactly. When the types differ outright pandas refuses, which is the good case. The dangerous case is two text columns that look alike to a person and not to pandas.',
             steps: [
               {
-                heading: 'The quietest failure in the unit',
-                prose: '<code>1</code> and <code>"1"</code> are different keys. No error, no warning, no rows.',
-                code: 'import pandas as pd\n\na = pd.DataFrame({"id": ["1"], "name": ["Ada"]})\nb = pd.DataFrame({"id": [1], "score": [90]})\nprint(len(pd.merge(a, b, on="id")), "rows")\nprint(a["id"].dtype, "vs", b["id"].dtype)',
+                heading: 'A type mismatch is loud',
+                prose: 'An int key against a text key raises <code>ValueError</code>, and the message names the column. Read it: it is telling you the two files disagree about what an id is.',
+                code: 'import pandas as pd\n\na = pd.DataFrame({"id": ["1"], "name": ["Ada"]})\nb = pd.DataFrame({"id": [1], "score": [90]})\ntry:\n    pd.merge(a, b, on="id")\nexcept ValueError as exc:\n    print("ValueError:", exc)\nprint(a["id"].dtype, "vs", b["id"].dtype)',
               },
               {
-                heading: 'Compare the dtypes first',
-                prose: 'The fix is to make both sides the same type before joining. Converting only one side leaves the mismatch where it was.',
+                heading: 'Make both sides the same type',
+                prose: 'Convert both id columns before joining, on copies. Converting only one side leaves the mismatch where it was.',
                 code: 'import pandas as pd\n\na = pd.DataFrame({"id": ["1"], "name": ["Ada"]})\nb = pd.DataFrame({"id": [1], "score": [90]})\n\na2, b2 = a.copy(), b.copy()\na2["id"] = a2["id"].astype(str)\nb2["id"] = b2["id"].astype(str)\nprint(len(pd.merge(a2, b2, on="id")), "rows")',
               },
               {
-                heading: 'Whitespace does the same thing',
-                prose: '<code>"1 "</code> and <code>"1"</code> are also different keys. Stripping both sides is part of the same preparation.',
+                heading: 'Text that differs is silent',
+                prose: 'Once both sides are text, pandas compares them character by character and raises nothing. <code>"1 "</code> and <code>"1"</code> are different keys, and so are <code>"007"</code> and <code>"7"</code> — which is exactly what you get when one file was read as numbers and then converted back to text. No error, no warning, no rows.',
                 code: 'import pandas as pd\n\na = pd.DataFrame({"id": ["1 "], "name": ["Ada"]})\nb = pd.DataFrame({"id": ["1"], "score": [90]})\nprint(len(pd.merge(a, b, on="id")), "rows")\n\na["id"] = a["id"].str.strip()\nprint(len(pd.merge(a, b, on="id")), "rows")',
               },
             ],
@@ -332,14 +333,14 @@ module.exports = {
           {
             after: 1,
             title: 'Empty for no reason',
-            prompt: 'This join returns nothing. Print both dtypes to see why, then fix it.',
-            starter: 'import pandas as pd\n\na = pd.DataFrame({"id": ["1", "2"], "name": ["Ada", "Bo"]})\nb = pd.DataFrame({"id": [1, 2], "score": [90, 80]})\n\nprint(len(pd.merge(a, b, on="id")))\nprint(a["id"].dtype, b["id"].dtype)\n',
+            prompt: 'Both id columns are text, so this join raises nothing — and returns nothing. Print the ids from each side to see why, then fix one side so they match.',
+            starter: 'import pandas as pd\n\na = pd.DataFrame({"id": ["007", "008"], "name": ["Ada", "Bo"]})\nb = pd.DataFrame({"id": ["7", "8"], "score": [90, 80]})\n\nprint(len(pd.merge(a, b, on="id")), "rows")\nprint(a["id"].tolist(), b["id"].tolist())\n',
           },
         ],
         use: {
           cards: [
             { title: 'Before every merge', text: 'Check the key is unique where it should be and has the same dtype on both sides.', code: 'pd.merge(a, b, on="id", validate="many_to_one")' },
-            { title: 'After a surprising result', text: 'Too many rows means duplicate keys; too few means types or spellings that do not match.' },
+            { title: 'After a surprising result', text: 'Too many rows means duplicate keys; too few means ids written differently on each side — padding, spaces or case.' },
           ],
           avoid: 'Do not fix a doubled row count by dropping duplicates afterwards. Find the duplicate keys that caused it, or the numbers built on the merge are still wrong.',
         },
@@ -380,9 +381,9 @@ module.exports = {
           { id: 'd8-wmgw-1', prompt: 'Duplicate keys on both sides of a merge do what to the row count?',
             choices: ['Nothing', 'Multiply — every left match pairs with every right match', 'Halve it', 'Raise'], answer: 1,
             explain: 'Two and two make four. This is how a join quietly inflates a total.' },
-          { id: 'd8-wmgw-2', prompt: 'A key is int in one table and str in the other. What happens?',
-            choices: ['pandas converts', 'Nothing matches, and no error is raised', 'It raises TypeError', 'Only the first row matches'], answer: 1,
-            explain: '1 and "1" are different keys, and the merge succeeds with an empty result.' },
+          { id: 'd8-wmgw-2', prompt: 'A key is int in one table and str in the other. What does pd.merge do?',
+            choices: ['Converts one side for you', 'Matches nothing, silently', 'Raises ValueError', 'Matches only the first row'], answer: 2,
+            explain: 'pandas refuses to join an int key to a text key, and says which column. The silent failure is two text keys that differ, like "007" and "7".' },
           { id: 'd8-wmgw-3', prompt: 'Which argument makes pandas check the relationship you assumed?',
             choices: ['check=True', 'validate="one_to_one"', 'strict=True', 'assert_keys=True'], answer: 1,
             explain: 'It raises when the data disagrees, instead of silently multiplying rows.' },
@@ -696,7 +697,7 @@ module.exports = {
             { title: 'Answers that need two files', text: 'Scores in one file, teams in another: read, clean, join, then summarise.', code: 'out = pd.merge(people, scores, on="id")' },
             { title: 'Reports you will rerun', text: 'A function over the file paths runs the same checks on next month’s files.' },
           ],
-          avoid: 'Do not join before cleaning the keys. A key read as text in one file and a number in the other matches nothing, and the result is empty rather than an error.',
+          avoid: 'Do not join before cleaning the keys. An id kept as "007" in one file and turned into "7" in the other matches nothing, and the result is empty rather than an error.',
         },
         exercises: [
           {

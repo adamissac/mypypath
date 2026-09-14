@@ -114,15 +114,15 @@
     },
     {
       "id": "d5-swn-4",
-      "prompt": "Why does an id read as a number in one file and text in another matter?",
+      "prompt": "One file keeps ids as text like \"007\"; another reads them as numbers. Why does that matter?",
       "choices": [
         "It does not",
-        "A later join will match nothing, and will not raise",
+        "The leading zeros are gone, so the ids no longer match even as text",
         "It doubles the memory",
         "It changes the row order"
       ],
       "answer": 1,
-      "explain": "3 and \"3\" are different keys. The merge succeeds with an empty result, which is the quietest failure in unit 8."
+      "explain": "Joining an int key to a text key raises, and converting 7 back to text gives \"7\", not \"007\" — a join that then matches nothing without any error."
     }
   ]
 }

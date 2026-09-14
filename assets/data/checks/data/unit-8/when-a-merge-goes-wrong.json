@@ -91,15 +91,15 @@
     },
     {
       "id": "d8-wmgw-2",
-      "prompt": "A key is int in one table and str in the other. What happens?",
+      "prompt": "A key is int in one table and str in the other. What does pd.merge do?",
       "choices": [
-        "pandas converts",
-        "Nothing matches, and no error is raised",
-        "It raises TypeError",
-        "Only the first row matches"
+        "Converts one side for you",
+        "Matches nothing, silently",
+        "Raises ValueError",
+        "Matches only the first row"
       ],
-      "answer": 1,
-      "explain": "1 and \"1\" are different keys, and the merge succeeds with an empty result."
+      "answer": 2,
+      "explain": "pandas refuses to join an int key to a text key, and says which column. The silent failure is two text keys that differ, like \"007\" and \"7\"."
     },
     {
       "id": "d8-wmgw-3",

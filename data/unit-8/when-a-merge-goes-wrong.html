@@ -6,7 +6,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Python for Data • When a Merge Goes Wrong</title>
-    <meta name="description" content="Duplicate keys multiply rows, and mismatched types match nothing." />
+    <meta name="description" content="Duplicate keys multiply rows, and ids written two ways match nothing." />
     <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
     <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -67,14 +67,14 @@
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="PyPath" />
     <meta property="og:title" content="Python for Data • When a Merge Goes Wrong" />
-    <meta property="og:description" content="Duplicate keys multiply rows, and mismatched types match nothing." />
+    <meta property="og:description" content="Duplicate keys multiply rows, and ids written two ways match nothing." />
     <meta property="og:url" content="https://mypypath.com/data/unit-8/when-a-merge-goes-wrong.html" />
     <meta property="og:image" content="https://mypypath.com/assets/img/og-card.png" />
     <meta property="og:image:width" content="512" />
     <meta property="og:image:height" content="512" />
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Python for Data • When a Merge Goes Wrong" />
-    <meta name="twitter:description" content="Duplicate keys multiply rows, and mismatched types match nothing." />
+    <meta name="twitter:description" content="Duplicate keys multiply rows, and ids written two ways match nothing." />
     <link rel="canonical" href="https://mypypath.com/data/unit-8/when-a-merge-goes-wrong.html" />
     <!-- meta:end -->
   </head>
@@ -181,7 +181,7 @@
 <div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
 <h2 class="gradient-text" style="margin:0;">Overview</h2>
 </div>
-<p>Duplicate keys multiply rows, and mismatched types match nothing.</p>
+<p>Duplicate keys multiply rows, and ids written two ways match nothing.</p>
 <div class="lesson-meta">
 <span class="pill">Intermediate</span>
 <span class="pill">20&ndash;25 min</span>
@@ -199,12 +199,12 @@
 <ul>
 <li>Predict the row count of a join before running it.</li>
 <li>Explain why a duplicate key multiplies rows.</li>
-<li>Spot a type mismatch that makes a join match nothing.</li>
+<li>Tell a type mismatch, which raises, from text ids that silently match nothing.</li>
 <li>Have pandas check your assumption with <code>validate</code>.</li>
 </ul>
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
-<p>These are the two failures that produce a wrong number rather than an error. A duplicated key inflates a total silently; a type mismatch empties the result silently. Both are cheap to check for and expensive to discover later, which is the whole argument of this lesson.</p>
+<p>These are the two failures that produce a wrong number rather than an error. A duplicated key inflates a total silently; the same id written two ways — <code>"007"</code> and <code>"7"</code>, or with a trailing space — empties the result silently. Both are cheap to check for and expensive to discover later, which is the whole argument of this lesson.</p>
 </div>
 </div>
 
@@ -288,19 +288,22 @@ print(len(pd.merge(people, scores, on="id")))
 </div>
 
 <div class="content-section">
-<h2>Step 2: Types have to match too</h2>
-<p>An id read as a number in one file and as text in another matches nothing, and the merge succeeds with an empty result.</p>
+<h2>Step 2: Keys have to be written the same way</h2>
+<p>A join compares key values exactly. When the types differ outright pandas refuses, which is the good case. The dangerous case is two text columns that look alike to a person and not to pandas.</p>
 <div class="process-steps">
 <div class="step">
 <div class="step-number">1</div>
 <div class="step-content">
-<h3 class="h4">The quietest failure in the unit</h3>
-<p><code>1</code> and <code>"1"</code> are different keys. No error, no warning, no rows.</p>
+<h3 class="h4">A type mismatch is loud</h3>
+<p>An int key against a text key raises <code>ValueError</code>, and the message names the column. Read it: it is telling you the two files disagree about what an id is.</p>
 <pre class="code"><code>import pandas as pd
 
 a = pd.DataFrame({"id": ["1"], "name": ["Ada"]})
 b = pd.DataFrame({"id": [1], "score": [90]})
-print(len(pd.merge(a, b, on="id")), "rows")
+try:
+    pd.merge(a, b, on="id")
+except ValueError as exc:
+    print("ValueError:", exc)
 print(a["id"].dtype, "vs", b["id"].dtype)</code></pre>
 
 </div>
@@ -308,8 +311,8 @@ print(a["id"].dtype, "vs", b["id"].dtype)</code></pre>
 <div class="step">
 <div class="step-number">2</div>
 <div class="step-content">
-<h3 class="h4">Compare the dtypes first</h3>
-<p>The fix is to make both sides the same type before joining. Converting only one side leaves the mismatch where it was.</p>
+<h3 class="h4">Make both sides the same type</h3>
+<p>Convert both id columns before joining, on copies. Converting only one side leaves the mismatch where it was.</p>
 <pre class="code"><code>import pandas as pd
 
 a = pd.DataFrame({"id": ["1"], "name": ["Ada"]})
@@ -325,8 +328,8 @@ print(len(pd.merge(a2, b2, on="id")), "rows")</code></pre>
 <div class="step">
 <div class="step-number">3</div>
 <div class="step-content">
-<h3 class="h4">Whitespace does the same thing</h3>
-<p><code>"1 "</code> and <code>"1"</code> are also different keys. Stripping both sides is part of the same preparation.</p>
+<h3 class="h4">Text that differs is silent</h3>
+<p>Once both sides are text, pandas compares them character by character and raises nothing. <code>"1 "</code> and <code>"1"</code> are different keys, and so are <code>"007"</code> and <code>"7"</code> — which is exactly what you get when one file was read as numbers and then converted back to text. No error, no warning, no rows.</p>
 <pre class="code"><code>import pandas as pd
 
 a = pd.DataFrame({"id": ["1 "], "name": ["Ada"]})
@@ -347,21 +350,21 @@ print(len(pd.merge(a, b, on="id")), "rows")</code></pre>
 <h3 class="h4">Mini Practice #2: Empty for no reason</h3>
 <span class="practice-badge">Try It Yourself</span>
 </div>
-<p>This join returns nothing. Print both dtypes to see why, then fix it.</p>
+<p>Both id columns are text, so this join raises nothing — and returns nothing. Print the ids from each side to see why, then fix one side so they match.</p>
 
 <div class="interactive-editor" data-editor-id="practice2">
 <div class="editor-toolbar-small">
 <button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\na = pd.DataFrame({&quot;id&quot;: [&quot;1&quot;, &quot;2&quot;], &quot;name&quot;: [&quot;Ada&quot;, &quot;Bo&quot;]})\nb = pd.DataFrame({&quot;id&quot;: [1, 2], &quot;score&quot;: [90, 80]})\n\nprint(len(pd.merge(a, b, on=&quot;id&quot;)))\nprint(a[&quot;id&quot;].dtype, b[&quot;id&quot;].dtype)\n')">Reset</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\na = pd.DataFrame({&quot;id&quot;: [&quot;007&quot;, &quot;008&quot;], &quot;name&quot;: [&quot;Ada&quot;, &quot;Bo&quot;]})\nb = pd.DataFrame({&quot;id&quot;: [&quot;7&quot;, &quot;8&quot;], &quot;score&quot;: [90, 80]})\n\nprint(len(pd.merge(a, b, on=&quot;id&quot;)), &quot;rows&quot;)\nprint(a[&quot;id&quot;].tolist(), b[&quot;id&quot;].tolist())\n')">Reset</button>
 <button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice2">import pandas as pd
 
-a = pd.DataFrame({"id": ["1", "2"], "name": ["Ada", "Bo"]})
-b = pd.DataFrame({"id": [1, 2], "score": [90, 80]})
+a = pd.DataFrame({"id": ["007", "008"], "name": ["Ada", "Bo"]})
+b = pd.DataFrame({"id": ["7", "8"], "score": [90, 80]})
 
-print(len(pd.merge(a, b, on="id")))
-print(a["id"].dtype, b["id"].dtype)
+print(len(pd.merge(a, b, on="id")), "rows")
+print(a["id"].tolist(), b["id"].tolist())
 </textarea>
 <div class="editor-output" id="output-practice2">
 <div class="output-placeholder">Press Run to see output</div>
@@ -380,7 +383,7 @@ print(a["id"].dtype, b["id"].dtype)
 </div>
 <div class="feature-card">
 <h3 class="h4">After a surprising result</h3>
-<p>Too many rows means duplicate keys; too few means types or spellings that do not match.</p>
+<p>Too many rows means duplicate keys; too few means ids written differently on each side — padding, spaces or case.</p>
 
 </div>
 </div>

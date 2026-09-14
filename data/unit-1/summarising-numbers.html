@@ -283,19 +283,23 @@ print(mean([]))</code></pre>
 <h3 class="h4">Mini Practice #1: Guard the extremes</h3>
 <span class="practice-badge">Try It Yourself</span>
 </div>
-<p>Make <code>lowest</code> return <code>None</code> for an empty list instead of raising, then run both prints.</p>
+<p>Run it: the empty list raises <code>ValueError</code>, caught and printed below. Change <code>lowest</code> so it returns <code>None</code> for an empty list, and the second line prints <code>None</code> instead.</p>
 
 <div class="interactive-editor" data-editor-id="practice1">
 <div class="editor-toolbar-small">
 <button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice1', 'def lowest(values):\n    return min(values)\n\nprint(lowest([3, 1, 2]))\nprint(lowest([]))\n')">Reset</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'def lowest(values):\n    return min(values)\n\nprint(lowest([3, 1, 2]))\n\ntry:\n    print(lowest([]))\nexcept ValueError as e:\n    print(&quot;ValueError:&quot;, e)\n')">Reset</button>
 <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice1">def lowest(values):
     return min(values)
 
 print(lowest([3, 1, 2]))
-print(lowest([]))
+
+try:
+    print(lowest([]))
+except ValueError as e:
+    print("ValueError:", e)
 </textarea>
 <div class="editor-output" id="output-practice1">
 <div class="output-placeholder">Press Run to see output</div>

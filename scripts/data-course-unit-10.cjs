@@ -641,7 +641,7 @@ module.exports = {
           'Check row counts between steps, so a silent loss shows up.',
           'Return a result a reader can use, from two raw files.',
         ],
-        why: 'Every unit so far taught one step on its own, on data that arrived ready for it. Real work is the chain, and the chain fails at the joints: a key read as text meets a key read as a number and matches nothing, a missing marker survives into a mean. Doing the whole thing once, with checks between the steps, is what turns the separate skills into an analysis.',
+        why: 'Every unit so far taught one step on its own, on data that arrived ready for it. Real work is the chain, and the chain fails at the joints: an id kept as "007" in one file meets "7" in another and matches nothing, a missing marker survives into a mean. Doing the whole thing once, with checks between the steps, is what turns the separate skills into an analysis.',
         sections: [
           {
             heading: 'The order matters',
@@ -773,11 +773,11 @@ module.exports = {
             prompt: 'Put a two-file analysis in order.',
             items: ['Join on the key', 'Read both files', 'Report the result', 'Group and summarise', 'Fix the types and the missing values'],
             answer: [1, 4, 0, 3, 2],
-            explain: 'Clean before joining: a key with the wrong type matches nothing, and a missing value dropped after grouping has already moved the mean.' },
+            explain: 'Clean before joining: ids written differently on each side match nothing, and a missing value dropped after grouping has already moved the mean.' },
           { id: 'd10-twa-2', prompt: 'Why clean each table before the merge rather than after?',
             choices: ['It is the same', 'Each table is small and on its own, so you can still tell which file a bad row came from', 'merge refuses dirty data', 'It changes the join type'],
             answer: 1,
-            explain: 'After a merge the problem rows are mixed with the other file\'s columns, and a wrong-typed key may already have silently matched nothing.' },
+            explain: 'After a merge the problem rows are mixed with the other file\'s columns, and ids written two ways may already have silently matched nothing.' },
           { id: 'd10-twa-3', prompt: 'What is the last thing to do before showing the number to somebody?',
             choices: ['Round it', 'Check the steps between: row counts and how much was dropped', 'Make a chart', 'Save the file'],
             answer: 1,

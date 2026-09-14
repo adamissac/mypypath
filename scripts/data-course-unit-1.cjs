@@ -629,8 +629,8 @@ module.exports = {
           {
             after: 1,
             title: 'Guard the extremes',
-            prompt: 'Make <code>lowest</code> return <code>None</code> for an empty list instead of raising, then run both prints.',
-            starter: 'def lowest(values):\n    return min(values)\n\nprint(lowest([3, 1, 2]))\nprint(lowest([]))\n',
+            prompt: 'Run it: the empty list raises <code>ValueError</code>, caught and printed below. Change <code>lowest</code> so it returns <code>None</code> for an empty list, and the second line prints <code>None</code> instead.',
+            starter: 'def lowest(values):\n    return min(values)\n\nprint(lowest([3, 1, 2]))\n\ntry:\n    print(lowest([]))\nexcept ValueError as e:\n    print("ValueError:", e)\n',
           },
           {
             after: 2,
