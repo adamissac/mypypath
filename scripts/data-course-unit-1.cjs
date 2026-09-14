@@ -97,6 +97,13 @@ module.exports = {
             starter: 'rows = [["Ada", 92], ["Grace", 88], ["Alan", 79], ["Katherine", 99]]\n\nprint("typed:", 4)\nprint("computed:", len(rows))\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'A question with a computable answer', text: 'When you can say what number would settle it — a count, an average, a highest — the four steps apply directly.', code: 'print(len([s for s in scores if s < 60]))' },
+            { title: 'Before you trust a number someone quotes', text: 'Walking back through get, clean, summarise and explain is how you check someone else’s figure as well as your own.' },
+          ],
+          avoid: 'Do not start summarising before you have written the question down. A table always offers some pattern, and a pattern found by browsing is not a finding.',
+        },
         exercises: [
           {
             title: 'Count and top score',
@@ -226,6 +233,13 @@ module.exports = {
             starter: 'table = [["Ada", 92], ["Grace", 88], ["Alan", 79]]\n\nnames = []\nscores = []\n\n# The name at the same position as the highest score:\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Small, fixed-shape tables', text: 'A handful of rows whose column order you control — test data, a few results typed into a script.', code: 'scores = [row[1] for row in table]' },
+            { title: 'Data that arrives as positions', text: 'csv.reader and many APIs hand back rows as lists; a comprehension is how you get a column out of them.' },
+          ],
+          avoid: 'Do not keep list rows for anything long-lived or shared. The moment a column is added or reordered, every row[1] silently reads the wrong thing — switch to dictionaries.',
+        },
         exercises: [
           {
             title: 'Pull out a column',
@@ -355,6 +369,13 @@ module.exports = {
             starter: 'header = ["name", "age", "score"]\ntable = [["Ada", 36, 92], ["Grace", 45, 88], ["Alan", 41, 79]]\n\nrows = []   # build records here\n\n# average score by name, not by position:\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Rows with named fields', text: 'Any table you will read by column name, especially one whose columns might change order or grow.', code: 'strong = [r["name"] for r in rows if r["score"] >= 85]' },
+            { title: 'Records with optional fields', text: 'When some rows legitimately lack a field, .get with a deliberate default says how you treat the gap.' },
+          ],
+          avoid: 'Do not use .get with a default to hide a column that should always be there. A missing required field is an error you want to see, so use brackets and let it raise.',
+        },
         exercises: [
           {
             title: 'Everyone at 85 or above',
@@ -480,6 +501,13 @@ module.exports = {
             starter: 'import csv\n\nwith open("people.csv", "w") as f:\n    f.write("name,subject\\nAda,maths\\nGrace,computing\\n")\n\nwith open("people.csv") as f:\n    reader = csv.reader(f)\n    # take the header off, then print each name\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Any comma-separated file', text: 'Spreadsheet exports, logs and downloads. csv handles quoting and line endings that split() gets wrong.', code: 'with open(path) as f:\n    rows = list(csv.DictReader(f))' },
+            { title: 'Files with a header row', text: 'DictReader turns the header into keys, so the rest of the code reads fields by name.' },
+          ],
+          avoid: 'Do not split lines on commas yourself, even for a file that looks simple today. The first quoted name with a comma in it shifts every column after it, with no error.',
+        },
         exercises: [
           {
             title: 'Print every row',
@@ -611,6 +639,13 @@ module.exports = {
             starter: 'import statistics\n\nsalaries = [30, 32, 31, 29, 400]\nheights = [160, 170, 165, 175, 168]\n\n# mean and median of each:\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Mean with its range', text: 'The default report for a column of numbers: the average, and the lowest and highest beside it so the spread is visible.', code: 'print(mean, min(scores), max(scores))' },
+            { title: 'Median when values are skewed', text: 'Incomes, response times, anything with a long tail or a possible typo. The median ignores a single extreme value.' },
+          ],
+          avoid: 'Do not report a mean on its own, and do not divide before checking the column has anything in it. An empty column should give a deliberate answer, not a ZeroDivisionError.',
+        },
         exercises: [
           {
             title: 'A safe average',
@@ -740,6 +775,13 @@ module.exports = {
             starter: 'rows = [("maths", 92), ("computing", 88), ("maths", 79), ("computing", 95)]\n\ngroups = {}\n# split the scores by subject\n\n# print each subject with its highest score\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'How many of each', text: 'Categories, answers, subjects. Counter or a dictionary with .get gives the frequency table.', code: 'Counter(subjects).most_common(3)' },
+            { title: 'A summary per group', text: 'When the question says “per” or “by”: split into lists with setdefault, then summarise each list.' },
+          ],
+          avoid: 'Do not compare group averages without their sizes. A group of one can top the table by accident — report the count next to every mean.',
+        },
         exercises: [
           {
             title: 'Rows per subject',

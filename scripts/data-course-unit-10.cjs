@@ -85,6 +85,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ndf = pd.DataFrame({"team": ["zeta", "alpha", "mu"], "score": [70.0, 90.0, 80.0]})\n\nmeans = df.groupby("team")["score"].mean()\nprint(means)\nprint(None)   # ordered by value\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Comparing categories', text: 'A bar chart of one summary per group, sorted by value.', code: 'df.groupby("team")["score"].mean().sort_values()' },
+            { title: 'Showing change over time', text: 'A line chart of a series with dates on the index.' },
+          ],
+          avoid: 'Do not use a pie chart to compare more than two or three parts, or a line chart to connect categories that have no order.',
+        },
         exercises: [
           {
             title: 'The table behind a bar chart',
@@ -194,6 +201,13 @@ module.exports = {
             starter: 'import pandas as pd\n\nmeans = pd.Series({"red": 85.0, "blue": 82.0})\n\nprint(round(float(means.max() - means.min()), 1))\nprint(f"{(means.max() - means.min()) / means.min():.1%}")\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Every chart you share', text: 'A title that states the finding, axis labels with units, and the data source.' },
+            { title: 'Small differences that matter', text: 'A cut axis is acceptable when it is labelled clearly and the difference is the point.' },
+          ],
+          avoid: 'Do not start a bar chart’s axis above zero. Bar length is the value, and a cut axis turns a 2% gap into what looks like double.',
+        },
         exercises: [
           {
             title: 'The headline sentence',
@@ -303,6 +317,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ntight = pd.Series([70.0, 71.0, 72.0])\nwide = pd.Series([10.0, 71.0, 132.0])\n\nfor s in (tight, wide):\n    print(f"mean {s.mean():.1f} (min {s.min():.1f}, max {s.max():.1f})")\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'The number a reader sees', text: 'Round once, at the end, to the precision the data supports.', code: 'f"{mean:.1f}%"' },
+            { title: 'Large and small values', text: 'Thousands separators and percentages make a figure readable at a glance.' },
+          ],
+          avoid: 'Do not round values on the way in and then compute with them. Small rounding errors add up — round only the final answer.',
+        },
         exercises: [
           {
             title: 'The middle, with its ends',
@@ -411,6 +432,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ndf = pd.DataFrame({"team": ["a", "a", "b"], "score": [90.0, 80.0, 95.0]})\n\nout = df.groupby("team")["score"].agg(["count", "mean"]).round(1)\nprint(None)   # sorted by mean, best first\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Under a chart', text: 'The exact values the picture only shows approximately, with the group sizes.', code: 'df.groupby("team").agg(students=("score", "count"), mean_score=("score", "mean"))' },
+            { title: 'When readers need to look things up', text: 'A short, sorted table answers “what exactly was it for my group”.' },
+          ],
+          avoid: 'Do not paste the whole grouped output. A summary table that needs scrolling is data, not a summary — keep the few columns the question needs.',
+        },
         exercises: [
           {
             title: 'The table under the chart',
@@ -542,6 +570,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ndf = pd.DataFrame({"team": ["a", "b", "b", "b", "b"], "score": [9.0, 5.0, 6.0, 5.0, 6.0]})\nmeans = df.groupby("team")["score"].mean()\ngap = float(means.max() - means.min())\n\nprint(f"a scores {gap:.1f} above b (n={len(means)})")\n# Print it again with the row count as n.\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Reporting a comparison', text: 'The number, what it is compared with, and how much data it rests on, built from the values.', code: 'f"{top} scores {gap:.1f} above {bottom} (n={len(df)})"' },
+            { title: 'Describing an association', text: 'Say the columns move together, give r, and say what the data cannot show.' },
+          ],
+          avoid: 'Do not write “causes”, “drives” or “leads to” about a correlation, and do not type numbers into a sentence by hand. Both drift from what the data says.',
+        },
         exercises: [
           {
             title: 'A finding with its n',
@@ -677,6 +712,13 @@ module.exports = {
             starter: 'import pandas as pd\n\npeople = pd.DataFrame({"id": [1, 2, 3], "team": ["red", "red", "blue"]})\nscores = pd.DataFrame({"id": [1, 3], "score": [90.0, 70.0]})\n\nout = pd.merge(people, scores, on="id")\nprint(len(people), "->", len(out))\n# Which ids in people are not in scores?\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'A question that needs several files', text: 'Read, clean each table, join, summarise, report — in that order.', code: 'report("people.csv", "scores.csv")' },
+            { title: 'Analyses you will rerun', text: 'A function over the file paths, with checks between the steps, handles next term’s data unchanged.' },
+          ],
+          avoid: 'Do not skip the checks between steps because the final number looks plausible. Rows lost at a join or a clean are exactly what makes a plausible number wrong.',
+        },
         exercises: [
           {
             title: 'The best team, from two files',

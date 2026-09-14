@@ -369,6 +369,26 @@ print(a["id"].dtype, b["id"].dtype)
 </div>
 </div>
 
+<div class="content-section">
+<h2>Step 3: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Before every merge</h3>
+<p>Check the key is unique where it should be and has the same dtype on both sides.</p>
+<pre class="code"><code>pd.merge(a, b, on="id", validate="many_to_one")</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">After a surprising result</h3>
+<p>Too many rows means duplicate keys; too few means types or spellings that do not match.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not fix a doubled row count by dropping duplicates afterwards. Find the duplicate keys that caused it, or the numbers built on the merge are still wrong.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

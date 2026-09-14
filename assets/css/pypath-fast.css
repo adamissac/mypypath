@@ -2881,3 +2881,11 @@ html.reduced-motion.page-from-nav main {
 @media print {
   .sel__panel { display: none; }
 }
+
+/* Code inside a feature card wraps instead of scrolling. A card is a third to
+   a half of the column, so an ordinary line of pandas does not fit, and a
+   sideways-scrolling one-liner under its copy button reads as cut off. */
+.feature-card pre.code code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

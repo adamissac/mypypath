@@ -371,6 +371,26 @@ print("removed", len(names) - len(unique), "duplicates of", len(names), "rows")<
 <div class="info-callout"><p><strong>Key idea:</strong> <code>dict.fromkeys(values)</code> is a one-line order-keeping deduplication for exact matches — dictionary keys are unique and keep insertion order. It cannot normalise, so the loop is still the tool when case and spaces matter.</p></div>
 </div>
 
+<div class="content-section">
+<h2>Step 4: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Files that were appended to</h3>
+<p>Exports run twice, forms submitted twice. Deduplicate on the fields that identify a record.</p>
+<pre class="code"><code>key = (r["name"], r["date"])</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Text typed by people</h3>
+<p>Normalise case and spaces to see that “Ada” and “ ada ” are one value, while keeping the original spelling.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not deduplicate on every field when two real records can share them, and do not use set() when order matters. Decide what “the same” means first.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

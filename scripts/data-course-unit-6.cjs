@@ -90,6 +90,13 @@ module.exports = {
             starter: 'import pandas as pd\nimport numpy as np\n\ndf = pd.DataFrame({"score": [92, np.nan, 60]})\n\nhigh = df[df["score"] > 80]\nlow = df[df["score"] <= 80]\nprint(len(high) + len(low), "of", len(df))\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Keeping rows by a condition', text: 'A boolean Series selects whole rows, with every column coming along.', code: 'df[(df["score"] >= 60) & (df["subject"] == "maths")]' },
+            { title: 'Counting what matched', text: 'mask.sum() counts the rows a condition keeps, which is the check after every filter.' },
+          ],
+          avoid: 'Do not assume a filter and its opposite cover every row. Rows with NaN fail both, so count the missing ones separately.',
+        },
         exercises: [
           {
             title: 'The names that passed',
@@ -210,6 +217,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ndf = pd.DataFrame({"score": [55, 60, 70, 80, 85]})\n\nprint(len(df[(df["score"] >= 60) & (df["score"] <= 80)]))\nprint(None)   # between\nprint(None)   # query\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Membership in a list', text: 'isin replaces a chain of == with | when the allowed values are a set.', code: 'df[df["team"].isin(["red", "blue"])]' },
+            { title: 'Ranges and readable conditions', text: 'between for inclusive ranges; query when the condition reads better as a sentence.' },
+          ],
+          avoid: 'Do not reach for query when a column name has spaces or the condition uses outside variables you have not marked with @. A plain mask is clearer there.',
+        },
         exercises: [
           {
             title: 'Count the rows in a set of subjects',
@@ -319,6 +333,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ndf = pd.DataFrame({"sales": [1000.0, 300.0], "people": [500, 50]})\n\nresult = df.assign(per_person=lambda d: d["sales"] / d["people"])\nprint(result)\nprint(list(df.columns))\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Arithmetic across columns', text: 'Ratios, differences and percentages are one vectorised expression.', code: 'df["gap"] = df["target"] - df["score"]' },
+            { title: 'Labels from a condition', text: 'np.where or a mapping turns a number or code into the category a reader understands.' },
+          ],
+          avoid: 'Do not derive a column with a Python loop over rows. A vectorised expression is shorter, faster, and handles missing values consistently.',
+        },
         exercises: [
           {
             title: 'Each row as a share of the total',
@@ -434,6 +455,13 @@ module.exports = {
             starter: 'import pandas as pd\n\nnames = pd.Series([" Ada ", "GRACE"])\n\nprint(names.apply(lambda n: n.strip()).tolist())\nprint(names.apply(lambda n: len(n)).tolist())\nprint(names.apply(lambda n: n.lower()).tolist())\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Logic with no vectorised form', text: 'Parsing an odd string format or calling a function that only takes one value at a time.', code: 'df["initials"] = df["name"].apply(to_initials)' },
+            { title: 'A quick one-off on a small table', text: 'When readability matters more than speed and the table is a few hundred rows.' },
+          ],
+          avoid: 'Do not use apply for arithmetic, comparisons or string methods that pandas already vectorises (.str, np.where, plain operators). It is a loop in disguise and much slower.',
+        },
         exercises: [
           {
             title: 'Clean a column of names',
@@ -548,6 +576,13 @@ module.exports = {
             starter: 'import pandas as pd\n\nvalues = pd.Series([1, 2, 3, 4, 100])\n\nprint(pd.cut(values, bins=2).value_counts().tolist())\nprint(pd.qcut(values, q=2).value_counts().tolist())\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Grade bands and age groups', text: 'cut turns a measurement into labelled ranges you can count and group by.', code: 'pd.cut(df["score"], bins=[0, 60, 80, 100], labels=["low", "mid", "high"])' },
+            { title: 'Equal-sized groups', text: 'qcut splits into quantiles when you want the same number of rows in each band.' },
+          ],
+          avoid: 'Do not forget which edge a bin includes. Values exactly on a boundary, or outside the outer edges, land in a different band or become NaN.',
+        },
         exercises: [
           {
             title: 'Letter grades',
@@ -660,6 +695,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ndf = pd.DataFrame({"name": list("abcde"), "score": [5, 1, 9, 3, 7]})\n\nprint(df.sort_values("score", ascending=False).head(3)["name"].tolist())\nprint(None)   # the same, with nlargest\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Ranking a table', text: 'sort_values by one or more columns, with a direction for each.', code: 'df.sort_values(["score", "name"], ascending=[False, True])' },
+            { title: 'The few rows that matter', text: 'nlargest and nsmallest take the top or bottom n directly.' },
+          ],
+          avoid: 'Do not rely on head() after a sort you did not assign. sort_values returns a new table; the original keeps its old order.',
+        },
         exercises: [
           {
             title: 'The top scorers',

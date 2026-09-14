@@ -331,6 +331,26 @@ print(df.groupby("k")["v"].agg(["size", "count", "mean"]))
 </div>
 </div>
 
+<div class="content-section">
+<h2>Step 3: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Rows per group</h3>
+<p>size counts every row, including those with missing values.</p>
+<pre class="code"><code>df.groupby("team").size()</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Values per group</h3>
+<p>count counts the non-missing values in a column — how many actually have a score.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not use size and count interchangeably. When a column has gaps they give different answers, and the difference is the number of missing values.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

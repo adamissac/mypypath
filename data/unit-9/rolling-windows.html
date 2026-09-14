@@ -327,6 +327,26 @@ print(int(rolled.isna().sum()), "dropped")
 </div>
 </div>
 
+<div class="content-section">
+<h2>Step 3: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Smoothing a noisy series</h3>
+<p>A 7-day rolling mean shows the trend under daily ups and downs.</p>
+<pre class="code"><code>df["sales"].rolling(7).mean()</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Recent-window checks</h3>
+<p>A rolling max or sum over the last n rows for alerts and running totals.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not forget the first window-minus-one rows are NaN, and do not use a row-count window on data with gaps. Use a time window like "7D" instead.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

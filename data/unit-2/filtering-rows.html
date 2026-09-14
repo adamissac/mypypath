@@ -363,6 +363,26 @@ print(len(kept), "+", len(dropped), "of", len(rows))</code></pre>
 <div class="info-callout"><p><strong>Key idea:</strong> Printing before-and-after counts is the cheapest check in data work. A filter that keeps 3 rows of 900 is almost always a mistake in the condition, not a finding.</p></div>
 </div>
 
+<div class="content-section">
+<h2>Step 4: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Selecting who is in the analysis</h3>
+<p>Pass marks, date ranges, one category. Put the rule in one function and use it everywhere.</p>
+<pre class="code"><code>passing = [r for r in rows if r["score"] &gt;= PASS_MARK]</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Splitting a table into parts</h3>
+<p>A filter and its opposite, with a check that the counts add up to the whole.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not test for a missing value with “if not score”: a real 0 is falsy too. Use “is None”, and print the before-and-after row counts.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

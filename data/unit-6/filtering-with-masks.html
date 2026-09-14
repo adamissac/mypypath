@@ -344,6 +344,26 @@ print(len(high) + len(low), "of", len(df))
 </div>
 </div>
 
+<div class="content-section">
+<h2>Step 3: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Keeping rows by a condition</h3>
+<p>A boolean Series selects whole rows, with every column coming along.</p>
+<pre class="code"><code>df[(df["score"] &gt;= 60) &amp; (df["subject"] == "maths")]</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Counting what matched</h3>
+<p>mask.sum() counts the rows a condition keeps, which is the check after every filter.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not assume a filter and its opposite cover every row. Rows with NaN fail both, so count the missing ones separately.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

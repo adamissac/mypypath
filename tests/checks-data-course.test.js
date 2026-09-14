@@ -116,6 +116,8 @@ describe('every lesson is written to the full template', () => {
         expect(pr.after, `"${pr.title}" sits between sections`).toBeLessThan(lesson.sections.length);
         expect(pr.after).toBeGreaterThanOrEqual(0);
       }
+      expect(lesson.use?.cards?.length, 'when-to-use cards').toBeGreaterThanOrEqual(2);
+      expect(String(lesson.use?.avoid || '').length, 'when not to use it').toBeGreaterThan(40);
       expect(lesson.questions.length, 'questions').toBeGreaterThanOrEqual(3);
     });
   }
@@ -127,6 +129,8 @@ describe('every lesson is written to the full template', () => {
       expect(html, where).toContain('What You Will Learn');
       expect(html, where).toContain('Why This Matters');
       expect(html, where).toContain('Mini Practice #2');
+      expect(html, where).toContain('class="feature-card"');
+      expect(html, where).toContain('When Not to Use It');
       expect((html.match(/data-exercise-id=/g) || []).length, where).toBeGreaterThanOrEqual(2);
       // Interleaved, not dumped at the end: the first practice comes before
       // the last section's heading.

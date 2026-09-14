@@ -86,6 +86,13 @@ module.exports = {
             starter: 'import pandas as pd\n\na = pd.DataFrame({"name": ["Ada"], "score": [90]})\nb = pd.DataFrame({"name": ["Bo"], "grade": ["B"]})\n\nprint(pd.concat([a, b], ignore_index=True))\nprint(None)   # columns present in only one\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'The same table in pieces', text: 'Monthly files, one export per class: same columns, stacked into one table.', code: 'pd.concat([jan, feb], ignore_index=True)' },
+            { title: 'Keeping track of the source', text: 'Tag each piece with a column before stacking so rows can still be told apart.' },
+          ],
+          avoid: 'Do not concat tables whose column names differ slightly. Mismatched names become separate columns full of NaN rather than an error.',
+        },
         exercises: [
           {
             title: 'Stack a list of tables',
@@ -203,6 +210,13 @@ module.exports = {
             starter: 'import pandas as pd\n\npeople = pd.DataFrame({"id": [1, 2, 3], "name": ["a", "b", "c"]})\nscores = pd.DataFrame({"id": [1], "score": [90]})\n\nout = pd.merge(people, scores, on="id", how="left")\nprint(out[out["score"].isna()]["name"].tolist())\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Adding columns from another table', text: 'Names from a people table onto a scores table, matched on the id they share.', code: 'pd.merge(scores, people, on="id", how="left")' },
+            { title: 'Choosing which rows survive', text: 'inner keeps matches only; left keeps every row of the main table.' },
+          ],
+          avoid: 'Do not merge without checking the row count before and after. An inner join drops unmatched rows silently, and duplicate keys multiply them.',
+        },
         exercises: [
           {
             title: 'Keep everyone, count the gaps',
@@ -322,6 +336,13 @@ module.exports = {
             starter: 'import pandas as pd\n\na = pd.DataFrame({"id": ["1", "2"], "name": ["Ada", "Bo"]})\nb = pd.DataFrame({"id": [1, 2], "score": [90, 80]})\n\nprint(len(pd.merge(a, b, on="id")))\nprint(a["id"].dtype, b["id"].dtype)\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Before every merge', text: 'Check the key is unique where it should be and has the same dtype on both sides.', code: 'pd.merge(a, b, on="id", validate="many_to_one")' },
+            { title: 'After a surprising result', text: 'Too many rows means duplicate keys; too few means types or spellings that do not match.' },
+          ],
+          avoid: 'Do not fix a doubled row count by dropping duplicates afterwards. Find the duplicate keys that caused it, or the numbers built on the merge are still wrong.',
+        },
         exercises: [
           {
             title: 'Join whatever type the ids arrived as',
@@ -431,6 +452,13 @@ module.exports = {
             starter: 'import pandas as pd\n\nwide = pd.DataFrame({\n    "name": ["a", "b", "c"],\n    "q1": [1, 2, 3], "q2": [4, 5, 6], "q3": [7, 8, 9], "q4": [10, 11, 12],\n})\n\nprint(len(wide.melt(id_vars=["name"])))\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'A column per period', text: 'Spreadsheets with jan, feb, mar columns become one month column and one value column.', code: 'df.melt(id_vars=["name"], var_name="month", value_name="score")' },
+            { title: 'Before grouping or charting', text: 'Long tables group, filter and plot directly; wide ones need a column per operation.' },
+          ],
+          avoid: 'Do not melt the identifying columns. Anything that says which row this is belongs in id_vars, or it is turned into values and lost.',
+        },
         exercises: [
           {
             title: 'Melt the months down',
@@ -543,6 +571,13 @@ module.exports = {
             starter: 'import pandas as pd\n\nlong = pd.DataFrame({"name": ["Ada", "Ada"], "month": ["jan", "jan"], "score": [90, 80]})\n\ntry:\n    print(long.pivot(index="name", columns="month", values="score"))\nexcept ValueError as exc:\n    print("ValueError:", exc)\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'One row per person for reading', text: 'A long table of scores becomes a grid with a column per month.', code: 'df.pivot(index="name", columns="month", values="score")' },
+            { title: 'Comparing periods side by side', text: 'Wide is the shape for a table a person scans across.' },
+          ],
+          avoid: 'Do not use pivot when a name and month can appear twice — it raises. Use pivot_table with an aggfunc, and decide how duplicates combine.',
+        },
         exercises: [
           {
             title: 'Spread the months across',
@@ -656,6 +691,13 @@ module.exports = {
             starter: 'import pandas as pd\n\npeople = pd.DataFrame({"id": [1, 2, 3], "team": ["red", "red", "blue"]})\nscores = pd.DataFrame({"id": [1, 2, 3], "score": [90, 80, 70]})\n\nout = pd.merge(people, scores, on="id", how="left")\nprint(out.groupby("team")["score"].agg(["mean", "size"]))\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Answers that need two files', text: 'Scores in one file, teams in another: read, clean, join, then summarise.', code: 'out = pd.merge(people, scores, on="id")' },
+            { title: 'Reports you will rerun', text: 'A function over the file paths runs the same checks on next month’s files.' },
+          ],
+          avoid: 'Do not join before cleaning the keys. A key read as text in one file and a number in the other matches nothing, and the result is empty rather than an error.',
+        },
         exercises: [
           {
             title: 'Mean score per team, from two files',

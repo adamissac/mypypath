@@ -95,6 +95,13 @@ module.exports = {
             starter: 'names = ["Ada", "Grace", "Alan", "Grace", "Katherine"]\nscores = ["92", "", "79", "88", ""]\n\n# blanks:\n\n# repeated names:\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Every new file', text: 'Look at the distinct values and count blanks and repeats before any summary leaves your program.', code: 'print(sorted(set(column)))' },
+            { title: 'When a result surprises you', text: 'An unexpected average is more often dirty data than a discovery. Inspect before you explain.' },
+          ],
+          avoid: 'Do not start fixing as soon as you see a problem. Count all four kinds first, so you can report what was wrong and decide the order of the fixes.',
+        },
         exercises: [
           {
             title: 'Count the missing scores',
@@ -225,6 +232,13 @@ module.exports = {
             starter: 'scores = [80, None, 90, None, 70]\n\n# filled with 0:\n\n# filled with the mean of the known scores:\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Drop when the gaps are few', text: 'A handful of incomplete rows in a large table, in the column you are analysing.', code: 'complete = [r for r in rows if r["score"] != ""]' },
+            { title: 'Fill when the fill value is true', text: 'Zero when zero really happened; a known default when the source documents one.' },
+          ],
+          avoid: 'Do not fill with the mean just to keep a row count, and never remove items from a list while looping over it. Build a new list, and say how many rows you dropped.',
+        },
         exercises: [
           {
             title: 'Drop the incomplete rows',
@@ -353,6 +367,13 @@ module.exports = {
             starter: 'prices = ["£1,200", " £85 ", "£3,000.50"]\n\ntotal = 0\n# clean and convert each price\n\nprint(total)\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Straight after reading a file', text: 'Convert every numeric column on the way in, so every later line works with real numbers.', code: 'scores = [int(r["score"]) for r in rows]' },
+            { title: 'Columns with decorations or junk', text: 'Strip commas, currency and percent signs, then try the conversion and catch ValueError by name.' },
+          ],
+          avoid: 'Do not test with isdigit() to decide what is a number — it rejects "-5" and "3.5". And do not use a bare except, which hides your own bugs along with bad data.',
+        },
         exercises: [
           {
             title: 'A safe score converter',
@@ -481,6 +502,13 @@ module.exports = {
             starter: 'subjects = ["Maths", "maths ", "MATHS", "Art", " art", "Computing"]\n\n# how many real subjects?\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Files that were appended to', text: 'Exports run twice, forms submitted twice. Deduplicate on the fields that identify a record.', code: 'key = (r["name"], r["date"])' },
+            { title: 'Text typed by people', text: 'Normalise case and spaces to see that “Ada” and “ ada ” are one value, while keeping the original spelling.' },
+          ],
+          avoid: 'Do not deduplicate on every field when two real records can share them, and do not use set() when order matters. Decide what “the same” means first.',
+        },
         exercises: [
           {
             title: 'Unique names, first spelling kept',
@@ -609,6 +637,13 @@ module.exports = {
             starter: 'rows = [\n    {"name": "Ada", "subject": "computing", "score": 92},\n    {"name": "Grace", "subject": "computing", "score": 88},\n    {"name": "Alan", "subject": "maths", "score": 75},\n    {"name": "Katherine", "subject": "computing", "score": 70},\n]\n\n# names:\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Selecting who is in the analysis', text: 'Pass marks, date ranges, one category. Put the rule in one function and use it everywhere.', code: 'passing = [r for r in rows if r["score"] >= PASS_MARK]' },
+            { title: 'Splitting a table into parts', text: 'A filter and its opposite, with a check that the counts add up to the whole.' },
+          ],
+          avoid: 'Do not test for a missing value with “if not score”: a real 0 is falsy too. Use “is None”, and print the before-and-after row counts.',
+        },
         exercises: [
           {
             title: 'Rows at or above the mark',
@@ -735,6 +770,13 @@ module.exports = {
             starter: 'rows = [\n    {"name": "Zoe", "score": 90},\n    {"name": "Ada", "score": 90},\n    {"name": "Max", "score": 95},\n    {"name": "Bea", "score": 90},\n]\n\n# sorted names:\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Top and bottom n', text: 'Leaderboards, the weakest topics, the largest orders: sorted with a key and reverse, then a slice.', code: 'sorted(rows, key=lambda r: r["score"], reverse=True)[:5]' },
+            { title: 'Rankings people will read', text: 'A tuple key to break ties, and shared ranks for equal values.' },
+          ],
+          avoid: 'Do not write x = x.sort() — it replaces your list with None. And do not sort a column that is still text: "100" comes before "20".',
+        },
         exercises: [
           {
             title: 'The top n names',

@@ -345,6 +345,26 @@ print(df.groupby("city")["score"].agg(["mean", "size"]))
 </div>
 </div>
 
+<div class="content-section">
+<h2>Step 3: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Any question with “per” in it</h3>
+<p>Mean per team, total per month, count per category: group, summarise, and pandas combines.</p>
+<pre class="code"><code>df.groupby("team")["score"].mean()</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Comparing groups</h3>
+<p>A grouped result is one row per group, ready to sort, chart or put in a table.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not loop over the unique values and filter each one by hand. It repeats the scan per group and is easy to get subtly wrong; groupby does it in one pass.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

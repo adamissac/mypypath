@@ -360,6 +360,26 @@ print(None)   # the total across every column
 </div>
 </div>
 
+<div class="content-section">
+<h2>Step 3: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Files with text markers</h3>
+<p>"n/a", "-", "missing": name them in na_values so the column stays numeric.</p>
+<pre class="code"><code>pd.read_csv(path, na_values=["n/a", "-"])</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Numeric sentinels</h3>
+<p>Values like 999 or -1 that mean “not recorded” should be listed too, or they ruin the mean.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not clean markers after the load with string replacement when read_csv can do it. And do not assume blanks are the only marker — look at the distinct values.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

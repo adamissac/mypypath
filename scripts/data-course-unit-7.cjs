@@ -88,6 +88,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ndf = pd.DataFrame({"city": ["L", "L", "L", "Y"], "score": [80, 82, 78, 100]})\n\nprint(df.groupby("city")["score"].agg(["mean", "size"]))\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Any question with “per” in it', text: 'Mean per team, total per month, count per category: group, summarise, and pandas combines.', code: 'df.groupby("team")["score"].mean()' },
+            { title: 'Comparing groups', text: 'A grouped result is one row per group, ready to sort, chart or put in a table.' },
+          ],
+          avoid: 'Do not loop over the unique values and filter each one by hand. It repeats the scan per group and is easy to get subtly wrong; groupby does it in one pass.',
+        },
         exercises: [
           {
             title: 'Mean score per subject',
@@ -197,6 +204,13 @@ module.exports = {
             starter: 'import pandas as pd\nimport numpy as np\n\ndf = pd.DataFrame({"k": ["a", "a", "a", "b"], "v": [10, np.nan, 20, 5]})\n\nprint(df.groupby("k")["v"].agg(["size", "count", "mean"]))\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Rows per group', text: 'size counts every row, including those with missing values.', code: 'df.groupby("team").size()' },
+            { title: 'Values per group', text: 'count counts the non-missing values in a column — how many actually have a score.' },
+          ],
+          avoid: 'Do not use size and count interchangeably. When a column has gaps they give different answers, and the difference is the number of missing values.',
+        },
         exercises: [
           {
             title: 'How many of each',
@@ -306,6 +320,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ndf = pd.DataFrame({"k": ["a", "a", "b", "b"], "v": [1, 4, 7, 9]})\n\nprint(df.groupby("k").agg(\n    lowest=("v", "min"),\n    highest=("v", "max"),\n    rows=("v", "size"),\n))\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Several numbers per group', text: 'Count, mean and max side by side, so every mean comes with the size behind it.', code: 'df.groupby("team")["score"].agg(["count", "mean", "max"])' },
+            { title: 'Readable column names', text: 'Named aggregation gives each result the name a reader should see.' },
+          ],
+          avoid: 'Do not produce a wide table of every summary for every column. Pick the few numbers the question needs; the rest hides them.',
+        },
         exercises: [
           {
             title: 'The spread within each group',
@@ -414,6 +435,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ndf = pd.DataFrame({"subject": ["m", "m", "a"], "year": [10, 11, 10], "score": [90, 80, 70]})\n\nout = df.groupby(["subject", "year"])["score"].mean()\nprint(None)   # the same thing, flattened\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Combinations of categories', text: 'Team and term, region and month: one row per pair that exists.', code: 'df.groupby(["team", "term"])["score"].mean()' },
+            { title: 'Drilling down', text: 'A two-level index lets you select one outer group and see its inner breakdown.' },
+          ],
+          avoid: 'Do not forget reset_index when the next step expects ordinary columns. And remember combinations with no rows do not appear at all.',
+        },
         exercises: [
           {
             title: 'Count every pair',
@@ -523,6 +551,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ndf = pd.DataFrame({"k": ["low", "low", "high"], "v": [1, 2, 100]})\n\ndf["group_mean"] = df.groupby("k")["v"].transform("mean")\nprint(df)\nprint(int((df["v"] > df["group_mean"]).sum()))\nprint(int((df["v"] > df["v"].mean()).sum()))\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Comparing each row to its group', text: 'transform returns one value per row, aligned to the original table.', code: 'df["vs_team"] = df["score"] - df.groupby("team")["score"].transform("mean")' },
+            { title: 'Filling gaps with a group value', text: 'Fill missing values with the mean of the row’s own group rather than the whole column.' },
+          ],
+          avoid: 'Do not use agg when you need a value on every row, or transform when you want one row per group. The shape of the answer decides which.',
+        },
         exercises: [
           {
             title: 'Rows above their own group',
@@ -632,6 +667,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ndf = pd.DataFrame({"subject": ["m", "m", "a"], "year": [10, 10, 11], "score": [90, 80, 70]})\n\nprint(pd.pivot_table(df, index="subject", columns="year", values="score", aggfunc="size", fill_value=0))\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'A grid people will read', text: 'One key down the side, one across the top, a summary in each cell.', code: 'pd.pivot_table(df, index="team", columns="term", values="score", aggfunc="mean")' },
+            { title: 'Totals along the edges', text: 'margins=True adds row and column totals to the grid.' },
+          ],
+          avoid: 'Do not leave aggfunc to its default without thinking. Duplicate combinations are averaged, which may not be what the cell should say.',
+        },
         exercises: [
           {
             title: 'The shape of the grid',

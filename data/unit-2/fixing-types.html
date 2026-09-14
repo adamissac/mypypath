@@ -360,6 +360,26 @@ print(total)
 </div>
 </div>
 
+<div class="content-section">
+<h2>Step 4: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Straight after reading a file</h3>
+<p>Convert every numeric column on the way in, so every later line works with real numbers.</p>
+<pre class="code"><code>scores = [int(r["score"]) for r in rows]</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Columns with decorations or junk</h3>
+<p>Strip commas, currency and percent signs, then try the conversion and catch ValueError by name.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not test with isdigit() to decide what is a number — it rejects "-5" and "3.5". And do not use a bare except, which hides your own bugs along with bad data.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

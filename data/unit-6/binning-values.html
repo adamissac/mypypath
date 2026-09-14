@@ -344,6 +344,26 @@ print(pd.qcut(values, q=2).value_counts().tolist())
 </div>
 </div>
 
+<div class="content-section">
+<h2>Step 3: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Grade bands and age groups</h3>
+<p>cut turns a measurement into labelled ranges you can count and group by.</p>
+<pre class="code"><code>pd.cut(df["score"], bins=[0, 60, 80, 100], labels=["low", "mid", "high"])</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Equal-sized groups</h3>
+<p>qcut splits into quantiles when you want the same number of rows in each band.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not forget which edge a bin includes. Values exactly on a boundary, or outside the outer edges, land in a different band or become NaN.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

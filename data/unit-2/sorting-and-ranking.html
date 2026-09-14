@@ -362,6 +362,26 @@ print(list(zip(scores, ranks)))</code></pre>
 <div class="info-callout"><p><strong>Key idea:</strong> Sorting a column that is still text sorts it alphabetically — <code>"100"</code> before <code>"20"</code>. Convert types (lesson 3) before sorting numbers.</p></div>
 </div>
 
+<div class="content-section">
+<h2>Step 4: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Top and bottom n</h3>
+<p>Leaderboards, the weakest topics, the largest orders: sorted with a key and reverse, then a slice.</p>
+<pre class="code"><code>sorted(rows, key=lambda r: r["score"], reverse=True)[:5]</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Rankings people will read</h3>
+<p>A tuple key to break ties, and shared ranks for equal values.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not write x = x.sort() — it replaces your list with None. And do not sort a column that is still text: "100" comes before "20".</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

@@ -89,6 +89,13 @@ module.exports = {
             starter: 'import pandas as pd\n\nmessy = pd.Series(["2024-01-05", "n/a", "2024-02-01", ""])\n\ndays = pd.to_datetime(messy, errors="coerce")\nprint(int(days.isna().sum()))\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Any date column from a file', text: 'to_datetime turns text into real dates that sort, compare and subtract correctly.', code: 'df["date"] = pd.to_datetime(df["date"])' },
+            { title: 'Known formats', text: 'Pass format= when you know it; it is faster and refuses dates that do not fit.' },
+          ],
+          avoid: 'Do not let an ambiguous date like 03/04/2024 be guessed. Say the format or dayfirst=True, or March and April swap silently.',
+        },
         exercises: [
           {
             title: 'The earliest date',
@@ -198,6 +205,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ndf = pd.DataFrame({\n    "day": pd.to_datetime(["2023-01-05", "2024-01-20", "2024-02-01"]),\n    "n": [1, 9, 4],\n})\n\nprint(df.groupby(df["day"].dt.month)["n"].sum())\nprint(df.groupby(df["day"].dt.to_period("M"))["n"].sum())\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Grouping by calendar', text: 'dt.year, dt.month and dt.day_name give keys for “per month” and “per weekday” questions.', code: 'df.groupby(df["date"].dt.day_name())["sales"].sum()' },
+            { title: 'Filtering to a period', text: 'Compare a part — all Mondays, all of 2024 — without building strings.' },
+          ],
+          avoid: 'Do not group by month number alone across several years. January 2023 and January 2024 end up in one group.',
+        },
         exercises: [
           {
             title: 'Totals by month number',
@@ -304,6 +318,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ndf = pd.DataFrame({\n    "day": pd.to_datetime(["2024-03-01", "2024-01-05", "2024-02-01"]),\n    "n": [3, 1, 2],\n}).set_index("day")\n\nprint(df.index.is_monotonic_increasing)\nprint(None)   # after sorting\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'A series measured over time', text: 'With dates on the index, df.loc["2024-03"] selects a whole month.', code: 'df = df.set_index("date").sort_index()' },
+            { title: 'Before resampling or rolling', text: 'Both need time on the index to know how far apart the rows are.' },
+          ],
+          avoid: 'Do not slice a date index that is not sorted. Partial-string selection on an unsorted index can raise or return the wrong rows.',
+        },
         exercises: [
           {
             title: 'The total in a month',
@@ -411,6 +432,13 @@ module.exports = {
             starter: 'import pandas as pd\n\nidx = pd.to_datetime(["2024-01-01", "2024-03-01"])\ns = pd.Series([1, 1], index=idx)\n\nprint(len(s.resample("MS").sum()))\nprint(len(s.groupby(s.index.month).sum()))\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Totals per period', text: 'Daily rows to weekly or monthly totals without building a period column.', code: 'df["sales"].resample("MS").sum()' },
+            { title: 'Finding gaps', text: 'resample includes periods with no rows, so size() shows where data is missing.' },
+          ],
+          avoid: 'Do not read a zero in a resampled sum as “nothing happened”. An empty period also sums to zero — check size() to tell them apart.',
+        },
         exercises: [
           {
             title: 'Monthly totals, gaps included',
@@ -521,6 +549,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ns = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0])\n\nrolled = s.rolling(3).mean()\nprint(rolled.tolist())\nprint(int(rolled.isna().sum()), "dropped")\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Smoothing a noisy series', text: 'A 7-day rolling mean shows the trend under daily ups and downs.', code: 'df["sales"].rolling(7).mean()' },
+            { title: 'Recent-window checks', text: 'A rolling max or sum over the last n rows for alerts and running totals.' },
+          ],
+          avoid: 'Do not forget the first window-minus-one rows are NaN, and do not use a row-count window on data with gaps. Use a time window like "7D" instead.',
+        },
         exercises: [
           {
             title: 'Smooth a series',
@@ -634,6 +669,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ns = pd.Series([0.0, 5.0, 10.0])\n\nprint(s.pct_change().tolist())\nprint(s.pct_change().dropna().tolist())\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Step-by-step change', text: 'diff gives the change from one row to the next; pct_change the growth rate.', code: 'df["growth"] = df["sales"].pct_change()' },
+            { title: 'Comparing with a year ago', text: 'shift(12) on monthly data lines each month up with the same month last year.' },
+          ],
+          avoid: 'Do not report a percentage change from zero or near zero. It is infinite or huge, and a sentence about the absolute change says more.',
+        },
         exercises: [
           {
             title: 'Count the rises',

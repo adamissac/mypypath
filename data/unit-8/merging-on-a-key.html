@@ -345,6 +345,26 @@ print(out[out["score"].isna()]["name"].tolist())
 </div>
 </div>
 
+<div class="content-section">
+<h2>Step 3: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Adding columns from another table</h3>
+<p>Names from a people table onto a scores table, matched on the id they share.</p>
+<pre class="code"><code>pd.merge(scores, people, on="id", how="left")</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Choosing which rows survive</h3>
+<p>inner keeps matches only; left keeps every row of the main table.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not merge without checking the row count before and after. An inner join drops unmatched rows silently, and duplicate keys multiply them.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

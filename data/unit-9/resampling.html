@@ -333,6 +333,26 @@ print(len(s.groupby(s.index.month).sum()))
 </div>
 </div>
 
+<div class="content-section">
+<h2>Step 3: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Totals per period</h3>
+<p>Daily rows to weekly or monthly totals without building a period column.</p>
+<pre class="code"><code>df["sales"].resample("MS").sum()</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Finding gaps</h3>
+<p>resample includes periods with no rows, so size() shows where data is missing.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not read a zero in a resampled sum as “nothing happened”. An empty period also sums to zero — check size() to tell them apart.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

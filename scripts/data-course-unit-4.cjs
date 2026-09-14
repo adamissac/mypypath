@@ -85,6 +85,13 @@ module.exports = {
             starter: 'import pandas as pd\n\na = pd.Series([1, 2, 3], index=["x", "y", "z"])\nb = pd.Series([10, 20, 30], index=["z", "y", "x"])\n\nprint(a + b)\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'One labelled column', text: 'Values with meaningful labels — scores by name, sales by month — where lookups use the label.', code: 'scores = pd.Series([92, 88], index=["Ada", "Grace"])' },
+            { title: 'Arithmetic that should align', text: 'Two Series combine by label, so values match up even when the order differs.' },
+          ],
+          avoid: 'Do not assume two Series line up by position. They align by label, and a label missing from one side produces NaN rather than an error.',
+        },
         exercises: [
           {
             title: 'Who scored highest',
@@ -199,6 +206,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ndf = pd.DataFrame({"name": ["Ada", "Grace"], "score": ["92", "88"]})\n\nprint(df.shape)\nprint(list(df.columns))\nprint(df.head())\nprint(df.dtypes)\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Several columns about the same rows', text: 'A dictionary of equal-length lists, or a list of records, becomes a table with one index.', code: 'df = pd.DataFrame({"name": names, "score": scores})' },
+            { title: 'Data from code rather than a file', text: 'Test cases, small reference tables, results you computed and want to summarise.' },
+          ],
+          avoid: 'Do not build a DataFrame by appending one row at a time in a loop — it copies the table every time. Collect rows in a list first and build once.',
+        },
         exercises: [
           {
             title: 'Describe a table',
@@ -322,6 +336,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ndf = pd.DataFrame({"score": [70, 99, 80]})\nbest = df.sort_values("score", ascending=False)\n\nprint(best.iloc[0]["score"])\nprint(best.loc[0]["score"])\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'loc for labels', text: 'Rows by index label and columns by name, with slices that include the end.', code: 'df.loc[df["score"] >= 60, ["name", "score"]]' },
+            { title: 'iloc for positions', text: 'The first n rows, the last column — anything defined by position rather than name.' },
+          ],
+          avoid: 'Do not chain selections and then assign, as in df[mask]["score"] = 0. It may change a temporary copy and leave df alone; do it in one .loc call.',
+        },
         exercises: [
           {
             title: 'The score belonging to a name',
@@ -438,6 +459,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ndef add_flag(table):\n    table["flag"] = True\n    return table\n\ndf = pd.DataFrame({"a": [1]})\nresult = add_flag(df)\n\nprint(list(result.columns))\nprint(list(df.columns))\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'A derived column', text: 'Assign an expression over existing columns to a new name.', code: 'df["percent"] = df["score"] / df["total"] * 100' },
+            { title: 'Removing columns you will not use', text: 'drop(columns=[...]) returns a smaller table that is easier to read and check.' },
+          ],
+          avoid: 'Do not expect drop to change the table in place. It returns a new DataFrame — assign the result, or the column is still there.',
+        },
         exercises: [
           {
             title: 'Add a total, leave the original alone',
@@ -562,6 +590,13 @@ module.exports = {
             starter: 'import pandas as pd\n\nmessy = pd.Series(["10", "n/a", "5", "-", "7"])\nnumbers = pd.to_numeric(messy, errors="coerce")\n\nprint(numbers.tolist())\nprint(None)   # the original values that became NaN\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Right after loading', text: 'Check df.dtypes before any maths: a numeric column showing object means text got in.', code: 'df["score"] = pd.to_numeric(df["score"], errors="coerce")' },
+            { title: 'Categories with few values', text: 'Converting repeated labels to category saves memory and makes the allowed values explicit.' },
+          ],
+          avoid: 'Do not use astype(int) on a column that may contain junk or missing values — it raises. Use to_numeric with errors="coerce", then decide what to do with the NaNs.',
+        },
         exercises: [
           {
             title: 'Total a messy column',
@@ -671,6 +706,13 @@ module.exports = {
             starter: 'import pandas as pd\nfrom io import StringIO\n\ntext = "name;city;score\\nAda;Leeds;92\\n"\ndf = pd.read_csv(StringIO(text))\n\nprint(df.shape)\nprint(list(df.columns))\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Any tabular file', text: 'read_csv replaces the reader loop, the header handling and the conversions in one call.', code: 'df = pd.read_csv("scores.csv")' },
+            { title: 'A first look at new data', text: 'Follow it with shape, dtypes and head() to see what actually arrived.' },
+          ],
+          avoid: 'Do not trust the load because it did not raise. A wrong separator gives one column, and a missing marker turns numbers into text — both silently.',
+        },
         exercises: [
           {
             title: 'The average from a file',

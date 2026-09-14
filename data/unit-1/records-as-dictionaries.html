@@ -377,6 +377,26 @@ print(known)</code></pre>
 <div class="info-callout"><p><strong>Key idea:</strong> Defaulting a missing score to 0 is a decision with consequences: it drags the average down as if the student had sat the test and scored nothing. Unit 2 spends a lesson on that choice.</p></div>
 </div>
 
+<div class="content-section">
+<h2>Step 4: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Rows with named fields</h3>
+<p>Any table you will read by column name, especially one whose columns might change order or grow.</p>
+<pre class="code"><code>strong = [r["name"] for r in rows if r["score"] &gt;= 85]</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Records with optional fields</h3>
+<p>When some rows legitimately lack a field, .get with a deliberate default says how you treat the gap.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not use .get with a default to hide a column that should always be there. A missing required field is an error you want to see, so use brackets and let it raise.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

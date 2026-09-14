@@ -353,6 +353,26 @@ print(names.apply(lambda n: n.lower()).tolist())
 </div>
 </div>
 
+<div class="content-section">
+<h2>Step 3: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Logic with no vectorised form</h3>
+<p>Parsing an odd string format or calling a function that only takes one value at a time.</p>
+<pre class="code"><code>df["initials"] = df["name"].apply(to_initials)</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">A quick one-off on a small table</h3>
+<p>When readability matters more than speed and the table is a few hundred rows.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not use apply for arithmetic, comparisons or string methods that pandas already vectorises (.str, np.where, plain operators). It is a loop in disguise and much slower.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

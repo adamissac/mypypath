@@ -355,6 +355,26 @@ print(int(match["score"].iloc[0]))</code></pre>
 
 </div>
 
+<div class="content-section">
+<h2>Step 4: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">loc for labels</h3>
+<p>Rows by index label and columns by name, with slices that include the end.</p>
+<pre class="code"><code>df.loc[df["score"] &gt;= 60, ["name", "score"]]</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">iloc for positions</h3>
+<p>The first n rows, the last column — anything defined by position rather than name.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not chain selections and then assign, as in df[mask]["score"] = 0. It may change a temporary copy and leave df alone; do it in one .loc call.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

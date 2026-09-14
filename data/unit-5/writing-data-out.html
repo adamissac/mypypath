@@ -346,6 +346,26 @@ print(list(back.columns) == list(df.columns))
 </div>
 </div>
 
+<div class="content-section">
+<h2>Step 3: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Saving a cleaned table</h3>
+<p>to_csv with index=False writes exactly the columns a reader expects.</p>
+<pre class="code"><code>df.to_csv("clean.csv", index=False)</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Handing results to someone else</h3>
+<p>A file they can open in a spreadsheet, with named columns and no internal index.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not write the default index for a range index. Read back in, it becomes an “Unnamed: 0” column, and one more on every round trip.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

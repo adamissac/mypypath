@@ -339,6 +339,26 @@ print(df.groupby(df["day"].dt.to_period("M"))["n"].sum())
 </div>
 </div>
 
+<div class="content-section">
+<h2>Step 3: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Grouping by calendar</h3>
+<p>dt.year, dt.month and dt.day_name give keys for “per month” and “per weekday” questions.</p>
+<pre class="code"><code>df.groupby(df["date"].dt.day_name())["sales"].sum()</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Filtering to a period</h3>
+<p>Compare a part — all Mondays, all of 2024 — without building strings.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not group by month number alone across several years. January 2023 and January 2024 end up in one group.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

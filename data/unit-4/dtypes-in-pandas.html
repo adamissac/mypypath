@@ -360,6 +360,26 @@ print(None)   # the original values that became NaN
 </div>
 </div>
 
+<div class="content-section">
+<h2>Step 3: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Right after loading</h3>
+<p>Check df.dtypes before any maths: a numeric column showing object means text got in.</p>
+<pre class="code"><code>df["score"] = pd.to_numeric(df["score"], errors="coerce")</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Categories with few values</h3>
+<p>Converting repeated labels to category saves memory and makes the allowed values explicit.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not use astype(int) on a column that may contain junk or missing values — it raises. Use to_numeric with errors="coerce", then decide what to do with the NaNs.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

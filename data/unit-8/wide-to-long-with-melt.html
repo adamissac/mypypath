@@ -333,6 +333,26 @@ print(len(wide.melt(id_vars=["name"])))
 </div>
 </div>
 
+<div class="content-section">
+<h2>Step 3: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">A column per period</h3>
+<p>Spreadsheets with jan, feb, mar columns become one month column and one value column.</p>
+<pre class="code"><code>df.melt(id_vars=["name"], var_name="month", value_name="score")</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Before grouping or charting</h3>
+<p>Long tables group, filter and plot directly; wide ones need a column per operation.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not melt the identifying columns. Anything that says which row this is belongs in id_vars, or it is turned into values and lost.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

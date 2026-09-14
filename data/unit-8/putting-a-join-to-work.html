@@ -345,6 +345,26 @@ print(out.groupby("team")["score"].agg(["mean", "size"]))
 </div>
 </div>
 
+<div class="content-section">
+<h2>Step 3: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Answers that need two files</h3>
+<p>Scores in one file, teams in another: read, clean, join, then summarise.</p>
+<pre class="code"><code>out = pd.merge(people, scores, on="id")</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Reports you will rerun</h3>
+<p>A function over the file paths runs the same checks on next month’s files.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not join before cleaning the keys. A key read as text in one file and a number in the other matches nothing, and the result is empty rather than an error.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

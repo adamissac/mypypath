@@ -83,6 +83,13 @@ module.exports = {
             starter: 'import pandas as pd\nfrom io import StringIO\n\nraw = "Ada,92\\nGrace,88\\n"\n\ndf = None   # header=None and names=[...]\nprint(df)\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Files that are not plain comma-separated', text: 'Tabs, semicolons, no header, or a few junk lines at the top: sep, header, names and skiprows.', code: 'pd.read_csv(path, sep="\\t")' },
+            { title: 'Files from other countries or tools', text: 'Different separators and decimal marks are common in exports; say what the file uses.' },
+          ],
+          avoid: 'Do not keep adding options until it stops raising. Check the resulting shape and column names — a load that runs with the wrong options is still wrong.',
+        },
         exercises: [
           {
             title: 'Count the rows in a tab-separated file',
@@ -201,6 +208,13 @@ module.exports = {
             starter: 'import pandas as pd\nfrom io import StringIO\n\ntext = "name,score,city\\nAda,92,\\nGrace,,Leeds\\n"\ndf = pd.read_csv(StringIO(text))\n\nprint(df.isna().sum())\nprint(None)   # the total across every column\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Files with text markers', text: '"n/a", "-", "missing": name them in na_values so the column stays numeric.', code: 'pd.read_csv(path, na_values=["n/a", "-"])' },
+            { title: 'Numeric sentinels', text: 'Values like 999 or -1 that mean “not recorded” should be listed too, or they ruin the mean.' },
+          ],
+          avoid: 'Do not clean markers after the load with string replacement when read_csv can do it. And do not assume blanks are the only marker — look at the distinct values.',
+        },
         exercises: [
           {
             title: 'Count the known scores',
@@ -316,6 +330,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ndf = pd.DataFrame({"Full Name": [1], "Home City": [2], "SCORE": [3]})\n\nprint(list(df.columns))\nprint(None)   # the tidied names\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Wide files', text: 'usecols reads only the columns the analysis needs, which is faster and easier to check.', code: 'pd.read_csv(path, usecols=["id", "score"])' },
+            { title: 'Large files', text: 'nrows reads a sample first, so you can inspect the shape before loading everything.' },
+          ],
+          avoid: 'Do not drop columns you might need to explain a result, such as the one that says where a row came from. Reading less is for columns you are sure about.',
+        },
         exercises: [
           {
             title: 'Tidy the column names',
@@ -429,6 +450,13 @@ module.exports = {
             starter: 'import pandas as pd\n\nrecords = [{"name": "Ada", "at": {"city": "Leeds"}}]\n\nprint(list(pd.DataFrame(records).columns))\nprint(None)   # the flattened version\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'A list of records', text: 'JSON from an API is often a list of objects, which becomes a table with one call.', code: 'pd.DataFrame(records)' },
+            { title: 'Nested objects', text: 'json_normalize flattens nested fields into columns with dotted names.' },
+          ],
+          avoid: 'Do not load deeply nested JSON straight into a DataFrame and expect columns. Cells full of dictionaries need flattening first.',
+        },
         exercises: [
           {
             title: 'Columns from records',
@@ -542,6 +570,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ndf = pd.DataFrame({"name": ["Ada", "Grace"], "score": [92, 88]})\n\ndf.to_csv("out.csv", index=False)\nback = pd.read_csv("out.csv")\nprint(list(back.columns) == list(df.columns))\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Saving a cleaned table', text: 'to_csv with index=False writes exactly the columns a reader expects.', code: 'df.to_csv("clean.csv", index=False)' },
+            { title: 'Handing results to someone else', text: 'A file they can open in a spreadsheet, with named columns and no internal index.' },
+          ],
+          avoid: 'Do not write the default index for a range index. Read back in, it becomes an “Unnamed: 0” column, and one more on every round trip.',
+        },
         exercises: [
           {
             title: 'Save without the index',
@@ -658,6 +693,13 @@ module.exports = {
             starter: 'import pandas as pd\n\ncity = pd.Series(["Leeds", "leeds", "York", "Leeds "])\n\nprint(city.nunique())\nprint(None)   # after .str.strip().str.lower()\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Every time a file is read', text: 'Shape, dtypes, missing counts and a look at the first rows — before any number is trusted.', code: 'print(df.shape, df.isna().sum())' },
+            { title: 'When the data is updated', text: 'The same checks catch a new column, a changed marker or a doubled file.' },
+          ],
+          avoid: 'Do not skip the checks because the file loaded last time. Files change; the checks are cheap and the wrong answer is not.',
+        },
         exercises: [
           {
             title: 'A load report',

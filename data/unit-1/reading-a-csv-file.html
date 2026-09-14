@@ -383,6 +383,27 @@ print(int(rows[0]["score"]) + int(rows[1]["score"]))  # 180</code></pre>
 <div class="info-callout"><p><strong>Key idea:</strong> The exercises below use a supplied <code>scores.csv</code>. Pressing Run puts that file in place for you, and Check swaps in different files to make sure your code reads it rather than reciting it.</p></div>
 </div>
 
+<div class="content-section">
+<h2>Step 4: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Any comma-separated file</h3>
+<p>Spreadsheet exports, logs and downloads. csv handles quoting and line endings that split() gets wrong.</p>
+<pre class="code"><code>with open(path) as f:
+    rows = list(csv.DictReader(f))</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Files with a header row</h3>
+<p>DictReader turns the header into keys, so the rest of the code reads fields by name.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not split lines on commas yourself, even for a file that looks simple today. The first quoted name with a comma in it shifts every column after it, with no error.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

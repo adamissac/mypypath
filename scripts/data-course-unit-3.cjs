@@ -108,6 +108,13 @@ module.exports = {
             starter: 'import numpy as np\n\nscores = [92, 88, 79]\n\nby_loop = [s * 2 for s in scores]\n\n# Replace None with an array expression that gives the same numbers.\nby_array = None\n\nprint(by_loop)\nprint(by_array)\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Columns of numbers', text: 'Any calculation applied to every value — scaling, offsets, comparisons — is one expression on an array.', code: 'np.array(scores) * 1.1' },
+            { title: 'Data sets with many rows', text: 'Arrays stay fast as the column grows, where a Python loop slows down row by row.' },
+          ],
+          avoid: 'Do not use an array for mixed values like a name, a score and a flag, or for a collection you build up one item at a time. Use lists, then convert once.',
+        },
         exercises: [
           {
             title: 'Raise every score',
@@ -228,6 +235,13 @@ module.exports = {
             starter: 'import numpy as np\n\nprint(np.array([1, 2]).dtype)\nprint(np.array([1, 2.5]).dtype)\nprint(np.array([1, 2], dtype=float).dtype)\nprint(np.array([1.9, 2.9], dtype=int))\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Converting data you already have', text: 'np.array on a list of numbers, then check dtype so you know what arithmetic will do.', code: 'arr = np.array(values, dtype=float)' },
+            { title: 'Generating ranges and placeholders', text: 'arange, linspace, zeros and ones for sequences and blank arrays of a known size.' },
+          ],
+          avoid: 'Do not ignore the dtype. A column that settled on an integer type truncates when you store a fraction into it, and one that settled on object has lost the speed entirely.',
+        },
         exercises: [
           {
             title: 'Even numbers below a stop',
@@ -344,6 +358,13 @@ module.exports = {
             starter: 'import numpy as np\n\na = np.array([1, 2, 3, 4, 5])\nwindow = a[1:4]\nwindow[:] = 0\n\nprint(window)\nprint(a)\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Reading part of an array', text: 'A slice is a cheap view: ideal for looking at, summarising or passing along a range of values.', code: 'first_week = daily[:7]' },
+            { title: 'Changing part of an array on purpose', text: 'Assigning into a slice updates the original — useful when that is exactly what you mean.' },
+          ],
+          avoid: 'Do not modify a slice you meant to be a separate copy. Call .copy() first, or a change to the “copy” quietly rewrites the original data.',
+        },
         exercises: [
           {
             title: 'Everything but the ends',
@@ -472,6 +493,13 @@ module.exports = {
             starter: 'import numpy as np\n\nscores = np.array([92, 88, 79, 60])\n\nprint(scores[(scores >= 70) & (scores <= 90)])\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Selecting values by a condition', text: 'A comparison gives a mask, and indexing with it keeps the matching values — no loop.', code: 'passed = scores[scores >= 60]' },
+            { title: 'Counting and replacing', text: '(mask).sum() counts matches; np.where builds a new array from a condition.' },
+          ],
+          avoid: 'Do not combine masks with and, or or not — they raise on arrays. Use &, | and ~, with each comparison in parentheses.',
+        },
         exercises: [
           {
             title: 'The scores that passed',
@@ -586,6 +614,13 @@ module.exports = {
             starter: 'import numpy as np\n\ntable = np.array([[1, 2, 3],\n                  [4, 5, 6]])\nadjust = np.array([1, 2])\n\ntry:\n    print(table + adjust)\nexcept ValueError as exc:\n    print("ValueError:", exc)\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Applying one value to everything', text: 'A scalar broadcasts across the whole array: offsets, scaling, unit conversions.', code: 'celsius = (fahrenheit - 32) * 5 / 9' },
+            { title: 'A row or column against a table', text: 'Subtract a per-column mean from every row, where the shapes line up from the right.' },
+          ],
+          avoid: 'Do not rely on broadcasting when you are not sure of the shapes. Print .shape first — a silent broadcast between the wrong axes gives a result of the wrong size, not an error.',
+        },
         exercises: [
           {
             title: 'Centre on the mean',
@@ -698,6 +733,13 @@ module.exports = {
             starter: 'import numpy as np\n\nmarks = np.array([[80, 60, 70],\n                  [50, 90, 65]])\n\nprint(marks.max(axis=0))\nprint(marks.argmax(axis=0))\n',
           },
         ],
+        use: {
+          cards: [
+            { title: 'Totals per row or per column', text: 'axis=0 collapses rows to give one value per column; axis=1 gives one value per row.', code: 'per_student = marks.sum(axis=1)' },
+            { title: 'Whole-table summaries', text: 'No axis gives one number for everything — a grand total or overall mean.' },
+          ],
+          avoid: 'Do not guess the axis. Check the shape of the result: if you wanted one value per student and got one per test, the axis is the other one.',
+        },
         exercises: [
           {
             title: 'One total per student',

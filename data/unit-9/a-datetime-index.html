@@ -344,6 +344,26 @@ print(None)   # after sorting
 </div>
 </div>
 
+<div class="content-section">
+<h2>Step 3: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">A series measured over time</h3>
+<p>With dates on the index, df.loc["2024-03"] selects a whole month.</p>
+<pre class="code"><code>df = df.set_index("date").sort_index()</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Before resampling or rolling</h3>
+<p>Both need time on the index to know how far apart the rows are.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not slice a date index that is not sorted. Partial-string selection on an unsorted index can raise or return the wrong rows.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

@@ -335,6 +335,26 @@ print(int((df["v"] &gt; df["v"].mean()).sum()))
 </div>
 </div>
 
+<div class="content-section">
+<h2>Step 3: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Comparing each row to its group</h3>
+<p>transform returns one value per row, aligned to the original table.</p>
+<pre class="code"><code>df["vs_team"] = df["score"] - df.groupby("team")["score"].transform("mean")</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Filling gaps with a group value</h3>
+<p>Fill missing values with the mean of the row’s own group rather than the whole column.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not use agg when you need a value on every row, or transform when you want one row per group. The shape of the answer decides which.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>

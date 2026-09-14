@@ -377,6 +377,26 @@ print(sum(scores) / len(scores))</code></pre>
 
 </div>
 
+<div class="content-section">
+<h2>Step 4: When to Use It</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h3 class="h4">Small, fixed-shape tables</h3>
+<p>A handful of rows whose column order you control — test data, a few results typed into a script.</p>
+<pre class="code"><code>scores = [row[1] for row in table]</code></pre>
+</div>
+<div class="feature-card">
+<h3 class="h4">Data that arrives as positions</h3>
+<p>csv.reader and many APIs hand back rows as lists; a comprehension is how you get a column out of them.</p>
+
+</div>
+</div>
+<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>Do not keep list rows for anything long-lived or shared. The moment a column is added or reordered, every row[1] silently reads the wrong thing — switch to dictionaries.</p>
+</div>
+</div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
