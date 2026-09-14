@@ -173,34 +173,121 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Match four common question shapes to four chart types.</li>
+<li>Say what the table behind each chart looks like.</li>
+<li>Explain why a pie chart is usually the wrong answer.</li>
+<li>Build the summary table before thinking about the picture.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Choosing the chart is not a decoration step — it is the last analysis decision. A bar chart and a line chart of the same numbers make different claims, and picking the one that matches your question is what stops the picture saying something the data does not.</p>
+</div>
 
 <div class="content-section">
 <h2>Four questions, four charts</h2>
-<p>A quantity per category is a bar. A value over time is a line. A distribution is a histogram. A relationship between two measurements is a scatter. Most bad charts are one of these four answering a different question.</p>
+<p>Almost every chart you need is one of these, and the question tells you which.</p>
+<h3 class="h4">The mapping</h3>
+<p>Comparison across categories is a bar. Change over time is a line. The distribution of one column is a histogram. The relationship between two numbers is a scatter.</p>
+<pre class="code"><code># Comparison  -&gt; bar        mean score per team
+# Over time   -&gt; line       sales per month
+# Distribution-&gt; histogram  how scores are spread
+# Relationship-&gt; scatter    hours against score
+print("the question decides, not the tool")</code></pre>
+<h3 class="h4">Why bars work</h3>
+<p>Bars share a baseline and encode value as length, which is the comparison people read most accurately. A pie encodes it as angle, which they read worst — and it can only ever show parts of one whole.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"team": ["red", "blue"], "score": [90, 70]})
-# A quantity per category: a bar chart of this table.
-print(df.set_index("team")["score"].to_dict())</code></pre>
+df = pd.DataFrame({"team": ["red", "red", "blue"], "score": [90, 80, 70]})
+print(df.groupby("team")["score"].mean().round(1))</code></pre>
 
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Name the chart</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>For each question, write down which of the four charts it asks for before reading on.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', '# 1. How does revenue change across the twelve months?\n# 2. Which of our five regions sells most per head?\n# 3. Are longer study hours associated with higher marks?\n# 4. What do the marks look like -- clustered, or spread out?\n\nprint(&quot;line, bar, scatter, histogram&quot;)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1"># 1. How does revenue change across the twelve months?
+# 2. Which of our five regions sells most per head?
+# 3. Are longer study hours associated with higher marks?
+# 4. What do the marks look like -- clustered, or spread out?
+
+print("line, bar, scatter, histogram")
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>What the code looks like</h2>
-<p>pandas plots directly from a table. The plotting is one line; the work is the summary you feed it, which is why this unit grades the summary.</p>
-<pre class="code"><code># df.plot(kind="bar", x="team", y="score")
-# df.plot(kind="line", x="day", y="visits")
-# df["score"].plot(kind="hist", bins=10)
-print("the table you plot is the part that has to be right")</code></pre>
+<p>The chart is one call. The table behind it is the part worth getting right, and the part you can check.</p>
+<h3 class="h4">Table first</h3>
+<p>Every chart in this lesson is a summary table plus a <code>.plot</code>. If the table is wrong, the chart is wrong and much more convincing.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"team": ["red", "red", "blue"], "score": [90, 80, 70]})
+summary = df.groupby("team")["score"].mean().round(1)
+print(summary)
+# summary.plot(kind="bar")   # the picture, once the table is right</code></pre>
+<h3 class="h4">Sort a bar chart by value</h3>
+<p>Alphabetical order carries no information. Ordering the bars by the thing being compared is what makes the ranking readable at a glance.</p>
+<pre class="code"><code>import pandas as pd
+
+df = pd.DataFrame({"team": ["zeta", "alpha", "mu"], "score": [70.0, 90.0, 80.0]})
+means = df.groupby("team")["score"].mean()
+print(means)
+print(means.sort_values(ascending=False))</code></pre>
+<p class="note">The exception is a category with a natural order — months, age bands, school years. Sorting those by value destroys the thing the reader is using to navigate.</p>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Order the bars</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Produce the mean per team and then the same table ordered so the ranking is readable.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;team&quot;: [&quot;zeta&quot;, &quot;alpha&quot;, &quot;mu&quot;], &quot;score&quot;: [70.0, 90.0, 80.0]})\n\nmeans = df.groupby(&quot;team&quot;)[&quot;score&quot;].mean()\nprint(means)\nprint(None)   # ordered by value\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+df = pd.DataFrame({"team": ["zeta", "alpha", "mu"], "score": [70.0, 90.0, 80.0]})
+
+means = df.groupby("team")["score"].mean()
+print(means)
+print(None)   # ordered by value
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: The table behind a bar chart</h3>
 <p>Write <code>chart_data(df)</code> that returns the table behind a bar chart of mean score per team, as a dictionary of team to mean rounded to one decimal place.</p>
 <p class="hint-text">A bar chart of "mean by team" is a group-by with the means rounded for display. Get that table right and the chart is one more line.</p>
 
@@ -222,6 +309,32 @@ print(chart_data(pd.DataFrame({"team": ["red"], "score": [90]})))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Bars in a readable order</h3>
+<p>Write <code>ranked_bars(df)</code> returning a list of <code>(team, mean)</code> pairs ordered highest mean first, with the means to one decimal place. Alphabetical order carries no information.</p>
+<p class="hint-text">Group to a mean per team, round, sort_values(ascending=False), then build plain (name, value) tuples with str() and float().</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef ranked_bars(df):\n    # [(team, mean)] highest first.\n    return []\n\nprint(ranked_bars(pd.DataFrame({&quot;team&quot;: [&quot;zeta&quot;, &quot;alpha&quot;], &quot;score&quot;: [70.0, 90.0]})))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def ranked_bars(df):
+    # [(team, mean)] highest first.
+    return []
+
+print(ranked_bars(pd.DataFrame({"team": ["zeta", "alpha"], "score": [70.0, 90.0]})))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

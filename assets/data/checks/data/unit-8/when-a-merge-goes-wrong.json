@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Duplicate keys multiply rows, and mismatched types match nothing.",
+    "prompt": "When a Merge Goes Wrong: Join whatever type the ids arrived as",
     "packages": [
       "pandas"
     ],
@@ -23,7 +23,7 @@
         "expect": "0"
       },
       {
-        "name": "the ids are converted before the join",
+        "name": "pandas does the work",
         "kind": "ast",
         "requires": {
           "calls": [
@@ -35,42 +35,95 @@
     ],
     "hint": "Convert both id columns with astype(str) on copies, then merge. Converting only one side leaves the mismatch exactly where it was."
   },
+  "exercise2": {
+    "prompt": "When a Merge Goes Wrong: Count the duplicate keys first",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "key_report(__import__(\"pandas\").DataFrame({\"id\": [1]}), __import__(\"pandas\").DataFrame({\"id\": [1, 1]}))",
+        "expect": "[0, 1, 2]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "clean keys on both sides",
+        "call": "key_report(__import__(\"pandas\").DataFrame({\"id\": [1, 2]}), __import__(\"pandas\").DataFrame({\"id\": [1, 2]}))",
+        "expect": "[0, 0, 2]"
+      },
+      {
+        "name": "duplicates on both sides multiply",
+        "call": "key_report(__import__(\"pandas\").DataFrame({\"id\": [1, 1]}), __import__(\"pandas\").DataFrame({\"id\": [1, 1]}))",
+        "expect": "[1, 1, 4]"
+      },
+      {
+        "name": "no overlap gives no rows",
+        "call": "key_report(__import__(\"pandas\").DataFrame({\"id\": [1]}), __import__(\"pandas\").DataFrame({\"id\": [2]}))",
+        "expect": "[0, 0, 0]"
+      },
+      {
+        "name": "pandas does the work",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "merge"
+          ]
+        },
+        "describe": "the join actually performed"
+      }
+    ],
+    "hint": "df[\"id\"].duplicated().sum() counts the repeats on each side. Then merge and take len() — two duplicates each side give four rows, which is the multiplication this exercise is about."
+  },
   "questions": [
     {
-      "id": "d8-wmg-1",
-      "prompt": "The right-hand key repeats twice. What happens to a matching left row?",
+      "id": "d8-wmgw-1",
+      "prompt": "Duplicate keys on both sides of a merge do what to the row count?",
       "choices": [
-        "It is dropped",
-        "It appears twice in the result",
-        "It appears once",
-        "An error"
+        "Nothing",
+        "Multiply — every left match pairs with every right match",
+        "Halve it",
+        "Raise"
       ],
       "answer": 1,
-      "explain": "Every combination of matching rows is produced, so a small duplicate on one side can inflate the whole result."
+      "explain": "Two and two make four. This is how a join quietly inflates a total."
     },
     {
-      "id": "d8-wmg-2",
-      "prompt": "The key is text on one side and integer on the other. What do you get?",
+      "id": "d8-wmgw-2",
+      "prompt": "A key is int in one table and str in the other. What happens?",
       "choices": [
-        "An error",
-        "An empty result",
-        "A partial match",
-        "A warning and a match"
+        "pandas converts",
+        "Nothing matches, and no error is raised",
+        "It raises TypeError",
+        "Only the first row matches"
       ],
       "answer": 1,
-      "explain": "Nothing compares equal, so the join succeeds and matches nothing. Silence is what makes this one expensive to find."
+      "explain": "1 and \"1\" are different keys, and the merge succeeds with an empty result."
     },
     {
-      "id": "d8-wmg-3",
-      "prompt": "What is the quickest guard against both of these?",
+      "id": "d8-wmgw-3",
+      "prompt": "Which argument makes pandas check the relationship you assumed?",
       "choices": [
-        "Sorting first",
-        "Checking the row count before and after, and the key dtypes",
-        "Using outer joins",
-        "Dropping duplicates always"
+        "check=True",
+        "validate=\"one_to_one\"",
+        "strict=True",
+        "assert_keys=True"
       ],
       "answer": 1,
-      "explain": "Two numbers and two dtypes, checked in a line each, catch the multiplication and the type mismatch respectively."
+      "explain": "It raises when the data disagrees, instead of silently multiplying rows."
+    },
+    {
+      "id": "d8-wmgw-4",
+      "prompt": "What is the cheapest check before a join?",
+      "choices": [
+        "Sorting both",
+        "Compare the key dtypes and count duplicates on each side",
+        "Count the columns",
+        "Reset both indexes"
+      ],
+      "answer": 1,
+      "explain": "Those two lines catch both of this lesson’s failures before they become a wrong number."
     }
   ]
 }

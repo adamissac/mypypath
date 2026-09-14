@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "The small table that goes under the chart.",
+    "prompt": "A Summary Table: The table under the chart",
     "packages": [
       "pandas"
     ],
@@ -24,48 +24,111 @@
       },
       {
         "name": "the order is by mean, not by name",
-        "call": "[row[0] for row in summary_table(__import__(\"pandas\").DataFrame({\"team\": [\"z\", \"a\"], \"score\": [99.0, 1.0]}))]",
+        "call": "[row[0] for row in summary_table(__import__(\"pandas\").DataFrame({\"team\": [\"z\", \"a\"], \"score\": [9.0, 1.0]}))]",
         "expect": "['z', 'a']"
+      },
+      {
+        "name": "the summary is computed, not typed",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "groupby"
+          ]
+        },
+        "describe": "one group-by behind the table"
       }
     ],
     "hint": "Group once and ask for count and mean together, sort by the mean descending, then build plain tuples so the result is easy to compare."
   },
+  "exercise2": {
+    "prompt": "A Summary Table: Groups too small to compare",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "thin_groups(__import__(\"pandas\").DataFrame({\"team\": [\"a\", \"a\", \"b\"], \"score\": [1.0, 2.0, 9.0]}), 2)",
+        "expect": "['b']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a group on the threshold is not thin",
+        "call": "thin_groups(__import__(\"pandas\").DataFrame({\"team\": [\"a\", \"a\"], \"score\": [1.0, 2.0]}), 2)",
+        "expect": "[]"
+      },
+      {
+        "name": "every group can be thin",
+        "call": "thin_groups(__import__(\"pandas\").DataFrame({\"team\": [\"a\", \"b\"], \"score\": [1.0, 2.0]}), 5)",
+        "expect": "['b', 'a']"
+      },
+      {
+        "name": "the order is by mean, best first",
+        "call": "thin_groups(__import__(\"pandas\").DataFrame({\"team\": [\"low\", \"high\"], \"score\": [1.0, 9.0]}), 2)",
+        "expect": "['high', 'low']"
+      },
+      {
+        "name": "the summary is computed, not typed",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "groupby"
+          ]
+        },
+        "describe": "one group-by behind the table"
+      }
+    ],
+    "hint": "Group for count and mean, keep the rows whose count is below the threshold, sort what is left by mean descending, and return the index as a list."
+  },
   "questions": [
     {
       "id": "d10-ast-1",
-      "prompt": "Why sort a summary table by the number being discussed?",
+      "prompt": "What should the small table under a chart carry?",
       "choices": [
-        "It looks tidy",
-        "The reader's eye lands on the comparison you are making",
-        "It is faster",
-        "pandas defaults to it"
+        "Every row",
+        "The few numbers the chart cannot show exactly, and the group sizes",
+        "The raw file",
+        "The code"
       ],
       "answer": 1,
-      "explain": "Alphabetical order is an arbitrary order. Sorting by the measure puts the argument at the top."
+      "explain": "The chart shows the shape; the table pins the values and says how much is behind each one."
     },
     {
       "id": "d10-ast-2",
-      "prompt": "Why include the count next to each mean?",
+      "prompt": "How should the rows be ordered?",
       "choices": [
-        "To fill the table",
-        "A mean of two is a much weaker claim than a mean of two hundred",
-        "It is required",
-        "For sorting"
+        "Alphabetically",
+        "By the value being compared",
+        "By group size",
+        "At random"
       ],
       "answer": 1,
-      "explain": "Group size is how a reader weighs the difference. Without it, a group of one can look like a finding."
+      "explain": "And in the same order as the bars, so a reader moving between the two does not have to re-find each row."
     },
     {
       "id": "d10-ast-3",
-      "prompt": "How big should a summary table be?",
+      "prompt": "Why name the columns \"students\" and \"mean score\" rather than \"count\" and \"mean\"?",
       "choices": [
-        "As big as possible",
-        "Small enough to read entirely",
-        "One row",
-        "It does not matter"
+        "It is shorter",
+        "\"count\" says how it was computed; \"students\" says what it means",
+        "pandas requires it",
+        "It changes the numbers"
       ],
       "answer": 1,
-      "explain": "A table nobody reads all of is a table making no argument. If it needs scrolling, it is data rather than a summary."
+      "explain": "The reader did not write the group-by and should not have to infer it."
+    },
+    {
+      "id": "d10-ast-4",
+      "prompt": "What does the count column protect the reader from?",
+      "choices": [
+        "Nothing",
+        "Over-reading a bar built from two rows",
+        "Rounding errors",
+        "Missing values"
+      ],
+      "answer": 1,
+      "explain": "A striking average over three rows looks identical on a chart to one over three thousand."
     }
   ]
 }

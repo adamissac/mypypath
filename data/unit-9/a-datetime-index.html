@@ -173,35 +173,134 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Move a date column onto the index.</li>
+<li>Select a period with a string.</li>
+<li>Say why the index must be sorted.</li>
+<li>Get the column back when you need it.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>A DatetimeIndex is what makes the rest of this unit possible: partial-string selection, resampling and rolling windows all read the index. It is also the one place in pandas where an unsorted index gives you a wrong answer rather than an error.</p>
+</div>
 
 <div class="content-section">
 <h2>set_index on a date column</h2>
-<p>With time on the index, a string is enough to select a period, which reads far better than two comparisons.</p>
+<p>With time on the index, a string is enough to select a period.</p>
+<h3 class="h4">Partial string selection</h3>
+<p>The string names a period rather than an instant. <code>"2024"</code> is a year, <code>"2024-01"</code> is a month.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"day": pd.to_datetime(["2024-01-05", "2024-02-01"]), "n": [1, 2]})
-df = df.set_index("day")
-print(df.loc["2024-01"]["n"].tolist())</code></pre>
+df = pd.DataFrame({
+    "day": pd.to_datetime(["2024-01-05", "2024-01-20", "2024-02-01"]),
+    "n": [1, 2, 5],
+}).set_index("day")
 
+print(df.loc["2024-01"])
+print(df.loc["2024-01"]["n"].sum())</code></pre>
+<h3 class="h4">A range between two dates</h3>
+<p>A slice on a DatetimeIndex includes both ends, like every other <code>loc</code> slice.</p>
+<pre class="code"><code>import pandas as pd
+
+df = pd.DataFrame({
+    "day": pd.to_datetime(["2024-01-05", "2024-01-20", "2024-02-01"]),
+    "n": [1, 2, 5],
+}).set_index("day")
+
+print(df.loc["2024-01-05":"2024-01-20"])</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Select a month</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Put the day on the index and print just January, then just its total.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({\n    &quot;day&quot;: pd.to_datetime([&quot;2024-01-05&quot;, &quot;2024-01-20&quot;, &quot;2024-02-01&quot;]),\n    &quot;n&quot;: [1, 2, 5],\n}).set_index(&quot;day&quot;)\n\nprint(df.loc[&quot;2024-01&quot;])\nprint(None)   # the January total\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+df = pd.DataFrame({
+    "day": pd.to_datetime(["2024-01-05", "2024-01-20", "2024-02-01"]),
+    "n": [1, 2, 5],
+}).set_index("day")
+
+print(df.loc["2024-01"])
+print(None)   # the January total
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Order matters</h2>
-<p>Slicing a time index expects it sorted. Sorting once after setting the index saves a confusing error later.</p>
+<p>Slicing a time index expects it sorted. Sorting once after setting it is the habit worth keeping.</p>
+<h3 class="h4">Sort it and forget about it</h3>
+<p>A file is often already in date order, and often not. One call removes the question.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"day": pd.to_datetime(["2024-02-01", "2024-01-05"]), "n": [2, 1]})
-df = df.set_index("day").sort_index()
-print(df["n"].tolist())</code></pre>
+df = pd.DataFrame({
+    "day": pd.to_datetime(["2024-02-01", "2024-01-05"]),
+    "n": [5, 1],
+}).set_index("day").sort_index()
 
+print(df)
+print(df.index.is_monotonic_increasing)</code></pre>
+<h3 class="h4">And getting the column back</h3>
+<p><code>reset_index()</code> is the way out, for when you want a plain table again — to write to a file, or to join.</p>
+<pre class="code"><code>import pandas as pd
+
+df = pd.DataFrame({"day": pd.to_datetime(["2024-01-05"]), "n": [1]}).set_index("day")
+print(list(df.reset_index().columns))</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Sort before slicing</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Set the index on this out-of-order table, sort it, and confirm the index is now increasing.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({\n    &quot;day&quot;: pd.to_datetime([&quot;2024-03-01&quot;, &quot;2024-01-05&quot;, &quot;2024-02-01&quot;]),\n    &quot;n&quot;: [3, 1, 2],\n}).set_index(&quot;day&quot;)\n\nprint(df.index.is_monotonic_increasing)\nprint(None)   # after sorting\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+df = pd.DataFrame({
+    "day": pd.to_datetime(["2024-03-01", "2024-01-05", "2024-02-01"]),
+    "n": [3, 1, 2],
+}).set_index("day")
+
+print(df.index.is_monotonic_increasing)
+print(None)   # after sorting
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: The total in a month</h3>
 <p>Write <code>month_total(df, month)</code> where <code>df</code> has a datetime <code>day</code> column and a numeric <code>n</code>, and <code>month</code> is a string like <code>"2024-01"</code>. Return the total of <code>n</code> in that month.</p>
 <p class="hint-text">Set the day as the index and sort it, then select the month string. An empty selection sums to 0, which is the answer the first hidden case wants.</p>
 
@@ -223,6 +322,32 @@ print(month_total(pd.DataFrame({"day": pd.to_datetime(["2024-01-05"]), "n": [1]}
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: The span the data covers</h3>
+<p>Write <code>date_span(df)</code> that puts the <code>day</code> column on a sorted index and returns a two-element list of [first date, last date] as <code>YYYY-MM-DD</code> strings. Reporting the span is part of describing any time series.</p>
+<p class="hint-text">set_index("day").sort_index(), then the first and last index entries. strftime("%Y-%m-%d") turns each back into a plain string.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef date_span(df):\n    # [&quot;first&quot;, &quot;last&quot;] as YYYY-MM-DD\n    return []\n\nprint(date_span(pd.DataFrame({&quot;day&quot;: pd.to_datetime([&quot;2024-02-01&quot;, &quot;2024-01-05&quot;]), &quot;n&quot;: [2, 1]})))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def date_span(df):
+    # ["first", "last"] as YYYY-MM-DD
+    return []
+
+print(date_span(pd.DataFrame({"day": pd.to_datetime(["2024-02-01", "2024-01-05"]), "n": [2, 1]})))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

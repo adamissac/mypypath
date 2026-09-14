@@ -173,34 +173,128 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Convert a column of date text into real datetimes.</li>
+<li>Parse at load time rather than afterwards.</li>
+<li>Handle a value that will not parse.</li>
+<li>Say why day-first and month-first matter.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Text that looks like a date sorts alphabetically and compares alphabetically, so "02/2024" comes before "1/2023" and every ordering you build on it is wrong. Worse, an ambiguous format can be parsed the wrong way round and still succeed, giving you a year of data where every day up to the twelfth is a different date than you think.</p>
+</div>
 
 <div class="content-section">
 <h2>to_datetime turns text into dates</h2>
-<p>Until it does, sorting is alphabetical and "greater than" means later in the alphabet rather than later in time.</p>
+<p>Until it does, sorting is alphabetical and "greater than" means something other than "later".</p>
+<h3 class="h4">What text does to order</h3>
+<p>Run this once. The text ordering is not an approximation of the date ordering; it is unrelated to it.</p>
 <pre class="code"><code>import pandas as pd
 
-s = pd.Series(["2024-03-01", "2024-01-15"])
-print(s.sort_values().tolist())
-print(pd.to_datetime(s).sort_values().dt.strftime("%Y-%m-%d").tolist())</code></pre>
+text = pd.Series(["10/01/2024", "02/01/2024", "1/03/2023"])
+print(sorted(text.tolist()))
+print(pd.to_datetime(text, dayfirst=True).sort_values().dt.strftime("%Y-%m-%d").tolist())</code></pre>
+<h3 class="h4">The conversion</h3>
+<p>Once converted, the column has a datetime dtype and every comparison means what you expect.</p>
+<pre class="code"><code>import pandas as pd
 
+days = pd.to_datetime(pd.Series(["2024-03-01", "2024-01-15"]))
+print(days.dtype)
+print(days.min(), days.max())
+print(days.max() - days.min())</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Text order against date order</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Sort these as text and as dates, and compare the two answers.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ntext = pd.Series([&quot;10/01/2024&quot;, &quot;02/01/2024&quot;, &quot;1/03/2023&quot;])\n\nprint(sorted(text.tolist()))\nprint(None)   # parsed, then sorted\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+text = pd.Series(["10/01/2024", "02/01/2024", "1/03/2023"])
+
+print(sorted(text.tolist()))
+print(None)   # parsed, then sorted
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Parsing on the way in</h2>
-<p>parse_dates on read_csv does it at load time, which is one fewer step to forget.</p>
+<p><code>parse_dates</code> on <code>read_csv</code> does it at load time, which is one fewer step to forget.</p>
+<h3 class="h4">At load time</h3>
+<p>Cheaper than converting afterwards, and it means the column is never text long enough for you to sort it by accident.</p>
+<pre class="code"><code>import pandas as pd
+from io import StringIO
+
+text = "day,n\n2024-01-05,1\n2024-02-01,2\n"
+df = pd.read_csv(StringIO(text), parse_dates=["day"])
+print(df.dtypes)</code></pre>
+<h3 class="h4">When a value will not parse</h3>
+<p><code>errors="coerce"</code> gives NaT — the datetime version of NaN — instead of raising. Counting them tells you how bad the column is before you decide what to do.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.read_csv("visits.csv", parse_dates=["day"])
-print(str(df["day"].dtype))</code></pre>
+messy = pd.Series(["2024-01-05", "not a date", "2024-02-01"])
+days = pd.to_datetime(messy, errors="coerce")
+print(days.tolist())
+print("unparseable:", int(days.isna().sum()))</code></pre>
+<h3 class="h4">The ambiguity that does not raise</h3>
+<p>03/04/2024 is the third of April or the fourth of March, and both readings succeed. If the file is British, say so — otherwise every date whose day is 12 or under is silently wrong.</p>
+<pre class="code"><code>import pandas as pd
 
+value = pd.Series(["03/04/2024"])
+print(pd.to_datetime(value, dayfirst=False).dt.strftime("%d %B %Y").iloc[0])
+print(pd.to_datetime(value, dayfirst=True).dt.strftime("%d %B %Y").iloc[0])</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Count what will not parse</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Coerce this column and report how many values failed, before deciding anything.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\nmessy = pd.Series([&quot;2024-01-05&quot;, &quot;n/a&quot;, &quot;2024-02-01&quot;, &quot;&quot;])\n\ndays = pd.to_datetime(messy, errors=&quot;coerce&quot;)\nprint(int(days.isna().sum()))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+messy = pd.Series(["2024-01-05", "n/a", "2024-02-01", ""])
+
+days = pd.to_datetime(messy, errors="coerce")
+print(int(days.isna().sum()))
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: The earliest date</h3>
 <p>Write <code>earliest(dates)</code> that takes a Series of date strings and returns the earliest as a string in <code>YYYY-MM-DD</code> form.</p>
 <p class="hint-text">Parse first, then take the minimum, then format it back. On ISO-formatted text the alphabetical answer happens to agree, which is exactly why the habit matters when the format changes.</p>
 
@@ -222,6 +316,32 @@ print(earliest(pd.Series(["2024-03-01", "2024-01-15"])))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: How many dates are usable</h3>
+<p>Write <code>usable_dates(values)</code> that takes a Series of date strings and returns a two-element list of [how many parsed, how many did not]. Report the bad ones rather than dropping them quietly.</p>
+<p class="hint-text">to_datetime with errors="coerce" turns the failures into NaT instead of raising. notna() counts the good ones and isna() the bad.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef usable_dates(values):\n    # [parsed, unparseable]\n    return [0, 0]\n\nprint(usable_dates(pd.Series([&quot;2024-01-05&quot;, &quot;n/a&quot;])))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def usable_dates(values):
+    # [parsed, unparseable]
+    return [0, 0]
+
+print(usable_dates(pd.Series(["2024-01-05", "n/a"])))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

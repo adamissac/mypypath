@@ -173,35 +173,119 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Lay a two-key summary out as a grid.</li>
+<li>Name what goes down, what goes across, and what fills the cells.</li>
+<li>Say what <code>aggfunc</code> defaults to.</li>
+<li>Read the gaps in the grid.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>A pivot table is the same computation as a two-key group-by, arranged so a person can read it. That arrangement is the whole value: a grid with subjects down and years across is scannable in a way a 40-row two-level index is not.</p>
+</div>
 
 <div class="content-section">
 <h2>Rows, columns and a value</h2>
-<p>pivot_table groups by two keys and lays the result out as a grid rather than a long list. Same numbers, different shape.</p>
+<p><code>index</code> is what goes down the side, <code>columns</code> is what goes across the top, <code>values</code> is what fills the cells.</p>
+<h3 class="h4">The same numbers, laid out</h3>
+<p>Compare it with the group-by beneath. Identical arithmetic, different shape.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"subject": ["m", "m", "a"], "year": [10, 11, 10], "score": [90, 80, 70]})
-out = pd.pivot_table(df, index="subject", columns="year", values="score", aggfunc="mean")
-print(out.shape)</code></pre>
 
+print(pd.pivot_table(df, index="subject", columns="year", values="score", aggfunc="mean"))
+print()
+print(df.groupby(["subject", "year"])["score"].mean())</code></pre>
+<h3 class="h4">aggfunc is not count</h3>
+<p>It defaults to <code>mean</code>, which surprises people expecting a spreadsheet pivot's count. Name it whenever you mean something else.</p>
+<pre class="code"><code>import pandas as pd
+
+df = pd.DataFrame({"subject": ["m", "m"], "year": [10, 10], "score": [90, 80]})
+print(pd.pivot_table(df, index="subject", columns="year", values="score"))
+print(pd.pivot_table(df, index="subject", columns="year", values="score", aggfunc="size"))</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Grid and group-by</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Produce the same summary both ways and satisfy yourself the numbers match.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;subject&quot;: [&quot;m&quot;, &quot;m&quot;, &quot;a&quot;, &quot;a&quot;], &quot;year&quot;: [10, 11, 10, 11], &quot;score&quot;: [90, 80, 70, 60]})\n\nprint(pd.pivot_table(df, index=&quot;subject&quot;, columns=&quot;year&quot;, values=&quot;score&quot;, aggfunc=&quot;mean&quot;))\nprint(df.groupby([&quot;subject&quot;, &quot;year&quot;])[&quot;score&quot;].mean())\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+df = pd.DataFrame({"subject": ["m", "m", "a", "a"], "year": [10, 11, 10, 11], "score": [90, 80, 70, 60]})
+
+print(pd.pivot_table(df, index="subject", columns="year", values="score", aggfunc="mean"))
+print(df.groupby(["subject", "year"])["score"].mean())
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Combinations with no rows</h2>
-<p>A grid has a cell for every pair, including those the data never had. Those come out missing, and fill_value decides what a reader sees there.</p>
+<p>A grid has a cell for every combination, including the ones the data never had. Those cells are NaN, and that is information.</p>
+<h3 class="h4">The gaps</h3>
+<p>Unlike a group-by, which simply omits an absent pair, the grid shows it as an empty cell — which is often exactly what you wanted to see.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"a": ["x"], "b": [1], "v": [5]})
-out = pd.pivot_table(df, index="a", columns="b", values="v", aggfunc="mean", fill_value=0)
-print(out.values.tolist())</code></pre>
+df = pd.DataFrame({"subject": ["m", "a"], "year": [10, 11], "score": [90, 70]})
+print(pd.pivot_table(df, index="subject", columns="year", values="score", aggfunc="mean"))</code></pre>
+<h3 class="h4">Filling them, if a zero is honest</h3>
+<p><code>fill_value</code> replaces the gaps. Use it only when "no rows" really does mean zero — for a count it usually does, for a mean it never does.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"subject": ["m", "a"], "year": [10, 11], "score": [90, 70]})
+print(pd.pivot_table(df, index="subject", columns="year", values="score",
+                     aggfunc="size", fill_value=0))</code></pre>
+<p class="note">Filling a missing <em>mean</em> with 0 claims a group scored nothing, when the truth is that nobody sat it. The gap was the honest answer.</p>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Count, not mean</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Make a grid of how many rows each subject/year pair has, with empty pairs shown as 0.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;subject&quot;: [&quot;m&quot;, &quot;m&quot;, &quot;a&quot;], &quot;year&quot;: [10, 10, 11], &quot;score&quot;: [90, 80, 70]})\n\nprint(pd.pivot_table(df, index=&quot;subject&quot;, columns=&quot;year&quot;, values=&quot;score&quot;, aggfunc=&quot;size&quot;, fill_value=0))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+df = pd.DataFrame({"subject": ["m", "m", "a"], "year": [10, 10, 11], "score": [90, 80, 70]})
+
+print(pd.pivot_table(df, index="subject", columns="year", values="score", aggfunc="size", fill_value=0))
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: The shape of the grid</h3>
 <p>Write <code>grid_shape(df)</code> that pivots <code>score</code> with <code>subject</code> down the rows and <code>year</code> across the columns, and returns the shape of the result.</p>
 <p class="hint-text">index is what goes down the side, columns is what goes across the top, values is what fills the cells. The shape is distinct subjects by distinct years.</p>
 
@@ -223,6 +307,32 @@ print(grid_shape(pd.DataFrame({"subject": ["m"], "year": [10], "score": [90]})))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: How many pairs never happened</h3>
+<p>Write <code>empty_cells(df)</code> that pivots the same way and returns how many cells of the grid are empty — combinations of subject and year with no rows behind them.</p>
+<p class="hint-text">Pivot with aggfunc="mean" and leave the gaps as NaN, then count them with .isna().sum().sum(). Passing fill_value would remove the very thing you are counting.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef empty_cells(df):\n    # How many grid cells have no rows behind them.\n    return 0\n\nprint(empty_cells(pd.DataFrame({&quot;subject&quot;: [&quot;m&quot;, &quot;a&quot;], &quot;year&quot;: [10, 11], &quot;score&quot;: [90, 70]})))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def empty_cells(df):
+    # How many grid cells have no rows behind them.
+    return 0
+
+print(empty_cells(pd.DataFrame({"subject": ["m", "a"], "year": [10, 11], "score": [90, 70]})))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

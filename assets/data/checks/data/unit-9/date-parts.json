@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Year, month and weekday are columns you can group by.",
+    "prompt": "Date Parts: Totals by month number",
     "packages": [
       "pandas"
     ],
@@ -25,42 +25,85 @@
     ],
     "hint": "Group by df[\"day\"].dt.month and sum n. The second hidden case is a warning about that: month alone ignores the year, which is sometimes what you want and sometimes a bug."
   },
+  "exercise2": {
+    "prompt": "Date Parts: Totals that keep the year",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "by_period(__import__(\"pandas\").DataFrame({\"day\": __import__(\"pandas\").to_datetime([\"2023-01-05\", \"2024-01-20\"]), \"n\": [1, 9]}))",
+        "expect": "{'2023-01': 1, '2024-01': 9}"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "two months in one year stay separate",
+        "call": "by_period(__import__(\"pandas\").DataFrame({\"day\": __import__(\"pandas\").to_datetime([\"2024-01-01\", \"2024-02-01\"]), \"n\": [1, 2]}))",
+        "expect": "{'2024-01': 1, '2024-02': 2}"
+      },
+      {
+        "name": "rows in the same month are totalled",
+        "call": "by_period(__import__(\"pandas\").DataFrame({\"day\": __import__(\"pandas\").to_datetime([\"2024-01-01\", \"2024-01-31\"]), \"n\": [3, 4]}))",
+        "expect": "{'2024-01': 7}"
+      },
+      {
+        "name": "the keys are plain strings",
+        "call": "all(type(k).__name__ == \"str\" for k in by_period(__import__(\"pandas\").DataFrame({\"day\": __import__(\"pandas\").to_datetime([\"2024-01-01\"]), \"n\": [1]})))",
+        "expect": "True"
+      }
+    ],
+    "hint": "Group on df[\"day\"].dt.to_period(\"M\"), which orders correctly and keeps the year. str() each key on the way into the dictionary."
+  },
   "questions": [
     {
       "id": "d9-dp-1",
-      "prompt": "Grouping by month alone across two years does what?",
+      "prompt": "What does days.dt.year give you?",
+      "choices": [
+        "One number",
+        "A column of years",
+        "The index",
+        "A string"
+      ],
+      "answer": 1,
+      "explain": "The .dt accessor reaches the datetime parts of every value at once."
+    },
+    {
+      "id": "d9-dp-2",
+      "prompt": "Grouping by .dt.month across two years does what?",
       "choices": [
         "Keeps the years separate",
-        "Puts both Marches in the same bucket",
+        "Pools both Januaries into one bucket",
         "Raises",
         "Sorts by year"
       ],
       "answer": 1,
-      "explain": "The month number carries no year. Grouping by year and month together is what you want for a timeline."
-    },
-    {
-      "id": "d9-dp-2",
-      "prompt": "What does s.dt.weekday give you?",
-      "choices": [
-        "The day name",
-        "A number for the day of the week",
-        "The week number",
-        "The date"
-      ],
-      "answer": 1,
-      "explain": "Monday is 0. day_name() gives the text when you want it readable."
+      "explain": "Right for \"which month is busiest\", wrong for \"how has each month gone\"."
     },
     {
       "id": "d9-dp-3",
-      "prompt": "Why is a date part just an ordinary column?",
+      "prompt": "What keeps the year and still sorts correctly?",
       "choices": [
-        "It is not",
-        "Because it is values, so everything that works on a column works on it",
-        "It is faster",
-        "It is an index"
+        ".dt.month",
+        ".dt.to_period(\"M\")",
+        ".dt.day_name()",
+        ".dt.year alone"
       ],
       "answer": 1,
-      "explain": "Once the part is a value you can group, filter, sort and plot with it exactly as with anything else."
+      "explain": "It gives a year-and-month value that orders properly, unlike the bare month number."
+    },
+    {
+      "id": "d9-dp-4",
+      "prompt": "What does .dt.day_name() return?",
+      "choices": [
+        "A number",
+        "The weekday as text",
+        "The date",
+        "The month"
+      ],
+      "answer": 1,
+      "explain": "Useful for grouping, though remember text sorts alphabetically — Friday before Monday."
     }
   ]
 }

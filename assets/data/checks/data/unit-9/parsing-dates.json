@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "A date read from a file is text until you say otherwise.",
+    "prompt": "Parsing Dates: The earliest date",
     "packages": [
       "pandas"
     ],
@@ -23,7 +23,7 @@
         "expect": "'2023-12-31'"
       },
       {
-        "name": "the text is parsed into real dates",
+        "name": "the right tool does the work",
         "kind": "ast",
         "requires": {
           "calls": [
@@ -35,42 +35,95 @@
     ],
     "hint": "Parse first, then take the minimum, then format it back. On ISO-formatted text the alphabetical answer happens to agree, which is exactly why the habit matters when the format changes."
   },
+  "exercise2": {
+    "prompt": "Parsing Dates: How many dates are usable",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "usable_dates(__import__(\"pandas\").Series([\"2024-01-05\", \"n/a\", \"2024-02-01\"]))",
+        "expect": "[2, 1]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a clean column has nothing unusable",
+        "call": "usable_dates(__import__(\"pandas\").Series([\"2024-01-01\", \"2024-01-02\"]))",
+        "expect": "[2, 0]"
+      },
+      {
+        "name": "a column of junk parses nothing",
+        "call": "usable_dates(__import__(\"pandas\").Series([\"x\", \"y\"]))",
+        "expect": "[0, 2]"
+      },
+      {
+        "name": "the two always total the column length",
+        "call": "sum(usable_dates(__import__(\"pandas\").Series([\"2024-01-01\", \"x\", \"y\"]))) == 3",
+        "expect": "True"
+      },
+      {
+        "name": "the right tool does the work",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "to_datetime"
+          ]
+        },
+        "describe": "pd.to_datetime with errors=\"coerce\""
+      }
+    ],
+    "hint": "to_datetime with errors=\"coerce\" turns the failures into NaT instead of raising. notna() counts the good ones and isna() the bad."
+  },
   "questions": [
     {
       "id": "d9-pd-1",
-      "prompt": "What is wrong with comparing dates as text?",
+      "prompt": "A date column read from a CSV is what, until you convert it?",
       "choices": [
-        "Nothing",
-        "It compares character by character, so the order is only right for some formats",
-        "It is slow",
-        "It raises"
+        "A datetime",
+        "Text",
+        "An integer",
+        "The index"
       ],
       "answer": 1,
-      "explain": "ISO dates happen to sort correctly as text. \"01/03/2024\" does not, and nothing tells you which kind you have."
+      "explain": "And text sorts alphabetically, so \"02/2024\" comes before \"1/2023\"."
     },
     {
       "id": "d9-pd-2",
-      "prompt": "What does parse_dates on read_csv do?",
+      "prompt": "What does errors=\"coerce\" do to an unparseable date?",
       "choices": [
-        "Checks the dates are valid",
-        "Converts those columns to datetimes as the file loads",
-        "Sorts by date",
-        "Removes bad dates"
+        "Raises",
+        "Makes it NaT",
+        "Leaves it as text",
+        "Drops the row"
       ],
       "answer": 1,
-      "explain": "It does the conversion at load time, so there is no window in which the column is text and someone sorts it."
+      "explain": "NaT is the datetime equivalent of NaN, and counting them tells you how bad the column is."
     },
     {
       "id": "d9-pd-3",
-      "prompt": "What does .dt give you on a datetime Series?",
+      "prompt": "A British file writes 03/04/2024 for 3 April. What do you need?",
       "choices": [
-        "The date only",
-        "Date parts and formatting for every value at once",
-        "A conversion",
-        "An error"
+        "dayfirst=True",
+        "monthfirst=False",
+        "format=\"auto\"",
+        "utc=True"
+      ],
+      "answer": 0,
+      "explain": "Both readings succeed, so nothing warns you — every date whose day is 12 or under is silently wrong."
+    },
+    {
+      "id": "d9-pd-4",
+      "prompt": "Which is cheaper than converting after the load?",
+      "choices": [
+        "astype(\"datetime64\")",
+        "parse_dates= on read_csv",
+        "sort_values first",
+        "There is no difference"
       ],
       "answer": 1,
-      "explain": "year, month, day, weekday and strftime, applied across the whole column -- the datetime counterpart of .str."
+      "explain": "And it means the column is never text long enough for you to sort it by accident."
     }
   ]
 }

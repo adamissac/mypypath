@@ -173,34 +173,130 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Pull the year, month, day and weekday out of a datetime column.</li>
+<li>Group by a date part.</li>
+<li>Say why month alone is not enough across years.</li>
+<li>Name a period so that it sorts correctly.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>"Which month is busiest" and "how did each month go" are different questions, and the difference is whether the year is part of the key. Grouping by month alone silently pools every January together, which is sometimes exactly right and sometimes the reason a chart makes no sense.</p>
+</div>
 
 <div class="content-section">
 <h2>Pulling a part out</h2>
-<p>Once a column is really a date, its parts are one attribute away, and each is an ordinary column you can group or filter on.</p>
+<p>Once a column is really a date, its parts are one attribute away through the <code>.dt</code> accessor.</p>
+<h3 class="h4">The parts</h3>
+<p>Each is a whole column, computed for every row at once.</p>
 <pre class="code"><code>import pandas as pd
 
-s = pd.to_datetime(pd.Series(["2024-03-01", "2024-03-15"]))
-print(s.dt.year.tolist())
-print(s.dt.month.tolist())</code></pre>
+days = pd.to_datetime(pd.Series(["2024-01-05", "2024-06-18"]))
+print(days.dt.year.tolist())
+print(days.dt.month.tolist())
+print(days.dt.day.tolist())
+print(days.dt.day_name().tolist())</code></pre>
+<h3 class="h4">A period that sorts</h3>
+<p><code>to_period("M")</code> gives a year-and-month value that orders correctly, unlike the number 1 which is shared by every January you have.</p>
+<pre class="code"><code>import pandas as pd
 
+days = pd.to_datetime(pd.Series(["2023-12-31", "2024-01-01"]))
+print(days.dt.month.tolist())
+print(days.dt.to_period("M").astype(str).tolist())</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Every part</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print the year, month, day and weekday name for these two dates.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndays = pd.to_datetime(pd.Series([&quot;2024-01-05&quot;, &quot;2024-06-18&quot;]))\n\nprint(days.dt.year.tolist())\nprint(days.dt.month.tolist())\nprint(None)   # weekday names\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+days = pd.to_datetime(pd.Series(["2024-01-05", "2024-06-18"]))
+
+print(days.dt.year.tolist())
+print(days.dt.month.tolist())
+print(None)   # weekday names
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Grouping by a part</h2>
-<p>"How many per month" is a group-by on a derived column, which is why the parts matter.</p>
+<p>"How many per month" is a group-by on a derived column, which you already know how to do.</p>
+<h3 class="h4">Group on the accessor directly</h3>
+<p>No need to create the column first, though creating it is clearer when you want it in the output too.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"day": pd.to_datetime(["2024-01-05", "2024-02-01"]), "n": [1, 2]})
-print(df.groupby(df["day"].dt.month)["n"].sum().to_dict())</code></pre>
+df = pd.DataFrame({
+    "day": pd.to_datetime(["2024-01-05", "2024-01-20", "2024-02-01"]),
+    "n": [1, 2, 5],
+})
+print(df.groupby(df["day"].dt.month)["n"].sum())</code></pre>
+<h3 class="h4">Month alone pools the years</h3>
+<p>Two Januaries from different years land in the same bucket. Group on the period when the years are meant to stay apart.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({
+    "day": pd.to_datetime(["2023-01-05", "2024-01-20"]),
+    "n": [1, 9],
+})
+print(df.groupby(df["day"].dt.month)["n"].sum())
+print(df.groupby(df["day"].dt.to_period("M"))["n"].sum())</code></pre>
+<p class="note">Pooling is the right answer for "which month of the year is busiest" and the wrong one for "how has each month gone". The code looks almost identical, which is why it is worth stating which question you are asking.</p>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: With and without the year</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Group these by month and then by period, and satisfy yourself about which answers which question.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({\n    &quot;day&quot;: pd.to_datetime([&quot;2023-01-05&quot;, &quot;2024-01-20&quot;, &quot;2024-02-01&quot;]),\n    &quot;n&quot;: [1, 9, 4],\n})\n\nprint(df.groupby(df[&quot;day&quot;].dt.month)[&quot;n&quot;].sum())\nprint(df.groupby(df[&quot;day&quot;].dt.to_period(&quot;M&quot;))[&quot;n&quot;].sum())\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+df = pd.DataFrame({
+    "day": pd.to_datetime(["2023-01-05", "2024-01-20", "2024-02-01"]),
+    "n": [1, 9, 4],
+})
+
+print(df.groupby(df["day"].dt.month)["n"].sum())
+print(df.groupby(df["day"].dt.to_period("M"))["n"].sum())
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Totals by month number</h3>
 <p>Write <code>by_month(df)</code> that takes a table with a datetime <code>day</code> column and a numeric <code>n</code>, and returns a dictionary of month number to the total of <code>n</code>.</p>
 <p class="hint-text">Group by df["day"].dt.month and sum n. The second hidden case is a warning about that: month alone ignores the year, which is sometimes what you want and sometimes a bug.</p>
 
@@ -222,6 +318,32 @@ print(by_month(pd.DataFrame({"day": pd.to_datetime(["2024-01-05"]), "n": [1]})))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Totals that keep the year</h3>
+<p>Write <code>by_period(df)</code> returning a dictionary of <code>"YYYY-MM"</code> to the total of <code>n</code> — the same summary, with the years kept apart.</p>
+<p class="hint-text">Group on df["day"].dt.to_period("M"), which orders correctly and keeps the year. str() each key on the way into the dictionary.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef by_period(df):\n    # {&quot;YYYY-MM&quot;: total n}\n    return {}\n\nprint(by_period(pd.DataFrame({&quot;day&quot;: pd.to_datetime([&quot;2024-01-05&quot;]), &quot;n&quot;: [1]})))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def by_period(df):
+    # {"YYYY-MM": total n}
+    return {}
+
+print(by_period(pd.DataFrame({"day": pd.to_datetime(["2024-01-05"]), "n": [1]})))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Two files, one question, and the checks that keep the answer honest.",
+    "prompt": "Putting a Join to Work: Mean score per team, from two files",
     "packages": [
       "pandas"
     ],
@@ -26,7 +26,7 @@
         "expect": "{'solo': 50.0}"
       },
       {
-        "name": "the two files are actually joined",
+        "name": "pandas does the work",
         "kind": "ast",
         "requires": {
           "calls": [
@@ -39,48 +39,112 @@
     ],
     "hint": "Read both, merge on id, group by team, take the mean of score, round it, then to_dict(). The second file set is different, so a typed-in answer fails."
   },
+  "exercise2": {
+    "prompt": "Putting a Join to Work: Report the join, not just its result",
+    "packages": [
+      "pandas"
+    ],
+    "files": {
+      "people.csv": "id,team\n1,red\n2,red\n3,blue\n",
+      "scores.csv": "id,score\n1,90\n2,80\n"
+    },
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "join_report(\"people.csv\", \"scores.csv\")",
+        "expect": "[3, 3, 1]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a duplicated key shows up as extra rows",
+        "files": {
+          "people.csv": "id,team\n1,red\n",
+          "scores.csv": "id,score\n1,90\n1,80\n"
+        },
+        "call": "join_report(\"people.csv\", \"scores.csv\")",
+        "expect": "[1, 2, 0]"
+      },
+      {
+        "name": "everyone matched leaves nobody missing",
+        "files": {
+          "people.csv": "id,team\n1,red\n2,red\n",
+          "scores.csv": "id,score\n1,90\n2,80\n"
+        },
+        "call": "join_report(\"people.csv\", \"scores.csv\")",
+        "expect": "[2, 2, 0]"
+      },
+      {
+        "name": "nobody matched",
+        "files": {
+          "people.csv": "id,team\n1,red\n",
+          "scores.csv": "id,score\n9,90\n"
+        },
+        "call": "join_report(\"people.csv\", \"scores.csv\")",
+        "expect": "[1, 1, 1]"
+      },
+      {
+        "name": "pandas does the work",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "merge",
+            "read_csv"
+          ]
+        },
+        "describe": "both files read and joined"
+      }
+    ],
+    "hint": "Read both, left join, and report len(people), len(joined) and the count of NaN in the score column. A left join cannot lose rows, so more rows than people means a key was duplicated."
+  },
   "questions": [
     {
       "id": "d8-pjw-1",
-      "kind": "order",
-      "prompt": "Put the steps of a two-file analysis in the order this lesson recommends.",
-      "items": [
-        "Merge on the key",
-        "Load both files and look at them",
-        "Summarise",
-        "Check the row count survived the join"
+      "prompt": "When should the key checks happen?",
+      "choices": [
+        "After the join",
+        "Before the join",
+        "After summarising",
+        "They are not needed"
       ],
-      "answer": [
-        1,
-        0,
-        3,
-        2
-      ],
-      "explain": "The check sits between the join and the summary, because that is the point where a wrong join is still cheap to notice."
+      "answer": 1,
+      "explain": "Every one of them is cheap before and expensive after, once the totals are already wrong."
     },
     {
       "id": "d8-pjw-2",
-      "prompt": "Why check the row count after a join rather than before?",
+      "prompt": "A left join gives more rows than the left table had. What happened?",
       "choices": [
-        "It is the same",
-        "The join is what changes it, by dropping or multiplying rows",
-        "It is faster",
-        "You should not"
+        "Impossible",
+        "The right table had a duplicated key",
+        "The join failed",
+        "Rows were dropped"
       ],
       "answer": 1,
-      "explain": "Before the join there is nothing to compare against. The pair of numbers is what tells you which of the two failure modes you have."
+      "explain": "A left join cannot lose rows, so more rows than you started with means the right side multiplied them."
     },
     {
       "id": "d8-pjw-3",
-      "prompt": "What does rounding the result at the end buy you?",
+      "prompt": "Why summarise last?",
       "choices": [
-        "Accuracy",
-        "A number a reader can take in, with the working left exact until the last step",
-        "Speed",
-        "Nothing"
+        "It is faster",
+        "A mean over multiplied rows looks entirely reasonable and is wrong",
+        "pandas requires it",
+        "It does not matter"
       ],
       "answer": 1,
-      "explain": "Rounding early loses precision through the calculation; rounding at the end is presentation."
+      "explain": "Nothing about the summary reveals that the table underneath it was the wrong one."
+    },
+    {
+      "id": "d8-pjw-4",
+      "prompt": "What belongs beside a group mean in the report?",
+      "choices": [
+        "The dtype",
+        "The number of rows behind it",
+        "The file size",
+        "The column count"
+      ],
+      "answer": 1,
+      "explain": "A team of one is not a comparison, and the reader cannot tell without the count."
     }
   ]
 }

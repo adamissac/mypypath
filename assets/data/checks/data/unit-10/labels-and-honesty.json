@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "A chart without units is a decoration, and a cut axis is an argument.",
+    "prompt": "Labels and Honesty: The headline sentence",
     "packages": [
       "pandas"
     ],
@@ -23,59 +23,107 @@
         "expect": "'high leads on 9.0, 8.0 ahead of low'"
       },
       {
-        "name": "the means come from a group-by",
+        "name": "the summary is computed, not typed",
         "kind": "ast",
         "requires": {
           "calls": [
             "groupby"
           ]
         },
-        "describe": "a grouped mean behind the sentence"
+        "describe": "the means come from a group-by"
       }
     ],
     "hint": "Group to a mean per team, round to one place, then use idxmax and idxmin for the names. The gap is the difference between the two means."
   },
+  "exercise2": {
+    "prompt": "Labels and Honesty: How big is the gap, in context",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "gap_size(__import__(\"pandas\").DataFrame({\"team\": [\"a\", \"b\"], \"score\": [85.0, 82.0]}))",
+        "expect": "[3.0, 3.7]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a large gap reads large both ways",
+        "call": "gap_size(__import__(\"pandas\").DataFrame({\"team\": [\"a\", \"b\"], \"score\": [100.0, 50.0]}))",
+        "expect": "[50.0, 100.0]"
+      },
+      {
+        "name": "identical teams have no gap",
+        "call": "gap_size(__import__(\"pandas\").DataFrame({\"team\": [\"a\", \"b\"], \"score\": [70.0, 70.0]}))",
+        "expect": "[0.0, 0.0]"
+      },
+      {
+        "name": "the gap is between group means, not rows",
+        "call": "gap_size(__import__(\"pandas\").DataFrame({\"team\": [\"a\", \"a\", \"b\"], \"score\": [90.0, 70.0, 40.0]}))",
+        "expect": "[40.0, 100.0]"
+      },
+      {
+        "name": "the summary is computed, not typed",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "groupby"
+          ]
+        },
+        "describe": "the means come from a group-by"
+      }
+    ],
+    "hint": "Group to means, take max and min, subtract for the gap, then divide the gap by the minimum and multiply by 100. Round both at the end."
+  },
   "questions": [
     {
-      "id": "d10-lah-1",
-      "prompt": "Why does a bar chart's value axis normally start at zero?",
+      "id": "d10-lh-1",
+      "prompt": "A chart without units is what?",
       "choices": [
-        "Convention",
-        "The length of the bar is the quantity, so cutting the axis distorts the comparison",
-        "It looks better",
-        "It does not"
+        "Fine if the title is clear",
+        "A decoration",
+        "Automatically wrong",
+        "Only a problem in print"
       ],
       "answer": 1,
-      "explain": "A bar encodes its value as length. Start at 98 and a one-point difference fills the chart, which is a claim the data did not make."
+      "explain": "The reader cannot tell pounds from thousands of pounds from a percentage."
     },
     {
-      "id": "d10-lah-2",
-      "kind": "multi",
-      "prompt": "What belongs on a chart before anyone else sees it?",
+      "id": "d10-lh-2",
+      "prompt": "A bar chart whose y-axis starts at 80 rather than 0 does what?",
       "choices": [
-        "A title saying what it shows",
-        "Units on the value axis",
-        "The period covered",
-        "The code that made it"
-      ],
-      "answers": [
-        0,
-        1,
-        2
-      ],
-      "explain": "The first three let a reader act on it. The code belongs with the work, not on the picture."
-    },
-    {
-      "id": "d10-lah-3",
-      "prompt": "When is a non-zero axis defensible?",
-      "choices": [
-        "Never",
-        "On a line chart of a quantity that moves in a narrow band, where the change is the subject",
-        "Always",
-        "On bar charts"
+        "Nothing",
+        "Exaggerates the differences between the bars",
+        "Is always wrong",
+        "Fixes the scale"
       ],
       "answer": 1,
-      "explain": "A line encodes change as slope rather than length, so a tight band can be legitimate -- provided the axis is labelled and the reader can see it."
+      "explain": "It can be defensible, but it is an argument and it has to be labelled as one."
+    },
+    {
+      "id": "d10-lh-3",
+      "prompt": "What belongs in a chart alongside the title and axis labels?",
+      "choices": [
+        "The code",
+        "How many observations it rests on",
+        "The file name",
+        "The date you made it"
+      ],
+      "answer": 1,
+      "explain": "A difference between two rows and a difference between two thousand look identical on a chart."
+    },
+    {
+      "id": "d10-lh-4",
+      "prompt": "Reporting totals rather than rates is what kind of decision?",
+      "choices": [
+        "Purely technical",
+        "One that can change which group looks best",
+        "Irrelevant",
+        "Always wrong"
+      ],
+      "answer": 1,
+      "explain": "Totals favour the big region and rates favour the small one, and the reader will not see you choose."
     }
   ]
 }

@@ -173,35 +173,121 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Ask for several summaries in one pass.</li>
+<li>Name the output columns rather than accepting the defaults.</li>
+<li>Apply different summaries to different columns.</li>
+<li>Build a summary that is not a built-in.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>One group-by per statistic means walking the table three times and then stitching the results together. <code>agg</code> does it in one pass and, more importantly, lets you name the columns — so the result is a table a reader can understand without you standing next to it.</p>
+</div>
 
 <div class="content-section">
 <h2>A list of functions</h2>
-<p>agg takes several summaries at once and gives you a column for each.</p>
+<p>Pass a list and you get a column per summary, named after the function.</p>
+<h3 class="h4">Several at once</h3>
+<p>One pass over the data, one table out.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"k": ["a", "a", "b"], "v": [1, 3, 5]})
-out = df.groupby("k")["v"].agg(["min", "max", "mean"])
-print(out.loc["a"].tolist())</code></pre>
+df = pd.DataFrame({"k": ["a", "a", "b"], "v": [1, 4, 7]})
+print(df.groupby("k")["v"].agg(["min", "max", "mean", "size"]))</code></pre>
+<h3 class="h4">Different summaries per column</h3>
+<p>A dictionary maps each column to what you want from it, which is how a real summary table usually looks.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"k": ["a", "a"], "score": [90, 80], "hours": [2, 5]})
+print(df.groupby("k").agg({"score": "mean", "hours": "sum"}))</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Four summaries, one pass</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Produce the minimum, maximum, mean and row count per key in a single call.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;k&quot;: [&quot;a&quot;, &quot;a&quot;, &quot;b&quot;, &quot;b&quot;], &quot;v&quot;: [1, 4, 7, 9]})\n\nprint(df.groupby(&quot;k&quot;)[&quot;v&quot;].agg([&quot;min&quot;, &quot;max&quot;, &quot;mean&quot;, &quot;size&quot;]))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+df = pd.DataFrame({"k": ["a", "a", "b", "b"], "v": [1, 4, 7, 9]})
+
+print(df.groupby("k")["v"].agg(["min", "max", "mean", "size"]))
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Naming the outputs</h2>
-<p>Named aggregation says what each column means, which matters when the reader is not you.</p>
+<p>Named aggregation gives you the columns you want with the names you want, and it is the form worth defaulting to.</p>
+<h3 class="h4">Say what each column is</h3>
+<p>Each keyword becomes a column name, and the tuple says which column to summarise and how.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"k": ["a", "a"], "v": [1, 3]})
-out = df.groupby("k").agg(lowest=("v", "min"), highest=("v", "max"))
-print(list(out.columns))</code></pre>
+df = pd.DataFrame({"k": ["a", "a", "b"], "v": [1, 4, 7]})
+print(df.groupby("k").agg(
+    lowest=("v", "min"),
+    highest=("v", "max"),
+    rows=("v", "size"),
+))</code></pre>
+<p class="note">Compare this with the default names from a list of functions. The difference is whether the person reading your output has to ask you what a column means.</p>
+<h3 class="h4">A summary of your own</h3>
+<p>Anything that reduces a Series to one value works, including a lambda. The range — highest minus lowest — is the obvious example, and it has no built-in.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"k": ["a", "a", "b"], "v": [1, 4, 7]})
+print(df.groupby("k")["v"].agg(spread=lambda s: s.max() - s.min()))</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Name them yourself</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Produce the same table again, with the columns named <code>lowest</code>, <code>highest</code> and <code>rows</code>.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;k&quot;: [&quot;a&quot;, &quot;a&quot;, &quot;b&quot;, &quot;b&quot;], &quot;v&quot;: [1, 4, 7, 9]})\n\nprint(df.groupby(&quot;k&quot;).agg(\n    lowest=(&quot;v&quot;, &quot;min&quot;),\n    highest=(&quot;v&quot;, &quot;max&quot;),\n    rows=(&quot;v&quot;, &quot;size&quot;),\n))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+df = pd.DataFrame({"k": ["a", "a", "b", "b"], "v": [1, 4, 7, 9]})
+
+print(df.groupby("k").agg(
+    lowest=("v", "min"),
+    highest=("v", "max"),
+    rows=("v", "size"),
+))
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: The spread within each group</h3>
 <p>Write <code>range_by(df)</code> returning a dictionary of each key to the difference between its highest and lowest <code>v</code>.</p>
 <p class="hint-text">Group, take max and min of v for each group, subtract one from the other, then to_dict(). The second hidden case is the whole point: the range is per group.</p>
 
@@ -223,6 +309,32 @@ print(range_by(pd.DataFrame({"k": ["a", "a"], "v": [1, 4]})))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: A named summary table</h3>
+<p>Write <code>summary_table(df)</code> that returns the column names of a grouped summary carrying, in this order, <code>lowest</code>, <code>highest</code> and <code>rows</code> per key. Name the columns rather than accepting the defaults.</p>
+<p class="hint-text">df.groupby("k").agg(lowest=("v", "min"), highest=("v", "max"), rows=("v", "size")) then list(...columns). Passing a list of function names instead would give you min, max and size as the names.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef summary_table(df):\n    # Return list(result.columns) for the named summary.\n    return []\n\nprint(summary_table(pd.DataFrame({&quot;k&quot;: [&quot;a&quot;, &quot;a&quot;], &quot;v&quot;: [1, 4]})))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def summary_table(df):
+    # Return list(result.columns) for the named summary.
+    return []
+
+print(summary_table(pd.DataFrame({"k": ["a", "a"], "v": [1, 4]})))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

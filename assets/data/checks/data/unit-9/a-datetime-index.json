@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Putting time on the index unlocks slicing by period.",
+    "prompt": "A Datetime Index: The total in a month",
     "packages": [
       "pandas"
     ],
@@ -25,42 +25,85 @@
     ],
     "hint": "Set the day as the index and sort it, then select the month string. An empty selection sums to 0, which is the answer the first hidden case wants."
   },
+  "exercise2": {
+    "prompt": "A Datetime Index: The span the data covers",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "date_span(__import__(\"pandas\").DataFrame({\"day\": __import__(\"pandas\").to_datetime([\"2024-02-01\", \"2024-01-05\"]), \"n\": [2, 1]}))",
+        "expect": "['2024-01-05', '2024-02-01']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "one row is both ends",
+        "call": "date_span(__import__(\"pandas\").DataFrame({\"day\": __import__(\"pandas\").to_datetime([\"2024-05-05\"]), \"n\": [1]}))",
+        "expect": "['2024-05-05', '2024-05-05']"
+      },
+      {
+        "name": "the file order does not decide the answer",
+        "call": "date_span(__import__(\"pandas\").DataFrame({\"day\": __import__(\"pandas\").to_datetime([\"2024-12-31\", \"2024-01-01\", \"2024-06-01\"]), \"n\": [1, 2, 3]}))",
+        "expect": "['2024-01-01', '2024-12-31']"
+      },
+      {
+        "name": "a year boundary is ordered by time",
+        "call": "date_span(__import__(\"pandas\").DataFrame({\"day\": __import__(\"pandas\").to_datetime([\"2024-01-01\", \"2023-12-31\"]), \"n\": [1, 2]}))",
+        "expect": "['2023-12-31', '2024-01-01']"
+      }
+    ],
+    "hint": "set_index(\"day\").sort_index(), then the first and last index entries. strftime(\"%Y-%m-%d\") turns each back into a plain string."
+  },
   "questions": [
     {
-      "id": "d9-adi-1",
-      "prompt": "What does a datetime index let you do?",
+      "id": "d9-dti-1",
+      "prompt": "What does a DatetimeIndex unlock?",
       "choices": [
-        "Nothing new",
-        "Select a period with a string like \"2024-01\"",
-        "Sort faster",
-        "Remove duplicates"
+        "Faster sorting",
+        "Selecting a period with a string, and resampling",
+        "Smaller memory",
+        "Automatic parsing"
       ],
       "answer": 1,
-      "explain": "Partial string selection is the payoff, and it reads much better than a pair of comparisons against boundary dates."
+      "explain": "df.loc[\"2024-03\"] is a whole month, and resample and rolling both read the index."
     },
     {
-      "id": "d9-adi-2",
-      "prompt": "Why sort a time index after setting it?",
+      "id": "d9-dti-2",
+      "prompt": "df.loc[\"2024\"] on a DatetimeIndex returns what?",
       "choices": [
-        "Style",
-        "Slicing an unsorted time index can raise",
-        "It is faster to write",
-        "It removes gaps"
-      ],
-      "answer": 1,
-      "explain": "The slice assumes order. One sort_index after set_index avoids an error that otherwise appears much later."
-    },
-    {
-      "id": "d9-adi-3",
-      "prompt": "A month selection matches no rows. What does the total come to?",
-      "choices": [
+        "One row",
+        "Every row in 2024",
         "An error",
-        "Zero",
-        "Missing",
-        "The whole total"
+        "The first row of 2024"
       ],
       "answer": 1,
-      "explain": "Summing nothing gives 0, which is usually the honest answer for \"how much happened in a month with no data\" -- though it is worth knowing it is indistinguishable from a genuine zero."
+      "explain": "Partial string indexing: the string names a period, not an instant."
+    },
+    {
+      "id": "d9-dti-3",
+      "prompt": "Why sort after set_index?",
+      "choices": [
+        "It looks tidier",
+        "Slicing a time index expects it sorted",
+        "It is required by pandas",
+        "To remove duplicates"
+      ],
+      "answer": 1,
+      "explain": "This is the one place where an unsorted index gives a wrong answer rather than an error."
+    },
+    {
+      "id": "d9-dti-4",
+      "prompt": "How do you get the date back as an ordinary column?",
+      "choices": [
+        "set_index(None)",
+        "reset_index()",
+        "to_frame()",
+        "It cannot be done"
+      ],
+      "answer": 1,
+      "explain": "Which is what you want before writing to a file or joining on the date."
     }
   ]
 }

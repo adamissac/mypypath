@@ -173,36 +173,129 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Join two tables on a shared column.</li>
+<li>Choose between inner, left, right and outer.</li>
+<li>Say what happens to a row that matches nothing.</li>
+<li>Check the row count against what you expected.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>A join is how two files become one answer, and the choice of <code>how</code> is a decision about whose rows matter. Getting it wrong does not raise — it silently drops the people you were asked about, and the summary that follows is computed over the wrong population.</p>
+</div>
 
 <div class="content-section">
 <h2>An inner join keeps the matches</h2>
-<p>merge lines rows up by a shared key. The default keeps only keys present on both sides, so the result can be smaller than either input.</p>
+<p>The default keeps only the rows whose key appears in both tables.</p>
+<h3 class="h4">Joining on a shared column</h3>
+<p>The key column appears once in the result; the other columns come from both sides.</p>
 <pre class="code"><code>import pandas as pd
 
-people = pd.DataFrame({"id": [1, 2], "name": ["Ada", "Grace"]})
+people = pd.DataFrame({"id": [1, 2], "name": ["Ada", "Bo"]})
 scores = pd.DataFrame({"id": [1], "score": [92]})
-print(pd.merge(people, scores, on="id").shape)</code></pre>
+print(pd.merge(people, scores, on="id"))</code></pre>
+<h3 class="h4">What an inner join costs you</h3>
+<p>Bo is gone. If the question was "what did each person score", an inner join has quietly answered a different one: "what did each person who has a score score".</p>
+<pre class="code"><code>import pandas as pd
 
+people = pd.DataFrame({"id": [1, 2], "name": ["Ada", "Bo"]})
+scores = pd.DataFrame({"id": [1], "score": [92]})
+inner = pd.merge(people, scores, on="id")
+print(len(people), "people -&gt;", len(inner), "rows")</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Inner against left</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Join these two both ways and print the row count each gives.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\npeople = pd.DataFrame({&quot;id&quot;: [1, 2, 3], &quot;name&quot;: [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]})\nscores = pd.DataFrame({&quot;id&quot;: [1, 2], &quot;score&quot;: [90, 80]})\n\nprint(len(pd.merge(people, scores, on=&quot;id&quot;)))\nprint(None)   # the left join\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+people = pd.DataFrame({"id": [1, 2, 3], "name": ["a", "b", "c"]})
+scores = pd.DataFrame({"id": [1, 2], "score": [90, 80]})
+
+print(len(pd.merge(people, scores, on="id")))
+print(None)   # the left join
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>how= decides what happens to the rest</h2>
-<p>left keeps every row on the left and leaves gaps where the right had nothing. That is usually what you want when the left table is your population.</p>
+<p>Four choices, and the right one depends on whose rows the question is about.</p>
+<h3 class="h4">left keeps everyone on the left</h3>
+<p>Rows with no match get NaN in the columns that came from the right. This is the one you want when the left table is the population you were asked about.</p>
 <pre class="code"><code>import pandas as pd
 
-people = pd.DataFrame({"id": [1, 2], "name": ["Ada", "Grace"]})
+people = pd.DataFrame({"id": [1, 2], "name": ["Ada", "Bo"]})
+scores = pd.DataFrame({"id": [1], "score": [92]})
+print(pd.merge(people, scores, on="id", how="left"))</code></pre>
+<h3 class="h4">And the other two</h3>
+<p><code>right</code> is the mirror image; <code>outer</code> keeps everything from both sides and fills the gaps on each.</p>
+<pre class="code"><code>import pandas as pd
+
+a = pd.DataFrame({"id": [1, 2], "x": ["a", "b"]})
+b = pd.DataFrame({"id": [2, 3], "y": ["c", "d"]})
+print(pd.merge(a, b, on="id", how="outer"))</code></pre>
+<h3 class="h4">Counting what did not match</h3>
+<p>After a left join, the rows with NaN in a right-hand column are exactly the ones that found no partner. That number is usually worth reporting, not just fixing.</p>
+<pre class="code"><code>import pandas as pd
+
+people = pd.DataFrame({"id": [1, 2, 3], "name": ["a", "b", "c"]})
 scores = pd.DataFrame({"id": [1], "score": [92]})
 out = pd.merge(people, scores, on="id", how="left")
-print(out.shape, int(out["score"].isna().sum()))</code></pre>
+print(int(out["score"].isna().sum()), "of", len(people), "had no score")</code></pre>
 
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Who is missing</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Left join, then print the names of the people who had no score.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\npeople = pd.DataFrame({&quot;id&quot;: [1, 2, 3], &quot;name&quot;: [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]})\nscores = pd.DataFrame({&quot;id&quot;: [1], &quot;score&quot;: [90]})\n\nout = pd.merge(people, scores, on=&quot;id&quot;, how=&quot;left&quot;)\nprint(out[out[&quot;score&quot;].isna()][&quot;name&quot;].tolist())\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+people = pd.DataFrame({"id": [1, 2, 3], "name": ["a", "b", "c"]})
+scores = pd.DataFrame({"id": [1], "score": [90]})
+
+out = pd.merge(people, scores, on="id", how="left")
+print(out[out["score"].isna()]["name"].tolist())
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Keep everyone, count the gaps</h3>
 <p>Write <code>with_scores(people, scores)</code> that joins on <code>id</code>, keeping every person even when they have no score, and returns the number of people with no score.</p>
 <p class="hint-text">how="left" keeps every person. The people who matched nothing have a missing score, and isna().sum() counts them.</p>
 
@@ -225,6 +318,32 @@ print(with_scores(pd.DataFrame({"id": [1, 2], "name": ["Ada", "Bo"]}),
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Inner against left, as a pair</h3>
+<p>Write <code>join_counts(left, right)</code> returning a two-element list of [rows in an inner join on <code>id</code>, rows in a left join]. The pair is what tells you whether every left row found a partner.</p>
+<p class="hint-text">Two merges, one with the default how and one with how="left", and len() on each. When the two numbers differ, the difference is how many left rows matched nothing.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef join_counts(left, right):\n    # [inner rows, left rows]\n    return [0, 0]\n\nprint(join_counts(pd.DataFrame({&quot;id&quot;: [1, 2]}), pd.DataFrame({&quot;id&quot;: [1], &quot;v&quot;: [9]})))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def join_counts(left, right):
+    # [inner rows, left rows]
+    return [0, 0]
+
+print(join_counts(pd.DataFrame({"id": [1, 2]}), pd.DataFrame({"id": [1], "v": [9]})))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

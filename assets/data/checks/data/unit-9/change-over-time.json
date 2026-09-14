@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Differences and growth rates, and the row that has neither.",
+    "prompt": "Change Over Time: Count the rises",
     "packages": [
       "pandas"
     ],
@@ -28,7 +28,7 @@
         "expect": "0"
       },
       {
-        "name": "the comparison is with the previous row",
+        "name": "the right tool does the work",
         "kind": "ast",
         "requires": {
           "calls": [
@@ -38,44 +38,92 @@
         "describe": "diff or shift"
       }
     ],
-    "hint": "diff() gives the change at each step, with the first one missing. Count how many of those are above zero -- a missing value is not, so it takes care of itself."
+    "hint": "diff() gives the change at each step, with the first one missing. Count how many of those are above zero — a missing value is not, so it takes care of itself."
+  },
+  "exercise2": {
+    "prompt": "Change Over Time: Growth, honestly reported",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "growth(__import__(\"pandas\").Series([100.0, 120.0, 90.0]))",
+        "expect": "[20.0, -25.0]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the first step is dropped, not zeroed",
+        "call": "len(growth(__import__(\"pandas\").Series([100.0, 110.0])))",
+        "expect": "1"
+      },
+      {
+        "name": "a single value has no growth at all",
+        "call": "growth(__import__(\"pandas\").Series([100.0]))",
+        "expect": "[]"
+      },
+      {
+        "name": "a flat series grows by nothing",
+        "call": "growth(__import__(\"pandas\").Series([50.0, 50.0]))",
+        "expect": "[0.0]"
+      },
+      {
+        "name": "a fall is reported as negative",
+        "call": "growth(__import__(\"pandas\").Series([100.0, 50.0]))",
+        "expect": "[-50.0]"
+      }
+    ],
+    "hint": "pct_change() gives proportions with the first row missing. Multiply by 100, round to one place, dropna() and tolist(). Filling the first row with 0 would claim a flat period nobody measured."
   },
   "questions": [
     {
       "id": "d9-cot-1",
-      "prompt": "Why is the first value of diff() missing?",
+      "prompt": "What does .diff() give you?",
       "choices": [
-        "A bug",
-        "There is no earlier row to compare it with",
-        "It is zero",
-        "It is dropped"
+        "The percentage change",
+        "The difference from the previous row",
+        "The cumulative sum",
+        "The distance from the mean"
       ],
       "answer": 1,
-      "explain": "Change is a relationship between two rows, and the first has only itself."
+      "explain": "And the first row has nothing before it, so it is NaN."
     },
     {
       "id": "d9-cot-2",
-      "prompt": "What does pct_change give when the previous value is zero?",
+      "prompt": ".pct_change() returns 0.5. What does that mean?",
       "choices": [
-        "Zero",
-        "An infinity, because there is no base to grow from",
-        "A missing value",
-        "An error"
+        "A rise of 0.5 units",
+        "A rise of 50 per cent",
+        "Half the total",
+        "A fall"
       ],
       "answer": 1,
-      "explain": "Growth from nothing has no percentage. What to display instead is a decision the analysis has to make."
+      "explain": "It is a proportion, so multiply by 100 only when formatting for a reader."
     },
     {
       "id": "d9-cot-3",
-      "prompt": "Why does counting rises use > 0 rather than >= 0?",
+      "prompt": "Which row has neither a difference nor a growth rate?",
       "choices": [
-        "Style",
-        "A step that did not move is not a rise",
-        "They are the same",
-        "It is faster"
+        "The last",
+        "The first",
+        "Every row has both",
+        "The middle"
       ],
       "answer": 1,
-      "explain": "Flat is flat. Counting it as a rise inflates every \"how often did it grow\" answer you produce."
+      "explain": "Nothing precedes it. Dropping it or reporting it as unknown are both honest; filling it with 0 is not."
+    },
+    {
+      "id": "d9-cot-4",
+      "prompt": "pct_change from 0 to 5 gives what?",
+      "choices": [
+        "5.0",
+        "inf",
+        "0",
+        "An error"
+      ],
+      "answer": 1,
+      "explain": "\"Grew from nothing\" is a sentence, not a percentage, and inf is pandas saying exactly that."
     }
   ]
 }

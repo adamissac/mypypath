@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Round at the end, and show the precision you actually have.",
+    "prompt": "Formatting Numbers: The middle, with its ends",
     "packages": [
       "pandas"
     ],
@@ -23,7 +23,7 @@
         "expect": "'mean 5.0 (min 0.0, max 10.0)'"
       },
       {
-        "name": "the spread is reported next to the middle",
+        "name": "the summary is computed, not typed",
         "kind": "ast",
         "requires": {
           "calls": [
@@ -36,42 +36,90 @@
     ],
     "hint": "Compute all three, round each to one place with float() so they print as plain numbers, and build the sentence with an f-string."
   },
+  "exercise2": {
+    "prompt": "Formatting Numbers: Round once, at the end",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "mean_to(__import__(\"pandas\").Series([1.26, 1.26, 1.26, 1.26]), 1)",
+        "expect": "1.3"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "rounding the inputs first would give a different answer",
+        "call": "mean_to(__import__(\"pandas\").Series([0.6, 0.6, 0.0]), 0)",
+        "expect": "0.0"
+      },
+      {
+        "name": "more places keep more of the answer",
+        "call": "mean_to(__import__(\"pandas\").Series([1.0, 2.0]), 2)",
+        "expect": "1.5"
+      },
+      {
+        "name": "zero places gives a whole number",
+        "call": "mean_to(__import__(\"pandas\").Series([1.4, 1.4]), 0)",
+        "expect": "1.0"
+      },
+      {
+        "name": "a single value rounds to itself",
+        "call": "mean_to(__import__(\"pandas\").Series([3.14159]), 2)",
+        "expect": "3.14"
+      }
+    ],
+    "hint": "Take s.mean() at full precision, then round once. Calling s.round(places) first would round every value before averaging, which is a different calculation."
+  },
   "questions": [
     {
       "id": "d10-fn-1",
-      "prompt": "Why round at the end rather than as you go?",
+      "prompt": "When should you round?",
       "choices": [
-        "It is faster",
-        "Rounding early loses precision that the later steps then compound",
-        "It is the same",
-        "pandas requires it"
+        "As early as possible",
+        "At the end, for display only",
+        "Never",
+        "After every step"
       ],
       "answer": 1,
-      "explain": "Every intermediate rounding is an error carried forward. Rounding is a presentation step, not a calculation step."
+      "explain": "Rounding early puts the error into every calculation that follows."
     },
     {
       "id": "d10-fn-2",
-      "prompt": "What does reporting a mean to six decimal places suggest?",
+      "prompt": "Reporting a mean as 72.4183 from nine observations does what?",
       "choices": [
-        "Care",
-        "A precision the measurements do not support",
         "Nothing",
-        "A larger sample"
+        "Claims precision the data does not support",
+        "Is more accurate",
+        "Is required"
       ],
       "answer": 1,
-      "explain": "Digits are a claim about accuracy. Showing more than you have is a quiet form of overstating the result."
+      "explain": "The extra digits are noise dressed as certainty."
     },
     {
       "id": "d10-fn-3",
-      "prompt": "Why report the minimum and maximum next to a mean?",
+      "prompt": "What does f\"{0.0734:.1%}\" print?",
       "choices": [
-        "To fill space",
-        "Because the mean alone hides the spread",
-        "It is required",
-        "For sorting"
+        "0.1%",
+        "7.3%",
+        "73.4%",
+        "0.07"
       ],
       "answer": 1,
-      "explain": "Two numbers turn a figure that can mislead into one a reader can weigh."
+      "explain": "The percent format multiplies by 100 and appends the sign, formatting without changing the stored value."
+    },
+    {
+      "id": "d10-fn-4",
+      "prompt": "Why report min and max beside a mean?",
+      "choices": [
+        "Convention",
+        "Two very different columns can share a mean",
+        "It is faster",
+        "To find duplicates"
+      ],
+      "answer": 1,
+      "explain": "70/71/72 and 10/71/132 both average 71, and only one supports \"they scored about 71\"."
     }
   ]
 }

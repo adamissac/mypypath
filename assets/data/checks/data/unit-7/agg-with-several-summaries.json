@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "More than one answer per group, named as you want them.",
+    "prompt": "agg with Several Summaries: The spread within each group",
     "packages": [
       "pandas"
     ],
@@ -30,47 +30,95 @@
             "groupby"
           ]
         },
-        "describe": "a groupby"
+        "describe": "a groupby rather than a hand-written loop"
       }
     ],
     "hint": "Group, take max and min of v for each group, subtract one from the other, then to_dict(). The second hidden case is the whole point: the range is per group."
   },
+  "exercise2": {
+    "prompt": "agg with Several Summaries: A named summary table",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "summary_table(__import__(\"pandas\").DataFrame({\"k\": [\"a\", \"a\", \"b\"], \"v\": [1, 4, 7]}))",
+        "expect": "['lowest', 'highest', 'rows']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the names do not depend on the data",
+        "call": "summary_table(__import__(\"pandas\").DataFrame({\"k\": [\"z\"], \"v\": [9]}))",
+        "expect": "['lowest', 'highest', 'rows']"
+      },
+      {
+        "name": "no default function names leak through",
+        "call": "all(c not in summary_table(__import__(\"pandas\").DataFrame({\"k\": [\"a\"], \"v\": [1]})) for c in (\"min\", \"max\", \"size\"))",
+        "expect": "True"
+      },
+      {
+        "name": "the grouping is done by pandas",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "groupby"
+          ]
+        },
+        "describe": "a groupby rather than a hand-written loop"
+      }
+    ],
+    "hint": "df.groupby(\"k\").agg(lowest=(\"v\", \"min\"), highest=(\"v\", \"max\"), rows=(\"v\", \"size\")) then list(...columns). Passing a list of function names instead would give you min, max and size as the names."
+  },
   "questions": [
     {
       "id": "d7-agg-1",
-      "prompt": "What does agg([\"min\", \"max\"]) give you per group?",
+      "prompt": "How do you get the mean and the max per group in one pass?",
       "choices": [
-        "One value",
-        "One column for each summary",
-        "A list",
-        "An error"
+        "Two group-bys",
+        ".agg([\"mean\", \"max\"])",
+        ".mean().max()",
+        "It is not possible"
       ],
       "answer": 1,
-      "explain": "One row per group and one column per summary, which is a small table rather than a single series."
+      "explain": "One walk over the data instead of two, and one table out."
     },
     {
       "id": "d7-agg-2",
-      "prompt": "Why use named aggregation?",
+      "prompt": "What does .agg(lowest=(\"v\", \"min\")) do?",
       "choices": [
-        "It is faster",
-        "The output columns say what they are",
-        "It sorts",
-        "It is required"
+        "Raises",
+        "Makes a column called lowest holding the minimum of v",
+        "Renames v",
+        "Sorts by v"
       ],
       "answer": 1,
-      "explain": "A column called \"highest\" needs no explanation; one called \"max\" sitting next to three others does."
+      "explain": "Named aggregation: the keyword is the output column, the tuple says which column and which summary."
     },
     {
       "id": "d7-agg-3",
-      "prompt": "A group of one row: what is its max minus its min?",
+      "prompt": "How do you apply different summaries to different columns?",
       "choices": [
-        "An error",
-        "Zero",
-        "Missing",
-        "The value itself"
+        "You cannot",
+        "Pass a dictionary of column to function",
+        "Group twice",
+        "Use transform"
       ],
       "answer": 1,
-      "explain": "The one value is both the largest and the smallest, so the range is zero. Worth checking, because a group of one is common in real data."
+      "explain": "{\"score\": \"mean\", \"hours\": \"sum\"} is how a real summary table usually looks."
+    },
+    {
+      "id": "d7-agg-4",
+      "prompt": "Why name the output columns?",
+      "choices": [
+        "It is faster",
+        "So the result is readable without you explaining it",
+        "It is required",
+        "It changes the numbers"
+      ],
+      "answer": 1,
+      "explain": "The default names come from the functions, which says how it was computed rather than what it means."
     }
   ]
 }

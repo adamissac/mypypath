@@ -23,6 +23,10 @@ const later = {
   ...require('./data-course-unit-4.cjs'),
   ...require('./data-course-unit-5.cjs'),
   ...require('./data-course-unit-6.cjs'),
+  ...require('./data-course-unit-7.cjs'),
+  ...require('./data-course-unit-8.cjs'),
+  ...require('./data-course-unit-9.cjs'),
+  ...require('./data-course-unit-10.cjs'),
 };
 
 module.exports = {

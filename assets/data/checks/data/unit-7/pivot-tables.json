@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "A grouped summary laid out as a grid.",
+    "prompt": "Pivot Tables: The shape of the grid",
     "packages": [
       "pandas"
     ],
@@ -35,42 +35,95 @@
     ],
     "hint": "index is what goes down the side, columns is what goes across the top, values is what fills the cells. The shape is distinct subjects by distinct years."
   },
+  "exercise2": {
+    "prompt": "Pivot Tables: How many pairs never happened",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "empty_cells(__import__(\"pandas\").DataFrame({\"subject\": [\"m\", \"a\"], \"year\": [10, 11], \"score\": [90, 70]}))",
+        "expect": "2"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a full grid has no gaps",
+        "call": "empty_cells(__import__(\"pandas\").DataFrame({\"subject\": [\"m\", \"m\"], \"year\": [10, 11], \"score\": [1, 2]}))",
+        "expect": "0"
+      },
+      {
+        "name": "a single cell grid is full",
+        "call": "empty_cells(__import__(\"pandas\").DataFrame({\"subject\": [\"m\"], \"year\": [10], \"score\": [1]}))",
+        "expect": "0"
+      },
+      {
+        "name": "the count is a plain int",
+        "call": "type(empty_cells(__import__(\"pandas\").DataFrame({\"subject\": [\"m\"], \"year\": [10], \"score\": [1]}))).__name__",
+        "expect": "'int'"
+      },
+      {
+        "name": "pandas does the pivoting",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "pivot_table"
+          ]
+        },
+        "describe": "pivot_table"
+      }
+    ],
+    "hint": "Pivot with aggfunc=\"mean\" and leave the gaps as NaN, then count them with .isna().sum().sum(). Passing fill_value would remove the very thing you are counting."
+  },
   "questions": [
     {
       "id": "d7-pt-1",
-      "prompt": "What does the index argument of pivot_table control?",
+      "prompt": "What is a pivot table, in terms of what you already know?",
       "choices": [
-        "The columns across the top",
-        "What goes down the rows",
-        "The values in the cells",
-        "The sort order"
+        "A merge",
+        "A two-key group-by laid out as a grid",
+        "A filter",
+        "A sort"
       ],
       "answer": 1,
-      "explain": "index is the row key and columns is the top. Swapping them transposes the grid, which is the exercise's wrong answer."
+      "explain": "Identical arithmetic, different shape — and the shape is the value, because a grid is scannable."
     },
     {
       "id": "d7-pt-2",
-      "prompt": "A subject and year pair with no rows becomes what cell?",
+      "prompt": "What does aggfunc default to?",
       "choices": [
-        "Zero",
-        "Missing, unless fill_value says otherwise",
-        "Omitted",
-        "An error"
+        "sum",
+        "mean",
+        "count",
+        "first"
       ],
       "answer": 1,
-      "explain": "A grid has every cell whether the data did or not, so absent combinations arrive as gaps. Whether a gap should read as 0 is your decision."
+      "explain": "Which surprises people expecting a spreadsheet pivot’s count. Name it when you mean something else."
     },
     {
       "id": "d7-pt-3",
-      "prompt": "How does a pivot table relate to a group-by?",
+      "prompt": "A subject/year pair has no rows. What is in that cell?",
       "choices": [
-        "They are unrelated",
-        "It is the same summary laid out as a grid",
-        "It is faster",
-        "It only counts"
+        "0",
+        "NaN",
+        "The cell is absent",
+        "An error"
       ],
       "answer": 1,
-      "explain": "Same split-apply-combine underneath. The difference is the shape of the answer and therefore how easy it is to read."
+      "explain": "Unlike a group-by, which omits the pair entirely, a grid has a cell for every combination."
+    },
+    {
+      "id": "d7-pt-4",
+      "prompt": "When is fill_value=0 the wrong choice?",
+      "choices": [
+        "For a count",
+        "For a mean",
+        "Always",
+        "Never"
+      ],
+      "answer": 1,
+      "explain": "It claims a group scored nothing when the truth is that nobody sat it. For a count, zero usually is the honest answer."
     }
   ]
 }

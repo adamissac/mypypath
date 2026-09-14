@@ -173,37 +173,131 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Stack several tables into one.</li>
+<li>Say why <code>ignore_index=True</code> is usually wanted.</li>
+<li>Predict what happens when the columns do not line up.</li>
+<li>Keep track of which table a row came from.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Twelve monthly exports that should be one table is the commonest shape of real work. concat is straightforward; the two things worth knowing are that the index repeats unless you say otherwise, and that a column present in one file and absent from another fills with NaN rather than complaining.</p>
+</div>
 
 <div class="content-section">
 <h2>Rows end to end</h2>
-<p>concat stacks tables that share their columns. ignore_index renumbers the result, which you almost always want after stacking.</p>
+<p><code>concat</code> takes a list of tables and stacks them, lining the columns up by name.</p>
+<h3 class="h4">The basic stack</h3>
+<p>Order is the order of the list. The columns are matched by name, not by position.</p>
 <pre class="code"><code>import pandas as pd
 
-jan = pd.DataFrame({"name": ["Ada"], "score": [92]})
-feb = pd.DataFrame({"name": ["Grace"], "score": [88]})
-both = pd.concat([jan, feb], ignore_index=True)
-print(both.shape)</code></pre>
+jan = pd.DataFrame({"name": ["Ada"], "score": [90]})
+feb = pd.DataFrame({"score": [80], "name": ["Bo"]})
+print(pd.concat([jan, feb]))</code></pre>
+<h3 class="h4">The index repeats</h3>
+<p>Each table brought its own 0, 1, 2. <code>ignore_index=True</code> renumbers the result, which is what you want unless the index meant something.</p>
+<pre class="code"><code>import pandas as pd
 
+a = pd.DataFrame({"v": [1]})
+b = pd.DataFrame({"v": [2]})
+print(pd.concat([a, b]).index.tolist())
+print(pd.concat([a, b], ignore_index=True).index.tolist())</code></pre>
+<p class="note">A repeated index is not an error, but <code>.loc[0]</code> then returns two rows, and that surprise usually surfaces a long way from here.</p>
+<h3 class="h4">Remembering where a row came from</h3>
+<p>Add the column before stacking. Once the tables are one table there is no way to tell.</p>
+<pre class="code"><code>import pandas as pd
+
+jan = pd.DataFrame({"score": [90]}).assign(month="jan")
+feb = pd.DataFrame({"score": [80]}).assign(month="feb")
+print(pd.concat([jan, feb], ignore_index=True))</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Stack and renumber</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Stack these two tables, once as-is and once with a fresh index, and print both index lists.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\na = pd.DataFrame({&quot;v&quot;: [1, 2]})\nb = pd.DataFrame({&quot;v&quot;: [3]})\n\nprint(pd.concat([a, b]).index.tolist())\nprint(None)   # renumbered\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+a = pd.DataFrame({"v": [1, 2]})
+b = pd.DataFrame({"v": [3]})
+
+print(pd.concat([a, b]).index.tolist())
+print(None)   # renumbered
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Columns that do not line up</h2>
-<p>A column missing from one side is not an error. It appears with a gap for the rows that never had it, which is honest and occasionally a surprise.</p>
+<p>A column one table has and another does not is filled with NaN rather than dropped, and nothing warns you.</p>
+<h3 class="h4">The union of the columns</h3>
+<p>This is usually what you want and occasionally a sign that one export had a column renamed. Comparing the column sets first is the cheap check.</p>
 <pre class="code"><code>import pandas as pd
 
-a = pd.DataFrame({"x": [1]})
-b = pd.DataFrame({"x": [2], "y": [3]})
-out = pd.concat([a, b], ignore_index=True)
-print(sorted(out.columns), int(out["y"].isna().sum()))</code></pre>
+a = pd.DataFrame({"name": ["Ada"], "score": [90]})
+b = pd.DataFrame({"name": ["Bo"], "grade": ["B"]})
+print(pd.concat([a, b], ignore_index=True))
+print(set(a.columns) ^ set(b.columns))</code></pre>
+<h3 class="h4">The row count is predictable, so predict it</h3>
+<p>Stacking is the one combine whose result size you know in advance. Checking it costs one line and catches a file that failed to load.</p>
+<pre class="code"><code>import pandas as pd
 
+tables = [pd.DataFrame({"v": [1, 2]}), pd.DataFrame({"v": [3]})]
+expected = sum(len(t) for t in tables)
+out = pd.concat(tables, ignore_index=True)
+print(len(out) == expected, len(out))</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Mismatched columns</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Stack these two and print the result, then print which columns only one of them had.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\na = pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;], &quot;score&quot;: [90]})\nb = pd.DataFrame({&quot;name&quot;: [&quot;Bo&quot;], &quot;grade&quot;: [&quot;B&quot;]})\n\nprint(pd.concat([a, b], ignore_index=True))\nprint(None)   # columns present in only one\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+a = pd.DataFrame({"name": ["Ada"], "score": [90]})
+b = pd.DataFrame({"name": ["Bo"], "grade": ["B"]})
+
+print(pd.concat([a, b], ignore_index=True))
+print(None)   # columns present in only one
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Stack a list of tables</h3>
 <p>Write <code>stack(tables)</code> that stacks a list of tables into one with a fresh index, and returns the number of rows.</p>
 <p class="hint-text">pd.concat takes the list. ignore_index=True is what stops two rows both being numbered 0.</p>
 
@@ -225,6 +319,32 @@ print(stack([pd.DataFrame({"a": [1]}), pd.DataFrame({"a": [2]})]))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Label each row with its source</h3>
+<p>Write <code>stack_labelled(tables, labels)</code> that stacks the tables, adding a <code>source</code> column holding the matching label for every row from that table, and returns the <code>source</code> column as a list.</p>
+<p class="hint-text">Tag each table before stacking — assign(source=label) on a copy of each — then concat. Once they are one table there is no way to tell them apart.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef stack_labelled(tables, labels):\n    # Stack them, tagging each row with where it came from.\n    return []\n\nprint(stack_labelled([pd.DataFrame({&quot;v&quot;: [1, 2]}), pd.DataFrame({&quot;v&quot;: [3]})], [&quot;jan&quot;, &quot;feb&quot;]))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def stack_labelled(tables, labels):
+    # Stack them, tagging each row with where it came from.
+    return []
+
+print(stack_labelled([pd.DataFrame({"v": [1, 2]}), pd.DataFrame({"v": [3]})], ["jan", "feb"]))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

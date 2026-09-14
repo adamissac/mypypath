@@ -173,33 +173,118 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Take a moving average over a window.</li>
+<li>Say why the first values are missing.</li>
+<li>Choose a window length deliberately.</li>
+<li>State the smoothing when you report the result.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Daily numbers are noisy enough that the shape is invisible; a seven-day mean makes it legible. The trade is real, though: you are showing something that never happened, so the window length is a choice you have to declare rather than tune until the chart looks good.</p>
+</div>
 
 <div class="content-section">
 <h2>A moving average</h2>
-<p>rolling takes a window and a summary. A seven-day mean of daily numbers removes the weekday pattern and leaves the trend.</p>
+<p><code>rolling</code> takes a window and a summary. A seven-day mean of daily data is the standard way to make a weekly pattern stop drowning the trend.</p>
+<h3 class="h4">The call</h3>
+<p>Each output value is the summary of that row and the ones before it, within the window.</p>
 <pre class="code"><code>import pandas as pd
 
-s = pd.Series([1, 2, 3, 4])
-print(s.rolling(2).mean().tolist())</code></pre>
+s = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0])
+print(s.rolling(3).mean().tolist())</code></pre>
+<h3 class="h4">Choosing the window</h3>
+<p>A window of 7 on daily data removes the day-of-week pattern because every window contains one of each day. That is a reason, and reasons are what a window length should have.</p>
+<pre class="code"><code>import pandas as pd
 
+s = pd.Series([10.0, 2.0, 11.0, 3.0, 12.0, 4.0, 13.0, 5.0])
+print([round(x, 1) for x in s.rolling(2).mean().dropna().tolist()])
+print([round(x, 1) for x in s.rolling(4).mean().dropna().tolist()])</code></pre>
+<p class="note">The wider the window, the smoother the line and the later it reacts to a real change. Smoothing is a trade between legibility and responsiveness, not a free improvement.</p>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Two window lengths</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Smooth this noisy series with a window of 2 and then 4, and see which one shows the trend.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ns = pd.Series([10.0, 2.0, 11.0, 3.0, 12.0, 4.0, 13.0, 5.0])\n\nprint([round(x, 1) for x in s.rolling(2).mean().dropna().tolist()])\nprint(None)   # window of 4\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+s = pd.Series([10.0, 2.0, 11.0, 3.0, 12.0, 4.0, 13.0, 5.0])
+
+print([round(x, 1) for x in s.rolling(2).mean().dropna().tolist()])
+print(None)   # window of 4
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>The first values have no window</h2>
-<p>A window of three has nothing to average until the third value, so the first entries come back missing. That is honest rather than awkward.</p>
+<p>A window of three has nothing to average until the third value, so the first two are NaN. This is correct, and it is why a smoothed series is shorter than the one it came from.</p>
+<h3 class="h4">The gap at the front</h3>
+<p>Not an error — there genuinely is no three-day average on day one.</p>
 <pre class="code"><code>import pandas as pd
 
-s = pd.Series([1, 2, 3])
-print(s.rolling(3).mean().isna().sum())</code></pre>
+s = pd.Series([1.0, 2.0, 3.0, 4.0])
+print(s.rolling(3).mean().tolist())
+print(s.rolling(3).mean().dropna().tolist())</code></pre>
+<h3 class="h4">min_periods, and what it costs</h3>
+<p>It fills the front by averaging over fewer points. That is defensible for a chart and dishonest in a table, because the early values are computed differently from the rest.</p>
+<pre class="code"><code>import pandas as pd
 
+s = pd.Series([1.0, 2.0, 3.0, 4.0])
+print(s.rolling(3, min_periods=1).mean().tolist())</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: The gap at the front</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print the rolling mean with and without the leading gaps, and count how many were dropped.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ns = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0])\n\nrolled = s.rolling(3).mean()\nprint(rolled.tolist())\nprint(int(rolled.isna().sum()), &quot;dropped&quot;)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+s = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0])
+
+rolled = s.rolling(3).mean()
+print(rolled.tolist())
+print(int(rolled.isna().sum()), "dropped")
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Smooth a series</h3>
 <p>Write <code>smoothed(s, window)</code> returning the rolling mean as a list, with the leading gaps dropped.</p>
 <p class="hint-text">s.rolling(window).mean() gives the smoothed series with gaps at the front; dropna() removes them and tolist() hands back plain floats.</p>
 
@@ -221,6 +306,32 @@ print(smoothed(pd.Series([1.0, 2.0, 3.0]), 2))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: What the smoothing cost</h3>
+<p>Write <code>smoothing_cost(s, window)</code> returning a two-element list of [values in, values out after dropping the leading gaps]. The difference is how much of the start you gave up, and it is worth stating alongside a smoothed chart.</p>
+<p class="hint-text">len(s) for the first, then the length of s.rolling(window).mean().dropna() for the second. The gap is window - 1 whenever the series is long enough.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef smoothing_cost(s, window):\n    # [original length, smoothed length]\n    return [0, 0]\n\nprint(smoothing_cost(pd.Series([1.0, 2.0, 3.0]), 2))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def smoothing_cost(s, window):
+    # [original length, smoothed length]
+    return [0, 0]
+
+print(smoothing_cost(pd.Series([1.0, 2.0, 3.0]), 2))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

@@ -97,7 +97,7 @@ module.exports = {
                 call: 'row_count("scores.tsv")', expect: '4' },
               { name: 'the separator is actually given', kind: 'ast', requires: { calls: ['read_csv'] }, describe: 'read_csv with the tab separator' },
             ],
-            hint: 'Without sep="\\t" the whole line lands in one column and you get one column and three rows -- the row count would look right and the table would be wrong. len(df) or df.shape[0] counts the rows.',
+            hint: 'Without sep="\\t" the whole line lands in one column and you get one column and three rows — the row count would look right and the table would be wrong. len(df) or df.shape[0] counts the rows.',
             correct: 'import pandas as pd\n\ndef row_count(path):\n    return len(pd.read_csv(path, sep="\\t"))\n',
             wrong: 'import pandas as pd\n\ndef row_count(path):\n    return 3\n',
           },

@@ -173,35 +173,124 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Say what wide and long mean.</li>
+<li>Melt a set of columns down into two.</li>
+<li>Choose what stays put with <code>id_vars</code>.</li>
+<li>Predict the row count after a melt.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>A spreadsheet is usually wide — a column per month — because that is readable. Every pandas operation you have learned wants long: one row per observation, with the thing that varies in a column of its own. You cannot group by month when month is twelve column headings.</p>
+</div>
 
 <div class="content-section">
 <h2>Why long is easier to work with</h2>
-<p>A table with a column per month cannot be grouped by month, because the month is in the header rather than the data. melt moves it into the rows.</p>
+<p>In a wide table the month is metadata — it lives in the column name, where no operation can reach it. In a long table it is data.</p>
+<h3 class="h4">The same numbers, two shapes</h3>
+<p>Wide is easier to read; long is the only one you can group, filter or plot by month.</p>
 <pre class="code"><code>import pandas as pd
 
-wide = pd.DataFrame({"name": ["Ada"], "jan": [90], "feb": [80]})
-long = wide.melt(id_vars=["name"], var_name="month", value_name="score")
-print(long.shape)
-print(long["month"].tolist())</code></pre>
+wide = pd.DataFrame({"name": ["Ada", "Bo"], "jan": [90, 70], "feb": [80, 60]})
+print(wide)
+print()
+print(wide.melt(id_vars=["name"], var_name="month", value_name="score"))</code></pre>
+<h3 class="h4">And now the question is answerable</h3>
+<p>Grouping by month is impossible in the wide shape and one line in the long one.</p>
+<pre class="code"><code>import pandas as pd
 
+wide = pd.DataFrame({"name": ["Ada", "Bo"], "jan": [90, 70], "feb": [80, 60]})
+long = wide.melt(id_vars=["name"], var_name="month", value_name="score")
+print(long.groupby("month")["score"].mean())</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Melt and group</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Melt this table and then take the mean score per month — the question the wide shape cannot answer.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\nwide = pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;, &quot;Bo&quot;], &quot;jan&quot;: [90, 70], &quot;feb&quot;: [80, 60]})\n\nlong = wide.melt(id_vars=[&quot;name&quot;], var_name=&quot;month&quot;, value_name=&quot;score&quot;)\nprint(long)\nprint(None)   # mean per month\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+wide = pd.DataFrame({"name": ["Ada", "Bo"], "jan": [90, 70], "feb": [80, 60]})
+
+long = wide.melt(id_vars=["name"], var_name="month", value_name="score")
+print(long)
+print(None)   # mean per month
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>id_vars are what stays put</h2>
-<p>Everything named in id_vars stays as a column; everything else is folded into the two new columns.</p>
+<p>Everything named in <code>id_vars</code> is repeated down the rows; everything else is folded into the two new columns.</p>
+<h3 class="h4">Naming the new columns</h3>
+<p><code>var_name</code> is where the old column headings go; <code>value_name</code> is where their values go. Naming both is worth the keystrokes.</p>
 <pre class="code"><code>import pandas as pd
 
 wide = pd.DataFrame({"name": ["Ada"], "jan": [90], "feb": [80]})
-print(wide.melt(id_vars=["name"]).shape)</code></pre>
+print(wide.melt(id_vars=["name"]))
+print()
+print(wide.melt(id_vars=["name"], var_name="month", value_name="score"))</code></pre>
+<h3 class="h4">The row count is predictable</h3>
+<p>Rows times melted columns. Checking it catches an id_vars list that accidentally left something out.</p>
+<pre class="code"><code>import pandas as pd
 
+wide = pd.DataFrame({"name": ["Ada", "Bo"], "jan": [90, 70], "feb": [80, 60]})
+long = wide.melt(id_vars=["name"], var_name="month", value_name="score")
+print(len(wide), "rows x 2 months =", len(long))</code></pre>
+<p class="note">Forget to list a column in <code>id_vars</code> and it gets melted too, which usually shows up as a row count twice what you predicted.</p>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Predict the row count</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Three people, four months. Say how many rows the melt gives before you run it.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\nwide = pd.DataFrame({\n    &quot;name&quot;: [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;],\n    &quot;q1&quot;: [1, 2, 3], &quot;q2&quot;: [4, 5, 6], &quot;q3&quot;: [7, 8, 9], &quot;q4&quot;: [10, 11, 12],\n})\n\nprint(len(wide.melt(id_vars=[&quot;name&quot;])))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+wide = pd.DataFrame({
+    "name": ["a", "b", "c"],
+    "q1": [1, 2, 3], "q2": [4, 5, 6], "q3": [7, 8, 9], "q4": [10, 11, 12],
+})
+
+print(len(wide.melt(id_vars=["name"])))
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Melt the months down</h3>
 <p>Write <code>to_long(df)</code> that melts a table with a <code>name</code> column and one column per month into columns <code>name</code>, <code>month</code>, <code>score</code>, and returns the row count.</p>
 <p class="hint-text">id_vars=["name"] keeps the name and folds every other column down. The row count is people times months.</p>
 
@@ -223,6 +312,32 @@ print(to_long(pd.DataFrame({"name": ["Ada"], "jan": [90], "feb": [80]})))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: The best month, once it is a column</h3>
+<p>Write <code>best_month(df)</code> that melts a wide table with <code>name</code> and a column per month, and returns the month with the highest mean score. This is the question the wide shape cannot answer at all.</p>
+<p class="hint-text">Melt with id_vars=["name"], group by the month column, take the mean of the score column, then idxmax for the label.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef best_month(df):\n    # Melt, then find the month with the highest average.\n    return None\n\nprint(best_month(pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;, &quot;Bo&quot;], &quot;jan&quot;: [90, 70], &quot;feb&quot;: [50, 40]})))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def best_month(df):
+    # Melt, then find the month with the highest average.
+    return None
+
+print(best_month(pd.DataFrame({"name": ["Ada", "Bo"], "jan": [90, 70], "feb": [50, 40]})))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

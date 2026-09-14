@@ -173,34 +173,129 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Name the three steps of a group-by.</li>
+<li>Say why <code>df.groupby("x")</code> on its own computes nothing.</li>
+<li>Read the result, and get the key back as a column.</li>
+<li>Report the group size beside the group summary.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Every question of the form "per region", "by month", "for each subject" is this one operation. Naming its three steps once means the rest of the unit is variations rather than new material — and it makes the error messages legible, because they nearly always come from the apply step.</p>
+</div>
 
 <div class="content-section">
 <h2>Three steps in one call</h2>
-<p>Split the rows into groups by a key, apply a summary to each group, and combine the answers into one result indexed by that key.</p>
+<p>Split the table into groups by a key, apply a summary to each group, combine the answers into one result. pandas does all three in one expression, which is why it helps to be able to name them separately.</p>
+<h3 class="h4">Nothing happens until you name the summary</h3>
+<p>The grouped object is a plan, not a result. Printing it tells you almost nothing, which is confusing until you know it is deliberate.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"subject": ["maths", "art", "maths"], "score": [90, 70, 80]})
-print(df.groupby("subject")["score"].mean().to_dict())</code></pre>
+grouped = df.groupby("subject")
+print(grouped)
+print(grouped["score"].mean())</code></pre>
+<h3 class="h4">The three steps, visible</h3>
+<p>You will not write it this way, but seeing the split makes the rest concrete.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"subject": ["maths", "art", "maths"], "score": [90, 70, 80]})
+
+for key, piece in df.groupby("subject"):
+    print(key, "-&gt;", piece["score"].tolist(), "-&gt; mean", piece["score"].mean())</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Watch the split</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Loop over the groups and print each key with the rows it holds, then get the same answer in one expression.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;city&quot;: [&quot;L&quot;, &quot;Y&quot;, &quot;L&quot;], &quot;score&quot;: [90, 70, 80]})\n\nfor key, piece in df.groupby(&quot;city&quot;):\n    print(key, piece[&quot;score&quot;].tolist())\n\nprint(None)   # the means, in one expression\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+df = pd.DataFrame({"city": ["L", "Y", "L"], "score": [90, 70, 80]})
+
+for key, piece in df.groupby("city"):
+    print(key, piece["score"].tolist())
+
+print(None)   # the means, in one expression
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>The key becomes the index</h2>
-<p>What you grouped by ends up as the index of the result, which is why the answer reads as a lookup table.</p>
+<p>The result is labelled by the group key, which is a Series indexed by whatever you grouped on.</p>
+<h3 class="h4">Getting the key back as a column</h3>
+<p>Sometimes you want a plain table rather than an indexed Series. <code>reset_index</code> turns the key back into a column, and <code>as_index=False</code> asks for that from the start.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"subject": ["maths", "art"], "score": [90, 70]})
-out = df.groupby("subject")["score"].mean()
-print(out.index.tolist())</code></pre>
+df = pd.DataFrame({"subject": ["maths", "art", "maths"], "score": [90, 70, 80]})
+print(df.groupby("subject")["score"].mean().reset_index())
+print(df.groupby("subject", as_index=False)["score"].mean())</code></pre>
+<h3 class="h4">Always report the size</h3>
+<p>A mean over two rows and a mean over two thousand are not comparable, and the group with the striking average is very often the group with three rows in it. Putting the count beside the summary is the cheapest honesty there is.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"subject": ["maths", "art", "maths"], "score": [90, 70, 80]})
+out = df.groupby("subject")["score"].agg(["mean", "size"])
+print(out)</code></pre>
+<h3 class="h4">Where rows with a missing key go</h3>
+<p>A row whose key is NaN is dropped from the result by default, so your groups can silently fail to account for the whole table. <code>dropna=False</code> keeps them as their own group.</p>
+<pre class="code"><code>import pandas as pd
+import numpy as np
+
+df = pd.DataFrame({"subject": ["maths", np.nan], "score": [90, 70]})
+print(df.groupby("subject")["score"].size().sum(), "of", len(df))
+print(df.groupby("subject", dropna=False)["score"].size().sum(), "of", len(df))</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Mean and size together</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Produce the mean and the row count per city in one result, and notice which group you would be wary of.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;city&quot;: [&quot;L&quot;, &quot;L&quot;, &quot;L&quot;, &quot;Y&quot;], &quot;score&quot;: [80, 82, 78, 100]})\n\nprint(df.groupby(&quot;city&quot;)[&quot;score&quot;].agg([&quot;mean&quot;, &quot;size&quot;]))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+df = pd.DataFrame({"city": ["L", "L", "L", "Y"], "score": [80, 82, 78, 100]})
+
+print(df.groupby("city")["score"].agg(["mean", "size"]))
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Mean score per subject</h3>
 <p>Write <code>mean_by_subject(df)</code> returning a dictionary of subject to mean score, each mean rounded to one decimal place.</p>
 <p class="hint-text">groupby the subject, take the score column, ask for the mean, round it, and to_dict() at the end gives plain keys and values.</p>
 
@@ -222,6 +317,32 @@ print(mean_by_subject(pd.DataFrame({"subject": ["maths"], "score": [90]})))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: The mean, with the size beside it</h3>
+<p>Write <code>summary_by(df)</code> returning a dictionary of subject to a two-element list of [mean score rounded to one place, number of rows]. Reporting the size is what stops a group of two being read like a group of two thousand.</p>
+<p class="hint-text">Group once and take both the mean and the size off the same grouped object, then build the dictionary with round() and int() so the values are plain Python.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef summary_by(df):\n    # {subject: [mean, rows]}\n    return {}\n\nprint(summary_by(pd.DataFrame({&quot;subject&quot;: [&quot;m&quot;, &quot;m&quot;, &quot;a&quot;], &quot;score&quot;: [90, 80, 70]})))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def summary_by(df):
+    # {subject: [mean, rows]}
+    return {}
+
+print(summary_by(pd.DataFrame({"subject": ["m", "m", "a"], "score": [90, 80, 70]})))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

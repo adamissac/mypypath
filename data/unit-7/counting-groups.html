@@ -173,34 +173,122 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Count the distinct values in a column with <code>value_counts</code>.</li>
+<li>Say the difference between <code>size</code> and <code>count</code>.</li>
+<li>Turn counts into proportions.</li>
+<li>Choose which one answers the question you were asked.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>"How many of each" is the most common question anyone asks of a table, and there are two right answers to it depending on whether you mean rows or values. On a column with gaps in it the two differ, and picking the wrong one gives a number that is plausible and wrong.</p>
+</div>
 
 <div class="content-section">
 <h2>value_counts for one column</h2>
-<p>The quickest answer to "how many of each" and sorted by frequency by default.</p>
+<p>For a single column this is the shortest path: distinct values and how often each appears, already sorted by frequency.</p>
+<h3 class="h4">Counts, and shares</h3>
+<p><code>normalize=True</code> turns the counts into proportions of the whole, which is usually what a reader wants beside them.</p>
 <pre class="code"><code>import pandas as pd
 
-s = pd.Series(["maths", "art", "maths"])
-print(s.value_counts().to_dict())</code></pre>
+city = pd.Series(["L", "Y", "L", "L"])
+print(city.value_counts())
+print(city.value_counts(normalize=True))</code></pre>
+<h3 class="h4">Missing values are not counted by default</h3>
+<p>So the counts can sum to less than the length of the column. <code>dropna=False</code> makes the gaps a category of their own.</p>
+<pre class="code"><code>import pandas as pd
+import numpy as np
 
+city = pd.Series(["L", np.nan, "Y"])
+print(city.value_counts().sum(), "of", len(city))
+print(city.value_counts(dropna=False))</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Counts and shares</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print the counts for this column and then the same thing as proportions.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ncity = pd.Series([&quot;L&quot;, &quot;Y&quot;, &quot;L&quot;, &quot;L&quot;, &quot;Y&quot;, &quot;B&quot;])\n\nprint(city.value_counts())\nprint(None)   # as proportions\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+city = pd.Series(["L", "Y", "L", "L", "Y", "B"])
+
+print(city.value_counts())
+print(None)   # as proportions
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>size counts rows, count counts values</h2>
-<p>On a group, size includes rows whose value is missing and count does not. Which you want depends on whether a gap is still a row.</p>
+<p>On a group, <code>size</code> is how many rows are in it. <code>count</code> is how many non-missing values a column has in it. They differ exactly where the data has holes.</p>
+<h3 class="h4">The difference, shown</h3>
+<p>Ten rows with three missing scores give a size of 10 and a count of 7. Which one you want depends on whether you are asking "how many students" or "how many marked papers".</p>
 <pre class="code"><code>import pandas as pd
+import numpy as np
 
-df = pd.DataFrame({"k": ["a", "a"], "v": [1, None]})
-print(df.groupby("k")["v"].size().to_dict())
-print(df.groupby("k")["v"].count().to_dict())</code></pre>
+df = pd.DataFrame({"k": ["a", "a", "a"], "v": [1, np.nan, 3]})
+g = df.groupby("k")
+print("size:", g.size().to_dict())
+print("count:", g["v"].count().to_dict())</code></pre>
+<h3 class="h4">Both at once</h3>
+<p>Asking for both is usually the honest answer, because the gap between them is itself information about the data.</p>
+<pre class="code"><code>import pandas as pd
+import numpy as np
 
+df = pd.DataFrame({"k": ["a", "a", "b"], "v": [1, np.nan, 3]})
+print(df.groupby("k")["v"].agg(["size", "count", "mean"]))</code></pre>
+<p class="note">Note the mean: it is computed over the <em>count</em>, not the size. A group of three rows with one missing value has its mean taken over two.</p>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Where they differ</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print size, count and mean for each group and explain to yourself why the mean is what it is.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\nimport numpy as np\n\ndf = pd.DataFrame({&quot;k&quot;: [&quot;a&quot;, &quot;a&quot;, &quot;a&quot;, &quot;b&quot;], &quot;v&quot;: [10, np.nan, 20, 5]})\n\nprint(df.groupby(&quot;k&quot;)[&quot;v&quot;].agg([&quot;size&quot;, &quot;count&quot;, &quot;mean&quot;]))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+import numpy as np
+
+df = pd.DataFrame({"k": ["a", "a", "a", "b"], "v": [10, np.nan, 20, 5]})
+
+print(df.groupby("k")["v"].agg(["size", "count", "mean"]))
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: How many of each</h3>
 <p>Write <code>counts_by(df, column)</code> returning a dictionary of each distinct value in that column to how many rows have it.</p>
 <p class="hint-text">value_counts on the column gives exactly this. to_dict() makes the keys and values plain, though the counts may need int() to shed their numpy type.</p>
 
@@ -222,6 +310,32 @@ print(counts_by(pd.DataFrame({"s": ["a", "a", "b"]}), "s"))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Rows against marked papers</h3>
+<p>Write <code>size_and_count(df)</code> returning a dictionary of each key to a two-element list of [rows in the group, rows whose <code>v</code> is not missing]. Where a group has gaps the two numbers differ, and that difference is the point.</p>
+<p class="hint-text">Group once, then ask the grouped object for .size() and the column for .count(). size counts rows; count counts values that are not missing.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef size_and_count(df):\n    # {key: [rows, non-missing values]}\n    return {}\n\nprint(size_and_count(pd.DataFrame({&quot;k&quot;: [&quot;a&quot;, &quot;a&quot;], &quot;v&quot;: [1, None]})))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def size_and_count(df):
+    # {key: [rows, non-missing values]}
+    return {}
+
+print(size_and_count(pd.DataFrame({"k": ["a", "a"], "v": [1, None]})))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

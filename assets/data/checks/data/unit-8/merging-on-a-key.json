@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Bringing two tables together on the column they share.",
+    "prompt": "Merging on a Key: Keep everyone, count the gaps",
     "packages": [
       "pandas"
     ],
@@ -23,7 +23,7 @@
         "expect": "2"
       },
       {
-        "name": "the join keeps the left-hand rows",
+        "name": "pandas does the work",
         "kind": "ast",
         "requires": {
           "calls": [
@@ -35,22 +35,63 @@
     ],
     "hint": "how=\"left\" keeps every person. The people who matched nothing have a missing score, and isna().sum() counts them."
   },
+  "exercise2": {
+    "prompt": "Merging on a Key: Inner against left, as a pair",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "join_counts(__import__(\"pandas\").DataFrame({\"id\": [1, 2]}), __import__(\"pandas\").DataFrame({\"id\": [1], \"v\": [9]}))",
+        "expect": "[1, 2]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a complete match makes the two equal",
+        "call": "join_counts(__import__(\"pandas\").DataFrame({\"id\": [1]}), __import__(\"pandas\").DataFrame({\"id\": [1], \"v\": [9]}))",
+        "expect": "[1, 1]"
+      },
+      {
+        "name": "a duplicate on the right multiplies both",
+        "call": "join_counts(__import__(\"pandas\").DataFrame({\"id\": [1]}), __import__(\"pandas\").DataFrame({\"id\": [1, 1], \"v\": [9, 8]}))",
+        "expect": "[2, 2]"
+      },
+      {
+        "name": "no matches at all",
+        "call": "join_counts(__import__(\"pandas\").DataFrame({\"id\": [1]}), __import__(\"pandas\").DataFrame({\"id\": [2], \"v\": [9]}))",
+        "expect": "[0, 1]"
+      },
+      {
+        "name": "pandas does the work",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "merge"
+          ]
+        },
+        "describe": "two merges"
+      }
+    ],
+    "hint": "Two merges, one with the default how and one with how=\"left\", and len() on each. When the two numbers differ, the difference is how many left rows matched nothing."
+  },
   "questions": [
     {
       "id": "d8-mok-1",
-      "prompt": "What does the default inner merge keep?",
+      "prompt": "What does an inner join keep?",
       "choices": [
-        "Everything",
-        "Only keys present in both tables",
-        "Only the left table",
-        "Only the right table"
+        "Every row of the left",
+        "Only rows whose key is in both tables",
+        "Everything from both",
+        "The first match only"
       ],
       "answer": 1,
-      "explain": "Rows whose key is missing on either side disappear. That is why an inner join can silently shrink your population."
+      "explain": "Which quietly changes the question from \"each person\" to \"each person who also appears in the other file\"."
     },
     {
       "id": "d8-mok-2",
-      "prompt": "You want every person, with a score where one exists. Which join?",
+      "prompt": "Which join keeps every row of the left table?",
       "choices": [
         "inner",
         "left",
@@ -58,19 +99,31 @@
         "outer"
       ],
       "answer": 1,
-      "explain": "Left keeps the left table whole and fills gaps on the right, which is the shape of \"my population, plus what I know about them\"."
+      "explain": "Rows with no partner get NaN in the columns that came from the right."
     },
     {
       "id": "d8-mok-3",
-      "prompt": "What should you check immediately after a merge?",
+      "prompt": "After a left join, what identifies the rows that matched nothing?",
       "choices": [
-        "The column order",
-        "The row count",
-        "The file size",
-        "The dtypes only"
+        "They are dropped",
+        "NaN in a column that came from the right",
+        "A flag column",
+        "Nothing"
       ],
       "answer": 1,
-      "explain": "Fewer rows means an inner join dropped some; more means the key was not unique and rows multiplied. Both are worth catching at once."
+      "explain": "isna().sum() on one of those columns counts them, and that number is usually worth reporting."
+    },
+    {
+      "id": "d8-mok-4",
+      "prompt": "An inner join returns fewer rows than the left table. What does that mean?",
+      "choices": [
+        "A bug in pandas",
+        "Some keys did not match",
+        "The tables were sorted",
+        "Duplicates were removed"
+      ],
+      "answer": 1,
+      "explain": "Worth checking rather than accepting — the cause is often a type mismatch rather than genuinely absent data."
     }
   ]
 }

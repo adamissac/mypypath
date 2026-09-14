@@ -173,34 +173,130 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Say what every chart needs before it is readable.</li>
+<li>Explain what a truncated axis does to a comparison.</li>
+<li>State a comparison in words, with its size.</li>
+<li>Recognise a choice that is making an argument for you.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Every chart makes a claim. The labels are what let a reader check it, and the axis is what decides how big the claim looks. Neither is a styling question: a chart with no units and a zoomed axis can make a one per cent difference look like a crisis, without a single number being wrong.</p>
+</div>
 
 <div class="content-section">
 <h2>The label is part of the answer</h2>
-<p>A number on a chart with no unit and no period cannot be acted on. Title, axis labels and the source belong to the chart as much as the bars do.</p>
+<p>A number with no unit is not information. The reader cannot tell pounds from thousands of pounds from a percentage.</p>
+<h3 class="h4">What a chart needs</h3>
+<p>A title saying what it shows, both axes labelled with units, and a note of how many observations are behind it. Four things, and a chart missing any of them is asking the reader to guess.</p>
+<pre class="code"><code># title:  "Mean exam score by team, 2024"
+# y axis: "Mean score (out of 100)"
+# x axis: "Team"
+# note:   "n = 48 students"
+print("the units are half the claim")</code></pre>
+<h3 class="h4">The claim in words</h3>
+<p>If you cannot write the sentence, the chart is not finished. The sentence needs the direction, the size and the comparison.</p>
 <pre class="code"><code>import pandas as pd
 
-# df.plot(kind="bar", title="Mean score by team, autumn term")
-print("Mean score by team, autumn term (n=42)")</code></pre>
+df = pd.DataFrame({"team": ["red", "red", "blue"], "score": [90.0, 80.0, 70.0]})
+means = df.groupby("team")["score"].mean().round(1)
+gap = round(float(means.max() - means.min()), 1)
+print(f"{means.idxmax()} leads on {means.max()}, {gap} ahead of {means.idxmin()}")</code></pre>
 
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Write the sentence</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Produce the means, then print a sentence naming the leader, its value and the gap.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;team&quot;: [&quot;red&quot;, &quot;red&quot;, &quot;blue&quot;], &quot;score&quot;: [90.0, 80.0, 70.0]})\n\nmeans = df.groupby(&quot;team&quot;)[&quot;score&quot;].mean().round(1)\ngap = round(float(means.max() - means.min()), 1)\nprint(f&quot;{means.idxmax()} leads on {means.max()}, {gap} ahead of {means.idxmin()}&quot;)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+df = pd.DataFrame({"team": ["red", "red", "blue"], "score": [90.0, 80.0, 70.0]})
+
+means = df.groupby("team")["score"].mean().round(1)
+gap = round(float(means.max() - means.min()), 1)
+print(f"{means.idxmax()} leads on {means.max()}, {gap} ahead of {means.idxmin()}")
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>A truncated axis exaggerates</h2>
-<p>Starting a bar chart's value axis somewhere other than zero makes a small difference look enormous. Sometimes that is the honest choice for a line; for bars it almost never is.</p>
+<p>Starting a bar chart's axis at 80 rather than 0 makes a small difference fill the frame. It can be defensible; it is never neutral.</p>
+<h3 class="h4">The same numbers, two impressions</h3>
+<p>85 and 82 differ by three and a half per cent. On an axis from 80 to 90 one bar is more than twice the other.</p>
 <pre class="code"><code>import pandas as pd
 
-scores = pd.Series([98.0, 99.0])
-print((scores.max() - scores.min()).round(2))
-print(((scores.max() - scores.min()) / scores.max() * 100).round(2))</code></pre>
+means = pd.Series({"red": 85.0, "blue": 82.0})
+print(means)
+print("real difference:", round(float(means.max() - means.min()), 1))
+print("as a share of the smaller:", f"{(means.max() - means.min()) / means.min():.1%}")
 
+full = means / 100
+zoomed = (means - 80) / 10
+print("bar heights on a 0-100 axis:", full.round(2).to_dict())
+print("bar heights on an 80-90 axis:", zoomed.round(2).to_dict())</code></pre>
+<p class="note">The numbers did not change. The picture did. If you truncate an axis, say so on the chart — and be sure the reason is that the detail matters, not that the difference looked small.</p>
+<h3 class="h4">The other quiet arguments</h3>
+<p>A colour scale with an off-centre midpoint, a y-axis that is a rate in one panel and a total in the next, a time axis with uneven gaps. Each is a decision the reader will not see you make.</p>
+<pre class="code"><code>import pandas as pd
+
+# Totals favour the big region; rates favour the small one.
+df = pd.DataFrame({"region": ["big", "small"], "sales": [1000.0, 300.0], "people": [500, 50]})
+df["per_person"] = df["sales"] / df["people"]
+print(df)
+print("by total:", df.loc[df["sales"].idxmax(), "region"])
+print("by rate: ", df.loc[df["per_person"].idxmax(), "region"])</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: How big is the difference, really</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print the absolute gap and the gap as a share of the smaller value, then decide whether it deserves a zoomed axis.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\nmeans = pd.Series({&quot;red&quot;: 85.0, &quot;blue&quot;: 82.0})\n\nprint(round(float(means.max() - means.min()), 1))\nprint(f&quot;{(means.max() - means.min()) / means.min():.1%}&quot;)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+means = pd.Series({"red": 85.0, "blue": 82.0})
+
+print(round(float(means.max() - means.min()), 1))
+print(f"{(means.max() - means.min()) / means.min():.1%}")
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: The headline sentence</h3>
 <p>Write <code>headline(df)</code> that returns a sentence of the form <code>"red leads on 85.0, 15.0 ahead of blue"</code>, using the highest and lowest mean score per team.</p>
 <p class="hint-text">Group to a mean per team, round to one place, then use idxmax and idxmin for the names. The gap is the difference between the two means.</p>
 
@@ -222,6 +318,32 @@ print(headline(pd.DataFrame({"team": ["red", "blue"], "score": [85.0, 70.0]})))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: How big is the gap, in context</h3>
+<p>Write <code>gap_size(df)</code> returning a two-element list of [the absolute gap between the highest and lowest team mean, that gap as a percentage of the lowest mean], both to one decimal place. The second number is what says whether the first one matters.</p>
+<p class="hint-text">Group to means, take max and min, subtract for the gap, then divide the gap by the minimum and multiply by 100. Round both at the end.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef gap_size(df):\n    # [absolute gap, gap as % of the smaller mean]\n    return [0.0, 0.0]\n\nprint(gap_size(pd.DataFrame({&quot;team&quot;: [&quot;a&quot;, &quot;b&quot;], &quot;score&quot;: [85.0, 82.0]})))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def gap_size(df):
+    # [absolute gap, gap as % of the smaller mean]
+    return [0.0, 0.0]
+
+print(gap_size(pd.DataFrame({"team": ["a", "b"], "score": [85.0, 82.0]})))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

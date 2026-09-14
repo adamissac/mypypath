@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "The other direction, for when a person should be one row.",
+    "prompt": "Long to Wide with pivot: Spread the months across",
     "packages": [
       "pandas"
     ],
@@ -23,7 +23,7 @@
         "expect": "['jan']"
       },
       {
-        "name": "the spreading is done by pandas",
+        "name": "pandas does the work",
         "kind": "ast",
         "requires": {
           "calls": [
@@ -35,42 +35,95 @@
     ],
     "hint": "index is what stays down the side, columns is what spreads across the top, values fills the cells. sorted() on the result keeps the answer stable."
   },
+  "exercise2": {
+    "prompt": "Long to Wide with pivot: Spread a table that has duplicates",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "wide_mean(__import__(\"pandas\").DataFrame({\"name\": [\"Ada\", \"Ada\"], \"month\": [\"jan\", \"jan\"], \"score\": [90, 80]}))",
+        "expect": "(1, 1)"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "names become the rows and months the columns",
+        "call": "wide_mean(__import__(\"pandas\").DataFrame({\"name\": [\"a\", \"b\", \"c\", \"a\"], \"month\": [\"jan\", \"jan\", \"feb\", \"feb\"], \"score\": [1, 2, 3, 4]}))",
+        "expect": "(3, 2)"
+      },
+      {
+        "name": "two names and two months make a 2x2 grid",
+        "call": "wide_mean(__import__(\"pandas\").DataFrame({\"name\": [\"a\", \"a\", \"b\", \"b\"], \"month\": [\"jan\", \"feb\", \"jan\", \"feb\"], \"score\": [1, 2, 3, 4]}))",
+        "expect": "(2, 2)"
+      },
+      {
+        "name": "a table with no duplicates still works",
+        "call": "wide_mean(__import__(\"pandas\").DataFrame({\"name\": [\"a\"], \"month\": [\"jan\"], \"score\": [1]}))",
+        "expect": "(1, 1)"
+      },
+      {
+        "name": "pandas does the work",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "pivot_table"
+          ]
+        },
+        "describe": "pivot_table with an aggfunc"
+      }
+    ],
+    "hint": "pivot raises on duplicate index/column pairs. pivot_table with aggfunc=\"mean\" answers the question pivot could not, then .shape gives the grid size."
+  },
   "questions": [
     {
       "id": "d8-ltw-1",
-      "prompt": "What is pivot to melt?",
+      "prompt": "What is pivot for?",
       "choices": [
-        "The same thing",
-        "The opposite direction",
-        "Faster",
-        "Unrelated"
+        "Stacking tables",
+        "Long back to wide — one row per entity again",
+        "Filtering",
+        "Sorting"
       ],
       "answer": 1,
-      "explain": "melt goes wide to long, pivot goes long to wide. Knowing you can go both ways is most of reshaping."
+      "explain": "The inverse of melt, and the shape a report table usually wants."
     },
     {
       "id": "d8-ltw-2",
-      "prompt": "Two rows share the same index and column pair. What does pivot do?",
+      "prompt": "pivot raises \"Index contains duplicate entries\". Why?",
       "choices": [
-        "Averages them",
-        "Raises, because it has no way to choose",
-        "Keeps the first",
-        "Keeps the last"
+        "The file is corrupt",
+        "Two rows want the same cell, and a cell holds one value",
+        "The columns are numeric",
+        "The table is empty"
       ],
       "answer": 1,
-      "explain": "It refuses rather than guessing. pivot_table exists for the case where you want to say how to combine them."
+      "explain": "It is a question pivot cannot answer on its own, not a broken table."
     },
     {
       "id": "d8-ltw-3",
-      "prompt": "When is wide the better shape?",
+      "prompt": "What fixes that, when the duplicates are legitimate?",
       "choices": [
-        "Always",
-        "For reading and for reports, where one row per subject is easiest to scan",
-        "Never",
-        "For grouping"
+        "drop_duplicates",
+        "pivot_table with an aggfunc",
+        "reset_index",
+        "melt again"
       ],
       "answer": 1,
-      "explain": "Long is easier to compute with; wide is easier to read. Analyses often go long to work and wide to present."
+      "explain": "The aggfunc says what to do with the two values — a decision you should be making anyway."
+    },
+    {
+      "id": "d8-ltw-4",
+      "prompt": "After pivot, where is the index column?",
+      "choices": [
+        "Still a column",
+        "It is the index",
+        "Dropped",
+        "Duplicated"
+      ],
+      "answer": 1,
+      "explain": "reset_index() puts it back as a column when you want a plain table."
     }
   ]
 }

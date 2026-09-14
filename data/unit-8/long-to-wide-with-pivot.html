@@ -173,35 +173,125 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Spread a long table back into a grid.</li>
+<li>Name what stays down the side and what goes across the top.</li>
+<li>Explain the duplicate-entries error and fix it.</li>
+<li>Choose between <code>pivot</code> and <code>pivot_table</code>.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Long is the shape for computing; wide is the shape for reading. The final table in a report almost always wants one row per person and a column per period, and pivot is the trip back. Its one error message is unhelpful until you know what it means, at which point it is precise.</p>
+</div>
 
 <div class="content-section">
 <h2>pivot spreads a column across the top</h2>
-<p>It is melt run backwards: the values of one column become column headers.</p>
+<p><code>index</code> stays down the side, <code>columns</code> spreads across the top, <code>values</code> fills the cells. The exact inverse of melt.</p>
+<h3 class="h4">The round trip</h3>
+<p>Melt then pivot gets you back where you started, which is a useful way to convince yourself what each one does.</p>
+<pre class="code"><code>import pandas as pd
+
+wide = pd.DataFrame({"name": ["Ada", "Bo"], "jan": [90, 70], "feb": [80, 60]})
+long = wide.melt(id_vars=["name"], var_name="month", value_name="score")
+back = long.pivot(index="name", columns="month", values="score")
+print(back)</code></pre>
+<h3 class="h4">The index is the thing you kept</h3>
+<p>The name is now the index rather than a column. <code>reset_index()</code> puts it back if you want a plain table.</p>
 <pre class="code"><code>import pandas as pd
 
 long = pd.DataFrame({"name": ["Ada", "Ada"], "month": ["jan", "feb"], "score": [90, 80]})
 wide = long.pivot(index="name", columns="month", values="score")
-print(sorted(wide.columns.tolist()))</code></pre>
+print(list(wide.columns))
+print(wide.reset_index())</code></pre>
 
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: There and back</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Melt this table and pivot it back, then check the result has the columns you started with.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\nwide = pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;, &quot;Bo&quot;], &quot;jan&quot;: [90, 70], &quot;feb&quot;: [80, 60]})\n\nlong = wide.melt(id_vars=[&quot;name&quot;], var_name=&quot;month&quot;, value_name=&quot;score&quot;)\nback = long.pivot(index=&quot;name&quot;, columns=&quot;month&quot;, values=&quot;score&quot;)\nprint(sorted(back.columns.tolist()))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+wide = pd.DataFrame({"name": ["Ada", "Bo"], "jan": [90, 70], "feb": [80, 60]})
+
+long = wide.melt(id_vars=["name"], var_name="month", value_name="score")
+back = long.pivot(index="name", columns="month", values="score")
+print(sorted(back.columns.tolist()))
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>It needs the pairs to be unique</h2>
-<p>Two rows for the same person and month give pivot no way to choose, and it raises. pivot_table takes an aggfunc precisely so it can answer that.</p>
+<p>A grid cell holds one value. If two rows claim the same index and column, pivot cannot choose between them and says so.</p>
+<h3 class="h4">The error, and what it means</h3>
+<p>"Index contains duplicate entries, cannot reshape" means two rows want the same cell. It is not a corrupt table; it is a question pivot cannot answer on its own.</p>
 <pre class="code"><code>import pandas as pd
 
-long = pd.DataFrame({"n": ["a", "a"], "m": ["jan", "jan"], "v": [1, 2]})
-out = pd.pivot_table(long, index="n", columns="m", values="v", aggfunc="mean")
-print(out.values.tolist())</code></pre>
+long = pd.DataFrame({"name": ["Ada", "Ada"], "month": ["jan", "jan"], "score": [90, 80]})
+try:
+    long.pivot(index="name", columns="month", values="score")
+except ValueError as exc:
+    print("ValueError:", exc)</code></pre>
+<h3 class="h4">pivot_table answers it</h3>
+<p>Supplying an <code>aggfunc</code> tells pandas what to do with the two values. That is a decision you should be making anyway.</p>
+<pre class="code"><code>import pandas as pd
 
+long = pd.DataFrame({"name": ["Ada", "Ada"], "month": ["jan", "jan"], "score": [90, 80]})
+print(pd.pivot_table(long, index="name", columns="month", values="score", aggfunc="mean"))</code></pre>
+<p class="note">If the duplicates are not legitimate — the same reading recorded twice — the honest fix is upstream, with <code>drop_duplicates</code>, rather than averaging a mistake.</p>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Two rows, one cell</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Run this to see the error, then get an answer out of it with <code>pivot_table</code>.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\nlong = pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;, &quot;Ada&quot;], &quot;month&quot;: [&quot;jan&quot;, &quot;jan&quot;], &quot;score&quot;: [90, 80]})\n\ntry:\n    print(long.pivot(index=&quot;name&quot;, columns=&quot;month&quot;, values=&quot;score&quot;))\nexcept ValueError as exc:\n    print(&quot;ValueError:&quot;, exc)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+long = pd.DataFrame({"name": ["Ada", "Ada"], "month": ["jan", "jan"], "score": [90, 80]})
+
+try:
+    print(long.pivot(index="name", columns="month", values="score"))
+except ValueError as exc:
+    print("ValueError:", exc)
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Spread the months across</h3>
 <p>Write <code>month_columns(df)</code> that spreads a long table with <code>name</code>, <code>month</code> and <code>score</code> into one row per name, and returns the sorted column names.</p>
 <p class="hint-text">index is what stays down the side, columns is what spreads across the top, values fills the cells. sorted() on the result keeps the answer stable.</p>
 
@@ -223,6 +313,32 @@ print(month_columns(pd.DataFrame({"name": ["Ada"], "month": ["jan"], "score": [9
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Spread a table that has duplicates</h3>
+<p>Write <code>wide_mean(df)</code> that spreads the same long shape into one row per name, averaging where a name has more than one score for a month, and returns the shape of the result. A plain <code>pivot</code> cannot do this.</p>
+<p class="hint-text">pivot raises on duplicate index/column pairs. pivot_table with aggfunc="mean" answers the question pivot could not, then .shape gives the grid size.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef wide_mean(df):\n    # One row per name, a column per month, averaging duplicates.\n    return None\n\nprint(wide_mean(pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;, &quot;Ada&quot;], &quot;month&quot;: [&quot;jan&quot;, &quot;jan&quot;], &quot;score&quot;: [90, 80]})))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def wide_mean(df):
+    # One row per name, a column per month, averaging duplicates.
+    return None
+
+print(wide_mean(pd.DataFrame({"name": ["Ada", "Ada"], "month": ["jan", "jan"], "score": [90, 80]})))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

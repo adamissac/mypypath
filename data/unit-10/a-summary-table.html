@@ -173,35 +173,122 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Build a table with one row per thing and one column per fact.</li>
+<li>Order it by the thing being compared.</li>
+<li>Include the group size.</li>
+<li>Say what the table does that the chart cannot.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>A chart shows the shape; the table pins the values. Together they answer both "what is the pattern" and "what exactly was the number", and the group size in the table is what stops a reader over-reading a bar built from two rows.</p>
+</div>
 
 <div class="content-section">
 <h2>One row per thing, one column per fact</h2>
-<p>A good summary table is small enough to read entirely. Count, mean and range per group is usually the whole story.</p>
+<p>The table under a chart is small on purpose: the few numbers the picture cannot state exactly, and the counts behind them.</p>
+<h3 class="h4">Count and mean together</h3>
+<p>One group-by gives both. The count is not optional — it is what makes the mean interpretable.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"team": ["a", "a", "b"], "score": [90, 80, 70]})
-out = df.groupby("team")["score"].agg(["count", "mean"]).round(1)
-print(out.loc["a"].tolist())</code></pre>
+df = pd.DataFrame({"team": ["a", "a", "b"], "score": [90.0, 80.0, 95.0]})
+print(df.groupby("team")["score"].agg(["count", "mean"]).round(1))</code></pre>
+<h3 class="h4">Name the columns for a reader</h3>
+<p>"count" and "mean" are how it was computed. "students" and "mean score" are what it means.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"team": ["a", "a", "b"], "score": [90.0, 80.0, 95.0]})
+out = df.groupby("team").agg(
+    students=("score", "count"),
+    mean_score=("score", "mean"),
+).round(1)
+print(out)</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Count and mean, named</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Produce a summary with the columns named <code>students</code> and <code>mean_score</code>.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;team&quot;: [&quot;a&quot;, &quot;a&quot;, &quot;b&quot;], &quot;score&quot;: [90.0, 80.0, 95.0]})\n\nprint(df.groupby(&quot;team&quot;).agg(\n    students=(&quot;score&quot;, &quot;count&quot;),\n    mean_score=(&quot;score&quot;, &quot;mean&quot;),\n).round(1))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+df = pd.DataFrame({"team": ["a", "a", "b"], "score": [90.0, 80.0, 95.0]})
+
+print(df.groupby("team").agg(
+    students=("score", "count"),
+    mean_score=("score", "mean"),
+).round(1))
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Order it by the thing being compared</h2>
-<p>Sorting by the number under discussion means the reader's eye lands where the argument is, rather than on whichever group happens to be alphabetically first.</p>
+<p>The first row should be the one the reader is looking for. Alphabetical order almost never is.</p>
+<h3 class="h4">Sort by the value</h3>
+<p>Best first, so the ranking is visible without reading every row.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"team": ["a", "b"], "score": [70, 90]})
-out = df.groupby("team")["score"].mean().sort_values(ascending=False)
-print(out.index.tolist())</code></pre>
+df = pd.DataFrame({"team": ["a", "a", "b"], "score": [90.0, 80.0, 95.0]})
+out = df.groupby("team")["score"].agg(["count", "mean"]).round(1)
+print(out.sort_values("mean", ascending=False))</code></pre>
+<h3 class="h4">And match the chart</h3>
+<p>If the bars are ordered by value, the table should be too. A reader moving between the two should not have to re-find each row.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"team": ["zeta", "alpha", "mu"], "score": [70.0, 90.0, 80.0]})
+order = df.groupby("team")["score"].mean().sort_values(ascending=False).index
+print(list(order))</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Best first</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Sort the same summary so the highest mean is the first row.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;team&quot;: [&quot;a&quot;, &quot;a&quot;, &quot;b&quot;], &quot;score&quot;: [90.0, 80.0, 95.0]})\n\nout = df.groupby(&quot;team&quot;)[&quot;score&quot;].agg([&quot;count&quot;, &quot;mean&quot;]).round(1)\nprint(None)   # sorted by mean, best first\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+df = pd.DataFrame({"team": ["a", "a", "b"], "score": [90.0, 80.0, 95.0]})
+
+out = df.groupby("team")["score"].agg(["count", "mean"]).round(1)
+print(None)   # sorted by mean, best first
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: The table under the chart</h3>
 <p>Write <code>summary_table(df)</code> returning a list of <code>(team, count, mean)</code> tuples, highest mean first, with the mean to one decimal place.</p>
 <p class="hint-text">Group once and ask for count and mean together, sort by the mean descending, then build plain tuples so the result is easy to compare.</p>
 
@@ -223,6 +310,32 @@ print(summary_table(pd.DataFrame({"team": ["a"], "score": [90.0]})))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Groups too small to compare</h3>
+<p>Write <code>thin_groups(df, least)</code> returning the names of the teams with fewer than <code>least</code> rows, best mean first. These are the bars a reader should be warned about.</p>
+<p class="hint-text">Group for count and mean, keep the rows whose count is below the threshold, sort what is left by mean descending, and return the index as a list.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef thin_groups(df, least):\n    # Teams with fewer than `least` rows behind them.\n    return []\n\nprint(thin_groups(pd.DataFrame({&quot;team&quot;: [&quot;a&quot;, &quot;a&quot;, &quot;b&quot;], &quot;score&quot;: [1.0, 2.0, 9.0]}), 2))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def thin_groups(df, least):
+    # Teams with fewer than `least` rows behind them.
+    return []
+
+print(thin_groups(pd.DataFrame({"team": ["a", "a", "b"], "score": [1.0, 2.0, 9.0]}), 2))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

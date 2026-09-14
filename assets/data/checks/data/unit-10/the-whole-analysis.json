@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Load, clean, join, summarise, report -- in one function, from files.",
+    "prompt": "The Whole Analysis: The best team, from two files",
     "packages": [
       "pandas"
     ],
@@ -49,6 +49,64 @@
     ],
     "hint": "Read both, convert the score with to_numeric(errors=\"coerce\"), drop the missing rows, merge on id, group by team, take the mean, and pick the highest with idxmax."
   },
+  "exercise2": {
+    "prompt": "The Whole Analysis: The checks between the steps",
+    "packages": [
+      "pandas"
+    ],
+    "files": {
+      "people.csv": "id,team\n1,red\n2,red\n3,blue\n4,blue\n5,green\n",
+      "scores.csv": "id,score\n1,90\n2,80\n3,70\n4,n/a\n"
+    },
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "audit(\"people.csv\", \"scores.csv\")",
+        "expect": "{'missing': 1, 'unmatched': 1, 'used': 3}"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "clean files lose nothing",
+        "files": {
+          "people.csv": "id,team\n1,a\n2,b\n",
+          "scores.csv": "id,score\n1,10\n2,20\n"
+        },
+        "call": "audit(\"people.csv\", \"scores.csv\")",
+        "expect": "{'missing': 0, 'unmatched': 0, 'used': 2}"
+      },
+      {
+        "name": "a missing score is not the same as an unmatched person",
+        "files": {
+          "people.csv": "id,team\n1,a\n2,b\n3,c\n",
+          "scores.csv": "id,score\n1,n/a\n2,n/a\n"
+        },
+        "call": "audit(\"people.csv\", \"scores.csv\")",
+        "expect": "{'missing': 2, 'unmatched': 1, 'used': 0}"
+      },
+      {
+        "name": "scores for people who are not listed are not used",
+        "files": {
+          "people.csv": "id,team\n1,a\n",
+          "scores.csv": "id,score\n1,5\n9,99\n"
+        },
+        "call": "audit(\"people.csv\", \"scores.csv\")",
+        "expect": "{'missing': 0, 'unmatched': 0, 'used': 1}"
+      },
+      {
+        "name": "the counts come from pandas",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "read_csv",
+            "merge"
+          ]
+        },
+        "describe": "both files read and joined"
+      }
+    ],
+    "hint": "missing: to_numeric(errors=\"coerce\") then isna().sum(). unmatched: ~people[\"id\"].isin(scores[\"id\"]), summed. used: len of the merge after dropna. Wrap each count in int() so the dict holds plain numbers."
+  },
   "questions": [
     {
       "id": "d10-twa-1",
@@ -72,15 +130,15 @@
     },
     {
       "id": "d10-twa-2",
-      "prompt": "Why drop the missing scores before grouping rather than after?",
+      "prompt": "Why clean each table before the merge rather than after?",
       "choices": [
         "It is the same",
-        "A missing value included in a mean changes it, and dropping after cannot undo that",
-        "It is faster",
-        "pandas requires it"
+        "Each table is small and on its own, so you can still tell which file a bad row came from",
+        "merge refuses dirty data",
+        "It changes the join type"
       ],
       "answer": 1,
-      "explain": "pandas skips missing values in a mean, but a row you meant to exclude entirely -- for instance from the count -- has to go before the summary, not after."
+      "explain": "After a merge the problem rows are mixed with the other file's columns, and a wrong-typed key may already have silently matched nothing."
     },
     {
       "id": "d10-twa-3",
@@ -93,6 +151,18 @@
       ],
       "answer": 1,
       "explain": "The checks are what let you answer \"how do you know\". A number without them is a number you are hoping about."
+    },
+    {
+      "id": "d10-twa-4",
+      "prompt": "An inner join turns 5 people into 3 rows. What has happened?",
+      "choices": [
+        "pandas has a bug",
+        "Two people have no matching key in the other table, and were dropped without an error",
+        "The join averaged them",
+        "Duplicates were removed"
+      ],
+      "answer": 1,
+      "explain": "An inner join keeps only keys present in both tables. Counting before and after is how you notice."
     }
   ]
 }

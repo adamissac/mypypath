@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "How many of each, and the difference between size and count.",
+    "prompt": "Counting Groups: How many of each",
     "packages": [
       "pandas"
     ],
@@ -19,7 +19,7 @@
       },
       {
         "name": "it works on whichever column is named",
-        "call": "counts_by(__import__(\"pandas\").DataFrame({\"s\": [\"a\"], \"t\": [\"x\", ]}), \"t\")",
+        "call": "counts_by(__import__(\"pandas\").DataFrame({\"s\": [\"a\"], \"t\": [\"x\"]}), \"t\")",
         "expect": "{'x': 1}"
       },
       {
@@ -30,42 +30,95 @@
     ],
     "hint": "value_counts on the column gives exactly this. to_dict() makes the keys and values plain, though the counts may need int() to shed their numpy type."
   },
+  "exercise2": {
+    "prompt": "Counting Groups: Rows against marked papers",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "size_and_count(__import__(\"pandas\").DataFrame({\"k\": [\"a\", \"a\"], \"v\": [1, None]}))",
+        "expect": "{'a': [2, 1]}"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a complete group has the two equal",
+        "call": "size_and_count(__import__(\"pandas\").DataFrame({\"k\": [\"a\", \"a\"], \"v\": [1, 2]}))",
+        "expect": "{'a': [2, 2]}"
+      },
+      {
+        "name": "a group with nothing recorded counts zero values",
+        "call": "size_and_count(__import__(\"pandas\").DataFrame({\"k\": [\"a\"], \"v\": [None]}))",
+        "expect": "{'a': [1, 0]}"
+      },
+      {
+        "name": "separate groups are reported separately",
+        "call": "size_and_count(__import__(\"pandas\").DataFrame({\"k\": [\"a\", \"b\"], \"v\": [1, None]}))",
+        "expect": "{'a': [1, 1], 'b': [1, 0]}"
+      },
+      {
+        "name": "the grouping is done by pandas",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "groupby"
+          ]
+        },
+        "describe": "a groupby rather than a hand-written loop"
+      }
+    ],
+    "hint": "Group once, then ask the grouped object for .size() and the column for .count(). size counts rows; count counts values that are not missing."
+  },
   "questions": [
     {
       "id": "d7-cg-1",
-      "prompt": "How does value_counts order its result by default?",
+      "prompt": "What is the difference between size() and count() on a group?",
       "choices": [
-        "Alphabetically",
-        "Most frequent first",
-        "By the index",
-        "Randomly"
+        "None",
+        "size counts rows; count counts non-missing values",
+        "count is faster",
+        "size only works on numbers"
       ],
       "answer": 1,
-      "explain": "Frequency order, which is usually what you wanted to see. sort_index() gets you alphabetical when you need it."
+      "explain": "Ten rows with three missing scores give size 10 and count 7."
     },
     {
       "id": "d7-cg-2",
-      "prompt": "What is the difference between size and count on a group?",
+      "prompt": "What does value_counts(normalize=True) give you?",
       "choices": [
-        "None",
-        "size counts rows, count counts non-missing values",
-        "count is faster",
-        "size sorts"
+        "Sorted values",
+        "Each value’s share of the whole",
+        "The counts as integers",
+        "The distinct values"
       ],
       "answer": 1,
-      "explain": "A group of three rows with one missing value has size 3 and count 2. Which is right depends on whether a gap is still a row to you."
+      "explain": "Proportions rather than counts, which is usually what a reader wants beside the raw numbers."
     },
     {
       "id": "d7-cg-3",
-      "prompt": "Why might a count come back as a numpy integer rather than a plain int?",
+      "prompt": "Why might value_counts sum to less than the column length?",
       "choices": [
         "A bug",
-        "pandas stores columns as numpy types, so the values it hands back carry them",
-        "It does not",
-        "Because of the index"
+        "Missing values are not counted by default",
+        "It samples",
+        "It rounds"
       ],
       "answer": 1,
-      "explain": "It behaves like an int almost everywhere, and it prints differently between library versions -- which is why the exercises here end in int()."
+      "explain": "dropna=False makes the gaps a category of their own."
+    },
+    {
+      "id": "d7-cg-4",
+      "prompt": "A group has 3 rows and one missing value. Its mean is taken over how many?",
+      "choices": [
+        "3",
+        "2",
+        "1",
+        "It is NaN"
+      ],
+      "answer": 1,
+      "explain": "The mean is computed over the count, not the size — which is another reason to report both."
     }
   ]
 }

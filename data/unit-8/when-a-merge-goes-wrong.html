@@ -173,35 +173,148 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Predict the row count of a join before running it.</li>
+<li>Explain why a duplicate key multiplies rows.</li>
+<li>Spot a type mismatch that makes a join match nothing.</li>
+<li>Have pandas check your assumption with <code>validate</code>.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>These are the two failures that produce a wrong number rather than an error. A duplicated key inflates a total silently; a type mismatch empties the result silently. Both are cheap to check for and expensive to discover later, which is the whole argument of this lesson.</p>
+</div>
 
 <div class="content-section">
 <h2>A key that repeats multiplies</h2>
-<p>If the right-hand key is not unique, every match on the left is repeated once per match on the right. Two rows becoming six is the classic sign.</p>
+<p>Every matching row on the left pairs with every matching row on the right. Two and two make four, not two.</p>
+<h3 class="h4">The multiplication</h3>
+<p>One person, two score rows, two output rows. Sum the scores now and the person counts twice.</p>
 <pre class="code"><code>import pandas as pd
 
-left = pd.DataFrame({"id": [1], "name": ["Ada"]})
-right = pd.DataFrame({"id": [1, 1], "score": [90, 80]})
-print(pd.merge(left, right, on="id").shape)</code></pre>
+people = pd.DataFrame({"id": [1], "name": ["Ada"]})
+scores = pd.DataFrame({"id": [1, 1], "score": [90, 80]})
+out = pd.merge(people, scores, on="id")
+print(out)
+print(len(people), "x duplicated key -&gt;", len(out), "rows")</code></pre>
+<h3 class="h4">Check the key before you join</h3>
+<p>One line, and it answers the question the row count would otherwise raise afterwards.</p>
+<pre class="code"><code>import pandas as pd
 
+scores = pd.DataFrame({"id": [1, 1, 2], "score": [90, 80, 70]})
+print("duplicated keys:", int(scores["id"].duplicated().sum()))
+print(scores["id"].value_counts())</code></pre>
+<h3 class="h4">Let pandas hold you to it</h3>
+<p><code>validate</code> states the relationship you believe you have, and raises when the data disagrees — instead of silently multiplying.</p>
+<pre class="code"><code>import pandas as pd
+
+people = pd.DataFrame({"id": [1], "name": ["Ada"]})
+scores = pd.DataFrame({"id": [1, 1], "score": [90, 80]})
+try:
+    pd.merge(people, scores, on="id", validate="one_to_one")
+except Exception as exc:
+    print(type(exc).__name__ + ":", exc)</code></pre>
+<p class="note">"one_to_one", "one_to_many" and "many_to_one" are the useful three. Writing down which one you expect is also documentation for the next reader.</p>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Predict, then count</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Write down how many rows you expect before you run this. The right-hand table has a duplicate.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\npeople = pd.DataFrame({&quot;id&quot;: [1, 2], &quot;name&quot;: [&quot;Ada&quot;, &quot;Bo&quot;]})\nscores = pd.DataFrame({&quot;id&quot;: [1, 1, 2], &quot;score&quot;: [90, 80, 70]})\n\nprint(&quot;duplicated keys:&quot;, int(scores[&quot;id&quot;].duplicated().sum()))\nprint(len(pd.merge(people, scores, on=&quot;id&quot;)))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+people = pd.DataFrame({"id": [1, 2], "name": ["Ada", "Bo"]})
+scores = pd.DataFrame({"id": [1, 1, 2], "score": [90, 80, 70]})
+
+print("duplicated keys:", int(scores["id"].duplicated().sum()))
+print(len(pd.merge(people, scores, on="id")))
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Types have to match too</h2>
-<p>An id that is text on one side and a number on the other matches nothing at all, and the result is an empty table rather than an error.</p>
+<p>An id read as a number in one file and as text in another matches nothing, and the merge succeeds with an empty result.</p>
+<h3 class="h4">The quietest failure in the unit</h3>
+<p><code>1</code> and <code>"1"</code> are different keys. No error, no warning, no rows.</p>
 <pre class="code"><code>import pandas as pd
 
-left = pd.DataFrame({"id": ["1"], "name": ["Ada"]})
-right = pd.DataFrame({"id": [1], "score": [90]})
-print(pd.merge(left, right, on="id").shape)</code></pre>
+a = pd.DataFrame({"id": ["1"], "name": ["Ada"]})
+b = pd.DataFrame({"id": [1], "score": [90]})
+print(len(pd.merge(a, b, on="id")), "rows")
+print(a["id"].dtype, "vs", b["id"].dtype)</code></pre>
+<h3 class="h4">Compare the dtypes first</h3>
+<p>The fix is to make both sides the same type before joining. Converting only one side leaves the mismatch where it was.</p>
+<pre class="code"><code>import pandas as pd
 
+a = pd.DataFrame({"id": ["1"], "name": ["Ada"]})
+b = pd.DataFrame({"id": [1], "score": [90]})
+
+a2, b2 = a.copy(), b.copy()
+a2["id"] = a2["id"].astype(str)
+b2["id"] = b2["id"].astype(str)
+print(len(pd.merge(a2, b2, on="id")), "rows")</code></pre>
+<h3 class="h4">Whitespace does the same thing</h3>
+<p><code>"1 "</code> and <code>"1"</code> are also different keys. Stripping both sides is part of the same preparation.</p>
+<pre class="code"><code>import pandas as pd
+
+a = pd.DataFrame({"id": ["1 "], "name": ["Ada"]})
+b = pd.DataFrame({"id": ["1"], "score": [90]})
+print(len(pd.merge(a, b, on="id")), "rows")
+
+a["id"] = a["id"].str.strip()
+print(len(pd.merge(a, b, on="id")), "rows")</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Empty for no reason</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>This join returns nothing. Print both dtypes to see why, then fix it.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\na = pd.DataFrame({&quot;id&quot;: [&quot;1&quot;, &quot;2&quot;], &quot;name&quot;: [&quot;Ada&quot;, &quot;Bo&quot;]})\nb = pd.DataFrame({&quot;id&quot;: [1, 2], &quot;score&quot;: [90, 80]})\n\nprint(len(pd.merge(a, b, on=&quot;id&quot;)))\nprint(a[&quot;id&quot;].dtype, b[&quot;id&quot;].dtype)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+a = pd.DataFrame({"id": ["1", "2"], "name": ["Ada", "Bo"]})
+b = pd.DataFrame({"id": [1, 2], "score": [90, 80]})
+
+print(len(pd.merge(a, b, on="id")))
+print(a["id"].dtype, b["id"].dtype)
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Join whatever type the ids arrived as</h3>
 <p>Write <code>safe_merge(left, right)</code> that joins on <code>id</code> after making both id columns text, and returns the number of rows in the result.</p>
 <p class="hint-text">Convert both id columns with astype(str) on copies, then merge. Converting only one side leaves the mismatch exactly where it was.</p>
 
@@ -224,6 +337,32 @@ print(safe_merge(pd.DataFrame({"id": ["1"], "name": ["Ada"]}),
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Count the duplicate keys first</h3>
+<p>Write <code>key_report(left, right)</code> returning a three-element list of [duplicated ids on the left, duplicated ids on the right, rows an inner join would produce]. Checking before joining is the point.</p>
+<p class="hint-text">df["id"].duplicated().sum() counts the repeats on each side. Then merge and take len() — two duplicates each side give four rows, which is the multiplication this exercise is about.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef key_report(left, right):\n    # [left dupes, right dupes, joined rows]\n    return [0, 0, 0]\n\nprint(key_report(pd.DataFrame({&quot;id&quot;: [1]}), pd.DataFrame({&quot;id&quot;: [1, 1]})))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def key_report(left, right):
+    # [left dupes, right dupes, joined rows]
+    return [0, 0, 0]
+
+print(key_report(pd.DataFrame({"id": [1]}), pd.DataFrame({"id": [1, 1]})))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

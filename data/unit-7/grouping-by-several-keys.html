@@ -173,35 +173,123 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Group by more than one column.</li>
+<li>Read a two-level index.</li>
+<li>Flatten the result back into a plain table.</li>
+<li>Say what happens to combinations that never occur.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>"Per subject per year" is one group-by, not two. The result carries an index with two levels, which is the first genuinely unfamiliar object in pandas — and knowing how to flatten it is most of what you need.</p>
+</div>
 
 <div class="content-section">
 <h2>A list of columns</h2>
-<p>Grouping by subject and year gives one row per pair that actually occurs -- combinations with no rows simply are not there.</p>
+<p>Pass a list and you get a row per combination that actually occurs in the data.</p>
+<h3 class="h4">One row per combination</h3>
+<p>The index now has two levels, printed as two columns down the left.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"subject": ["maths", "maths"], "year": [10, 11], "score": [90, 80]})
+df = pd.DataFrame({"subject": ["m", "m", "a"], "year": [10, 11, 10], "score": [90, 80, 70]})
 out = df.groupby(["subject", "year"])["score"].mean()
-print(out.to_dict())</code></pre>
+print(out)
+print(out.index.nlevels)</code></pre>
+<h3 class="h4">Reaching into it</h3>
+<p>A tuple indexes both levels at once; naming just the first gives you everything under it.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"subject": ["m", "m", "a"], "year": [10, 11, 10], "score": [90, 80, 70]})
+out = df.groupby(["subject", "year"])["score"].mean()
+print(out[("m", 10)])
+print(out["m"])</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Two keys</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Group by both columns, print the result, and print how many levels its index has.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;subject&quot;: [&quot;m&quot;, &quot;m&quot;, &quot;a&quot;, &quot;a&quot;], &quot;year&quot;: [10, 11, 10, 11], &quot;score&quot;: [90, 80, 70, 60]})\n\nout = df.groupby([&quot;subject&quot;, &quot;year&quot;])[&quot;score&quot;].mean()\nprint(out)\nprint(out.index.nlevels)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+df = pd.DataFrame({"subject": ["m", "m", "a", "a"], "year": [10, 11, 10, 11], "score": [90, 80, 70, 60]})
+
+out = df.groupby(["subject", "year"])["score"].mean()
+print(out)
+print(out.index.nlevels)
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Flattening the result</h2>
-<p>reset_index turns the group keys back into ordinary columns, which is usually what you want before writing the result out.</p>
+<p>Most of the time you want a plain table with the keys as ordinary columns, which is one call away.</p>
+<h3 class="h4">reset_index</h3>
+<p>Both levels become columns and the index goes back to 0, 1, 2. This is the form you would write to a file or hand to a chart.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"a": ["x"], "b": [1], "v": [5]})
-out = df.groupby(["a", "b"])["v"].mean().reset_index()
-print(list(out.columns))</code></pre>
+df = pd.DataFrame({"subject": ["m", "m", "a"], "year": [10, 11, 10], "score": [90, 80, 70]})
+flat = df.groupby(["subject", "year"])["score"].mean().reset_index()
+print(flat)
+print(list(flat.columns))</code></pre>
+<h3 class="h4">Combinations that never happened</h3>
+<p>A pair with no rows does not appear — the result has one row per combination that exists, not per combination that is possible. If the missing ones matter, <code>unstack</code> lays the grid out and shows them as NaN.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"subject": ["m", "a"], "year": [10, 11], "score": [90, 70]})
+out = df.groupby(["subject", "year"])["score"].mean()
+print(len(out), "rows for", df["subject"].nunique() * df["year"].nunique(), "possible pairs")
+print(out.unstack())</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Flatten it</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Turn the same result into a plain table with three ordinary columns.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;subject&quot;: [&quot;m&quot;, &quot;m&quot;, &quot;a&quot;], &quot;year&quot;: [10, 11, 10], &quot;score&quot;: [90, 80, 70]})\n\nout = df.groupby([&quot;subject&quot;, &quot;year&quot;])[&quot;score&quot;].mean()\nprint(None)   # the same thing, flattened\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+df = pd.DataFrame({"subject": ["m", "m", "a"], "year": [10, 11, 10], "score": [90, 80, 70]})
+
+out = df.groupby(["subject", "year"])["score"].mean()
+print(None)   # the same thing, flattened
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Count every pair</h3>
 <p>Write <code>pairs_counted(df)</code> returning a dictionary keyed by the <code>(subject, year)</code> tuple, holding how many rows each pair has.</p>
 <p class="hint-text">Group by both columns and ask for size. to_dict() on a two-level index gives tuple keys, and the counts want int() to shed their numpy type.</p>
 
@@ -223,6 +311,32 @@ print(pairs_counted(pd.DataFrame({"subject": ["m"], "year": [10]})))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Flatten it back to a table</h3>
+<p>Write <code>flat_means(df)</code> that groups by <code>subject</code> and <code>year</code>, takes the mean score, and returns the column names of the result as a plain table — keys as ordinary columns, not as an index.</p>
+<p class="hint-text">Group by the two columns, take the mean of score, then reset_index() to push both levels back out as columns. Without it the keys stay in the index and the columns list is just ["score"].</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef flat_means(df):\n    # Return list(result.columns) for the flattened summary.\n    return []\n\nprint(flat_means(pd.DataFrame({&quot;subject&quot;: [&quot;m&quot;], &quot;year&quot;: [10], &quot;score&quot;: [90]})))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def flat_means(df):
+    # Return list(result.columns) for the flattened summary.
+    return []
+
+print(flat_means(pd.DataFrame({"subject": ["m"], "year": [10], "score": [90]})))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

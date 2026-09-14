@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Two tables of the same shape, one after the other.",
+    "prompt": "Stacking Tables with concat: Stack a list of tables",
     "packages": [
       "pandas"
     ],
@@ -23,7 +23,7 @@
         "expect": "[0, 1]"
       },
       {
-        "name": "concat does the stacking",
+        "name": "pandas does the work",
         "kind": "ast",
         "requires": {
           "calls": [
@@ -35,42 +35,95 @@
     ],
     "hint": "pd.concat takes the list. ignore_index=True is what stops two rows both being numbered 0."
   },
+  "exercise2": {
+    "prompt": "Stacking Tables with concat: Label each row with its source",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "stack_labelled([__import__(\"pandas\").DataFrame({\"v\": [1, 2]}), __import__(\"pandas\").DataFrame({\"v\": [3]})], [\"jan\", \"feb\"])",
+        "expect": "['jan', 'jan', 'feb']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a one-row table gets one label",
+        "call": "stack_labelled([__import__(\"pandas\").DataFrame({\"v\": [1]})], [\"only\"])",
+        "expect": "['only']"
+      },
+      {
+        "name": "an empty table contributes no rows",
+        "call": "stack_labelled([__import__(\"pandas\").DataFrame({\"v\": []}), __import__(\"pandas\").DataFrame({\"v\": [1]})], [\"a\", \"b\"])",
+        "expect": "['b']"
+      },
+      {
+        "name": "three tables keep their own labels",
+        "call": "stack_labelled([__import__(\"pandas\").DataFrame({\"v\": [1]}), __import__(\"pandas\").DataFrame({\"v\": [2]}), __import__(\"pandas\").DataFrame({\"v\": [3]})], [\"a\", \"b\", \"c\"])",
+        "expect": "['a', 'b', 'c']"
+      },
+      {
+        "name": "pandas does the work",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "concat"
+          ]
+        },
+        "describe": "pd.concat"
+      }
+    ],
+    "hint": "Tag each table before stacking — assign(source=label) on a copy of each — then concat. Once they are one table there is no way to tell them apart."
+  },
   "questions": [
     {
       "id": "d8-cst-1",
-      "prompt": "What does ignore_index=True do?",
+      "prompt": "What does pd.concat([a, b]) do by default?",
       "choices": [
-        "Drops the index column",
-        "Renumbers the result from zero",
-        "Sorts the rows",
-        "Removes duplicates"
+        "Joins on a key",
+        "Stacks the rows",
+        "Adds the columns",
+        "Raises on different indexes"
       ],
       "answer": 1,
-      "explain": "Without it each piece keeps its own numbering, so a stacked table can have several rows labelled 0 -- which then breaks anything that looks a row up by label."
+      "explain": "axis=0 is the default, and columns are lined up by name rather than by position."
     },
     {
       "id": "d8-cst-2",
-      "prompt": "One table has a column the other lacks. What does concat do?",
+      "prompt": "Why pass ignore_index=True?",
       "choices": [
-        "Raises",
-        "Includes the column, with gaps for the rows that lacked it",
-        "Drops the column",
-        "Drops those rows"
+        "For speed",
+        "Otherwise both tables keep their own 0, 1, 2",
+        "To drop duplicates",
+        "To sort"
       ],
       "answer": 1,
-      "explain": "The result is the union of the columns. Checking for unexpected gaps afterwards is how you notice a source changed its schema."
+      "explain": "A repeated index is legal, and then .loc[0] returns two rows somewhere a long way from here."
     },
     {
       "id": "d8-cst-3",
-      "prompt": "When is concat the right tool rather than merge?",
+      "prompt": "One table has a column the other does not. What happens?",
       "choices": [
-        "Always",
-        "When the tables are the same shape and you want them end to end",
-        "When you have a key",
-        "Never"
+        "It is dropped",
+        "It is kept, with NaN for the rows that lacked it",
+        "It raises",
+        "Only the first table’s columns survive"
       ],
       "answer": 1,
-      "explain": "concat stacks; merge matches on a key. Reaching for the wrong one usually shows up as a row count that makes no sense."
+      "explain": "The union of the columns, filled in. Comparing the column sets first is the cheap check."
+    },
+    {
+      "id": "d8-cst-4",
+      "prompt": "How do you know which table a row came from after stacking?",
+      "choices": [
+        "The index",
+        "You cannot, unless you added a column before stacking",
+        "concat adds one",
+        "The dtype"
+      ],
+      "answer": 1,
+      "explain": "Tag each table first. Once they are one table the information is gone."
     }
   ]
 }

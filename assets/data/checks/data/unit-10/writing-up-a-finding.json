@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "A number, what it is compared with, and what it does not prove.",
+    "prompt": "Writing Up a Finding: A finding with its n",
     "packages": [
       "pandas"
     ],
@@ -13,7 +13,7 @@
     ],
     "hiddenCases": [
       {
-        "name": "the sample size is the row count",
+        "name": "the sample size is the row count, not the group count",
         "call": "finding(__import__(\"pandas\").DataFrame({\"team\": [\"a\", \"b\", \"b\", \"b\"], \"score\": [10.0, 4.0, 4.0, 4.0]}))",
         "expect": "'a scores 6.0 above b (n=4)'"
       },
@@ -34,6 +34,47 @@
       }
     ],
     "hint": "Group to means, take idxmax and idxmin, subtract for the gap, and len(df) for n. Reporting n is what stops a difference between two rows reading like a result."
+  },
+  "exercise2": {
+    "prompt": "Writing Up a Finding: An association, stated honestly",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "association(__import__(\"pandas\").DataFrame({\"hours\": [1.0, 2.0, 3.0, 4.0], \"score\": [60.0, 68.0, 81.0, 88.0]}), \"hours\", \"score\")",
+        "expect": "'hours and score move together (r=0.99)'"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a negative link is described as opposite",
+        "call": "association(__import__(\"pandas\").DataFrame({\"absences\": [0.0, 2.0, 4.0, 6.0], \"score\": [90.0, 80.0, 72.0, 60.0]}), \"absences\", \"score\")",
+        "expect": "'absences and score move in opposite directions (r=-1.00)'"
+      },
+      {
+        "name": "a weak link is not a finding",
+        "call": "association(__import__(\"pandas\").DataFrame({\"a\": [1.0, 2.0, 3.0, 4.0], \"b\": [2.0, 1.0, 2.0, 1.5]}), \"a\", \"b\")",
+        "expect": "'no clear link between a and b (r=-0.13)'"
+      },
+      {
+        "name": "exactly 0.5 counts as moving together",
+        "call": "association(__import__(\"pandas\").DataFrame({\"a\": [1.0, 2.0, 3.0], \"b\": [1.0, 3.0, 2.0]}), \"a\", \"b\")",
+        "expect": "'a and b move together (r=0.50)'"
+      },
+      {
+        "name": "the summary is computed, not typed",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "corr"
+          ]
+        },
+        "describe": "the correlation computed by pandas"
+      }
+    ],
+    "hint": "r = float(df[x].corr(df[y])). Compare with 0.5 and -0.5 using >= and <=, and format r with :.2f inside each sentence. None of the three sentences says \"causes\"."
   },
   "questions": [
     {
@@ -76,6 +117,18 @@
       ],
       "answer": 1,
       "explain": "Sample size is how a reader decides how much to believe. Leaving it out lets a coincidence read as a result."
+    },
+    {
+      "id": "d10-wuf-4",
+      "prompt": "Why build the sentence with an f-string over computed values instead of typing it?",
+      "choices": [
+        "It runs faster",
+        "A typed sentence is a second copy of the result that does not update when the data does",
+        "f-strings round automatically",
+        "Reports must be code"
+      ],
+      "answer": 1,
+      "explain": "The table and the sentence should have one source. Otherwise the next data refresh leaves a report that contradicts its own table."
     }
   ]
 }

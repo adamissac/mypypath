@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "One answer per group, or one answer per row.",
+    "prompt": "transform versus aggregate: Rows above their own group",
     "packages": [
       "pandas"
     ],
@@ -35,42 +35,95 @@
     ],
     "hint": "transform(\"mean\") gives each row its group average, which lines up with the table so you can compare row by row. An aggregate would collapse the groups and leave you nothing to compare against."
   },
+  "exercise2": {
+    "prompt": "transform versus aggregate: Each row as a share of its group",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "share_of_group(__import__(\"pandas\").DataFrame({\"k\": [\"a\", \"a\", \"b\"], \"v\": [1.0, 3.0, 5.0]}))",
+        "expect": "[25.0, 75.0, 100.0]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a row alone in its group is all of it",
+        "call": "share_of_group(__import__(\"pandas\").DataFrame({\"k\": [\"a\", \"b\"], \"v\": [2.0, 8.0]}))",
+        "expect": "[100.0, 100.0]"
+      },
+      {
+        "name": "the total is the group’s, not the table’s",
+        "call": "share_of_group(__import__(\"pandas\").DataFrame({\"k\": [\"a\", \"a\", \"b\"], \"v\": [1.0, 1.0, 98.0]}))",
+        "expect": "[50.0, 50.0, 100.0]"
+      },
+      {
+        "name": "the row order is preserved",
+        "call": "share_of_group(__import__(\"pandas\").DataFrame({\"k\": [\"b\", \"a\", \"a\"], \"v\": [10.0, 1.0, 1.0]}))",
+        "expect": "[100.0, 50.0, 50.0]"
+      },
+      {
+        "name": "transform keeps the row count",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "transform"
+          ]
+        },
+        "describe": "transform rather than an aggregate"
+      }
+    ],
+    "hint": "transform(\"sum\") gives each row its group total, lined up with the table. Divide, multiply by 100, round, and tolist()."
+  },
   "questions": [
     {
       "id": "d7-tva-1",
-      "prompt": "What does transform return?",
+      "prompt": "How does transform differ from agg?",
       "choices": [
-        "One row per group",
-        "One value per original row",
-        "A dictionary",
-        "A smaller table"
+        "transform is faster",
+        "transform returns one value per row; agg returns one per group",
+        "transform only works on strings",
+        "They are the same"
       ],
       "answer": 1,
-      "explain": "It keeps the shape of the input, which is exactly what lets the result be assigned back as a column."
+      "explain": "Which is what makes transform the way to put a group mean beside every row."
     },
     {
       "id": "d7-tva-2",
-      "prompt": "You want a column holding each row's group average. Which do you use?",
+      "prompt": "You want each row compared with its own group’s mean. What do you use?",
       "choices": [
-        "aggregate",
+        "agg",
         "transform",
-        "apply",
-        "count"
+        "apply(axis=1)",
+        "merge"
       ],
       "answer": 1,
-      "explain": "An aggregate gives one row per group and will not line up with the table you want to attach it to."
+      "explain": "An aggregate throws away the rows, leaving nothing to compare against."
     },
     {
       "id": "d7-tva-3",
-      "prompt": "Comparing rows to the whole table's mean instead of their group's does what?",
+      "prompt": "A 4-row table with 2 groups. How long is the transform result?",
       "choices": [
-        "The same thing",
-        "Answers a different question, usually wrongly",
-        "Raises",
-        "Is faster and equivalent"
+        "2",
+        "4",
+        "1",
+        "8"
       ],
       "answer": 1,
-      "explain": "One high group can drag the overall mean above every row of a low group, so \"above average\" quietly starts meaning \"in the good group\"."
+      "explain": "Same length and same index as the table, which is what lets it become a column."
+    },
+    {
+      "id": "d7-tva-4",
+      "prompt": "Why is \"above own group mean\" different from \"above table mean\"?",
+      "choices": [
+        "They are the same",
+        "A group with high values has a high bar of its own",
+        "transform rounds",
+        "agg drops rows"
+      ],
+      "answer": 1,
+      "explain": "A row can beat the table and not beat its own group, and reporting one as the other is a different claim."
     }
   ]
 }

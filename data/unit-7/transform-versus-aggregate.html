@@ -173,34 +173,126 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Say what shape an aggregate returns and what shape a transform returns.</li>
+<li>Put a group summary beside every row.</li>
+<li>Compare a row with its own group rather than with the table.</li>
+<li>Choose between the two from the question being asked.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Questions like "which rows beat their own group average" cannot be answered by an aggregate, because an aggregate throws away the rows. transform is what keeps the shape, and it is the piece people are missing when they fall back to a loop over the groups.</p>
+</div>
 
 <div class="content-section">
 <h2>aggregate collapses</h2>
-<p>A group of five rows becomes one. That is what you want for a summary table and not what you want for a new column.</p>
+<p>One value per group. The rows are gone, which is usually what you wanted.</p>
+<h3 class="h4">The shape of an aggregate</h3>
+<p>Four rows in, two groups out. Nothing here lines up with the original table any more.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"k": ["a", "a", "b"], "v": [1, 3, 5]})
-print(df.groupby("k")["v"].mean().to_dict())</code></pre>
+df = pd.DataFrame({"k": ["a", "a", "b", "b"], "v": [1, 3, 10, 20]})
+means = df.groupby("k")["v"].mean()
+print(means)
+print(len(df), "rows -&gt;", len(means), "groups")</code></pre>
 
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Two shapes</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print the length of the aggregate and the length of the transform, next to the length of the table.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;k&quot;: [&quot;a&quot;, &quot;a&quot;, &quot;b&quot;, &quot;b&quot;], &quot;v&quot;: [1, 3, 10, 20]})\n\nprint(len(df))\nprint(len(df.groupby(&quot;k&quot;)[&quot;v&quot;].mean()))\nprint(None)   # the transform\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+df = pd.DataFrame({"k": ["a", "a", "b", "b"], "v": [1, 3, 10, 20]})
+
+print(len(df))
+print(len(df.groupby("k")["v"].mean()))
+print(None)   # the transform
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>transform keeps the shape</h2>
-<p>It gives every row its group's answer, so it lines up with the table and can be assigned straight back as a column.</p>
+<p>One value per <em>row</em> — each row gets its own group's answer. The result lines up with the table, so you can put it straight into a column or compare against it.</p>
+<h3 class="h4">The group answer, beside every row</h3>
+<p>Same length as the table, same index, so it can sit alongside the data it describes.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"k": ["a", "a", "b"], "v": [1, 3, 5]})
+df = pd.DataFrame({"k": ["a", "a", "b", "b"], "v": [1, 3, 10, 20]})
 df["group_mean"] = df.groupby("k")["v"].transform("mean")
-print(df["group_mean"].tolist())</code></pre>
+print(df)</code></pre>
+<h3 class="h4">Comparing a row with its own group</h3>
+<p>This is the question an aggregate cannot answer. Note how different it is from comparing against the whole table's mean.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"k": ["low", "low", "high"], "v": [1, 2, 100]})
+group_mean = df.groupby("k")["v"].transform("mean")
+
+print("above own group:", int((df["v"] &gt; group_mean).sum()))
+print("above table mean:", int((df["v"] &gt; df["v"].mean()).sum()))</code></pre>
+<p class="note">The row with 100 is above the table mean and is exactly its own group's mean, because it is alone in its group. Which of those two numbers you report is the difference between two quite different claims.</p>
+<h3 class="h4">Standardising within a group</h3>
+<p>The same idea with two transforms: each value's distance from its group mean, in units of its group's spread.</p>
+<pre class="code"><code>import pandas as pd
+
+df = pd.DataFrame({"k": ["a", "a", "a", "b"], "v": [10.0, 20.0, 30.0, 5.0]})
+g = df.groupby("k")["v"]
+df["z"] = (df["v"] - g.transform("mean")) / g.transform("std")
+print(df)</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Beat your own group</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Add a column holding each row's group mean, then count the rows above it. Compare that with the count above the whole table's mean.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;k&quot;: [&quot;low&quot;, &quot;low&quot;, &quot;high&quot;], &quot;v&quot;: [1, 2, 100]})\n\ndf[&quot;group_mean&quot;] = df.groupby(&quot;k&quot;)[&quot;v&quot;].transform(&quot;mean&quot;)\nprint(df)\nprint(int((df[&quot;v&quot;] > df[&quot;group_mean&quot;]).sum()))\nprint(int((df[&quot;v&quot;] > df[&quot;v&quot;].mean()).sum()))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+df = pd.DataFrame({"k": ["low", "low", "high"], "v": [1, 2, 100]})
+
+df["group_mean"] = df.groupby("k")["v"].transform("mean")
+print(df)
+print(int((df["v"] &gt; df["group_mean"]).sum()))
+print(int((df["v"] &gt; df["v"].mean()).sum()))
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Rows above their own group</h3>
 <p>Write <code>above_group_mean(df)</code> returning the number of rows whose <code>v</code> is above the mean of their own group.</p>
 <p class="hint-text">transform("mean") gives each row its group average, which lines up with the table so you can compare row by row. An aggregate would collapse the groups and leave you nothing to compare against.</p>
 
@@ -222,6 +314,32 @@ print(above_group_mean(pd.DataFrame({"k": ["a", "a"], "v": [1, 3]})))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Each row as a share of its group</h3>
+<p>Write <code>share_of_group(df)</code> returning a list of each row's <code>v</code> as a percentage of its own group's total, rounded to one decimal place, in the original row order.</p>
+<p class="hint-text">transform("sum") gives each row its group total, lined up with the table. Divide, multiply by 100, round, and tolist().</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef share_of_group(df):\n    # Each v as a percentage of its own group total.\n    return []\n\nprint(share_of_group(pd.DataFrame({&quot;k&quot;: [&quot;a&quot;, &quot;a&quot;], &quot;v&quot;: [1.0, 3.0]})))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def share_of_group(df):
+    # Each v as a percentage of its own group total.
+    return []
+
+print(share_of_group(pd.DataFrame({"k": ["a", "a"], "v": [1.0, 3.0]})))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

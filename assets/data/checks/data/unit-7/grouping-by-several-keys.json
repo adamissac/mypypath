@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Two keys give a row per combination, and an index with two levels.",
+    "prompt": "Grouping by Several Keys: Count every pair",
     "packages": [
       "pandas"
     ],
@@ -25,42 +25,90 @@
     ],
     "hint": "Group by both columns and ask for size. to_dict() on a two-level index gives tuple keys, and the counts want int() to shed their numpy type."
   },
+  "exercise2": {
+    "prompt": "Grouping by Several Keys: Flatten it back to a table",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "flat_means(__import__(\"pandas\").DataFrame({\"subject\": [\"m\", \"a\"], \"year\": [10, 11], \"score\": [90, 70]}))",
+        "expect": "['subject', 'year', 'score']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the keys are columns, not an index",
+        "call": "all(c in flat_means(__import__(\"pandas\").DataFrame({\"subject\": [\"m\"], \"year\": [10], \"score\": [9]})) for c in (\"subject\", \"year\"))",
+        "expect": "True"
+      },
+      {
+        "name": "the summarised column keeps its name",
+        "call": "\"score\" in flat_means(__import__(\"pandas\").DataFrame({\"subject\": [\"m\"], \"year\": [10], \"score\": [9]}))",
+        "expect": "True"
+      },
+      {
+        "name": "the grouping is done by pandas",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "groupby"
+          ]
+        },
+        "describe": "a groupby rather than a hand-written loop"
+      }
+    ],
+    "hint": "Group by the two columns, take the mean of score, then reset_index() to push both levels back out as columns. Without it the keys stay in the index and the columns list is just [\"score\"]."
+  },
   "questions": [
     {
       "id": "d7-gsk-1",
-      "prompt": "Grouping by two columns gives you a row per what?",
+      "prompt": "What does grouping by two keys give you?",
       "choices": [
-        "Column",
-        "Combination that actually occurs in the data",
-        "Possible combination",
-        "Row"
+        "Two tables",
+        "A row per combination, with a two-level index",
+        "An error",
+        "The first key only"
       ],
       "answer": 1,
-      "explain": "Only the pairs present are there. A pair with no rows is absent rather than zero, which matters when you expected a full grid."
+      "explain": "One group-by, not two, and the index carries both keys."
     },
     {
       "id": "d7-gsk-2",
-      "prompt": "What does reset_index do to a grouped result?",
+      "prompt": "How do you turn the two index levels back into columns?",
       "choices": [
-        "Sorts it",
-        "Turns the group keys back into ordinary columns",
-        "Removes them",
-        "Renumbers the rows only"
+        "flatten()",
+        "reset_index()",
+        "to_frame()",
+        "unstack()"
       ],
       "answer": 1,
-      "explain": "It flattens the index into columns, which is what you want before writing the result to a file or merging it with something else."
+      "explain": "unstack lays the grid out instead, which is a different and also useful shape."
     },
     {
       "id": "d7-gsk-3",
-      "prompt": "What shape are the keys of a two-level grouped result?",
+      "prompt": "A subject/year pair has no rows. What appears in the result?",
       "choices": [
-        "Strings",
-        "Tuples of the two values",
-        "Lists",
-        "Integers"
+        "A row with 0",
+        "A row with NaN",
+        "Nothing — it is absent",
+        "An error"
       ],
-      "answer": 1,
-      "explain": "One tuple per group, in the order you named the keys."
+      "answer": 2,
+      "explain": "You get one row per combination that occurs, not per combination that is possible. unstack shows the gaps as NaN."
+    },
+    {
+      "id": "d7-gsk-4",
+      "prompt": "How do you read one cell out of a two-level result?",
+      "choices": [
+        "out[\"m\"][\"10\"]",
+        "out[(\"m\", 10)]",
+        "out.loc[\"m\", 10].value",
+        "Both of the first two work"
+      ],
+      "answer": 3,
+      "explain": "A tuple indexes both levels at once; naming just the first gives you everything underneath it."
     }
   ]
 }

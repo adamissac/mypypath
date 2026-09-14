@@ -173,35 +173,135 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Take two files through to one summarised answer.</li>
+<li>Put the checks in the right places.</li>
+<li>Summarise last, after the joining and the cleaning.</li>
+<li>Report the size of what you summarised.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>This is the unit assembled: read, check the keys, join, check the row count, then summarise. The order matters, because every check is cheap before the join and expensive afterwards — once a duplicate key has multiplied your rows, the total is wrong and nothing in the output says so.</p>
+</div>
 
 <div class="content-section">
 <h2>The shape of a real answer</h2>
-<p>Load both, check what came in, join on the key, check the row count survived, then summarise. The checks are the part people skip.</p>
+<p>Read both. Check the keys. Join with the <code>how</code> the question implies. Check the row count. Only then summarise.</p>
+<h3 class="h4">Read, and look</h3>
+<p>Two files, four checks each — the habit from unit 5. The key columns get one extra look, because they are what the join depends on.</p>
 <pre class="code"><code>import pandas as pd
+from io import StringIO
 
-people = pd.read_csv("people.csv")
-scores = pd.read_csv("scores.csv")
+people = pd.read_csv(StringIO("id,team\n1,red\n2,red\n3,blue\n"))
+scores = pd.read_csv(StringIO("id,score\n1,90\n2,80\n3,70\n"))
+
+print(people.shape, scores.shape)
+print(people["id"].dtype, scores["id"].dtype)
+print("dupes:", int(people["id"].duplicated().sum()), int(scores["id"].duplicated().sum()))</code></pre>
+<h3 class="h4">Join, and check the count</h3>
+<p>You predicted one row per person. If the join gives more, a key was duplicated; if fewer, some did not match. Either way you want to know now.</p>
+<pre class="code"><code>import pandas as pd
+from io import StringIO
+
+people = pd.read_csv(StringIO("id,team\n1,red\n2,red\n3,blue\n"))
+scores = pd.read_csv(StringIO("id,score\n1,90\n2,80\n3,70\n"))
+
 out = pd.merge(people, scores, on="id", how="left")
-print(len(people), len(out))</code></pre>
+print(len(out), "rows for", len(people), "people")</code></pre>
 
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Check before joining</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print the dtypes and the duplicate counts for both key columns before you join anything.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\nfrom io import StringIO\n\npeople = pd.read_csv(StringIO(&quot;id,team\\n1,red\\n2,blue\\n&quot;))\nscores = pd.read_csv(StringIO(&quot;id,score\\n1,90\\n2,80\\n&quot;))\n\nprint(people[&quot;id&quot;].dtype, scores[&quot;id&quot;].dtype)\nprint(int(people[&quot;id&quot;].duplicated().sum()), int(scores[&quot;id&quot;].duplicated().sum()))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+from io import StringIO
+
+people = pd.read_csv(StringIO("id,team\n1,red\n2,blue\n"))
+scores = pd.read_csv(StringIO("id,score\n1,90\n2,80\n"))
+
+print(people["id"].dtype, scores["id"].dtype)
+print(int(people["id"].duplicated().sum()), int(scores["id"].duplicated().sum()))
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Summarise last</h2>
-<p>Once the join is trusted, the summary is one line. Doing it before you have checked the join is how a confident wrong number gets published.</p>
+<p>Group only once the table is the one you meant. A mean over multiplied rows is wrong in a way that looks entirely reasonable.</p>
+<h3 class="h4">The answer, with its size</h3>
+<p>The team means, and the number of people behind each — because a team of one is not a comparison.</p>
 <pre class="code"><code>import pandas as pd
+from io import StringIO
 
-df = pd.DataFrame({"team": ["a", "a", "b"], "score": [90, 80, 70]})
-print(df.groupby("team")["score"].mean().round(1).to_dict())</code></pre>
+people = pd.read_csv(StringIO("id,team\n1,red\n2,red\n3,blue\n"))
+scores = pd.read_csv(StringIO("id,score\n1,90\n2,80\n3,70\n"))
 
+out = pd.merge(people, scores, on="id", how="left")
+print(out.groupby("team")["score"].agg(["mean", "size"]))</code></pre>
+<h3 class="h4">What a duplicate would have done</h3>
+<p>The same code with one duplicated score row. The red mean has not changed much, the size has doubled, and nothing raised.</p>
+<pre class="code"><code>import pandas as pd
+from io import StringIO
+
+people = pd.read_csv(StringIO("id,team\n1,red\n2,red\n3,blue\n"))
+bad = pd.read_csv(StringIO("id,score\n1,90\n1,90\n2,80\n3,70\n"))
+
+out = pd.merge(people, bad, on="id", how="left")
+print(len(out), "rows for 3 people")
+print(out.groupby("team")["score"].agg(["mean", "size"]))</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: The answer and its size</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Join these and produce the mean and the count per team in one result.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\npeople = pd.DataFrame({&quot;id&quot;: [1, 2, 3], &quot;team&quot;: [&quot;red&quot;, &quot;red&quot;, &quot;blue&quot;]})\nscores = pd.DataFrame({&quot;id&quot;: [1, 2, 3], &quot;score&quot;: [90, 80, 70]})\n\nout = pd.merge(people, scores, on=&quot;id&quot;, how=&quot;left&quot;)\nprint(out.groupby(&quot;team&quot;)[&quot;score&quot;].agg([&quot;mean&quot;, &quot;size&quot;]))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+people = pd.DataFrame({"id": [1, 2, 3], "team": ["red", "red", "blue"]})
+scores = pd.DataFrame({"id": [1, 2, 3], "score": [90, 80, 70]})
+
+out = pd.merge(people, scores, on="id", how="left")
+print(out.groupby("team")["score"].agg(["mean", "size"]))
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Mean score per team, from two files</h3>
 <p>Two files are supplied: <code>people.csv</code> with <code>id</code> and <code>team</code>, and <code>scores.csv</code> with <code>id</code> and <code>score</code>. Write <code>team_means(people_path, scores_path)</code> returning a dictionary of team to mean score, rounded to one decimal place.</p>
 <p class="hint-text">Read both, merge on id, group by team, take the mean of score, round it, then to_dict(). The second file set is different, so a typed-in answer fails.</p>
 
@@ -223,6 +323,32 @@ print(team_means("people.csv", "scores.csv"))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Report the join, not just its result</h3>
+<p>Write <code>join_report(people_path, scores_path)</code> returning a three-element list of [people read, rows after a left join, people with no score]. The middle number differing from the first is how a duplicated key announces itself.</p>
+<p class="hint-text">Read both, left join, and report len(people), len(joined) and the count of NaN in the score column. A left join cannot lose rows, so more rows than people means a key was duplicated.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef join_report(people_path, scores_path):\n    # [people, joined rows, people with no score]\n    return [0, 0, 0]\n\nprint(join_report(&quot;people.csv&quot;, &quot;scores.csv&quot;))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def join_report(people_path, scores_path):
+    # [people, joined rows, people with no score]
+    return [0, 0, 0]
+
+print(join_report("people.csv", "scores.csv"))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

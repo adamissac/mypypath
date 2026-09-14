@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Group by time period without building the key yourself.",
+    "prompt": "Resampling: Monthly totals, gaps included",
     "packages": [
       "pandas"
     ],
@@ -23,7 +23,7 @@
         "expect": "[7]"
       },
       {
-        "name": "resample does the bucketing",
+        "name": "the right tool does the work",
         "kind": "ast",
         "requires": {
           "calls": [
@@ -35,42 +35,100 @@
     ],
     "hint": "resample(\"MS\") buckets by month start. The quiet month in the middle is the whole point: a group-by would skip it and the timeline would lie."
   },
+  "exercise2": {
+    "prompt": "Resampling: How many periods were empty",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "quiet_months(__import__(\"pandas\").Series([1, 1], index=__import__(\"pandas\").to_datetime([\"2024-01-01\", \"2024-03-01\"])))",
+        "expect": "1"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "consecutive months leave no gaps",
+        "call": "quiet_months(__import__(\"pandas\").Series([1, 1], index=__import__(\"pandas\").to_datetime([\"2024-01-01\", \"2024-02-01\"])))",
+        "expect": "0"
+      },
+      {
+        "name": "a single row has no gaps either side",
+        "call": "quiet_months(__import__(\"pandas\").Series([1], index=__import__(\"pandas\").to_datetime([\"2024-05-05\"])))",
+        "expect": "0"
+      },
+      {
+        "name": "a month that sums to zero still had rows",
+        "call": "quiet_months(__import__(\"pandas\").Series([5, -5, 2], index=__import__(\"pandas\").to_datetime([\"2024-01-01\", \"2024-01-15\", \"2024-02-01\"])))",
+        "expect": "0"
+      },
+      {
+        "name": "a longer gap counts every empty month",
+        "call": "quiet_months(__import__(\"pandas\").Series([1, 1], index=__import__(\"pandas\").to_datetime([\"2024-01-01\", \"2024-05-01\"])))",
+        "expect": "3"
+      },
+      {
+        "name": "the right tool does the work",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "resample"
+          ]
+        },
+        "describe": "resample, which produces the empty periods"
+      }
+    ],
+    "hint": "resample(\"MS\").size() gives the row count per period, and the empty ones are the zeros. Using sum() instead would confuse a quiet month with one whose values happened to cancel out."
+  },
   "questions": [
     {
       "id": "d9-rs-1",
-      "prompt": "What does resample do that a group-by on the month does not?",
+      "prompt": "What is resample, in terms of what you already know?",
       "choices": [
-        "Nothing",
-        "Produces every period in the range, including empty ones",
-        "Sorts",
-        "Handles missing values"
+        "A sort",
+        "A group-by where the key is a time period",
+        "A filter",
+        "A join"
       ],
       "answer": 1,
-      "explain": "A group-by only knows about months that have rows. A chart drawn from it silently closes the gap where nothing happened."
+      "explain": "df.resample(\"MS\").sum() is a monthly total without you building the month key."
     },
     {
       "id": "d9-rs-2",
-      "prompt": "What does resample need to work?",
+      "prompt": "What does resample need in place first?",
       "choices": [
-        "A sorted table",
+        "A sorted frame",
         "A datetime index",
-        "A numeric column",
-        "A key column"
+        "No missing values",
+        "A group-by"
       ],
       "answer": 1,
-      "explain": "It buckets on the index, so the index has to be time. That is what set_index was for in the previous lesson."
+      "explain": "It works off the index, which is why set_index is the step before."
     },
     {
       "id": "d9-rs-3",
-      "prompt": "Why does an empty period matter on a chart?",
+      "prompt": "How does resample differ from grouping on the month?",
       "choices": [
-        "It does not",
-        "A gap closed up makes a quiet period look like it never existed",
-        "It looks untidy",
-        "It breaks the axis"
+        "It is faster",
+        "It produces every period in the range, including the empty ones",
+        "It sorts",
+        "It drops NaN"
       ],
       "answer": 1,
-      "explain": "The reader sees a continuous line and assumes continuous activity. That is a chart telling them something untrue."
+      "explain": "A group-by omits a quiet month, and a chart then draws a line straight through it."
+    },
+    {
+      "id": "d9-rs-4",
+      "prompt": "An empty month under .mean() reads as what?",
+      "choices": [
+        "0",
+        "NaN",
+        "The previous month",
+        "It is omitted"
+      ],
+      "answer": 1,
+      "explain": "Which is the honest answer — unlike sum(), where 0 would claim the month averaged nothing."
     }
   ]
 }

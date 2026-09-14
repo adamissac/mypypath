@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "The shape of every group-by, named once so the rest makes sense.",
+    "prompt": "Split, Apply, Combine: Mean score per subject",
     "packages": [
       "pandas"
     ],
@@ -23,7 +23,7 @@
         "expect": "{'a': 50.0, 'b': 50.0}"
       },
       {
-        "name": "groupby does the splitting",
+        "name": "the grouping is done by pandas",
         "kind": "ast",
         "requires": {
           "calls": [
@@ -35,46 +35,95 @@
     ],
     "hint": "groupby the subject, take the score column, ask for the mean, round it, and to_dict() at the end gives plain keys and values."
   },
+  "exercise2": {
+    "prompt": "Split, Apply, Combine: The mean, with the size beside it",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "summary_by(__import__(\"pandas\").DataFrame({\"subject\": [\"m\", \"m\", \"a\"], \"score\": [90, 80, 70]}))",
+        "expect": "{'a': [70.0, 1], 'm': [85.0, 2]}"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a single row group reports a size of one",
+        "call": "summary_by(__import__(\"pandas\").DataFrame({\"subject\": [\"solo\"], \"score\": [5]}))",
+        "expect": "{'solo': [5.0, 1]}"
+      },
+      {
+        "name": "the size counts rows, not subjects",
+        "call": "summary_by(__import__(\"pandas\").DataFrame({\"subject\": [\"a\", \"a\", \"a\"], \"score\": [1, 2, 3]}))",
+        "expect": "{'a': [2.0, 3]}"
+      },
+      {
+        "name": "the counts are plain integers",
+        "call": "all(type(v[1]).__name__ == \"int\" for v in summary_by(__import__(\"pandas\").DataFrame({\"subject\": [\"a\"], \"score\": [1]})).values())",
+        "expect": "True"
+      },
+      {
+        "name": "the grouping is done by pandas",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "groupby"
+          ]
+        },
+        "describe": "a groupby rather than a hand-written loop"
+      }
+    ],
+    "hint": "Group once and take both the mean and the size off the same grouped object, then build the dictionary with round() and int() so the values are plain Python."
+  },
   "questions": [
     {
       "id": "d7-sac-1",
-      "kind": "order",
-      "prompt": "Put the three steps of a group-by in order.",
-      "items": [
-        "Combine the answers into one result",
-        "Split the rows by a key",
-        "Apply a summary to each group"
+      "prompt": "What are the three steps of a group-by?",
+      "choices": [
+        "Sort, filter, count",
+        "Split, apply, combine",
+        "Load, clean, report",
+        "Index, slice, sum"
       ],
-      "answer": [
-        1,
-        2,
-        0
-      ],
-      "explain": "Split, apply, combine. Naming the three makes the shape of every group-by recognisable, however complicated the summary is."
+      "answer": 1,
+      "explain": "Split the table by key, apply a summary to each piece, combine the answers into one result."
     },
     {
       "id": "d7-sac-2",
-      "prompt": "What becomes the index of a group-by result?",
+      "prompt": "What does df.groupby(\"city\") on its own return?",
       "choices": [
-        "The row numbers",
-        "The values you grouped by",
-        "The column you summarised",
-        "Nothing"
+        "A DataFrame",
+        "A grouped object that has computed nothing yet",
+        "A Series of counts",
+        "A list"
       ],
       "answer": 1,
-      "explain": "One row per group, labelled by the group key, which is why the result reads as a lookup table."
+      "explain": "Nothing happens until you name the summary, which is why printing it is unhelpful."
     },
     {
       "id": "d7-sac-3",
-      "prompt": "Why is a group-by better than looping over the distinct values yourself?",
+      "prompt": "After groupby(...).mean(), where is the group key?",
       "choices": [
-        "It is not",
-        "It does the split once, and it is easy to get the loop subtly wrong",
-        "It sorts",
-        "It uses less memory"
+        "A column",
+        "The index",
+        "Dropped",
+        "Duplicated"
       ],
       "answer": 1,
-      "explain": "The common bug in the hand-written version is summarising the whole table inside the loop instead of the group -- which is exactly the wrong answer the exercise checks for."
+      "explain": "reset_index() or as_index=False puts it back as a column when you want a plain table."
+    },
+    {
+      "id": "d7-sac-4",
+      "prompt": "Why report the group size next to the group mean?",
+      "choices": [
+        "It is not needed",
+        "A mean over two rows and one over two thousand are not comparable",
+        "It sorts the groups",
+        "It fills NaN"
+      ],
+      "answer": 1,
+      "explain": "The group with the striking average is very often the group with three rows in it."
     }
   ]
 }

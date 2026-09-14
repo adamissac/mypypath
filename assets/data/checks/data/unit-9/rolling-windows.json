@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Smoothing a noisy series to see the shape underneath.",
+    "prompt": "Rolling Windows: Smooth a series",
     "packages": [
       "pandas"
     ],
@@ -23,7 +23,7 @@
         "expect": "[2.0]"
       },
       {
-        "name": "rolling does the smoothing",
+        "name": "the right tool does the work",
         "kind": "ast",
         "requires": {
           "calls": [
@@ -35,42 +35,95 @@
     ],
     "hint": "s.rolling(window).mean() gives the smoothed series with gaps at the front; dropna() removes them and tolist() hands back plain floats."
   },
+  "exercise2": {
+    "prompt": "Rolling Windows: What the smoothing cost",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "smoothing_cost(__import__(\"pandas\").Series([1.0, 2.0, 3.0]), 2)",
+        "expect": "[3, 2]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a window of one loses nothing",
+        "call": "smoothing_cost(__import__(\"pandas\").Series([1.0, 2.0, 3.0]), 1)",
+        "expect": "[3, 3]"
+      },
+      {
+        "name": "a wider window costs more",
+        "call": "smoothing_cost(__import__(\"pandas\").Series([1.0, 2.0, 3.0, 4.0]), 3)",
+        "expect": "[4, 2]"
+      },
+      {
+        "name": "a window as long as the series leaves one value",
+        "call": "smoothing_cost(__import__(\"pandas\").Series([1.0, 2.0]), 2)",
+        "expect": "[2, 1]"
+      },
+      {
+        "name": "the right tool does the work",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "rolling"
+          ]
+        },
+        "describe": "a rolling window"
+      }
+    ],
+    "hint": "len(s) for the first, then the length of s.rolling(window).mean().dropna() for the second. The gap is window - 1 whenever the series is long enough."
+  },
   "questions": [
     {
       "id": "d9-rw-1",
-      "prompt": "Why do the first values of a rolling mean come back missing?",
+      "prompt": "What is a rolling window for?",
       "choices": [
-        "A bug",
-        "There are not enough earlier values to fill the window yet",
-        "They are zero",
-        "They are dropped"
+        "Removing outliers",
+        "Smoothing a noisy series so the shape is visible",
+        "Filling gaps",
+        "Joining tables"
       ],
       "answer": 1,
-      "explain": "A window of seven has no answer until the seventh value. Filling those with zero would invent a dip that never happened."
+      "explain": "It trades responsiveness for legibility, which is a choice you should state."
     },
     {
       "id": "d9-rw-2",
-      "prompt": "What is a seven-day rolling mean good for on daily data?",
+      "prompt": "Why are the first values of s.rolling(7).mean() NaN?",
       "choices": [
-        "Making it smaller",
-        "Removing the weekday pattern so the trend is visible",
-        "Filling gaps",
-        "Sorting"
+        "A bug",
+        "There is no seven-day window yet",
+        "The data is missing",
+        "It rounds"
       ],
       "answer": 1,
-      "explain": "A whole week per window averages out the weekly rhythm, which is usually noise relative to the question."
+      "explain": "Correct rather than broken, and the reason a smoothed series is shorter than its source."
     },
     {
       "id": "d9-rw-3",
-      "prompt": "What does a larger window do to the line?",
+      "prompt": "What does min_periods=1 do, and what does it cost?",
       "choices": [
-        "Makes it noisier",
-        "Makes it smoother and slower to react",
-        "No change",
-        "Shortens it"
+        "Nothing",
+        "Fills the front by averaging fewer points, so early values are computed differently",
+        "Widens the window",
+        "Drops the gaps"
       ],
       "answer": 1,
-      "explain": "Smoothing is a trade: more window is less noise and more lag behind a real turn."
+      "explain": "Defensible on a chart, dishonest in a table where the numbers are meant to be comparable."
+    },
+    {
+      "id": "d9-rw-4",
+      "prompt": "What does a wider window trade away?",
+      "choices": [
+        "Accuracy",
+        "Responsiveness — it reacts later to a real change",
+        "Memory",
+        "Nothing"
+      ],
+      "answer": 1,
+      "explain": "Smoothing is a trade, not a free improvement, which is why the length needs a reason."
     }
   ]
 }

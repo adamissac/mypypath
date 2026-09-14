@@ -173,27 +173,146 @@
 </aside>
 <section class="lesson-body">
 
-
-
 <div class="content-section">
-<h2>Three parts to a claim</h2>
-<p>The number, the comparison that gives it meaning, and the limit. Without the second it is trivia; without the third it is overstated.</p>
-<pre class="code"><code>import pandas as pd
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Write a claim in three parts: the number, the comparison, and the limit.</li>
+<li>Report the sample size next to every difference between groups.</li>
+<li>Tell an observed correlation apart from a causal claim.</li>
+<li>Build the sentence from the data, so it cannot drift from the numbers.</li>
+</ul>
+</div>
 
-df = pd.DataFrame({"team": ["a", "b"], "score": [85.0, 70.0]})
-gap = float(df["score"].max() - df["score"].min())
-print(f"a leads b by {gap:.1f} points, on one term of data")</code></pre>
-
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>The write-up is the only part of an analysis most people ever see. A correct table under an overstated sentence is still a wrong analysis, because the sentence is what gets repeated. Writing the claim from the data, with its size and its limits attached, is what makes the number something you can defend when somebody asks.</p>
 </div>
 
 <div class="content-section">
-<h2>Correlation is not the finding</h2>
-<p>Two things moving together is an observation. Saying one caused the other is a further claim, and usually one this data cannot support.</p>
+<h2>Three parts to a claim</h2>
+<p>A finding that survives a reader has three parts. Leave out the second and it is trivia; leave out the third and it is overstated.</p>
+<h3 class="h4">The number</h3>
+<p>Start with the value, at a precision the data supports. "Team a averages 85.0" is a number; it is not yet a finding, because nothing says whether 85 is good.</p>
 <pre class="code"><code>import pandas as pd
 
-hours = pd.Series([1.0, 2.0, 3.0])
-score = pd.Series([60.0, 70.0, 80.0])
+df = pd.DataFrame({"team": ["a", "a", "b"], "score": [90.0, 80.0, 70.0]})
+means = df.groupby("team")["score"].mean()
+print(means.round(1))</code></pre>
+<h3 class="h4">The comparison</h3>
+<p>A number means something next to another number: the other team, last term, the target. The gap is usually the thing the reader actually wants, so compute it rather than making them subtract.</p>
+<pre class="code"><code>import pandas as pd
+
+df = pd.DataFrame({"team": ["a", "a", "b"], "score": [90.0, 80.0, 70.0]})
+means = df.groupby("team")["score"].mean()
+gap = means.max() - means.min()
+print(f"{means.idxmax()} leads {means.idxmin()} by {gap:.1f} points")</code></pre>
+<h3 class="h4">The limit</h3>
+<p>Say how much data the claim rests on and what period it covers. This is not modesty; it is the information a reader needs to decide how far to trust it.</p>
+<pre class="code"><code>import pandas as pd
+
+df = pd.DataFrame({"team": ["a", "a", "b"], "score": [90.0, 80.0, 70.0]})
+sizes = df["team"].value_counts()
+print(f"based on {len(df)} scores: a has {sizes['a']}, b has {sizes['b']}")</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Add the comparison</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>The code prints the top team's mean on its own. Change the print so it also says which team it beats and by how many points.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;team&quot;: [&quot;red&quot;, &quot;red&quot;, &quot;blue&quot;], &quot;score&quot;: [88.0, 92.0, 81.0]})\nmeans = df.groupby(&quot;team&quot;)[&quot;score&quot;].mean()\n\nprint(f&quot;{means.idxmax()} averages {means.max():.1f}&quot;)\n# Now say who it beats, and by how much.\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+df = pd.DataFrame({"team": ["red", "red", "blue"], "score": [88.0, 92.0, 81.0]})
+means = df.groupby("team")["score"].mean()
+
+print(f"{means.idxmax()} averages {means.max():.1f}")
+# Now say who it beats, and by how much.
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Build the sentence from the data</h2>
+<p>A sentence typed by hand is a second copy of the result, and second copies drift. The next time the data changes the table updates and the sentence does not.</p>
+<h3 class="h4">An f-string over the computed values</h3>
+<p>Every number in the sentence comes from a variable. If the data changes, the sentence changes with it, and nobody has to remember to edit the report.</p>
+<pre class="code"><code>import pandas as pd
+
+def headline(df):
+    means = df.groupby("team")["score"].mean()
+    gap = float(means.max() - means.min())
+    return f"{means.idxmax()} scores {gap:.1f} above {means.idxmin()} (n={len(df)})"
+
+print(headline(pd.DataFrame({"team": ["a", "b"], "score": [85.0, 70.0]})))</code></pre>
+<h3 class="h4">Which n is the right n</h3>
+<p>The number of rows and the number of groups are both counts, and they say very different things. "n=2" after a comparison of two teams reads as two data points. Report the rows the means were built from.</p>
+<pre class="code"><code>import pandas as pd
+
+df = pd.DataFrame({"team": ["a", "b", "b", "b"], "score": [10.0, 4.0, 4.0, 4.0]})
+means = df.groupby("team")["score"].mean()
+print("groups:", len(means))
+print("rows:", len(df))</code></pre>
+<div class="info-card"><p>When one group is far smaller than the other, say so in the sentence. "a leads b (a: 1 score, b: 300)" is honest; "a leads b (n=301)" hides the problem inside a big number.</p></div>
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: The right n</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print the sentence twice: once with the number of groups as n, once with the number of rows. Read both aloud and decide which one a reader would misunderstand.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;team&quot;: [&quot;a&quot;, &quot;b&quot;, &quot;b&quot;, &quot;b&quot;, &quot;b&quot;], &quot;score&quot;: [9.0, 5.0, 6.0, 5.0, 6.0]})\nmeans = df.groupby(&quot;team&quot;)[&quot;score&quot;].mean()\ngap = float(means.max() - means.min())\n\nprint(f&quot;a scores {gap:.1f} above b (n={len(means)})&quot;)\n# Print it again with the row count as n.\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+df = pd.DataFrame({"team": ["a", "b", "b", "b", "b"], "score": [9.0, 5.0, 6.0, 5.0, 6.0]})
+means = df.groupby("team")["score"].mean()
+gap = float(means.max() - means.min())
+
+print(f"a scores {gap:.1f} above b (n={len(means)})")
+# Print it again with the row count as n.
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Moving together is not causing</h2>
+<p>The most common overstatement in a write-up is turning "these two go up together" into "this one makes that one go up".</p>
+<h3 class="h4">Measure the correlation</h3>
+<p><code>Series.corr</code> gives a number between -1 and 1 for how closely two columns move together. Close to 1 means they rise together in this data. That is the whole of what it says.</p>
+<pre class="code"><code>import pandas as pd
+
+hours = pd.Series([1.0, 2.0, 3.0, 4.0])
+score = pd.Series([60.0, 68.0, 81.0, 88.0])
 print(round(float(hours.corr(score)), 2))</code></pre>
+<h3 class="h4">Say what it does not show</h3>
+<p>Students who study more may also sleep more, attend more, or already be stronger. The table cannot separate those. The honest sentence reports the association and names that it is one.</p>
+<pre class="code"><code>import pandas as pd
+
+hours = pd.Series([1.0, 2.0, 3.0, 4.0])
+score = pd.Series([60.0, 68.0, 81.0, 88.0])
+r = float(hours.corr(score))
+print(f"hours and score move together (r={r:.2f}); this data cannot say whether one causes the other")</code></pre>
 
 </div>
 
@@ -201,7 +320,7 @@ print(round(float(hours.corr(score)), 2))</code></pre>
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: A finding with its n</h3>
 <p>Write <code>finding(df)</code> returning a sentence of the form <code>"a scores 15.0 above b (n=3)"</code>, comparing the highest and lowest team means and reporting how many rows the whole comparison rests on.</p>
 <p class="hint-text">Group to means, take idxmax and idxmin, subtract for the gap, and len(df) for n. Reporting n is what stops a difference between two rows reading like a result.</p>
 
@@ -223,6 +342,32 @@ print(finding(pd.DataFrame({"team": ["a", "b"], "score": [85.0, 70.0]})))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: An association, stated honestly</h3>
+<p>Write <code>association(df, x, y)</code> that returns <code>"x and y move together (r=0.99)"</code> when the correlation between the two columns is at least 0.5, <code>"x and y move in opposite directions (r=-0.99)"</code> when it is at most -0.5, and <code>"no clear link between x and y (r=0.10)"</code> otherwise. Use the column names given, and two decimal places for r.</p>
+<p class="hint-text">r = float(df[x].corr(df[y])). Compare with 0.5 and -0.5 using &gt;= and &lt;=, and format r with :.2f inside each sentence. None of the three sentences says "causes".</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef association(df, x, y):\n    # Describe the correlation between columns x and y without claiming a cause.\n    return &quot;&quot;\n\nprint(association(pd.DataFrame({&quot;hours&quot;: [1, 2, 3], &quot;score&quot;: [60, 70, 80]}), &quot;hours&quot;, &quot;score&quot;))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def association(df, x, y):
+    # Describe the correlation between columns x and y without claiming a cause.
+    return ""
+
+print(association(pd.DataFrame({"hours": [1, 2, 3], "score": [60, 70, 80]}), "hours", "score"))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

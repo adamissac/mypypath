@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Turning a column per month into a column that says which month.",
+    "prompt": "Wide to Long with melt: Melt the months down",
     "packages": [
       "pandas"
     ],
@@ -23,7 +23,7 @@
         "expect": "['feb', 'jan']"
       },
       {
-        "name": "melt does the reshaping",
+        "name": "pandas does the work",
         "kind": "ast",
         "requires": {
           "calls": [
@@ -35,42 +35,95 @@
     ],
     "hint": "id_vars=[\"name\"] keeps the name and folds every other column down. The row count is people times months."
   },
+  "exercise2": {
+    "prompt": "Wide to Long with melt: The best month, once it is a column",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "best_month(__import__(\"pandas\").DataFrame({\"name\": [\"Ada\", \"Bo\"], \"jan\": [90, 70], \"feb\": [50, 40]}))",
+        "expect": "'jan'"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the later month can win",
+        "call": "best_month(__import__(\"pandas\").DataFrame({\"name\": [\"Ada\"], \"jan\": [10], \"feb\": [90]}))",
+        "expect": "'feb'"
+      },
+      {
+        "name": "it averages rather than totals",
+        "call": "best_month(__import__(\"pandas\").DataFrame({\"name\": [\"a\", \"b\"], \"jan\": [100, 0], \"feb\": [60, 60]}))",
+        "expect": "'feb'"
+      },
+      {
+        "name": "one month wins by default",
+        "call": "best_month(__import__(\"pandas\").DataFrame({\"name\": [\"Ada\"], \"jan\": [5]}))",
+        "expect": "'jan'"
+      },
+      {
+        "name": "pandas does the work",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "melt"
+          ]
+        },
+        "describe": "melt then group"
+      }
+    ],
+    "hint": "Melt with id_vars=[\"name\"], group by the month column, take the mean of the score column, then idxmax for the label."
+  },
   "questions": [
     {
       "id": "d8-wtl-1",
-      "prompt": "Why can you not group a wide table by month?",
+      "prompt": "What does melt do?",
       "choices": [
-        "It is too big",
-        "The month is in the column names, not in the data",
-        "pandas forbids it",
-        "You can"
+        "Long into wide",
+        "Wide into long — column headings become values",
+        "Joins tables",
+        "Sorts columns"
       ],
       "answer": 1,
-      "explain": "groupby works on values. A month that only exists as a header is not a value yet, which is exactly what melt fixes."
+      "explain": "The month stops being metadata in a column name and becomes data you can group by."
     },
     {
       "id": "d8-wtl-2",
       "prompt": "What does id_vars name?",
       "choices": [
-        "The columns to fold down",
-        "The columns that stay as they are",
+        "The columns to melt",
+        "The columns that stay put",
         "The new column names",
         "The index"
       ],
       "answer": 1,
-      "explain": "Identifiers stay; everything else is melted. Forgetting one turns an identifier into data."
+      "explain": "Everything not listed gets folded down into the two new columns."
     },
     {
       "id": "d8-wtl-3",
-      "prompt": "Three people and four months melted gives how many rows?",
+      "prompt": "Melting 50 rows with 12 month columns gives how many rows?",
       "choices": [
-        "3",
-        "4",
-        "7",
+        "50",
+        "62",
+        "600",
         "12"
       ],
-      "answer": 3,
-      "explain": "One row per person per month. A row count that is not the product is the quickest sign the melt did not do what you meant."
+      "answer": 2,
+      "explain": "Rows times melted columns. Checking that number catches an id_vars list that left something out."
+    },
+    {
+      "id": "d8-wtl-4",
+      "prompt": "Why can you not group a wide table by month?",
+      "choices": [
+        "pandas forbids it",
+        "The month is a column heading, not a value",
+        "It is too slow",
+        "You can"
+      ],
+      "answer": 1,
+      "explain": "No operation can reach into a column name. That is what the melt fixes."
     }
   ]
 }
