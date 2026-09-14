@@ -35,6 +35,7 @@ const PAGES = [
   '/units/unit-1/what-is-python.html', '/classroom.html', '/quiz.html',
   '/unit-test.html', '/settings.html', '/certificate.html', '/account.html',
   '/login.html', '/progress.html', '/sandbox.html', '/404.html',
+  '/data.html', '/data/unit-1/reading-a-csv-file.html', '/data/unit-5/csv-options-that-matter.html',
 ];
 
 const VIEWPORTS = [

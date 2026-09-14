@@ -548,7 +548,14 @@ function makeEscapable(cm, label) {
       // without this. See makeEscapable.
       makeEscapable(window.editors[editorId], editorLabel);
 
-      window.editors[editorId].setSize(null, isExercise ? 180 : 150);
+      /* The editor grows with its code, from a floor of the old fixed height.
+         A fixed height put longer starters behind an inner scrollbar, which a
+         keyboard user cannot reach (axe: scrollable-region-focusable, on
+         CodeMirror's own tabindex="-1" scroller) and which hid half of the
+         code a lesson was asking the student to read. */
+      window.editors[editorId].setOption('viewportMargin', Infinity);
+      window.editors[editorId].setSize(null, 'auto');
+      window.editors[editorId].getScrollerElement().style.minHeight = (isExercise ? 180 : 150) + 'px';
       window.editors[editorId].on('change', function () {
         saveToStorage('code', editorId, window.editors[editorId].getValue());
         snapshotWhenSettled(editorId, function () {

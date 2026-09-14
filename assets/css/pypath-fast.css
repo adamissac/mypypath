@@ -147,8 +147,30 @@ pre.code code,
   border-right: 1px solid var(--border);
 }
 
+/* #78716c on the #f1f3f5 gutter is 4.31:1, under AA's 4.5. It went unnoticed
+   while editors had a fixed height and short starters; axe flags it as soon as
+   a line number is on screen long enough to be measured. #57534e is 6.86:1. */
 .cm-s-pypath .CodeMirror-linenumber {
-  color: #78716c;
+  color: #57534e;
+}
+
+/* Line numbers sit in a wrapper CodeMirror positions with an inline
+   `left: -<gutter width>px`, measured when the editor is built. A lesson editor
+   is built while its section is still being laid out, and some of them keep
+   `left: 0` -- the numbers then print over the first characters of every line.
+   These editors wrap long lines, so they never scroll sideways and the offset
+   is only ever "just left of the line": say that in CSS, where timing cannot
+   get it wrong. */
+.cm-s-pypath.CodeMirror-wrap .CodeMirror-gutter-wrapper {
+  left: auto !important;
+  right: 100%;
+}
+
+/* The wrapper is zero-width -- the number inside it is absolutely positioned --
+   so anchor the number's right edge to it rather than its left. */
+.cm-s-pypath.CodeMirror-wrap .CodeMirror-gutter-wrapper .CodeMirror-gutter-elt {
+  left: auto !important;
+  right: 0;
 }
 
 .cm-s-pypath .CodeMirror-cursor {

@@ -61,6 +61,7 @@ const PAGES = [
   '/classroom.html',
   '/curriculum.html',
   '/quiz.html',
+  '/data/unit-3/why-arrays-beat-lists.html',
 ];
 
 const TYPES = {

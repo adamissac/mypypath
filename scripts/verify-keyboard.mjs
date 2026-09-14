@@ -23,6 +23,7 @@ const PORT = Number(process.env.KB_PORT || 8085);
 const PAGES = [
   '/index.html', '/curriculum.html', '/units/unit-1/what-is-python.html',
   '/classroom.html', '/quiz.html', '/settings.html', '/login.html', '/sandbox.html',
+  '/data/unit-1/reading-a-csv-file.html',
 ];
 
 const TYPES = {
