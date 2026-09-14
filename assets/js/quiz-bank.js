@@ -106,17 +106,30 @@
     return sortForPicker(out);
   }
 
-  function load(unit) {
+  /* Both courses. Each numbers its units from 1, so without the course in the
+     path a teacher whose class is on Python for Data unit 3 would be offered
+     Foundations unit 3 questions -- the same collision check-ui.js already
+     guards against for check files. Foundations keeps its existing flat paths
+     so no stored quiz's question ids have to move. */
+  var COURSE_DIR = { units: '', data: 'data/' };
+
+  function courseDir(course) {
+    return COURSE_DIR[course] === undefined ? COURSE_DIR.units : COURSE_DIR[course];
+  }
+
+  function load(unit, course) {
     if (!isUnit(unit)) return Promise.resolve([]);
     var n = Number(unit);
-    if (cache[n]) return Promise.resolve(cache[n]);
+    var dir = courseDir(course);
+    var key = dir + n;
+    if (cache[key]) return Promise.resolve(cache[key]);
 
     return Promise.all([
-      fetchJson('/assets/data/unit-tests/unit-' + n + '-mcq.json'),
-      fetchJson('/assets/data/quiz-bank/unit-' + n + '.json')
+      fetchJson('/assets/data/unit-tests/' + dir + 'unit-' + n + '-mcq.json'),
+      fetchJson('/assets/data/quiz-bank/' + dir + 'unit-' + n + '.json')
     ]).then(function (both) {
       var merged = merge(both[0], both[1]);
-      cache[n] = merged;
+      cache[key] = merged;
       return merged;
     });
   }

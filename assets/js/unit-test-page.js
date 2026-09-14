@@ -23,6 +23,45 @@
   var TOTAL_UNITS = 10;
   var DATA_DIR = '/assets/data/unit-tests/';
 
+  /* Two courses, and both number their units from 1.
+   *
+   * Foundations keeps the paths and the record keys it has always had --
+   * unit-3-mcq.json, and "3" in the stored blob -- because every existing
+   * result, the teacher summary and the sync allowlist are keyed off them.
+   * Python for Data nests under data/ and prefixes its record keys, so that
+   * its unit 3 neither reads Foundations' questions nor overwrites a
+   * Foundations result.
+   *
+   * check-ui.js and lesson-quiz.js already make exactly this split for check
+   * files; this is the same rule for tests. */
+  var COURSES = {
+    units: { dir: '', keyPrefix: '', home: '/curriculum.html', label: 'Python Foundations' },
+    data: { dir: 'data/', keyPrefix: 'data-', home: '/data.html', label: 'Python for Data' }
+  };
+
+  function courseFromQuery() {
+    var raw = null;
+    try { raw = new URLSearchParams(window.location.search).get('course'); }
+    catch (e) { raw = null; }
+    raw = (raw || '').trim().toLowerCase();
+    return Object.prototype.hasOwnProperty.call(COURSES, raw) ? raw : 'units';
+  }
+
+  // "3" for Foundations, "data-3" for Python for Data.
+  function recordKey(course, unit) {
+    return (COURSES[course] || COURSES.units).keyPrefix + String(unit);
+  }
+
+  // Splits a stored key back into its course and unit. Anything else is a hand
+  // edit or a bug and is dropped rather than carried to the teacher summary.
+  function parseRecordKey(key) {
+    var m = /^(?:(data)-)?(\d+)$/.exec(String(key));
+    if (!m) return null;
+    var unit = Number(m[2]);
+    if (!Number.isInteger(unit) || unit < 1 || unit > TOTAL_UNITS) return null;
+    return { course: m[1] ? 'data' : 'units', unit: unit };
+  }
+
   // ---------- pure rules: the stored record ----------
 
   function num(value, fallback) {
@@ -61,13 +100,13 @@
     if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
     var out = {};
     Object.keys(raw).forEach(function (key) {
-      var unit = Number(key);
-      if (!Number.isInteger(unit) || unit < 1 || unit > TOTAL_UNITS) return;
+      var parsed = parseRecordKey(key);
+      if (!parsed) return;
       var entry = raw[key];
       if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return;
 
       var best = clamp(Math.round(num(entry.best, 0)), 0, 100);
-      out[String(unit)] = {
+      out[recordKey(parsed.course, parsed.unit)] = {
         best: best,
         passed: entry.passed === true || reachedPassMark(best),
         attempts: Math.max(0, Math.round(num(entry.attempts, 0))),
@@ -99,7 +138,10 @@
     STORE_KEY: STORE_KEY,
     ATTEMPT_PREFIX: ATTEMPT_PREFIX,
     normalizeRecords: normalizeRecords,
-    mergeAttempt: mergeAttempt
+    mergeAttempt: mergeAttempt,
+    recordKey: recordKey,
+    parseRecordKey: parseRecordKey,
+    COURSES: COURSES
   };
 
   // ---------- storage ----------
@@ -164,6 +206,7 @@
   var T = window.PyPathUnitTest;
 
   var unit = null;
+  var course = 'units';
   var pools = { mcq: [], frq: [] };
   var paper = { mcq: [], frq: null, answers: [], code: '' };
   var editor = null;
@@ -181,12 +224,12 @@
   }
 
   function attemptsUsed() {
-    var record = readRecords()[String(unit)];
+    var record = readRecords()[recordKey(course, unit)];
     return record ? record.attempts : 0;
   }
 
   function bestSoFar() {
-    var record = readRecords()[String(unit)];
+    var record = readRecords()[recordKey(course, unit)];
     return record ? record.best : 0;
   }
 
@@ -295,7 +338,8 @@
     for (var i = 1; i <= TOTAL_UNITS; i++) {
       var item = el('li');
       var link = el('a', 'route', 'Unit ' + i + ' test');
-      link.href = '/unit-test.html?unit=' + i;
+      link.href = '/unit-test.html?unit=' + i
+        + (course === 'units' ? '' : '&course=' + course);
       item.appendChild(link);
       list.appendChild(item);
     }
@@ -318,7 +362,8 @@
   }
 
   function fetchPool(name) {
-    return fetch(DATA_DIR + 'unit-' + unit + '-' + name + '.json', { credentials: 'same-origin' })
+    var dir = DATA_DIR + (COURSES[course] || COURSES.units).dir;
+    return fetch(dir + 'unit-' + unit + '-' + name + '.json', { credentials: 'same-origin' })
       .then(function (res) {
         if (!res.ok) throw new Error('HTTP ' + res.status);
         return res.json();
@@ -623,7 +668,18 @@
       return Promise.resolve(failAllCases(cases, 'the Python runtime could not load'));
     }
 
+    /* Whatever the problem needs, plus whatever the answer imports.
+       The Python for Data papers set problems in numpy and pandas, neither of
+       which is in the base interpreter; without this the paper grades every
+       case as ModuleNotFoundError and the learner sees a zero they did not
+       earn. Same omission the Run button had. */
+    var wanted = ((frq && frq.packages) || [])
+      .concat(window.Pyodide.packagesFor ? window.Pyodide.packagesFor(source) : []);
+
     return window.Pyodide.ensureReady().then(function (pyodide) {
+      if (!window.Pyodide.ensurePackages || !wanted.length) return pyodide;
+      return window.Pyodide.ensurePackages(wanted).then(function () { return pyodide; });
+    }).then(function (pyodide) {
       if (!harnessInstalled) {
         pyodide.runPython(HARNESS);
         harnessInstalled = true;
@@ -681,7 +737,7 @@
         unit: unit,
         score: scored.total,
         total: 100,
-        attempt: (readRecords()[String(unit)] || {}).attempts + 1 || 1,
+        attempt: (readRecords()[recordKey(course, unit)] || {}).attempts + 1 || 1,
         // Clamped by the sanitizer, so a tab left open over a weekend cannot
         // report a two-day test.
         durationSec: startedAt ? Math.round((at - startedAt) / 1000) : 0
@@ -714,10 +770,10 @@
   // reach the test without having worked through them.
   function persist(attempt) {
     var records = readRecords();
-    records[String(unit)] = mergeAttempt(records[String(unit)], attempt);
+    records[recordKey(course, unit)] = mergeAttempt(records[recordKey(course, unit)], attempt);
     writeRecords(records);
 
-    if (!records[String(unit)].passed) return false;
+    if (!records[recordKey(course, unit)].passed) return false;
 
     // Finishing the test is the last thing a unit needs, and it does not
     // happen on a lesson page, so the roll-up has to be nudged from here.
@@ -869,7 +925,7 @@
 
   function renderIntro() {
     var records = readRecords();
-    var record = records[String(unit)] || null;
+    var record = records[recordKey(course, unit)] || null;
     var best = $('ut-best');
     if (best) {
       if (record && record.attempts) {
@@ -898,6 +954,7 @@
   }
 
   function boot() {
+    course = courseFromQuery();
     unit = unitFromQuery();
 
     var title = $('ut-title');
