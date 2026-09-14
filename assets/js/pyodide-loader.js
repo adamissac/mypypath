@@ -194,10 +194,88 @@
     });
   }
 
+  /* ---------------------------------------------------------- packages */
+
+  /* numpy and pandas are in the Pyodide distribution but not in the base
+     interpreter, so an `import numpy` fails until loadPackage has fetched the
+     wheel. The checker has always done this from a spec's `packages`; the free
+     Run button did not, which is why pressing Run on any Python for Data
+     lesson from unit 3 on returned ModuleNotFoundError while Check on the same
+     lesson passed.
+
+     Only names the distribution actually ships may appear here: loadPackage
+     rejects on anything else. The list mirrors KNOWN in
+     scripts/validate-checks.js, and the two should move together. */
+  var LOADABLE = ['numpy', 'pandas'];
+
+  // Resolved once per session, then free. Pyodide caches the wheel itself, but
+  // we still avoid a second await and a second "Loading..." flash.
+  var packageLoaded = {};
+  var packageInflight = {};
+
+  /* Top-level modules a snippet imports, narrowed to the ones we can load.
+     Deliberately a scan rather than a parse: it runs before Python is up, on
+     code that may not even be syntactically valid yet. Over-matching costs one
+     no-op loadPackage; under-matching costs a ModuleNotFoundError, so the
+     patterns are kept loose. */
+  function packagesFor(source) {
+    var text = String(source || '');
+    var found = {};
+    var patterns = [
+      /^[ \t]*import[ \t]+([^\n#]+)/gm,
+      /^[ \t]*from[ \t]+([A-Za-z_][\w.]*)[ \t]+import\b/gm
+    ];
+    patterns.forEach(function (re) {
+      var m;
+      while ((m = re.exec(text)) !== null) {
+        // "numpy as np, pandas" -> ["numpy", "pandas"]
+        m[1].split(',').forEach(function (part) {
+          var name = part.trim().split(/[ \t]+as[ \t]+/)[0].trim().split('.')[0];
+          if (LOADABLE.indexOf(name) !== -1) found[name] = true;
+        });
+      }
+    });
+    return Object.keys(found);
+  }
+
+  /* Loads what is missing and resolves when it is importable.
+     `onStart` is called with the names actually being fetched, and only when
+     there is a real fetch to wait for, so a caller can show a loading state
+     for the cold case without flashing one on every subsequent run. */
+  function ensurePackages(names, onStart) {
+    var wanted = (names || []).filter(function (n) {
+      return LOADABLE.indexOf(n) !== -1 && !packageLoaded[n];
+    });
+    if (!wanted.length) return Promise.resolve([]);
+
+    return ensureReady().then(function (pyodide) {
+      if (typeof pyodide.loadPackage !== 'function') return [];
+
+      var cold = wanted.filter(function (n) { return !packageInflight[n]; });
+      if (cold.length && typeof onStart === 'function') onStart(cold.slice());
+
+      return Promise.all(wanted.map(function (name) {
+        if (!packageInflight[name]) {
+          packageInflight[name] = Promise.resolve(pyodide.loadPackage(name))
+            .then(function () { packageLoaded[name] = true; })
+            .catch(function (err) {
+              // Let the next attempt try again rather than caching a failure
+              // for the life of the page.
+              packageInflight[name] = null;
+              throw err;
+            });
+        }
+        return packageInflight[name];
+      })).then(function () { return wanted; });
+    });
+  }
+
   window.Pyodide = {
     ensureReady: ensureReady,
     scheduleWarmup: scheduleWarmup,
     runCode: runCode,
+    packagesFor: packagesFor,
+    ensurePackages: ensurePackages,
     attachBootPanel: attachBootPanel,
     RUN_LABEL: 'Run',
     OUTPUT_HINT: 'Press Run to see output'

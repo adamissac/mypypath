@@ -684,7 +684,15 @@
    * unit 1 of Foundations should not pay for pandas to learn print(). */
   async function ensurePackages(pyodide, spec) {
     var wanted = (spec && spec.packages) || [];
-    if (!wanted.length || typeof pyodide.loadPackage !== 'function') return;
+    if (!wanted.length) return;
+    // pyodide-loader owns this now, so a package fetched for the Run button is
+    // already there for the checker and vice versa. The direct call stays as a
+    // fallback for anything holding a bare Pyodide shim.
+    if (window.Pyodide && typeof window.Pyodide.ensurePackages === 'function') {
+      await window.Pyodide.ensurePackages(wanted);
+      return;
+    }
+    if (typeof pyodide.loadPackage !== 'function') return;
     await pyodide.loadPackage(wanted);
   }
 

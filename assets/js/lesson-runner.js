@@ -301,6 +301,29 @@ function makeEscapable(cm, label) {
         window.Pyodide.attachBootPanel(outputEl);
         await window.Pyodide.ensureReady();
       }
+
+      // Anything the snippet imports that is not in the base interpreter has
+      // to be fetched before it runs, or `import pandas` raises
+      // ModuleNotFoundError. The wheels are tens of megabytes on a cold cache,
+      // so this says what it is waiting for rather than freezing on
+      // "Running..." -- and says nothing at all once they are loaded, which is
+      // every run after the first.
+      //
+      // Driven by the code in front of the student, not by the lesson: a
+      // Foundations unit 1 page importing nothing still pays nothing, and a
+      // student who reaches for pandas early still gets it.
+      if (window.Pyodide && window.Pyodide.ensurePackages) {
+        await window.Pyodide.ensurePackages(
+          window.Pyodide.packagesFor(code),
+          function (names) {
+            outputEl.innerHTML = '<div class="output-loading">Loading '
+              + escapeHtml(names.join(' and '))
+              + '&hellip; <span class="output-loading-note">first run only,'
+              + ' this can take a few seconds</span></div>';
+          }
+        );
+      }
+
       outputEl.innerHTML = '<div class="output-loading">Running...</div>';
       var result = await window.Pyodide.runCode(code);
       renderRunOutput(outputEl, result);
