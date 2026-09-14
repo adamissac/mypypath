@@ -270,12 +270,40 @@
     });
   }
 
+  /* ---------------------------------------------------------- fixtures */
+
+  /* The files an exercise reads (scores.csv and the like) live in its check
+     spec. The checker writes them into a scratch directory for every case;
+     Run used to write nothing, so a correct starter that opened scores.csv
+     raised FileNotFoundError on Run and passed on Check. This puts the same
+     files in the interpreter's working directory before a Run.
+
+     Author-supplied, but still joined into a path, so an absolute name or one
+     that climbs out with .. is refused rather than written where it points --
+     the same rule the checker applies. Returns the names actually written. */
+  function writeFixtures(pyodide, files) {
+    if (!pyodide || !pyodide.FS || !files) return [];
+    var written = [];
+    Object.keys(files).forEach(function (name) {
+      var parts = String(name).split('/');
+      if (!name || name.charAt(0) === '/' || parts.indexOf('..') !== -1) return;
+      if (parts.length > 1 && typeof pyodide.FS.mkdirTree === 'function') {
+        pyodide.FS.mkdirTree(parts.slice(0, -1).join('/'));
+      }
+      var body = files[name];
+      pyodide.FS.writeFile(name, body == null ? '' : String(body));
+      written.push(name);
+    });
+    return written;
+  }
+
   window.Pyodide = {
     ensureReady: ensureReady,
     scheduleWarmup: scheduleWarmup,
     runCode: runCode,
     packagesFor: packagesFor,
     ensurePackages: ensurePackages,
+    writeFixtures: writeFixtures,
     attachBootPanel: attachBootPanel,
     RUN_LABEL: 'Run',
     OUTPUT_HINT: 'Press Run to see output'

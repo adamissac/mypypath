@@ -280,6 +280,29 @@ function makeEscapable(cm, label) {
     return window.exerciseSolutions || {};
   }
 
+  /* The check spec for this lesson, fetched once per page. Run reads only the
+     `files` of the editor being run from it; check-ui.js fetches the same URL
+     for grading, and the browser cache makes the second request free. */
+  var specPromise = null;
+  function lessonSpec() {
+    if (!specPromise) {
+      var url = window.PyPathCheckUI && window.PyPathCheckUI.specUrl
+        ? window.PyPathCheckUI.specUrl()
+        : null;
+      specPromise = url
+        ? fetch(url).then(function (r) { return r.ok ? r.json() : null; })
+            .catch(function () { return null; })
+        : Promise.resolve(null);
+    }
+    return specPromise;
+  }
+
+  function fixturesFor(editorId) {
+    return lessonSpec().then(function (spec) {
+      return (spec && spec[editorId] && spec[editorId].files) || null;
+    });
+  }
+
   window.runEditorCode = async function (editorId) {
     var outputEl = document.getElementById('output-' + editorId);
     var editor = window.editors && window.editors[editorId];
@@ -322,6 +345,16 @@ function makeEscapable(cm, label) {
               + ' this can take a few seconds</span></div>';
           }
         );
+      }
+
+      // An exercise that reads scores.csv needs scores.csv to exist. The
+      // files come from the lesson's check spec, so Run and Check read the
+      // same data; a lesson with no fixtures fetches nothing more.
+      if (window.Pyodide && window.Pyodide.writeFixtures) {
+        var fixtures = await fixturesFor(editorId);
+        if (fixtures) {
+          window.Pyodide.writeFixtures(await window.Pyodide.ensureReady(), fixtures);
+        }
       }
 
       outputEl.innerHTML = '<div class="output-loading">Running...</div>';
