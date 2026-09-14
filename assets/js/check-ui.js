@@ -180,6 +180,23 @@
         .then(function (result) {
           renderResult(panel, result, spec);
           recordBest(exerciseId, result);
+
+          /* Tell lesson-progress the item is done.
+             recordBest writes the high-water mark under its own key, which is
+             what a teacher reads; it is not the lesson-completion map. Before
+             this, only the legacy checkExercise() global ticked an item off, so
+             an exercise graded by this panel -- the only grader Python for Data
+             has -- never completed its lesson.
+             An event rather than a direct call: check-ui must not depend on
+             lesson-progress being on the page, and markItem is idempotent. */
+          if (result.allPassed) {
+            try {
+              document.dispatchEvent(new CustomEvent('pypath:exercise-passed', {
+                detail: { exerciseId: exerciseId, lessonPath: lessonPath() }
+              }));
+            } catch (e) {}
+          }
+
           note('code.tests_passed', {
             lessonPath: lessonPath(),
             editorId: exerciseId,

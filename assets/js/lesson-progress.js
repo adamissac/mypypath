@@ -280,12 +280,21 @@
   var path = location.pathname;
   var unit = curriculum ? curriculum.unitOf(path) : null;
 
+  /* Both courses. Foundations lessons live under /units/, Python for Data
+     under /data/, and everything this file does on a lesson page -- collecting
+     the required items, wrapping the globals that tick them off, the progress
+     chip -- was gated behind a /units/-only pattern. A Data lesson therefore
+     left `required` empty, markItem returned on its first line, and no Data
+     lesson could ever be recorded as done, let alone complete a unit.
+
+     specUrl below already matched (units|data); this is the half that was
+     missed. */
   function isLessonPage() {
-    return /^\/units\/unit-\d+\/[^/]+\.html$/.test(path);
+    return /^\/(units|data)\/unit-\d+\/[^/]+\.html$/.test(path);
   }
 
   function isUnitPage() {
-    return /^\/units\/unit-\d+\.html$/.test(path);
+    return /^\/(units|data)\/unit-\d+\.html$/.test(path);
   }
 
   // Read afresh on every call rather than captured once: role-nav.js resolves
@@ -1042,6 +1051,16 @@
       window.checkExercise = check;
     }
   }
+
+  /* The modern grader's verdict. check-ui.js runs the visible and hidden cases
+     and says so here when every one of them passed; the legacy checkExercise()
+     path above covers the older Foundations pages that still use it. Both end
+     at markItem, which only ever adds and ignores an id the page does not
+     require. */
+  document.addEventListener('pypath:exercise-passed', function (e) {
+    var id = e && e.detail && e.detail.exerciseId;
+    if (id) markItem(id);
+  });
 
   // exercises.js builds its Save button at runtime, so this is delegated.
   // It must be captured, not bubbled: the Save handler calls stopPropagation(),
