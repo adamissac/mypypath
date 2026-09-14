@@ -1889,8 +1889,18 @@ html.reduced-motion ::view-transition-new(root) {
   animation: none !important;
 }
 
+/* The film and the progress bar are hidden outright for a reduced-motion
+   visitor, and main is forced visible. They used to share one rule forcing
+   opacity: 1, which was right for main and turned #page-transition -- a
+   full-screen cover in the page colour -- into a blank page on every route.
+   scripts/verify-reduced-motion.mjs now fails on any such cover. */
 html.reduced-motion #page-transition,
-html.reduced-motion .nav-progress,
+html.reduced-motion .nav-progress {
+  transition: none !important;
+  animation: none !important;
+  opacity: 0 !important;
+}
+
 html.reduced-motion.page-from-nav main {
   transition: none !important;
   animation: none !important;

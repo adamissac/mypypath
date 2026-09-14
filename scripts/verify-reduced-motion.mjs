@@ -21,6 +21,7 @@ const PORT = Number(process.env.RM_PORT || 8079);
 const PAGES = [
   '/index.html', '/curriculum.html', '/units/unit-1/what-is-python.html',
   '/classroom.html', '/quiz.html', '/sandbox.html', '/progress.html',
+  '/data/unit-3/why-arrays-beat-lists.html',
 ];
 
 const TYPES = {
@@ -63,7 +64,25 @@ const PROBE = `(() => {
       });
     }
   }
+  /* Stillness is not enough: the page also has to be visible. A reduced-motion
+     rule once forced #page-transition -- a full-screen film in the page colour
+     that should sit at opacity 0 -- to opacity 1, and every page rendered blank
+     for exactly the visitors this script is about. A fixed element covering
+     the viewport with a visible background is that shape, whatever its name. */
+  const covering = [];
+  for (const el of document.querySelectorAll('body *')) {
+    const cs = getComputedStyle(el);
+    if (cs.position !== 'fixed' || cs.display === 'none' || cs.visibility === 'hidden') continue;
+    if (parseFloat(cs.opacity) < 0.05) continue;
+    const bg = cs.backgroundColor;
+    if (!bg || bg === 'transparent' || /rgba\([^)]*,\s*0\)$/.test(bg)) continue;
+    const r = el.getBoundingClientRect();
+    if (r.width >= innerWidth * 0.9 && r.height >= innerHeight * 0.9) {
+      covering.push((el.id ? '#' + el.id : el.tagName.toLowerCase()) + ' opacity ' + cs.opacity);
+    }
+  }
   return {
+    covering,
     moving: moving.slice(0, 6),
     total: moving.length,
     bootPlaying: document.documentElement.classList.contains('pp-boot'),
@@ -88,6 +107,7 @@ async function run() {
     const problems = [];
     if (r.total) problems.push(`${r.total} element(s) still animating`);
     if (r.bootPlaying) problems.push('the boot overlay is playing');
+    if (r.covering.length) problems.push(`the page is covered by ${r.covering.join(', ')}`);
 
     console.log(`${page.padEnd(38)}${problems.length ? problems.join(', ') : 'still'}`);
     for (const m of r.moving) {
