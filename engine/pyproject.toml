@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pypath-engine"
+version = "0.1.0"
+description = "Offline skill-mastery model and practice recommender for PyPath"
+requires-python = ">=3.9"
+dependencies = [
+  "numpy>=1.26",
+  "pandas>=2.0",
+  "scikit-learn>=1.4",
+  "scipy>=1.11",
+  "matplotlib>=3.8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "hypothesis>=6.100"]
+
+[tool.setuptools]
+packages = ["pypath_engine"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
