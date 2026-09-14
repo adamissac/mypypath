@@ -146,51 +146,75 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-5.html">Unit 5</a>
-</nav>
-<h1 class="lesson-title">Selecting What You Need</h1>
-<p class="lead">Read the columns you want, and stop carrying the ones you do not.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 5 &middot; Getting Data In</p>
+<p class="sidebar-unit-label">Unit 5 &bull; Getting Data In</p>
 <nav>
 <ul>
 <li><a href="/data/unit-5/csv-options-that-matter.html">1. CSV Options That Matter</a></li>
 <li><a href="/data/unit-5/missing-markers-on-load.html">2. Missing Markers on Load</a></li>
-<li><a href="/data/unit-5/selecting-what-you-need.html" class="is-current" aria-current="page">3. Selecting What You Need</a></li>
+<li><a href="/data/unit-5/selecting-what-you-need.html" class="active" aria-current="page">3. Selecting What You Need</a></li>
 <li><a href="/data/unit-5/reading-json-data.html">4. Reading JSON Data</a></li>
 <li><a href="/data/unit-5/writing-data-out.html">5. Writing Data Out</a></li>
 <li><a href="/data/unit-5/checking-what-you-loaded.html">6. Checking What You Loaded</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-5.html">Unit 5</a>
+<span class="separator">/</span>
+<span class="current">Selecting What You Need</span>
+</nav>
+<div class="eyebrow">Unit 5 &bull; Lesson 3</div>
+<h1 class="lesson-title">Selecting What You Need</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Read the columns you want, and stop carrying the ones you do not.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-5/missing-markers-on-load.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-5/reading-json-data.html">Next: Reading JSON Data</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Read only the columns you need with <code>usecols</code>.</li>
 <li>Tidy shouty or spaced column names in one pass.</li>
 <li>Say what a smaller table buys beyond memory.</li>
 <li>Keep an id column as text so it does not lose its leading zeros.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>A real export is forty columns and you want six. Carrying the other thirty-four costs memory, but more importantly it costs attention: every one of them is a column that can surprise you later, and none of them is a column you checked.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>usecols on the way in</h2>
+<h2>Step 1: usecols on the way in</h2>
 <p>A wide export is mostly columns you will never touch. Naming the ones you want keeps the table small and the checks short.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Ask for what you need</h3>
 <p><code>usecols</code> takes the names, and the resulting table has only those. The rest of the file is never turned into columns at all.</p>
 <pre class="code"><code>import pandas as pd
@@ -200,6 +224,12 @@ text = "name,city,score,notes\nAda,Leeds,92,ignore me\n"
 df = pd.read_csv(StringIO(text), usecols=["name", "score"])
 print(df)
 print(df.shape)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">The type of an id</h3>
 <p>An id made of digits will be read as a number, and a number has no leading zeros. <code>dtype=</code> keeps it as text so <code>007</code> stays <code>007</code>.</p>
 <pre class="code"><code>import pandas as pd
@@ -209,6 +239,9 @@ text = "id,score\n007,92\n"
 print(pd.read_csv(StringIO(text))["id"].iloc[0])
 print(pd.read_csv(StringIO(text), dtype={"id": str})["id"].iloc[0])</code></pre>
 <p class="note">This also matters for joining. An id read as a number in one file and as text in another will match nothing in unit 8, and the merge will succeed with an empty result.</p>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -242,14 +275,24 @@ print(df.shape)
 </div>
 
 <div class="content-section">
-<h2>Renaming as you go</h2>
+<h2>Step 2: Renaming as you go</h2>
 <p>Column names from real systems are often shouty, spaced, or both. <code>rename</code> takes a dictionary from old name to new.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">One name at a time</h3>
 <p>A small mapping for the handful you actually care about.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"Full Name": ["Ada"], "SCORE": [92]})
 print(list(df.rename(columns={"Full Name": "name"}).columns))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">A rule for all of them</h3>
 <p>When every name needs the same treatment, build the mapping with a comprehension rather than typing forty pairs.</p>
 <pre class="code"><code>import pandas as pd
@@ -257,6 +300,10 @@ print(list(df.rename(columns={"Full Name": "name"}).columns))</code></pre>
 df = pd.DataFrame({"Full Name": ["Ada"], "SCORE": [92]})
 tidy = df.rename(columns={c: c.lower().replace(" ", "_") for c in df.columns})
 print(list(tidy.columns))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -285,6 +332,7 @@ print(None)   # the tidied names
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -341,9 +389,10 @@ print(narrow("wide.csv", ["name", "score"]))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-5/missing-markers-on-load.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-5/missing-markers-on-load.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-5/reading-json-data.html">Next</a>
 </div>
 </section>

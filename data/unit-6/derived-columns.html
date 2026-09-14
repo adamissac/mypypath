@@ -146,51 +146,75 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-6.html">Unit 6</a>
-</nav>
-<h1 class="lesson-title">Derived Columns</h1>
-<p class="lead">The column that answers your question usually is not in the file.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 6 &middot; Filtering and Deriving</p>
+<p class="sidebar-unit-label">Unit 6 &bull; Filtering and Deriving</p>
 <nav>
 <ul>
 <li><a href="/data/unit-6/filtering-with-masks.html">1. Filtering with Masks</a></li>
 <li><a href="/data/unit-6/isin-between-and-query.html">2. isin, between and query</a></li>
-<li><a href="/data/unit-6/derived-columns.html" class="is-current" aria-current="page">3. Derived Columns</a></li>
+<li><a href="/data/unit-6/derived-columns.html" class="active" aria-current="page">3. Derived Columns</a></li>
 <li><a href="/data/unit-6/apply-and-when-not-to.html">4. apply, and When Not To</a></li>
 <li><a href="/data/unit-6/binning-values.html">5. Binning Values</a></li>
 <li><a href="/data/unit-6/sorting-and-top-n.html">6. Sorting and Top N</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-6.html">Unit 6</a>
+<span class="separator">/</span>
+<span class="current">Derived Columns</span>
+</nav>
+<div class="eyebrow">Unit 6 &bull; Lesson 3</div>
+<h1 class="lesson-title">Derived Columns</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>The column that answers your question usually is not in the file.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-6/isin-between-and-query.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-6/apply-and-when-not-to.html">Next: apply, and When Not To</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Build a column from arithmetic between other columns.</li>
 <li>Divide a column by one of its own summaries.</li>
 <li>Use <code>assign</code> when you want to keep a chain going.</li>
 <li>Say why a rate is usually more comparable than a total.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Files hold what was recorded; questions are about rates, shares and differences. "Which region sells most" and "which region sells most per head" are different questions with different answers, and only one of them is in the file.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>Arithmetic between columns</h2>
+<h2>Step 1: Arithmetic between columns</h2>
 <p>Columns combine row by row, so a rate, a total or a difference is one expression.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Two columns in, one out</h3>
 <p>The alignment is by index, so the rows always line up with themselves.</p>
 <pre class="code"><code>import pandas as pd
@@ -198,6 +222,12 @@
 df = pd.DataFrame({"sales": [100.0, 90.0], "people": [4, 3]})
 df["per_person"] = df["sales"] / df["people"]
 print(df)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">A column against its own total</h3>
 <p>Dividing a column by its sum broadcasts the single total across every row, giving each row's share.</p>
 <pre class="code"><code>import pandas as pd
@@ -205,6 +235,12 @@ print(df)</code></pre>
 df = pd.DataFrame({"amount": [25.0, 75.0]})
 df["share"] = df["amount"] / df["amount"].sum() * 100
 print(df)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">Why the rate is the fairer comparison</h3>
 <p>The biggest total is often just the biggest region. Per head, the ranking can reverse entirely — and that reversal is usually the finding.</p>
 <pre class="code"><code>import pandas as pd
@@ -212,6 +248,10 @@ print(df)</code></pre>
 df = pd.DataFrame({"region": ["A", "B"], "sales": [1000.0, 300.0], "people": [500, 50]})
 df["per_person"] = df["sales"] / df["people"]
 print(df)</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -243,8 +283,12 @@ print(None)   # highest per_person
 </div>
 
 <div class="content-section">
-<h2>assign keeps the chain going</h2>
+<h2>Step 2: assign keeps the chain going</h2>
 <p><code>assign</code> returns a new table with the column added, which is useful when you are building a pipeline rather than editing a variable.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">One expression, several steps</h3>
 <p>Each step hands a table to the next, and nothing in between needs a name. It also leaves the original alone, which the plain assignment form does not.</p>
 <pre class="code"><code>import pandas as pd
@@ -257,6 +301,9 @@ result = (df
 print(result)
 print(list(df.columns))   # untouched</code></pre>
 <p class="note">The lambda receives the table as it is at that point in the chain, which is what lets a later assign use a column an earlier one just made.</p>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -286,6 +333,7 @@ print(list(df.columns))
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -342,9 +390,10 @@ print(best_rate(pd.DataFrame({"region": ["A", "B"], "sales": [1000.0, 300.0], "p
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-6/isin-between-and-query.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-6/isin-between-and-query.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-6/apply-and-when-not-to.html">Next</a>
 </div>
 </section>

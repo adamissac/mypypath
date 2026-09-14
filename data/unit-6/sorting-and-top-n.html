@@ -146,20 +146,10 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-6.html">Unit 6</a>
-</nav>
-<h1 class="lesson-title">Sorting and Top N</h1>
-<p class="lead">Ordering a table, and taking the few rows that matter.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 6 &middot; Filtering and Deriving</p>
+<p class="sidebar-unit-label">Unit 6 &bull; Filtering and Deriving</p>
 <nav>
 <ul>
 <li><a href="/data/unit-6/filtering-with-masks.html">1. Filtering with Masks</a></li>
@@ -167,30 +157,64 @@
 <li><a href="/data/unit-6/derived-columns.html">3. Derived Columns</a></li>
 <li><a href="/data/unit-6/apply-and-when-not-to.html">4. apply, and When Not To</a></li>
 <li><a href="/data/unit-6/binning-values.html">5. Binning Values</a></li>
-<li><a href="/data/unit-6/sorting-and-top-n.html" class="is-current" aria-current="page">6. Sorting and Top N</a></li>
+<li><a href="/data/unit-6/sorting-and-top-n.html" class="active" aria-current="page">6. Sorting and Top N</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-6.html">Unit 6</a>
+<span class="separator">/</span>
+<span class="current">Sorting and Top N</span>
+</nav>
+<div class="eyebrow">Unit 6 &bull; Lesson 6</div>
+<h1 class="lesson-title">Sorting and Top N</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Ordering a table, and taking the few rows that matter.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-6/binning-values.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-6.html">Unit 6 test</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Sort a table by one column, and by several.</li>
 <li>Say what <code>sort_values</code> returns.</li>
 <li>Take the top few rows with <code>nlargest</code>.</li>
 <li>Decide what happens to ties and to missing values.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Sorting is where the "returns a new table" rule bites hardest, because a sort you forget to assign looks like a sort that did not work. And "the top five" is a question worth asking directly rather than by sorting everything and slicing.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>sort_values returns a new table</h2>
+<h2>Step 1: sort_values returns a new table</h2>
 <p><code>by</code> names the column, <code>ascending</code> chooses the direction, and the original is untouched unless you reassign.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The result is the point</h3>
 <p>Same rule as <code>drop</code> and <code>rename</code>. Calling it and ignoring the return is a no-op.</p>
 <pre class="code"><code>import pandas as pd
@@ -199,12 +223,24 @@ df = pd.DataFrame({"name": ["Ada", "Alan"], "score": [92, 79]})
 df.sort_values("score")
 print(df)                 # unchanged
 print(df.sort_values("score"))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Several columns, and ties</h3>
 <p>A list of columns sorts by the first, then breaks ties with the second. Without a tiebreaker the order among equal values is whatever it was — stable, but not meaningful.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"city": ["Y", "L", "L"], "name": ["Bo", "Zoe", "Ada"], "score": [88, 88, 92]})
 print(df.sort_values(["score", "name"], ascending=[False, True]))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">Where missing values go</h3>
 <p>NaN sorts to the end by default, whichever direction you chose. <code>na_position="first"</code> changes it — and if the missing rows matter, saying so beats letting them sit quietly at the bottom.</p>
 <pre class="code"><code>import pandas as pd
@@ -213,6 +249,10 @@ import numpy as np
 df = pd.DataFrame({"score": [92, np.nan, 79]})
 print(df.sort_values("score")["score"].tolist())
 print(df.sort_values("score", na_position="first")["score"].tolist())</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -243,8 +283,12 @@ print(df)
 </div>
 
 <div class="content-section">
-<h2>nlargest says what you meant</h2>
+<h2>Step 2: nlargest says what you meant</h2>
 <p>Sorting the whole table to look at three rows is more work than the question needs, and reads less clearly.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The top few, directly</h3>
 <p>It takes the count and the column, and does both the ordering and the slice. Asking for more rows than exist gives you all of them rather than an error.</p>
 <pre class="code"><code>import pandas as pd
@@ -252,12 +296,22 @@ print(df)
 df = pd.DataFrame({"name": ["Ada", "Grace", "Alan"], "score": [92, 88, 79]})
 print(df.nlargest(2, "score"))
 print(df.nlargest(10, "score").shape)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">And the bottom few</h3>
 <p><code>nsmallest</code> is the same idea the other way up, and is clearer than sorting ascending and taking the head.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"name": ["Ada", "Grace", "Alan"], "score": [92, 88, 79]})
 print(df.nsmallest(1, "score")["name"].tolist())</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -286,6 +340,7 @@ print(None)   # the same, with nlargest
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -342,10 +397,11 @@ print(ranked(pd.DataFrame({"name": ["Zoe", "Ada"], "score": [88, 88]})))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-6/binning-values.html">&larr; Previous</a>
-<a class="btn btn-primary route" href="/data.html">Back to the course</a>
+<a class="btn btn-ghost route" href="/data/unit-6/binning-values.html">&larr; Prev</a>
+<a class="btn btn-primary route" href="/data/unit-6.html">Unit 6 test</a>
 </div>
 </section>
 </div>

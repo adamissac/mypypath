@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Find them, then decide between dropping and filling on purpose.",
+    "prompt": "Missing Values: Drop the incomplete rows",
     "cases": [
       {
         "name": "returns the right answer",
@@ -26,6 +26,44 @@
       }
     ],
     "hint": "Build a new list rather than removing from the one you were given. Removing while looping skips rows, and a caller who still needs their data will not thank you."
+  },
+  "exercise2": {
+    "prompt": "Missing Values: Fill with the mean",
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "fill_with_mean([92, None, 88])",
+        "expect": "[92, 90.0, 88]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the mean uses only the known values, not zeros",
+        "call": "fill_with_mean([10, None, None, 20])",
+        "expect": "[10, 15.0, 15.0, 20]"
+      },
+      {
+        "name": "nothing missing changes nothing",
+        "call": "fill_with_mean([1, 2])",
+        "expect": "[1, 2]"
+      },
+      {
+        "name": "all missing is left alone",
+        "call": "fill_with_mean([None, None])",
+        "expect": "[None, None]"
+      },
+      {
+        "name": "the mean is rounded to one place",
+        "call": "fill_with_mean([1, 1, 2, None])",
+        "expect": "[1, 1, 2, 1.3]"
+      },
+      {
+        "name": "the caller's list is not changed",
+        "call": "(lambda v: (fill_with_mean(v), v)[1])([4, None])",
+        "expect": "[4, None]"
+      }
+    ],
+    "hint": "known = [s for s in scores if s is not None]. If known is empty, return the list. Otherwise compute mean = round(sum(known) / len(known), 1) and build [mean if s is None else s for s in scores]."
   },
   "questions": [
     {
@@ -67,6 +105,18 @@
         1
       ],
       "explain": "Dropping most of your data is not cleaning, it is selecting. If the column is mostly missing, that fact is the finding."
+    },
+    {
+      "id": "d2-mv-4",
+      "prompt": "Filling a missing test score with 0 claims what?",
+      "choices": [
+        "Nothing",
+        "That the student sat the test and scored nothing",
+        "That the score is unknown",
+        "That the row should be ignored"
+      ],
+      "answer": 1,
+      "explain": "A fill value is a statement about the world. Zero is the right fill only when zero is what actually happened."
     }
   ]
 }

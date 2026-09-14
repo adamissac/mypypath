@@ -146,58 +146,229 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-2.html">Unit 2</a>
-</nav>
-<h1 class="lesson-title">Filtering Rows</h1>
-<p class="lead">Selecting the rows you meant, and noticing how many you dropped.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 2 &middot; Cleaning and Shaping</p>
+<p class="sidebar-unit-label">Unit 2 &bull; Cleaning and Shaping</p>
 <nav>
 <ul>
 <li><a href="/data/unit-2/what-dirty-data-looks-like.html">1. What Dirty Data Looks Like</a></li>
 <li><a href="/data/unit-2/missing-values.html">2. Missing Values</a></li>
 <li><a href="/data/unit-2/fixing-types.html">3. Fixing Types</a></li>
 <li><a href="/data/unit-2/removing-duplicates.html">4. Removing Duplicates</a></li>
-<li><a href="/data/unit-2/filtering-rows.html" class="is-current" aria-current="page">5. Filtering Rows</a></li>
+<li><a href="/data/unit-2/filtering-rows.html" class="active" aria-current="page">5. Filtering Rows</a></li>
 <li><a href="/data/unit-2/sorting-and-ranking.html">6. Sorting and Ranking</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
-
-
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-2.html">Unit 2</a>
+<span class="separator">/</span>
+<span class="current">Filtering Rows</span>
+</nav>
+<div class="eyebrow">Unit 2 &bull; Lesson 5</div>
+<h1 class="lesson-title">Filtering Rows</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Selecting the rows you meant, and noticing how many you dropped.</p>
+<div class="lesson-meta">
+<span class="pill">Beginner</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-2/removing-duplicates.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-2/sorting-and-ranking.html">Next: Sorting and Ranking</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
-<h2>A filter is a comprehension with a test</h2>
-<p>Say the condition once, in one place. Scattering the same test through the code is how two parts of an analysis end up disagreeing about who counts.</p>
-<pre class="code"><code>rows = [{"score": 92}, {"score": 58}, {"score": 88}]
+<h2>What You Will Learn in This Lesson</h2>
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
+<li>Write a filter as a comprehension with a condition.</li>
+<li>Combine conditions with <code>and</code>, <code>or</code> and <code>not</code> without changing their meaning.</li>
+<li>Get the boundary right: <code>&gt;=</code> versus <code>&gt;</code>.</li>
+<li>Check how many rows a filter kept, and name the rule in one place.</li>
+</ul>
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Filtering decides who is in the analysis, so it changes the answer more than any calculation after it. A pass mark written as <code>&gt;</code> instead of <code>&gt;=</code> fails everyone exactly on the line, and marks cluster on the line. The boolean masks you meet in numpy (unit 3) and pandas (unit 6) are the same conditions applied to a whole column at once — the logic, and the traps, carry straight over.</p>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Step 1: A filter is a comprehension with a test</h2>
+<p>Keep the rows for which a condition is true.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">One condition</h3>
+<p>The <code>if</code> at the end of a comprehension keeps a row only when the test holds. The rows themselves come through whole.</p>
+<pre class="code"><code>rows = [{"name": "Ada", "score": 92}, {"name": "Alan", "score": 58}, {"name": "Grace", "score": 88}]
+
 passing = [r for r in rows if r["score"] &gt;= 60]
-print(len(passing))</code></pre>
+print([r["name"] for r in passing])</code></pre>
 
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">The boundary</h3>
+<p>“At least 60” includes 60. <code>&gt; 60</code> silently excludes everyone who scored exactly 60, and grades pile up at pass marks because people are marked up to them.</p>
+<pre class="code"><code>scores = [59, 60, 60, 61, 75]
+print(len([s for s in scores if s &gt;= 60]))
+print(len([s for s in scores if s &gt; 60]))</code></pre>
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Where the boundary bites</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Count how many students pass with <code>&gt;= 50</code> and with <code>&gt; 50</code>. How many students does the wrong operator fail?</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'scores = [48, 50, 50, 50, 51, 67, 50, 72]\n\n# with >=\n\n# with >\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">scores = [48, 50, 50, 50, 51, 67, 50, 72]
+
+# with &gt;=
+
+# with &gt;
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
-<h2>Count what you removed</h2>
-<p>A filter that quietly drops most of the data changes the answer more than any calculation after it. Printing the before and after is one line and catches it.</p>
-<pre class="code"><code>rows = [{"score": 92}, {"score": 58}]
-kept = [r for r in rows if r["score"] &gt;= 60]
-print(len(rows), "-&gt;", len(kept))</code></pre>
+<h2>Step 2: Combining conditions</h2>
+<p>Real filters are rarely one test.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">and, or, not</h3>
+<p><code>and</code> needs both; <code>or</code> needs either; <code>not</code> flips a test. Parentheses make the intent visible and stop precedence surprises — <code>and</code> binds tighter than <code>or</code>.</p>
+<pre class="code"><code>rows = [
+    {"name": "Ada", "subject": "maths", "score": 92},
+    {"name": "Alan", "subject": "maths", "score": 58},
+    {"name": "Grace", "subject": "art", "score": 88},
+]
+
+print([r["name"] for r in rows if r["subject"] == "maths" and r["score"] &gt;= 60])
+print([r["name"] for r in rows if r["subject"] == "art" or r["score"] &lt; 60])</code></pre>
 
 </div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">A range</h3>
+<p>Python allows a chained comparison, <code>60 &lt;= s &lt; 70</code>, which reads like the maths and avoids repeating the value.</p>
+<pre class="code"><code>scores = [55, 60, 65, 70, 90]
+print([s for s in scores if 60 &lt;= s &lt; 70])</code></pre>
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Two conditions</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print the names of students who study computing and scored between 70 and 89 inclusive.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'rows = [\n    {&quot;name&quot;: &quot;Ada&quot;, &quot;subject&quot;: &quot;computing&quot;, &quot;score&quot;: 92},\n    {&quot;name&quot;: &quot;Grace&quot;, &quot;subject&quot;: &quot;computing&quot;, &quot;score&quot;: 88},\n    {&quot;name&quot;: &quot;Alan&quot;, &quot;subject&quot;: &quot;maths&quot;, &quot;score&quot;: 75},\n    {&quot;name&quot;: &quot;Katherine&quot;, &quot;subject&quot;: &quot;computing&quot;, &quot;score&quot;: 70},\n]\n\n# names:\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">rows = [
+    {"name": "Ada", "subject": "computing", "score": 92},
+    {"name": "Grace", "subject": "computing", "score": 88},
+    {"name": "Alan", "subject": "maths", "score": 75},
+    {"name": "Katherine", "subject": "computing", "score": 70},
+]
+
+# names:
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Step 3: Name the rule, count the result</h2>
+<p>Two habits that stop filters quietly going wrong.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">Say the condition once</h3>
+<p>If “passing” is written in three places, one of them will be edited and the others will not. Put the rule in a function and use it everywhere.</p>
+<pre class="code"><code>PASS_MARK = 60
+
+def passed(row):
+    return row["score"] &gt;= PASS_MARK
+
+rows = [{"score": 92}, {"score": 58}]
+print(len([r for r in rows if passed(r)]))
+print(len([r for r in rows if not passed(r)]))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">Check the counts add up</h3>
+<p>A filter and its opposite should account for every row. If they do not, something in the data — a missing score, say — is falling through both.</p>
+<pre class="code"><code>rows = [{"score": 92}, {"score": 58}, {"score": None}]
+
+kept = [r for r in rows if r["score"] is not None and r["score"] &gt;= 60]
+dropped = [r for r in rows if r["score"] is not None and r["score"] &lt; 60]
+print(len(kept), "+", len(dropped), "of", len(rows))</code></pre>
+
+</div>
+</div>
+</div>
+<div class="info-callout"><p><strong>Key idea:</strong> Printing before-and-after counts is the cheapest check in data work. A filter that keeps 3 rows of 900 is almost always a mistake in the condition, not a finding.</p></div>
+</div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Rows at or above the mark</h3>
 <p>Write <code>passing(rows, mark)</code> that returns the rows whose <code>score</code> is at least <code>mark</code>.</p>
 <p class="hint-text">At least the mark means the mark passes. A plain greater-than silently fails everyone sitting exactly on the boundary, which is where marks cluster.</p>
 
@@ -219,10 +390,36 @@ print(len(passing([{"score": 92}, {"score": 58}], 60)))
 <div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Pass, fail and unknown</h3>
+<p>Write <code>split_results(rows, mark)</code> returning a tuple <code>(passed, failed, unknown)</code> of counts. A row passes when its <code>score</code> is at least <code>mark</code>, fails when it is below, and is unknown when the score is <code>None</code>. The three counts must add up to the number of rows.</p>
+<p class="hint-text">Test for None first, with "is None", so that 0 is not mistaken for missing. Only then compare with &gt;= mark.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'def split_results(rows, mark):\n    # (passed, failed, unknown) -- they must total len(rows).\n    return (0, 0, 0)\n\nrows = [{&quot;score&quot;: 92}, {&quot;score&quot;: 58}, {&quot;score&quot;: None}]\nprint(split_results(rows, 60))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">def split_results(rows, mark):
+    # (passed, failed, unknown) -- they must total len(rows).
+    return (0, 0, 0)
+
+rows = [{"score": 92}, {"score": 58}, {"score": None}]
+print(split_results(rows, 60))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
+</div>
+</div>
+</div>
 </div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-2/removing-duplicates.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-2/removing-duplicates.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-2/sorting-and-ranking.html">Next</a>
 </div>
 </section>

@@ -146,51 +146,75 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-6.html">Unit 6</a>
-</nav>
-<h1 class="lesson-title">apply, and When Not To</h1>
-<p class="lead">A general escape hatch that is slower than the thing it usually replaces.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 6 &middot; Filtering and Deriving</p>
+<p class="sidebar-unit-label">Unit 6 &bull; Filtering and Deriving</p>
 <nav>
 <ul>
 <li><a href="/data/unit-6/filtering-with-masks.html">1. Filtering with Masks</a></li>
 <li><a href="/data/unit-6/isin-between-and-query.html">2. isin, between and query</a></li>
 <li><a href="/data/unit-6/derived-columns.html">3. Derived Columns</a></li>
-<li><a href="/data/unit-6/apply-and-when-not-to.html" class="is-current" aria-current="page">4. apply, and When Not To</a></li>
+<li><a href="/data/unit-6/apply-and-when-not-to.html" class="active" aria-current="page">4. apply, and When Not To</a></li>
 <li><a href="/data/unit-6/binning-values.html">5. Binning Values</a></li>
 <li><a href="/data/unit-6/sorting-and-top-n.html">6. Sorting and Top N</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-6.html">Unit 6</a>
+<span class="separator">/</span>
+<span class="current">apply, and When Not To</span>
+</nav>
+<div class="eyebrow">Unit 6 &bull; Lesson 4</div>
+<h1 class="lesson-title">apply, and When Not To</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>A general escape hatch that is slower than the thing it usually replaces.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-6/derived-columns.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-6/binning-values.html">Next: Binning Values</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Say what <code>apply</code> does and what it costs.</li>
 <li>Reach for <code>.str</code> and <code>.dt</code> methods before reaching for apply.</li>
 <li>Recognise the cases where apply genuinely is the answer.</li>
 <li>Rewrite an apply as a vectorised expression.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>apply is the first thing people find, because it lets you write ordinary Python over a column. It is also a Python loop wearing a pandas coat, and on a large table it can be a hundred times slower than the built-in it replaced. Knowing what it costs is what makes reaching for it a choice rather than a habit.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>apply runs your function per value</h2>
+<h2>Step 1: apply runs your function per value</h2>
 <p>It is flexible and it is a Python loop underneath, so it costs far more than the vectorised operation it usually replaces.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">What it does</h3>
 <p>Your function is called once per element, in Python, and the results are collected into a new Series.</p>
 <pre class="code"><code>import pandas as pd
@@ -198,6 +222,12 @@
 scores = pd.Series([92, 88, 79])
 print(scores.apply(lambda s: s + 5))
 print(scores + 5)          # the same answer, without the loop</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">axis=1 is the expensive one</h3>
 <p>Applying across rows builds a Series object per row and calls your function with it. On a large table this is the slowest thing in this course.</p>
 <pre class="code"><code>import pandas as pd
@@ -205,6 +235,10 @@ print(scores + 5)          # the same answer, without the loop</code></pre>
 df = pd.DataFrame({"a": [1, 2], "b": [10, 20]})
 print(df.apply(lambda r: r["a"] + r["b"], axis=1))
 print(df["a"] + df["b"])   # the same answer, vectorised</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -238,8 +272,12 @@ print(by_column)
 </div>
 
 <div class="content-section">
-<h2>Reach for the built-in first</h2>
+<h2>Step 2: Reach for the built-in first</h2>
 <p>Arithmetic, comparisons, <code>.str</code> methods and <code>.dt</code> methods all have vectorised forms. Almost every apply people write is one of these.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The .str accessor</h3>
 <p>Every string method you know, applied to a whole column, without a loop and without apply.</p>
 <pre class="code"><code>import pandas as pd
@@ -248,6 +286,12 @@ names = pd.Series([" Ada ", "GRACE"])
 print(names.str.strip().str.lower())
 print(names.str.len())
 print(names.str.contains("A"))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Choosing between values</h3>
 <p><code>np.where</code> and <code>.map</code> cover the two cases people usually reach for apply to solve: a two-way choice, and a lookup.</p>
 <pre class="code"><code>import pandas as pd
@@ -258,6 +302,12 @@ print(np.where(scores &gt;= 70, "pass", "fail"))
 
 codes = pd.Series(["L", "Y"])
 print(codes.map({"L": "Leeds", "Y": "York"}))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">When apply really is the answer</h3>
 <p>When the operation genuinely has no vectorised form — parsing an awkward string format, calling an external function, anything with real branching per row — apply is the right tool and there is nothing to feel bad about. It is the unconsidered apply that costs.</p>
 <pre class="code"><code>import pandas as pd
@@ -269,6 +319,10 @@ def band(row):
 
 df = pd.DataFrame({"score": [92, 92], "city": ["L", "Y"]})
 print(df.apply(band, axis=1).tolist())</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -298,6 +352,7 @@ print(names.apply(lambda n: n.lower()).tolist())
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -355,9 +410,10 @@ print(verdicts(pd.Series([92, 60]), 70))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-6/derived-columns.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-6/derived-columns.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-6/binning-values.html">Next</a>
 </div>
 </section>

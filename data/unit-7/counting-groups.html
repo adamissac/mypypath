@@ -146,24 +146,14 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-7.html">Unit 7</a>
-</nav>
-<h1 class="lesson-title">Counting Groups</h1>
-<p class="lead">How many of each, and the difference between size and count.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 7 &middot; Grouping and Aggregating</p>
+<p class="sidebar-unit-label">Unit 7 &bull; Grouping and Aggregating</p>
 <nav>
 <ul>
 <li><a href="/data/unit-7/split-apply-combine.html">1. Split, Apply, Combine</a></li>
-<li><a href="/data/unit-7/counting-groups.html" class="is-current" aria-current="page">2. Counting Groups</a></li>
+<li><a href="/data/unit-7/counting-groups.html" class="active" aria-current="page">2. Counting Groups</a></li>
 <li><a href="/data/unit-7/agg-with-several-summaries.html">3. agg with Several Summaries</a></li>
 <li><a href="/data/unit-7/grouping-by-several-keys.html">4. Grouping by Several Keys</a></li>
 <li><a href="/data/unit-7/transform-versus-aggregate.html">5. transform versus aggregate</a></li>
@@ -171,26 +161,60 @@
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-7.html">Unit 7</a>
+<span class="separator">/</span>
+<span class="current">Counting Groups</span>
+</nav>
+<div class="eyebrow">Unit 7 &bull; Lesson 2</div>
+<h1 class="lesson-title">Counting Groups</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>How many of each, and the difference between size and count.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-7/split-apply-combine.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-7/agg-with-several-summaries.html">Next: agg with Several Summaries</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Count the distinct values in a column with <code>value_counts</code>.</li>
 <li>Say the difference between <code>size</code> and <code>count</code>.</li>
 <li>Turn counts into proportions.</li>
 <li>Choose which one answers the question you were asked.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>"How many of each" is the most common question anyone asks of a table, and there are two right answers to it depending on whether you mean rows or values. On a column with gaps in it the two differ, and picking the wrong one gives a number that is plausible and wrong.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>value_counts for one column</h2>
+<h2>Step 1: value_counts for one column</h2>
 <p>For a single column this is the shortest path: distinct values and how often each appears, already sorted by frequency.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Counts, and shares</h3>
 <p><code>normalize=True</code> turns the counts into proportions of the whole, which is usually what a reader wants beside them.</p>
 <pre class="code"><code>import pandas as pd
@@ -198,6 +222,12 @@
 city = pd.Series(["L", "Y", "L", "L"])
 print(city.value_counts())
 print(city.value_counts(normalize=True))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Missing values are not counted by default</h3>
 <p>So the counts can sum to less than the length of the column. <code>dropna=False</code> makes the gaps a category of their own.</p>
 <pre class="code"><code>import pandas as pd
@@ -206,6 +236,10 @@ import numpy as np
 city = pd.Series(["L", np.nan, "Y"])
 print(city.value_counts().sum(), "of", len(city))
 print(city.value_counts(dropna=False))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -236,8 +270,12 @@ print(None)   # as proportions
 </div>
 
 <div class="content-section">
-<h2>size counts rows, count counts values</h2>
+<h2>Step 2: size counts rows, count counts values</h2>
 <p>On a group, <code>size</code> is how many rows are in it. <code>count</code> is how many non-missing values a column has in it. They differ exactly where the data has holes.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The difference, shown</h3>
 <p>Ten rows with three missing scores give a size of 10 and a count of 7. Which one you want depends on whether you are asking "how many students" or "how many marked papers".</p>
 <pre class="code"><code>import pandas as pd
@@ -247,6 +285,12 @@ df = pd.DataFrame({"k": ["a", "a", "a"], "v": [1, np.nan, 3]})
 g = df.groupby("k")
 print("size:", g.size().to_dict())
 print("count:", g["v"].count().to_dict())</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Both at once</h3>
 <p>Asking for both is usually the honest answer, because the gap between them is itself information about the data.</p>
 <pre class="code"><code>import pandas as pd
@@ -255,6 +299,9 @@ import numpy as np
 df = pd.DataFrame({"k": ["a", "a", "b"], "v": [1, np.nan, 3]})
 print(df.groupby("k")["v"].agg(["size", "count", "mean"]))</code></pre>
 <p class="note">Note the mean: it is computed over the <em>count</em>, not the size. A group of three rows with one missing value has its mean taken over two.</p>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -283,6 +330,7 @@ print(df.groupby("k")["v"].agg(["size", "count", "mean"]))
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -339,9 +387,10 @@ print(size_and_count(pd.DataFrame({"k": ["a", "a"], "v": [1, None]})))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-7/split-apply-combine.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-7/split-apply-combine.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-7/agg-with-several-summaries.html">Next</a>
 </div>
 </section>

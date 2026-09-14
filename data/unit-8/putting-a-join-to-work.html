@@ -146,20 +146,10 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-8.html">Unit 8</a>
-</nav>
-<h1 class="lesson-title">Putting a Join to Work</h1>
-<p class="lead">Two files, one question, and the checks that keep the answer honest.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 8 &middot; Combining Tables</p>
+<p class="sidebar-unit-label">Unit 8 &bull; Combining Tables</p>
 <nav>
 <ul>
 <li><a href="/data/unit-8/concat-stacking-tables.html">1. Stacking Tables with concat</a></li>
@@ -167,30 +157,64 @@
 <li><a href="/data/unit-8/when-a-merge-goes-wrong.html">3. When a Merge Goes Wrong</a></li>
 <li><a href="/data/unit-8/wide-to-long-with-melt.html">4. Wide to Long with melt</a></li>
 <li><a href="/data/unit-8/long-to-wide-with-pivot.html">5. Long to Wide with pivot</a></li>
-<li><a href="/data/unit-8/putting-a-join-to-work.html" class="is-current" aria-current="page">6. Putting a Join to Work</a></li>
+<li><a href="/data/unit-8/putting-a-join-to-work.html" class="active" aria-current="page">6. Putting a Join to Work</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-8.html">Unit 8</a>
+<span class="separator">/</span>
+<span class="current">Putting a Join to Work</span>
+</nav>
+<div class="eyebrow">Unit 8 &bull; Lesson 6</div>
+<h1 class="lesson-title">Putting a Join to Work</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Two files, one question, and the checks that keep the answer honest.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-8/long-to-wide-with-pivot.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-8.html">Unit 8 test</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Take two files through to one summarised answer.</li>
 <li>Put the checks in the right places.</li>
 <li>Summarise last, after the joining and the cleaning.</li>
 <li>Report the size of what you summarised.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>This is the unit assembled: read, check the keys, join, check the row count, then summarise. The order matters, because every check is cheap before the join and expensive afterwards — once a duplicate key has multiplied your rows, the total is wrong and nothing in the output says so.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>The shape of a real answer</h2>
+<h2>Step 1: The shape of a real answer</h2>
 <p>Read both. Check the keys. Join with the <code>how</code> the question implies. Check the row count. Only then summarise.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Read, and look</h3>
 <p>Two files, four checks each — the habit from unit 5. The key columns get one extra look, because they are what the join depends on.</p>
 <pre class="code"><code>import pandas as pd
@@ -202,6 +226,12 @@ scores = pd.read_csv(StringIO("id,score\n1,90\n2,80\n3,70\n"))
 print(people.shape, scores.shape)
 print(people["id"].dtype, scores["id"].dtype)
 print("dupes:", int(people["id"].duplicated().sum()), int(scores["id"].duplicated().sum()))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Join, and check the count</h3>
 <p>You predicted one row per person. If the join gives more, a key was duplicated; if fewer, some did not match. Either way you want to know now.</p>
 <pre class="code"><code>import pandas as pd
@@ -212,6 +242,10 @@ scores = pd.read_csv(StringIO("id,score\n1,90\n2,80\n3,70\n"))
 
 out = pd.merge(people, scores, on="id", how="left")
 print(len(out), "rows for", len(people), "people")</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -244,8 +278,12 @@ print(int(people["id"].duplicated().sum()), int(scores["id"].duplicated().sum())
 </div>
 
 <div class="content-section">
-<h2>Summarise last</h2>
+<h2>Step 2: Summarise last</h2>
 <p>Group only once the table is the one you meant. A mean over multiplied rows is wrong in a way that looks entirely reasonable.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The answer, with its size</h3>
 <p>The team means, and the number of people behind each — because a team of one is not a comparison.</p>
 <pre class="code"><code>import pandas as pd
@@ -256,6 +294,12 @@ scores = pd.read_csv(StringIO("id,score\n1,90\n2,80\n3,70\n"))
 
 out = pd.merge(people, scores, on="id", how="left")
 print(out.groupby("team")["score"].agg(["mean", "size"]))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">What a duplicate would have done</h3>
 <p>The same code with one duplicated score row. The red mean has not changed much, the size has doubled, and nothing raised.</p>
 <pre class="code"><code>import pandas as pd
@@ -267,6 +311,10 @@ bad = pd.read_csv(StringIO("id,score\n1,90\n1,90\n2,80\n3,70\n"))
 out = pd.merge(people, bad, on="id", how="left")
 print(len(out), "rows for 3 people")
 print(out.groupby("team")["score"].agg(["mean", "size"]))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -296,6 +344,7 @@ print(out.groupby("team")["score"].agg(["mean", "size"]))
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -352,10 +401,11 @@ print(join_report("people.csv", "scores.csv"))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-8/long-to-wide-with-pivot.html">&larr; Previous</a>
-<a class="btn btn-primary route" href="/data.html">Back to the course</a>
+<a class="btn btn-ghost route" href="/data/unit-8/long-to-wide-with-pivot.html">&larr; Prev</a>
+<a class="btn btn-primary route" href="/data/unit-8.html">Unit 8 test</a>
 </div>
 </section>
 </div>

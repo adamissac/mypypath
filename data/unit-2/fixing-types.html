@@ -146,63 +146,226 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-2.html">Unit 2</a>
-</nav>
-<h1 class="lesson-title">Fixing Types</h1>
-<p class="lead">Everything out of a file is text, and text sorts and adds in the wrong way.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 2 &middot; Cleaning and Shaping</p>
+<p class="sidebar-unit-label">Unit 2 &bull; Cleaning and Shaping</p>
 <nav>
 <ul>
 <li><a href="/data/unit-2/what-dirty-data-looks-like.html">1. What Dirty Data Looks Like</a></li>
 <li><a href="/data/unit-2/missing-values.html">2. Missing Values</a></li>
-<li><a href="/data/unit-2/fixing-types.html" class="is-current" aria-current="page">3. Fixing Types</a></li>
+<li><a href="/data/unit-2/fixing-types.html" class="active" aria-current="page">3. Fixing Types</a></li>
 <li><a href="/data/unit-2/removing-duplicates.html">4. Removing Duplicates</a></li>
 <li><a href="/data/unit-2/filtering-rows.html">5. Filtering Rows</a></li>
 <li><a href="/data/unit-2/sorting-and-ranking.html">6. Sorting and Ranking</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
-
-
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-2.html">Unit 2</a>
+<span class="separator">/</span>
+<span class="current">Fixing Types</span>
+</nav>
+<div class="eyebrow">Unit 2 &bull; Lesson 3</div>
+<h1 class="lesson-title">Fixing Types</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Everything out of a file is text, and text sorts and adds in the wrong way.</p>
+<div class="lesson-meta">
+<span class="pill">Beginner</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-2/missing-values.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-2/removing-duplicates.html">Next: Removing Duplicates</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
-<h2>Text that looks like a number</h2>
-<p>The bug is quiet: "9" is greater than "10" as text, because comparison goes character by character. Convert on the way in, not at the point of confusion.</p>
-<pre class="code"><code>print("9" &gt; "10")
-print(int("9") &gt; int("10"))
-print("9" + "10")
-print(int("9") + int("10"))</code></pre>
-
+<h2>What You Will Learn in This Lesson</h2>
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
+<li>Show how text that looks like a number compares, sorts and adds wrongly.</li>
+<li>Convert with <code>int</code> and <code>float</code>, and read the <code>ValueError</code> they raise.</li>
+<li>Write a safe converter with <code>try</code>/<code>except ValueError</code>.</li>
+<li>Clean common decorations — spaces, thousands separators, percent signs — before converting.</li>
+</ul>
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Every value from a CSV is a string, and strings behave like numbers just often enough to be dangerous: <code>"9" &gt; "10"</code> is True, and a sort puts 100 before 20. Converting types correctly on the way in is the step that makes every later sum, sort and comparison mean what it says. In pandas this is <code>to_numeric</code> and <code>dtype</code>, and the reasoning is identical.</p>
+</div>
 </div>
 
 <div class="content-section">
-<h2>Converting safely</h2>
-<p>int() raises on anything that is not a whole number in text. Deciding what a bad value should become is part of cleaning, not an afterthought.</p>
+<h2>Step 1: Text that looks like a number</h2>
+<p>The bug is quiet because every operation still works — it just does the text version.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">Comparing and sorting as text</h3>
+<p>Strings compare one character at a time. <code>"9"</code> beats <code>"10"</code> because <code>"9"</code> comes after <code>"1"</code>. A sorted text column puts <code>"100"</code> before <code>"20"</code>.</p>
+<pre class="code"><code>print("9" &gt; "10")
+print(sorted(["100", "20", "3"]))
+print(sorted([100, 20, 3]))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">Adding as text</h3>
+<p><code>+</code> joins strings. <code>sum</code> on a list of strings raises, which is at least loud; the <code>+</code> in a loop is not.</p>
+<pre class="code"><code>print("9" + "10")
+print(int("9") + int("10"))</code></pre>
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Sort it properly</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print the file order, the text sort, and a numeric sort of <code>raw</code>. Which one would put the wrong student first?</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'raw = [&quot;9&quot;, &quot;85&quot;, &quot;100&quot;, &quot;72&quot;]\n\nprint(raw)\nprint(sorted(raw))\n# a numeric sort:\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">raw = ["9", "85", "100", "72"]
+
+print(raw)
+print(sorted(raw))
+# a numeric sort:
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Step 2: Converting safely</h2>
+<p><code>int()</code> and <code>float()</code> convert text that is a clean number and raise <code>ValueError</code> on anything else.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">What converts and what raises</h3>
+<p><code>int</code> accepts surrounding spaces and a sign, but not a decimal point. <code>float</code> accepts decimals. Both raise on blanks and words.</p>
+<pre class="code"><code>print(int(" 42 "), int("-5"), float("3.5"))
+
+for text in ["", "n/a", "3.5"]:
+    try:
+        print(int(text))
+    except ValueError as e:
+        print("ValueError:", e)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">Catch the failure, do not predict it</h3>
+<p>Testing first with <code>isdigit()</code> looks tidy and misses <code>"-5"</code> and <code>"3.5"</code>. Trying the conversion and catching <code>ValueError</code> lets <code>int</code> itself decide what counts as a number.</p>
 <pre class="code"><code>def to_int(text, default=0):
     try:
         return int(text)
     except ValueError:
         return default
 
-print(to_int("92"), to_int(""), to_int("n/a", -1))</code></pre>
+print(to_int("92"), to_int(""), to_int("-5"), to_int("n/a", None))
+print("-5".isdigit())</code></pre>
 
 </div>
+</div>
+</div>
+<div class="info-callout"><p><strong>Key idea:</strong> Catch <code>ValueError</code> by name. A bare <code>except:</code> also swallows typos in your own code, so a misspelled variable silently becomes the default.</p></div>
+</div>
+
+<div class="content-section">
+<h2>Step 3: Clean, then convert</h2>
+<p>Real files decorate numbers for human readers. Strip the decoration first.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">Thousands separators and percent signs</h3>
+<p><code>"1,250"</code> and <code>"85%"</code> are numbers to a person and errors to <code>float</code>. <code>replace</code> and <code>strip</code> remove what does not belong.</p>
+<pre class="code"><code>raw = ["1,250", " 85% ", "3.5"]
+
+for text in raw:
+    cleaned = text.strip().replace(",", "").rstrip("%")
+    print(repr(text), "-&gt;", float(cleaned))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">Convert the whole column once</h3>
+<p>Convert on the way in, into a new column of numbers, rather than calling <code>int()</code> at every place the value is used. Then every later line works with real numbers.</p>
+<pre class="code"><code>rows = [{"name": "Ada", "score": "92"}, {"name": "Grace", "score": "88"}]
+
+scores = [int(r["score"]) for r in rows]
+print(scores, sum(scores), max(scores))</code></pre>
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Decorated numbers</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Convert every price to a float by stripping spaces, the pound sign and commas, then print the total.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'prices = [&quot;£1,200&quot;, &quot; £85 &quot;, &quot;£3,000.50&quot;]\n\ntotal = 0\n# clean and convert each price\n\nprint(total)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">prices = ["£1,200", " £85 ", "£3,000.50"]
+
+total = 0
+# clean and convert each price
+
+print(total)
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: A safe score converter</h3>
 <p>Write <code>to_score(text)</code> that returns the number in <code>text</code>, or <code>0</code> when it is not a number at all.</p>
 <p class="hint-text">Try the conversion and catch ValueError. Testing the string yourself with isdigit() misses the minus sign on negative numbers.</p>
 
@@ -225,10 +388,37 @@ print(to_score(""))
 <div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Parse a decorated amount</h3>
+<p>Write <code>parse_amount(text)</code> that turns strings like <code>"1,250"</code>, <code>" 85% "</code> or <code>"3.5"</code> into a float, by stripping spaces, removing commas and a trailing <code>%</code>. Return <code>None</code> when what is left is not a number.</p>
+<p class="hint-text">cleaned = text.strip().replace(",", "").rstrip("%"), then try: return float(cleaned) except ValueError: return None.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'def parse_amount(text):\n    # Strip spaces, commas and a trailing %, then float(); None if it fails.\n    return None\n\nprint(parse_amount(&quot;1,250&quot;))\nprint(parse_amount(&quot; 85% &quot;))\nprint(parse_amount(&quot;n/a&quot;))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">def parse_amount(text):
+    # Strip spaces, commas and a trailing %, then float(); None if it fails.
+    return None
+
+print(parse_amount("1,250"))
+print(parse_amount(" 85% "))
+print(parse_amount("n/a"))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
+</div>
+</div>
+</div>
 </div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-2/missing-values.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-2/missing-values.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-2/removing-duplicates.html">Next</a>
 </div>
 </section>

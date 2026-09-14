@@ -146,51 +146,75 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-6.html">Unit 6</a>
-</nav>
-<h1 class="lesson-title">Binning Values</h1>
-<p class="lead">Turning a measurement into a band you can count.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 6 &middot; Filtering and Deriving</p>
+<p class="sidebar-unit-label">Unit 6 &bull; Filtering and Deriving</p>
 <nav>
 <ul>
 <li><a href="/data/unit-6/filtering-with-masks.html">1. Filtering with Masks</a></li>
 <li><a href="/data/unit-6/isin-between-and-query.html">2. isin, between and query</a></li>
 <li><a href="/data/unit-6/derived-columns.html">3. Derived Columns</a></li>
 <li><a href="/data/unit-6/apply-and-when-not-to.html">4. apply, and When Not To</a></li>
-<li><a href="/data/unit-6/binning-values.html" class="is-current" aria-current="page">5. Binning Values</a></li>
+<li><a href="/data/unit-6/binning-values.html" class="active" aria-current="page">5. Binning Values</a></li>
 <li><a href="/data/unit-6/sorting-and-top-n.html">6. Sorting and Top N</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-6.html">Unit 6</a>
+<span class="separator">/</span>
+<span class="current">Binning Values</span>
+</nav>
+<div class="eyebrow">Unit 6 &bull; Lesson 5</div>
+<h1 class="lesson-title">Binning Values</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Turning a measurement into a band you can count.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-6/apply-and-when-not-to.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-6/sorting-and-top-n.html">Next: Sorting and Top N</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Divide a numeric range into labelled bands with <code>cut</code>.</li>
 <li>Say which side of a boundary a value falls on.</li>
 <li>Choose between equal-width and equal-frequency bands.</li>
 <li>Count how many landed in each band.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>You cannot count a continuous measurement — every value is its own group. Binning is what turns "age" into "age group" and "score" into "grade", and the edges you choose are an argument you are making about the data, which is why cut makes you write them down.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>cut divides a range into labelled bands</h2>
+<h2>Step 1: cut divides a range into labelled bands</h2>
 <p>Grades, age groups and price brackets are all the same operation: choose the edges, name the bands.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Edges and labels</h3>
 <p>There is always one more edge than there are labels, because each band sits between two edges.</p>
 <pre class="code"><code>import pandas as pd
@@ -199,6 +223,12 @@ scores = pd.Series([95, 85, 75, 60])
 bands = pd.cut(scores, bins=[-1, 69, 79, 89, 100],
                labels=["F", "C", "B", "A"])
 print(bands.tolist())</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Counting the bands</h3>
 <p>This is what the binning was for. <code>value_counts</code> on the banded column gives the distribution.</p>
 <pre class="code"><code>import pandas as pd
@@ -207,6 +237,10 @@ scores = pd.Series([95, 85, 75, 60, 92])
 bands = pd.cut(scores, bins=[-1, 69, 79, 89, 100],
                labels=["F", "C", "B", "A"])
 print(bands.value_counts().sort_index())</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -238,8 +272,12 @@ print(None)   # how many in each band
 </div>
 
 <div class="content-section">
-<h2>The edges are a decision</h2>
+<h2>Step 2: The edges are a decision</h2>
 <p>Whether 89 is a B or an A is your call, and <code>cut</code> makes you write it down rather than leaving it implied.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Which side a boundary falls on</h3>
 <p>By default each band includes its right-hand edge and excludes its left. So with an edge at 89, a score of 89 is in the band ending at 89 — and 90 starts the next one.</p>
 <pre class="code"><code>import pandas as pd
@@ -248,6 +286,11 @@ edges = [-1, 69, 79, 89, 100]
 labels = ["F", "C", "B", "A"]
 print(pd.cut(pd.Series([89, 90]), bins=edges, labels=labels).tolist())</code></pre>
 <p class="note">The lowest edge is -1 rather than 0 so that a score of exactly 0 has a band. An edge equal to the lowest possible value excludes it, and the result is NaN.</p>
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Anything outside the edges is NaN</h3>
 <p>Not an error — a value with no band. Worth counting, because it usually means the edges did not cover the real range.</p>
 <pre class="code"><code>import pandas as pd
@@ -255,6 +298,12 @@ print(pd.cut(pd.Series([89, 90]), bins=edges, labels=labels).tolist())</code></p
 banded = pd.cut(pd.Series([50, 150]), bins=[0, 100], labels=["in range"])
 print(banded.tolist())
 print("unbanded:", int(banded.isna().sum()))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">Equal width, or equal counts</h3>
 <p><code>cut</code> with a number makes bands of equal width. <code>qcut</code> makes bands holding roughly equal numbers of rows. They answer different questions and can look very different on skewed data.</p>
 <pre class="code"><code>import pandas as pd
@@ -262,6 +311,10 @@ print("unbanded:", int(banded.isna().sum()))</code></pre>
 values = pd.Series([1, 2, 3, 4, 100])
 print(pd.cut(values, bins=2).value_counts().tolist())
 print(pd.qcut(values, q=2).value_counts().tolist())</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -290,6 +343,7 @@ print(pd.qcut(values, q=2).value_counts().tolist())
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -346,9 +400,10 @@ print(band_counts(pd.Series([95, 85, 60])))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-6/apply-and-when-not-to.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-6/apply-and-when-not-to.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-6/sorting-and-top-n.html">Next</a>
 </div>
 </section>

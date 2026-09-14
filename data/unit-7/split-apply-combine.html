@@ -146,23 +146,13 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-7.html">Unit 7</a>
-</nav>
-<h1 class="lesson-title">Split, Apply, Combine</h1>
-<p class="lead">The shape of every group-by, named once so the rest makes sense.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 7 &middot; Grouping and Aggregating</p>
+<p class="sidebar-unit-label">Unit 7 &bull; Grouping and Aggregating</p>
 <nav>
 <ul>
-<li><a href="/data/unit-7/split-apply-combine.html" class="is-current" aria-current="page">1. Split, Apply, Combine</a></li>
+<li><a href="/data/unit-7/split-apply-combine.html" class="active" aria-current="page">1. Split, Apply, Combine</a></li>
 <li><a href="/data/unit-7/counting-groups.html">2. Counting Groups</a></li>
 <li><a href="/data/unit-7/agg-with-several-summaries.html">3. agg with Several Summaries</a></li>
 <li><a href="/data/unit-7/grouping-by-several-keys.html">4. Grouping by Several Keys</a></li>
@@ -171,26 +161,60 @@
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-7.html">Unit 7</a>
+<span class="separator">/</span>
+<span class="current">Split, Apply, Combine</span>
+</nav>
+<div class="eyebrow">Unit 7 &bull; Lesson 1</div>
+<h1 class="lesson-title">Split, Apply, Combine</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>The shape of every group-by, named once so the rest makes sense.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-7.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-7/counting-groups.html">Next: Counting Groups</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Name the three steps of a group-by.</li>
 <li>Say why <code>df.groupby("x")</code> on its own computes nothing.</li>
 <li>Read the result, and get the key back as a column.</li>
 <li>Report the group size beside the group summary.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Every question of the form "per region", "by month", "for each subject" is this one operation. Naming its three steps once means the rest of the unit is variations rather than new material — and it makes the error messages legible, because they nearly always come from the apply step.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>Three steps in one call</h2>
+<h2>Step 1: Three steps in one call</h2>
 <p>Split the table into groups by a key, apply a summary to each group, combine the answers into one result. pandas does all three in one expression, which is why it helps to be able to name them separately.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Nothing happens until you name the summary</h3>
 <p>The grouped object is a plan, not a result. Printing it tells you almost nothing, which is confusing until you know it is deliberate.</p>
 <pre class="code"><code>import pandas as pd
@@ -199,6 +223,12 @@ df = pd.DataFrame({"subject": ["maths", "art", "maths"], "score": [90, 70, 80]})
 grouped = df.groupby("subject")
 print(grouped)
 print(grouped["score"].mean())</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">The three steps, visible</h3>
 <p>You will not write it this way, but seeing the split makes the rest concrete.</p>
 <pre class="code"><code>import pandas as pd
@@ -207,6 +237,10 @@ df = pd.DataFrame({"subject": ["maths", "art", "maths"], "score": [90, 70, 80]})
 
 for key, piece in df.groupby("subject"):
     print(key, "-&gt;", piece["score"].tolist(), "-&gt; mean", piece["score"].mean())</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -239,8 +273,12 @@ print(None)   # the means, in one expression
 </div>
 
 <div class="content-section">
-<h2>The key becomes the index</h2>
+<h2>Step 2: The key becomes the index</h2>
 <p>The result is labelled by the group key, which is a Series indexed by whatever you grouped on.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Getting the key back as a column</h3>
 <p>Sometimes you want a plain table rather than an indexed Series. <code>reset_index</code> turns the key back into a column, and <code>as_index=False</code> asks for that from the start.</p>
 <pre class="code"><code>import pandas as pd
@@ -248,6 +286,12 @@ print(None)   # the means, in one expression
 df = pd.DataFrame({"subject": ["maths", "art", "maths"], "score": [90, 70, 80]})
 print(df.groupby("subject")["score"].mean().reset_index())
 print(df.groupby("subject", as_index=False)["score"].mean())</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Always report the size</h3>
 <p>A mean over two rows and a mean over two thousand are not comparable, and the group with the striking average is very often the group with three rows in it. Putting the count beside the summary is the cheapest honesty there is.</p>
 <pre class="code"><code>import pandas as pd
@@ -255,6 +299,12 @@ print(df.groupby("subject", as_index=False)["score"].mean())</code></pre>
 df = pd.DataFrame({"subject": ["maths", "art", "maths"], "score": [90, 70, 80]})
 out = df.groupby("subject")["score"].agg(["mean", "size"])
 print(out)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">Where rows with a missing key go</h3>
 <p>A row whose key is NaN is dropped from the result by default, so your groups can silently fail to account for the whole table. <code>dropna=False</code> keeps them as their own group.</p>
 <pre class="code"><code>import pandas as pd
@@ -263,6 +313,10 @@ import numpy as np
 df = pd.DataFrame({"subject": ["maths", np.nan], "score": [90, 70]})
 print(df.groupby("subject")["score"].size().sum(), "of", len(df))
 print(df.groupby("subject", dropna=False)["score"].size().sum(), "of", len(df))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -290,6 +344,7 @@ print(df.groupby("city")["score"].agg(["mean", "size"]))
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -346,9 +401,10 @@ print(summary_by(pd.DataFrame({"subject": ["m", "m", "a"], "score": [90, 80, 70]
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-7.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-7.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-7/counting-groups.html">Next</a>
 </div>
 </section>

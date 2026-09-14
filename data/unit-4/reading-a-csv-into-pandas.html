@@ -146,20 +146,10 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-4.html">Unit 4</a>
-</nav>
-<h1 class="lesson-title">Reading a CSV into pandas</h1>
-<p class="lead">One line replaces the whole of unit 1, and then you check what you got.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 4 &middot; Series and DataFrames</p>
+<p class="sidebar-unit-label">Unit 4 &bull; Series and DataFrames</p>
 <nav>
 <ul>
 <li><a href="/data/unit-4/the-series.html">1. The Series</a></li>
@@ -167,30 +157,64 @@
 <li><a href="/data/unit-4/selecting-columns-and-rows.html">3. Selecting Columns and Rows</a></li>
 <li><a href="/data/unit-4/adding-and-dropping-columns.html">4. Adding and Dropping Columns</a></li>
 <li><a href="/data/unit-4/dtypes-in-pandas.html">5. dtypes in pandas</a></li>
-<li><a href="/data/unit-4/reading-a-csv-into-pandas.html" class="is-current" aria-current="page">6. Reading a CSV into pandas</a></li>
+<li><a href="/data/unit-4/reading-a-csv-into-pandas.html" class="active" aria-current="page">6. Reading a CSV into pandas</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-4.html">Unit 4</a>
+<span class="separator">/</span>
+<span class="current">Reading a CSV into pandas</span>
+</nav>
+<div class="eyebrow">Unit 4 &bull; Lesson 6</div>
+<h1 class="lesson-title">Reading a CSV into pandas</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>One line replaces the whole of unit 1, and then you check what you got.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-4/dtypes-in-pandas.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-4.html">Unit 4 test</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Read a CSV into a DataFrame in one call.</li>
 <li>Say what <code>read_csv</code> decides for you, and what it cannot know.</li>
 <li>Run the same four checks on every table you load.</li>
 <li>Recognise the shape of a load that went wrong.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Unit 1 built a table out of lists and dicts by hand so that you know what a table is. This lesson replaces all of it with one line — and the point of having done it by hand is that you now know what that line is deciding on your behalf, and which of those decisions to check.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>read_csv</h2>
+<h2>Step 1: read_csv</h2>
 <p>It reads the header, splits the rows, and guesses each column's type. What it cannot do is know what your file means.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The whole of unit 1, in one call</h3>
 <p>Opening the file, reading the header, splitting each line, converting the numbers — all of it, in the one call.</p>
 <pre class="code"><code>import pandas as pd
@@ -198,6 +222,12 @@
 df = pd.read_csv("scores.csv")
 print(df.shape)
 print(df.dtypes)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">What it decided for you</h3>
 <p>Three decisions, every time: the first line is column names, the separator is a comma, and each column's type is inferred from what it saw. Each is usually right and each is occasionally wrong.</p>
 <pre class="code"><code>import pandas as pd
@@ -208,6 +238,9 @@ print(df.dtypes)</code></pre>
 # df = pd.read_csv("f.csv", dtype={"id": str})
 print("the defaults are decisions, not facts")</code></pre>
 <p class="note">Keeping an id column as text with <code>dtype={"id": str}</code> is the common one. An id that looks numeric loses its leading zeros the moment pandas reads it as a number.</p>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -241,8 +274,12 @@ print(df.dtypes)
 </div>
 
 <div class="content-section">
-<h2>Check before you trust</h2>
+<h2>Step 2: Check before you trust</h2>
 <p><code>head</code> shows you the first rows and <code>dtypes</code> shows you what pandas decided. Two lines, and they catch most of what goes wrong.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The four questions again</h3>
 <p>The same four from lesson two, now on a table you did not build. This is the habit worth keeping for the rest of the course.</p>
 <pre class="code"><code>import pandas as pd
@@ -252,6 +289,12 @@ print(df.shape)            # how much
 print(df.dtypes)           # what kind
 print(df.head(2))          # does it line up
 print(df.isna().sum())     # how much is missing</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">What a failed load looks like</h3>
 <p>A wrong separator does not raise. Every line arrives as one long string, so you get one column and a shape that tells you immediately.</p>
 <pre class="code"><code>import pandas as pd
@@ -265,6 +308,10 @@ print(list(wrong.columns))
 right = pd.read_csv(StringIO(text), sep=";")
 print(right.shape)
 print(list(right.columns))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -295,6 +342,7 @@ print(list(df.columns))
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -351,10 +399,11 @@ print(load_report("scores.csv"))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-4/dtypes-in-pandas.html">&larr; Previous</a>
-<a class="btn btn-primary route" href="/data.html">Back to the course</a>
+<a class="btn btn-ghost route" href="/data/unit-4/dtypes-in-pandas.html">&larr; Prev</a>
+<a class="btn btn-primary route" href="/data/unit-4.html">Unit 4 test</a>
 </div>
 </section>
 </div>

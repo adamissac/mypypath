@@ -146,24 +146,14 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-4.html">Unit 4</a>
-</nav>
-<h1 class="lesson-title">Building a DataFrame</h1>
-<p class="lead">A table is a dictionary of columns that share one index.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 4 &middot; Series and DataFrames</p>
+<p class="sidebar-unit-label">Unit 4 &bull; Series and DataFrames</p>
 <nav>
 <ul>
 <li><a href="/data/unit-4/the-series.html">1. The Series</a></li>
-<li><a href="/data/unit-4/building-a-dataframe.html" class="is-current" aria-current="page">2. Building a DataFrame</a></li>
+<li><a href="/data/unit-4/building-a-dataframe.html" class="active" aria-current="page">2. Building a DataFrame</a></li>
 <li><a href="/data/unit-4/selecting-columns-and-rows.html">3. Selecting Columns and Rows</a></li>
 <li><a href="/data/unit-4/adding-and-dropping-columns.html">4. Adding and Dropping Columns</a></li>
 <li><a href="/data/unit-4/dtypes-in-pandas.html">5. dtypes in pandas</a></li>
@@ -171,26 +161,60 @@
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-4.html">Unit 4</a>
+<span class="separator">/</span>
+<span class="current">Building a DataFrame</span>
+</nav>
+<div class="eyebrow">Unit 4 &bull; Lesson 2</div>
+<h1 class="lesson-title">Building a DataFrame</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>A table is a dictionary of columns that share one index.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-4/the-series.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-4/selecting-columns-and-rows.html">Next: Selecting Columns and Rows</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Build a DataFrame from a dictionary of columns and from a list of records.</li>
 <li>Read <code>shape</code>, <code>columns</code>, <code>head</code> and <code>info</code> as the first four questions.</li>
 <li>Explain why every column shares one index.</li>
 <li>Spot a load that went wrong from its shape alone.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Every table you meet for the rest of this course is a DataFrame, and almost every confusing result comes from not having looked at it first. The four checks in this lesson take two lines and catch a wrong separator, a missing header and a numeric column read as text.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>From a dictionary of columns</h2>
+<h2>Step 1: From a dictionary of columns</h2>
 <p>The keys become column names and the values become the columns. Every column shares the same index, which is what makes a row a row.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Columns first</h3>
 <p>This is the shape pandas thinks in. A DataFrame is not a list of rows that happens to be rectangular; it is a set of columns that happen to line up.</p>
 <pre class="code"><code>import pandas as pd
@@ -201,12 +225,24 @@ df = pd.DataFrame({
 })
 print(df)
 print(df.shape)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">From records, when that is what you have</h3>
 <p>A list of dictionaries works too, and it is what an API usually hands you. The union of the keys becomes the columns, and a record missing a key gets NaN.</p>
 <pre class="code"><code>import pandas as pd
 
 records = [{"name": "Ada", "score": 92}, {"name": "Grace"}]
 print(pd.DataFrame(records))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">One index, shared</h3>
 <p>Both columns are Series over the same index. Pull one out and the index comes with it — which is why a filtered column still knows which rows it came from.</p>
 <pre class="code"><code>import pandas as pd
@@ -214,6 +250,10 @@ print(pd.DataFrame(records))</code></pre>
 df = pd.DataFrame({"name": ["Ada", "Grace"], "score": [92, 88]})
 print(df["score"].index)
 print(df.index)</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -245,8 +285,12 @@ print(by_record)
 </div>
 
 <div class="content-section">
-<h2>The first four things to ask it</h2>
+<h2>Step 2: The first four things to ask it</h2>
 <p><code>shape</code>, <code>columns</code>, <code>head</code> and <code>info</code> answer "what am I holding" before you do anything else. Skipping them is where most confusing results begin.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">How much, and what of</h3>
 <p>Shape first, because a number you did not expect here means the rest is not worth reading yet.</p>
 <pre class="code"><code>import pandas as pd
@@ -255,13 +299,23 @@ df = pd.DataFrame({"name": ["Ada"], "score": [92]})
 print(df.shape)
 print(list(df.columns))
 print(df.head())</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">info answers two questions at once</h3>
 <p>It gives the dtype of every column and how many non-null values each holds, which is the fastest way to see both a text column that should be numeric and a column full of holes.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"score": ["92", "88"], "n": [1, None]})
 df.info()</code></pre>
-<div class="info-card"><p>A one-column DataFrame where you expected six is the signature of the wrong separator. The shape told you before any of the numbers did.</p></div>
+
+</div>
+</div>
+</div>
+<div class="info-callout"><p><strong>Key idea:</strong> A one-column DataFrame where you expected six is the signature of the wrong separator. The shape told you before any of the numbers did.</p></div>
 </div>
 
 <div class="practice-box interactive">
@@ -291,6 +345,7 @@ print(df.dtypes)
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -347,9 +402,10 @@ print(labelled({"score": [92, 88]}, ["Ada", "Grace"]))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-4/the-series.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-4/the-series.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-4/selecting-columns-and-rows.html">Next</a>
 </div>
 </section>

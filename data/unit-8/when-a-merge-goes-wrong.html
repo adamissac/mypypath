@@ -146,51 +146,75 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-8.html">Unit 8</a>
-</nav>
-<h1 class="lesson-title">When a Merge Goes Wrong</h1>
-<p class="lead">Duplicate keys multiply rows, and mismatched types match nothing.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 8 &middot; Combining Tables</p>
+<p class="sidebar-unit-label">Unit 8 &bull; Combining Tables</p>
 <nav>
 <ul>
 <li><a href="/data/unit-8/concat-stacking-tables.html">1. Stacking Tables with concat</a></li>
 <li><a href="/data/unit-8/merging-on-a-key.html">2. Merging on a Key</a></li>
-<li><a href="/data/unit-8/when-a-merge-goes-wrong.html" class="is-current" aria-current="page">3. When a Merge Goes Wrong</a></li>
+<li><a href="/data/unit-8/when-a-merge-goes-wrong.html" class="active" aria-current="page">3. When a Merge Goes Wrong</a></li>
 <li><a href="/data/unit-8/wide-to-long-with-melt.html">4. Wide to Long with melt</a></li>
 <li><a href="/data/unit-8/long-to-wide-with-pivot.html">5. Long to Wide with pivot</a></li>
 <li><a href="/data/unit-8/putting-a-join-to-work.html">6. Putting a Join to Work</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-8.html">Unit 8</a>
+<span class="separator">/</span>
+<span class="current">When a Merge Goes Wrong</span>
+</nav>
+<div class="eyebrow">Unit 8 &bull; Lesson 3</div>
+<h1 class="lesson-title">When a Merge Goes Wrong</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Duplicate keys multiply rows, and mismatched types match nothing.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-8/merging-on-a-key.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-8/wide-to-long-with-melt.html">Next: Wide to Long with melt</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Predict the row count of a join before running it.</li>
 <li>Explain why a duplicate key multiplies rows.</li>
 <li>Spot a type mismatch that makes a join match nothing.</li>
 <li>Have pandas check your assumption with <code>validate</code>.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>These are the two failures that produce a wrong number rather than an error. A duplicated key inflates a total silently; a type mismatch empties the result silently. Both are cheap to check for and expensive to discover later, which is the whole argument of this lesson.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>A key that repeats multiplies</h2>
+<h2>Step 1: A key that repeats multiplies</h2>
 <p>Every matching row on the left pairs with every matching row on the right. Two and two make four, not two.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The multiplication</h3>
 <p>One person, two score rows, two output rows. Sum the scores now and the person counts twice.</p>
 <pre class="code"><code>import pandas as pd
@@ -200,6 +224,12 @@ scores = pd.DataFrame({"id": [1, 1], "score": [90, 80]})
 out = pd.merge(people, scores, on="id")
 print(out)
 print(len(people), "x duplicated key -&gt;", len(out), "rows")</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Check the key before you join</h3>
 <p>One line, and it answers the question the row count would otherwise raise afterwards.</p>
 <pre class="code"><code>import pandas as pd
@@ -207,6 +237,12 @@ print(len(people), "x duplicated key -&gt;", len(out), "rows")</code></pre>
 scores = pd.DataFrame({"id": [1, 1, 2], "score": [90, 80, 70]})
 print("duplicated keys:", int(scores["id"].duplicated().sum()))
 print(scores["id"].value_counts())</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">Let pandas hold you to it</h3>
 <p><code>validate</code> states the relationship you believe you have, and raises when the data disagrees — instead of silently multiplying.</p>
 <pre class="code"><code>import pandas as pd
@@ -218,6 +254,9 @@ try:
 except Exception as exc:
     print(type(exc).__name__ + ":", exc)</code></pre>
 <p class="note">"one_to_one", "one_to_many" and "many_to_one" are the useful three. Writing down which one you expect is also documentation for the next reader.</p>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -249,8 +288,12 @@ print(len(pd.merge(people, scores, on="id")))
 </div>
 
 <div class="content-section">
-<h2>Types have to match too</h2>
+<h2>Step 2: Types have to match too</h2>
 <p>An id read as a number in one file and as text in another matches nothing, and the merge succeeds with an empty result.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The quietest failure in the unit</h3>
 <p><code>1</code> and <code>"1"</code> are different keys. No error, no warning, no rows.</p>
 <pre class="code"><code>import pandas as pd
@@ -259,6 +302,12 @@ a = pd.DataFrame({"id": ["1"], "name": ["Ada"]})
 b = pd.DataFrame({"id": [1], "score": [90]})
 print(len(pd.merge(a, b, on="id")), "rows")
 print(a["id"].dtype, "vs", b["id"].dtype)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Compare the dtypes first</h3>
 <p>The fix is to make both sides the same type before joining. Converting only one side leaves the mismatch where it was.</p>
 <pre class="code"><code>import pandas as pd
@@ -270,6 +319,12 @@ a2, b2 = a.copy(), b.copy()
 a2["id"] = a2["id"].astype(str)
 b2["id"] = b2["id"].astype(str)
 print(len(pd.merge(a2, b2, on="id")), "rows")</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">Whitespace does the same thing</h3>
 <p><code>"1 "</code> and <code>"1"</code> are also different keys. Stripping both sides is part of the same preparation.</p>
 <pre class="code"><code>import pandas as pd
@@ -280,6 +335,10 @@ print(len(pd.merge(a, b, on="id")), "rows")
 
 a["id"] = a["id"].str.strip()
 print(len(pd.merge(a, b, on="id")), "rows")</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -309,6 +368,7 @@ print(a["id"].dtype, b["id"].dtype)
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -366,9 +426,10 @@ print(key_report(pd.DataFrame({"id": [1]}), pd.DataFrame({"id": [1, 1]})))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-8/merging-on-a-key.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-8/merging-on-a-key.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-8/wide-to-long-with-melt.html">Next</a>
 </div>
 </section>

@@ -146,24 +146,14 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-3.html">Unit 3</a>
-</nav>
-<h1 class="lesson-title">Creating Arrays and dtypes</h1>
-<p class="lead">Where an array comes from, and the type it settles on.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 3 &middot; Arrays with numpy</p>
+<p class="sidebar-unit-label">Unit 3 &bull; Arrays with numpy</p>
 <nav>
 <ul>
 <li><a href="/data/unit-3/why-arrays-beat-lists.html">1. Why Arrays Beat Lists</a></li>
-<li><a href="/data/unit-3/creating-arrays-and-dtypes.html" class="is-current" aria-current="page">2. Creating Arrays and dtypes</a></li>
+<li><a href="/data/unit-3/creating-arrays-and-dtypes.html" class="active" aria-current="page">2. Creating Arrays and dtypes</a></li>
 <li><a href="/data/unit-3/indexing-and-slicing-arrays.html">3. Indexing and Slicing Arrays</a></li>
 <li><a href="/data/unit-3/boolean-masks.html">4. Boolean Masks</a></li>
 <li><a href="/data/unit-3/array-maths-and-broadcasting.html">5. Array Maths and Broadcasting</a></li>
@@ -171,26 +161,60 @@
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-3.html">Unit 3</a>
+<span class="separator">/</span>
+<span class="current">Creating Arrays and dtypes</span>
+</nav>
+<div class="eyebrow">Unit 3 &bull; Lesson 2</div>
+<h1 class="lesson-title">Creating Arrays and dtypes</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Where an array comes from, and the type it settles on.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-3/why-arrays-beat-lists.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-3/indexing-and-slicing-arrays.html">Next: Indexing and Slicing Arrays</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Build an array from a list, from a range, and from a fill value.</li>
 <li>Choose between <code>arange</code> and <code>linspace</code> for the job in front of you.</li>
 <li>Explain why one float in a list of ints changes the whole array.</li>
 <li>Set a dtype deliberately instead of accepting the one you were given.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>The dtype is decided at the moment the array is made, and it is decided silently. A column that should be whole numbers arriving as floats, or an integer array quietly truncating the decimals you assign into it, both start here. Two minutes on where arrays come from saves a long afternoon later.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>Several ways in</h2>
+<h2>Step 1: Several ways in</h2>
 <p>Most arrays come from one of four places: an existing list, a range of numbers, a fill value, or a file. The first three are here; files arrive in unit 5.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">From a list, and from a count</h3>
 <p><code>np.array</code> converts what you already have. <code>np.zeros</code> and <code>np.ones</code> make an array of a given size to fill in later, which is useful when you know the shape before you know the values.</p>
 <pre class="code"><code>import numpy as np
@@ -199,6 +223,12 @@ print(np.array([1, 2, 3]))
 print(np.zeros(3))
 print(np.ones(3))
 print(np.full(3, 7))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">arange steps, linspace divides</h3>
 <p><code>arange</code> takes a start, a stop and a step, and the stop is exclusive — exactly like <code>range</code>. <code>linspace</code> takes a start, a stop and a <em>count</em>, and the stop is included. Use arange when you know the step, linspace when you know how many points you want.</p>
 <pre class="code"><code>import numpy as np
@@ -209,6 +239,9 @@ print(np.arange(0, 10, 2))
 # five points from 0 to 1, both ends included
 print(np.linspace(0, 1, 5))</code></pre>
 <p class="note">The exclusive stop on arange is the single most common off-by-one in numpy. <code>np.arange(0, 10, 2)</code> has five elements, not six.</p>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -240,8 +273,12 @@ print(None)
 </div>
 
 <div class="content-section">
-<h2>The dtype is chosen for you, until it is not</h2>
+<h2>Step 2: The dtype is chosen for you, until it is not</h2>
 <p>Everything in an array shares one type. When you build from a list, numpy picks the narrowest type that can hold all of it.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">One float widens everything</h3>
 <p>A single decimal in a list of whole numbers makes the entire array float, because there is no way to keep one element different from the rest. This is why an id column read from a messy file sometimes prints as <code>3.0</code>.</p>
 <pre class="code"><code>import numpy as np
@@ -249,6 +286,12 @@ print(None)
 print(np.array([1, 2, 3]).dtype)
 print(np.array([1, 2, 3.0]).dtype)
 print(np.array([1, 2, 3.0]))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Saying what you want</h3>
 <p>Pass <code>dtype</code> to decide rather than discover. It converts, so asking for float gives you floats even from whole numbers.</p>
 <pre class="code"><code>import numpy as np
@@ -256,6 +299,11 @@ print(np.array([1, 2, 3.0]))</code></pre>
 print(np.array([1, 2, 3], dtype=float))
 print(np.array([1.9, 2.9], dtype=int))</code></pre>
 <p class="note">Converting to int truncates towards zero — it does not round. <code>1.9</code> becomes <code>1</code>.</p>
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">The trap on the way back in</h3>
 <p>The dtype belongs to the array, not to the value you assign. Writing a float into an int array truncates it, silently, with nothing raised.</p>
 <pre class="code"><code>import numpy as np
@@ -264,6 +312,10 @@ a = np.array([1, 2, 3])
 a[0] = 3.7
 print(a)        # the 3.7 became 3
 print(a.dtype)</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -292,6 +344,7 @@ print(np.array([1.9, 2.9], dtype=int))
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -348,9 +401,10 @@ print(readings(0, 1, 5))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-3/why-arrays-beat-lists.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-3/why-arrays-beat-lists.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-3/indexing-and-slicing-arrays.html">Next</a>
 </div>
 </section>

@@ -4,7 +4,7 @@ import { createRequire } from 'node:module';
 import { validateChecks } from '../scripts/validate-checks.js';
 import { setup, havePython, score, specIn } from './helpers/check-runner.js';
 
-/* Python for Data, units 1 and 2.
+/* Python for Data, every unit.
  *
  * The course is generated: scripts/data-course-content.cjs holds the lessons
  * and scripts/build-data-course.cjs turns them into pages, check files and a
@@ -12,10 +12,9 @@ import { setup, havePython, score, specIn } from './helpers/check-runner.js';
  * a correct solution and a plausible wrong one written next to the exercise
  * they belong to, rather than copied into a second list that can drift.
  *
- * Everything here is standard library. numpy and pandas are not loaded in the
- * page's Pyodide instance, and the two free units were written that way on
- * purpose so that every exercise a signed-out visitor can reach actually runs.
- */
+ * Units 1 and 2 are standard library only, so a signed-out visitor never pays
+ * for the numpy and pandas wheels; units 3 onward use them, and the local
+ * python3 that grades them here needs both installed. */
 
 const require = createRequire(import.meta.url);
 const CONTENT = require('../scripts/data-course-content.cjs');
@@ -37,7 +36,7 @@ describe('the Python for Data check files', () => {
     expect(validateChecks().errors).toEqual([]);
   });
 
-  it('cover every lesson in the two written units', () => {
+  it('cover every lesson in every written unit', () => {
     for (const { unit, lesson } of LESSONS) {
       const file = `assets/data/checks/data/unit-${unit}/${lesson.slug}.json`;
       expect(fs.existsSync(file), file).toBe(true);
@@ -92,11 +91,48 @@ describe('every lesson offers at least two graded exercises', () => {
   for (const { unit, lesson } of LESSONS) {
     if (exercisesOf(lesson).length < 2) thin.push(`u${unit}/${lesson.slug}`);
   }
-  it('names the ones that do not yet', () => {
-    // Kept as a list rather than a per-lesson assertion so the gap is one
-    // legible number while the rewrite works through the units.
-    expect({ lessonsWithUnderTwoExercises: thin.length, which: thin })
-      .toEqual({ lessonsWithUnderTwoExercises: thin.length, which: thin });
+  it('has no lesson with fewer than two', () => {
+    expect(thin).toEqual([]);
+  });
+});
+
+/* The template Foundations lessons are written to, held for every Data lesson
+   so a unit cannot be authored thin again: objectives, a why-this-matters,
+   stepwise sections, and mini practices placed between the sections rather
+   than dumped at the end. The rendered side is checked below, on the pages. */
+describe('every lesson is written to the full template', () => {
+  for (const { unit, lesson } of LESSONS) {
+    it(`u${unit}/${lesson.slug}`, () => {
+      expect(lesson.objectives?.length, 'objectives').toBeGreaterThanOrEqual(3);
+      expect(String(lesson.why || '').length, 'why this matters').toBeGreaterThan(120);
+      expect(lesson.sections.length, 'sections').toBeGreaterThanOrEqual(2);
+      for (const sec of lesson.sections) {
+        expect(sec.heading && sec.intro, 'a section has a heading and an intro').toBeTruthy();
+        expect(sec.steps?.length, `steps in "${sec.heading}"`).toBeGreaterThanOrEqual(1);
+      }
+      const practices = lesson.practices || [];
+      expect(practices.length, 'mini practices').toBeGreaterThanOrEqual(2);
+      for (const pr of practices) {
+        expect(pr.after, `"${pr.title}" sits between sections`).toBeLessThan(lesson.sections.length);
+        expect(pr.after).toBeGreaterThanOrEqual(0);
+      }
+      expect(lesson.questions.length, 'questions').toBeGreaterThanOrEqual(3);
+    });
+  }
+
+  it('renders those parts on every page', () => {
+    for (const { unit, lesson } of LESSONS) {
+      const html = fs.readFileSync(`data/unit-${unit}/${lesson.slug}.html`, 'utf8');
+      const where = `u${unit}/${lesson.slug}`;
+      expect(html, where).toContain('What You Will Learn');
+      expect(html, where).toContain('Why This Matters');
+      expect(html, where).toContain('Mini Practice #2');
+      expect((html.match(/data-exercise-id=/g) || []).length, where).toBeGreaterThanOrEqual(2);
+      // Interleaved, not dumped at the end: the first practice comes before
+      // the last section's heading.
+      const lastHeading = lesson.sections[lesson.sections.length - 1].heading;
+      expect(html.indexOf("Mini Practice #1"), where).toBeLessThan(html.indexOf(`: ${lastHeading}</h2>`));
+    }
   });
 });
 

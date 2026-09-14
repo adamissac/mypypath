@@ -146,20 +146,10 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-9.html">Unit 9</a>
-</nav>
-<h1 class="lesson-title">Change Over Time</h1>
-<p class="lead">Differences and growth rates, and the row that has neither.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 9 &middot; Time Series</p>
+<p class="sidebar-unit-label">Unit 9 &bull; Time Series</p>
 <nav>
 <ul>
 <li><a href="/data/unit-9/parsing-dates.html">1. Parsing Dates</a></li>
@@ -167,30 +157,64 @@
 <li><a href="/data/unit-9/a-datetime-index.html">3. A Datetime Index</a></li>
 <li><a href="/data/unit-9/resampling.html">4. Resampling</a></li>
 <li><a href="/data/unit-9/rolling-windows.html">5. Rolling Windows</a></li>
-<li><a href="/data/unit-9/change-over-time.html" class="is-current" aria-current="page">6. Change Over Time</a></li>
+<li><a href="/data/unit-9/change-over-time.html" class="active" aria-current="page">6. Change Over Time</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-9.html">Unit 9</a>
+<span class="separator">/</span>
+<span class="current">Change Over Time</span>
+</nav>
+<div class="eyebrow">Unit 9 &bull; Lesson 6</div>
+<h1 class="lesson-title">Change Over Time</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Differences and growth rates, and the row that has neither.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-9/rolling-windows.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-9.html">Unit 9 test</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Compare a row with the one before it.</li>
 <li>Compute a growth rate and read it correctly.</li>
 <li>Say what happens to the first row.</li>
 <li>Recognise when a percentage change is undefined.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Change is what most time-series questions are actually about, and both ways of measuring it have a row that cannot be answered — the first one, which has nothing before it. Filling that row with zero is the commonest quiet lie in a growth table.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>shift compares a row with its neighbour</h2>
+<h2>Step 1: shift compares a row with its neighbour</h2>
 <p><code>diff</code> is the difference from the previous row and <code>pct_change</code> is that difference as a proportion. Both are built on <code>shift</code>, which simply moves the column down by one.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The three of them</h3>
 <p>Seeing shift beside diff makes it obvious where the missing first row comes from.</p>
 <pre class="code"><code>import pandas as pd
@@ -199,6 +223,12 @@ s = pd.Series([100.0, 120.0, 90.0])
 print(s.shift().tolist())
 print(s.diff().tolist())
 print(s.pct_change().tolist())</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">A proportion, not a percentage</h3>
 <p><code>pct_change</code> returns 0.2 for a rise of a fifth. Multiply by 100 only when you format it for a reader, not while you are still calculating.</p>
 <pre class="code"><code>import pandas as pd
@@ -207,6 +237,10 @@ s = pd.Series([100.0, 120.0])
 change = s.pct_change()
 print(change.tolist())
 print([f"{x:.1%}" for x in change.dropna()])</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -238,14 +272,24 @@ print(None)   # pct_change
 </div>
 
 <div class="content-section">
-<h2>A percentage needs a base</h2>
+<h2>Step 2: A percentage needs a base</h2>
 <p>Growth from zero is undefined, and pandas says so with an infinity rather than an error.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Division by zero</h3>
 <p><code>inf</code> is not a number you can put in a report. It means "grew from nothing", which is a sentence, not a percentage.</p>
 <pre class="code"><code>import pandas as pd
 
 s = pd.Series([0.0, 5.0])
 print(s.pct_change().tolist())</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">The first row, and what to do with it</h3>
 <p>It has no predecessor, so it has no change. Drop it or report it as unknown; filling it with 0 claims a flat first period that was never measured.</p>
 <pre class="code"><code>import pandas as pd
@@ -255,6 +299,12 @@ changes = s.diff()
 print(changes.tolist())
 print(changes.dropna().tolist())
 print(changes.fillna(0).tolist(), "&lt;- claims no change in period one")</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">Counting the rises</h3>
 <p>A useful summary that sidesteps the whole problem: a missing first difference is not greater than zero, so it excludes itself.</p>
 <pre class="code"><code>import pandas as pd
@@ -262,6 +312,10 @@ print(changes.fillna(0).tolist(), "&lt;- claims no change in period one")</code>
 s = pd.Series([1, 2, 1, 3])
 print(s.diff().tolist())
 print("rises:", int((s.diff() &gt; 0).sum()))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -290,6 +344,7 @@ print(s.pct_change().dropna().tolist())
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -346,10 +401,11 @@ print(growth(pd.Series([100.0, 120.0])))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-9/rolling-windows.html">&larr; Previous</a>
-<a class="btn btn-primary route" href="/data.html">Back to the course</a>
+<a class="btn btn-ghost route" href="/data/unit-9/rolling-windows.html">&larr; Prev</a>
+<a class="btn btn-primary route" href="/data/unit-9.html">Unit 9 test</a>
 </div>
 </section>
 </div>

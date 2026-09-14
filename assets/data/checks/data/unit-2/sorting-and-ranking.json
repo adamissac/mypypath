@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Order by the value you mean, and remember that sorted returns a new list.",
+    "prompt": "Sorting and Ranking: The top n names",
     "cases": [
       {
         "name": "returns the right answer",
@@ -36,6 +36,39 @@
       }
     ],
     "hint": "sorted with a key and reverse, then take a slice. A slice longer than the list is not an error, which is why asking for five out of one works."
+  },
+  "exercise2": {
+    "prompt": "Sorting and Ranking: A fair ranking",
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "rank([{\"name\": \"Grace\", \"score\": 88}, {\"name\": \"Ada\", \"score\": 92}, {\"name\": \"Alan\", \"score\": 88}, {\"name\": \"Zoe\", \"score\": 70}])",
+        "expect": "[(1, 'Ada', 92), (2, 'Alan', 88), (2, 'Grace', 88), (4, 'Zoe', 70)]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "no ties counts 1, 2, 3",
+        "call": "[r[0] for r in rank([{\"name\": \"a\", \"score\": 3}, {\"name\": \"b\", \"score\": 2}, {\"name\": \"c\", \"score\": 1}])]",
+        "expect": "[1, 2, 3]"
+      },
+      {
+        "name": "everyone tied shares first place",
+        "call": "[r[0] for r in rank([{\"name\": \"b\", \"score\": 5}, {\"name\": \"a\", \"score\": 5}])]",
+        "expect": "[1, 1]"
+      },
+      {
+        "name": "ties are in name order",
+        "call": "[r[1] for r in rank([{\"name\": \"Zed\", \"score\": 5}, {\"name\": \"Amy\", \"score\": 5}])]",
+        "expect": "['Amy', 'Zed']"
+      },
+      {
+        "name": "no rows gives no ranks",
+        "call": "rank([])",
+        "expect": "[]"
+      }
+    ],
+    "hint": "Sort with key=lambda r: (-r[\"score\"], r[\"name\"]). Then walk it with enumerate: if the score equals the previous one, reuse the previous rank; otherwise the rank is i + 1."
   },
   "questions": [
     {
@@ -73,6 +106,18 @@
       ],
       "answer": 1,
       "explain": "Slices clamp rather than raise, which is why taking the top ten of a short list needs no special case."
+    },
+    {
+      "id": "d2-sr-4",
+      "prompt": "How do you sort highest score first but alphabetical names within a tie?",
+      "choices": [
+        "reverse=True with key (score, name)",
+        "key=lambda r: (-r[\"score\"], r[\"name\"])",
+        "Sort twice with reverse both times",
+        "It cannot be done"
+      ],
+      "answer": 1,
+      "explain": "Negating the number reverses just that part of the tuple; reverse=True would reverse the names too."
     }
   ]
 }

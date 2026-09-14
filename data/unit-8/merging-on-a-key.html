@@ -146,24 +146,14 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-8.html">Unit 8</a>
-</nav>
-<h1 class="lesson-title">Merging on a Key</h1>
-<p class="lead">Bringing two tables together on the column they share.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 8 &middot; Combining Tables</p>
+<p class="sidebar-unit-label">Unit 8 &bull; Combining Tables</p>
 <nav>
 <ul>
 <li><a href="/data/unit-8/concat-stacking-tables.html">1. Stacking Tables with concat</a></li>
-<li><a href="/data/unit-8/merging-on-a-key.html" class="is-current" aria-current="page">2. Merging on a Key</a></li>
+<li><a href="/data/unit-8/merging-on-a-key.html" class="active" aria-current="page">2. Merging on a Key</a></li>
 <li><a href="/data/unit-8/when-a-merge-goes-wrong.html">3. When a Merge Goes Wrong</a></li>
 <li><a href="/data/unit-8/wide-to-long-with-melt.html">4. Wide to Long with melt</a></li>
 <li><a href="/data/unit-8/long-to-wide-with-pivot.html">5. Long to Wide with pivot</a></li>
@@ -171,26 +161,60 @@
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-8.html">Unit 8</a>
+<span class="separator">/</span>
+<span class="current">Merging on a Key</span>
+</nav>
+<div class="eyebrow">Unit 8 &bull; Lesson 2</div>
+<h1 class="lesson-title">Merging on a Key</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Bringing two tables together on the column they share.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-8/concat-stacking-tables.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-8/when-a-merge-goes-wrong.html">Next: When a Merge Goes Wrong</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Join two tables on a shared column.</li>
 <li>Choose between inner, left, right and outer.</li>
 <li>Say what happens to a row that matches nothing.</li>
 <li>Check the row count against what you expected.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>A join is how two files become one answer, and the choice of <code>how</code> is a decision about whose rows matter. Getting it wrong does not raise — it silently drops the people you were asked about, and the summary that follows is computed over the wrong population.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>An inner join keeps the matches</h2>
+<h2>Step 1: An inner join keeps the matches</h2>
 <p>The default keeps only the rows whose key appears in both tables.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Joining on a shared column</h3>
 <p>The key column appears once in the result; the other columns come from both sides.</p>
 <pre class="code"><code>import pandas as pd
@@ -198,6 +222,12 @@
 people = pd.DataFrame({"id": [1, 2], "name": ["Ada", "Bo"]})
 scores = pd.DataFrame({"id": [1], "score": [92]})
 print(pd.merge(people, scores, on="id"))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">What an inner join costs you</h3>
 <p>Bo is gone. If the question was "what did each person score", an inner join has quietly answered a different one: "what did each person who has a score score".</p>
 <pre class="code"><code>import pandas as pd
@@ -206,6 +236,10 @@ people = pd.DataFrame({"id": [1, 2], "name": ["Ada", "Bo"]})
 scores = pd.DataFrame({"id": [1], "score": [92]})
 inner = pd.merge(people, scores, on="id")
 print(len(people), "people -&gt;", len(inner), "rows")</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -237,8 +271,12 @@ print(None)   # the left join
 </div>
 
 <div class="content-section">
-<h2>how= decides what happens to the rest</h2>
+<h2>Step 2: how= decides what happens to the rest</h2>
 <p>Four choices, and the right one depends on whose rows the question is about.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">left keeps everyone on the left</h3>
 <p>Rows with no match get NaN in the columns that came from the right. This is the one you want when the left table is the population you were asked about.</p>
 <pre class="code"><code>import pandas as pd
@@ -246,6 +284,12 @@ print(None)   # the left join
 people = pd.DataFrame({"id": [1, 2], "name": ["Ada", "Bo"]})
 scores = pd.DataFrame({"id": [1], "score": [92]})
 print(pd.merge(people, scores, on="id", how="left"))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">And the other two</h3>
 <p><code>right</code> is the mirror image; <code>outer</code> keeps everything from both sides and fills the gaps on each.</p>
 <pre class="code"><code>import pandas as pd
@@ -253,6 +297,12 @@ print(pd.merge(people, scores, on="id", how="left"))</code></pre>
 a = pd.DataFrame({"id": [1, 2], "x": ["a", "b"]})
 b = pd.DataFrame({"id": [2, 3], "y": ["c", "d"]})
 print(pd.merge(a, b, on="id", how="outer"))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">Counting what did not match</h3>
 <p>After a left join, the rows with NaN in a right-hand column are exactly the ones that found no partner. That number is usually worth reporting, not just fixing.</p>
 <pre class="code"><code>import pandas as pd
@@ -261,6 +311,10 @@ people = pd.DataFrame({"id": [1, 2, 3], "name": ["a", "b", "c"]})
 scores = pd.DataFrame({"id": [1], "score": [92]})
 out = pd.merge(people, scores, on="id", how="left")
 print(int(out["score"].isna().sum()), "of", len(people), "had no score")</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -290,6 +344,7 @@ print(out[out["score"].isna()]["name"].tolist())
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -347,9 +402,10 @@ print(join_counts(pd.DataFrame({"id": [1, 2]}), pd.DataFrame({"id": [1], "v": [9
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-8/concat-stacking-tables.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-8/concat-stacking-tables.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-8/when-a-merge-goes-wrong.html">Next</a>
 </div>
 </section>

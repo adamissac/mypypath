@@ -146,20 +146,10 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-7.html">Unit 7</a>
-</nav>
-<h1 class="lesson-title">Pivot Tables</h1>
-<p class="lead">A grouped summary laid out as a grid.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 7 &middot; Grouping and Aggregating</p>
+<p class="sidebar-unit-label">Unit 7 &bull; Grouping and Aggregating</p>
 <nav>
 <ul>
 <li><a href="/data/unit-7/split-apply-combine.html">1. Split, Apply, Combine</a></li>
@@ -167,30 +157,64 @@
 <li><a href="/data/unit-7/agg-with-several-summaries.html">3. agg with Several Summaries</a></li>
 <li><a href="/data/unit-7/grouping-by-several-keys.html">4. Grouping by Several Keys</a></li>
 <li><a href="/data/unit-7/transform-versus-aggregate.html">5. transform versus aggregate</a></li>
-<li><a href="/data/unit-7/pivot-tables.html" class="is-current" aria-current="page">6. Pivot Tables</a></li>
+<li><a href="/data/unit-7/pivot-tables.html" class="active" aria-current="page">6. Pivot Tables</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-7.html">Unit 7</a>
+<span class="separator">/</span>
+<span class="current">Pivot Tables</span>
+</nav>
+<div class="eyebrow">Unit 7 &bull; Lesson 6</div>
+<h1 class="lesson-title">Pivot Tables</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>A grouped summary laid out as a grid.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-7/transform-versus-aggregate.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-7.html">Unit 7 test</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Lay a two-key summary out as a grid.</li>
 <li>Name what goes down, what goes across, and what fills the cells.</li>
 <li>Say what <code>aggfunc</code> defaults to.</li>
 <li>Read the gaps in the grid.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>A pivot table is the same computation as a two-key group-by, arranged so a person can read it. That arrangement is the whole value: a grid with subjects down and years across is scannable in a way a 40-row two-level index is not.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>Rows, columns and a value</h2>
+<h2>Step 1: Rows, columns and a value</h2>
 <p><code>index</code> is what goes down the side, <code>columns</code> is what goes across the top, <code>values</code> is what fills the cells.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The same numbers, laid out</h3>
 <p>Compare it with the group-by beneath. Identical arithmetic, different shape.</p>
 <pre class="code"><code>import pandas as pd
@@ -200,6 +224,12 @@ df = pd.DataFrame({"subject": ["m", "m", "a"], "year": [10, 11, 10], "score": [9
 print(pd.pivot_table(df, index="subject", columns="year", values="score", aggfunc="mean"))
 print()
 print(df.groupby(["subject", "year"])["score"].mean())</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">aggfunc is not count</h3>
 <p>It defaults to <code>mean</code>, which surprises people expecting a spreadsheet pivot's count. Name it whenever you mean something else.</p>
 <pre class="code"><code>import pandas as pd
@@ -207,6 +237,10 @@ print(df.groupby(["subject", "year"])["score"].mean())</code></pre>
 df = pd.DataFrame({"subject": ["m", "m"], "year": [10, 10], "score": [90, 80]})
 print(pd.pivot_table(df, index="subject", columns="year", values="score"))
 print(pd.pivot_table(df, index="subject", columns="year", values="score", aggfunc="size"))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -237,14 +271,24 @@ print(df.groupby(["subject", "year"])["score"].mean())
 </div>
 
 <div class="content-section">
-<h2>Combinations with no rows</h2>
+<h2>Step 2: Combinations with no rows</h2>
 <p>A grid has a cell for every combination, including the ones the data never had. Those cells are NaN, and that is information.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The gaps</h3>
 <p>Unlike a group-by, which simply omits an absent pair, the grid shows it as an empty cell — which is often exactly what you wanted to see.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"subject": ["m", "a"], "year": [10, 11], "score": [90, 70]})
 print(pd.pivot_table(df, index="subject", columns="year", values="score", aggfunc="mean"))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Filling them, if a zero is honest</h3>
 <p><code>fill_value</code> replaces the gaps. Use it only when "no rows" really does mean zero — for a count it usually does, for a mean it never does.</p>
 <pre class="code"><code>import pandas as pd
@@ -253,6 +297,9 @@ df = pd.DataFrame({"subject": ["m", "a"], "year": [10, 11], "score": [90, 70]})
 print(pd.pivot_table(df, index="subject", columns="year", values="score",
                      aggfunc="size", fill_value=0))</code></pre>
 <p class="note">Filling a missing <em>mean</em> with 0 claims a group scored nothing, when the truth is that nobody sat it. The gap was the honest answer.</p>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -280,6 +327,7 @@ print(pd.pivot_table(df, index="subject", columns="year", values="score", aggfun
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -336,10 +384,11 @@ print(empty_cells(pd.DataFrame({"subject": ["m", "a"], "year": [10, 11], "score"
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-7/transform-versus-aggregate.html">&larr; Previous</a>
-<a class="btn btn-primary route" href="/data.html">Back to the course</a>
+<a class="btn btn-ghost route" href="/data/unit-7/transform-versus-aggregate.html">&larr; Prev</a>
+<a class="btn btn-primary route" href="/data/unit-7.html">Unit 7 test</a>
 </div>
 </section>
 </div>

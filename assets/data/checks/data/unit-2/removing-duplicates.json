@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Deciding what counts as the same row is most of the work.",
+    "prompt": "Removing Duplicates: Unique names, first spelling kept",
     "cases": [
       {
         "name": "returns the right answer",
@@ -31,6 +31,44 @@
       }
     ],
     "hint": "Two things at once: a normalised key for deciding sameness, and the original text for the output. Keep a set of keys you have already seen."
+  },
+  "exercise2": {
+    "prompt": "Removing Duplicates: Duplicate records by key",
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "len(dedupe([{\"name\": \"Ada\", \"date\": \"01-05\", \"score\": 92}, {\"name\": \"Ada\", \"date\": \"01-05\", \"score\": 90}, {\"name\": \"Ada\", \"date\": \"02-01\", \"score\": 95}], [\"name\", \"date\"]))",
+        "expect": "2"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the first of each is kept",
+        "call": "dedupe([{\"id\": 1, \"v\": \"first\"}, {\"id\": 1, \"v\": \"second\"}], [\"id\"])",
+        "expect": "[{'id': 1, 'v': 'first'}]"
+      },
+      {
+        "name": "only the named fields decide",
+        "call": "len(dedupe([{\"a\": 1, \"b\": 1}, {\"a\": 1, \"b\": 2}], [\"a\", \"b\"]))",
+        "expect": "2"
+      },
+      {
+        "name": "one field can be enough",
+        "call": "len(dedupe([{\"a\": 1, \"b\": 1}, {\"a\": 1, \"b\": 2}], [\"a\"]))",
+        "expect": "1"
+      },
+      {
+        "name": "order is kept",
+        "call": "[r[\"id\"] for r in dedupe([{\"id\": 3}, {\"id\": 1}, {\"id\": 3}], [\"id\"])]",
+        "expect": "[3, 1]"
+      },
+      {
+        "name": "no rows gives no rows",
+        "call": "dedupe([], [\"id\"])",
+        "expect": "[]"
+      }
+    ],
+    "hint": "For each row build key = tuple(row[f] for f in fields). Keep the row only if key is not already in a seen set, then add it."
   },
   "questions": [
     {
@@ -72,6 +110,18 @@
         }
       ],
       "explain": "Two representations, one for deciding and one for showing. Collapsing them is what makes cleaned data unreadable."
+    },
+    {
+      "id": "d2-rd-4",
+      "prompt": "Why use a tuple of fields, not the dictionary itself, as the key for duplicate records?",
+      "choices": [
+        "Tuples are shorter",
+        "Dictionaries cannot go in a set, and you choose which fields define sameness",
+        "Tuples sort automatically",
+        "It removes more rows"
+      ],
+      "answer": 1,
+      "explain": "A tuple is hashable, and building it from chosen fields is where you state what \"the same record\" means."
     }
   ]
 }

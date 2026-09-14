@@ -146,23 +146,13 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-3.html">Unit 3</a>
-</nav>
-<h1 class="lesson-title">Why Arrays Beat Lists</h1>
-<p class="lead">One type and one block of memory buys arithmetic on the whole column.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 3 &middot; Arrays with numpy</p>
+<p class="sidebar-unit-label">Unit 3 &bull; Arrays with numpy</p>
 <nav>
 <ul>
-<li><a href="/data/unit-3/why-arrays-beat-lists.html" class="is-current" aria-current="page">1. Why Arrays Beat Lists</a></li>
+<li><a href="/data/unit-3/why-arrays-beat-lists.html" class="active" aria-current="page">1. Why Arrays Beat Lists</a></li>
 <li><a href="/data/unit-3/creating-arrays-and-dtypes.html">2. Creating Arrays and dtypes</a></li>
 <li><a href="/data/unit-3/indexing-and-slicing-arrays.html">3. Indexing and Slicing Arrays</a></li>
 <li><a href="/data/unit-3/boolean-masks.html">4. Boolean Masks</a></li>
@@ -171,26 +161,60 @@
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-3.html">Unit 3</a>
+<span class="separator">/</span>
+<span class="current">Why Arrays Beat Lists</span>
+</nav>
+<div class="eyebrow">Unit 3 &bull; Lesson 1</div>
+<h1 class="lesson-title">Why Arrays Beat Lists</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>One type and one block of memory buys arithmetic on the whole column.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-3.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-3/creating-arrays-and-dtypes.html">Next: Creating Arrays and dtypes</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Say what an array gives up compared with a list, and what it buys in return.</li>
 <li>Predict what <code>* 2</code> does to a list and to an array.</li>
 <li>Replace a loop over a column with one expression over an array.</li>
 <li>Recognise when a list is still the right choice.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Almost every slow piece of analysis code is a Python loop doing arithmetic one row at a time. Arrays are how that loop disappears — and the rest of this course, including the whole of pandas, is built on top of them. Getting this one idea straight makes the next seven units read as variations on it rather than as new material.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>A list of numbers is a list of objects</h2>
+<h2>Step 1: A list of numbers is a list of objects</h2>
 <p>A Python list is a list of references. Each element is a separate object somewhere in memory, carrying its own type tag, and the list holds a pointer to each one. That is what makes a list able to hold a number, a string and another list at once.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">What an array does instead</h3>
 <p>An array holds one type in one unbroken block of memory. There are no per-element objects and no type tags, because the type is a property of the array. That is what lets numpy hand the whole block to compiled code and add a million numbers without Python seeing any of them.</p>
 <pre class="code"><code>import numpy as np
@@ -199,6 +223,12 @@ scores = np.array([92, 88, 79])
 print(scores)
 print(scores.dtype)
 print(scores.shape)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">The bargain, stated plainly</h3>
 <p>You give up mixed types. You get speed, and an arithmetic that applies to everything at once. Every other feature in this unit follows from that single trade.</p>
 <pre class="code"><code>import numpy as np
@@ -208,6 +238,10 @@ print(np.array([1, 2, 3.0]).dtype)
 
 # A list has no such rule, because it never made the bargain.
 print([1, 2, 3.0])</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -237,14 +271,24 @@ print(np.array([1, 2, 3.0]).dtype)
 </div>
 
 <div class="content-section">
-<h2>Arithmetic applies to the whole array</h2>
+<h2>Step 2: Arithmetic applies to the whole array</h2>
 <p>This is the difference you will feel first, and it is the one that catches people. The same operator means two completely different things depending on what is on the left of it.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Multiplying a list repeats it</h3>
 <p>On a list, <code>*</code> is repetition — it is the same operator that makes <code>"ab" * 3</code> give <code>"ababab"</code>. On an array it is multiplication, applied to every element.</p>
 <pre class="code"><code>import numpy as np
 
 print([1, 2, 3] * 2)
 print(np.array([1, 2, 3]) * 2)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">The loop you no longer write</h3>
 <p>Both of these give the same answer. The second one is the one that stays readable when there are three operations rather than one, and it is the one that does not slow down as the column grows.</p>
 <pre class="code"><code>import numpy as np
@@ -256,7 +300,11 @@ print([s + 5 for s in scores])
 
 # All of it at once, in compiled code.
 print(np.array(scores) + 5)</code></pre>
-<div class="info-card"><p>A comprehension is not wrong. It is the right tool for a handful of values, and for anything where the elements are not all the same kind of thing. The argument for arrays is about columns of numbers, which is what a data set is made of.</p></div>
+
+</div>
+</div>
+</div>
+<div class="info-callout"><p><strong>Key idea:</strong> A comprehension is not wrong. It is the right tool for a handful of values, and for anything where the elements are not all the same kind of thing. The argument for arrays is about columns of numbers, which is what a data set is made of.</p></div>
 </div>
 
 <div class="practice-box interactive">
@@ -291,8 +339,12 @@ print(by_array)
 </div>
 
 <div class="content-section">
-<h2>When a list is still the right answer</h2>
+<h2>Step 3: When a list is still the right answer</h2>
 <p>Arrays are not a replacement for lists. They are a replacement for one specific use of lists.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Mixed types, or things that are not numbers</h3>
 <p>A row of a table — a name, a city and a score — is a genuinely mixed thing, and forcing it into an array turns every element into a Python object anyway, losing the whole advantage. Keep those as lists, dicts, or (from unit 4) a DataFrame, which is built to hold a different type per column.</p>
 <pre class="code"><code>import numpy as np
@@ -301,6 +353,12 @@ print(by_array)
 mixed = np.array(["Ada", 92, True])
 print(mixed.dtype)
 print(mixed)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Growing a collection item by item</h3>
 <p>Appending to an array copies the whole block each time, because the block has to stay unbroken. Build with a list and convert once at the end.</p>
 <pre class="code"><code>import numpy as np
@@ -313,6 +371,11 @@ squares = np.array(rows)
 print(squares)</code></pre>
 
 </div>
+</div>
+</div>
+
+</div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -366,9 +429,10 @@ print(as_percent([45, 30], 50))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-3.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-3.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-3/creating-arrays-and-dtypes.html">Next</a>
 </div>
 </section>

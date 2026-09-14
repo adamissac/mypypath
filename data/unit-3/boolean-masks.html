@@ -146,51 +146,75 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-3.html">Unit 3</a>
-</nav>
-<h1 class="lesson-title">Boolean Masks</h1>
-<p class="lead">A comparison over an array gives an array of answers, and that array selects.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 3 &middot; Arrays with numpy</p>
+<p class="sidebar-unit-label">Unit 3 &bull; Arrays with numpy</p>
 <nav>
 <ul>
 <li><a href="/data/unit-3/why-arrays-beat-lists.html">1. Why Arrays Beat Lists</a></li>
 <li><a href="/data/unit-3/creating-arrays-and-dtypes.html">2. Creating Arrays and dtypes</a></li>
 <li><a href="/data/unit-3/indexing-and-slicing-arrays.html">3. Indexing and Slicing Arrays</a></li>
-<li><a href="/data/unit-3/boolean-masks.html" class="is-current" aria-current="page">4. Boolean Masks</a></li>
+<li><a href="/data/unit-3/boolean-masks.html" class="active" aria-current="page">4. Boolean Masks</a></li>
 <li><a href="/data/unit-3/array-maths-and-broadcasting.html">5. Array Maths and Broadcasting</a></li>
 <li><a href="/data/unit-3/summing-and-axes.html">6. Summing and Axes</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-3.html">Unit 3</a>
+<span class="separator">/</span>
+<span class="current">Boolean Masks</span>
+</nav>
+<div class="eyebrow">Unit 3 &bull; Lesson 4</div>
+<h1 class="lesson-title">Boolean Masks</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>A comparison over an array gives an array of answers, and that array selects.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-3/indexing-and-slicing-arrays.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-3/array-maths-and-broadcasting.html">Next: Array Maths and Broadcasting</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Read a comparison on an array as producing one answer per element.</li>
 <li>Use a mask inside square brackets to select the elements you want.</li>
 <li>Combine conditions with <code>&amp;</code> and <code>|</code>, and say why <code>and</code> fails.</li>
 <li>Count matches without selecting them.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>This is filtering, and it is the same idea you will use for the rest of the course — a mask over a numpy array in this unit, a mask over a whole DataFrame in unit 6. It also contains the single most common numpy error message people meet, and knowing why it happens turns it from a mystery into a typo.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>A comparison produces an array</h2>
+<h2>Step 1: A comparison produces an array</h2>
 <p><code>scores &gt; 85</code> is not one True or False. It is one per element — which is what makes the next section work.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">One answer per element</h3>
 <p>The comparison is elementwise, like every other numpy operation. What comes back is an array of booleans the same shape as the one you started with.</p>
 <pre class="code"><code>import numpy as np
@@ -198,6 +222,12 @@
 scores = np.array([92, 88, 79])
 print(scores &gt; 85)
 print((scores &gt; 85).dtype)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Counting without selecting</h3>
 <p>Because True counts as 1, summing a mask counts the matches. <code>.any()</code> and <code>.all()</code> answer the two other questions you usually have.</p>
 <pre class="code"><code>import numpy as np
@@ -208,6 +238,10 @@ mask = scores &gt; 85
 print(mask.sum())     # how many
 print(mask.any())     # is there at least one
 print(mask.all())     # are they all</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -240,8 +274,12 @@ print(None)   # are they all
 </div>
 
 <div class="content-section">
-<h2>Index with the mask to select</h2>
+<h2>Step 2: Index with the mask to select</h2>
 <p>Putting the mask inside the brackets keeps only the elements it marked. This is filtering, and it is the same shape of operation you will use on tables later.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Selecting</h3>
 <p>The result is a new array holding just the elements where the mask was True. Its length is the number of matches, not the length of the original.</p>
 <pre class="code"><code>import numpy as np
@@ -249,6 +287,12 @@ print(None)   # are they all
 scores = np.array([92, 88, 79])
 print(scores[scores &gt; 85])
 print(len(scores[scores &gt; 85]))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Two conditions, and the error everybody hits</h3>
 <p>Use <code>&amp;</code> for and, <code>|</code> for or, and bracket each condition. Python's own <code>and</code> needs to reduce each side to a single True or False, and an array refuses — which is exactly what the error says.</p>
 <pre class="code"><code>import numpy as np
@@ -258,6 +302,11 @@ scores = np.array([92, 88, 79, 60])
 print(scores[(scores &gt; 70) &amp; (scores &lt; 90)])
 print(scores[(scores &lt; 70) | (scores &gt; 90)])</code></pre>
 <p class="note">Leaving the brackets off gives a confusing error, because <code>&amp;</code> binds tighter than <code>&gt;</code>. <code>scores &gt; 70 &amp; scores &lt; 90</code> is parsed as <code>scores &gt; (70 &amp; scores) &lt; 90</code>.</p>
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">What "and" actually says</h3>
 <p>Run this deliberately once. The message — the truth value of an array with more than one element is ambiguous — is numpy telling you it cannot answer a yes/no question about a whole array, and pointing you at <code>&amp;</code>.</p>
 <pre class="code"><code>import numpy as np
@@ -267,6 +316,10 @@ try:
     scores[(scores &gt; 70) and (scores &lt; 90)]
 except ValueError as exc:
     print("ValueError:", exc)</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -296,8 +349,12 @@ print(scores[(scores &gt;= 70) &amp; (scores &lt;= 90)])
 </div>
 
 <div class="content-section">
-<h2>Assigning through a mask</h2>
+<h2>Step 3: Assigning through a mask</h2>
 <p>A mask works on the left of an assignment too, which is how you fix a set of values in one line.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Capping outliers</h3>
 <p>Everything the mask marks gets the new value. The rest is untouched.</p>
 <pre class="code"><code>import numpy as np
@@ -306,8 +363,12 @@ scores = np.array([92, 105, 79])
 scores[scores &gt; 100] = 100
 print(scores)</code></pre>
 <p class="note">Remember the previous lesson: this edits in place. Take a <code>.copy()</code> first if the caller still needs the original.</p>
+</div>
+</div>
+</div>
 
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -364,9 +425,10 @@ print(in_band(np.array([92, 88, 79, 60]), 70, 90))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-3/indexing-and-slicing-arrays.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-3/indexing-and-slicing-arrays.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-3/array-maths-and-broadcasting.html">Next</a>
 </div>
 </section>

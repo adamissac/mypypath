@@ -146,57 +146,87 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-10.html">Unit 10</a>
-</nav>
-<h1 class="lesson-title">A Summary Table</h1>
-<p class="lead">The small table that goes under the chart.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 10 &middot; Visualising and Reporting</p>
+<p class="sidebar-unit-label">Unit 10 &bull; Visualising and Reporting</p>
 <nav>
 <ul>
 <li><a href="/data/unit-10/choosing-a-chart.html">1. Choosing a Chart</a></li>
 <li><a href="/data/unit-10/labels-and-honesty.html">2. Labels and Honesty</a></li>
 <li><a href="/data/unit-10/formatting-numbers.html">3. Formatting Numbers</a></li>
-<li><a href="/data/unit-10/a-summary-table.html" class="is-current" aria-current="page">4. A Summary Table</a></li>
+<li><a href="/data/unit-10/a-summary-table.html" class="active" aria-current="page">4. A Summary Table</a></li>
 <li><a href="/data/unit-10/writing-up-a-finding.html">5. Writing Up a Finding</a></li>
 <li><a href="/data/unit-10/the-whole-analysis.html">6. The Whole Analysis</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-10.html">Unit 10</a>
+<span class="separator">/</span>
+<span class="current">A Summary Table</span>
+</nav>
+<div class="eyebrow">Unit 10 &bull; Lesson 4</div>
+<h1 class="lesson-title">A Summary Table</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>The small table that goes under the chart.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-10/formatting-numbers.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-10/writing-up-a-finding.html">Next: Writing Up a Finding</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Build a table with one row per thing and one column per fact.</li>
 <li>Order it by the thing being compared.</li>
 <li>Include the group size.</li>
 <li>Say what the table does that the chart cannot.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>A chart shows the shape; the table pins the values. Together they answer both "what is the pattern" and "what exactly was the number", and the group size in the table is what stops a reader over-reading a bar built from two rows.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>One row per thing, one column per fact</h2>
+<h2>Step 1: One row per thing, one column per fact</h2>
 <p>The table under a chart is small on purpose: the few numbers the picture cannot state exactly, and the counts behind them.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Count and mean together</h3>
 <p>One group-by gives both. The count is not optional — it is what makes the mean interpretable.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"team": ["a", "a", "b"], "score": [90.0, 80.0, 95.0]})
 print(df.groupby("team")["score"].agg(["count", "mean"]).round(1))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Name the columns for a reader</h3>
 <p>"count" and "mean" are how it was computed. "students" and "mean score" are what it means.</p>
 <pre class="code"><code>import pandas as pd
@@ -207,6 +237,10 @@ out = df.groupby("team").agg(
     mean_score=("score", "mean"),
 ).round(1)
 print(out)</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -239,8 +273,12 @@ print(df.groupby("team").agg(
 </div>
 
 <div class="content-section">
-<h2>Order it by the thing being compared</h2>
+<h2>Step 2: Order it by the thing being compared</h2>
 <p>The first row should be the one the reader is looking for. Alphabetical order almost never is.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Sort by the value</h3>
 <p>Best first, so the ranking is visible without reading every row.</p>
 <pre class="code"><code>import pandas as pd
@@ -248,6 +286,12 @@ print(df.groupby("team").agg(
 df = pd.DataFrame({"team": ["a", "a", "b"], "score": [90.0, 80.0, 95.0]})
 out = df.groupby("team")["score"].agg(["count", "mean"]).round(1)
 print(out.sort_values("mean", ascending=False))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">And match the chart</h3>
 <p>If the bars are ordered by value, the table should be too. A reader moving between the two should not have to re-find each row.</p>
 <pre class="code"><code>import pandas as pd
@@ -255,6 +299,10 @@ print(out.sort_values("mean", ascending=False))</code></pre>
 df = pd.DataFrame({"team": ["zeta", "alpha", "mu"], "score": [70.0, 90.0, 80.0]})
 order = df.groupby("team")["score"].mean().sort_values(ascending=False).index
 print(list(order))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -283,6 +331,7 @@ print(None)   # sorted by mean, best first
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -339,9 +388,10 @@ print(thin_groups(pd.DataFrame({"team": ["a", "a", "b"], "score": [1.0, 2.0, 9.0
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-10/formatting-numbers.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-10/formatting-numbers.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-10/writing-up-a-finding.html">Next</a>
 </div>
 </section>

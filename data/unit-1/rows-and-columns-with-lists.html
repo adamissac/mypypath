@@ -146,24 +146,14 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-1.html">Unit 1</a>
-</nav>
-<h1 class="lesson-title">Rows and Columns with Lists</h1>
-<p class="lead">A table is a list of lists, and a column is what you pull out of it.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 1 &middot; Data in Plain Python</p>
+<p class="sidebar-unit-label">Unit 1 &bull; Data in Plain Python</p>
 <nav>
 <ul>
 <li><a href="/data/unit-1/what-is-data-analysis.html">1. What Data Analysis Actually Is</a></li>
-<li><a href="/data/unit-1/rows-and-columns-with-lists.html" class="is-current" aria-current="page">2. Rows and Columns with Lists</a></li>
+<li><a href="/data/unit-1/rows-and-columns-with-lists.html" class="active" aria-current="page">2. Rows and Columns with Lists</a></li>
 <li><a href="/data/unit-1/records-as-dictionaries.html">3. Records as Dictionaries</a></li>
 <li><a href="/data/unit-1/reading-a-csv-file.html">4. Reading a CSV File</a></li>
 <li><a href="/data/unit-1/summarising-numbers.html">5. Summarising Numbers</a></li>
@@ -171,37 +161,228 @@
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
-
-
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-1.html">Unit 1</a>
+<span class="separator">/</span>
+<span class="current">Rows and Columns with Lists</span>
+</nav>
+<div class="eyebrow">Unit 1 &bull; Lesson 2</div>
+<h1 class="lesson-title">Rows and Columns with Lists</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>A table is a list of lists, and a column is what you pull out of it.</p>
+<div class="lesson-meta">
+<span class="pill">Beginner</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-1/what-is-data-analysis.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-1/records-as-dictionaries.html">Next: Records as Dictionaries</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
-<h2>A table is a list of rows</h2>
-<p>Each inner list is one row. Indexing gives you a row; indexing twice gives you one cell. The order of the columns is a decision you have to remember, which is exactly the weakness the next lesson fixes.</p>
+<h2>What You Will Learn in This Lesson</h2>
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
+<li>Store a small table as a list of row lists.</li>
+<li>Read one row, one cell, and one column out of it.</li>
+<li>Build a column with a comprehension over the rows.</li>
+<li>Explain the weakness of position-based rows that the next lesson fixes.</li>
+</ul>
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Every table you will ever analyse — a CSV, a spreadsheet, a DataFrame — is rows and columns. Building one out of plain lists first shows exactly what a table is underneath, so when pandas hands you <code>df["score"]</code> you know it is doing the comprehension in this lesson for you, and why it needed column names to do it.</p>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Step 1: A table is a list of rows</h2>
+<p>The simplest possible table: an outer list, holding one inner list per row, each inner list holding the values in a fixed order.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">One index for a row, two for a cell</h3>
+<p>The first index picks the row. The second picks a position inside that row. Row first, then column — the same order a spreadsheet uses.</p>
 <pre class="code"><code>table = [
     ["Ada", 92, "maths"],
     ["Grace", 88, "computing"],
+    ["Alan", 79, "maths"],
 ]
 
-print(table[0])
-print(table[0][1])</code></pre>
+print(table[0])      # the first row
+print(table[0][1])   # the second cell of the first row
+print(table[2][2])   # the third cell of the third row</code></pre>
 
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">The shape of the table</h3>
+<p><code>len(table)</code> is the number of rows. <code>len(table[0])</code> is the number of columns, assuming every row has the same length — an assumption real files break more often than you would hope.</p>
+<pre class="code"><code>table = [["Ada", 92, "maths"], ["Grace", 88, "computing"]]
+
+print("rows:", len(table))
+print("columns:", len(table[0]))</code></pre>
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Find the cell</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print Alan’s subject using two indexes, then print the number of columns in the table.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'table = [\n    [&quot;Ada&quot;, 92, &quot;maths&quot;],\n    [&quot;Grace&quot;, 88, &quot;computing&quot;],\n    [&quot;Alan&quot;, 79, &quot;maths&quot;],\n]\n\n# Alan\'s subject:\n\n# The number of columns:\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">table = [
+    ["Ada", 92, "maths"],
+    ["Grace", 88, "computing"],
+    ["Alan", 79, "maths"],
+]
+
+# Alan's subject:
+
+# The number of columns:
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
-<h2>A column is a comprehension</h2>
-<p>There is no column object here. To work on one you build a new list from the same position in every row.</p>
+<h2>Step 2: A column is a comprehension</h2>
+<p>There is no column object in a list of lists. To work on one, you build a new list out of the same position in every row.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">Pulling one position out of every row</h3>
+<p><code>[row[1] for row in table]</code> reads as “the second value of each row”. That is what a column is.</p>
 <pre class="code"><code>table = [["Ada", 92], ["Grace", 88], ["Alan", 79]]
+
 scores = [row[1] for row in table]
+names = [row[0] for row in table]
+print(names)
 print(scores)</code></pre>
 
 </div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">Summarise the column, not the table</h3>
+<p>Once the column is a list of numbers, every summary from the last lesson works on it.</p>
+<pre class="code"><code>table = [["Ada", 92], ["Grace", 88], ["Alan", 79]]
+
+scores = [row[1] for row in table]
+print(sum(scores) / len(scores))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
+<h3 class="h4">A column with a condition</h3>
+<p>Adding an <code>if</code> keeps only some rows while taking the column — the names of everyone who studies maths, say.</p>
+<pre class="code"><code>table = [["Ada", 92, "maths"], ["Grace", 88, "computing"], ["Alan", 79, "maths"]]
+
+maths = [row[0] for row in table if row[2] == "maths"]
+print(maths)</code></pre>
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Two columns</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Build <code>names</code> and <code>scores</code> as columns, then print the name of the student with the highest score using <code>scores.index</code>.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'table = [[&quot;Ada&quot;, 92], [&quot;Grace&quot;, 88], [&quot;Alan&quot;, 79]]\n\nnames = []\nscores = []\n\n# The name at the same position as the highest score:\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">table = [["Ada", 92], ["Grace", 88], ["Alan", 79]]
+
+names = []
+scores = []
+
+# The name at the same position as the highest score:
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Step 3: The weakness: positions mean nothing</h2>
+<p>This representation works, and it has one serious problem.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">row[1] does not say what it is</h3>
+<p>You have to remember that position 1 is the score. Six months later, or for someone else reading the code, <code>row[1]</code> is a mystery.</p>
+<pre class="code"><code>row = ["Ada", 92, "maths"]
+print(row[1])   # the score -- but only if you remember</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">A new column moves everything</h3>
+<p>Insert an age column after the name and every <code>row[1]</code> now reads the age. Nothing raises; the average is just the average age. The next lesson fixes this by giving every value a name.</p>
+<pre class="code"><code>table = [["Ada", 36, 92], ["Grace", 45, 88]]
+
+# Written before the age column existed. Still runs. Now wrong.
+scores = [row[1] for row in table]
+print(sum(scores) / len(scores))</code></pre>
+
+</div>
+</div>
+</div>
+
+</div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Pull out a column</h3>
 <p>Pull the second column out of <code>table</code> into a list called <code>scores</code>, then print it.</p>
 <p class="hint-text">One value per row, always at the same position. A comprehension over the rows is the shortest way to say that.</p>
 
@@ -225,10 +406,36 @@ print(scores)</code></pre>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: A column, filtered</h3>
+<p>Write <code>names_in(table, subject)</code> returning the names, in table order, of the rows whose third column equals <code>subject</code>. Each row is <code>[name, score, subject]</code>.</p>
+<p class="hint-text">The subject is at position 2 and the name at position 0: [row[0] for row in table if row[2] == subject].</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'def names_in(table, subject):\n    # Names of the rows studying `subject`.\n    return []\n\ntable = [[&quot;Ada&quot;, 92, &quot;maths&quot;], [&quot;Grace&quot;, 88, &quot;computing&quot;], [&quot;Alan&quot;, 79, &quot;maths&quot;]]\nprint(names_in(table, &quot;maths&quot;))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">def names_in(table, subject):
+    # Names of the rows studying `subject`.
+    return []
+
+table = [["Ada", 92, "maths"], ["Grace", 88, "computing"], ["Alan", 79, "maths"]]
+print(names_in(table, "maths"))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
+</div>
+</div>
+</div>
 </div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-1/what-is-data-analysis.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-1/what-is-data-analysis.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-1/records-as-dictionaries.html">Next</a>
 </div>
 </section>

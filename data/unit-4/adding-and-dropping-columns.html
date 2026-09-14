@@ -146,51 +146,75 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-4.html">Unit 4</a>
-</nav>
-<h1 class="lesson-title">Adding and Dropping Columns</h1>
-<p class="lead">A new column is an assignment, and drop returns a new table by default.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 4 &middot; Series and DataFrames</p>
+<p class="sidebar-unit-label">Unit 4 &bull; Series and DataFrames</p>
 <nav>
 <ul>
 <li><a href="/data/unit-4/the-series.html">1. The Series</a></li>
 <li><a href="/data/unit-4/building-a-dataframe.html">2. Building a DataFrame</a></li>
 <li><a href="/data/unit-4/selecting-columns-and-rows.html">3. Selecting Columns and Rows</a></li>
-<li><a href="/data/unit-4/adding-and-dropping-columns.html" class="is-current" aria-current="page">4. Adding and Dropping Columns</a></li>
+<li><a href="/data/unit-4/adding-and-dropping-columns.html" class="active" aria-current="page">4. Adding and Dropping Columns</a></li>
 <li><a href="/data/unit-4/dtypes-in-pandas.html">5. dtypes in pandas</a></li>
 <li><a href="/data/unit-4/reading-a-csv-into-pandas.html">6. Reading a CSV into pandas</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-4.html">Unit 4</a>
+<span class="separator">/</span>
+<span class="current">Adding and Dropping Columns</span>
+</nav>
+<div class="eyebrow">Unit 4 &bull; Lesson 4</div>
+<h1 class="lesson-title">Adding and Dropping Columns</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>A new column is an assignment, and drop returns a new table by default.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-4/selecting-columns-and-rows.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-4/dtypes-in-pandas.html">Next: dtypes in pandas</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Create a derived column from the columns you already have.</li>
 <li>Say what <code>drop</code> returns, and what it leaves behind.</li>
 <li>Take a copy before modifying a table a caller still owns.</li>
 <li>Rename a column without rebuilding the table.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>The column that answers your question is usually not in the file — it is a rate, a difference, a share. Deriving one is a single assignment, and the only real trap is that half of these operations return a new table while the other half change yours, and the difference is not visible until something downstream is wrong.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>A derived column</h2>
+<h2>Step 1: A derived column</h2>
 <p>Assigning to a name that does not exist creates it. The right-hand side is ordinary column arithmetic, applied to the whole column at once.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Create by assigning</h3>
 <p>No method call and no declaration. If the name exists it is replaced; if not, it is added at the end.</p>
 <pre class="code"><code>import pandas as pd
@@ -198,6 +222,12 @@
 df = pd.DataFrame({"price": [10.0, 20.0]})
 df["with_tax"] = df["price"] * 1.08
 print(df)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">From two columns</h3>
 <p>The arithmetic aligns on the index, so the rows always line up with themselves. This is the everyday case: a total, a rate, a difference from a target.</p>
 <pre class="code"><code>import pandas as pd
@@ -205,6 +235,12 @@ print(df)</code></pre>
 df = pd.DataFrame({"price": [2.0, 5.0], "quantity": [3, 2]})
 df["total"] = df["price"] * df["quantity"]
 print(df)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">Renaming</h3>
 <p><code>rename</code> takes a mapping and, like drop, hands back a new table unless you tell it otherwise.</p>
 <pre class="code"><code>import pandas as pd
@@ -212,6 +248,10 @@ print(df)</code></pre>
 df = pd.DataFrame({"n": [1, 2]})
 print(df.rename(columns={"n": "count"}).columns.tolist())
 print(df.columns.tolist())   # unchanged</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -243,8 +283,12 @@ print(df)
 </div>
 
 <div class="content-section">
-<h2>Dropping returns a copy</h2>
+<h2>Step 2: Dropping returns a copy</h2>
 <p><code>drop</code> hands back a new table and leaves yours alone unless you reassign. This surprises people who expect it to behave like a list method.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The result is the point</h3>
 <p>Calling drop and ignoring what it returns looks exactly like a no-op, because it is one.</p>
 <pre class="code"><code>import pandas as pd
@@ -253,6 +297,12 @@ df = pd.DataFrame({"a": [1], "b": [2]})
 smaller = df.drop(columns=["b"])
 print(list(smaller.columns))
 print(list(df.columns))      # still both</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Assignment is not a copy</h3>
 <p>Two names for the same table are still one table. A function that assigns a column onto the DataFrame it was handed has changed its caller's data, and nothing says so.</p>
 <pre class="code"><code>import pandas as pd
@@ -264,6 +314,12 @@ def add_flag(table):
 df = pd.DataFrame({"a": [1]})
 add_flag(df)
 print(list(df.columns))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">Copy first</h3>
 <p>One extra line makes the function honest: it returns something new and leaves what it was given alone.</p>
 <pre class="code"><code>import pandas as pd
@@ -276,6 +332,10 @@ def add_flag(table):
 df = pd.DataFrame({"a": [1]})
 add_flag(df)
 print(list(df.columns))      # untouched</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -309,6 +369,7 @@ print(list(df.columns))
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -365,9 +426,10 @@ print(only(pd.DataFrame({"a": [1], "b": [2], "c": [3]}), ["c", "a"]))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-4/selecting-columns-and-rows.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-4/selecting-columns-and-rows.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-4/dtypes-in-pandas.html">Next</a>
 </div>
 </section>

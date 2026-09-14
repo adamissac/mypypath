@@ -146,24 +146,14 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-10.html">Unit 10</a>
-</nav>
-<h1 class="lesson-title">Labels and Honesty</h1>
-<p class="lead">A chart without units is a decoration, and a cut axis is an argument.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 10 &middot; Visualising and Reporting</p>
+<p class="sidebar-unit-label">Unit 10 &bull; Visualising and Reporting</p>
 <nav>
 <ul>
 <li><a href="/data/unit-10/choosing-a-chart.html">1. Choosing a Chart</a></li>
-<li><a href="/data/unit-10/labels-and-honesty.html" class="is-current" aria-current="page">2. Labels and Honesty</a></li>
+<li><a href="/data/unit-10/labels-and-honesty.html" class="active" aria-current="page">2. Labels and Honesty</a></li>
 <li><a href="/data/unit-10/formatting-numbers.html">3. Formatting Numbers</a></li>
 <li><a href="/data/unit-10/a-summary-table.html">4. A Summary Table</a></li>
 <li><a href="/data/unit-10/writing-up-a-finding.html">5. Writing Up a Finding</a></li>
@@ -171,26 +161,60 @@
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-10.html">Unit 10</a>
+<span class="separator">/</span>
+<span class="current">Labels and Honesty</span>
+</nav>
+<div class="eyebrow">Unit 10 &bull; Lesson 2</div>
+<h1 class="lesson-title">Labels and Honesty</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>A chart without units is a decoration, and a cut axis is an argument.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-10/choosing-a-chart.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-10/formatting-numbers.html">Next: Formatting Numbers</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Say what every chart needs before it is readable.</li>
 <li>Explain what a truncated axis does to a comparison.</li>
 <li>State a comparison in words, with its size.</li>
 <li>Recognise a choice that is making an argument for you.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Every chart makes a claim. The labels are what let a reader check it, and the axis is what decides how big the claim looks. Neither is a styling question: a chart with no units and a zoomed axis can make a one per cent difference look like a crisis, without a single number being wrong.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>The label is part of the answer</h2>
+<h2>Step 1: The label is part of the answer</h2>
 <p>A number with no unit is not information. The reader cannot tell pounds from thousands of pounds from a percentage.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">What a chart needs</h3>
 <p>A title saying what it shows, both axes labelled with units, and a note of how many observations are behind it. Four things, and a chart missing any of them is asking the reader to guess.</p>
 <pre class="code"><code># title:  "Mean exam score by team, 2024"
@@ -198,6 +222,12 @@
 # x axis: "Team"
 # note:   "n = 48 students"
 print("the units are half the claim")</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">The claim in words</h3>
 <p>If you cannot write the sentence, the chart is not finished. The sentence needs the direction, the size and the comparison.</p>
 <pre class="code"><code>import pandas as pd
@@ -206,6 +236,10 @@ df = pd.DataFrame({"team": ["red", "red", "blue"], "score": [90.0, 80.0, 70.0]})
 means = df.groupby("team")["score"].mean().round(1)
 gap = round(float(means.max() - means.min()), 1)
 print(f"{means.idxmax()} leads on {means.max()}, {gap} ahead of {means.idxmin()}")</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -237,8 +271,12 @@ print(f"{means.idxmax()} leads on {means.max()}, {gap} ahead of {means.idxmin()}
 </div>
 
 <div class="content-section">
-<h2>A truncated axis exaggerates</h2>
+<h2>Step 2: A truncated axis exaggerates</h2>
 <p>Starting a bar chart's axis at 80 rather than 0 makes a small difference fill the frame. It can be defensible; it is never neutral.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The same numbers, two impressions</h3>
 <p>85 and 82 differ by three and a half per cent. On an axis from 80 to 90 one bar is more than twice the other.</p>
 <pre class="code"><code>import pandas as pd
@@ -253,6 +291,11 @@ zoomed = (means - 80) / 10
 print("bar heights on a 0-100 axis:", full.round(2).to_dict())
 print("bar heights on an 80-90 axis:", zoomed.round(2).to_dict())</code></pre>
 <p class="note">The numbers did not change. The picture did. If you truncate an axis, say so on the chart — and be sure the reason is that the detail matters, not that the difference looked small.</p>
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">The other quiet arguments</h3>
 <p>A colour scale with an off-centre midpoint, a y-axis that is a rate in one panel and a total in the next, a time axis with uneven gaps. Each is a decision the reader will not see you make.</p>
 <pre class="code"><code>import pandas as pd
@@ -263,6 +306,10 @@ df["per_person"] = df["sales"] / df["people"]
 print(df)
 print("by total:", df.loc[df["sales"].idxmax(), "region"])
 print("by rate: ", df.loc[df["per_person"].idxmax(), "region"])</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -291,6 +338,7 @@ print(f"{(means.max() - means.min()) / means.min():.1%}")
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -347,9 +395,10 @@ print(gap_size(pd.DataFrame({"team": ["a", "b"], "score": [85.0, 82.0]})))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-10/choosing-a-chart.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-10/choosing-a-chart.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-10/formatting-numbers.html">Next</a>
 </div>
 </section>

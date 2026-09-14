@@ -146,20 +146,10 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-10.html">Unit 10</a>
-</nav>
-<h1 class="lesson-title">The Whole Analysis</h1>
-<p class="lead">Load, clean, join, summarise, report — in one function, from files.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 10 &middot; Visualising and Reporting</p>
+<p class="sidebar-unit-label">Unit 10 &bull; Visualising and Reporting</p>
 <nav>
 <ul>
 <li><a href="/data/unit-10/choosing-a-chart.html">1. Choosing a Chart</a></li>
@@ -167,30 +157,64 @@
 <li><a href="/data/unit-10/formatting-numbers.html">3. Formatting Numbers</a></li>
 <li><a href="/data/unit-10/a-summary-table.html">4. A Summary Table</a></li>
 <li><a href="/data/unit-10/writing-up-a-finding.html">5. Writing Up a Finding</a></li>
-<li><a href="/data/unit-10/the-whole-analysis.html" class="is-current" aria-current="page">6. The Whole Analysis</a></li>
+<li><a href="/data/unit-10/the-whole-analysis.html" class="active" aria-current="page">6. The Whole Analysis</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-10.html">Unit 10</a>
+<span class="separator">/</span>
+<span class="current">The Whole Analysis</span>
+</nav>
+<div class="eyebrow">Unit 10 &bull; Lesson 6</div>
+<h1 class="lesson-title">The Whole Analysis</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Load, clean, join, summarise, report — in one function, from files.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-10/writing-up-a-finding.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-10.html">Unit 10 test</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Put the steps from this course in the order that keeps each one correct.</li>
 <li>Clean types and missing values before joining, not after.</li>
 <li>Check row counts between steps, so a silent loss shows up.</li>
 <li>Return a result a reader can use, from two raw files.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Every unit so far taught one step on its own, on data that arrived ready for it. Real work is the chain, and the chain fails at the joints: a key read as text meets a key read as a number and matches nothing, a missing marker survives into a mean. Doing the whole thing once, with checks between the steps, is what turns the separate skills into an analysis.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>The order matters</h2>
+<h2>Step 1: The order matters</h2>
 <p>The steps are the ones you already know. What is new is that each one depends on the one before it being right.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Read, then look</h3>
 <p>Read each file and check its shape and dtypes before doing anything else. A score column that comes back as <code>object</code> is the first sign of a missing marker, and it is far cheaper to notice here than after a join.</p>
 <pre class="code"><code>import io
@@ -199,6 +223,12 @@ import pandas as pd
 scores = pd.read_csv(io.StringIO("id,score\n1,90\n2,n/a\n3,70\n"))
 print(scores.shape)
 print(scores.dtypes)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Clean before you join</h3>
 <p>Convert types and deal with missing values on each table while it is still small and on its own. After a merge the bad rows are mixed in with good ones from the other file, and it is much harder to say which table they came from.</p>
 <pre class="code"><code>import io
@@ -208,6 +238,12 @@ scores = pd.read_csv(io.StringIO("id,score\n1,90\n2,n/a\n3,70\n"))
 scores["score"] = pd.to_numeric(scores["score"], errors="coerce")
 print(scores.dtypes)
 print(int(scores["score"].isna().sum()), "missing")</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">Then join, then summarise</h3>
 <p>Merge on the key, group, and take the summary. Rounding comes last, at the moment the number is shown, so no step downstream computes with a rounded value.</p>
 <pre class="code"><code>import io
@@ -217,6 +253,10 @@ people = pd.read_csv(io.StringIO("id,team\n1,red\n2,red\n3,blue\n"))
 scores = pd.read_csv(io.StringIO("id,score\n1,90\n2,80\n3,70\n"))
 out = pd.merge(people, scores, on="id")
 print(out.groupby("team")["score"].mean().round(1))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -247,8 +287,12 @@ print(scores.dtypes)
 </div>
 
 <div class="content-section">
-<h2>Check between the steps</h2>
+<h2>Step 2: Check between the steps</h2>
 <p>Each step can lose rows without raising anything. A check is one line that prints what you expect to be true.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">How much did cleaning drop?</h3>
 <p>Count before and after. If a third of the rows vanished at the cleaning step, that belongs in the write-up, not in a surprise later.</p>
 <pre class="code"><code>import pandas as pd
@@ -257,6 +301,12 @@ df = pd.DataFrame({"id": [1, 2, 3], "score": ["90", "n/a", "70"]})
 df["score"] = pd.to_numeric(df["score"], errors="coerce")
 kept = df.dropna(subset=["score"])
 print(len(df) - len(kept), "dropped of", len(df))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Did the join keep what it should?</h3>
 <p>An inner join drops every row whose key has no partner. Compare the row count after the merge with the table you expected it to match.</p>
 <pre class="code"><code>import pandas as pd
@@ -265,7 +315,11 @@ people = pd.DataFrame({"id": [1, 2, 3], "team": ["red", "red", "blue"]})
 scores = pd.DataFrame({"id": [1, 2, 4], "score": [90.0, 80.0, 70.0]})
 out = pd.merge(people, scores, on="id")
 print("people:", len(people), "joined:", len(out))</code></pre>
-<div class="info-card"><p>The checks are not the analysis, and they do not need to stay in the final function as prints. What matters is that you ran them and know the answers, because "how many rows did that rest on" is the first question anyone asks.</p></div>
+
+</div>
+</div>
+</div>
+<div class="info-callout"><p><strong>Key idea:</strong> The checks are not the analysis, and they do not need to stay in the final function as prints. What matters is that you ran them and know the answers, because "how many rows did that rest on" is the first question anyone asks.</p></div>
 </div>
 
 <div class="practice-box interactive">
@@ -297,8 +351,12 @@ print(len(people), "-&gt;", len(out))
 </div>
 
 <div class="content-section">
-<h2>One function, two files</h2>
+<h2>Step 3: One function, two files</h2>
 <p>Wrapping the chain in a function with the file paths as arguments makes it rerunnable, which is the point: next term's files should go through the same steps without anybody copying code.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Paths in, answer out</h3>
 <p>The function reads, cleans, joins and summarises, and returns plain Python values. A caller does not need to know pandas was involved.</p>
 <pre class="code"><code>import pandas as pd
@@ -313,6 +371,12 @@ def best_team(people_path, scores_path):
     return str(means.idxmax())
 
 print(best_team("people.csv", "scores.csv"))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">The same function on different data</h3>
 <p>Run it again on a second pair of files. If the answer changes when the data does and nothing else had to change, the analysis is finished.</p>
 <pre class="code"><code>import pandas as pd
@@ -328,6 +392,11 @@ open("scores.csv", "w").write("id,score\n1,40\n2,95\n")
 print(best_team("people.csv", "scores.csv"))</code></pre>
 
 </div>
+</div>
+</div>
+
+</div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -384,10 +453,11 @@ print(audit("people.csv", "scores.csv"))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-10/writing-up-a-finding.html">&larr; Previous</a>
-<a class="btn btn-primary route" href="/data.html">Back to the course</a>
+<a class="btn btn-ghost route" href="/data/unit-10/writing-up-a-finding.html">&larr; Prev</a>
+<a class="btn btn-primary route" href="/data/unit-10.html">Unit 10 test</a>
 </div>
 </section>
 </div>

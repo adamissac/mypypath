@@ -146,23 +146,13 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-1.html">Unit 1</a>
-</nav>
-<h1 class="lesson-title">What Data Analysis Actually Is</h1>
-<p class="lead">Four steps that turn a file of rows into an answer you can defend.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 1 &middot; Data in Plain Python</p>
+<p class="sidebar-unit-label">Unit 1 &bull; Data in Plain Python</p>
 <nav>
 <ul>
-<li><a href="/data/unit-1/what-is-data-analysis.html" class="is-current" aria-current="page">1. What Data Analysis Actually Is</a></li>
+<li><a href="/data/unit-1/what-is-data-analysis.html" class="active" aria-current="page">1. What Data Analysis Actually Is</a></li>
 <li><a href="/data/unit-1/rows-and-columns-with-lists.html">2. Rows and Columns with Lists</a></li>
 <li><a href="/data/unit-1/records-as-dictionaries.html">3. Records as Dictionaries</a></li>
 <li><a href="/data/unit-1/reading-a-csv-file.html">4. Reading a CSV File</a></li>
@@ -171,37 +161,217 @@
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
-
-
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-1.html">Unit 1</a>
+<span class="separator">/</span>
+<span class="current">What Data Analysis Actually Is</span>
+</nav>
+<div class="eyebrow">Unit 1 &bull; Lesson 1</div>
+<h1 class="lesson-title">What Data Analysis Actually Is</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Four steps that turn a file of rows into an answer you can defend.</p>
+<div class="lesson-meta">
+<span class="pill">Beginner</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-1.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-1/rows-and-columns-with-lists.html">Next: Rows and Columns with Lists</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
-<h2>The shape of the work</h2>
-<p>Every analysis is the same four moves: get the data, clean it, summarise it, and say what it means. Most of the time goes on the second one, and most of the mistakes hide there too.</p>
+<h2>What You Will Learn in This Lesson</h2>
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
+<li>Name the four steps every analysis goes through, in order.</li>
+<li>Turn a vague goal into a question a table can answer.</li>
+<li>Compute an answer from the data rather than reading it off and typing it.</li>
+<li>Say why the cleaning step is where most of the time and most of the mistakes go.</li>
+</ul>
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Every tool in this course — the csv module, numpy, pandas — is a faster way of doing one of four steps. Knowing the steps first is what stops the tools feeling like a pile of unrelated functions, and it is what lets you notice when an analysis skipped one. The most common bad result is not a wrong calculation; it is a correct calculation over data nobody looked at.</p>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Step 1: The shape of the work</h2>
+<p>Every analysis, from a class spreadsheet to a national survey, makes the same four moves. The tools change; the moves do not.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">Get, clean, summarise, explain</h3>
+<p>Get the data into your program. Clean it until it means what you think it means. Summarise it into a few numbers. Explain what those numbers say — and what they do not. This unit covers getting and summarising with plain Python; unit 2 is entirely about cleaning.</p>
 <pre class="code"><code>rows = [
     ["Ada", 92],
     ["Grace", 88],
     ["Alan", 79],
 ]
 
-print("students:", len(rows))</code></pre>
+# Get: the rows are here.
+# Summarise: how many, and the best score.
+print("students:", len(rows))
+print("best:", max(r[1] for r in rows))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">Where the time actually goes</h3>
+<p>The summary is often three lines. Getting the data fit to summarise — finding the blank score, the name typed twice, the number stored as text — is most of the job. It is also where mistakes hide, because nothing raises when a column is dirty; the average simply comes out wrong.</p>
+<pre class="code"><code>scores = ["92", "88", ""]
+
+# One blank value, and a sum over the column fails outright.
+# Worse cases do not fail at all -- that is unit 2.
+print(len(scores), "values, one of them empty:", scores.count(""))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
 <div class="content-section">
-<h2>An answer needs a question first</h2>
-<p>A table on its own says nothing. "Who scored highest?" is a question a table can answer; "is this class doing well?" is not, until you decide what well means. Writing the question down first is what stops you fishing.</p>
-<pre class="code"><code>scores = [92, 88, 79]
-print("highest:", max(scores))
-print("lowest:", min(scores))</code></pre>
+<h2>Step 2: An answer needs a question first</h2>
+<p>A table on its own says nothing. It answers questions, and only the ones precise enough to be computed.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">Vague goals and computable questions</h3>
+<p>"Is this class doing well?" cannot be computed until you decide what well means. "What is the average score, and how many students are below 60?" can. Writing the question down first is also what stops you fishing — a table always contains some pattern if you look long enough.</p>
+<pre class="code"><code>scores = [92, 88, 79, 55]
+
+print("average:", sum(scores) / len(scores))
+print("below 60:", len([s for s in scores if s &lt; 60]))</code></pre>
 
 </div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">The question decides the summary</h3>
+<p>"Who scored highest?" wants <code>max</code>. "How spread out are the scores?" wants the smallest and largest together. "How many passed?" wants a count. Choosing the summary is the second half of asking the question.</p>
+<pre class="code"><code>scores = [92, 88, 79, 55]
+
+print("highest:", max(scores))
+print("range:", min(scores), "to", max(scores))
+print("passed:", len([s for s in scores if s &gt;= 60]))</code></pre>
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Pick the summary</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Each comment is a question. Replace each <code>None</code> with the expression that answers it from <code>scores</code>.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'scores = [92, 88, 79, 55, 61]\n\n# How many students are there?\nprint(None)\n\n# What is the lowest score?\nprint(None)\n\n# How many scored 60 or more?\nprint(None)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">scores = [92, 88, 79, 55, 61]
+
+# How many students are there?
+print(None)
+
+# What is the lowest score?
+print(None)
+
+# How many scored 60 or more?
+print(None)
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Step 3: Compute it, do not copy it</h2>
+<p>The single habit that separates analysis code from a calculator: the answer is derived from the data every time the code runs.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">A typed answer is right once</h3>
+<p><code>print(3)</code> is correct today. Add a fourth student and it is silently wrong, and nothing in the code tells you. <code>print(len(rows))</code> is correct for every version of the data.</p>
+<pre class="code"><code>rows = [["Ada", 92], ["Grace", 88], ["Alan", 79], ["Katherine", 99]]
+
+print(3)          # stale the moment the data changed
+print(len(rows))  # still right</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">Reading a column out of rows</h3>
+<p>To take the largest score you need the scores on their own. A generator over the rows pulls one position out of each — the same idea the next lesson calls a column.</p>
+<pre class="code"><code>rows = [["Ada", 92], ["Grace", 88], ["Alan", 79]]
+
+print(max(r[1] for r in rows))
+print(min(r[1] for r in rows))</code></pre>
+
+</div>
+</div>
+</div>
+<div class="info-callout"><p><strong>Key idea:</strong> Later, pandas will do <code>df["score"].max()</code>. It is the same move: select a column, then summarise it. Nothing in this unit is thrown away.</p></div>
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Break the typed answer</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Run it once. Then add a fifth row to <code>rows</code> and run it again. Which line went stale?</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'rows = [[&quot;Ada&quot;, 92], [&quot;Grace&quot;, 88], [&quot;Alan&quot;, 79], [&quot;Katherine&quot;, 99]]\n\nprint(&quot;typed:&quot;, 4)\nprint(&quot;computed:&quot;, len(rows))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">rows = [["Ada", 92], ["Grace", 88], ["Alan", 79], ["Katherine", 99]]
+
+print("typed:", 4)
+print("computed:", len(rows))
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Count and top score</h3>
 <p>Three students and their scores are in <code>rows</code>. Print how many students there are, then the highest score.</p>
 <p class="hint-text">print(3) is right today and wrong the moment a fourth student arrives. Ask len() and max() for the answers so the code still holds when the data changes.</p>
 
@@ -225,10 +395,35 @@ print("lowest:", min(scores))</code></pre>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Answer three questions</h3>
+<p>Write <code>quick_look(scores)</code> that returns a tuple <code>(count, lowest, passed)</code>: how many scores there are, the lowest one, and how many are 60 or more.</p>
+<p class="hint-text">len(scores) and min(scores) give the first two. For the third, count the scores where s &gt;= 60 — a comprehension inside len() does it in one line.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'def quick_look(scores):\n    # (how many, the lowest, how many are 60 or above)\n    return (0, 0, 0)\n\nprint(quick_look([92, 88, 55]))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">def quick_look(scores):
+    # (how many, the lowest, how many are 60 or above)
+    return (0, 0, 0)
+
+print(quick_look([92, 88, 55]))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
+</div>
+</div>
+</div>
 </div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-1.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-1.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-1/rows-and-columns-with-lists.html">Next</a>
 </div>
 </section>

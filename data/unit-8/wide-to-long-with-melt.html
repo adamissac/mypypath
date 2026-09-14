@@ -146,51 +146,75 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-8.html">Unit 8</a>
-</nav>
-<h1 class="lesson-title">Wide to Long with melt</h1>
-<p class="lead">Turning a column per month into a column that says which month.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 8 &middot; Combining Tables</p>
+<p class="sidebar-unit-label">Unit 8 &bull; Combining Tables</p>
 <nav>
 <ul>
 <li><a href="/data/unit-8/concat-stacking-tables.html">1. Stacking Tables with concat</a></li>
 <li><a href="/data/unit-8/merging-on-a-key.html">2. Merging on a Key</a></li>
 <li><a href="/data/unit-8/when-a-merge-goes-wrong.html">3. When a Merge Goes Wrong</a></li>
-<li><a href="/data/unit-8/wide-to-long-with-melt.html" class="is-current" aria-current="page">4. Wide to Long with melt</a></li>
+<li><a href="/data/unit-8/wide-to-long-with-melt.html" class="active" aria-current="page">4. Wide to Long with melt</a></li>
 <li><a href="/data/unit-8/long-to-wide-with-pivot.html">5. Long to Wide with pivot</a></li>
 <li><a href="/data/unit-8/putting-a-join-to-work.html">6. Putting a Join to Work</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-8.html">Unit 8</a>
+<span class="separator">/</span>
+<span class="current">Wide to Long with melt</span>
+</nav>
+<div class="eyebrow">Unit 8 &bull; Lesson 4</div>
+<h1 class="lesson-title">Wide to Long with melt</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Turning a column per month into a column that says which month.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-8/when-a-merge-goes-wrong.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-8/long-to-wide-with-pivot.html">Next: Long to Wide with pivot</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Say what wide and long mean.</li>
 <li>Melt a set of columns down into two.</li>
 <li>Choose what stays put with <code>id_vars</code>.</li>
 <li>Predict the row count after a melt.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>A spreadsheet is usually wide — a column per month — because that is readable. Every pandas operation you have learned wants long: one row per observation, with the thing that varies in a column of its own. You cannot group by month when month is twelve column headings.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>Why long is easier to work with</h2>
+<h2>Step 1: Why long is easier to work with</h2>
 <p>In a wide table the month is metadata — it lives in the column name, where no operation can reach it. In a long table it is data.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The same numbers, two shapes</h3>
 <p>Wide is easier to read; long is the only one you can group, filter or plot by month.</p>
 <pre class="code"><code>import pandas as pd
@@ -199,6 +223,12 @@ wide = pd.DataFrame({"name": ["Ada", "Bo"], "jan": [90, 70], "feb": [80, 60]})
 print(wide)
 print()
 print(wide.melt(id_vars=["name"], var_name="month", value_name="score"))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">And now the question is answerable</h3>
 <p>Grouping by month is impossible in the wide shape and one line in the long one.</p>
 <pre class="code"><code>import pandas as pd
@@ -206,6 +236,10 @@ print(wide.melt(id_vars=["name"], var_name="month", value_name="score"))</code><
 wide = pd.DataFrame({"name": ["Ada", "Bo"], "jan": [90, 70], "feb": [80, 60]})
 long = wide.melt(id_vars=["name"], var_name="month", value_name="score")
 print(long.groupby("month")["score"].mean())</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -237,8 +271,12 @@ print(None)   # mean per month
 </div>
 
 <div class="content-section">
-<h2>id_vars are what stays put</h2>
+<h2>Step 2: id_vars are what stays put</h2>
 <p>Everything named in <code>id_vars</code> is repeated down the rows; everything else is folded into the two new columns.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Naming the new columns</h3>
 <p><code>var_name</code> is where the old column headings go; <code>value_name</code> is where their values go. Naming both is worth the keystrokes.</p>
 <pre class="code"><code>import pandas as pd
@@ -247,6 +285,12 @@ wide = pd.DataFrame({"name": ["Ada"], "jan": [90], "feb": [80]})
 print(wide.melt(id_vars=["name"]))
 print()
 print(wide.melt(id_vars=["name"], var_name="month", value_name="score"))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">The row count is predictable</h3>
 <p>Rows times melted columns. Checking it catches an id_vars list that accidentally left something out.</p>
 <pre class="code"><code>import pandas as pd
@@ -255,6 +299,9 @@ wide = pd.DataFrame({"name": ["Ada", "Bo"], "jan": [90, 70], "feb": [80, 60]})
 long = wide.melt(id_vars=["name"], var_name="month", value_name="score")
 print(len(wide), "rows x 2 months =", len(long))</code></pre>
 <p class="note">Forget to list a column in <code>id_vars</code> and it gets melted too, which usually shows up as a row count twice what you predicted.</p>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -285,6 +332,7 @@ print(len(wide.melt(id_vars=["name"])))
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -341,9 +389,10 @@ print(best_month(pd.DataFrame({"name": ["Ada", "Bo"], "jan": [90, 70], "feb": [5
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-8/when-a-merge-goes-wrong.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-8/when-a-merge-goes-wrong.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-8/long-to-wide-with-pivot.html">Next</a>
 </div>
 </section>

@@ -146,23 +146,13 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-8.html">Unit 8</a>
-</nav>
-<h1 class="lesson-title">Stacking Tables with concat</h1>
-<p class="lead">Two tables of the same shape, one after the other.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 8 &middot; Combining Tables</p>
+<p class="sidebar-unit-label">Unit 8 &bull; Combining Tables</p>
 <nav>
 <ul>
-<li><a href="/data/unit-8/concat-stacking-tables.html" class="is-current" aria-current="page">1. Stacking Tables with concat</a></li>
+<li><a href="/data/unit-8/concat-stacking-tables.html" class="active" aria-current="page">1. Stacking Tables with concat</a></li>
 <li><a href="/data/unit-8/merging-on-a-key.html">2. Merging on a Key</a></li>
 <li><a href="/data/unit-8/when-a-merge-goes-wrong.html">3. When a Merge Goes Wrong</a></li>
 <li><a href="/data/unit-8/wide-to-long-with-melt.html">4. Wide to Long with melt</a></li>
@@ -171,26 +161,60 @@
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-8.html">Unit 8</a>
+<span class="separator">/</span>
+<span class="current">Stacking Tables with concat</span>
+</nav>
+<div class="eyebrow">Unit 8 &bull; Lesson 1</div>
+<h1 class="lesson-title">Stacking Tables with concat</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Two tables of the same shape, one after the other.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-8.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-8/merging-on-a-key.html">Next: Merging on a Key</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Stack several tables into one.</li>
 <li>Say why <code>ignore_index=True</code> is usually wanted.</li>
 <li>Predict what happens when the columns do not line up.</li>
 <li>Keep track of which table a row came from.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Twelve monthly exports that should be one table is the commonest shape of real work. concat is straightforward; the two things worth knowing are that the index repeats unless you say otherwise, and that a column present in one file and absent from another fills with NaN rather than complaining.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>Rows end to end</h2>
+<h2>Step 1: Rows end to end</h2>
 <p><code>concat</code> takes a list of tables and stacks them, lining the columns up by name.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The basic stack</h3>
 <p>Order is the order of the list. The columns are matched by name, not by position.</p>
 <pre class="code"><code>import pandas as pd
@@ -198,6 +222,12 @@
 jan = pd.DataFrame({"name": ["Ada"], "score": [90]})
 feb = pd.DataFrame({"score": [80], "name": ["Bo"]})
 print(pd.concat([jan, feb]))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">The index repeats</h3>
 <p>Each table brought its own 0, 1, 2. <code>ignore_index=True</code> renumbers the result, which is what you want unless the index meant something.</p>
 <pre class="code"><code>import pandas as pd
@@ -207,6 +237,11 @@ b = pd.DataFrame({"v": [2]})
 print(pd.concat([a, b]).index.tolist())
 print(pd.concat([a, b], ignore_index=True).index.tolist())</code></pre>
 <p class="note">A repeated index is not an error, but <code>.loc[0]</code> then returns two rows, and that surprise usually surfaces a long way from here.</p>
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">Remembering where a row came from</h3>
 <p>Add the column before stacking. Once the tables are one table there is no way to tell.</p>
 <pre class="code"><code>import pandas as pd
@@ -214,6 +249,10 @@ print(pd.concat([a, b], ignore_index=True).index.tolist())</code></pre>
 jan = pd.DataFrame({"score": [90]}).assign(month="jan")
 feb = pd.DataFrame({"score": [80]}).assign(month="feb")
 print(pd.concat([jan, feb], ignore_index=True))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -245,8 +284,12 @@ print(None)   # renumbered
 </div>
 
 <div class="content-section">
-<h2>Columns that do not line up</h2>
+<h2>Step 2: Columns that do not line up</h2>
 <p>A column one table has and another does not is filled with NaN rather than dropped, and nothing warns you.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The union of the columns</h3>
 <p>This is usually what you want and occasionally a sign that one export had a column renamed. Comparing the column sets first is the cheap check.</p>
 <pre class="code"><code>import pandas as pd
@@ -255,6 +298,12 @@ a = pd.DataFrame({"name": ["Ada"], "score": [90]})
 b = pd.DataFrame({"name": ["Bo"], "grade": ["B"]})
 print(pd.concat([a, b], ignore_index=True))
 print(set(a.columns) ^ set(b.columns))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">The row count is predictable, so predict it</h3>
 <p>Stacking is the one combine whose result size you know in advance. Checking it costs one line and catches a file that failed to load.</p>
 <pre class="code"><code>import pandas as pd
@@ -263,6 +312,10 @@ tables = [pd.DataFrame({"v": [1, 2]}), pd.DataFrame({"v": [3]})]
 expected = sum(len(t) for t in tables)
 out = pd.concat(tables, ignore_index=True)
 print(len(out) == expected, len(out))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -292,6 +345,7 @@ print(None)   # columns present in only one
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -348,9 +402,10 @@ print(stack_labelled([pd.DataFrame({"v": [1, 2]}), pd.DataFrame({"v": [3]})], ["
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-8.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-8.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-8/merging-on-a-key.html">Next</a>
 </div>
 </section>

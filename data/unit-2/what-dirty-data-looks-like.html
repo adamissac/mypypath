@@ -146,23 +146,13 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-2.html">Unit 2</a>
-</nav>
-<h1 class="lesson-title">What Dirty Data Looks Like</h1>
-<p class="lead">The four problems you will meet in almost every real file.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 2 &middot; Cleaning and Shaping</p>
+<p class="sidebar-unit-label">Unit 2 &bull; Cleaning and Shaping</p>
 <nav>
 <ul>
-<li><a href="/data/unit-2/what-dirty-data-looks-like.html" class="is-current" aria-current="page">1. What Dirty Data Looks Like</a></li>
+<li><a href="/data/unit-2/what-dirty-data-looks-like.html" class="active" aria-current="page">1. What Dirty Data Looks Like</a></li>
 <li><a href="/data/unit-2/missing-values.html">2. Missing Values</a></li>
 <li><a href="/data/unit-2/fixing-types.html">3. Fixing Types</a></li>
 <li><a href="/data/unit-2/removing-duplicates.html">4. Removing Duplicates</a></li>
@@ -171,36 +161,209 @@
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
-
-
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-2.html">Unit 2</a>
+<span class="separator">/</span>
+<span class="current">What Dirty Data Looks Like</span>
+</nav>
+<div class="eyebrow">Unit 2 &bull; Lesson 1</div>
+<h1 class="lesson-title">What Dirty Data Looks Like</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>The four problems you will meet in almost every real file.</p>
+<div class="lesson-meta">
+<span class="pill">Beginner</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-2.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-2/missing-values.html">Next: Missing Values</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
-<h2>Four recurring problems</h2>
-<p>Missing values, wrong types, duplicates, and the same thing written several ways. Every one of them is quiet: nothing raises, the summary just comes out wrong.</p>
+<h2>What You Will Learn in This Lesson</h2>
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
+<li>Name the four problems that turn up in almost every real data file.</li>
+<li>Explain why each one produces a wrong answer rather than an error.</li>
+<li>Inspect a column with <code>set</code> and a count before summarising it.</li>
+<li>Write a small report of what is wrong with a table.</li>
+</ul>
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>A crash tells you where to look. Dirty data does not crash: a blank score, a number stored as text, a student entered twice all flow through to an average that looks exactly as trustworthy as a correct one. Learning to look before you summarise is the habit that separates an analysis you can defend from one that is merely confident — and it costs a few lines.</p>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Step 1: Four recurring problems</h2>
+<p>Almost every file you will ever clean has some mix of the same four faults.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">Missing values and wrong types</h3>
+<p>A missing value is a blank, or a marker like <code>"n/a"</code>, where a value should be. A wrong type is a number stored as text, which is every number read from a file until you convert it. Both break arithmetic, and some of those breaks are silent.</p>
 <pre class="code"><code>rows = [
     {"name": "Ada", "score": "92"},
     {"name": "Grace", "score": ""},
-    {"name": "ada", "score": "92"},
+    {"name": "Alan", "score": "n/a"},
 ]
-print(len(rows))</code></pre>
+for r in rows:
+    print(repr(r["score"]))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">Duplicates and inconsistent spellings</h3>
+<p>A duplicate is the same record twice, often from a file being appended to more than once. An inconsistent spelling is the same value written several ways — <code>"Maths"</code>, <code>"maths"</code>, <code>" maths"</code> — which a computer counts as three different things.</p>
+<pre class="code"><code>subjects = ["Maths", "maths", " maths", "Computing"]
+print(len(set(subjects)), "distinct values for what is really 2 subjects")</code></pre>
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Spot the four</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print the distinct values of <code>subject</code> and of <code>score</code>. Which of the four problems can you see?</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'rows = [\n    {&quot;name&quot;: &quot;Ada&quot;, &quot;subject&quot;: &quot;Maths&quot;, &quot;score&quot;: &quot;92&quot;},\n    {&quot;name&quot;: &quot;Grace&quot;, &quot;subject&quot;: &quot;maths &quot;, &quot;score&quot;: &quot;&quot;},\n    {&quot;name&quot;: &quot;Ada&quot;, &quot;subject&quot;: &quot;Maths&quot;, &quot;score&quot;: &quot;92&quot;},\n    {&quot;name&quot;: &quot;Alan&quot;, &quot;subject&quot;: &quot;Art&quot;, &quot;score&quot;: &quot;n/a&quot;},\n]\n\n# distinct subjects, then distinct scores:\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">rows = [
+    {"name": "Ada", "subject": "Maths", "score": "92"},
+    {"name": "Grace", "subject": "maths ", "score": ""},
+    {"name": "Ada", "subject": "Maths", "score": "92"},
+    {"name": "Alan", "subject": "Art", "score": "n/a"},
+]
+
+# distinct subjects, then distinct scores:
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Step 2: Why they are dangerous</h2>
+<p>The problem is not that dirty data is hard to work with. It is that it is easy to work with and wrong.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">A wrong answer that looks right</h3>
+<p>A duplicated row is counted twice. Nothing about the resulting average tells you so.</p>
+<pre class="code"><code>scores = [92, 88, 79, 92]   # Ada entered twice
+print(round(sum(scores) / len(scores), 1))
+
+clean = [92, 88, 79]
+print(round(sum(clean) / len(clean), 1))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">Text that adds</h3>
+<p>Adding two strings does not raise — it joins them. A total computed over a text column is a long string of digits, and if it is then printed next to a label it can look like a number.</p>
+<pre class="code"><code>scores = ["92", "88"]
+total = scores[0] + scores[1]
+print("total:", total)</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
 <div class="content-section">
-<h2>Look before you summarise</h2>
-<p>Printing a few rows and the set of values in a column costs nothing and catches most of it. An average computed over dirty data is a confident wrong answer.</p>
-<pre class="code"><code>scores = ["92", "", "88"]
-print(set(scores))
-print([s for s in scores if s == ""])</code></pre>
+<h2>Step 3: Look before you summarise</h2>
+<p>Three cheap looks catch most of the four problems.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">The distinct values in a column</h3>
+<p><code>set(column)</code> collapses a column to the values that actually occur. Blanks, markers and spelling variants all show up at once.</p>
+<pre class="code"><code>subjects = ["maths", "Maths", "art", "", "art", "n/a"]
+print(sorted(set(subjects)))</code></pre>
 
 </div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">How many of each problem</h3>
+<p>Counting blanks and repeats turns “the data seems a bit messy” into “4 of 300 scores are blank and 2 students appear twice”, which is something you can act on and report.</p>
+<pre class="code"><code>scores = ["92", "", "88", "", "79"]
+print("blank:", scores.count(""), "of", len(scores))
+
+names = ["Ada", "Grace", "Ada"]
+print("repeated:", len(names) - len(set(names)))</code></pre>
+
+</div>
+</div>
+</div>
+<div class="info-callout"><p><strong>Key idea:</strong> Looking is not cleaning. The next four lessons fix each problem in turn; this one is about knowing they are there before any number leaves your program.</p></div>
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Count the blanks</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print how many scores are blank and how many names are repeated.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'names = [&quot;Ada&quot;, &quot;Grace&quot;, &quot;Alan&quot;, &quot;Grace&quot;, &quot;Katherine&quot;]\nscores = [&quot;92&quot;, &quot;&quot;, &quot;79&quot;, &quot;88&quot;, &quot;&quot;]\n\n# blanks:\n\n# repeated names:\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">names = ["Ada", "Grace", "Alan", "Grace", "Katherine"]
+scores = ["92", "", "79", "88", ""]
+
+# blanks:
+
+# repeated names:
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Count the missing scores</h3>
 <p>Write <code>count_missing(rows)</code> that returns how many rows have an empty string for <code>score</code>.</p>
 <p class="hint-text">An empty string is falsy, which is convenient and also a trap: 0 is falsy too. Compare against "" when that is what you mean.</p>
 
@@ -222,10 +385,40 @@ print(count_missing([{"score": "92"}, {"score": ""}]))
 <div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: A dirt report</h3>
+<p>Write <code>dirt_report(rows)</code> for rows with <code>name</code> and <code>score</code> keys (both strings). Return a dictionary with three counts: <code>"blank"</code>, scores that are empty or only spaces; <code>"not_number"</code>, non-blank scores that are not made of digits; and <code>"repeated"</code>, how many rows repeat a name already seen.</p>
+<p class="hint-text">Keep a set of names seen so far. For each row: if score.strip() == "" it is blank; elif not score.strip().isdigit() it is not a number; and if the name is already in the set it is a repeat.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'def dirt_report(rows):\n    # {&quot;blank&quot;: ..., &quot;not_number&quot;: ..., &quot;repeated&quot;: ...}\n    return {}\n\nrows = [\n    {&quot;name&quot;: &quot;Ada&quot;, &quot;score&quot;: &quot;92&quot;},\n    {&quot;name&quot;: &quot;Grace&quot;, &quot;score&quot;: &quot;&quot;},\n    {&quot;name&quot;: &quot;Ada&quot;, &quot;score&quot;: &quot;n/a&quot;},\n]\nprint(dirt_report(rows))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">def dirt_report(rows):
+    # {"blank": ..., "not_number": ..., "repeated": ...}
+    return {}
+
+rows = [
+    {"name": "Ada", "score": "92"},
+    {"name": "Grace", "score": ""},
+    {"name": "Ada", "score": "n/a"},
+]
+print(dirt_report(rows))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
+</div>
+</div>
+</div>
 </div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-2.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-2.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-2/missing-values.html">Next</a>
 </div>
 </section>

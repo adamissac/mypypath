@@ -146,51 +146,75 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-7.html">Unit 7</a>
-</nav>
-<h1 class="lesson-title">Grouping by Several Keys</h1>
-<p class="lead">Two keys give a row per combination, and an index with two levels.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 7 &middot; Grouping and Aggregating</p>
+<p class="sidebar-unit-label">Unit 7 &bull; Grouping and Aggregating</p>
 <nav>
 <ul>
 <li><a href="/data/unit-7/split-apply-combine.html">1. Split, Apply, Combine</a></li>
 <li><a href="/data/unit-7/counting-groups.html">2. Counting Groups</a></li>
 <li><a href="/data/unit-7/agg-with-several-summaries.html">3. agg with Several Summaries</a></li>
-<li><a href="/data/unit-7/grouping-by-several-keys.html" class="is-current" aria-current="page">4. Grouping by Several Keys</a></li>
+<li><a href="/data/unit-7/grouping-by-several-keys.html" class="active" aria-current="page">4. Grouping by Several Keys</a></li>
 <li><a href="/data/unit-7/transform-versus-aggregate.html">5. transform versus aggregate</a></li>
 <li><a href="/data/unit-7/pivot-tables.html">6. Pivot Tables</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-7.html">Unit 7</a>
+<span class="separator">/</span>
+<span class="current">Grouping by Several Keys</span>
+</nav>
+<div class="eyebrow">Unit 7 &bull; Lesson 4</div>
+<h1 class="lesson-title">Grouping by Several Keys</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Two keys give a row per combination, and an index with two levels.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-7/agg-with-several-summaries.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-7/transform-versus-aggregate.html">Next: transform versus aggregate</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Group by more than one column.</li>
 <li>Read a two-level index.</li>
 <li>Flatten the result back into a plain table.</li>
 <li>Say what happens to combinations that never occur.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>"Per subject per year" is one group-by, not two. The result carries an index with two levels, which is the first genuinely unfamiliar object in pandas — and knowing how to flatten it is most of what you need.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>A list of columns</h2>
+<h2>Step 1: A list of columns</h2>
 <p>Pass a list and you get a row per combination that actually occurs in the data.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">One row per combination</h3>
 <p>The index now has two levels, printed as two columns down the left.</p>
 <pre class="code"><code>import pandas as pd
@@ -199,6 +223,12 @@ df = pd.DataFrame({"subject": ["m", "m", "a"], "year": [10, 11, 10], "score": [9
 out = df.groupby(["subject", "year"])["score"].mean()
 print(out)
 print(out.index.nlevels)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Reaching into it</h3>
 <p>A tuple indexes both levels at once; naming just the first gives you everything under it.</p>
 <pre class="code"><code>import pandas as pd
@@ -207,6 +237,10 @@ df = pd.DataFrame({"subject": ["m", "m", "a"], "year": [10, 11, 10], "score": [9
 out = df.groupby(["subject", "year"])["score"].mean()
 print(out[("m", 10)])
 print(out["m"])</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -238,8 +272,12 @@ print(out.index.nlevels)
 </div>
 
 <div class="content-section">
-<h2>Flattening the result</h2>
+<h2>Step 2: Flattening the result</h2>
 <p>Most of the time you want a plain table with the keys as ordinary columns, which is one call away.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">reset_index</h3>
 <p>Both levels become columns and the index goes back to 0, 1, 2. This is the form you would write to a file or hand to a chart.</p>
 <pre class="code"><code>import pandas as pd
@@ -248,6 +286,12 @@ df = pd.DataFrame({"subject": ["m", "m", "a"], "year": [10, 11, 10], "score": [9
 flat = df.groupby(["subject", "year"])["score"].mean().reset_index()
 print(flat)
 print(list(flat.columns))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Combinations that never happened</h3>
 <p>A pair with no rows does not appear — the result has one row per combination that exists, not per combination that is possible. If the missing ones matter, <code>unstack</code> lays the grid out and shows them as NaN.</p>
 <pre class="code"><code>import pandas as pd
@@ -256,6 +300,10 @@ df = pd.DataFrame({"subject": ["m", "a"], "year": [10, 11], "score": [90, 70]})
 out = df.groupby(["subject", "year"])["score"].mean()
 print(len(out), "rows for", df["subject"].nunique() * df["year"].nunique(), "possible pairs")
 print(out.unstack())</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -284,6 +332,7 @@ print(None)   # the same thing, flattened
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -340,9 +389,10 @@ print(flat_means(pd.DataFrame({"subject": ["m"], "year": [10], "score": [90]})))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-7/agg-with-several-summaries.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-7/agg-with-several-summaries.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-7/transform-versus-aggregate.html">Next</a>
 </div>
 </section>

@@ -146,24 +146,14 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-5.html">Unit 5</a>
-</nav>
-<h1 class="lesson-title">Missing Markers on Load</h1>
-<p class="lead">Files write missing values in a dozen ways; na_values names yours.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 5 &middot; Getting Data In</p>
+<p class="sidebar-unit-label">Unit 5 &bull; Getting Data In</p>
 <nav>
 <ul>
 <li><a href="/data/unit-5/csv-options-that-matter.html">1. CSV Options That Matter</a></li>
-<li><a href="/data/unit-5/missing-markers-on-load.html" class="is-current" aria-current="page">2. Missing Markers on Load</a></li>
+<li><a href="/data/unit-5/missing-markers-on-load.html" class="active" aria-current="page">2. Missing Markers on Load</a></li>
 <li><a href="/data/unit-5/selecting-what-you-need.html">3. Selecting What You Need</a></li>
 <li><a href="/data/unit-5/reading-json-data.html">4. Reading JSON Data</a></li>
 <li><a href="/data/unit-5/writing-data-out.html">5. Writing Data Out</a></li>
@@ -171,26 +161,60 @@
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-5.html">Unit 5</a>
+<span class="separator">/</span>
+<span class="current">Missing Markers on Load</span>
+</nav>
+<div class="eyebrow">Unit 5 &bull; Lesson 2</div>
+<h1 class="lesson-title">Missing Markers on Load</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Files write missing values in a dozen ways; na_values names yours.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-5/csv-options-that-matter.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-5/selecting-what-you-need.html">Next: Selecting What You Need</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>List what pandas already treats as missing.</li>
 <li>Name a file's own missing markers at load time.</li>
 <li>Explain why an unnamed marker costs you the whole column.</li>
 <li>Count what is missing before deciding what to do about it.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Every file writes "we do not know" differently: blank, n/a, N/A, -, ., NULL, 999. pandas knows some of them. The ones it does not know do not become missing values — they stay as text, and one of them is enough to turn a numeric column into strings and every calculation on it into nonsense.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>What counts as missing</h2>
+<h2>Step 1: What counts as missing</h2>
 <p>pandas already treats an empty field, <code>NA</code>, <code>NaN</code>, <code>NULL</code> and a few others as missing. Real files also use <code>n/a</code>, a single dash, a full stop, or a sentinel number like 999.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The ones it knows</h3>
 <p>An empty field becomes NaN on its own, and the column stays numeric.</p>
 <pre class="code"><code>import pandas as pd
@@ -200,6 +224,12 @@ text = "name,score\nAda,92\nGrace,\n"
 df = pd.read_csv(StringIO(text))
 print(df)
 print(df.dtypes)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Naming your own</h3>
 <p><code>na_values</code> adds to the list. Doing it at load time means the column is numeric from the start, rather than being repaired afterwards.</p>
 <pre class="code"><code>import pandas as pd
@@ -209,6 +239,10 @@ text = "name,score\nAda,92\nGrace,n/a\n"
 df = pd.read_csv(StringIO(text), na_values=["n/a", "-", "."])
 print(df)
 print(df.dtypes)</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -242,8 +276,12 @@ print(df.dtypes)
 </div>
 
 <div class="content-section">
-<h2>A missing marker left unnamed poisons the column</h2>
+<h2>Step 2: A missing marker left unnamed poisons the column</h2>
 <p>One <code>"n/a"</code> in a numeric column makes the whole column text, and every calculation on it is then wrong in a way that does not raise.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The damage</h3>
 <p>Compare these two loads of the same file. The only difference is whether the marker was named.</p>
 <pre class="code"><code>import pandas as pd
@@ -257,6 +295,11 @@ print(bad["score"].dtype, "|", bad["score"].sum())
 good = pd.read_csv(StringIO(text), na_values=["n/a"])
 print(good["score"].dtype, "|", good["score"].sum())</code></pre>
 <p class="note">The first sum concatenated three strings. It did not raise, and on a real file it would have produced a number-shaped answer you might have believed.</p>
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Count before you decide</h3>
 <p>How much is missing is a fact about your data and usually belongs in the write-up. Find it before you fill or drop anything, because afterwards it is gone.</p>
 <pre class="code"><code>import pandas as pd
@@ -267,6 +310,12 @@ df = pd.read_csv(StringIO(text), na_values=["n/a"])
 
 print(df.isna().sum())
 print("rows with a score:", int(df["score"].notna().sum()))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">The sentinel that looks like data</h3>
 <p>A missing marker of 999 or -1 is the dangerous kind: the column stays numeric, nothing looks wrong, and the mean is quietly ruined. Only knowing the file catches it.</p>
 <pre class="code"><code>import pandas as pd
@@ -276,6 +325,10 @@ print(with_sentinel.mean())
 
 cleaned = pd.Series([92, 88, 999]).replace(999, None)
 print(cleaned.mean())</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -306,6 +359,7 @@ print(None)   # the total across every column
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -362,9 +416,10 @@ print(true_mean("readings.csv"))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-5/csv-options-that-matter.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-5/csv-options-that-matter.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-5/selecting-what-you-need.html">Next</a>
 </div>
 </section>

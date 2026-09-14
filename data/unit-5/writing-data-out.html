@@ -146,51 +146,75 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-5.html">Unit 5</a>
-</nav>
-<h1 class="lesson-title">Writing Data Out</h1>
-<p class="lead">Saving a result, and the index that gets written with it.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 5 &middot; Getting Data In</p>
+<p class="sidebar-unit-label">Unit 5 &bull; Getting Data In</p>
 <nav>
 <ul>
 <li><a href="/data/unit-5/csv-options-that-matter.html">1. CSV Options That Matter</a></li>
 <li><a href="/data/unit-5/missing-markers-on-load.html">2. Missing Markers on Load</a></li>
 <li><a href="/data/unit-5/selecting-what-you-need.html">3. Selecting What You Need</a></li>
 <li><a href="/data/unit-5/reading-json-data.html">4. Reading JSON Data</a></li>
-<li><a href="/data/unit-5/writing-data-out.html" class="is-current" aria-current="page">5. Writing Data Out</a></li>
+<li><a href="/data/unit-5/writing-data-out.html" class="active" aria-current="page">5. Writing Data Out</a></li>
 <li><a href="/data/unit-5/checking-what-you-loaded.html">6. Checking What You Loaded</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-5.html">Unit 5</a>
+<span class="separator">/</span>
+<span class="current">Writing Data Out</span>
+</nav>
+<div class="eyebrow">Unit 5 &bull; Lesson 5</div>
+<h1 class="lesson-title">Writing Data Out</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Saving a result, and the index that gets written with it.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-5/reading-json-data.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-5/checking-what-you-loaded.html">Next: Checking What You Loaded</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Write a table to CSV.</li>
 <li>Say what <code>to_csv</code> writes that you did not ask for.</li>
 <li>Decide when the index is worth keeping.</li>
 <li>Write only the columns a reader needs.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>The file you write is the one someone else reads, including you next month. An unnamed index column read back as data is the most common way a saved result quietly grows a junk column every time it goes round the loop.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>to_csv writes the index too</h2>
+<h2>Step 1: to_csv writes the index too</h2>
 <p>By default the index becomes an unnamed first column. Reading that file back gives you a column called <code>Unnamed: 0</code>.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The extra column</h3>
 <p>Nothing is wrong with the data; there is simply a column of row numbers in the file that was never part of your table.</p>
 <pre class="code"><code>import pandas as pd
@@ -198,6 +222,12 @@
 df = pd.DataFrame({"name": ["Ada"], "score": [92]})
 df.to_csv("out.csv")
 print(open("out.csv").read())</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Round-tripping makes it worse</h3>
 <p>Read it back, write it again, and you have two junk columns. This is how a file ends up with <code>Unnamed: 0</code>, <code>Unnamed: 0.1</code> and so on.</p>
 <pre class="code"><code>import pandas as pd
@@ -207,6 +237,10 @@ back = pd.read_csv("out.csv")
 print(list(back.columns))
 back.to_csv("out2.csv")
 print(list(pd.read_csv("out2.csv").columns))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -238,8 +272,12 @@ print(list(pd.read_csv("out.csv").columns))
 </div>
 
 <div class="content-section">
-<h2>Write what you meant to write</h2>
+<h2>Step 2: Write what you meant to write</h2>
 <p><code>index=False</code> keeps the row numbers out, and <code>columns=</code> picks what goes.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Without the index</h3>
 <p>When the index is just 0, 1, 2 it carries nothing and should not be written.</p>
 <pre class="code"><code>import pandas as pd
@@ -247,6 +285,12 @@ print(list(pd.read_csv("out.csv").columns))
 df = pd.DataFrame({"name": ["Ada"], "score": [92]})
 df.to_csv("out.csv", index=False)
 print(open("out.csv").read())</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">When the index should be written</h3>
 <p>If the index is the label for the row — a date, a name, an id — then dropping it loses information. Keep it, and give it a name so the column has a header.</p>
 <pre class="code"><code>import pandas as pd
@@ -255,6 +299,12 @@ df = pd.DataFrame({"score": [92, 88]}, index=["Ada", "Grace"])
 df.index.name = "name"
 df.to_csv("out.csv")
 print(open("out.csv").read())</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">Only the columns that matter</h3>
 <p>A result for a reader is usually narrower than the table you worked in.</p>
 <pre class="code"><code>import pandas as pd
@@ -262,6 +312,10 @@ print(open("out.csv").read())</code></pre>
 df = pd.DataFrame({"name": ["Ada"], "score": [92], "scratch": [0]})
 df.to_csv("out.csv", index=False, columns=["name", "score"])
 print(open("out.csv").read())</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -291,6 +345,7 @@ print(list(back.columns) == list(df.columns))
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -347,9 +402,10 @@ print(round_trip(pd.DataFrame({"name": ["Ada"], "score": [92]}), "out.csv"))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-5/reading-json-data.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-5/reading-json-data.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-5/checking-what-you-loaded.html">Next</a>
 </div>
 </section>

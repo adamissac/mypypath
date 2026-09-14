@@ -146,23 +146,13 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-5.html">Unit 5</a>
-</nav>
-<h1 class="lesson-title">CSV Options That Matter</h1>
-<p class="lead">Separators, headers and the arguments you reach for on a real file.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 5 &middot; Getting Data In</p>
+<p class="sidebar-unit-label">Unit 5 &bull; Getting Data In</p>
 <nav>
 <ul>
-<li><a href="/data/unit-5/csv-options-that-matter.html" class="is-current" aria-current="page">1. CSV Options That Matter</a></li>
+<li><a href="/data/unit-5/csv-options-that-matter.html" class="active" aria-current="page">1. CSV Options That Matter</a></li>
 <li><a href="/data/unit-5/missing-markers-on-load.html">2. Missing Markers on Load</a></li>
 <li><a href="/data/unit-5/selecting-what-you-need.html">3. Selecting What You Need</a></li>
 <li><a href="/data/unit-5/reading-json-data.html">4. Reading JSON Data</a></li>
@@ -171,26 +161,60 @@
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-5.html">Unit 5</a>
+<span class="separator">/</span>
+<span class="current">CSV Options That Matter</span>
+</nav>
+<div class="eyebrow">Unit 5 &bull; Lesson 1</div>
+<h1 class="lesson-title">CSV Options That Matter</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Separators, headers and the arguments you reach for on a real file.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-5.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-5/missing-markers-on-load.html">Next: Missing Markers on Load</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Read a file whose fields are not separated by commas.</li>
 <li>Load a file that has no header row, and name the columns yourself.</li>
 <li>Skip junk at the top of a file.</li>
 <li>Recognise a wrong separator from the shape alone.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>read_csv makes three assumptions about every file: comma separated, first line is the header, types inferred. Real exports break each of them, and none of the breakages raises — you get a table, it is just the wrong one. Four arguments cover almost every real file you will meet.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>The file is not always comma separated</h2>
+<h2>Step 1: The file is not always comma separated</h2>
 <p><code>sep</code> tells read_csv what divides the fields. A tab-separated export read with the default gives one column holding the whole line.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Naming the separator</h3>
 <p>Tabs are <code>"\t"</code>, semicolons are common in exports from locales where the comma is a decimal point. Pipe-separated files turn up too.</p>
 <pre class="code"><code>import pandas as pd
@@ -198,6 +222,12 @@ from io import StringIO
 
 tabbed = "name\tscore\nAda\t92\n"
 print(pd.read_csv(StringIO(tabbed), sep="\t"))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">What it looks like when you get it wrong</h3>
 <p>The load succeeds. The shape is the tell: one column where you expected several, and a column name that is the entire header line.</p>
 <pre class="code"><code>import pandas as pd
@@ -208,6 +238,9 @@ wrong = pd.read_csv(StringIO(tabbed))
 print(wrong.shape)
 print(list(wrong.columns))</code></pre>
 <p class="note">This is why <code>df.shape</code> is the first of the four checks. It catches this before any number you compute from the table can mislead you.</p>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -239,8 +272,12 @@ print(None)   # the same read, done properly
 </div>
 
 <div class="content-section">
-<h2>Headers, and files without one</h2>
+<h2>Step 2: Headers, and files without one</h2>
 <p><code>header=None</code> stops pandas taking the first row of data as your column names, and <code>names=</code> supplies your own.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">A file with no header</h3>
 <p>Without <code>header=None</code>, your first row of real data silently becomes the column names and you are quietly one row short.</p>
 <pre class="code"><code>import pandas as pd
@@ -249,6 +286,12 @@ from io import StringIO
 raw = "Ada,92\nGrace,88\n"
 print(pd.read_csv(StringIO(raw), header=None, names=["name", "score"]))
 print(len(pd.read_csv(StringIO(raw))))   # one row lost</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Junk above the header</h3>
 <p>Exports from reporting tools often carry a title and a blank line before the real header. <code>skiprows</code> steps over them.</p>
 <pre class="code"><code>import pandas as pd
@@ -256,6 +299,10 @@ from io import StringIO
 
 messy = "Quarterly report\n\nname,score\nAda,92\n"
 print(pd.read_csv(StringIO(messy), skiprows=2))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -285,6 +332,7 @@ print(df)
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -341,9 +389,10 @@ print(headerless("raw.csv"))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-5.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-5.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-5/missing-markers-on-load.html">Next</a>
 </div>
 </section>

@@ -146,62 +146,246 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-1.html">Unit 1</a>
-</nav>
-<h1 class="lesson-title">Summarising Numbers</h1>
-<p class="lead">Totals, averages and extremes, and what each one hides.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 1 &middot; Data in Plain Python</p>
+<p class="sidebar-unit-label">Unit 1 &bull; Data in Plain Python</p>
 <nav>
 <ul>
 <li><a href="/data/unit-1/what-is-data-analysis.html">1. What Data Analysis Actually Is</a></li>
 <li><a href="/data/unit-1/rows-and-columns-with-lists.html">2. Rows and Columns with Lists</a></li>
 <li><a href="/data/unit-1/records-as-dictionaries.html">3. Records as Dictionaries</a></li>
 <li><a href="/data/unit-1/reading-a-csv-file.html">4. Reading a CSV File</a></li>
-<li><a href="/data/unit-1/summarising-numbers.html" class="is-current" aria-current="page">5. Summarising Numbers</a></li>
+<li><a href="/data/unit-1/summarising-numbers.html" class="active" aria-current="page">5. Summarising Numbers</a></li>
 <li><a href="/data/unit-1/counting-and-grouping.html">6. Counting and Grouping</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
-
-
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-1.html">Unit 1</a>
+<span class="separator">/</span>
+<span class="current">Summarising Numbers</span>
+</nav>
+<div class="eyebrow">Unit 1 &bull; Lesson 5</div>
+<h1 class="lesson-title">Summarising Numbers</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Totals, averages and extremes, and what each one hides.</p>
+<div class="lesson-meta">
+<span class="pill">Beginner</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-1/reading-a-csv-file.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-1/counting-and-grouping.html">Next: Counting and Grouping</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
-<h2>The three you reach for first</h2>
-<p>sum, len and max answer most questions about a column. The average is sum divided by len, and it is worth writing out once so you remember it can divide by zero.</p>
-<pre class="code"><code>scores = [92, 88, 79]
-print(sum(scores))
-print(sum(scores) / len(scores))
-print(max(scores))</code></pre>
+<h2>What You Will Learn in This Lesson</h2>
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
+<li>Compute a count, total, mean, minimum and maximum from a column.</li>
+<li>Handle the empty column before it raises <code>ZeroDivisionError</code>.</li>
+<li>Find the middle value with a median, and say when it beats the mean.</li>
+<li>Report an average together with its spread.</li>
+</ul>
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>A summary is the answer most analyses are asked for, and a single average is the most-quoted and most-misleading number in any report. Knowing what each summary throws away — the mean hides spread, one outlier drags it, an empty column breaks it — is what lets you choose the right one and report it honestly. pandas’ <code>describe()</code> in unit 4 is these same numbers in one call.</p>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Step 1: The summaries you reach for first</h2>
+<p>Five built-ins answer most questions about a column of numbers.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">Count, total, extremes</h3>
+<p><code>len</code>, <code>sum</code>, <code>min</code> and <code>max</code> work directly on a list of numbers.</p>
+<pre class="code"><code>scores = [92, 88, 79, 55]
+
+print("count:", len(scores))
+print("total:", sum(scores))
+print("lowest:", min(scores), "highest:", max(scores))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">The mean, written out</h3>
+<p>The average is the total divided by the count. Writing it out once, rather than reaching for a library, makes the next problem obvious.</p>
+<pre class="code"><code>scores = [92, 88, 79, 55]
+
+mean = sum(scores) / len(scores)
+print(round(mean, 1))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
 <div class="content-section">
-<h2>An average is not the whole story</h2>
-<p>The same average can come from very different data. Reporting it next to the smallest and largest value costs one line and prevents most of the misreadings.</p>
-<pre class="code"><code>a = [50, 50, 50]
-b = [0, 50, 100]
-print(sum(a) / len(a), sum(b) / len(b))
-print(min(b), max(b))</code></pre>
+<h2>Step 2: The empty column</h2>
+<p>Real data sometimes has nothing in it: a filter kept no rows, a class had no scores yet.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">Dividing by zero</h3>
+<p><code>len([])</code> is 0, so the mean of an empty list raises <code>ZeroDivisionError</code>. <code>min</code> and <code>max</code> raise <code>ValueError</code>.</p>
+<pre class="code"><code>scores = []
+
+try:
+    print(sum(scores) / len(scores))
+except ZeroDivisionError as e:
+    print("mean failed:", e)</code></pre>
 
 </div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">Decide the answer before the division</h3>
+<p>Check for an empty list first and return something deliberate — 0, or <code>None</code> if “no answer” should look different from “scored zero”.</p>
+<pre class="code"><code>def mean(values):
+    if not values:
+        return None
+    return sum(values) / len(values)
+
+print(mean([92, 88]))
+print(mean([]))</code></pre>
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Guard the extremes</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Make <code>lowest</code> return <code>None</code> for an empty list instead of raising, then run both prints.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'def lowest(values):\n    return min(values)\n\nprint(lowest([3, 1, 2]))\nprint(lowest([]))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">def lowest(values):
+    return min(values)
+
+print(lowest([3, 1, 2]))
+print(lowest([]))
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Step 3: What an average hides</h2>
+<p>Very different data can share an average. Two small additions make a summary much harder to misread.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">Same mean, different class</h3>
+<p>Everyone scoring 50, and half scoring 0 while half score 100, both average 50. Reporting the lowest and highest next to the mean shows the difference at the cost of one line.</p>
+<pre class="code"><code>a = [50, 50, 50, 50]
+b = [0, 0, 100, 100]
+
+print(sum(a) / len(a), min(a), max(a))
+print(sum(b) / len(b), min(b), max(b))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">One outlier moves the mean</h3>
+<p>A single typo of 900 instead of 90 drags the mean far from any real score. The median — the middle value once sorted — barely moves. The <code>statistics</code> module has both.</p>
+<pre class="code"><code>import statistics
+
+scores = [88, 90, 92, 900]
+print("mean:", statistics.mean(scores))
+print("median:", statistics.median(scores))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
+<h3 class="h4">Finding the median by hand</h3>
+<p>Sort, then take the middle value — or the mean of the two middle values when the count is even.</p>
+<pre class="code"><code>scores = sorted([79, 92, 88, 55])
+n = len(scores)
+mid = n // 2
+if n % 2:
+    print(scores[mid])
+else:
+    print((scores[mid - 1] + scores[mid]) / 2)</code></pre>
+
+</div>
+</div>
+</div>
+<div class="info-callout"><p><strong>Key idea:</strong> Neither summary is “correct”. The mean uses every value, which is its strength and its weakness. When a mean and a median disagree a lot, that disagreement is itself worth reporting.</p></div>
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Mean or median?</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print the mean and the median of each list. For which list do they disagree, and why?</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import statistics\n\nsalaries = [30, 32, 31, 29, 400]\nheights = [160, 170, 165, 175, 168]\n\n# mean and median of each:\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import statistics
+
+salaries = [30, 32, 31, 29, 400]
+heights = [160, 170, 165, 175, 168]
+
+# mean and median of each:
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: A safe average</h3>
 <p>Write a function <code>average(scores)</code> that returns the mean, and returns <code>0</code> for an empty list rather than raising.</p>
-<p class="hint-text">The empty case has to be handled before the division, not after it -- len([]) is 0 and dividing by it raises.</p>
+<p class="hint-text">The empty case has to be handled before the division, not after it — len([]) is 0 and dividing by it raises.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -221,10 +405,36 @@ print(average([92, 88, 79]))
 <div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: The median, by hand</h3>
+<p>Write <code>median(values)</code> that returns the middle value of the list once sorted, or the mean of the two middle values when there is an even number of them. Return <code>None</code> for an empty list. Do not change the list you were given, and do not import <code>statistics</code>.</p>
+<p class="hint-text">s = sorted(values) makes a sorted copy. With n = len(s) and mid = n // 2, an odd count gives s[mid]; an even count gives (s[mid - 1] + s[mid]) / 2.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'def median(values):\n    # Middle value once sorted; mean of the middle two for an even count.\n    return None\n\nprint(median([79, 92, 88]))\nprint(median([79, 92, 88, 55]))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">def median(values):
+    # Middle value once sorted; mean of the middle two for an even count.
+    return None
+
+print(median([79, 92, 88]))
+print(median([79, 92, 88, 55]))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
+</div>
+</div>
+</div>
 </div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-1/reading-a-csv-file.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-1/reading-a-csv-file.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-1/counting-and-grouping.html">Next</a>
 </div>
 </section>

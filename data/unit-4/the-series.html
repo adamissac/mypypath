@@ -146,23 +146,13 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-4.html">Unit 4</a>
-</nav>
-<h1 class="lesson-title">The Series</h1>
-<p class="lead">A column with labels attached, and the labels travel with the data.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 4 &middot; Series and DataFrames</p>
+<p class="sidebar-unit-label">Unit 4 &bull; Series and DataFrames</p>
 <nav>
 <ul>
-<li><a href="/data/unit-4/the-series.html" class="is-current" aria-current="page">1. The Series</a></li>
+<li><a href="/data/unit-4/the-series.html" class="active" aria-current="page">1. The Series</a></li>
 <li><a href="/data/unit-4/building-a-dataframe.html">2. Building a DataFrame</a></li>
 <li><a href="/data/unit-4/selecting-columns-and-rows.html">3. Selecting Columns and Rows</a></li>
 <li><a href="/data/unit-4/adding-and-dropping-columns.html">4. Adding and Dropping Columns</a></li>
@@ -171,26 +161,60 @@
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-4.html">Unit 4</a>
+<span class="separator">/</span>
+<span class="current">The Series</span>
+</nav>
+<div class="eyebrow">Unit 4 &bull; Lesson 1</div>
+<h1 class="lesson-title">The Series</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>A column with labels attached, and the labels travel with the data.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-4.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-4/building-a-dataframe.html">Next: Building a DataFrame</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Build a Series with an index and read a value by its label.</li>
 <li>Say what a Series has that a numpy array does not.</li>
 <li>Use the numpy operations you already know on a Series.</li>
 <li>Tell <code>max</code> from <code>idxmax</code>, and know which question each answers.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>A DataFrame is a collection of Series, so everything here is the foundation for the next six units. The index in particular is not decoration: it is what survives a filter, what lines two columns up when you add them, and what turns "the highest score" into "who got the highest score".</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>A labelled column</h2>
+<h2>Step 1: A labelled column</h2>
 <p>A Series is one column of values plus an index. Build one from a list and pandas supplies 0, 1, 2 as the index; supply your own and the labels become how you reach the values.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Values and labels together</h3>
 <p>The index is printed down the left. Reaching for a label gives you the value beside it, in the same way a dictionary key would.</p>
 <pre class="code"><code>import pandas as pd
@@ -198,6 +222,12 @@
 scores = pd.Series([92, 88, 79], index=["Ada", "Grace", "Alan"])
 print(scores)
 print(scores["Grace"])</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">The labels survive what you do to it</h3>
 <p>This is the part that matters. Filter the Series and the surviving values keep their own labels, so you never have to track which position belonged to whom.</p>
 <pre class="code"><code>import pandas as pd
@@ -206,6 +236,10 @@ scores = pd.Series([92, 88, 79], index=["Ada", "Grace", "Alan"])
 high = scores[scores &gt; 85]
 print(high)
 print(list(high.index))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -237,8 +271,12 @@ print(None)   # just their labels
 </div>
 
 <div class="content-section">
-<h2>Everything numpy did, a Series does too</h2>
+<h2>Step 2: Everything numpy did, a Series does too</h2>
 <p>Masks, arithmetic and aggregation all carry over unchanged. What is added is that the labels come with them.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The familiar operations</h3>
 <p>If unit 3 made sense, none of this is new. A Series is an array with an index bolted on.</p>
 <pre class="code"><code>import pandas as pd
@@ -247,6 +285,12 @@ scores = pd.Series([92, 88, 79], index=["Ada", "Grace", "Alan"])
 print(scores.mean())
 print(scores + 5)
 print(scores[scores &gt; 85])</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Two different questions</h3>
 <p><code>max</code> gives the value. <code>idxmax</code> gives the label of the row it was on. Confusing them is easy and the wrong one is never an error, just a wrong answer.</p>
 <pre class="code"><code>import pandas as pd
@@ -254,6 +298,12 @@ print(scores[scores &gt; 85])</code></pre>
 scores = pd.Series([92, 88, 79], index=["Ada", "Grace", "Alan"])
 print(scores.max())      # what the best score was
 print(scores.idxmax())   # who got it</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">Alignment, and where NaN comes from</h3>
 <p>Adding two Series matches them on their labels, not their positions. A label present in one and missing from the other gives NaN — which is either exactly what you wanted or the quietest bug in pandas.</p>
 <pre class="code"><code>import pandas as pd
@@ -262,6 +312,9 @@ term1 = pd.Series([90, 80], index=["Ada", "Grace"])
 term2 = pd.Series([70, 60], index=["Grace", "Alan"])
 print(term1 + term2)</code></pre>
 <p class="note">Nothing is out of order and nothing raised. Ada and Alan are NaN because each appears in only one of the two terms.</p>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -290,6 +343,7 @@ print(a + b)
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -346,9 +400,10 @@ print(above_average(pd.Series([90, 80, 70], index=["Ada", "Grace", "Alan"])))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-4.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-4.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-4/building-a-dataframe.html">Next</a>
 </div>
 </section>

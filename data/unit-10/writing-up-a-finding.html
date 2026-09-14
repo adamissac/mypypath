@@ -146,51 +146,75 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-10.html">Unit 10</a>
-</nav>
-<h1 class="lesson-title">Writing Up a Finding</h1>
-<p class="lead">A number, what it is compared with, and what it does not prove.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 10 &middot; Visualising and Reporting</p>
+<p class="sidebar-unit-label">Unit 10 &bull; Visualising and Reporting</p>
 <nav>
 <ul>
 <li><a href="/data/unit-10/choosing-a-chart.html">1. Choosing a Chart</a></li>
 <li><a href="/data/unit-10/labels-and-honesty.html">2. Labels and Honesty</a></li>
 <li><a href="/data/unit-10/formatting-numbers.html">3. Formatting Numbers</a></li>
 <li><a href="/data/unit-10/a-summary-table.html">4. A Summary Table</a></li>
-<li><a href="/data/unit-10/writing-up-a-finding.html" class="is-current" aria-current="page">5. Writing Up a Finding</a></li>
+<li><a href="/data/unit-10/writing-up-a-finding.html" class="active" aria-current="page">5. Writing Up a Finding</a></li>
 <li><a href="/data/unit-10/the-whole-analysis.html">6. The Whole Analysis</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-10.html">Unit 10</a>
+<span class="separator">/</span>
+<span class="current">Writing Up a Finding</span>
+</nav>
+<div class="eyebrow">Unit 10 &bull; Lesson 5</div>
+<h1 class="lesson-title">Writing Up a Finding</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>A number, what it is compared with, and what it does not prove.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-10/a-summary-table.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-10/the-whole-analysis.html">Next: The Whole Analysis</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Write a claim in three parts: the number, the comparison, and the limit.</li>
 <li>Report the sample size next to every difference between groups.</li>
 <li>Tell an observed correlation apart from a causal claim.</li>
 <li>Build the sentence from the data, so it cannot drift from the numbers.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>The write-up is the only part of an analysis most people ever see. A correct table under an overstated sentence is still a wrong analysis, because the sentence is what gets repeated. Writing the claim from the data, with its size and its limits attached, is what makes the number something you can defend when somebody asks.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>Three parts to a claim</h2>
+<h2>Step 1: Three parts to a claim</h2>
 <p>A finding that survives a reader has three parts. Leave out the second and it is trivia; leave out the third and it is overstated.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The number</h3>
 <p>Start with the value, at a precision the data supports. "Team a averages 85.0" is a number; it is not yet a finding, because nothing says whether 85 is good.</p>
 <pre class="code"><code>import pandas as pd
@@ -198,6 +222,12 @@
 df = pd.DataFrame({"team": ["a", "a", "b"], "score": [90.0, 80.0, 70.0]})
 means = df.groupby("team")["score"].mean()
 print(means.round(1))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">The comparison</h3>
 <p>A number means something next to another number: the other team, last term, the target. The gap is usually the thing the reader actually wants, so compute it rather than making them subtract.</p>
 <pre class="code"><code>import pandas as pd
@@ -206,6 +236,12 @@ df = pd.DataFrame({"team": ["a", "a", "b"], "score": [90.0, 80.0, 70.0]})
 means = df.groupby("team")["score"].mean()
 gap = means.max() - means.min()
 print(f"{means.idxmax()} leads {means.idxmin()} by {gap:.1f} points")</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">The limit</h3>
 <p>Say how much data the claim rests on and what period it covers. This is not modesty; it is the information a reader needs to decide how far to trust it.</p>
 <pre class="code"><code>import pandas as pd
@@ -213,6 +249,10 @@ print(f"{means.idxmax()} leads {means.idxmin()} by {gap:.1f} points")</code></pr
 df = pd.DataFrame({"team": ["a", "a", "b"], "score": [90.0, 80.0, 70.0]})
 sizes = df["team"].value_counts()
 print(f"based on {len(df)} scores: a has {sizes['a']}, b has {sizes['b']}")</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -244,8 +284,12 @@ print(f"{means.idxmax()} averages {means.max():.1f}")
 </div>
 
 <div class="content-section">
-<h2>Build the sentence from the data</h2>
+<h2>Step 2: Build the sentence from the data</h2>
 <p>A sentence typed by hand is a second copy of the result, and second copies drift. The next time the data changes the table updates and the sentence does not.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">An f-string over the computed values</h3>
 <p>Every number in the sentence comes from a variable. If the data changes, the sentence changes with it, and nobody has to remember to edit the report.</p>
 <pre class="code"><code>import pandas as pd
@@ -256,6 +300,12 @@ def headline(df):
     return f"{means.idxmax()} scores {gap:.1f} above {means.idxmin()} (n={len(df)})"
 
 print(headline(pd.DataFrame({"team": ["a", "b"], "score": [85.0, 70.0]})))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Which n is the right n</h3>
 <p>The number of rows and the number of groups are both counts, and they say very different things. "n=2" after a comparison of two teams reads as two data points. Report the rows the means were built from.</p>
 <pre class="code"><code>import pandas as pd
@@ -264,7 +314,11 @@ df = pd.DataFrame({"team": ["a", "b", "b", "b"], "score": [10.0, 4.0, 4.0, 4.0]}
 means = df.groupby("team")["score"].mean()
 print("groups:", len(means))
 print("rows:", len(df))</code></pre>
-<div class="info-card"><p>When one group is far smaller than the other, say so in the sentence. "a leads b (a: 1 score, b: 300)" is honest; "a leads b (n=301)" hides the problem inside a big number.</p></div>
+
+</div>
+</div>
+</div>
+<div class="info-callout"><p><strong>Key idea:</strong> When one group is far smaller than the other, say so in the sentence. "a leads b (a: 1 score, b: 300)" is honest; "a leads b (n=301)" hides the problem inside a big number.</p></div>
 </div>
 
 <div class="practice-box interactive">
@@ -296,8 +350,12 @@ print(f"a scores {gap:.1f} above b (n={len(means)})")
 </div>
 
 <div class="content-section">
-<h2>Moving together is not causing</h2>
+<h2>Step 3: Moving together is not causing</h2>
 <p>The most common overstatement in a write-up is turning "these two go up together" into "this one makes that one go up".</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Measure the correlation</h3>
 <p><code>Series.corr</code> gives a number between -1 and 1 for how closely two columns move together. Close to 1 means they rise together in this data. That is the whole of what it says.</p>
 <pre class="code"><code>import pandas as pd
@@ -305,6 +363,12 @@ print(f"a scores {gap:.1f} above b (n={len(means)})")
 hours = pd.Series([1.0, 2.0, 3.0, 4.0])
 score = pd.Series([60.0, 68.0, 81.0, 88.0])
 print(round(float(hours.corr(score)), 2))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Say what it does not show</h3>
 <p>Students who study more may also sleep more, attend more, or already be stronger. The table cannot separate those. The honest sentence reports the association and names that it is one.</p>
 <pre class="code"><code>import pandas as pd
@@ -315,6 +379,11 @@ r = float(hours.corr(score))
 print(f"hours and score move together (r={r:.2f}); this data cannot say whether one causes the other")</code></pre>
 
 </div>
+</div>
+</div>
+
+</div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -371,9 +440,10 @@ print(association(pd.DataFrame({"hours": [1, 2, 3], "score": [60, 70, 80]}), "ho
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-10/a-summary-table.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-10/a-summary-table.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-10/the-whole-analysis.html">Next</a>
 </div>
 </section>

@@ -146,24 +146,14 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-9.html">Unit 9</a>
-</nav>
-<h1 class="lesson-title">Date Parts</h1>
-<p class="lead">Year, month and weekday are columns you can group by.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 9 &middot; Time Series</p>
+<p class="sidebar-unit-label">Unit 9 &bull; Time Series</p>
 <nav>
 <ul>
 <li><a href="/data/unit-9/parsing-dates.html">1. Parsing Dates</a></li>
-<li><a href="/data/unit-9/date-parts.html" class="is-current" aria-current="page">2. Date Parts</a></li>
+<li><a href="/data/unit-9/date-parts.html" class="active" aria-current="page">2. Date Parts</a></li>
 <li><a href="/data/unit-9/a-datetime-index.html">3. A Datetime Index</a></li>
 <li><a href="/data/unit-9/resampling.html">4. Resampling</a></li>
 <li><a href="/data/unit-9/rolling-windows.html">5. Rolling Windows</a></li>
@@ -171,26 +161,60 @@
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-9.html">Unit 9</a>
+<span class="separator">/</span>
+<span class="current">Date Parts</span>
+</nav>
+<div class="eyebrow">Unit 9 &bull; Lesson 2</div>
+<h1 class="lesson-title">Date Parts</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Year, month and weekday are columns you can group by.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-9/parsing-dates.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-9/a-datetime-index.html">Next: A Datetime Index</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Pull the year, month, day and weekday out of a datetime column.</li>
 <li>Group by a date part.</li>
 <li>Say why month alone is not enough across years.</li>
 <li>Name a period so that it sorts correctly.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>"Which month is busiest" and "how did each month go" are different questions, and the difference is whether the year is part of the key. Grouping by month alone silently pools every January together, which is sometimes exactly right and sometimes the reason a chart makes no sense.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>Pulling a part out</h2>
+<h2>Step 1: Pulling a part out</h2>
 <p>Once a column is really a date, its parts are one attribute away through the <code>.dt</code> accessor.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The parts</h3>
 <p>Each is a whole column, computed for every row at once.</p>
 <pre class="code"><code>import pandas as pd
@@ -200,6 +224,12 @@ print(days.dt.year.tolist())
 print(days.dt.month.tolist())
 print(days.dt.day.tolist())
 print(days.dt.day_name().tolist())</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">A period that sorts</h3>
 <p><code>to_period("M")</code> gives a year-and-month value that orders correctly, unlike the number 1 which is shared by every January you have.</p>
 <pre class="code"><code>import pandas as pd
@@ -207,6 +237,10 @@ print(days.dt.day_name().tolist())</code></pre>
 days = pd.to_datetime(pd.Series(["2023-12-31", "2024-01-01"]))
 print(days.dt.month.tolist())
 print(days.dt.to_period("M").astype(str).tolist())</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -238,8 +272,12 @@ print(None)   # weekday names
 </div>
 
 <div class="content-section">
-<h2>Grouping by a part</h2>
+<h2>Step 2: Grouping by a part</h2>
 <p>"How many per month" is a group-by on a derived column, which you already know how to do.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Group on the accessor directly</h3>
 <p>No need to create the column first, though creating it is clearer when you want it in the output too.</p>
 <pre class="code"><code>import pandas as pd
@@ -249,6 +287,12 @@ df = pd.DataFrame({
     "n": [1, 2, 5],
 })
 print(df.groupby(df["day"].dt.month)["n"].sum())</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Month alone pools the years</h3>
 <p>Two Januaries from different years land in the same bucket. Group on the period when the years are meant to stay apart.</p>
 <pre class="code"><code>import pandas as pd
@@ -260,6 +304,9 @@ df = pd.DataFrame({
 print(df.groupby(df["day"].dt.month)["n"].sum())
 print(df.groupby(df["day"].dt.to_period("M"))["n"].sum())</code></pre>
 <p class="note">Pooling is the right answer for "which month of the year is busiest" and the wrong one for "how has each month gone". The code looks almost identical, which is why it is worth stating which question you are asking.</p>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -291,6 +338,7 @@ print(df.groupby(df["day"].dt.to_period("M"))["n"].sum())
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -347,9 +395,10 @@ print(by_period(pd.DataFrame({"day": pd.to_datetime(["2024-01-05"]), "n": [1]}))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-9/parsing-dates.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-9/parsing-dates.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-9/a-datetime-index.html">Next</a>
 </div>
 </section>

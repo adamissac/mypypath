@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "The four problems you will meet in almost every real file.",
+    "prompt": "What Dirty Data Looks Like: Count the missing scores",
     "cases": [
       {
         "name": "returns the right answer",
@@ -33,13 +33,46 @@
     ],
     "hint": "An empty string is falsy, which is convenient and also a trap: 0 is falsy too. Compare against \"\" when that is what you mean."
   },
+  "exercise2": {
+    "prompt": "What Dirty Data Looks Like: A dirt report",
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "dirt_report([{\"name\": \"Ada\", \"score\": \"92\"}, {\"name\": \"Grace\", \"score\": \"\"}, {\"name\": \"Ada\", \"score\": \"n/a\"}])",
+        "expect": "{'blank': 1, 'not_number': 1, 'repeated': 1}"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "clean rows report nothing",
+        "call": "dirt_report([{\"name\": \"a\", \"score\": \"1\"}, {\"name\": \"b\", \"score\": \"2\"}])",
+        "expect": "{'blank': 0, 'not_number': 0, 'repeated': 0}"
+      },
+      {
+        "name": "spaces alone count as blank, not as a bad number",
+        "call": "dirt_report([{\"name\": \"a\", \"score\": \"   \"}])",
+        "expect": "{'blank': 1, 'not_number': 0, 'repeated': 0}"
+      },
+      {
+        "name": "a name seen three times repeats twice",
+        "call": "dirt_report([{\"name\": \"a\", \"score\": \"1\"}, {\"name\": \"a\", \"score\": \"1\"}, {\"name\": \"a\", \"score\": \"1\"}])",
+        "expect": "{'blank': 0, 'not_number': 0, 'repeated': 2}"
+      },
+      {
+        "name": "an empty table reports nothing",
+        "call": "dirt_report([])",
+        "expect": "{'blank': 0, 'not_number': 0, 'repeated': 0}"
+      }
+    ],
+    "hint": "Keep a set of names seen so far. For each row: if score.strip() == \"\" it is blank; elif not score.strip().isdigit() it is not a number; and if the name is already in the set it is a repeat."
+  },
   "questions": [
     {
       "id": "d2-ddl-1",
       "prompt": "What makes dirty data dangerous rather than merely annoying?",
       "choices": [
         "It is slow to load",
-        "Nothing raises -- the summary is simply wrong",
+        "Nothing raises — the summary is simply wrong",
         "It cannot be opened",
         "It uses more memory"
       ],
@@ -74,6 +107,18 @@
       ],
       "answer": 1,
       "explain": "A set collapses the column to its distinct values, which is where \"Maths\", \"maths\" and \"MATHS\" become visible as three things."
+    },
+    {
+      "id": "d2-ddl-4",
+      "prompt": "What does \"92\" + \"88\" evaluate to?",
+      "choices": [
+        "180",
+        "\"180\"",
+        "\"9288\"",
+        "A TypeError"
+      ],
+      "answer": 2,
+      "explain": "Adding strings joins them. That is why a text column can be \"totalled\" without any error."
     }
   ]
 }

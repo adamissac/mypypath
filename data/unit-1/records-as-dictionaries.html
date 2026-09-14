@@ -146,38 +146,77 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-1.html">Unit 1</a>
-</nav>
-<h1 class="lesson-title">Records as Dictionaries</h1>
-<p class="lead">Name the columns, and the code stops depending on their order.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 1 &middot; Data in Plain Python</p>
+<p class="sidebar-unit-label">Unit 1 &bull; Data in Plain Python</p>
 <nav>
 <ul>
 <li><a href="/data/unit-1/what-is-data-analysis.html">1. What Data Analysis Actually Is</a></li>
 <li><a href="/data/unit-1/rows-and-columns-with-lists.html">2. Rows and Columns with Lists</a></li>
-<li><a href="/data/unit-1/records-as-dictionaries.html" class="is-current" aria-current="page">3. Records as Dictionaries</a></li>
+<li><a href="/data/unit-1/records-as-dictionaries.html" class="active" aria-current="page">3. Records as Dictionaries</a></li>
 <li><a href="/data/unit-1/reading-a-csv-file.html">4. Reading a CSV File</a></li>
 <li><a href="/data/unit-1/summarising-numbers.html">5. Summarising Numbers</a></li>
 <li><a href="/data/unit-1/counting-and-grouping.html">6. Counting and Grouping</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
-
-
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-1.html">Unit 1</a>
+<span class="separator">/</span>
+<span class="current">Records as Dictionaries</span>
+</nav>
+<div class="eyebrow">Unit 1 &bull; Lesson 3</div>
+<h1 class="lesson-title">Records as Dictionaries</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Name the columns, and the code stops depending on their order.</p>
+<div class="lesson-meta">
+<span class="pill">Beginner</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-1/rows-and-columns-with-lists.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-1/reading-a-csv-file.html">Next: Reading a CSV File</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
-<h2>A row that says what it holds</h2>
-<p>Once each row is a dictionary, position stops mattering. row["score"] survives someone inserting a column; row[1] does not.</p>
+<h2>What You Will Learn in This Lesson</h2>
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
+<li>Store each row as a dictionary keyed by column name.</li>
+<li>Loop over records and read fields by name.</li>
+<li>Handle a missing field with <code>.get</code> and a default, on purpose.</li>
+<li>Convert a list-of-lists table into a list of records.</li>
+</ul>
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Naming the columns is the single change that makes analysis code survive contact with real files, where columns get added, reordered and occasionally left out. It is also exactly the shape <code>csv.DictReader</code> hands you in the next lesson, and the shape pandas builds a DataFrame from, so this is the representation the rest of the course assumes.</p>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Step 1: A row that says what it holds</h2>
+<p>Replace the list for each row with a dictionary. The keys are the column names; the values are the cells.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">Reading by name</h3>
+<p><code>row["score"]</code> says what it reads. It keeps working when someone inserts a column, because there are no positions to shift.</p>
 <pre class="code"><code>rows = [
     {"name": "Ada", "score": 92},
     {"name": "Grace", "score": 88},
@@ -187,21 +226,163 @@ for row in rows:
     print(row["name"], row["score"])</code></pre>
 
 </div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">Order no longer matters</h3>
+<p>Two records with their keys written in different orders are the same record. The code that reads them does not care.</p>
+<pre class="code"><code>a = {"name": "Ada", "score": 92}
+b = {"score": 92, "name": "Ada"}
+
+print(a == b)
+print(a["score"], b["score"])</code></pre>
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Add a field</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Add a <code>"subject"</code> key to each record, then print each name with its subject. Notice that no existing line had to change.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'rows = [\n    {&quot;name&quot;: &quot;Ada&quot;, &quot;score&quot;: 92},\n    {&quot;name&quot;: &quot;Grace&quot;, &quot;score&quot;: 88},\n]\n\nfor row in rows:\n    print(row[&quot;name&quot;], row[&quot;score&quot;])\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">rows = [
+    {"name": "Ada", "score": 92},
+    {"name": "Grace", "score": 88},
+]
+
+for row in rows:
+    print(row["name"], row["score"])
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
 
 <div class="content-section">
-<h2>Missing keys, and .get</h2>
-<p>Real data has gaps. row["score"] on a row without one raises KeyError; row.get("score") hands back None instead, which is a decision you should make on purpose rather than by accident.</p>
+<h2>Step 2: Working with a list of records</h2>
+<p>Everything from the last lesson still applies — columns are comprehensions, filters are conditions — but now every access has a name.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">A column by name</h3>
+<p>The same comprehension, with a key instead of an index.</p>
+<pre class="code"><code>rows = [{"name": "Ada", "score": 92}, {"name": "Grace", "score": 88}, {"name": "Alan", "score": 79}]
+
+scores = [r["score"] for r in rows]
+print(scores)
+print(sum(scores) / len(scores))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">Filtering records</h3>
+<p>A condition on one field selects whole records, so every other field comes along with them.</p>
+<pre class="code"><code>rows = [{"name": "Ada", "score": 92}, {"name": "Grace", "score": 88}, {"name": "Alan", "score": 79}]
+
+strong = [r for r in rows if r["score"] &gt;= 85]
+for r in strong:
+    print(r["name"])</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
+<h3 class="h4">From lists to records</h3>
+<p>When data arrives as rows of lists and a header, <code>zip</code> pairs each column name with its value, and <code>dict</code> turns the pairs into a record.</p>
+<pre class="code"><code>header = ["name", "score"]
+table = [["Ada", 92], ["Grace", 88]]
+
+rows = [dict(zip(header, row)) for row in table]
+print(rows)</code></pre>
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Header plus rows</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Turn <code>table</code> into a list of records with <code>zip</code>, then print the average score using the <code>"score"</code> key.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'header = [&quot;name&quot;, &quot;age&quot;, &quot;score&quot;]\ntable = [[&quot;Ada&quot;, 36, 92], [&quot;Grace&quot;, 45, 88], [&quot;Alan&quot;, 41, 79]]\n\nrows = []   # build records here\n\n# average score by name, not by position:\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">header = ["name", "age", "score"]
+table = [["Ada", 36, 92], ["Grace", 45, 88], ["Alan", 41, 79]]
+
+rows = []   # build records here
+
+# average score by name, not by position:
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Step 3: Missing fields, on purpose</h2>
+<p>Real records have gaps. A dictionary makes you decide what a gap means.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">Brackets raise, .get does not</h3>
+<p><code>row["score"]</code> on a record without a score raises <code>KeyError</code>. <code>row.get("score")</code> returns <code>None</code>, or the default you give it.</p>
 <pre class="code"><code>row = {"name": "Alan"}
+
 print(row.get("score"))
 print(row.get("score", 0))</code></pre>
 
 </div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">Which one you want</h3>
+<p>A crash is sometimes the right behaviour: a column you expected to always be there is missing, and you want to know loudly. <code>.get</code> is for gaps you know about and have decided how to treat.</p>
+<pre class="code"><code>rows = [{"name": "Ada", "score": 92}, {"name": "Alan"}]
+
+# Decided: a missing score is left out of the count, not counted as 0.
+known = [r["score"] for r in rows if r.get("score") is not None]
+print(known)</code></pre>
+
+</div>
+</div>
+</div>
+<div class="info-callout"><p><strong>Key idea:</strong> Defaulting a missing score to 0 is a decision with consequences: it drags the average down as if the student had sat the test and scored nothing. Unit 2 spends a lesson on that choice.</p></div>
+</div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Everyone at 85 or above</h3>
 <p>Each row is a dictionary. Print the name of every student whose score is at least 85, one per line.</p>
 <p class="hint-text">At least 85 includes 85. Loop the rows, read row["score"], and print row["name"] when the test holds.</p>
 
@@ -225,10 +406,41 @@ print(row.get("score", 0))</code></pre>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Records from a header</h3>
+<p>Write <code>to_records(header, table)</code> that turns a header list and a list of row lists into a list of dictionaries. Then write <code>average_of(records, field)</code> returning the mean of that field over the records that have it, or <code>None</code> if none do.</p>
+<p class="hint-text">dict(zip(header, row)) builds one record. For the average, collect r[field] for the records where field in r, and return None before dividing if that list is empty.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'def to_records(header, table):\n    # [{header[0]: row[0], header[1]: row[1], ...} for each row]\n    return []\n\ndef average_of(records, field):\n    # Mean of `field` over the records that have it; None if none do.\n    return None\n\nrows = to_records([&quot;name&quot;, &quot;score&quot;], [[&quot;Ada&quot;, 92], [&quot;Grace&quot;, 88]])\nprint(rows)\nprint(average_of(rows, &quot;score&quot;))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">def to_records(header, table):
+    # [{header[0]: row[0], header[1]: row[1], ...} for each row]
+    return []
+
+def average_of(records, field):
+    # Mean of `field` over the records that have it; None if none do.
+    return None
+
+rows = to_records(["name", "score"], [["Ada", 92], ["Grace", 88]])
+print(rows)
+print(average_of(rows, "score"))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
+</div>
+</div>
+</div>
 </div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-1/rows-and-columns-with-lists.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-1/rows-and-columns-with-lists.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-1/reading-a-csv-file.html">Next</a>
 </div>
 </section>

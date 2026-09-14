@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "A table is a list of lists, and a column is what you pull out of it.",
+    "prompt": "Rows and Columns with Lists: Pull out a column",
     "cases": [
       {
         "name": "produces the expected output",
@@ -25,6 +25,42 @@
       }
     ],
     "hint": "One value per row, always at the same position. A comprehension over the rows is the shortest way to say that."
+  },
+  "exercise2": {
+    "prompt": "Rows and Columns with Lists: A column, filtered",
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "names_in([[\"Ada\", 92, \"maths\"], [\"Grace\", 88, \"computing\"], [\"Alan\", 79, \"maths\"]], \"maths\")",
+        "expect": "['Ada', 'Alan']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a subject nobody takes gives an empty list",
+        "call": "names_in([[\"Ada\", 92, \"maths\"]], \"art\")",
+        "expect": "[]"
+      },
+      {
+        "name": "the order of the table is kept",
+        "call": "names_in([[\"Zoe\", 1, \"art\"], [\"Ada\", 2, \"art\"]], \"art\")",
+        "expect": "['Zoe', 'Ada']"
+      },
+      {
+        "name": "an empty table gives an empty list",
+        "call": "names_in([], \"maths\")",
+        "expect": "[]"
+      },
+      {
+        "name": "the column is filtered with a comprehension or loop",
+        "kind": "ast",
+        "requires": {
+          "loops": true
+        },
+        "describe": "the rows walked and tested"
+      }
+    ],
+    "hint": "The subject is at position 2 and the name at position 0: [row[0] for row in table if row[2] == subject]."
   },
   "questions": [
     {
@@ -66,6 +102,18 @@
         }
       ],
       "explain": "A comprehension states the shape of the result, which is what makes a column extraction read as one idea."
+    },
+    {
+      "id": "d1-rcl-4",
+      "prompt": "A column is inserted at position 1 of every row. What happens to code that reads row[1] as the score?",
+      "choices": [
+        "It raises IndexError",
+        "It silently reads the new column instead",
+        "Python adjusts the index",
+        "It still reads the score"
+      ],
+      "answer": 1,
+      "explain": "Nothing raises, which is the danger. The summary is computed over the wrong column and looks perfectly plausible."
     }
   ]
 }

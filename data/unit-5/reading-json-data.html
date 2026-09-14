@@ -146,51 +146,75 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-5.html">Unit 5</a>
-</nav>
-<h1 class="lesson-title">Reading JSON Data</h1>
-<p class="lead">A list of records is a table waiting to happen.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 5 &middot; Getting Data In</p>
+<p class="sidebar-unit-label">Unit 5 &bull; Getting Data In</p>
 <nav>
 <ul>
 <li><a href="/data/unit-5/csv-options-that-matter.html">1. CSV Options That Matter</a></li>
 <li><a href="/data/unit-5/missing-markers-on-load.html">2. Missing Markers on Load</a></li>
 <li><a href="/data/unit-5/selecting-what-you-need.html">3. Selecting What You Need</a></li>
-<li><a href="/data/unit-5/reading-json-data.html" class="is-current" aria-current="page">4. Reading JSON Data</a></li>
+<li><a href="/data/unit-5/reading-json-data.html" class="active" aria-current="page">4. Reading JSON Data</a></li>
 <li><a href="/data/unit-5/writing-data-out.html">5. Writing Data Out</a></li>
 <li><a href="/data/unit-5/checking-what-you-loaded.html">6. Checking What You Loaded</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-5.html">Unit 5</a>
+<span class="separator">/</span>
+<span class="current">Reading JSON Data</span>
+</nav>
+<div class="eyebrow">Unit 5 &bull; Lesson 4</div>
+<h1 class="lesson-title">Reading JSON Data</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>A list of records is a table waiting to happen.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-5/selecting-what-you-need.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-5/writing-data-out.html">Next: Writing Data Out</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Turn a list of dictionaries into a DataFrame.</li>
 <li>Say what happens to a record that is missing a key.</li>
 <li>Explain why the column order is not guaranteed to be the key order.</li>
 <li>Flatten one level of nesting.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>JSON is what an API gives you, and it is record-shaped rather than column-shaped. pandas bridges the two in one call — but the bridge makes decisions about missing keys and about nesting, and knowing them saves you from a column of dictionaries.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>Records in, table out</h2>
+<h2>Step 1: Records in, table out</h2>
 <p>JSON from an API is usually a list of objects, and each object is a row. <code>DataFrame</code> takes that shape directly.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">A list of dictionaries</h3>
 <p>The union of all the keys becomes the columns. Each record becomes a row.</p>
 <pre class="code"><code>import pandas as pd
@@ -200,6 +224,12 @@ records = [
     {"name": "Grace", "score": 88},
 ]
 print(pd.DataFrame(records))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">From a JSON string</h3>
 <p>When the JSON arrives as text, parse it first and build from the result. <code>read_json</code> exists too, but going through <code>json.loads</code> keeps the parsing and the table-building as two steps you can inspect separately.</p>
 <pre class="code"><code>import json
@@ -207,6 +237,10 @@ import pandas as pd
 
 text = '[{"name": "Ada", "score": 92}]'
 print(pd.DataFrame(json.loads(text)))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -242,8 +276,12 @@ print(list(df.columns))
 </div>
 
 <div class="content-section">
-<h2>Missing keys become missing values</h2>
+<h2>Step 2: Missing keys become missing values</h2>
 <p>A record without a key does not break the table. That column simply has a gap on that row.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The gap</h3>
 <p>The column exists because some record had it. The rows that did not get NaN, and the column widens to float if it was holding whole numbers.</p>
 <pre class="code"><code>import pandas as pd
@@ -252,6 +290,12 @@ records = [{"name": "Ada", "score": 92}, {"name": "Grace"}]
 df = pd.DataFrame(records)
 print(df)
 print(df.dtypes)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Nesting does not flatten itself</h3>
 <p>A value that is itself a dictionary becomes a column of dictionaries, which is almost never what you want. <code>json_normalize</code> flattens it into real columns.</p>
 <pre class="code"><code>import pandas as pd
@@ -261,6 +305,9 @@ print(pd.DataFrame(records))
 print()
 print(pd.json_normalize(records))</code></pre>
 <p class="note">The flattened names are joined with a dot: <code>at.city</code>. Rename them if a dot in a column name is going to be awkward later.</p>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -289,6 +336,7 @@ print(None)   # the flattened version
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -345,9 +393,10 @@ print(completeness([{"a": 1}, {"a": 2, "b": 3}]))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-5/selecting-what-you-need.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-5/selecting-what-you-need.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-5/writing-data-out.html">Next</a>
 </div>
 </section>

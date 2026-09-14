@@ -146,51 +146,75 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-4.html">Unit 4</a>
-</nav>
-<h1 class="lesson-title">Selecting Columns and Rows</h1>
-<p class="lead">loc goes by label, iloc goes by position, and the difference matters.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 4 &middot; Series and DataFrames</p>
+<p class="sidebar-unit-label">Unit 4 &bull; Series and DataFrames</p>
 <nav>
 <ul>
 <li><a href="/data/unit-4/the-series.html">1. The Series</a></li>
 <li><a href="/data/unit-4/building-a-dataframe.html">2. Building a DataFrame</a></li>
-<li><a href="/data/unit-4/selecting-columns-and-rows.html" class="is-current" aria-current="page">3. Selecting Columns and Rows</a></li>
+<li><a href="/data/unit-4/selecting-columns-and-rows.html" class="active" aria-current="page">3. Selecting Columns and Rows</a></li>
 <li><a href="/data/unit-4/adding-and-dropping-columns.html">4. Adding and Dropping Columns</a></li>
 <li><a href="/data/unit-4/dtypes-in-pandas.html">5. dtypes in pandas</a></li>
 <li><a href="/data/unit-4/reading-a-csv-into-pandas.html">6. Reading a CSV into pandas</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-4.html">Unit 4</a>
+<span class="separator">/</span>
+<span class="current">Selecting Columns and Rows</span>
+</nav>
+<div class="eyebrow">Unit 4 &bull; Lesson 3</div>
+<h1 class="lesson-title">Selecting Columns and Rows</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>loc goes by label, iloc goes by position, and the difference matters.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-4/building-a-dataframe.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-4/adding-and-dropping-columns.html">Next: Adding and Dropping Columns</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Take one column as a Series and several as a smaller table.</li>
 <li>Say what <code>loc</code> and <code>iloc</code> each read.</li>
 <li>Explain why they stop agreeing after a filter or a sort.</li>
 <li>Find a row by what it contains rather than by where it sits.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Almost every "why is this the wrong row" question comes from reaching for a position when you meant a label, or the reverse. The two look interchangeable on a freshly loaded table and stop being interchangeable the moment you sort or filter it — which is to say, immediately.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>Columns by name</h2>
+<h2>Step 1: Columns by name</h2>
 <p>One name gives a Series; a list of names gives a smaller DataFrame. The double brackets are not a typo — the inner pair is the list.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">One column, or several</h3>
 <p>Single brackets with one name give the column itself. Wrap the name in a list and you get a table back, with one column in it.</p>
 <pre class="code"><code>import pandas as pd
@@ -199,6 +223,10 @@ df = pd.DataFrame({"name": ["Ada", "Grace"], "score": [92, 88]})
 print(type(df["score"]).__name__)
 print(type(df[["score"]]).__name__)
 print(df[["name", "score"]])</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -230,8 +258,12 @@ print(type(df[["name", "score"]]).__name__)
 </div>
 
 <div class="content-section">
-<h2>Rows by label or by position</h2>
+<h2>Step 2: Rows by label or by position</h2>
 <p><code>loc</code> reads the index label; <code>iloc</code> reads the position. They agree on a default index and disagree the moment it changes.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The two accessors</h3>
 <p>Both take a row and optionally a column. loc names them; iloc counts them.</p>
 <pre class="code"><code>import pandas as pd
@@ -239,6 +271,12 @@ print(type(df[["name", "score"]]).__name__)
 df = pd.DataFrame({"score": [92, 88, 79]}, index=["a", "b", "c"])
 print(df.loc["b", "score"])    # by label
 print(df.iloc[1]["score"])     # by position</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Where they part company</h3>
 <p>Sort the table and the labels travel with their rows while the positions do not. After this sort, position 0 and label 0 are different rows.</p>
 <pre class="code"><code>import pandas as pd
@@ -249,6 +287,11 @@ print(best)
 print("iloc[0]:", best.iloc[0]["score"])   # the top score
 print("loc[0]:", best.loc[0]["score"])     # still the original row 0</code></pre>
 <p class="note">Neither is wrong. They are answering different questions, and a filtered or sorted table is where the difference becomes visible.</p>
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">One more asymmetry</h3>
 <p>A loc slice includes its end label; an iloc slice excludes its end position, like every other slice in Python. This is worth knowing once rather than debugging twice.</p>
 <pre class="code"><code>import pandas as pd
@@ -256,6 +299,10 @@ print("loc[0]:", best.loc[0]["score"])     # still the original row 0</code></pr
 df = pd.DataFrame({"score": [10, 20, 30, 40]})
 print(len(df.loc[0:2]))    # 3 -- inclusive
 print(len(df.iloc[0:2]))   # 2 -- exclusive</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -287,8 +334,12 @@ print(best.loc[0]["score"])
 </div>
 
 <div class="content-section">
-<h2>Finding a row by what is in it</h2>
+<h2>Step 3: Finding a row by what is in it</h2>
 <p>Usually you do not know either the label or the position — you know a value. Mask first, then read off what survives.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Mask, then take</h3>
 <p>The mask keeps the rows you meant. <code>.iloc[0]</code> on the survivors takes the first of them, which is safe because you are indexing into the filtered result, not the original table.</p>
 <pre class="code"><code>import pandas as pd
@@ -299,6 +350,11 @@ print(match)
 print(int(match["score"].iloc[0]))</code></pre>
 
 </div>
+</div>
+</div>
+
+</div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -356,9 +412,10 @@ print(best_name(pd.DataFrame({"name": ["Zoe", "Ada"], "score": [10, 92]})))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-4/building-a-dataframe.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-4/building-a-dataframe.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-4/adding-and-dropping-columns.html">Next</a>
 </div>
 </section>

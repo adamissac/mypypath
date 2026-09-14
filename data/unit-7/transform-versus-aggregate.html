@@ -146,51 +146,75 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-7.html">Unit 7</a>
-</nav>
-<h1 class="lesson-title">transform versus aggregate</h1>
-<p class="lead">One answer per group, or one answer per row.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 7 &middot; Grouping and Aggregating</p>
+<p class="sidebar-unit-label">Unit 7 &bull; Grouping and Aggregating</p>
 <nav>
 <ul>
 <li><a href="/data/unit-7/split-apply-combine.html">1. Split, Apply, Combine</a></li>
 <li><a href="/data/unit-7/counting-groups.html">2. Counting Groups</a></li>
 <li><a href="/data/unit-7/agg-with-several-summaries.html">3. agg with Several Summaries</a></li>
 <li><a href="/data/unit-7/grouping-by-several-keys.html">4. Grouping by Several Keys</a></li>
-<li><a href="/data/unit-7/transform-versus-aggregate.html" class="is-current" aria-current="page">5. transform versus aggregate</a></li>
+<li><a href="/data/unit-7/transform-versus-aggregate.html" class="active" aria-current="page">5. transform versus aggregate</a></li>
 <li><a href="/data/unit-7/pivot-tables.html">6. Pivot Tables</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-7.html">Unit 7</a>
+<span class="separator">/</span>
+<span class="current">transform versus aggregate</span>
+</nav>
+<div class="eyebrow">Unit 7 &bull; Lesson 5</div>
+<h1 class="lesson-title">transform versus aggregate</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>One answer per group, or one answer per row.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-7/grouping-by-several-keys.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-7/pivot-tables.html">Next: Pivot Tables</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Say what shape an aggregate returns and what shape a transform returns.</li>
 <li>Put a group summary beside every row.</li>
 <li>Compare a row with its own group rather than with the table.</li>
 <li>Choose between the two from the question being asked.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Questions like "which rows beat their own group average" cannot be answered by an aggregate, because an aggregate throws away the rows. transform is what keeps the shape, and it is the piece people are missing when they fall back to a loop over the groups.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>aggregate collapses</h2>
+<h2>Step 1: aggregate collapses</h2>
 <p>One value per group. The rows are gone, which is usually what you wanted.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The shape of an aggregate</h3>
 <p>Four rows in, two groups out. Nothing here lines up with the original table any more.</p>
 <pre class="code"><code>import pandas as pd
@@ -199,6 +223,10 @@ df = pd.DataFrame({"k": ["a", "a", "b", "b"], "v": [1, 3, 10, 20]})
 means = df.groupby("k")["v"].mean()
 print(means)
 print(len(df), "rows -&gt;", len(means), "groups")</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -230,8 +258,12 @@ print(None)   # the transform
 </div>
 
 <div class="content-section">
-<h2>transform keeps the shape</h2>
+<h2>Step 2: transform keeps the shape</h2>
 <p>One value per <em>row</em> — each row gets its own group's answer. The result lines up with the table, so you can put it straight into a column or compare against it.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The group answer, beside every row</h3>
 <p>Same length as the table, same index, so it can sit alongside the data it describes.</p>
 <pre class="code"><code>import pandas as pd
@@ -239,6 +271,12 @@ print(None)   # the transform
 df = pd.DataFrame({"k": ["a", "a", "b", "b"], "v": [1, 3, 10, 20]})
 df["group_mean"] = df.groupby("k")["v"].transform("mean")
 print(df)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Comparing a row with its own group</h3>
 <p>This is the question an aggregate cannot answer. Note how different it is from comparing against the whole table's mean.</p>
 <pre class="code"><code>import pandas as pd
@@ -249,6 +287,11 @@ group_mean = df.groupby("k")["v"].transform("mean")
 print("above own group:", int((df["v"] &gt; group_mean).sum()))
 print("above table mean:", int((df["v"] &gt; df["v"].mean()).sum()))</code></pre>
 <p class="note">The row with 100 is above the table mean and is exactly its own group's mean, because it is alone in its group. Which of those two numbers you report is the difference between two quite different claims.</p>
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">Standardising within a group</h3>
 <p>The same idea with two transforms: each value's distance from its group mean, in units of its group's spread.</p>
 <pre class="code"><code>import pandas as pd
@@ -257,6 +300,10 @@ df = pd.DataFrame({"k": ["a", "a", "a", "b"], "v": [10.0, 20.0, 30.0, 5.0]})
 g = df.groupby("k")["v"]
 df["z"] = (df["v"] - g.transform("mean")) / g.transform("std")
 print(df)</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -287,6 +334,7 @@ print(int((df["v"] &gt; df["v"].mean()).sum()))
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -343,9 +391,10 @@ print(share_of_group(pd.DataFrame({"k": ["a", "a"], "v": [1.0, 3.0]})))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-7/grouping-by-several-keys.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-7/grouping-by-several-keys.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-7/pivot-tables.html">Next</a>
 </div>
 </section>

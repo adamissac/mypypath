@@ -146,23 +146,13 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-10.html">Unit 10</a>
-</nav>
-<h1 class="lesson-title">Choosing a Chart</h1>
-<p class="lead">The shape of the question decides the shape of the picture.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 10 &middot; Visualising and Reporting</p>
+<p class="sidebar-unit-label">Unit 10 &bull; Visualising and Reporting</p>
 <nav>
 <ul>
-<li><a href="/data/unit-10/choosing-a-chart.html" class="is-current" aria-current="page">1. Choosing a Chart</a></li>
+<li><a href="/data/unit-10/choosing-a-chart.html" class="active" aria-current="page">1. Choosing a Chart</a></li>
 <li><a href="/data/unit-10/labels-and-honesty.html">2. Labels and Honesty</a></li>
 <li><a href="/data/unit-10/formatting-numbers.html">3. Formatting Numbers</a></li>
 <li><a href="/data/unit-10/a-summary-table.html">4. A Summary Table</a></li>
@@ -171,26 +161,60 @@
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-10.html">Unit 10</a>
+<span class="separator">/</span>
+<span class="current">Choosing a Chart</span>
+</nav>
+<div class="eyebrow">Unit 10 &bull; Lesson 1</div>
+<h1 class="lesson-title">Choosing a Chart</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>The shape of the question decides the shape of the picture.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-10.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-10/labels-and-honesty.html">Next: Labels and Honesty</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Match four common question shapes to four chart types.</li>
 <li>Say what the table behind each chart looks like.</li>
 <li>Explain why a pie chart is usually the wrong answer.</li>
 <li>Build the summary table before thinking about the picture.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Choosing the chart is not a decoration step — it is the last analysis decision. A bar chart and a line chart of the same numbers make different claims, and picking the one that matches your question is what stops the picture saying something the data does not.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>Four questions, four charts</h2>
+<h2>Step 1: Four questions, four charts</h2>
 <p>Almost every chart you need is one of these, and the question tells you which.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The mapping</h3>
 <p>Comparison across categories is a bar. Change over time is a line. The distribution of one column is a histogram. The relationship between two numbers is a scatter.</p>
 <pre class="code"><code># Comparison  -&gt; bar        mean score per team
@@ -198,12 +222,22 @@
 # Distribution-&gt; histogram  how scores are spread
 # Relationship-&gt; scatter    hours against score
 print("the question decides, not the tool")</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Why bars work</h3>
 <p>Bars share a baseline and encode value as length, which is the comparison people read most accurately. A pie encodes it as angle, which they read worst — and it can only ever show parts of one whole.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"team": ["red", "red", "blue"], "score": [90, 80, 70]})
 print(df.groupby("team")["score"].mean().round(1))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -234,8 +268,12 @@ print("line, bar, scatter, histogram")
 </div>
 
 <div class="content-section">
-<h2>What the code looks like</h2>
+<h2>Step 2: What the code looks like</h2>
 <p>The chart is one call. The table behind it is the part worth getting right, and the part you can check.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Table first</h3>
 <p>Every chart in this lesson is a summary table plus a <code>.plot</code>. If the table is wrong, the chart is wrong and much more convincing.</p>
 <pre class="code"><code>import pandas as pd
@@ -244,6 +282,12 @@ df = pd.DataFrame({"team": ["red", "red", "blue"], "score": [90, 80, 70]})
 summary = df.groupby("team")["score"].mean().round(1)
 print(summary)
 # summary.plot(kind="bar")   # the picture, once the table is right</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Sort a bar chart by value</h3>
 <p>Alphabetical order carries no information. Ordering the bars by the thing being compared is what makes the ranking readable at a glance.</p>
 <pre class="code"><code>import pandas as pd
@@ -253,6 +297,9 @@ means = df.groupby("team")["score"].mean()
 print(means)
 print(means.sort_values(ascending=False))</code></pre>
 <p class="note">The exception is a category with a natural order — months, age bands, school years. Sorting those by value destroys the thing the reader is using to navigate.</p>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -282,6 +329,7 @@ print(None)   # ordered by value
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -338,9 +386,10 @@ print(ranked_bars(pd.DataFrame({"team": ["zeta", "alpha"], "score": [70.0, 90.0]
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-10.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-10.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-10/labels-and-honesty.html">Next</a>
 </div>
 </section>

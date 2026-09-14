@@ -146,51 +146,75 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-3.html">Unit 3</a>
-</nav>
-<h1 class="lesson-title">Indexing and Slicing Arrays</h1>
-<p class="lead">Slices look like list slices and behave differently in one important way.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 3 &middot; Arrays with numpy</p>
+<p class="sidebar-unit-label">Unit 3 &bull; Arrays with numpy</p>
 <nav>
 <ul>
 <li><a href="/data/unit-3/why-arrays-beat-lists.html">1. Why Arrays Beat Lists</a></li>
 <li><a href="/data/unit-3/creating-arrays-and-dtypes.html">2. Creating Arrays and dtypes</a></li>
-<li><a href="/data/unit-3/indexing-and-slicing-arrays.html" class="is-current" aria-current="page">3. Indexing and Slicing Arrays</a></li>
+<li><a href="/data/unit-3/indexing-and-slicing-arrays.html" class="active" aria-current="page">3. Indexing and Slicing Arrays</a></li>
 <li><a href="/data/unit-3/boolean-masks.html">4. Boolean Masks</a></li>
 <li><a href="/data/unit-3/array-maths-and-broadcasting.html">5. Array Maths and Broadcasting</a></li>
 <li><a href="/data/unit-3/summing-and-axes.html">6. Summing and Axes</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-3.html">Unit 3</a>
+<span class="separator">/</span>
+<span class="current">Indexing and Slicing Arrays</span>
+</nav>
+<div class="eyebrow">Unit 3 &bull; Lesson 3</div>
+<h1 class="lesson-title">Indexing and Slicing Arrays</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Slices look like list slices and behave differently in one important way.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-3/creating-arrays-and-dtypes.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-3/boolean-masks.html">Next: Boolean Masks</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Index and slice a one-dimensional array the way you already index a list.</li>
 <li>Explain what a view is, and why writing into one changes the original.</li>
 <li>Use <code>.copy()</code> when you need the array left alone.</li>
 <li>Index a two-dimensional array with one pair of brackets.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Array slicing looks identical to list slicing and behaves differently in exactly one respect — it does not copy. That single difference is behind a whole class of bug where a function quietly edits its caller's data. It is worth meeting deliberately, once, rather than discovering it in an analysis you have already published.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>Indexing reads the same as a list</h2>
+<h2>Step 1: Indexing reads the same as a list</h2>
 <p>Positions from zero, negatives from the end, and a slice for a run of them. Everything you know from lists transfers.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Positions and ranges</h3>
 <p>A single index gives one element. A slice gives a run, with the stop exclusive, exactly as in a list.</p>
 <pre class="code"><code>import numpy as np
@@ -201,6 +225,12 @@ print(a[-1])
 print(a[1:4])
 print(a[:2])
 print(a[::2])</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Two dimensions, one pair of brackets</h3>
 <p>For a 2-D array you can write <code>a[1][2]</code> as you would with nested lists, but <code>a[1, 2]</code> is the numpy way and it is what lets you slice both directions at once.</p>
 <pre class="code"><code>import numpy as np
@@ -210,6 +240,9 @@ print(table[1, 2])      # row 1, column 2
 print(table[0])         # a whole row
 print(table[:, 1])      # a whole column</code></pre>
 <p class="note"><code>table[:, 1]</code> reads as "every row, column 1". Pulling a column out of a list of lists took a comprehension; here it is a slice.</p>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -243,8 +276,12 @@ print(None)   # bottom right
 </div>
 
 <div class="content-section">
-<h2>A slice is a view, not a copy</h2>
+<h2>Step 2: A slice is a view, not a copy</h2>
 <p>This is the difference that catches people. Slicing a list gives you a new list; slicing an array gives you a window onto the same memory.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Writing through the window</h3>
 <p>Assigning into a slice changes the array it came from. Nothing warns you, because as far as numpy is concerned you asked for a view and then wrote into it.</p>
 <pre class="code"><code>import numpy as np
@@ -254,6 +291,12 @@ part = a[1:3]
 part[0] = 99
 print(part)
 print(a)          # the 99 is in here too</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">The same code with a list does not do this</h3>
 <p>Worth running side by side once, so the difference is a thing you have seen rather than a thing you were told.</p>
 <pre class="code"><code>values = [1, 2, 3, 4]
@@ -261,6 +304,12 @@ part = values[1:3]
 part[0] = 99
 print(part)
 print(values)     # untouched</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">Ask for a copy when you want one</h3>
 <p>If a function is going to modify what it was handed, take a copy first — or return something new instead of editing in place. The cost of the copy is almost always smaller than the cost of the bug.</p>
 <pre class="code"><code>import numpy as np
@@ -270,6 +319,10 @@ part = a[1:3].copy()
 part[0] = 99
 print(part)
 print(a)          # safe</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -300,6 +353,7 @@ print(a)
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -358,9 +412,10 @@ print(a)
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-3/creating-arrays-and-dtypes.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-3/creating-arrays-and-dtypes.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-3/boolean-masks.html">Next</a>
 </div>
 </section>

@@ -146,57 +146,87 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-9.html">Unit 9</a>
-</nav>
-<h1 class="lesson-title">Rolling Windows</h1>
-<p class="lead">Smoothing a noisy series to see the shape underneath.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 9 &middot; Time Series</p>
+<p class="sidebar-unit-label">Unit 9 &bull; Time Series</p>
 <nav>
 <ul>
 <li><a href="/data/unit-9/parsing-dates.html">1. Parsing Dates</a></li>
 <li><a href="/data/unit-9/date-parts.html">2. Date Parts</a></li>
 <li><a href="/data/unit-9/a-datetime-index.html">3. A Datetime Index</a></li>
 <li><a href="/data/unit-9/resampling.html">4. Resampling</a></li>
-<li><a href="/data/unit-9/rolling-windows.html" class="is-current" aria-current="page">5. Rolling Windows</a></li>
+<li><a href="/data/unit-9/rolling-windows.html" class="active" aria-current="page">5. Rolling Windows</a></li>
 <li><a href="/data/unit-9/change-over-time.html">6. Change Over Time</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-9.html">Unit 9</a>
+<span class="separator">/</span>
+<span class="current">Rolling Windows</span>
+</nav>
+<div class="eyebrow">Unit 9 &bull; Lesson 5</div>
+<h1 class="lesson-title">Rolling Windows</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Smoothing a noisy series to see the shape underneath.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-9/resampling.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-9/change-over-time.html">Next: Change Over Time</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Take a moving average over a window.</li>
 <li>Say why the first values are missing.</li>
 <li>Choose a window length deliberately.</li>
 <li>State the smoothing when you report the result.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Daily numbers are noisy enough that the shape is invisible; a seven-day mean makes it legible. The trade is real, though: you are showing something that never happened, so the window length is a choice you have to declare rather than tune until the chart looks good.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>A moving average</h2>
+<h2>Step 1: A moving average</h2>
 <p><code>rolling</code> takes a window and a summary. A seven-day mean of daily data is the standard way to make a weekly pattern stop drowning the trend.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The call</h3>
 <p>Each output value is the summary of that row and the ones before it, within the window.</p>
 <pre class="code"><code>import pandas as pd
 
 s = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0])
 print(s.rolling(3).mean().tolist())</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Choosing the window</h3>
 <p>A window of 7 on daily data removes the day-of-week pattern because every window contains one of each day. That is a reason, and reasons are what a window length should have.</p>
 <pre class="code"><code>import pandas as pd
@@ -205,6 +235,9 @@ s = pd.Series([10.0, 2.0, 11.0, 3.0, 12.0, 4.0, 13.0, 5.0])
 print([round(x, 1) for x in s.rolling(2).mean().dropna().tolist()])
 print([round(x, 1) for x in s.rolling(4).mean().dropna().tolist()])</code></pre>
 <p class="note">The wider the window, the smoother the line and the later it reacts to a real change. Smoothing is a trade between legibility and responsiveness, not a free improvement.</p>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -235,8 +268,12 @@ print(None)   # window of 4
 </div>
 
 <div class="content-section">
-<h2>The first values have no window</h2>
+<h2>Step 2: The first values have no window</h2>
 <p>A window of three has nothing to average until the third value, so the first two are NaN. This is correct, and it is why a smoothed series is shorter than the one it came from.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The gap at the front</h3>
 <p>Not an error — there genuinely is no three-day average on day one.</p>
 <pre class="code"><code>import pandas as pd
@@ -244,12 +281,22 @@ print(None)   # window of 4
 s = pd.Series([1.0, 2.0, 3.0, 4.0])
 print(s.rolling(3).mean().tolist())
 print(s.rolling(3).mean().dropna().tolist())</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">min_periods, and what it costs</h3>
 <p>It fills the front by averaging over fewer points. That is defensible for a chart and dishonest in a table, because the early values are computed differently from the rest.</p>
 <pre class="code"><code>import pandas as pd
 
 s = pd.Series([1.0, 2.0, 3.0, 4.0])
 print(s.rolling(3, min_periods=1).mean().tolist())</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -279,6 +326,7 @@ print(int(rolled.isna().sum()), "dropped")
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -335,9 +383,10 @@ print(smoothing_cost(pd.Series([1.0, 2.0, 3.0]), 2))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-9/resampling.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-9/resampling.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-9/change-over-time.html">Next</a>
 </div>
 </section>

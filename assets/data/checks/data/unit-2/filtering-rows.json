@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Selecting the rows you meant, and noticing how many you dropped.",
+    "prompt": "Filtering Rows: Rows at or above the mark",
     "cases": [
       {
         "name": "returns the right answer",
@@ -36,6 +36,39 @@
       }
     ],
     "hint": "At least the mark means the mark passes. A plain greater-than silently fails everyone sitting exactly on the boundary, which is where marks cluster."
+  },
+  "exercise2": {
+    "prompt": "Filtering Rows: Pass, fail and unknown",
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "split_results([{\"score\": 92}, {\"score\": 58}, {\"score\": None}], 60)",
+        "expect": "(1, 1, 1)"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the mark itself passes",
+        "call": "split_results([{\"score\": 60}, {\"score\": 59}], 60)",
+        "expect": "(1, 1, 0)"
+      },
+      {
+        "name": "a score of 0 is a fail, not unknown",
+        "call": "split_results([{\"score\": 0}], 50)",
+        "expect": "(0, 1, 0)"
+      },
+      {
+        "name": "the counts always total the rows",
+        "call": "sum(split_results([{\"score\": 1}, {\"score\": None}, {\"score\": 99}, {\"score\": None}], 50))",
+        "expect": "4"
+      },
+      {
+        "name": "an empty table is all zeros",
+        "call": "split_results([], 50)",
+        "expect": "(0, 0, 0)"
+      }
+    ],
+    "hint": "Test for None first, with \"is None\", so that 0 is not mistaken for missing. Only then compare with >= mark."
   },
   "questions": [
     {
@@ -73,6 +106,18 @@
       ],
       "answer": 1,
       "explain": "Both wordings describe the same off-by-one, and marks bunch at the boundary, so it usually affects more rows than you would guess."
+    },
+    {
+      "id": "d2-fr-4",
+      "prompt": "Why is \"if not score\" a bad test for a missing score?",
+      "choices": [
+        "It is slow",
+        "A real score of 0 is falsy too, so it would be treated as missing",
+        "It raises on None",
+        "It is not valid Python"
+      ],
+      "answer": 1,
+      "explain": "Use \"score is None\" when you mean missing. Falsiness lumps 0 in with None."
     }
   ]
 }

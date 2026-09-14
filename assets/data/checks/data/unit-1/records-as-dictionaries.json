@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Name the columns, and the code stops depending on their order.",
+    "prompt": "Records as Dictionaries: Everyone at 85 or above",
     "cases": [
       {
         "name": "produces the expected output",
@@ -31,6 +31,39 @@
       }
     ],
     "hint": "At least 85 includes 85. Loop the rows, read row[\"score\"], and print row[\"name\"] when the test holds."
+  },
+  "exercise2": {
+    "prompt": "Records as Dictionaries: Records from a header",
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "to_records([\"name\", \"score\"], [[\"Ada\", 92], [\"Grace\", 88]])",
+        "expect": "[{'name': 'Ada', 'score': 92}, {'name': 'Grace', 'score': 88}]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "an empty table gives no records",
+        "call": "to_records([\"a\"], [])",
+        "expect": "[]"
+      },
+      {
+        "name": "the average reads the named field",
+        "call": "average_of([{\"age\": 40, \"score\": 90}, {\"age\": 20, \"score\": 70}], \"score\")",
+        "expect": "80.0"
+      },
+      {
+        "name": "records missing the field are skipped, not counted as 0",
+        "call": "average_of([{\"score\": 90}, {\"name\": \"x\"}], \"score\")",
+        "expect": "90.0"
+      },
+      {
+        "name": "no record has it",
+        "call": "average_of([{\"name\": \"x\"}], \"score\")",
+        "expect": "None"
+      }
+    ],
+    "hint": "dict(zip(header, row)) builds one record. For the average, collect r[field] for the records where field in r, and return None before dividing if that list is empty."
   },
   "questions": [
     {
@@ -71,7 +104,19 @@
         0,
         1
       ],
-      "explain": "Crashing is sometimes exactly right -- a missing column you did not expect should be loud. .get is for gaps you know about."
+      "explain": "Crashing is sometimes exactly right — a missing column you did not expect should be loud. .get is for gaps you know about."
+    },
+    {
+      "id": "d1-rad-4",
+      "prompt": "What does dict(zip([\"name\", \"score\"], [\"Ada\", 92])) produce?",
+      "choices": [
+        "[(\"name\", \"Ada\"), (\"score\", 92)]",
+        "{\"name\": \"Ada\", \"score\": 92}",
+        "{\"Ada\": 92}",
+        "An error"
+      ],
+      "answer": 1,
+      "explain": "zip pairs each name with the value in the same position, and dict turns the pairs into a record."
     }
   ]
 }

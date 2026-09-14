@@ -146,51 +146,75 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-3.html">Unit 3</a>
-</nav>
-<h1 class="lesson-title">Array Maths and Broadcasting</h1>
-<p class="lead">Arrays of different shapes can still meet, under one clear rule.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 3 &middot; Arrays with numpy</p>
+<p class="sidebar-unit-label">Unit 3 &bull; Arrays with numpy</p>
 <nav>
 <ul>
 <li><a href="/data/unit-3/why-arrays-beat-lists.html">1. Why Arrays Beat Lists</a></li>
 <li><a href="/data/unit-3/creating-arrays-and-dtypes.html">2. Creating Arrays and dtypes</a></li>
 <li><a href="/data/unit-3/indexing-and-slicing-arrays.html">3. Indexing and Slicing Arrays</a></li>
 <li><a href="/data/unit-3/boolean-masks.html">4. Boolean Masks</a></li>
-<li><a href="/data/unit-3/array-maths-and-broadcasting.html" class="is-current" aria-current="page">5. Array Maths and Broadcasting</a></li>
+<li><a href="/data/unit-3/array-maths-and-broadcasting.html" class="active" aria-current="page">5. Array Maths and Broadcasting</a></li>
 <li><a href="/data/unit-3/summing-and-axes.html">6. Summing and Axes</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-3.html">Unit 3</a>
+<span class="separator">/</span>
+<span class="current">Array Maths and Broadcasting</span>
+</nav>
+<div class="eyebrow">Unit 3 &bull; Lesson 5</div>
+<h1 class="lesson-title">Array Maths and Broadcasting</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Arrays of different shapes can still meet, under one clear rule.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-3/boolean-masks.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-3/summing-and-axes.html">Next: Summing and Axes</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Combine two arrays of the same shape without a loop or a zip.</li>
 <li>State the broadcasting rule and apply it to a scalar and a row.</li>
 <li>Predict which pairs of shapes cannot be combined.</li>
 <li>Centre and scale a column in one expression.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Broadcasting is why <code>+ 5</code> worked in the first lesson, and it is the reason a per-column adjustment does not need a loop. It is also the source of the shape errors that stop a script dead — and those errors are readable once you know the rule they are enforcing.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>Elementwise by default</h2>
+<h2>Step 1: Elementwise by default</h2>
 <p>Two arrays of the same shape combine position by position. No loop, no zip.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Same shape, straightforward</h3>
 <p>Every arithmetic operator works this way, and so do the comparisons you met in the last lesson.</p>
 <pre class="code"><code>import numpy as np
@@ -201,6 +225,12 @@ bonus = np.array([5, 10, 0])
 print(marks + bonus)
 print(marks * 2)
 print(marks / 50)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">The methods that reduce</h3>
 <p>Alongside the operators, an array carries its own summaries. Each collapses the array to one number, unless you say otherwise — which is the next lesson.</p>
 <pre class="code"><code>import numpy as np
@@ -208,6 +238,10 @@ print(marks / 50)</code></pre>
 marks = np.array([45, 30, 50])
 print(marks.sum(), marks.mean(), marks.min(), marks.max())
 print(round(marks.std(), 3))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -241,8 +275,12 @@ print(None)   # one total per student
 </div>
 
 <div class="content-section">
-<h2>Broadcasting stretches the smaller one</h2>
+<h2>Step 2: Broadcasting stretches the smaller one</h2>
 <p>A single number is treated as if repeated to fit. That is why <code>+ 5</code> worked, and the same rule extends to whole rows and columns.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The rule</h3>
 <p>Line the shapes up from the right. Two dimensions are compatible if they are equal, or if one of them is 1. Anything else has no defined meaning and numpy says so rather than guessing.</p>
 <pre class="code"><code>import numpy as np
@@ -254,6 +292,12 @@ per_column = np.array([10, 20, 30]) # shape (3,)
 # (2, 3) and (3,) line up on the right: 3 == 3, and the missing
 # dimension is treated as 1. The row is applied to every row.
 print(table + per_column)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">When it refuses</h3>
 <p>A shape mismatch is a real error, not a numpy quirk — there is no single sensible answer for adding three numbers to rows of four.</p>
 <pre class="code"><code>import numpy as np
@@ -262,6 +306,12 @@ try:
     np.array([1, 2, 3]) + np.array([1, 2, 3, 4])
 except ValueError as exc:
     print("ValueError:", exc)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">Centring, the everyday use</h3>
 <p>Subtracting the mean is broadcasting a single number across the whole array. Dividing by the standard deviation as well gives you a standardised column, which is the form most models want.</p>
 <pre class="code"><code>import numpy as np
@@ -270,6 +320,10 @@ values = np.array([2.0, 4.0, 6.0])
 centred = values - values.mean()
 print(centred)
 print(centred / values.std())</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -302,6 +356,7 @@ except ValueError as exc:
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -358,9 +413,10 @@ print(weighted_totals(np.array([[80, 60], [50, 90]]), np.array([0.5, 0.5])))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-3/boolean-masks.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-3/boolean-masks.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-3/summing-and-axes.html">Next</a>
 </div>
 </section>

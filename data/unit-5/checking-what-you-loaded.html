@@ -146,20 +146,10 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-5.html">Unit 5</a>
-</nav>
-<h1 class="lesson-title">Checking What You Loaded</h1>
-<p class="lead">Four questions to ask a new table before you trust a number from it.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 5 &middot; Getting Data In</p>
+<p class="sidebar-unit-label">Unit 5 &bull; Getting Data In</p>
 <nav>
 <ul>
 <li><a href="/data/unit-5/csv-options-that-matter.html">1. CSV Options That Matter</a></li>
@@ -167,30 +157,64 @@
 <li><a href="/data/unit-5/selecting-what-you-need.html">3. Selecting What You Need</a></li>
 <li><a href="/data/unit-5/reading-json-data.html">4. Reading JSON Data</a></li>
 <li><a href="/data/unit-5/writing-data-out.html">5. Writing Data Out</a></li>
-<li><a href="/data/unit-5/checking-what-you-loaded.html" class="is-current" aria-current="page">6. Checking What You Loaded</a></li>
+<li><a href="/data/unit-5/checking-what-you-loaded.html" class="active" aria-current="page">6. Checking What You Loaded</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-5.html">Unit 5</a>
+<span class="separator">/</span>
+<span class="current">Checking What You Loaded</span>
+</nav>
+<div class="eyebrow">Unit 5 &bull; Lesson 6</div>
+<h1 class="lesson-title">Checking What You Loaded</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Four questions to ask a new table before you trust a number from it.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-5/writing-data-out.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-5.html">Unit 5 test</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Run the same four checks on any table you did not build.</li>
 <li>Use the distinct values of a category column as a fifth check.</li>
 <li>Say what each check would have caught.</li>
 <li>Report what you found, rather than only acting on it.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Every silent failure in this unit is caught by one of these checks, and together they take about four lines. The reason to make them a habit rather than a debugging step is that they are cheapest before you have built an analysis on top of the table, and most expensive after you have published one.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>The four questions</h2>
+<h2>Step 1: The four questions</h2>
 <p>How many rows, what are the columns, what type is each, and how much is missing. In that order, because each one can make the next pointless.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">All four, in four lines</h3>
 <p>Shape first — a surprise here means stop and fix the load. Then dtypes, then the gaps.</p>
 <pre class="code"><code>import pandas as pd
@@ -203,6 +227,12 @@ print(df.shape)
 print(list(df.columns))
 print(df.dtypes.to_dict())
 print(df.isna().sum().to_dict())</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">What each one would have caught</h3>
 <p>Shape catches a wrong separator and a lost header row. dtypes catches an unnamed missing marker and a numeric column read as text. The missing counts catch a column that is mostly empty — which is a fact worth reporting rather than a problem to fix silently.</p>
 <pre class="code"><code>import pandas as pd
@@ -213,6 +243,10 @@ print(pd.read_csv(StringIO("a;b\n1;2\n")).shape)
 
 # An unnamed marker: the column is text, not numbers.
 print(pd.read_csv(StringIO("v\n1\nn/a\n"))["v"].dtype)</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -247,8 +281,12 @@ print(df.isna().sum().to_dict())
 </div>
 
 <div class="content-section">
-<h2>Distinct values catch the rest</h2>
+<h2>Step 2: Distinct values catch the rest</h2>
 <p>For a column that should hold a handful of categories, the set of what is actually in it is the fastest way to find the fifth problem: the same thing spelled two ways.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">What is actually in there</h3>
 <p><code>value_counts</code> gives the distinct values and how common each is. Two spellings of one city show up immediately, and a group-by would otherwise have split them without a word.</p>
 <pre class="code"><code>import pandas as pd
@@ -257,12 +295,21 @@ city = pd.Series(["Leeds", "leeds", "York", "Leeds "])
 print(city.value_counts())
 print(city.nunique())</code></pre>
 <p class="note">Three of those four are the same city. Stripping whitespace and lowercasing before grouping is usually the fix, and knowing it was needed is the point of looking.</p>
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">A range check on the numbers</h3>
 <p>For a numeric column, min and max are the cheap version of the same question: are these values possible? A score of 999 or a negative age is a sentinel or an error, and both are easier to see here than in a mean.</p>
 <pre class="code"><code>import pandas as pd
 
 scores = pd.Series([92, 88, 999])
 print(scores.min(), scores.max(), round(scores.mean(), 2))</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -291,6 +338,7 @@ print(None)   # after .str.strip().str.lower()
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -347,10 +395,11 @@ print(distinct_cities("places.csv"))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-5/writing-data-out.html">&larr; Previous</a>
-<a class="btn btn-primary route" href="/data.html">Back to the course</a>
+<a class="btn btn-ghost route" href="/data/unit-5/writing-data-out.html">&larr; Prev</a>
+<a class="btn btn-primary route" href="/data/unit-5.html">Unit 5 test</a>
 </div>
 </section>
 </div>

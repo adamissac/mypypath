@@ -34,16 +34,20 @@ const COURSE = JSON.parse(fs.readFileSync('assets/data/courses.json', 'utf8'))
 
 /* ------------------------------------------------------------- lesson pages */
 
-/* The lesson list every Foundations lesson carries. Without it a learner can
-   see the lesson they are on and nothing either side of it, which is most of
-   what makes a course feel like a course rather than a page. */
+/* The lesson page is written in the markup Foundations lessons use -- the same
+   .layout-course grid, sidebar, breadcrumb, eyebrow, overview card and
+   .lesson-content column -- so the two courses share one stylesheet and one set
+   of scripts rather than drifting apart. core.js adds the sidebar's collapse
+   button to .layout-course, and lesson-progress.js puts its chip under the
+   title, exactly as it does on a Foundations page. */
+
 function sidebar(unitN, lessons, currentSlug) {
   const items = lessons.map((l, i) => {
-    const here = l.slug === currentSlug ? ' class="is-current" aria-current="page"' : '';
+    const here = l.slug === currentSlug ? ' class="active" aria-current="page"' : '';
     return `<li><a href="/data/unit-${unitN}/${l.slug}.html"${here}>${i + 1}. ${esc(l.title)}</a></li>`;
   }).join('\n');
   return `<aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit ${unitN} &middot; ${esc(C[`unit${unitN}`].title)}</p>
+<p class="sidebar-unit-label">Unit ${unitN} &bull; ${esc(C[`unit${unitN}`].title)}</p>
 <nav>
 <ul>
 ${items}
@@ -54,23 +58,22 @@ ${items}
 
 /* ------------------------------------------------------- the lesson schema
 
-   A lesson is normalised before it is rendered, so the content modules can be
-   upgraded one unit at a time instead of all sixty lessons in one commit.
+   A lesson is normalised before it is rendered.
 
-   The shape a rewritten lesson uses:
-
+     slug, title, summary
      objectives  [string]        what the learner will be able to do
      why         string          why this matters, before the how
-     sections    [ { heading, intro, steps: [ { heading, prose, code, note } ] } ]
-     practices   [ { after, title, prompt, starter } ]   interleaved, not dumped
-     exercises   [ { title, prompt, hint, starter, ... } ]  two or more, graded
+     sections    [ { heading, intro, note?, steps: [ { heading, prose, code, note } ] } ]
+     practices   [ { after, title, prompt, starter } ]   interleaved: `after` is
+                                 the index of the section the practice follows
+     use         { cards: [ { title, text, code? } ], avoid }   optional; the
+                                 "when to use it" step, rendered last
+     exercises   [ { title, prompt, hint, starter, correct, wrong, ... } ]  two or more, graded
      questions   [ ... ]         the end-of-lesson quiz
 
-   The shape the first draft used, still accepted:
-
-     sections    [ [heading, prose, code] ]
-     exercise    { prompt, starter, ... }                 exactly one
-*/
+   The first-draft shape -- sections as [heading, prose, code] and a single
+   `exercise` -- is still accepted, so an old lesson renders rather than breaks,
+   but tests/checks-data-course.test.js fails any lesson written that way. */
 function normalise(lesson) {
   const sections = (lesson.sections || []).map((sec) => {
     if (Array.isArray(sec)) {
@@ -96,6 +99,7 @@ function normalise(lesson) {
     objectives: lesson.objectives || [],
     why: lesson.why || '',
     practices: lesson.practices || [],
+    use: lesson.use || null,
   };
 }
 
@@ -103,29 +107,89 @@ function normalise(lesson) {
    check file, the manifest and the markup all have to agree on them. */
 const exId = (n) => `exercise${n + 1}`;
 
-function objectivesBlock(objectives) {
-  if (!objectives.length) return '';
+const LEVEL = (unitN) => (unitN <= 2 ? 'Beginner' : 'Intermediate');
+
+/* A reading-time estimate from the lesson itself rather than a typed number:
+   prose at 200 words a minute, plus a few minutes per editor. Rounded to five
+   and shown as a range, because it is an estimate. */
+function minutes(lesson) {
+  const text = [
+    lesson.why, ...lesson.objectives,
+    ...lesson.sections.flatMap((s) => [s.intro, s.note, ...s.steps.map((t) => t.prose)]),
+  ].join(' ').replace(/<[^>]+>/g, ' ');
+  const words = text.split(/\s+/).filter(Boolean).length;
+  const est = words / 200 + lesson.practices.length * 3 + lesson.exercises.length * 6;
+  const low = Math.max(10, Math.round(est / 5) * 5);
+  return `${low}&ndash;${low + 5} min`;
+}
+
+const OVERVIEW_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>';
+
+function introSection(lesson) {
+  if (!lesson.objectives.length && !lesson.why) return '';
   return `
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
-${objectives.map((o) => `<li>${o}</li>`).join('\n')}
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
+${lesson.objectives.map((o) => `<li>${o}</li>`).join('\n')}
 </ul>
+${lesson.why ? `<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>${lesson.why}</p>
+</div>` : ''}
 </div>`;
 }
 
-function whyBlock(why) {
-  if (!why) return '';
+/* Each step is a numbered sub-step, in the .process-steps markup Foundations
+   uses for the same job, followed by its example. */
+function stepSection(sec, n) {
+  const steps = sec.steps.map((step, i) => `
+<div class="step">
+<div class="step-number">${i + 1}</div>
+<div class="step-content">
+${step.heading ? `<h3 class="h4">${esc(step.heading)}</h3>` : ''}
+${step.prose ? `<p>${step.prose}</p>` : ''}
+${step.code ? `<pre class="code"><code>${esc(step.code)}</code></pre>` : ''}
+${step.note ? `<p class="note">${step.note}</p>` : ''}
+</div>
+</div>`).join('');
+
   return `
-<div class="info-card">
-<h3 class="h4">Why This Matters</h3>
-<p>${why}</p>
+<div class="content-section">
+<h2>Step ${n}: ${esc(sec.heading)}</h2>
+${sec.intro ? `<p>${sec.intro}</p>` : ''}
+${sec.steps.length ? `<div class="process-steps">${steps}
+</div>` : ''}
+${sec.note ? `<div class="info-callout"><p><strong>Key idea:</strong> ${sec.note}</p></div>` : ''}
+</div>`;
+}
+
+/* The "when to use it" step: feature cards for the cases it is for, and an
+   info card for the case it is not. */
+function useSection(use, n) {
+  if (!use) return '';
+  const cards = (use.cards || []).map((c) => `
+<div class="feature-card">
+<h3 class="h4">${esc(c.title)}</h3>
+<p>${c.text}</p>
+${c.code ? `<pre class="code"><code>${esc(c.code)}</code></pre>` : ''}
+</div>`).join('');
+  return `
+<div class="content-section">
+<h2>Step ${n}: When to Use It</h2>
+${use.intro ? `<p>${use.intro}</p>` : ''}
+<div class="feature-grid">${cards}
+</div>
+${use.avoid ? `<div class="info-card">
+<h3 class="h4">When Not to Use It</h3>
+<p>${use.avoid}</p>
+</div>` : ''}
 </div>`;
 }
 
 /* A mini practice is an ungraded editor mid-lesson: somewhere to try the thing
-   that was just explained, while it is still the thing being explained. They
-   are interleaved by `after`, which is the index of the section they follow. */
+   that was just explained, while it is still the thing being explained. */
 function practiceBlock(practice, n) {
   return `
 <div class="practice-box interactive">
@@ -182,30 +246,15 @@ ${exercise.hint ? `<p class="hint-text">${esc(exercise.hint)}</p>` : ''}
 </div>`;
 }
 
-function lessonMain(unitN, unit, i, raw, prev, next) {
+function lessonMain(unitN, unit, i, raw, prev, next, nextTitle) {
   const lesson = normalise(raw);
+  const lessons = C[`unit${unitN}`].lessons;
 
   /* Heading levels go h1 -> h2 -> h3, never h2 -> h4. axe's heading-order rule
-     is enabled in scripts/audit-a11y.mjs and the budget is zero; the first
-     draft emitted <h4> here and the violation was fixed in the generated HTML
-     instead of in the generator, so every rebuild put it back. */
-  const body = [];
+     is enabled in scripts/audit-a11y.mjs and the budget is zero. */
+  const body = [introSection(lesson)];
   lesson.sections.forEach((sec, idx) => {
-    const steps = (sec.steps || []).map((step) => [
-      step.heading ? `<h3 class="h4">${esc(step.heading)}</h3>` : '',
-      step.prose ? `<p>${step.prose}</p>` : '',
-      step.code ? `<pre class="code"><code>${esc(step.code)}</code></pre>` : '',
-      step.note ? `<p class="note">${step.note}</p>` : '',
-    ].filter(Boolean).join('\n')).join('\n');
-
-    body.push(`
-<div class="content-section">
-<h2>${esc(sec.heading)}</h2>
-${sec.intro ? `<p>${sec.intro}</p>` : ''}
-${steps}
-${sec.note ? `<div class="info-card"><p>${sec.note}</p></div>` : ''}
-</div>`);
-
+    body.push(stepSection(sec, idx + 1));
     lesson.practices.forEach((pr, pi) => {
       if (pr.after === idx) body.push(practiceBlock(pr, pi + 1));
     });
@@ -218,35 +267,59 @@ ${sec.note ? `<div class="info-card"><p>${sec.note}</p></div>` : ''}
     }
   });
 
+  body.push(useSection(lesson.use, lesson.sections.length + 1));
+
   const exercises = lesson.exercises.map((ex, n) => exerciseBlock(ex, n)).join('\n');
+  const nextLink = next
+    ? `<a class="btn btn-primary route" href="${next}">Next: ${esc(nextTitle)}</a>`
+    : `<a class="btn btn-primary route" href="/data/unit-${unitN}.html">Unit ${unitN} test</a>`;
 
   return `<main id="main-content">
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-${unitN}.html">Unit ${unitN}</a>
-</nav>
-<h1 class="lesson-title">${esc(lesson.title)}</h1>
-<p class="lead">${esc(lesson.summary)}</p>
-</div>
-</section>
+<section class="section">
+<div class="container layout-course">
+${sidebar(unitN, lessons, lesson.slug)}
 <section class="course-main">
-<div class="container">
-${sidebar(unitN, C[`unit${unitN}`].lessons, lesson.slug)}
-<section class="lesson-body">
-${objectivesBlock(lesson.objectives)}
-${whyBlock(lesson.why)}
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-${unitN}.html">Unit ${unitN}</a>
+<span class="separator">/</span>
+<span class="current">${esc(lesson.title)}</span>
+</nav>
+<div class="eyebrow">Unit ${unitN} &bull; Lesson ${i + 1}</div>
+<h1 class="lesson-title">${esc(lesson.title)}</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true">${OVERVIEW_ICON}</div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>${esc(lesson.summary)}</p>
+<div class="lesson-meta">
+<span class="pill">${LEVEL(unitN)}</span>
+<span class="pill">${minutes(lesson)}</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="${prev}">&larr; Previous</a>
+${nextLink}
+</div>
+</div>
+<div class="lesson-content">
 ${body.join('\n')}
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 ${exercises}
 </div>
+</div>
 
 <div class="lesson-nav">
-${prev ? `<a class="btn btn-ghost route" href="${prev}">&larr; Previous</a>` : '<span></span>'}
-${next ? `<a class="btn btn-primary route" href="${next}">Next</a>` : '<a class="btn btn-primary route" href="/data.html">Back to the course</a>'}
+<a class="btn btn-ghost route" href="${prev}">&larr; Prev</a>
+${next ? `<a class="btn btn-primary route" href="${next}">Next</a>` : `<a class="btn btn-primary route" href="/data/unit-${unitN}.html">Unit ${unitN} test</a>`}
 </div>
 </section>
 </div>
@@ -365,9 +438,10 @@ for (const unit of COURSE.units) {
   lessons.forEach((lesson, i) => {
     const prev = i > 0 ? `/data/unit-${unit.n}/${lessons[i - 1].slug}.html` : `/data/unit-${unit.n}.html`;
     const next = i < lessons.length - 1 ? `/data/unit-${unit.n}/${lessons[i + 1].slug}.html` : null;
+    const nextTitle = i < lessons.length - 1 ? lessons[i + 1].title : null;
     write(`data/unit-${unit.n}/${lesson.slug}.html`,
       shell(`Python for Data \u2022 ${lesson.title}`, lesson.summary,
-        lessonMain(unit.n, unit, i, lesson, prev, next)));
+        lessonMain(unit.n, unit, i, lesson, prev, next, nextTitle)));
     pages++;
 
     // The check file, in the course's own folder so that unit 1 of each course

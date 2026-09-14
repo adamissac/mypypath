@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Everything out of a file is text, and text sorts and adds in the wrong way.",
+    "prompt": "Fixing Types: A safe score converter",
     "cases": [
       {
         "name": "returns the right answer",
@@ -47,6 +47,54 @@
     ],
     "hint": "Try the conversion and catch ValueError. Testing the string yourself with isdigit() misses the minus sign on negative numbers."
   },
+  "exercise2": {
+    "prompt": "Fixing Types: Parse a decorated amount",
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "parse_amount(\"1,250\")",
+        "expect": "1250.0"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a percent sign and spaces are removed",
+        "call": "parse_amount(\" 85% \")",
+        "expect": "85.0"
+      },
+      {
+        "name": "a decimal survives",
+        "call": "parse_amount(\"3.5\")",
+        "expect": "3.5"
+      },
+      {
+        "name": "a negative amount survives",
+        "call": "parse_amount(\"-1,000\")",
+        "expect": "-1000.0"
+      },
+      {
+        "name": "a word is not a number",
+        "call": "parse_amount(\"n/a\")",
+        "expect": "None"
+      },
+      {
+        "name": "a blank is not a number",
+        "call": "parse_amount(\"  \")",
+        "expect": "None"
+      },
+      {
+        "name": "the failure is caught by name",
+        "kind": "ast",
+        "requires": {
+          "handlers": [
+            "ValueError"
+          ]
+        },
+        "describe": "except ValueError around float()"
+      }
+    ],
+    "hint": "cleaned = text.strip().replace(\",\", \"\").rstrip(\"%\"), then try: return float(cleaned) except ValueError: return None."
+  },
   "questions": [
     {
       "id": "d2-ft-1",
@@ -70,7 +118,7 @@
         "Nothing, it returns 0"
       ],
       "answer": 1,
-      "explain": "The type is right -- it is a string, which int accepts -- but the value is not a number, so it is a ValueError."
+      "explain": "The type is right — it is a string, which int accepts — but the value is not a number, so it is a ValueError."
     },
     {
       "id": "d2-ft-3",
@@ -83,6 +131,18 @@
       ],
       "answer": 1,
       "explain": "\"-5\".isdigit() is False, and so is \"3.5\".isdigit(). Trying the conversion and catching the failure covers what the test misses."
+    },
+    {
+      "id": "d2-ft-4",
+      "prompt": "Why catch ValueError by name instead of using a bare except?",
+      "choices": [
+        "It is faster",
+        "A bare except also hides unrelated bugs, like a misspelled variable",
+        "Python requires a name",
+        "A bare except does not catch ValueError"
+      ],
+      "answer": 1,
+      "explain": "Catch the failure you expect. Anything else should still be loud."
     }
   ]
 }

@@ -146,51 +146,75 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-10.html">Unit 10</a>
-</nav>
-<h1 class="lesson-title">Formatting Numbers</h1>
-<p class="lead">Round at the end, and show the precision you actually have.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 10 &middot; Visualising and Reporting</p>
+<p class="sidebar-unit-label">Unit 10 &bull; Visualising and Reporting</p>
 <nav>
 <ul>
 <li><a href="/data/unit-10/choosing-a-chart.html">1. Choosing a Chart</a></li>
 <li><a href="/data/unit-10/labels-and-honesty.html">2. Labels and Honesty</a></li>
-<li><a href="/data/unit-10/formatting-numbers.html" class="is-current" aria-current="page">3. Formatting Numbers</a></li>
+<li><a href="/data/unit-10/formatting-numbers.html" class="active" aria-current="page">3. Formatting Numbers</a></li>
 <li><a href="/data/unit-10/a-summary-table.html">4. A Summary Table</a></li>
 <li><a href="/data/unit-10/writing-up-a-finding.html">5. Writing Up a Finding</a></li>
 <li><a href="/data/unit-10/the-whole-analysis.html">6. The Whole Analysis</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-10.html">Unit 10</a>
+<span class="separator">/</span>
+<span class="current">Formatting Numbers</span>
+</nav>
+<div class="eyebrow">Unit 10 &bull; Lesson 3</div>
+<h1 class="lesson-title">Formatting Numbers</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Round at the end, and show the precision you actually have.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-10/labels-and-honesty.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-10/a-summary-table.html">Next: A Summary Table</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Round for display without rounding during the calculation.</li>
 <li>Say what a number of decimal places claims.</li>
 <li>Format a percentage and a large number readably.</li>
 <li>Report the middle with the spread beside it.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Rounding early puts error into every step that follows; rounding late and too finely claims a precision the data never had. Nine observations do not support four decimal places, and printing them anyway tells a reader the answer is more certain than it is.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>Round for the reader, not for the maths</h2>
+<h2>Step 1: Round for the reader, not for the maths</h2>
 <p>Keep full precision through the calculation and round once, at the point where a person sees it.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">What early rounding costs</h3>
 <p>Rounding each value before averaging is a different calculation from averaging then rounding, and on enough rows the difference is visible.</p>
 <pre class="code"><code>import pandas as pd
@@ -198,6 +222,12 @@
 s = pd.Series([1.25, 1.25, 1.25, 1.25])
 print(round(float(s.mean()), 1))
 print(round(float(s.round(1).mean()), 1))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Formatting, which is not rounding</h3>
 <p>An f-string formats for display and leaves the value alone. That is usually what you want: the stored number stays exact and only the printed one is shortened.</p>
 <pre class="code"><code>import pandas as pd
@@ -208,6 +238,10 @@ print(f"{value:.2f}")
 
 share = 0.0734
 print(f"{share:.1%}")</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -238,8 +272,12 @@ print(round(float(s.round(1).mean()), 1))
 </div>
 
 <div class="content-section">
-<h2>Precision is a claim</h2>
+<h2>Step 2: Precision is a claim</h2>
 <p>Each decimal place you print says "I know the answer this precisely". With nine observations, you do not.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">What the extra digits mean</h3>
 <p>72.4183 over nine rows is noise dressed as certainty. One decimal place is usually generous for a mean of a small sample.</p>
 <pre class="code"><code>import pandas as pd
@@ -248,6 +286,12 @@ small = pd.Series([70, 72, 75, 68, 80, 71, 73, 69, 74])
 print(len(small), "observations")
 print(small.mean())
 print(round(float(small.mean()), 1))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">The middle needs its spread</h3>
 <p>A mean on its own hides how much the values vary. Reporting the minimum and maximum beside it costs one line and stops a wide spread being read as a tight one.</p>
 <pre class="code"><code>import pandas as pd
@@ -257,6 +301,9 @@ wide = pd.Series([10.0, 71.0, 132.0])
 for s in (tight, wide):
     print(f"mean {s.mean():.1f} (min {s.min():.1f}, max {s.max():.1f})")</code></pre>
 <p class="note">Both have a mean of 71. Only one of them supports the sentence "they scored about 71".</p>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -286,6 +333,7 @@ for s in (tight, wide):
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -342,9 +390,10 @@ print(mean_to(pd.Series([1.25, 1.25, 1.25, 1.25]), 1))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-10/labels-and-honesty.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-10/labels-and-honesty.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-10/a-summary-table.html">Next</a>
 </div>
 </section>

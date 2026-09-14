@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "The csv module turns a file of text into rows you can work with.",
+    "prompt": "Reading a CSV File: Print every row",
     "files": {
       "scores.csv": "name,score\nAda,92\nGrace,88\nAlan,79\n"
     },
@@ -39,6 +39,56 @@
     ],
     "hint": "DictReader reads the header for you, so row[\"name\"] and row[\"score\"] work straight away. Typing the three lines out passes the first check and fails the second."
   },
+  "exercise2": {
+    "prompt": "Reading a CSV File: Total a column from a file",
+    "files": {
+      "scores.csv": "name,score\n\"Lovelace, Ada\",92\nGrace,88\nAlan,79\n"
+    },
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "total_score(\"scores.csv\")",
+        "expect": "259"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a different file gives a different total",
+        "files": {
+          "scores.csv": "name,score\nKatherine,99\n"
+        },
+        "call": "total_score(\"scores.csv\")",
+        "expect": "99"
+      },
+      {
+        "name": "a file with only a header totals 0",
+        "files": {
+          "scores.csv": "name,score\n"
+        },
+        "call": "total_score(\"scores.csv\")",
+        "expect": "0"
+      },
+      {
+        "name": "a comma inside quotes does not shift the columns",
+        "files": {
+          "scores.csv": "name,score\n\"Hopper, Grace\",10\n\"Turing, Alan\",5\n"
+        },
+        "call": "total_score(\"scores.csv\")",
+        "expect": "15"
+      },
+      {
+        "name": "the csv module does the reading",
+        "kind": "ast",
+        "requires": {
+          "imports": [
+            "csv"
+          ]
+        },
+        "describe": "the csv module, which understands quotes"
+      }
+    ],
+    "hint": "Loop csv.DictReader(f) and add int(row[\"score\"]) each time. Splitting lines on commas breaks on \"Lovelace, Ada\", and adding the strings without int() joins them instead of summing."
+  },
   "questions": [
     {
       "id": "d1-csv-1",
@@ -75,6 +125,18 @@
       ],
       "answer": 2,
       "explain": "A file is text, so everything read out of one is text until you convert it. That is the source of more early bugs than anything else in this course."
+    },
+    {
+      "id": "d1-csv-4",
+      "prompt": "What does the with statement guarantee when reading a file?",
+      "choices": [
+        "The file is read faster",
+        "The file is closed when the block ends, even if an error happens",
+        "The file exists",
+        "The header is skipped"
+      ],
+      "answer": 1,
+      "explain": "Leaving the block, for any reason, closes the file. That is the whole job of with."
     }
   ]
 }

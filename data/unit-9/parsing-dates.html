@@ -146,23 +146,13 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-9.html">Unit 9</a>
-</nav>
-<h1 class="lesson-title">Parsing Dates</h1>
-<p class="lead">A date read from a file is text until you say otherwise.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 9 &middot; Time Series</p>
+<p class="sidebar-unit-label">Unit 9 &bull; Time Series</p>
 <nav>
 <ul>
-<li><a href="/data/unit-9/parsing-dates.html" class="is-current" aria-current="page">1. Parsing Dates</a></li>
+<li><a href="/data/unit-9/parsing-dates.html" class="active" aria-current="page">1. Parsing Dates</a></li>
 <li><a href="/data/unit-9/date-parts.html">2. Date Parts</a></li>
 <li><a href="/data/unit-9/a-datetime-index.html">3. A Datetime Index</a></li>
 <li><a href="/data/unit-9/resampling.html">4. Resampling</a></li>
@@ -171,26 +161,60 @@
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-9.html">Unit 9</a>
+<span class="separator">/</span>
+<span class="current">Parsing Dates</span>
+</nav>
+<div class="eyebrow">Unit 9 &bull; Lesson 1</div>
+<h1 class="lesson-title">Parsing Dates</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>A date read from a file is text until you say otherwise.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-9.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-9/date-parts.html">Next: Date Parts</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Convert a column of date text into real datetimes.</li>
 <li>Parse at load time rather than afterwards.</li>
 <li>Handle a value that will not parse.</li>
 <li>Say why day-first and month-first matter.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Text that looks like a date sorts alphabetically and compares alphabetically, so "02/2024" comes before "1/2023" and every ordering you build on it is wrong. Worse, an ambiguous format can be parsed the wrong way round and still succeed, giving you a year of data where every day up to the twelfth is a different date than you think.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>to_datetime turns text into dates</h2>
+<h2>Step 1: to_datetime turns text into dates</h2>
 <p>Until it does, sorting is alphabetical and "greater than" means something other than "later".</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">What text does to order</h3>
 <p>Run this once. The text ordering is not an approximation of the date ordering; it is unrelated to it.</p>
 <pre class="code"><code>import pandas as pd
@@ -198,6 +222,12 @@
 text = pd.Series(["10/01/2024", "02/01/2024", "1/03/2023"])
 print(sorted(text.tolist()))
 print(pd.to_datetime(text, dayfirst=True).sort_values().dt.strftime("%Y-%m-%d").tolist())</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">The conversion</h3>
 <p>Once converted, the column has a datetime dtype and every comparison means what you expect.</p>
 <pre class="code"><code>import pandas as pd
@@ -206,6 +236,10 @@ days = pd.to_datetime(pd.Series(["2024-03-01", "2024-01-15"]))
 print(days.dtype)
 print(days.min(), days.max())
 print(days.max() - days.min())</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -236,8 +270,12 @@ print(None)   # parsed, then sorted
 </div>
 
 <div class="content-section">
-<h2>Parsing on the way in</h2>
+<h2>Step 2: Parsing on the way in</h2>
 <p><code>parse_dates</code> on <code>read_csv</code> does it at load time, which is one fewer step to forget.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">At load time</h3>
 <p>Cheaper than converting afterwards, and it means the column is never text long enough for you to sort it by accident.</p>
 <pre class="code"><code>import pandas as pd
@@ -246,6 +284,12 @@ from io import StringIO
 text = "day,n\n2024-01-05,1\n2024-02-01,2\n"
 df = pd.read_csv(StringIO(text), parse_dates=["day"])
 print(df.dtypes)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">When a value will not parse</h3>
 <p><code>errors="coerce"</code> gives NaT — the datetime version of NaN — instead of raising. Counting them tells you how bad the column is before you decide what to do.</p>
 <pre class="code"><code>import pandas as pd
@@ -254,6 +298,12 @@ messy = pd.Series(["2024-01-05", "not a date", "2024-02-01"])
 days = pd.to_datetime(messy, errors="coerce")
 print(days.tolist())
 print("unparseable:", int(days.isna().sum()))</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">The ambiguity that does not raise</h3>
 <p>03/04/2024 is the third of April or the fourth of March, and both readings succeed. If the file is British, say so — otherwise every date whose day is 12 or under is silently wrong.</p>
 <pre class="code"><code>import pandas as pd
@@ -261,6 +311,10 @@ print("unparseable:", int(days.isna().sum()))</code></pre>
 value = pd.Series(["03/04/2024"])
 print(pd.to_datetime(value, dayfirst=False).dt.strftime("%d %B %Y").iloc[0])
 print(pd.to_datetime(value, dayfirst=True).dt.strftime("%d %B %Y").iloc[0])</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -289,6 +343,7 @@ print(int(days.isna().sum()))
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -345,9 +400,10 @@ print(usable_dates(pd.Series(["2024-01-05", "n/a"])))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-9.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-9.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-9/date-parts.html">Next</a>
 </div>
 </section>

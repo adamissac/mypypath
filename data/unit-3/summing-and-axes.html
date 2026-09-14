@@ -146,20 +146,10 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-3.html">Unit 3</a>
-</nav>
-<h1 class="lesson-title">Summing and Axes</h1>
-<p class="lead">In two dimensions, the question is always which way you are collapsing.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 3 &middot; Arrays with numpy</p>
+<p class="sidebar-unit-label">Unit 3 &bull; Arrays with numpy</p>
 <nav>
 <ul>
 <li><a href="/data/unit-3/why-arrays-beat-lists.html">1. Why Arrays Beat Lists</a></li>
@@ -167,30 +157,64 @@
 <li><a href="/data/unit-3/indexing-and-slicing-arrays.html">3. Indexing and Slicing Arrays</a></li>
 <li><a href="/data/unit-3/boolean-masks.html">4. Boolean Masks</a></li>
 <li><a href="/data/unit-3/array-maths-and-broadcasting.html">5. Array Maths and Broadcasting</a></li>
-<li><a href="/data/unit-3/summing-and-axes.html" class="is-current" aria-current="page">6. Summing and Axes</a></li>
+<li><a href="/data/unit-3/summing-and-axes.html" class="active" aria-current="page">6. Summing and Axes</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-3.html">Unit 3</a>
+<span class="separator">/</span>
+<span class="current">Summing and Axes</span>
+</nav>
+<div class="eyebrow">Unit 3 &bull; Lesson 6</div>
+<h1 class="lesson-title">Summing and Axes</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>In two dimensions, the question is always which way you are collapsing.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-3/array-maths-and-broadcasting.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-3.html">Unit 3 test</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Reduce a whole array to a single number.</li>
 <li>Say what <code>axis=0</code> and <code>axis=1</code> collapse, in words, before writing either.</li>
 <li>Check an answer by its shape rather than by reading the numbers.</li>
 <li>Choose the axis from the question being asked.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Getting the axis backwards is the most common error in this unit, and it is dangerous because it does not raise — you get a plausible-looking list of the wrong length. Learning to say "I am collapsing the rows, so I keep one value per column" out loud, and then checking the shape, is what stops it.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>Aggregating the whole array</h2>
+<h2>Step 1: Aggregating the whole array</h2>
 <p><code>sum</code>, <code>mean</code>, <code>min</code>, <code>max</code> and <code>std</code> each reduce an array to one number when you do not say otherwise.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Everything at once</h3>
 <p>With no axis named, there is nothing left to keep, so the whole array collapses — including a two-dimensional one.</p>
 <pre class="code"><code>import numpy as np
@@ -201,6 +225,10 @@ table = np.array([[1, 2, 3],
 print(table.sum())
 print(table.mean())
 print(table.max())</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -232,8 +260,12 @@ print(None)                 # per student
 </div>
 
 <div class="content-section">
-<h2>axis picks the direction</h2>
+<h2>Step 2: axis picks the direction</h2>
 <p>The name is the confusing part. <code>axis</code> says which dimension is being <em>removed</em>, not which one is kept.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">axis=0 collapses the rows</h3>
 <p>Running down through the rows leaves one value per column. For a table of students by test, that is one number per test.</p>
 <pre class="code"><code>import numpy as np
@@ -243,6 +275,12 @@ table = np.array([[1, 2, 3],
 
 print(table.sum(axis=0))      # one per column
 print(table.sum(axis=0).shape)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">axis=1 collapses the columns</h3>
 <p>Running across the columns leaves one value per row — one number per student.</p>
 <pre class="code"><code>import numpy as np
@@ -252,6 +290,12 @@ table = np.array([[1, 2, 3],
 
 print(table.sum(axis=1))      # one per row
 print(table.sum(axis=1).shape)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">Check the shape, not the numbers</h3>
 <p>A 2&times;3 table summed along the wrong axis gives three numbers where you wanted two. On a real table both are plausible lists, so the length is the check that catches it.</p>
 <pre class="code"><code>import numpy as np
@@ -263,6 +307,9 @@ print("students:", table.shape[0], "tests:", table.shape[1])
 print("per student:", table.sum(axis=1))   # length 2
 print("per test:   ", table.sum(axis=0))   # length 3</code></pre>
 <p class="note">A sentence that always works: <em>axis=0 is down, axis=1 is across.</em> Say which you mean in words first, then write it.</p>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -292,6 +339,7 @@ print(marks.argmax(axis=0))
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -348,10 +396,11 @@ print(hardest_test(np.array([[80, 60], [90, 50]])))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-3/array-maths-and-broadcasting.html">&larr; Previous</a>
-<a class="btn btn-primary route" href="/data.html">Back to the course</a>
+<a class="btn btn-ghost route" href="/data/unit-3/array-maths-and-broadcasting.html">&larr; Prev</a>
+<a class="btn btn-primary route" href="/data/unit-3.html">Unit 3 test</a>
 </div>
 </section>
 </div>

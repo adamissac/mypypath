@@ -146,20 +146,10 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-2.html">Unit 2</a>
-</nav>
-<h1 class="lesson-title">Sorting and Ranking</h1>
-<p class="lead">Order by the value you mean, and remember that sorted returns a new list.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 2 &middot; Cleaning and Shaping</p>
+<p class="sidebar-unit-label">Unit 2 &bull; Cleaning and Shaping</p>
 <nav>
 <ul>
 <li><a href="/data/unit-2/what-dirty-data-looks-like.html">1. What Dirty Data Looks Like</a></li>
@@ -167,38 +157,217 @@
 <li><a href="/data/unit-2/fixing-types.html">3. Fixing Types</a></li>
 <li><a href="/data/unit-2/removing-duplicates.html">4. Removing Duplicates</a></li>
 <li><a href="/data/unit-2/filtering-rows.html">5. Filtering Rows</a></li>
-<li><a href="/data/unit-2/sorting-and-ranking.html" class="is-current" aria-current="page">6. Sorting and Ranking</a></li>
+<li><a href="/data/unit-2/sorting-and-ranking.html" class="active" aria-current="page">6. Sorting and Ranking</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
-
-
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-2.html">Unit 2</a>
+<span class="separator">/</span>
+<span class="current">Sorting and Ranking</span>
+</nav>
+<div class="eyebrow">Unit 2 &bull; Lesson 6</div>
+<h1 class="lesson-title">Sorting and Ranking</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>Order by the value you mean, and remember that sorted returns a new list.</p>
+<div class="lesson-meta">
+<span class="pill">Beginner</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-2/filtering-rows.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-2.html">Unit 2 test</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
-<h2>Sorting by a field</h2>
-<p>key says which part of each row to order by. reverse turns it around. sorted gives you a new list; .sort() changes the one you have and returns None.</p>
-<pre class="code"><code>rows = [{"name": "Ada", "score": 92}, {"name": "Alan", "score": 79}]
+<h2>What You Will Learn in This Lesson</h2>
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
+<li>Sort records by a field with <code>key</code> and <code>reverse</code>.</li>
+<li>Avoid the <code>.sort()</code>-returns-None trap.</li>
+<li>Break ties with a tuple key, including a descending number and an ascending name.</li>
+<li>Take the top n with a slice, and give tied values the same rank.</li>
+</ul>
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Most reports end in a ranking: the top five products, the lowest-scoring topics, the students who most need help. Getting the order right means sorting by the right field, in the right direction, with a sensible rule for ties — and not losing the list along the way. pandas’ <code>sort_values</code> and <code>nlargest</code> in unit 6 take the same arguments for the same reasons.</p>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Step 1: Sorting by a field</h2>
+<p>Records do not have a natural order. <code>key</code> tells <code>sorted</code> which part of each one to compare.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">key and reverse</h3>
+<p><code>key</code> is a function applied to each item; its result is what gets compared. <code>reverse=True</code> puts the largest first.</p>
+<pre class="code"><code>rows = [{"name": "Ada", "score": 92}, {"name": "Alan", "score": 79}, {"name": "Grace", "score": 88}]
+
 best = sorted(rows, key=lambda r: r["score"], reverse=True)
 print([r["name"] for r in best])</code></pre>
 
 </div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">sorted versus .sort()</h3>
+<p><code>sorted(x)</code> returns a new list and leaves <code>x</code> alone. <code>x.sort()</code> reorders <code>x</code> itself and returns <code>None</code>. So <code>names = names.sort()</code> throws the list away.</p>
+<pre class="code"><code>names = ["Grace", "Ada", "Alan"]
+print(sorted(names), names)
 
-<div class="content-section">
-<h2>The None that catches everyone</h2>
-<p>names = names.sort() throws your list away and keeps None. It is the single most common list mistake, and nothing raises until you use the result.</p>
-<pre class="code"><code>names = ["Grace", "Ada"]
-print(names.sort())
-print(names)
-print(sorted(["Grace", "Ada"]))</code></pre>
+result = names.sort()
+print(result, names)</code></pre>
 
 </div>
+</div>
+</div>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Lowest first</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print the names from lowest score to highest, then check that <code>rows</code> itself is still in its original order.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'rows = [{&quot;name&quot;: &quot;Ada&quot;, &quot;score&quot;: 92}, {&quot;name&quot;: &quot;Alan&quot;, &quot;score&quot;: 79}, {&quot;name&quot;: &quot;Grace&quot;, &quot;score&quot;: 88}]\n\n# names, lowest score first:\n\n# rows unchanged?\nprint([r[&quot;name&quot;] for r in rows])\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">rows = [{"name": "Ada", "score": 92}, {"name": "Alan", "score": 79}, {"name": "Grace", "score": 88}]
+
+# names, lowest score first:
+
+# rows unchanged?
+print([r["name"] for r in rows])
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Step 2: Ties</h2>
+<p>Two rows with the same score come out in whatever order they went in. If the order matters, say what breaks the tie.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">A tuple key</h3>
+<p>Tuples compare element by element, so <code>key=lambda r: (r["score"], r["name"])</code> sorts by score and then by name within equal scores.</p>
+<pre class="code"><code>rows = [{"name": "Grace", "score": 88}, {"name": "Ada", "score": 88}, {"name": "Alan", "score": 79}]
+
+print([r["name"] for r in sorted(rows, key=lambda r: (r["score"], r["name"]))])</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">Descending numbers, ascending names</h3>
+<p><code>reverse=True</code> would flip both parts. Negating the number flips only the score: highest score first, and alphabetical among ties.</p>
+<pre class="code"><code>rows = [{"name": "Grace", "score": 88}, {"name": "Ada", "score": 88}, {"name": "Katherine", "score": 99}]
+
+ranked = sorted(rows, key=lambda r: (-r["score"], r["name"]))
+print([(r["name"], r["score"]) for r in ranked])</code></pre>
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Break the tie</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Sort by score, highest first, with ties in alphabetical order by name.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'rows = [\n    {&quot;name&quot;: &quot;Zoe&quot;, &quot;score&quot;: 90},\n    {&quot;name&quot;: &quot;Ada&quot;, &quot;score&quot;: 90},\n    {&quot;name&quot;: &quot;Max&quot;, &quot;score&quot;: 95},\n    {&quot;name&quot;: &quot;Bea&quot;, &quot;score&quot;: 90},\n]\n\n# sorted names:\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">rows = [
+    {"name": "Zoe", "score": 90},
+    {"name": "Ada", "score": 90},
+    {"name": "Max", "score": 95},
+    {"name": "Bea", "score": 90},
+]
+
+# sorted names:
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Step 3: Top n and ranks</h2>
+<p>A ranking is a sort followed by either a slice or a numbering.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<h3 class="h4">Slicing the top</h3>
+<p>Sort, then take <code>[:n]</code>. A slice longer than the list simply returns what there is, so asking for the top ten of a short list needs no special case.</p>
+<pre class="code"><code>scores = [92, 79, 88]
+print(sorted(scores, reverse=True)[:2])
+print(sorted(scores, reverse=True)[:10])</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<h3 class="h4">Equal scores, equal rank</h3>
+<p>Numbering the sorted list with <code>enumerate</code> gives tied students different ranks. The fairer rule (“competition ranking”) gives a tie the same rank, and the next student the rank after all the tied ones: 1, 2, 2, 4.</p>
+<pre class="code"><code>scores = sorted([92, 88, 88, 79], reverse=True)
+
+ranks = []
+for i, s in enumerate(scores):
+    if i &gt; 0 and s == scores[i - 1]:
+        ranks.append(ranks[-1])
+    else:
+        ranks.append(i + 1)
+print(list(zip(scores, ranks)))</code></pre>
+
+</div>
+</div>
+</div>
+<div class="info-callout"><p><strong>Key idea:</strong> Sorting a column that is still text sorts it alphabetically — <code>"100"</code> before <code>"20"</code>. Convert types (lesson 3) before sorting numbers.</p></div>
+</div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: The top n names</h3>
 <p>Write <code>top_names(rows, n)</code> that returns the names of the <code>n</code> highest scorers, highest first.</p>
 <p class="hint-text">sorted with a key and reverse, then take a slice. A slice longer than the list is not an error, which is why asking for five out of one works.</p>
 
@@ -221,11 +390,37 @@ print(top_names(rows, 1))
 <div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: A fair ranking</h3>
+<p>Write <code>rank(rows)</code> returning a list of <code>(rank, name, score)</code> tuples, highest score first, with ties broken alphabetically by name. Tied scores share a rank, and the next score takes the rank after all the tied ones (1, 2, 2, 4).</p>
+<p class="hint-text">Sort with key=lambda r: (-r["score"], r["name"]). Then walk it with enumerate: if the score equals the previous one, reuse the previous rank; otherwise the rank is i + 1.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'def rank(rows):\n    # [(rank, name, score)] best first; ties share a rank; names break ties.\n    return []\n\nrows = [{&quot;name&quot;: &quot;Grace&quot;, &quot;score&quot;: 88}, {&quot;name&quot;: &quot;Ada&quot;, &quot;score&quot;: 92}, {&quot;name&quot;: &quot;Alan&quot;, &quot;score&quot;: 88}]\nprint(rank(rows))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">def rank(rows):
+    # [(rank, name, score)] best first; ties share a rank; names break ties.
+    return []
+
+rows = [{"name": "Grace", "score": 88}, {"name": "Ada", "score": 92}, {"name": "Alan", "score": 88}]
+print(rank(rows))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
+</div>
+</div>
+</div>
 </div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-2/filtering-rows.html">&larr; Previous</a>
-<a class="btn btn-primary route" href="/data.html">Back to the course</a>
+<a class="btn btn-ghost route" href="/data/unit-2/filtering-rows.html">&larr; Prev</a>
+<a class="btn btn-primary route" href="/data/unit-2.html">Unit 2 test</a>
 </div>
 </section>
 </div>

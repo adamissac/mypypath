@@ -146,23 +146,13 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-6.html">Unit 6</a>
-</nav>
-<h1 class="lesson-title">Filtering with Masks</h1>
-<p class="lead">The same idea as numpy, applied to whole rows.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 6 &middot; Filtering and Deriving</p>
+<p class="sidebar-unit-label">Unit 6 &bull; Filtering and Deriving</p>
 <nav>
 <ul>
-<li><a href="/data/unit-6/filtering-with-masks.html" class="is-current" aria-current="page">1. Filtering with Masks</a></li>
+<li><a href="/data/unit-6/filtering-with-masks.html" class="active" aria-current="page">1. Filtering with Masks</a></li>
 <li><a href="/data/unit-6/isin-between-and-query.html">2. isin, between and query</a></li>
 <li><a href="/data/unit-6/derived-columns.html">3. Derived Columns</a></li>
 <li><a href="/data/unit-6/apply-and-when-not-to.html">4. apply, and When Not To</a></li>
@@ -171,26 +161,60 @@
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-6.html">Unit 6</a>
+<span class="separator">/</span>
+<span class="current">Filtering with Masks</span>
+</nav>
+<div class="eyebrow">Unit 6 &bull; Lesson 1</div>
+<h1 class="lesson-title">Filtering with Masks</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>The same idea as numpy, applied to whole rows.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-6.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-6/isin-between-and-query.html">Next: isin, between and query</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Filter a table with a condition on one of its columns.</li>
 <li>Combine conditions with <code>&amp;</code> and <code>|</code>, bracketed.</li>
 <li>Say what happens to rows whose value is missing.</li>
 <li>Notice how many rows a filter dropped.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Filtering is the operation you will reach for more than any other, and it has exactly two traps: <code>and</code> does not work, and rows with NaN fall out of both a condition and its opposite. Both are worth meeting on purpose here rather than in an analysis whose totals do not add up.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>A condition on a column selects rows</h2>
+<h2>Step 1: A condition on a column selects rows</h2>
 <p>The mask is one True or False per row, and putting it in the brackets keeps the rows it marked — the whole row, not just the column you tested.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Mask, then select</h3>
 <p>Exactly the numpy idea from unit 3, with the difference that the unit of selection is a row.</p>
 <pre class="code"><code>import pandas as pd
@@ -199,6 +223,12 @@ df = pd.DataFrame({"name": ["Ada", "Grace", "Alan"], "score": [92, 88, 79]})
 mask = df["score"] &gt; 85
 print(mask)
 print(df[mask])</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Count what you dropped</h3>
 <p>A filter that leaves three rows out of five hundred is either the answer or a bug, and the only way to tell is to look at the number.</p>
 <pre class="code"><code>import pandas as pd
@@ -206,6 +236,10 @@ print(df[mask])</code></pre>
 df = pd.DataFrame({"score": [92, 88, 79, 60]})
 kept = df[df["score"] &gt; 85]
 print(f"{len(kept)} of {len(df)} rows kept")</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -236,20 +270,36 @@ print(len(kept), "of", len(df))
 </div>
 
 <div class="content-section">
-<h2>Combining conditions</h2>
+<h2>Step 2: Combining conditions</h2>
 <p>Use <code>&amp;</code> and <code>|</code> rather than <code>and</code> and <code>or</code>, and bracket each condition.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">Two conditions</h3>
 <p>The brackets are required because <code>&amp;</code> binds more tightly than the comparison operators.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"score": [92, 88, 79, 60], "city": ["L", "Y", "L", "Y"]})
 print(df[(df["score"] &gt; 70) &amp; (df["city"] == "L")])</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">Negating one</h3>
 <p><code>~</code> flips a mask. It is the readable way to say "everything except", and it is easier to check than rewriting the condition backwards.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"city": ["L", "Y", "L"]})
 print(df[~(df["city"] == "L")])</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
 <h3 class="h4">Where the missing rows go</h3>
 <p>A comparison with NaN is never True, so a row with a missing value falls out of the filter <em>and</em> out of its opposite. The two halves do not add up to the whole table, and nothing says so.</p>
 <pre class="code"><code>import pandas as pd
@@ -260,6 +310,9 @@ high = df[df["score"] &gt; 80]
 low = df[df["score"] &lt;= 80]
 print(len(high), "+", len(low), "=", len(high) + len(low), "of", len(df))</code></pre>
 <p class="note">If the two halves have to account for every row, filter on <code>.notna()</code> first and report the missing ones separately, rather than letting them vanish.</p>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -290,6 +343,7 @@ print(len(high) + len(low), "of", len(df))
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -346,9 +400,10 @@ print(split_counts(pd.DataFrame({"score": [92, 60, None]}), 85))
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-6.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-6.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-6/isin-between-and-query.html">Next</a>
 </div>
 </section>

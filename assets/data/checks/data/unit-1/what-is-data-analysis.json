@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Four steps that turn a file of rows into an answer you can defend.",
+    "prompt": "What Data Analysis Actually Is: Count and top score",
     "cases": [
       {
         "name": "produces the expected output",
@@ -30,6 +30,45 @@
       }
     ],
     "hint": "print(3) is right today and wrong the moment a fourth student arrives. Ask len() and max() for the answers so the code still holds when the data changes."
+  },
+  "exercise2": {
+    "prompt": "What Data Analysis Actually Is: Answer three questions",
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "quick_look([92, 88, 55])",
+        "expect": "(3, 55, 2)"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a score of exactly 60 passes",
+        "call": "quick_look([60, 59])",
+        "expect": "(2, 59, 1)"
+      },
+      {
+        "name": "everyone can fail",
+        "call": "quick_look([10, 20, 30])",
+        "expect": "(3, 10, 0)"
+      },
+      {
+        "name": "a single score is its own lowest",
+        "call": "quick_look([75])",
+        "expect": "(1, 75, 1)"
+      },
+      {
+        "name": "the answers are computed",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "len",
+            "min"
+          ]
+        },
+        "describe": "len() and min() over the scores"
+      }
+    ],
+    "hint": "len(scores) and min(scores) give the first two. For the third, count the scores where s >= 60 — a comprehension inside len() does it in one line."
   },
   "questions": [
     {
@@ -73,6 +112,18 @@
         2
       ],
       "explain": "Summarising dirty data produces a confident wrong answer, which is the worst of the four outcomes."
+    },
+    {
+      "id": "d1-wda-4",
+      "prompt": "Why is print(len(rows)) better than print(3) when there are three rows?",
+      "choices": [
+        "It is shorter",
+        "It stays correct when the data changes",
+        "print(3) raises an error",
+        "len is faster than a literal"
+      ],
+      "answer": 1,
+      "explain": "A typed answer is a copy of the result that nothing keeps in step with the data."
     }
   ]
 }

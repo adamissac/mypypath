@@ -146,51 +146,75 @@
         <p class="noscript-notice">This lesson's text is readable without JavaScript, but the code editors, the checks and your saved progress will not work until it is switched on.</p>
       </noscript>
       <!-- noscript:end -->
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/data.html">Python for Data</a> &middot;
-<a class="route" href="/data/unit-8.html">Unit 8</a>
-</nav>
-<h1 class="lesson-title">Long to Wide with pivot</h1>
-<p class="lead">The other direction, for when a person should be one row.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
+<section class="section">
+<div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
-<p class="sidebar-unit-label">Unit 8 &middot; Combining Tables</p>
+<p class="sidebar-unit-label">Unit 8 &bull; Combining Tables</p>
 <nav>
 <ul>
 <li><a href="/data/unit-8/concat-stacking-tables.html">1. Stacking Tables with concat</a></li>
 <li><a href="/data/unit-8/merging-on-a-key.html">2. Merging on a Key</a></li>
 <li><a href="/data/unit-8/when-a-merge-goes-wrong.html">3. When a Merge Goes Wrong</a></li>
 <li><a href="/data/unit-8/wide-to-long-with-melt.html">4. Wide to Long with melt</a></li>
-<li><a href="/data/unit-8/long-to-wide-with-pivot.html" class="is-current" aria-current="page">5. Long to Wide with pivot</a></li>
+<li><a href="/data/unit-8/long-to-wide-with-pivot.html" class="active" aria-current="page">5. Long to Wide with pivot</a></li>
 <li><a href="/data/unit-8/putting-a-join-to-work.html">6. Putting a Join to Work</a></li>
 </ul>
 </nav>
 </aside>
-<section class="lesson-body">
+<section class="course-main">
+<div class="sidebar-toggle">
+<button type="button" class="sidebar-toggle-btn" data-sidebar-toggle aria-expanded="false" aria-controls="lesson-sidebar">Toggle lesson menu</button>
+</div>
+<nav aria-label="Breadcrumb">
+<a href="/">Home</a>
+<span class="separator">/</span>
+<a href="/data.html">Python for Data</a>
+<span class="separator">/</span>
+<a href="/data/unit-8.html">Unit 8</a>
+<span class="separator">/</span>
+<span class="current">Long to Wide with pivot</span>
+</nav>
+<div class="eyebrow">Unit 8 &bull; Lesson 5</div>
+<h1 class="lesson-title">Long to Wide with pivot</h1>
+<div class="lesson-overview" style="margin-top:8px;">
+<div class="lesson-head">
+<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+<h2 class="gradient-text" style="margin:0;">Overview</h2>
+</div>
+<p>The other direction, for when a person should be one row.</p>
+<div class="lesson-meta">
+<span class="pill">Intermediate</span>
+<span class="pill">20&ndash;25 min</span>
+</div>
+<div class="lesson-actions">
+<a class="btn btn-ghost route" href="/data/unit-8/wide-to-long-with-melt.html">&larr; Previous</a>
+<a class="btn btn-primary route" href="/data/unit-8/putting-a-join-to-work.html">Next: Putting a Join to Work</a>
+</div>
+</div>
+<div class="lesson-content">
 
 <div class="content-section">
 <h2>What You Will Learn in This Lesson</h2>
-<ul class="objective-list">
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
 <li>Spread a long table back into a grid.</li>
 <li>Name what stays down the side and what goes across the top.</li>
 <li>Explain the duplicate-entries error and fix it.</li>
 <li>Choose between <code>pivot</code> and <code>pivot_table</code>.</li>
 </ul>
-</div>
-
 <div class="info-card">
 <h3 class="h4">Why This Matters</h3>
 <p>Long is the shape for computing; wide is the shape for reading. The final table in a report almost always wants one row per person and a column per period, and pivot is the trip back. Its one error message is unhelpful until you know what it means, at which point it is precise.</p>
 </div>
+</div>
 
 <div class="content-section">
-<h2>pivot spreads a column across the top</h2>
+<h2>Step 1: pivot spreads a column across the top</h2>
 <p><code>index</code> stays down the side, <code>columns</code> spreads across the top, <code>values</code> fills the cells. The exact inverse of melt.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The round trip</h3>
 <p>Melt then pivot gets you back where you started, which is a useful way to convince yourself what each one does.</p>
 <pre class="code"><code>import pandas as pd
@@ -199,6 +223,12 @@ wide = pd.DataFrame({"name": ["Ada", "Bo"], "jan": [90, 70], "feb": [80, 60]})
 long = wide.melt(id_vars=["name"], var_name="month", value_name="score")
 back = long.pivot(index="name", columns="month", values="score")
 print(back)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">The index is the thing you kept</h3>
 <p>The name is now the index rather than a column. <code>reset_index()</code> puts it back if you want a plain table.</p>
 <pre class="code"><code>import pandas as pd
@@ -207,6 +237,10 @@ long = pd.DataFrame({"name": ["Ada", "Ada"], "month": ["jan", "feb"], "score": [
 wide = long.pivot(index="name", columns="month", values="score")
 print(list(wide.columns))
 print(wide.reset_index())</code></pre>
+
+</div>
+</div>
+</div>
 
 </div>
 
@@ -238,8 +272,12 @@ print(sorted(back.columns.tolist()))
 </div>
 
 <div class="content-section">
-<h2>It needs the pairs to be unique</h2>
+<h2>Step 2: It needs the pairs to be unique</h2>
 <p>A grid cell holds one value. If two rows claim the same index and column, pivot cannot choose between them and says so.</p>
+<div class="process-steps">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
 <h3 class="h4">The error, and what it means</h3>
 <p>"Index contains duplicate entries, cannot reshape" means two rows want the same cell. It is not a corrupt table; it is a question pivot cannot answer on its own.</p>
 <pre class="code"><code>import pandas as pd
@@ -249,6 +287,12 @@ try:
     long.pivot(index="name", columns="month", values="score")
 except ValueError as exc:
     print("ValueError:", exc)</code></pre>
+
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
 <h3 class="h4">pivot_table answers it</h3>
 <p>Supplying an <code>aggfunc</code> tells pandas what to do with the two values. That is a decision you should be making anyway.</p>
 <pre class="code"><code>import pandas as pd
@@ -256,6 +300,9 @@ except ValueError as exc:
 long = pd.DataFrame({"name": ["Ada", "Ada"], "month": ["jan", "jan"], "score": [90, 80]})
 print(pd.pivot_table(long, index="name", columns="month", values="score", aggfunc="mean"))</code></pre>
 <p class="note">If the duplicates are not legitimate — the same reading recorded twice — the honest fix is upstream, with <code>drop_duplicates</code>, rather than averaging a mistake.</p>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -286,6 +333,7 @@ except ValueError as exc:
 </div>
 </div>
 </div>
+
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
@@ -342,9 +390,10 @@ print(wide_mean(pd.DataFrame({"name": ["Ada", "Ada"], "month": ["jan", "jan"], "
 </div>
 </div>
 </div>
+</div>
 
 <div class="lesson-nav">
-<a class="btn btn-ghost route" href="/data/unit-8/wide-to-long-with-melt.html">&larr; Previous</a>
+<a class="btn btn-ghost route" href="/data/unit-8/wide-to-long-with-melt.html">&larr; Prev</a>
 <a class="btn btn-primary route" href="/data/unit-8/putting-a-join-to-work.html">Next</a>
 </div>
 </section>
