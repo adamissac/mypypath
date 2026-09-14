@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "In two dimensions, the question is always which way you are collapsing.",
+    "prompt": "Summing and Axes: One total per student",
     "packages": [
       "numpy"
     ],
@@ -30,42 +30,90 @@
     ],
     "hint": "One total per student means one per row, so the sum has to collapse across the columns. That is axis=1."
   },
+  "exercise2": {
+    "prompt": "Summing and Axes: The hardest test",
+    "packages": [
+      "numpy"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "hardest_test(__import__(\"numpy\").array([[80, 60], [90, 50]]))",
+        "expect": "1"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the first column can be the hardest",
+        "call": "hardest_test(__import__(\"numpy\").array([[10, 90], [20, 80]]))",
+        "expect": "0"
+      },
+      {
+        "name": "a single test is the answer by default",
+        "call": "hardest_test(__import__(\"numpy\").array([[5], [6]]))",
+        "expect": "0"
+      },
+      {
+        "name": "it averages rather than totals",
+        "call": "hardest_test(__import__(\"numpy\").array([[0, 1], [0, 1], [100, 1]]))",
+        "expect": "1"
+      },
+      {
+        "name": "it returns a plain int",
+        "call": "int(hardest_test(__import__(\"numpy\").array([[1, 2]])))",
+        "expect": "0"
+      }
+    ],
+    "hint": "table.mean(axis=0) gives one mean per test. argmin on that gives the position of the smallest. Wrap it in int() so the answer is a plain number."
+  },
   "questions": [
     {
       "id": "d3-sa-1",
-      "prompt": "In a table of rows and columns, what does axis=0 collapse?",
+      "prompt": "For a table of students down and tests across, which gives one total per student?",
       "choices": [
-        "The columns, leaving one value per row",
-        "The rows, leaving one value per column",
-        "Everything",
-        "Nothing"
+        "table.sum()",
+        "table.sum(axis=0)",
+        "table.sum(axis=1)",
+        "table.sum(axis=2)"
       ],
-      "answer": 1,
-      "explain": "axis=0 runs down the rows, so what survives is one number per column. The name refers to the axis being removed."
+      "answer": 2,
+      "explain": "One per student means one per row, so the columns are what collapses. axis=1 is across."
     },
     {
       "id": "d3-sa-2",
-      "prompt": "You want each student's average across their tests. Which axis?",
+      "prompt": "What does axis name?",
       "choices": [
-        "axis=0",
-        "axis=1",
-        "No axis",
-        "Both"
+        "The dimension that is kept",
+        "The dimension that is collapsed",
+        "The order of the result",
+        "The dtype"
       ],
       "answer": 1,
-      "explain": "Students are rows, so you collapse across their columns: axis=1."
+      "explain": "It names what is removed, which is why axis=0 — the row dimension — leaves one value per column."
     },
     {
       "id": "d3-sa-3",
-      "prompt": "What does a.sum() with no axis give you?",
+      "prompt": "table.sum() with no axis on a 2-D array gives what?",
       "choices": [
-        "One number for the whole array",
-        "One per row",
-        "One per column",
+        "One number per row",
+        "One number per column",
+        "A single number",
         "An error"
       ],
-      "answer": 0,
-      "explain": "With no axis named, everything is reduced to a single total."
+      "answer": 2,
+      "explain": "With no axis named there is nothing left to keep, so everything collapses."
+    },
+    {
+      "id": "d3-sa-4",
+      "prompt": "You expected two numbers and got three. What is the quickest diagnosis?",
+      "choices": [
+        "The data is wrong",
+        "The axis is the wrong way round",
+        "numpy has a bug",
+        "The dtype is wrong"
+      ],
+      "answer": 1,
+      "explain": "The length of the result tells you which dimension survived. This is why checking the shape beats reading the numbers."
     }
   ]
 }

@@ -173,41 +173,139 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Index and slice a one-dimensional array the way you already index a list.</li>
+<li>Explain what a view is, and why writing into one changes the original.</li>
+<li>Use <code>.copy()</code> when you need the array left alone.</li>
+<li>Index a two-dimensional array with one pair of brackets.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Array slicing looks identical to list slicing and behaves differently in exactly one respect — it does not copy. That single difference is behind a whole class of bug where a function quietly edits its caller's data. It is worth meeting deliberately, once, rather than discovering it in an analysis you have already published.</p>
+</div>
 
 <div class="content-section">
 <h2>Indexing reads the same as a list</h2>
-<p>Positions from zero, negatives from the end, and a slice for a run of them.</p>
+<p>Positions from zero, negatives from the end, and a slice for a run of them. Everything you know from lists transfers.</p>
+<h3 class="h4">Positions and ranges</h3>
+<p>A single index gives one element. A slice gives a run, with the stop exclusive, exactly as in a list.</p>
 <pre class="code"><code>import numpy as np
 
 a = np.array([10, 20, 30, 40, 50])
-print(a[0], a[-1])
-print(a[1:4])</code></pre>
+print(a[0])
+print(a[-1])
+print(a[1:4])
+print(a[:2])
+print(a[::2])</code></pre>
+<h3 class="h4">Two dimensions, one pair of brackets</h3>
+<p>For a 2-D array you can write <code>a[1][2]</code> as you would with nested lists, but <code>a[1, 2]</code> is the numpy way and it is what lets you slice both directions at once.</p>
+<pre class="code"><code>import numpy as np
 
+table = np.array([[1, 2, 3], [4, 5, 6]])
+print(table[1, 2])      # row 1, column 2
+print(table[0])         # a whole row
+print(table[:, 1])      # a whole column</code></pre>
+<p class="note"><code>table[:, 1]</code> reads as "every row, column 1". Pulling a column out of a list of lists took a comprehension; here it is a slice.</p>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Take a column</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>From the table below, print the second column, then the last row, then the single value in the bottom right — each in one expression.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import numpy as np\n\ntable = np.array([[1, 2, 3],\n                  [4, 5, 6],\n                  [7, 8, 9]])\n\nprint(table[:, 1])\nprint(None)   # the last row\nprint(None)   # bottom right\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import numpy as np
+
+table = np.array([[1, 2, 3],
+                  [4, 5, 6],
+                  [7, 8, 9]])
+
+print(table[:, 1])
+print(None)   # the last row
+print(None)   # bottom right
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>A slice is a view, not a copy</h2>
-<p>This is the difference that catches people. Writing into a slice of an array changes the original; the same line on a list would not. Use .copy() when you want your own.</p>
+<p>This is the difference that catches people. Slicing a list gives you a new list; slicing an array gives you a window onto the same memory.</p>
+<h3 class="h4">Writing through the window</h3>
+<p>Assigning into a slice changes the array it came from. Nothing warns you, because as far as numpy is concerned you asked for a view and then wrote into it.</p>
 <pre class="code"><code>import numpy as np
 
-a = np.array([1, 2, 3])
-view = a[:2]
-view[0] = 99
+a = np.array([1, 2, 3, 4])
+part = a[1:3]
+part[0] = 99
+print(part)
+print(a)          # the 99 is in here too</code></pre>
+<h3 class="h4">The same code with a list does not do this</h3>
+<p>Worth running side by side once, so the difference is a thing you have seen rather than a thing you were told.</p>
+<pre class="code"><code>values = [1, 2, 3, 4]
+part = values[1:3]
+part[0] = 99
+print(part)
+print(values)     # untouched</code></pre>
+<h3 class="h4">Ask for a copy when you want one</h3>
+<p>If a function is going to modify what it was handed, take a copy first — or return something new instead of editing in place. The cost of the copy is almost always smaller than the cost of the bug.</p>
+<pre class="code"><code>import numpy as np
+
+a = np.array([1, 2, 3, 4])
+part = a[1:3].copy()
+part[0] = 99
+print(part)
+print(a)          # safe</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Prove it to yourself</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Run this as it stands and note what <code>a</code> prints. Then add <code>.copy()</code> to the slice and run it again.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import numpy as np\n\na = np.array([1, 2, 3, 4, 5])\nwindow = a[1:4]\nwindow[:] = 0\n\nprint(window)\nprint(a)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import numpy as np
+
+a = np.array([1, 2, 3, 4, 5])
+window = a[1:4]
+window[:] = 0
+
+print(window)
 print(a)
-
-b = np.array([1, 2, 3])
-safe = b[:2].copy()
-safe[0] = 99
-print(b)</code></pre>
-
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Everything but the ends</h3>
 <p>Write <code>middle(values)</code> that returns a list of everything except the first and last item.</p>
 <p class="hint-text">A slice from 1 to -1 drops one from each end, and slices clamp rather than raise when there is nothing left to take.</p>
 
@@ -229,6 +327,34 @@ print(middle(np.array([1, 2, 3, 4, 5])))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Zero a range without touching the original</h3>
+<p>Write <code>blanked(values, start, stop)</code> that returns a new array with the elements from <code>start</code> up to (not including) <code>stop</code> set to 0. The array you were given must come back unchanged.</p>
+<p class="hint-text">Take a .copy() first, then assign 0 into the slice of the copy. Assigning into a slice of the original would change the caller's array, which is the thing this exercise is checking.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import numpy as np\n\ndef blanked(values, start, stop):\n    # A new array, that range zeroed, the original untouched.\n    return None\n\na = np.array([1, 2, 3, 4])\nprint(blanked(a, 1, 3))\nprint(a)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import numpy as np
+
+def blanked(values, start, stop):
+    # A new array, that range zeroed, the original untouched.
+    return None
+
+a = np.array([1, 2, 3, 4])
+print(blanked(a, 1, 3))
+print(a)
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

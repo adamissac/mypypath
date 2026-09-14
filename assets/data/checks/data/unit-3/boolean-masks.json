@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "A comparison over an array gives an array of answers, and that array selects.",
+    "prompt": "Boolean Masks: The scores that passed",
     "packages": [
       "numpy"
     ],
@@ -33,47 +33,98 @@
     ],
     "hint": "scores >= mark gives you an array of True and False. Put that inside the square brackets."
   },
+  "exercise2": {
+    "prompt": "Boolean Masks: How many in the band",
+    "packages": [
+      "numpy"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "in_band(__import__(\"numpy\").array([92, 88, 79, 60]), 70, 90)",
+        "expect": "2"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "both ends are included",
+        "call": "in_band(__import__(\"numpy\").array([70, 90]), 70, 90)",
+        "expect": "2"
+      },
+      {
+        "name": "nothing in range counts zero",
+        "call": "in_band(__import__(\"numpy\").array([1, 2]), 70, 90)",
+        "expect": "0"
+      },
+      {
+        "name": "an empty array counts zero",
+        "call": "in_band(__import__(\"numpy\").array([]), 70, 90)",
+        "expect": "0"
+      },
+      {
+        "name": "it returns a plain int, not an array",
+        "call": "type(in_band(__import__(\"numpy\").array([80]), 70, 90)).__name__ in (\"int\", \"int64\")",
+        "expect": "True"
+      },
+      {
+        "name": "no loop counts the elements",
+        "kind": "ast",
+        "forbids": {
+          "loops": true
+        },
+        "describe": "the mask summed rather than counted in Python"
+      }
+    ],
+    "hint": "Build one mask with (scores >= low) & (scores <= high), then .sum() it. Wrap the result in int() so it comes back as a plain number."
+  },
   "questions": [
     {
       "id": "d3-bm-1",
       "prompt": "What does scores > 85 evaluate to when scores is an array?",
       "choices": [
-        "One True or False",
+        "A single True or False",
         "An array of True and False, one per element",
         "The matching scores",
-        "A count"
+        "The number of matches"
       ],
       "answer": 1,
-      "explain": "The comparison applies elementwise like the arithmetic does. The array of answers is then what you index with."
+      "explain": "Elementwise, like every other numpy operation. That array of answers is what does the selecting."
     },
     {
       "id": "d3-bm-2",
-      "prompt": "What does (scores > 85).sum() tell you?",
+      "prompt": "How do you write \"over 70 and under 90\" as a mask?",
       "choices": [
-        "The total of the high scores",
-        "How many scores are above 85",
-        "The highest score",
-        "Nothing useful"
+        "(a > 70) and (a < 90)",
+        "(a > 70) & (a < 90)",
+        "a > 70 && a < 90",
+        "both(a > 70, a < 90)"
       ],
       "answer": 1,
-      "explain": "True counts as 1 and False as 0, so summing a mask counts the matches. It is the quickest \"how many rows satisfy this\" there is."
+      "explain": "Python's `and` needs one truth value per side and an array refuses to give one. The brackets matter because & binds tighter than the comparisons."
     },
     {
       "id": "d3-bm-3",
-      "kind": "multi",
-      "prompt": "Which are true of masking?",
+      "prompt": "What does mask.sum() give you?",
       "choices": [
-        "It needs no loop",
-        "It works on whole columns in pandas too",
-        "It returns only the elements marked True",
-        "It sorts the result"
+        "The matching values",
+        "How many are True",
+        "True or False",
+        "The mask again"
       ],
-      "answers": [
-        0,
-        1,
-        2
+      "answer": 1,
+      "explain": "True counts as 1, so summing a boolean array counts the matches without selecting anything."
+    },
+    {
+      "id": "d3-bm-4",
+      "prompt": "a[a > 100] = 100 does what?",
+      "choices": [
+        "Returns the capped array",
+        "Sets every element over 100 to 100, in place",
+        "Raises",
+        "Removes those elements"
       ],
-      "explain": "Order is untouched -- masking selects, it does not rearrange."
+      "answer": 1,
+      "explain": "A mask works on the left of an assignment too. Note \"in place\" — the array you were handed is the one that changed."
     }
   ]
 }

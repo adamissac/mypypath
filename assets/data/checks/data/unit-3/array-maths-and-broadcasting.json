@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Arrays of different shapes can still meet, under one clear rule.",
+    "prompt": "Array Maths and Broadcasting: Centre on the mean",
     "packages": [
       "numpy"
     ],
@@ -31,44 +31,95 @@
         "describe": "broadcasting rather than a loop"
       }
     ],
-    "hint": "values - values.mean() does the whole thing. np.round then rounds the array, and list() turns it back into plain numbers."
+    "hint": "values - values.mean() does the whole thing. np.round then rounds the array, and tolist() turns it back into plain numbers."
+  },
+  "exercise2": {
+    "prompt": "Array Maths and Broadcasting: Apply a weight to every column",
+    "packages": [
+      "numpy"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "weighted_totals(__import__(\"numpy\").array([[80, 60], [50, 90]]), __import__(\"numpy\").array([0.5, 0.5]))",
+        "expect": "[70.0, 70.0]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "uneven weights favour the right column",
+        "call": "weighted_totals(__import__(\"numpy\").array([[100, 0]]), __import__(\"numpy\").array([0.25, 0.75]))",
+        "expect": "[25.0]"
+      },
+      {
+        "name": "a single row still works",
+        "call": "weighted_totals(__import__(\"numpy\").array([[10, 10]]), __import__(\"numpy\").array([1.0, 1.0]))",
+        "expect": "[20.0]"
+      },
+      {
+        "name": "three rows give three totals",
+        "call": "len(weighted_totals(__import__(\"numpy\").array([[1, 1], [2, 2], [3, 3]]), __import__(\"numpy\").array([1.0, 1.0])))",
+        "expect": "3"
+      },
+      {
+        "name": "broadcasting applies the weights",
+        "kind": "ast",
+        "forbids": {
+          "loops": true
+        },
+        "describe": "the weights broadcast across the rows"
+      }
+    ],
+    "hint": "(table * weights) scales every row by the weights, because the shapes line up on the right. Then sum along axis=1 for one total per row."
   },
   "questions": [
     {
       "id": "d3-amb-1",
-      "prompt": "What is broadcasting?",
+      "prompt": "Why does np.array([1, 2, 3]) + 5 work?",
       "choices": [
-        "Sending data over a network",
-        "Stretching a smaller shape so it can meet a larger one",
-        "Sorting two arrays together",
-        "Copying an array"
+        "numpy loops for you",
+        "The 5 is broadcast to the array’s shape",
+        "It raises a warning first",
+        "Only because they are integers"
       ],
       "answer": 1,
-      "explain": "A single number meeting an array is the simplest case, and the rule extends to a row meeting a table."
+      "explain": "The scalar is treated as though repeated to fit, without a real array of fives ever being built."
     },
     {
       "id": "d3-amb-2",
-      "prompt": "What does prices - prices.mean() give you?",
+      "prompt": "Which pair of shapes cannot broadcast?",
       "choices": [
-        "One number",
-        "An array of distances from the average",
-        "The average",
-        "An error"
+        "(3,) and (1,)",
+        "(3,) and (3,)",
+        "(3,) and (4,)",
+        "(2, 3) and (3,)"
       ],
-      "answer": 1,
-      "explain": "The mean is one number broadcast across every element, so each result says how far that price sits from the middle."
+      "answer": 2,
+      "explain": "Lined up from the right, dimensions must be equal or one of them must be 1. 3 and 4 are neither."
     },
     {
       "id": "d3-amb-3",
-      "prompt": "Two arrays of the same length are added. What happens?",
+      "prompt": "What does values - values.mean() give you?",
       "choices": [
-        "They are joined end to end",
-        "They are added position by position",
-        "The first is returned",
-        "An error"
+        "A single number",
+        "Each value’s distance from the average",
+        "The sorted values",
+        "The standard deviation"
       ],
       "answer": 1,
-      "explain": "Elementwise, unlike lists, where + concatenates. Getting these two the wrong way round is the most common early mistake."
+      "explain": "Centring a column, and the first half of standardising it."
+    },
+    {
+      "id": "d3-amb-4",
+      "prompt": "table has shape (2, 3). Which array can be added to it row-wise?",
+      "choices": [
+        "shape (2,)",
+        "shape (3,)",
+        "shape (6,)",
+        "shape (3, 2)"
+      ],
+      "answer": 1,
+      "explain": "Shapes line up from the right, so the (3,) matches the 3 columns and is applied to every row."
     }
   ]
 }

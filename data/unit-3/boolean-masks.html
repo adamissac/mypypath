@@ -173,26 +173,139 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Read a comparison on an array as producing one answer per element.</li>
+<li>Use a mask inside square brackets to select the elements you want.</li>
+<li>Combine conditions with <code>&amp;</code> and <code>|</code>, and say why <code>and</code> fails.</li>
+<li>Count matches without selecting them.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>This is filtering, and it is the same idea you will use for the rest of the course — a mask over a numpy array in this unit, a mask over a whole DataFrame in unit 6. It also contains the single most common numpy error message people meet, and knowing why it happens turns it from a mystery into a typo.</p>
+</div>
 
 <div class="content-section">
 <h2>A comparison produces an array</h2>
-<p>scores > 85 is not one True or False. It is one per element, which is what makes the next line work.</p>
+<p><code>scores &gt; 85</code> is not one True or False. It is one per element — which is what makes the next section work.</p>
+<h3 class="h4">One answer per element</h3>
+<p>The comparison is elementwise, like every other numpy operation. What comes back is an array of booleans the same shape as the one you started with.</p>
 <pre class="code"><code>import numpy as np
 
-scores = np.array([92, 88, 79, 95])
-print(scores &gt; 85)</code></pre>
+scores = np.array([92, 88, 79])
+print(scores &gt; 85)
+print((scores &gt; 85).dtype)</code></pre>
+<h3 class="h4">Counting without selecting</h3>
+<p>Because True counts as 1, summing a mask counts the matches. <code>.any()</code> and <code>.all()</code> answer the two other questions you usually have.</p>
+<pre class="code"><code>import numpy as np
 
+scores = np.array([92, 88, 79])
+mask = scores &gt; 85
+
+print(mask.sum())     # how many
+print(mask.any())     # is there at least one
+print(mask.all())     # are they all</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Count before you select</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print how many scores are below 80, whether any are, and whether all are — without selecting a single element.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import numpy as np\n\nscores = np.array([92, 88, 79, 60, 71])\nlow = scores < 80\n\nprint(low.sum())\nprint(None)   # is there at least one\nprint(None)   # are they all\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import numpy as np
+
+scores = np.array([92, 88, 79, 60, 71])
+low = scores &lt; 80
+
+print(low.sum())
+print(None)   # is there at least one
+print(None)   # are they all
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Index with the mask to select</h2>
-<p>Putting the mask inside the brackets keeps only the elements it marked. This is filtering, and it is the same idea pandas uses on whole tables.</p>
+<p>Putting the mask inside the brackets keeps only the elements it marked. This is filtering, and it is the same shape of operation you will use on tables later.</p>
+<h3 class="h4">Selecting</h3>
+<p>The result is a new array holding just the elements where the mask was True. Its length is the number of matches, not the length of the original.</p>
 <pre class="code"><code>import numpy as np
 
-scores = np.array([92, 88, 79, 95])
+scores = np.array([92, 88, 79])
 print(scores[scores &gt; 85])
-print((scores &gt; 85).sum())</code></pre>
+print(len(scores[scores &gt; 85]))</code></pre>
+<h3 class="h4">Two conditions, and the error everybody hits</h3>
+<p>Use <code>&amp;</code> for and, <code>|</code> for or, and bracket each condition. Python's own <code>and</code> needs to reduce each side to a single True or False, and an array refuses — which is exactly what the error says.</p>
+<pre class="code"><code>import numpy as np
+
+scores = np.array([92, 88, 79, 60])
+
+print(scores[(scores &gt; 70) &amp; (scores &lt; 90)])
+print(scores[(scores &lt; 70) | (scores &gt; 90)])</code></pre>
+<p class="note">Leaving the brackets off gives a confusing error, because <code>&amp;</code> binds tighter than <code>&gt;</code>. <code>scores &gt; 70 &amp; scores &lt; 90</code> is parsed as <code>scores &gt; (70 &amp; scores) &lt; 90</code>.</p>
+<h3 class="h4">What "and" actually says</h3>
+<p>Run this deliberately once. The message — the truth value of an array with more than one element is ambiguous — is numpy telling you it cannot answer a yes/no question about a whole array, and pointing you at <code>&amp;</code>.</p>
+<pre class="code"><code>import numpy as np
+
+scores = np.array([92, 88])
+try:
+    scores[(scores &gt; 70) and (scores &lt; 90)]
+except ValueError as exc:
+    print("ValueError:", exc)</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Two conditions</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Select the scores that are at least 70 and at most 90. Then try it once with <code>and</code> instead of <code>&amp;</code> and read the error.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import numpy as np\n\nscores = np.array([92, 88, 79, 60])\n\nprint(scores[(scores >= 70) & (scores <= 90)])\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import numpy as np
+
+scores = np.array([92, 88, 79, 60])
+
+print(scores[(scores &gt;= 70) &amp; (scores &lt;= 90)])
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Assigning through a mask</h2>
+<p>A mask works on the left of an assignment too, which is how you fix a set of values in one line.</p>
+<h3 class="h4">Capping outliers</h3>
+<p>Everything the mask marks gets the new value. The rest is untouched.</p>
+<pre class="code"><code>import numpy as np
+
+scores = np.array([92, 105, 79])
+scores[scores &gt; 100] = 100
+print(scores)</code></pre>
+<p class="note">Remember the previous lesson: this edits in place. Take a <code>.copy()</code> first if the caller still needs the original.</p>
 
 </div>
 
@@ -200,7 +313,7 @@ print((scores &gt; 85).sum())</code></pre>
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: The scores that passed</h3>
 <p>Write <code>passing(scores, mark)</code> that returns a list of the scores that are at least <code>mark</code>, using a mask rather than a loop.</p>
 <p class="hint-text">scores &gt;= mark gives you an array of True and False. Put that inside the square brackets.</p>
 
@@ -222,6 +335,32 @@ print(passing(np.array([92, 88, 79]), 85))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: How many in the band</h3>
+<p>Write <code>in_band(scores, low, high)</code> that returns how many scores are between <code>low</code> and <code>high</code> inclusive. Count the mask; do not select the elements and measure the result.</p>
+<p class="hint-text">Build one mask with (scores &gt;= low) &amp; (scores &lt;= high), then .sum() it. Wrap the result in int() so it comes back as a plain number.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import numpy as np\n\ndef in_band(scores, low, high):\n    # How many scores sit between low and high, both included.\n    return 0\n\nprint(in_band(np.array([92, 88, 79, 60]), 70, 90))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import numpy as np
+
+def in_band(scores, low, high):
+    # How many scores sit between low and high, both included.
+    return 0
+
+print(in_band(np.array([92, 88, 79, 60]), 70, 90))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

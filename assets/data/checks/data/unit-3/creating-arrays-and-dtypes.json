@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Where an array comes from, and the type it settles on.",
+    "prompt": "Creating Arrays and dtypes: Even numbers below a stop",
     "packages": [
       "numpy"
     ],
@@ -43,6 +43,55 @@
     ],
     "hint": "np.arange takes a start, a stop and a step. The stop is exclusive, the same way range works."
   },
+  "exercise2": {
+    "prompt": "Creating Arrays and dtypes: Evenly spaced readings",
+    "packages": [
+      "numpy"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "readings(0, 1, 5).tolist()",
+        "expect": "[0.0, 0.25, 0.5, 0.75, 1.0]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "both ends are included",
+        "call": "readings(2, 4, 3).tolist()",
+        "expect": "[2.0, 3.0, 4.0]"
+      },
+      {
+        "name": "asking for two gives just the ends",
+        "call": "readings(0, 10, 2).tolist()",
+        "expect": "[0.0, 10.0]"
+      },
+      {
+        "name": "asking for one gives the start",
+        "call": "readings(5, 9, 1).tolist()",
+        "expect": "[5.0]"
+      },
+      {
+        "name": "the values are floats",
+        "call": "readings(0, 1, 2).dtype.kind",
+        "expect": "'f'"
+      },
+      {
+        "name": "linspace rather than a loop",
+        "kind": "ast",
+        "requires": {
+          "imports": [
+            "numpy"
+          ]
+        },
+        "forbids": {
+          "loops": true
+        },
+        "describe": "linspace doing the spacing"
+      }
+    ],
+    "hint": "This is exactly what np.linspace is for: it takes the count, not the step, and includes the end."
+  },
   "questions": [
     {
       "id": "d3-cad-1",
@@ -58,28 +107,39 @@
     },
     {
       "id": "d3-cad-2",
-      "prompt": "What does np.arange(0, 10, 2) produce?",
+      "prompt": "How many elements does np.arange(0, 10, 2) have?",
       "choices": [
-        "0 2 4 6 8 10",
-        "0 2 4 6 8",
-        "0 1 2 ... 9",
-        "2 4 6 8 10"
+        "Four",
+        "Five",
+        "Six",
+        "Ten"
       ],
       "answer": 1,
-      "explain": "Start, stop, step, with the stop exclusive -- the same rule as range, which is deliberate."
+      "explain": "0, 2, 4, 6, 8. The stop is exclusive, so 10 is not included — the same rule as range."
     },
     {
       "id": "d3-cad-blank",
-      "kind": "blank",
-      "prompt": "np.___(0, 1, 5) divides the interval from 0 to 1 into five evenly spaced values.",
-      "blanks": [
-        {
-          "accept": [
-            "linspace"
-          ]
-        }
+      "prompt": "Which makes five values from 0 to 1 with both ends included?",
+      "choices": [
+        "np.arange(0, 1, 5)",
+        "np.linspace(0, 1, 5)",
+        "np.zeros(5)",
+        "np.full(5, 1)"
       ],
-      "explain": "arange takes a step and linspace takes a count. When you know how many points you want, linspace is the one that cannot land short."
+      "answer": 1,
+      "explain": "linspace takes a count and includes the end; arange takes a step and excludes it."
+    },
+    {
+      "id": "d3-cad-4",
+      "prompt": "a = np.array([1, 2, 3]); a[0] = 3.7. What does a[0] hold?",
+      "choices": [
+        "3.7",
+        "3",
+        "4",
+        "It raises TypeError"
+      ],
+      "answer": 1,
+      "explain": "The array's dtype wins over the value being assigned, and the decimal is truncated with no warning."
     }
   ]
 }

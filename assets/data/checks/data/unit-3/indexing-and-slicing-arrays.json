@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Slices look like list slices and behave differently in one important way.",
+    "prompt": "Indexing and Slicing Arrays: Everything but the ends",
     "packages": [
       "numpy"
     ],
@@ -30,42 +30,90 @@
     ],
     "hint": "A slice from 1 to -1 drops one from each end, and slices clamp rather than raise when there is nothing left to take."
   },
+  "exercise2": {
+    "prompt": "Indexing and Slicing Arrays: Zero a range without touching the original",
+    "packages": [
+      "numpy"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "blanked(__import__(\"numpy\").array([1, 2, 3, 4]), 1, 3).tolist()",
+        "expect": "[1, 0, 0, 4]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the original is left alone",
+        "call": "(lambda np: (lambda a: (blanked(a, 0, 2), a.tolist())[1])(np.array([5, 6, 7])))(__import__(\"numpy\"))",
+        "expect": "[5, 6, 7]"
+      },
+      {
+        "name": "an empty range changes nothing",
+        "call": "blanked(__import__(\"numpy\").array([1, 2]), 1, 1).tolist()",
+        "expect": "[1, 2]"
+      },
+      {
+        "name": "the whole array can be zeroed",
+        "call": "blanked(__import__(\"numpy\").array([1, 2]), 0, 2).tolist()",
+        "expect": "[0, 0]"
+      },
+      {
+        "name": "the result is an array",
+        "call": "type(blanked(__import__(\"numpy\").array([1]), 0, 0)).__name__",
+        "expect": "'ndarray'"
+      }
+    ],
+    "hint": "Take a .copy() first, then assign 0 into the slice of the copy. Assigning into a slice of the original would change the caller's array, which is the thing this exercise is checking."
+  },
   "questions": [
     {
       "id": "d3-ias-1",
-      "prompt": "What is a numpy slice?",
+      "prompt": "How does slicing an array differ from slicing a list?",
       "choices": [
-        "A copy of the data",
-        "A view onto the same data",
-        "A list",
-        "An error"
+        "It does not",
+        "The array slice is a view, so writing to it changes the original",
+        "The array slice is always shorter",
+        "Array slices cannot use negatives"
       ],
       "answer": 1,
-      "explain": "Writing into the slice writes into the original. It is the single biggest behavioural difference from list slicing, and it is a feature: no copy is made."
+      "explain": "No copy is made. This is efficient and it is also the source of a whole class of accidental edits."
     },
     {
       "id": "d3-ias-2",
-      "prompt": "How do you take a slice you can safely modify?",
+      "prompt": "What does table[:, 1] give you?",
       "choices": [
-        "a[1:3]",
-        "a[1:3].copy()",
-        "list(a)[1:3]",
-        "Both the second and third"
+        "Row 1",
+        "Column 1",
+        "The element at 0,1",
+        "An error"
       ],
-      "answer": 3,
-      "explain": "copy() makes a new array; building a list first also detaches from the buffer. Either gives you something of your own."
+      "answer": 1,
+      "explain": "\"Every row, column 1\" — which is how you take a column out of a two-dimensional array in one expression."
     },
     {
       "id": "d3-ias-3",
-      "prompt": "What does a[-1] give you?",
+      "prompt": "How do you take a slice you can safely modify?",
       "choices": [
-        "The first item",
-        "The last item",
-        "An error",
-        "Everything but the last"
+        "a[1:3].copy()",
+        "a[1:3].view()",
+        "list(a[1:3])",
+        "a.slice(1, 3)"
+      ],
+      "answer": 0,
+      "explain": "copy() makes the new block of memory that a list slice would have given you anyway."
+    },
+    {
+      "id": "d3-ias-4",
+      "prompt": "a = np.array([1,2,3,4]); a[1:3] = 0. What is a?",
+      "choices": [
+        "[1, 0, 3, 4]",
+        "[1, 0, 0, 4]",
+        "[0, 0, 0, 0]",
+        "It raises"
       ],
       "answer": 1,
-      "explain": "Negative indexes count from the end, exactly as in lists."
+      "explain": "Assigning a single number into a slice broadcasts it across every position in that slice."
     }
   ]
 }

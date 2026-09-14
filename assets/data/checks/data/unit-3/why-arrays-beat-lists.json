@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "One type and one block of memory buys arithmetic on the whole column.",
+    "prompt": "Why Arrays Beat Lists: Raise every score",
     "packages": [
       "numpy"
     ],
@@ -27,10 +27,64 @@
         "forbids": {
           "loops": true
         },
-        "describe": "the arithmetic applied to the whole array at once"
+        "describe": "the operation applied to the whole array at once"
       }
     ],
     "hint": "np.array(scores) + 5. The addition reaches every element on its own, which is the point of the array."
+  },
+  "exercise2": {
+    "prompt": "Why Arrays Beat Lists: Scale to a percentage",
+    "packages": [
+      "numpy"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "as_percent([45, 30], 50).tolist()",
+        "expect": "[90.0, 60.0]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a different total rescales everything",
+        "call": "as_percent([10, 20], 40).tolist()",
+        "expect": "[25.0, 50.0]"
+      },
+      {
+        "name": "an empty list gives an empty array",
+        "call": "as_percent([], 50).tolist()",
+        "expect": "[]"
+      },
+      {
+        "name": "the result really is an array",
+        "call": "type(as_percent([1], 2)).__name__",
+        "expect": "'ndarray'"
+      },
+      {
+        "name": "it rounds rather than truncates",
+        "call": "as_percent([1], 3).tolist()",
+        "expect": "[33.3]"
+      },
+      {
+        "name": "numpy does the work",
+        "kind": "ast",
+        "requires": {
+          "imports": [
+            "numpy"
+          ]
+        },
+        "describe": "numpy imported and used"
+      },
+      {
+        "name": "no loop is needed",
+        "kind": "ast",
+        "forbids": {
+          "loops": true
+        },
+        "describe": "the operation applied to the whole array at once"
+      }
+    ],
+    "hint": "np.array(marks) / total * 100, then np.round(..., 1). Every step applies to the whole array, so no loop appears anywhere."
   },
   "questions": [
     {
@@ -50,24 +104,36 @@
       "prompt": "Why can numpy add a large array faster than a Python loop can?",
       "choices": [
         "It uses more memory",
-        "One type in one block of memory means the addition runs in compiled code, not per object",
+        "One type in one block of memory, handed to compiled code",
         "It skips some elements",
-        "It is not faster"
+        "It caches the answer"
       ],
       "answer": 1,
-      "explain": "A list element is an object with its own type to check. An array is a known type laid out end to end, so the work happens once in C rather than a million times in Python."
+      "explain": "No per-element objects and no type checks per element, so the addition happens below Python entirely."
     },
     {
       "id": "d3-wab-3",
-      "prompt": "What does an array give up compared with a list?",
+      "prompt": "When is a list still the better choice?",
       "choices": [
-        "Speed",
-        "Holding several different types at once",
-        "Indexing",
-        "Length"
+        "For any numbers",
+        "When the elements are of mixed types, or you are growing the collection item by item",
+        "Never",
+        "Only for text"
       ],
       "answer": 1,
-      "explain": "The single dtype is the trade. An array of mixed types has to widen to something that fits everything, usually object, and the speed goes with it."
+      "explain": "An array of mixed types falls back to Python objects and loses the advantage, and appending to an array copies the whole block."
+    },
+    {
+      "id": "d3-wab-4",
+      "prompt": "What is scores.shape for np.array([92, 88, 79])?",
+      "choices": [
+        "3",
+        "(3,)",
+        "(1, 3)",
+        "(3, 1)"
+      ],
+      "answer": 1,
+      "explain": "A one-dimensional array has a one-element shape tuple. The trailing comma is what makes it a tuple rather than a number in brackets."
     }
   ]
 }

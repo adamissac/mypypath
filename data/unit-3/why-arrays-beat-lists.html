@@ -173,26 +173,144 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Say what an array gives up compared with a list, and what it buys in return.</li>
+<li>Predict what <code>* 2</code> does to a list and to an array.</li>
+<li>Replace a loop over a column with one expression over an array.</li>
+<li>Recognise when a list is still the right choice.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Almost every slow piece of analysis code is a Python loop doing arithmetic one row at a time. Arrays are how that loop disappears — and the rest of this course, including the whole of pandas, is built on top of them. Getting this one idea straight makes the next seven units read as variations on it rather than as new material.</p>
+</div>
 
 <div class="content-section">
 <h2>A list of numbers is a list of objects</h2>
-<p>A Python list can hold anything, so each element is a separate object with its own type. An array holds one type in one block of memory, which is what lets numpy add a million numbers without a loop.</p>
+<p>A Python list is a list of references. Each element is a separate object somewhere in memory, carrying its own type tag, and the list holds a pointer to each one. That is what makes a list able to hold a number, a string and another list at once.</p>
+<h3 class="h4">What an array does instead</h3>
+<p>An array holds one type in one unbroken block of memory. There are no per-element objects and no type tags, because the type is a property of the array. That is what lets numpy hand the whole block to compiled code and add a million numbers without Python seeing any of them.</p>
 <pre class="code"><code>import numpy as np
 
 scores = np.array([92, 88, 79])
 print(scores)
-print(scores.dtype)</code></pre>
+print(scores.dtype)
+print(scores.shape)</code></pre>
+<h3 class="h4">The bargain, stated plainly</h3>
+<p>You give up mixed types. You get speed, and an arithmetic that applies to everything at once. Every other feature in this unit follows from that single trade.</p>
+<pre class="code"><code>import numpy as np
 
+# One type wins. The int is widened, not kept alongside the float.
+print(np.array([1, 2, 3.0]).dtype)
+
+# A list has no such rule, because it never made the bargain.
+print([1, 2, 3.0])</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Watch the dtype settle</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print the <code>dtype</code> of each of these three arrays before you run it, then check. The third one is the interesting case.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import numpy as np\n\nprint(np.array([1, 2, 3]).dtype)\nprint(np.array([1.0, 2.0]).dtype)\nprint(np.array([1, 2, 3.0]).dtype)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import numpy as np
+
+print(np.array([1, 2, 3]).dtype)
+print(np.array([1.0, 2.0]).dtype)
+print(np.array([1, 2, 3.0]).dtype)
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Arithmetic applies to the whole array</h2>
-<p>Multiplying a list repeats it; multiplying an array scales every element. That difference is the reason the rest of this course exists.</p>
+<p>This is the difference you will feel first, and it is the one that catches people. The same operator means two completely different things depending on what is on the left of it.</p>
+<h3 class="h4">Multiplying a list repeats it</h3>
+<p>On a list, <code>*</code> is repetition — it is the same operator that makes <code>"ab" * 3</code> give <code>"ababab"</code>. On an array it is multiplication, applied to every element.</p>
 <pre class="code"><code>import numpy as np
 
 print([1, 2, 3] * 2)
 print(np.array([1, 2, 3]) * 2)</code></pre>
+<h3 class="h4">The loop you no longer write</h3>
+<p>Both of these give the same answer. The second one is the one that stays readable when there are three operations rather than one, and it is the one that does not slow down as the column grows.</p>
+<pre class="code"><code>import numpy as np
+
+scores = [92, 88, 79]
+
+# One row at a time, in Python.
+print([s + 5 for s in scores])
+
+# All of it at once, in compiled code.
+print(np.array(scores) + 5)</code></pre>
+<div class="info-card"><p>A comprehension is not wrong. It is the right tool for a handful of values, and for anything where the elements are not all the same kind of thing. The argument for arrays is about columns of numbers, which is what a data set is made of.</p></div>
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: The same sum, two ways</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Below is a loop that doubles every score. Rewrite the marked line as one expression on an array, and check the two agree.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import numpy as np\n\nscores = [92, 88, 79]\n\nby_loop = [s * 2 for s in scores]\n\n# Replace None with an array expression that gives the same numbers.\nby_array = None\n\nprint(by_loop)\nprint(by_array)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import numpy as np
+
+scores = [92, 88, 79]
+
+by_loop = [s * 2 for s in scores]
+
+# Replace None with an array expression that gives the same numbers.
+by_array = None
+
+print(by_loop)
+print(by_array)
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
+<div class="content-section">
+<h2>When a list is still the right answer</h2>
+<p>Arrays are not a replacement for lists. They are a replacement for one specific use of lists.</p>
+<h3 class="h4">Mixed types, or things that are not numbers</h3>
+<p>A row of a table — a name, a city and a score — is a genuinely mixed thing, and forcing it into an array turns every element into a Python object anyway, losing the whole advantage. Keep those as lists, dicts, or (from unit 4) a DataFrame, which is built to hold a different type per column.</p>
+<pre class="code"><code>import numpy as np
+
+# Every element becomes an object, and the speed is gone.
+mixed = np.array(["Ada", 92, True])
+print(mixed.dtype)
+print(mixed)</code></pre>
+<h3 class="h4">Growing a collection item by item</h3>
+<p>Appending to an array copies the whole block each time, because the block has to stay unbroken. Build with a list and convert once at the end.</p>
+<pre class="code"><code>import numpy as np
+
+rows = []
+for n in range(5):
+    rows.append(n * n)
+
+squares = np.array(rows)
+print(squares)</code></pre>
 
 </div>
 
@@ -200,7 +318,7 @@ print(np.array([1, 2, 3]) * 2)</code></pre>
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Raise every score</h3>
 <p>Turn <code>scores</code> into a numpy array and print every score raised by 5, using no loop.</p>
 <p class="hint-text">np.array(scores) + 5. The addition reaches every element on its own, which is the point of the array.</p>
 
@@ -219,6 +337,32 @@ scores = [92, 88, 79]
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Scale to a percentage</h3>
+<p>Write <code>as_percent(marks, total)</code> that takes a list of marks and the total they were out of, and returns a numpy array of percentages rounded to one decimal place. Do the arithmetic on the whole array, not a mark at a time.</p>
+<p class="hint-text">np.array(marks) / total * 100, then np.round(..., 1). Every step applies to the whole array, so no loop appears anywhere.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import numpy as np\n\ndef as_percent(marks, total):\n    # An array of marks / total * 100, rounded to one place.\n    return None\n\nprint(as_percent([45, 30], 50))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import numpy as np
+
+def as_percent(marks, total):
+    # An array of marks / total * 100, rounded to one place.
+    return None
+
+print(as_percent([45, 30], 50))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

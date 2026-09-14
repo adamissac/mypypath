@@ -4,8 +4,11 @@
  * page's Pyodide instance and adding them costs about twenty megabytes of
  * wheels on a cold start, so the two free units teach the same habits -- rows,
  * records, reading a file, summarising, cleaning -- with lists, dicts and the
- * csv module. Every exercise here runs and is graded today. Units 3 onward are
- * where numpy and pandas begin, and they wait on that loader.
+ * csv module, so a signed-out visitor pays nothing to reach them.
+ *
+ * Units 3 onward are where numpy and pandas begin. The Run button now loads
+ * those packages on demand (assets/js/pyodide-loader.js), so their exercises
+ * run as well as grade.
  */
 /* Units 3 onward live in files of their own. They are where numpy and pandas
    begin, they are much longer than the standard-library units, and keeping
@@ -14,6 +17,9 @@ const later = {
   ...require('./data-course-units-3-6.cjs'),
   ...require('./data-course-units-5-7.cjs'),
   ...require('./data-course-units-8-10.cjs'),
+  // Units rewritten to the richer lesson schema live in a file each and are
+  // spread last, so they replace the first-draft version of the same unit.
+  ...require('./data-course-unit-3.cjs'),
 };
 
 module.exports = {

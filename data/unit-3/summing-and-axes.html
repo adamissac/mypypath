@@ -173,36 +173,132 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Reduce a whole array to a single number.</li>
+<li>Say what <code>axis=0</code> and <code>axis=1</code> collapse, in words, before writing either.</li>
+<li>Check an answer by its shape rather than by reading the numbers.</li>
+<li>Choose the axis from the question being asked.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Getting the axis backwards is the most common error in this unit, and it is dangerous because it does not raise — you get a plausible-looking list of the wrong length. Learning to say "I am collapsing the rows, so I keep one value per column" out loud, and then checking the shape, is what stops it.</p>
+</div>
 
 <div class="content-section">
 <h2>Aggregating the whole array</h2>
-<p>sum, mean, min, max and std each reduce an array to one number when you do not say otherwise.</p>
+<p><code>sum</code>, <code>mean</code>, <code>min</code>, <code>max</code> and <code>std</code> each reduce an array to one number when you do not say otherwise.</p>
+<h3 class="h4">Everything at once</h3>
+<p>With no axis named, there is nothing left to keep, so the whole array collapses — including a two-dimensional one.</p>
 <pre class="code"><code>import numpy as np
 
-a = np.array([[1, 2, 3], [4, 5, 6]])
-print(a.sum())
-print(a.mean())</code></pre>
+table = np.array([[1, 2, 3],
+                  [4, 5, 6]])
 
+print(table.sum())
+print(table.mean())
+print(table.max())</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Say it before you write it</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>This table is students down, tests across. Print the average per test, then the average per student — and predict the length of each before you run it.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import numpy as np\n\nmarks = np.array([[80, 60, 70],\n                  [50, 90, 65]])\n\nprint(marks.mean(axis=0))   # per test — how many numbers?\nprint(None)                 # per student\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import numpy as np
+
+marks = np.array([[80, 60, 70],
+                  [50, 90, 65]])
+
+print(marks.mean(axis=0))   # per test — how many numbers?
+print(None)                 # per student
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>axis picks the direction</h2>
-<p>axis=0 collapses down the rows and leaves one value per column. axis=1 collapses across the columns and leaves one per row. Saying it out loud before you type it saves a lot of confusion.</p>
+<p>The name is the confusing part. <code>axis</code> says which dimension is being <em>removed</em>, not which one is kept.</p>
+<h3 class="h4">axis=0 collapses the rows</h3>
+<p>Running down through the rows leaves one value per column. For a table of students by test, that is one number per test.</p>
 <pre class="code"><code>import numpy as np
 
-a = np.array([[1, 2, 3], [4, 5, 6]])
-print(a.sum(axis=0))
-print(a.sum(axis=1))</code></pre>
+table = np.array([[1, 2, 3],
+                  [4, 5, 6]])
 
+print(table.sum(axis=0))      # one per column
+print(table.sum(axis=0).shape)</code></pre>
+<h3 class="h4">axis=1 collapses the columns</h3>
+<p>Running across the columns leaves one value per row — one number per student.</p>
+<pre class="code"><code>import numpy as np
+
+table = np.array([[1, 2, 3],
+                  [4, 5, 6]])
+
+print(table.sum(axis=1))      # one per row
+print(table.sum(axis=1).shape)</code></pre>
+<h3 class="h4">Check the shape, not the numbers</h3>
+<p>A 2&times;3 table summed along the wrong axis gives three numbers where you wanted two. On a real table both are plausible lists, so the length is the check that catches it.</p>
+<pre class="code"><code>import numpy as np
+
+table = np.array([[1, 2, 3],
+                  [4, 5, 6]])
+
+print("students:", table.shape[0], "tests:", table.shape[1])
+print("per student:", table.sum(axis=1))   # length 2
+print("per test:   ", table.sum(axis=0))   # length 3</code></pre>
+<p class="note">A sentence that always works: <em>axis=0 is down, axis=1 is across.</em> Say which you mean in words first, then write it.</p>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Best in each test</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print the highest mark in each test, and then which student got it. <code>argmax</code> takes an axis too.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import numpy as np\n\nmarks = np.array([[80, 60, 70],\n                  [50, 90, 65]])\n\nprint(marks.max(axis=0))\nprint(marks.argmax(axis=0))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import numpy as np
+
+marks = np.array([[80, 60, 70],
+                  [50, 90, 65]])
+
+print(marks.max(axis=0))
+print(marks.argmax(axis=0))
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
-<p>A table has one row per student and one column per test. Write <code>student_totals(table)</code> returning each student's total as a list.</p>
+<h3 class="h4">Exercise 1: One total per student</h3>
+<p>A table has one row per student and one column per test. Write <code>student_totals(table)</code> returning each student’s total as a list.</p>
 <p class="hint-text">One total per student means one per row, so the sum has to collapse across the columns. That is axis=1.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
@@ -223,6 +319,32 @@ print(student_totals(np.array([[1, 2], [3, 4]])))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: The hardest test</h3>
+<p>Write <code>hardest_test(table)</code> that returns the position of the test with the lowest average mark, where the table is students down and tests across. Collapse the rows to get an average per test, then take the position of the smallest.</p>
+<p class="hint-text">table.mean(axis=0) gives one mean per test. argmin on that gives the position of the smallest. Wrap it in int() so the answer is a plain number.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import numpy as np\n\ndef hardest_test(table):\n    # The index of the column with the lowest mean.\n    return 0\n\nprint(hardest_test(np.array([[80, 60], [90, 50]])))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import numpy as np
+
+def hardest_test(table):
+    # The index of the column with the lowest mean.
+    return 0
+
+print(hardest_test(np.array([[80, 60], [90, 50]])))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

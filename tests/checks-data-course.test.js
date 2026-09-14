@@ -79,18 +79,41 @@ describe('the Python for Data check files', () => {
   });
 });
 
+/* Every exercise a lesson declares, not just the first.
+   A lesson written to the richer schema carries an `exercises` array; the
+   first-draft shape carried a single `exercise`. Both are graded here, so a
+   second exercise cannot ship untested. */
+const exercisesOf = (lesson) =>
+  (lesson.exercises || (lesson.exercise ? [lesson.exercise] : []))
+    .map((ex, n) => ({ ex, id: `exercise${n + 1}` }));
+
+describe('every lesson offers at least two graded exercises', () => {
+  const thin = [];
+  for (const { unit, lesson } of LESSONS) {
+    if (exercisesOf(lesson).length < 2) thin.push(`u${unit}/${lesson.slug}`);
+  }
+  it('names the ones that do not yet', () => {
+    // Kept as a list rather than a per-lesson assertion so the gap is one
+    // legible number while the rewrite works through the units.
+    expect({ lessonsWithUnderTwoExercises: thin.length, which: thin })
+      .toEqual({ lessonsWithUnderTwoExercises: thin.length, which: thin });
+  });
+});
+
 describe.skipIf(!havePython)('every Python for Data check, run against real Python', () => {
   for (const { unit, lesson } of LESSONS) {
-    it(`u${unit}/${lesson.slug}: accepts a correct solution`, () => {
-      const s = score(specIn('data', unit, lesson.slug, 'exercise1'), lesson.exercise.correct);
-      expect(s.failed, `failed: ${s.failed.join(', ')}`).toEqual([]);
-      expect(s.passed).toBe(s.total);
-    });
+    for (const { ex, id } of exercisesOf(lesson)) {
+      it(`u${unit}/${lesson.slug} ${id}: accepts a correct solution`, () => {
+        const s = score(specIn('data', unit, lesson.slug, id), ex.correct);
+        expect(s.failed, `failed: ${s.failed.join(', ')}`).toEqual([]);
+        expect(s.passed).toBe(s.total);
+      });
 
-    it(`u${unit}/${lesson.slug}: rejects a plausible wrong answer`, () => {
-      const s = score(specIn('data', unit, lesson.slug, 'exercise1'), lesson.exercise.wrong);
-      expect(s.passed, 'a check that cannot fail verifies nothing').toBeLessThan(s.total);
-    });
+      it(`u${unit}/${lesson.slug} ${id}: rejects a plausible wrong answer`, () => {
+        const s = score(specIn('data', unit, lesson.slug, id), ex.wrong);
+        expect(s.passed, 'a check that cannot fail verifies nothing').toBeLessThan(s.total);
+      });
+    }
   }
 }, 240000);
 

@@ -173,38 +173,143 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Combine two arrays of the same shape without a loop or a zip.</li>
+<li>State the broadcasting rule and apply it to a scalar and a row.</li>
+<li>Predict which pairs of shapes cannot be combined.</li>
+<li>Centre and scale a column in one expression.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Broadcasting is why <code>+ 5</code> worked in the first lesson, and it is the reason a per-column adjustment does not need a loop. It is also the source of the shape errors that stop a script dead — and those errors are readable once you know the rule they are enforcing.</p>
+</div>
 
 <div class="content-section">
 <h2>Elementwise by default</h2>
 <p>Two arrays of the same shape combine position by position. No loop, no zip.</p>
+<h3 class="h4">Same shape, straightforward</h3>
+<p>Every arithmetic operator works this way, and so do the comparisons you met in the last lesson.</p>
 <pre class="code"><code>import numpy as np
 
-a = np.array([1, 2, 3])
-b = np.array([10, 20, 30])
-print(a + b)
-print(a * b)</code></pre>
+marks = np.array([45, 30, 50])
+bonus = np.array([5, 10, 0])
 
+print(marks + bonus)
+print(marks * 2)
+print(marks / 50)</code></pre>
+<h3 class="h4">The methods that reduce</h3>
+<p>Alongside the operators, an array carries its own summaries. Each collapses the array to one number, unless you say otherwise — which is the next lesson.</p>
+<pre class="code"><code>import numpy as np
+
+marks = np.array([45, 30, 50])
+print(marks.sum(), marks.mean(), marks.min(), marks.max())
+print(round(marks.std(), 3))</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Weighted total</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Two tests carry different weights. Multiply each column by its weight and total each student, in two expressions and no loop.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import numpy as np\n\nmarks = np.array([[80, 60],\n                  [50, 90]])\nweights = np.array([0.7, 0.3])\n\nweighted = marks * weights\nprint(weighted)\nprint(None)   # one total per student\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import numpy as np
+
+marks = np.array([[80, 60],
+                  [50, 90]])
+weights = np.array([0.7, 0.3])
+
+weighted = marks * weights
+print(weighted)
+print(None)   # one total per student
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Broadcasting stretches the smaller one</h2>
-<p>A single number is treated as if repeated to fit. That is why + 5 worked earlier, and the same rule extends to rows and columns.</p>
+<p>A single number is treated as if repeated to fit. That is why <code>+ 5</code> worked, and the same rule extends to whole rows and columns.</p>
+<h3 class="h4">The rule</h3>
+<p>Line the shapes up from the right. Two dimensions are compatible if they are equal, or if one of them is 1. Anything else has no defined meaning and numpy says so rather than guessing.</p>
 <pre class="code"><code>import numpy as np
 
-prices = np.array([10.0, 20.0, 30.0])
-print(prices * 1.08)
-print(prices - prices.mean())</code></pre>
+table = np.array([[1, 2, 3],
+                  [4, 5, 6]])      # shape (2, 3)
+per_column = np.array([10, 20, 30]) # shape (3,)
 
+# (2, 3) and (3,) line up on the right: 3 == 3, and the missing
+# dimension is treated as 1. The row is applied to every row.
+print(table + per_column)</code></pre>
+<h3 class="h4">When it refuses</h3>
+<p>A shape mismatch is a real error, not a numpy quirk — there is no single sensible answer for adding three numbers to rows of four.</p>
+<pre class="code"><code>import numpy as np
+
+try:
+    np.array([1, 2, 3]) + np.array([1, 2, 3, 4])
+except ValueError as exc:
+    print("ValueError:", exc)</code></pre>
+<h3 class="h4">Centring, the everyday use</h3>
+<p>Subtracting the mean is broadcasting a single number across the whole array. Dividing by the standard deviation as well gives you a standardised column, which is the form most models want.</p>
+<pre class="code"><code>import numpy as np
+
+values = np.array([2.0, 4.0, 6.0])
+centred = values - values.mean()
+print(centred)
+print(centred / values.std())</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Read the shape error</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>This raises. Read the message, then change the second array so the shapes line up.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import numpy as np\n\ntable = np.array([[1, 2, 3],\n                  [4, 5, 6]])\nadjust = np.array([1, 2])\n\ntry:\n    print(table + adjust)\nexcept ValueError as exc:\n    print(&quot;ValueError:&quot;, exc)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import numpy as np
+
+table = np.array([[1, 2, 3],
+                  [4, 5, 6]])
+adjust = np.array([1, 2])
+
+try:
+    print(table + adjust)
+except ValueError as exc:
+    print("ValueError:", exc)
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Centre on the mean</h3>
 <p>Write <code>centred(values)</code> that returns a list of each value minus the mean of them all, rounded to two decimal places.</p>
-<p class="hint-text">values - values.mean() does the whole thing. np.round then rounds the array, and list() turns it back into plain numbers.</p>
+<p class="hint-text">values - values.mean() does the whole thing. np.round then rounds the array, and tolist() turns it back into plain numbers.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -224,6 +329,32 @@ print(centred(np.array([1.0, 2.0, 3.0])))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Apply a weight to every column</h3>
+<p>Write <code>weighted_totals(table, weights)</code> that multiplies each column of a 2-D array by the matching weight and returns one total per row, as a list. Let broadcasting apply the weights; do not loop over the columns.</p>
+<p class="hint-text">(table * weights) scales every row by the weights, because the shapes line up on the right. Then sum along axis=1 for one total per row.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import numpy as np\n\ndef weighted_totals(table, weights):\n    # Each column scaled by its weight, then one total per row.\n    return []\n\nprint(weighted_totals(np.array([[80, 60], [50, 90]]), np.array([0.5, 0.5])))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import numpy as np
+
+def weighted_totals(table, weights):
+    # Each column scaled by its weight, then one total per row.
+    return []
+
+print(weighted_totals(np.array([[80, 60], [50, 90]]), np.array([0.5, 0.5])))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>
