@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 """Bake canonical header/footer into all HTML pages (no runtime DOM surgery)."""
+# `int | None` in the signatures below is 3.10 syntax, and the macOS system
+# Python is 3.9. Deferring annotation evaluation costs nothing and keeps this
+# runnable on whatever python3 is already on the machine.
+from __future__ import annotations
+
 import re
 from pathlib import Path
 
@@ -217,7 +222,8 @@ def header_html(path: Path, show_progress: bool) -> str:
 # Directories that are not part of the site. node_modules matters most: baking
 # into it rewrites dependency files -- it injected the site header into
 # firebase-tools' login templates before this guard existed.
-SKIP_DIRS = {'.git', 'node_modules', 'lesson-format-kit', 'REVIEW', 'docs', 'tests'}
+SKIP_DIRS = {'.git', '.claude', 'node_modules', 'lesson-format-kit', 'REVIEW',
+             'docs', 'tests'}
 
 
 def skipped(path: Path) -> bool:
