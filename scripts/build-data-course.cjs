@@ -332,48 +332,54 @@ ${next ? `<a class="btn btn-primary route" href="${next}">Next</a>` : `<a class=
 function unitPage(unit) {
   const stub = unit.stub === true;
   const lessons = stub ? [] : C[`unit${unit.n}`].lessons;
-  const body = stub
-    ? `<div class="content-section">
-<h2>Not written yet</h2>
-<p>This unit is planned and its lessons are not built. Units 1 and 2 teach the
-same habits with the standard library and run today; this one needs numpy and
-pandas loaded into the page, which is a piece of work of its own.</p>
-<p><a class="btn btn-primary route" href="/data.html">Back to the course</a></p>
-</div>`
-    : `<ol class="lesson-list">
-${lessons.map((l, i) => `<li><a class="route" href="/data/unit-${unit.n}/${l.slug}.html"><span class="lesson-list__num">${i + 1}</span><span class="lesson-list__title">${esc(l.title)}</span><span class="lesson-list__meta">${esc(l.summary)}</span></a></li>`).join('\n')}
+  const first = lessons.length ? `/data/unit-${unit.n}/${lessons[0].slug}.html` : '/data.html';
+
+  /* The same markup as a Foundations unit page. .unit-lesson-list is what
+     lesson-progress.js ticks finished lessons in; the first draft emitted an
+     unstyled .lesson-list that nothing painted and no stylesheet laid out, so
+     number, title and summary ran together on one line. */
+  const list = stub
+    ? `<p class="muted">This unit is planned and its lessons are not written yet.</p>`
+    : `<ol class="unit-lesson-list">
+${lessons.map((l, i) => `<li><a class="route" href="/data/unit-${unit.n}/${l.slug}.html">${i + 1}. ${esc(l.title)}</a></li>`).join('\n')}
 </ol>`;
 
-  /* The end-of-unit test, which the first draft of this course never linked.
-     ?course=data is what sends unit-test-page.js to this course's questions
-     and its own record key; without it the link would serve Foundations unit N
-     and overwrite a Foundations result. */
+  /* The end-of-unit test. ?course=data is what sends unit-test-page.js to this
+     course's questions and its own record key; without it the link would serve
+     Foundations unit N and overwrite a Foundations result. */
   const test = stub ? '' : `
-<div class="unit-test-card">
+<section class="section">
+<div class="container narrow">
 <h2>End of unit test</h2>
-<p>Ten multiple choice questions and one free response problem. You need 70 to
-finish the unit. Retakes are unlimited and your best score is the one that counts.</p>
+<p class="muted">Ten multiple choice questions and one free response problem. You
+need 70 to finish the unit. Retakes are unlimited and your best score is the one that counts.</p>
 <p class="unit-test-status" data-unit-test-status="${unit.n}" hidden></p>
+<div class="cta" style="margin-top: 18px;">
 <a class="btn btn-primary route" data-unit-test-link="${unit.n}" href="/unit-test.html?unit=${unit.n}&amp;course=data">Take the Unit ${unit.n} test</a>
-</div>`;
+</div>
+</div>
+</section>`;
 
   return `<main id="main-content">
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb">
-<a class="route" href="/courses.html">Courses</a> &middot;
-<a class="route" href="/data.html">Python for Data</a>
-</nav>
-<h1>Unit ${unit.n} &middot; ${esc(unit.title)}</h1>
-<p class="lead">${esc(stub ? 'Planned. Not written yet.' : C[`unit${unit.n}`].blurb)}</p>
+<section class="section">
+<div class="container narrow">
+<p class="eyebrow">Python for Data &bull; Unit ${unit.n}</p>
+<h1 class="page-title">Unit ${unit.n}: ${esc(unit.title)}</h1>
+<p class="muted">${esc(stub ? 'Planned. Not written yet.' : C[`unit${unit.n}`].blurb)}</p>
+<div class="cta" style="margin-top: 18px;">
+${stub ? '' : `<a class="btn btn-primary route" href="${first}">Start Unit ${unit.n}</a>`}
+<a class="btn btn-ghost route" href="/data.html">Back to the course</a>
+</div>
 </div>
 </section>
-<section class="course-main">
-<div class="container">
-${body}
+
+<section class="section">
+<div class="container narrow">
+<h2>Lessons</h2>
+${list}
+</div>
+</section>
 ${test}
-</div>
-</section>
 </main>`;
 }
 

@@ -310,6 +310,18 @@ describe('lesson check-off on a unit page', () => {
     history.pushState({}, '', '/');
   });
 
+  it('ticks a finished Python for Data lesson the same way', async () => {
+    const D = '/data/unit-1/reading-a-csv-file.html';
+    document.body.innerHTML = `<main><h2>Lessons</h2><ol class="unit-lesson-list">
+      <li><a class="route" href="${D}">4. Reading a CSV File</a></li>
+    </ol></main>`;
+    seedLessons({ [D]: { done: ['exercise1', 'exercise2'], passed: true } });
+    await progressArrived();
+    const li = document.querySelector('.unit-lesson-list li');
+    expect(li.classList.contains('is-lesson-done')).toBe(true);
+    expect(li.querySelector('[data-lesson-check]').textContent).toBe('✓');
+  });
+
   it('ticks a passed lesson, dots a started one, leaves an untouched one bare', async () => {
     seedLessons({
       [A]: { done: ['x'], passed: true },

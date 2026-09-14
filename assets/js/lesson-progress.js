@@ -487,8 +487,10 @@
   // the moment the learner comes back to the unit -- and, because
   // ProgressStore emits pypath:progress on every write, the instant a sync from
   // another device lands too.
+  // Both courses. Matching /units/ alone meant a Python for Data unit page
+  // never ticked a finished lesson, though the lesson itself said complete.
   function isLessonHref(href) {
-    return /^\/units\/unit-\d+\/[^/]+\.html$/.test(String(href || ''));
+    return /^\/(units|data)\/unit-\d+\/[^/]+\.html$/.test(String(href || ''));
   }
 
   function lessonState(entry) {
