@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Three ways to say a condition that reads like the question.",
+    "prompt": "isin, between and query: Count the rows in a set of subjects",
     "packages": [
       "pandas"
     ],
@@ -23,54 +23,103 @@
         "expect": "0"
       },
       {
-        "name": "isin does the testing",
+        "name": "isin does the matching",
         "kind": "ast",
-        "requires": {
-          "calls": [
-            "isin"
-          ]
+        "forbids": {
+          "loops": true
         },
-        "describe": "isin rather than a chain of comparisons"
+        "describe": "isin rather than a loop over the rows"
       }
     ],
     "hint": "df[\"subject\"].isin(subjects) is the mask. Its sum is the count, and int() makes it a plain number."
   },
+  "exercise2": {
+    "prompt": "isin, between and query: Names in a band",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "band_names(__import__(\"pandas\").DataFrame({\"name\": [\"Ada\", \"Grace\", \"Alan\"], \"score\": [92, 70, 60]}), 60, 80)",
+        "expect": "['Grace', 'Alan']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "both ends are included",
+        "call": "band_names(__import__(\"pandas\").DataFrame({\"name\": [\"lo\", \"hi\"], \"score\": [60, 80]}), 60, 80)",
+        "expect": "['lo', 'hi']"
+      },
+      {
+        "name": "nothing in the band gives an empty list",
+        "call": "band_names(__import__(\"pandas\").DataFrame({\"name\": [\"x\"], \"score\": [5]}), 60, 80)",
+        "expect": "[]"
+      },
+      {
+        "name": "the original order is kept",
+        "call": "band_names(__import__(\"pandas\").DataFrame({\"name\": [\"b\", \"a\"], \"score\": [70, 65]}), 60, 80)",
+        "expect": "['b', 'a']"
+      },
+      {
+        "name": "the vectorised form does the work",
+        "kind": "ast",
+        "forbids": {
+          "loops": true
+        },
+        "describe": "column operations rather than a loop"
+      }
+    ],
+    "hint": "df[\"score\"].between(low, high) is inclusive at both ends by default. Mask the table with it, then take the name column."
+  },
   "questions": [
     {
       "id": "d6-ibq-1",
-      "prompt": "What does isin take?",
+      "prompt": "What does df[\"city\"].isin([\"Leeds\", \"York\"]) replace?",
       "choices": [
-        "A single value",
-        "A collection of values to test against",
-        "A condition",
-        "A column name"
+        "A group-by",
+        "A chain of == joined with |",
+        "A sort",
+        "A merge"
       ],
       "answer": 1,
-      "explain": "It replaces a chain of == joined with |, and reads as the sentence you were trying to write."
+      "explain": "And it does not get longer as the list grows, which is the point."
     },
     {
       "id": "d6-ibq-2",
-      "prompt": "Is between inclusive of its endpoints?",
+      "prompt": "Does between include its endpoints?",
       "choices": [
-        "No",
-        "Yes, by default",
-        "Only the lower one",
-        "Only the upper one"
+        "Neither",
+        "Both, by default",
+        "Only the lower",
+        "Only the upper"
       ],
       "answer": 1,
-      "explain": "Both ends are included unless you say otherwise, which matches how a range usually reads in a question."
+      "explain": "inclusive= changes it; saying so explicitly beats writing two comparisons and hoping the reader checks them."
     },
     {
       "id": "d6-ibq-3",
-      "prompt": "Why does an empty list passed to isin match nothing?",
+      "prompt": "What does query let you write?",
       "choices": [
-        "It is an error",
-        "No value is in an empty set",
-        "It matches everything",
-        "It matches the first row"
+        "SQL",
+        "A condition as a sentence, with plain and/or and bare column names",
+        "A faster filter",
+        "A join"
       ],
       "answer": 1,
-      "explain": "The condition is \"is this value one of these\", and there are none, so it is False everywhere. Worth knowing before you build the list from a filter that came back empty."
+      "explain": "A Python variable is reachable inside it with an @ in front. The argument for query is legibility, not speed."
+    },
+    {
+      "id": "d6-ibq-4",
+      "prompt": "Why does a filter you can read matter?",
+      "choices": [
+        "It runs faster",
+        "A filter you can read is one you can check",
+        "It uses less memory",
+        "It does not matter"
+      ],
+      "answer": 1,
+      "explain": "A chain of six | conditions is where an accidental wrong comparison hides."
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Ordering a table, and taking the few rows that matter.",
+    "prompt": "Sorting and Top N: The top scorers",
     "packages": [
       "pandas"
     ],
@@ -30,42 +30,85 @@
     ],
     "hint": "nlargest takes the count and the column and does both the sort and the slice. Sorting ascending and taking the head gives you the worst, not the best."
   },
+  "exercise2": {
+    "prompt": "Sorting and Top N: Break the tie on purpose",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "ranked(__import__(\"pandas\").DataFrame({\"name\": [\"Zoe\", \"Ada\"], \"score\": [88, 88]}))",
+        "expect": "['Ada', 'Zoe']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "score still wins over name",
+        "call": "ranked(__import__(\"pandas\").DataFrame({\"name\": [\"Zoe\", \"Ada\"], \"score\": [92, 88]}))",
+        "expect": "['Zoe', 'Ada']"
+      },
+      {
+        "name": "a three-way tie sorts alphabetically",
+        "call": "ranked(__import__(\"pandas\").DataFrame({\"name\": [\"c\", \"a\", \"b\"], \"score\": [1, 1, 1]}))",
+        "expect": "['a', 'b', 'c']"
+      },
+      {
+        "name": "one row is already ranked",
+        "call": "ranked(__import__(\"pandas\").DataFrame({\"name\": [\"solo\"], \"score\": [1]}))",
+        "expect": "['solo']"
+      }
+    ],
+    "hint": "sort_values takes a list of columns and a matching list of directions: [\"score\", \"name\"] with ascending=[False, True]."
+  },
   "questions": [
     {
       "id": "d6-stn-1",
-      "prompt": "What does sort_values do to the table you call it on?",
+      "prompt": "What does df.sort_values(\"score\") return?",
       "choices": [
-        "Sorts it in place",
-        "Nothing -- it returns a sorted copy",
-        "Deletes it",
-        "Reindexes it"
+        "None, it sorts in place",
+        "A new sorted table",
+        "The score column",
+        "The top row"
       ],
       "answer": 1,
-      "explain": "Like drop and rename, it hands back a copy. Forgetting to reassign is why a sort can look as though it did nothing."
+      "explain": "Assign it or pass inplace=True. A sort you forget to assign looks like a sort that did not work."
     },
     {
       "id": "d6-stn-2",
-      "prompt": "What does ascending=False give you?",
+      "prompt": "What is the clearest way to get the five highest rows?",
       "choices": [
-        "The smallest first",
-        "The largest first",
-        "Random order",
-        "The original order"
+        "Sort then head(5)",
+        "nlargest(5, \"score\")",
+        "Both work; nlargest states the intent",
+        "max() five times"
       ],
-      "answer": 1,
-      "explain": "Descending, which is what \"top\" almost always means. The default is ascending, and forgetting it hands you the bottom of the table."
+      "answer": 2,
+      "explain": "Both are correct; nlargest does not order the rows you were never going to look at."
     },
     {
       "id": "d6-stn-3",
-      "prompt": "Why prefer nlargest to sorting and slicing?",
+      "prompt": "Where do NaN values sort to by default?",
       "choices": [
-        "It is the only way",
-        "It states the question and does less work",
-        "It sorts better",
-        "No reason"
+        "The start",
+        "The end, whichever direction you chose",
+        "They are dropped",
+        "It raises"
       ],
       "answer": 1,
-      "explain": "It says \"the biggest three\" in one call, and it does not have to order the rows you were never going to look at."
+      "explain": "na_position=\"first\" changes it. If the missing rows matter, say so rather than letting them sit at the bottom."
+    },
+    {
+      "id": "d6-stn-4",
+      "prompt": "How do you break ties on a second column?",
+      "choices": [
+        "Sort twice",
+        "Pass a list of columns to by",
+        "It is not possible",
+        "Use nlargest"
+      ],
+      "answer": 1,
+      "explain": "With a matching list for ascending, so each column can have its own direction."
     }
   ]
 }

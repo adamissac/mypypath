@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Read the columns you want, and stop carrying the ones you do not.",
+    "prompt": "Selecting What You Need: Tidy the column names",
     "packages": [
       "pandas"
     ],
@@ -24,11 +24,56 @@
       },
       {
         "name": "the data survives the rename",
-        "call": "tidy_columns(__import__(\"pandas\").DataFrame({\"A B\": [7]}))[\"a_b\"].tolist()",
-        "expect": "[7]"
+        "call": "int(tidy_columns(__import__(\"pandas\").DataFrame({\"A B\": [7]}))[\"a_b\"].iloc[0])",
+        "expect": "7"
       }
     ],
     "hint": "Build a dictionary from each existing name to its tidy version, then hand it to rename. str.lower() and str.replace(\" \", \"_\") do the work."
+  },
+  "exercise2": {
+    "prompt": "Selecting What You Need: Read only what you need",
+    "packages": [
+      "pandas"
+    ],
+    "files": {
+      "wide.csv": "name,city,score,notes\nAda,Leeds,92,x\nGrace,York,88,y\n"
+    },
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "narrow(\"wide.csv\", [\"name\", \"score\"])",
+        "expect": "(2, 2)"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "one column is a valid request",
+        "files": {
+          "wide.csv": "name,city,score,notes\nAda,Leeds,92,x\nGrace,York,88,y\n"
+        },
+        "call": "narrow(\"wide.csv\", [\"score\"])",
+        "expect": "(2, 1)"
+      },
+      {
+        "name": "the rows are unaffected by the column choice",
+        "files": {
+          "wide.csv": "name,city,score,notes\na,b,1,n\nc,d,2,n\ne,f,3,n\n"
+        },
+        "call": "narrow(\"wide.csv\", [\"name\"])",
+        "expect": "(3, 1)"
+      },
+      {
+        "name": "usecols does the narrowing",
+        "kind": "ast",
+        "requires": {
+          "calls": [
+            "read_csv"
+          ]
+        },
+        "describe": "read_csv asked for the columns"
+      }
+    ],
+    "hint": "pd.read_csv(path, usecols=keep) then .shape. Reading everything and then selecting gives the same shape but does all the work you were trying to avoid."
   },
   "questions": [
     {
@@ -37,35 +82,47 @@
       "choices": [
         "Renames columns",
         "Reads only the columns you name",
-        "Sorts columns",
-        "Drops rows"
+        "Sorts the columns",
+        "Sets the index"
       ],
       "answer": 1,
-      "explain": "It filters on the way in, so the columns you do not want are never built at all."
+      "explain": "Less memory, and fewer unchecked columns to surprise you later."
     },
     {
       "id": "d5-swn-2",
-      "prompt": "What does df.rename(columns={...}) return?",
+      "prompt": "How do you rename several columns at once?",
       "choices": [
-        "Nothing, it renames in place",
-        "A new table with the new names",
-        "A list of names",
-        "An error"
+        "df.columns = new",
+        "df.rename(columns={old: new, ...})",
+        "df.set_names()",
+        "Both of the first two work"
       ],
-      "answer": 1,
-      "explain": "Like drop, it hands back a copy. Forgetting to reassign is why a rename can appear to do nothing."
+      "answer": 3,
+      "explain": "Assigning to df.columns replaces all of them positionally; rename maps the ones you name and leaves the rest."
     },
     {
       "id": "d5-swn-3",
-      "prompt": "Why tidy column names at all?",
+      "prompt": "An id column of 007 read normally becomes what?",
       "choices": [
-        "pandas requires it",
-        "So every later line can use the same predictable name",
-        "It saves memory",
-        "It sorts the table"
+        "\"007\"",
+        "7",
+        "NaN",
+        "An error"
       ],
       "answer": 1,
-      "explain": "A name with a space or a capital has to be quoted and remembered exactly. Tidying once means the rest of the analysis stops thinking about it."
+      "explain": "It is read as a number, and numbers have no leading zeros. dtype={\"id\": str} keeps it as text."
+    },
+    {
+      "id": "d5-swn-4",
+      "prompt": "Why does an id read as a number in one file and text in another matter?",
+      "choices": [
+        "It does not",
+        "A later join will match nothing, and will not raise",
+        "It doubles the memory",
+        "It changes the row order"
+      ],
+      "answer": 1,
+      "explain": "3 and \"3\" are different keys. The merge succeeds with an empty result, which is the quietest failure in unit 8."
     }
   ]
 }

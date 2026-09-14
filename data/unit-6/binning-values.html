@@ -173,35 +173,130 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Divide a numeric range into labelled bands with <code>cut</code>.</li>
+<li>Say which side of a boundary a value falls on.</li>
+<li>Choose between equal-width and equal-frequency bands.</li>
+<li>Count how many landed in each band.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>You cannot count a continuous measurement — every value is its own group. Binning is what turns "age" into "age group" and "score" into "grade", and the edges you choose are an argument you are making about the data, which is why cut makes you write them down.</p>
+</div>
 
 <div class="content-section">
 <h2>cut divides a range into labelled bands</h2>
 <p>Grades, age groups and price brackets are all the same operation: choose the edges, name the bands.</p>
+<h3 class="h4">Edges and labels</h3>
+<p>There is always one more edge than there are labels, because each band sits between two edges.</p>
 <pre class="code"><code>import pandas as pd
 
-scores = pd.Series([95, 82, 71])
-bands = pd.cut(scores, bins=[0, 79, 89, 100], labels=["C", "B", "A"])
+scores = pd.Series([95, 85, 75, 60])
+bands = pd.cut(scores, bins=[-1, 69, 79, 89, 100],
+               labels=["F", "C", "B", "A"])
 print(bands.tolist())</code></pre>
+<h3 class="h4">Counting the bands</h3>
+<p>This is what the binning was for. <code>value_counts</code> on the banded column gives the distribution.</p>
+<pre class="code"><code>import pandas as pd
 
+scores = pd.Series([95, 85, 75, 60, 92])
+bands = pd.cut(scores, bins=[-1, 69, 79, 89, 100],
+               labels=["F", "C", "B", "A"])
+print(bands.value_counts().sort_index())</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Band and count</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Band these scores into the four grades and print how many are in each.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\nscores = pd.Series([95, 85, 75, 60, 92, 88])\nbands = pd.cut(scores, bins=[-1, 69, 79, 89, 100], labels=[&quot;F&quot;, &quot;C&quot;, &quot;B&quot;, &quot;A&quot;])\n\nprint(bands.tolist())\nprint(None)   # how many in each band\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+scores = pd.Series([95, 85, 75, 60, 92, 88])
+bands = pd.cut(scores, bins=[-1, 69, 79, 89, 100], labels=["F", "C", "B", "A"])
+
+print(bands.tolist())
+print(None)   # how many in each band
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>The edges are a decision</h2>
-<p>Whether 89 is a B or an A is your call, and cut makes you write it down. right=True, the default, means the upper edge belongs to the band.</p>
+<p>Whether 89 is a B or an A is your call, and <code>cut</code> makes you write it down rather than leaving it implied.</p>
+<h3 class="h4">Which side a boundary falls on</h3>
+<p>By default each band includes its right-hand edge and excludes its left. So with an edge at 89, a score of 89 is in the band ending at 89 — and 90 starts the next one.</p>
 <pre class="code"><code>import pandas as pd
 
-s = pd.Series([89])
-print(pd.cut(s, bins=[0, 89, 100], labels=["low", "high"]).tolist())</code></pre>
+edges = [-1, 69, 79, 89, 100]
+labels = ["F", "C", "B", "A"]
+print(pd.cut(pd.Series([89, 90]), bins=edges, labels=labels).tolist())</code></pre>
+<p class="note">The lowest edge is -1 rather than 0 so that a score of exactly 0 has a band. An edge equal to the lowest possible value excludes it, and the result is NaN.</p>
+<h3 class="h4">Anything outside the edges is NaN</h3>
+<p>Not an error — a value with no band. Worth counting, because it usually means the edges did not cover the real range.</p>
+<pre class="code"><code>import pandas as pd
 
+banded = pd.cut(pd.Series([50, 150]), bins=[0, 100], labels=["in range"])
+print(banded.tolist())
+print("unbanded:", int(banded.isna().sum()))</code></pre>
+<h3 class="h4">Equal width, or equal counts</h3>
+<p><code>cut</code> with a number makes bands of equal width. <code>qcut</code> makes bands holding roughly equal numbers of rows. They answer different questions and can look very different on skewed data.</p>
+<pre class="code"><code>import pandas as pd
+
+values = pd.Series([1, 2, 3, 4, 100])
+print(pd.cut(values, bins=2).value_counts().tolist())
+print(pd.qcut(values, q=2).value_counts().tolist())</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Equal width against equal counts</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>This column has one large outlier. Band it both ways and compare how many land in each band.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\nvalues = pd.Series([1, 2, 3, 4, 100])\n\nprint(pd.cut(values, bins=2).value_counts().tolist())\nprint(pd.qcut(values, q=2).value_counts().tolist())\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+values = pd.Series([1, 2, 3, 4, 100])
+
+print(pd.cut(values, bins=2).value_counts().tolist())
+print(pd.qcut(values, q=2).value_counts().tolist())
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
-<p>Write <code>grade(scores)</code> that returns a list of letter grades: 90 and above is an A, 80 to 89 a B, 70 to 79 a C, and anything below that an F.</p>
+<h3 class="h4">Exercise 1: Letter grades</h3>
+<p>Write <code>grade(scores)</code> that returns a list of letter grades: 90 and above is an A, 80 to 89 a B, 70 to 79 a C, and anything below 70 an F.</p>
 <p class="hint-text">cut with edges at -1, 69, 79, 89 and 100 puts each boundary score in the band above it, because the right-hand edge belongs to its band.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
@@ -222,6 +317,32 @@ print(grade(pd.Series([95, 85, 75, 60])))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: How many in each band</h3>
+<p>Write <code>band_counts(scores)</code> that bands the scores into the same four grades and returns a dictionary from grade to how many scored it. A grade nobody reached still appears, with 0.</p>
+<p class="hint-text">cut gives a categorical column, and value_counts on it keeps every category including the empty ones. Sort by the category order and build the dict with int() values.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef band_counts(scores):\n    # {&quot;F&quot;: n, &quot;C&quot;: n, &quot;B&quot;: n, &quot;A&quot;: n}\n    return {}\n\nprint(band_counts(pd.Series([95, 85, 60])))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def band_counts(scores):
+    # {"F": n, "C": n, "B": n, "A": n}
+    return {}
+
+print(band_counts(pd.Series([95, 85, 60])))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

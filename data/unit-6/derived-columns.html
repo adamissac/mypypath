@@ -173,36 +173,126 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Build a column from arithmetic between other columns.</li>
+<li>Divide a column by one of its own summaries.</li>
+<li>Use <code>assign</code> when you want to keep a chain going.</li>
+<li>Say why a rate is usually more comparable than a total.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Files hold what was recorded; questions are about rates, shares and differences. "Which region sells most" and "which region sells most per head" are different questions with different answers, and only one of them is in the file.</p>
+</div>
 
 <div class="content-section">
 <h2>Arithmetic between columns</h2>
-<p>Columns combine row by row, so a rate, a total or a difference is one line.</p>
+<p>Columns combine row by row, so a rate, a total or a difference is one expression.</p>
+<h3 class="h4">Two columns in, one out</h3>
+<p>The alignment is by index, so the rows always line up with themselves.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"price": [10.0, 20.0], "quantity": [3, 1]})
-df["total"] = df["price"] * df["quantity"]
-print(df["total"].tolist())</code></pre>
+df = pd.DataFrame({"sales": [100.0, 90.0], "people": [4, 3]})
+df["per_person"] = df["sales"] / df["people"]
+print(df)</code></pre>
+<h3 class="h4">A column against its own total</h3>
+<p>Dividing a column by its sum broadcasts the single total across every row, giving each row's share.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"amount": [25.0, 75.0]})
+df["share"] = df["amount"] / df["amount"].sum() * 100
+print(df)</code></pre>
+<h3 class="h4">Why the rate is the fairer comparison</h3>
+<p>The biggest total is often just the biggest region. Per head, the ranking can reverse entirely — and that reversal is usually the finding.</p>
+<pre class="code"><code>import pandas as pd
+
+df = pd.DataFrame({"region": ["A", "B"], "sales": [1000.0, 300.0], "people": [500, 50]})
+df["per_person"] = df["sales"] / df["people"]
+print(df)</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Total against rate</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Add a <code>per_person</code> column, then print the region with the highest total and the region with the highest rate. They are not the same.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;region&quot;: [&quot;A&quot;, &quot;B&quot;], &quot;sales&quot;: [1000.0, 300.0], &quot;people&quot;: [500, 50]})\n\ndf[&quot;per_person&quot;] = df[&quot;sales&quot;] / df[&quot;people&quot;]\nprint(df.loc[df[&quot;sales&quot;].idxmax(), &quot;region&quot;])\nprint(None)   # highest per_person\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+df = pd.DataFrame({"region": ["A", "B"], "sales": [1000.0, 300.0], "people": [500, 50]})
+
+df["per_person"] = df["sales"] / df["people"]
+print(df.loc[df["sales"].idxmax(), "region"])
+print(None)   # highest per_person
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>assign keeps the chain going</h2>
-<p>assign returns a new table with the column added, which is useful when you do not want to name an intermediate.</p>
+<p><code>assign</code> returns a new table with the column added, which is useful when you are building a pipeline rather than editing a variable.</p>
+<h3 class="h4">One expression, several steps</h3>
+<p>Each step hands a table to the next, and nothing in between needs a name. It also leaves the original alone, which the plain assignment form does not.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"price": [10.0], "quantity": [2]})
-out = df.assign(total=df["price"] * df["quantity"])
-print(out["total"].tolist())</code></pre>
+df = pd.DataFrame({"sales": [1000.0, 300.0], "people": [500, 50]})
 
+result = (df
+          .assign(per_person=lambda d: d["sales"] / d["people"])
+          .sort_values("per_person", ascending=False))
+print(result)
+print(list(df.columns))   # untouched</code></pre>
+<p class="note">The lambda receives the table as it is at that point in the chain, which is what lets a later assign use a column an earlier one just made.</p>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: A chain with assign</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Build the same per-person column with <code>assign</code>, sort by it, and confirm the original table is unchanged.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;sales&quot;: [1000.0, 300.0], &quot;people&quot;: [500, 50]})\n\nresult = df.assign(per_person=lambda d: d[&quot;sales&quot;] / d[&quot;people&quot;])\nprint(result)\nprint(list(df.columns))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+df = pd.DataFrame({"sales": [1000.0, 300.0], "people": [500, 50]})
+
+result = df.assign(per_person=lambda d: d["sales"] / d["people"])
+print(result)
+print(list(df.columns))
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
-<p>Write <code>percent_of_total(df)</code> returning each row's <code>amount</code> as a percentage of the column total, rounded to one decimal place, as a list.</p>
+<h3 class="h4">Exercise 1: Each row as a share of the total</h3>
+<p>Write <code>percent_of_total(df)</code> returning each row's <code>amount</code> as a percentage of the column total, rounded to one decimal place.</p>
 <p class="hint-text">Divide the column by its own sum and multiply by 100. The division broadcasts the single total across every row.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
@@ -223,6 +313,32 @@ print(percent_of_total(pd.DataFrame({"amount": [25.0, 75.0]})))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: The best rate, not the biggest total</h3>
+<p>Write <code>best_rate(df)</code> returning the <code>region</code> with the highest sales per person, where the table has <code>region</code>, <code>sales</code> and <code>people</code> columns.</p>
+<p class="hint-text">Build the rate as a column, then use idxmax to get the row label of the highest and read the region off it. Ranking on sales alone is what the third hidden case catches.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef best_rate(df):\n    # The region with the highest sales per person.\n    return None\n\nprint(best_rate(pd.DataFrame({&quot;region&quot;: [&quot;A&quot;, &quot;B&quot;], &quot;sales&quot;: [1000.0, 300.0], &quot;people&quot;: [500, 50]})))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def best_rate(df):
+    # The region with the highest sales per person.
+    return None
+
+print(best_rate(pd.DataFrame({"region": ["A", "B"], "sales": [1000.0, 300.0], "people": [500, 50]})))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

@@ -173,35 +173,138 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Say what <code>apply</code> does and what it costs.</li>
+<li>Reach for <code>.str</code> and <code>.dt</code> methods before reaching for apply.</li>
+<li>Recognise the cases where apply genuinely is the answer.</li>
+<li>Rewrite an apply as a vectorised expression.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>apply is the first thing people find, because it lets you write ordinary Python over a column. It is also a Python loop wearing a pandas coat, and on a large table it can be a hundred times slower than the built-in it replaced. Knowing what it costs is what makes reaching for it a choice rather than a habit.</p>
+</div>
 
 <div class="content-section">
 <h2>apply runs your function per value</h2>
-<p>It is flexible and it is a Python loop underneath, so it costs far more than the vectorised version when one exists.</p>
+<p>It is flexible and it is a Python loop underneath, so it costs far more than the vectorised operation it usually replaces.</p>
+<h3 class="h4">What it does</h3>
+<p>Your function is called once per element, in Python, and the results are collected into a new Series.</p>
 <pre class="code"><code>import pandas as pd
 
-s = pd.Series([1, 2, 3])
-print(s.apply(lambda x: x * 2).tolist())
-print((s * 2).tolist())</code></pre>
+scores = pd.Series([92, 88, 79])
+print(scores.apply(lambda s: s + 5))
+print(scores + 5)          # the same answer, without the loop</code></pre>
+<h3 class="h4">axis=1 is the expensive one</h3>
+<p>Applying across rows builds a Series object per row and calls your function with it. On a large table this is the slowest thing in this course.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"a": [1, 2], "b": [10, 20]})
+print(df.apply(lambda r: r["a"] + r["b"], axis=1))
+print(df["a"] + df["b"])   # the same answer, vectorised</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: The same answer, two ways</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Double this column with <code>apply</code> and then without it, and check the results match.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\nscores = pd.Series([92, 88, 79])\n\nby_apply = scores.apply(lambda s: s * 2)\nby_column = None\n\nprint(by_apply.tolist())\nprint(by_column)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+scores = pd.Series([92, 88, 79])
+
+by_apply = scores.apply(lambda s: s * 2)
+by_column = None
+
+print(by_apply.tolist())
+print(by_column)
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Reach for the built-in first</h2>
-<p>Arithmetic, comparisons, .str methods and .dt methods all have vectorised forms. apply earns its place when the logic genuinely is not expressible that way.</p>
+<p>Arithmetic, comparisons, <code>.str</code> methods and <code>.dt</code> methods all have vectorised forms. Almost every apply people write is one of these.</p>
+<h3 class="h4">The .str accessor</h3>
+<p>Every string method you know, applied to a whole column, without a loop and without apply.</p>
 <pre class="code"><code>import pandas as pd
 
 names = pd.Series([" Ada ", "GRACE"])
-print(names.str.strip().str.lower().tolist())</code></pre>
+print(names.str.strip().str.lower())
+print(names.str.len())
+print(names.str.contains("A"))</code></pre>
+<h3 class="h4">Choosing between values</h3>
+<p><code>np.where</code> and <code>.map</code> cover the two cases people usually reach for apply to solve: a two-way choice, and a lookup.</p>
+<pre class="code"><code>import pandas as pd
+import numpy as np
 
+scores = pd.Series([92, 60])
+print(np.where(scores &gt;= 70, "pass", "fail"))
+
+codes = pd.Series(["L", "Y"])
+print(codes.map({"L": "Leeds", "Y": "York"}))</code></pre>
+<h3 class="h4">When apply really is the answer</h3>
+<p>When the operation genuinely has no vectorised form — parsing an awkward string format, calling an external function, anything with real branching per row — apply is the right tool and there is nothing to feel bad about. It is the unconsidered apply that costs.</p>
+<pre class="code"><code>import pandas as pd
+
+def band(row):
+    if row["score"] &gt; 90 and row["city"] == "L":
+        return "local star"
+    return "other"
+
+df = pd.DataFrame({"score": [92, 92], "city": ["L", "Y"]})
+print(df.apply(band, axis=1).tolist())</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Rewrite without apply</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Each of these uses apply for something with a built-in. Rewrite all three.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\nnames = pd.Series([&quot; Ada &quot;, &quot;GRACE&quot;])\n\nprint(names.apply(lambda n: n.strip()).tolist())\nprint(names.apply(lambda n: len(n)).tolist())\nprint(names.apply(lambda n: n.lower()).tolist())\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+names = pd.Series([" Ada ", "GRACE"])
+
+print(names.apply(lambda n: n.strip()).tolist())
+print(names.apply(lambda n: len(n)).tolist())
+print(names.apply(lambda n: n.lower()).tolist())
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
-<p>Write <code>clean_names(names)</code> that takes a Series of names and returns a list with the spaces trimmed and everything lowercased, without using apply.</p>
+<h3 class="h4">Exercise 1: Clean a column of names</h3>
+<p>Write <code>clean_names(names)</code> that takes a Series of names and returns a list with the spaces trimmed and everything lowercased. Use the vectorised string methods rather than apply.</p>
 <p class="hint-text">names.str.strip().str.lower() does both steps to the whole column, and .tolist() hands back plain strings.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
@@ -222,6 +325,33 @@ print(clean_names(pd.Series([" Ada ", "GRACE"])))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Pass or fail, without a loop</h3>
+<p>Write <code>verdicts(scores, mark)</code> returning a list of <code>"pass"</code> or <code>"fail"</code> for each score, using a vectorised two-way choice rather than apply.</p>
+<p class="hint-text">np.where(scores &gt;= mark, "pass", "fail") makes the whole column at once. Finish with .tolist() so the result is plain Python strings rather than numpy ones.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\nimport numpy as np\n\ndef verdicts(scores, mark):\n    # &quot;pass&quot; at or above the mark, &quot;fail&quot; below.\n    return []\n\nprint(verdicts(pd.Series([92, 60]), 70))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+import numpy as np
+
+def verdicts(scores, mark):
+    # "pass" at or above the mark, "fail" below.
+    return []
+
+print(verdicts(pd.Series([92, 60]), 70))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

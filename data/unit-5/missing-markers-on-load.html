@@ -173,34 +173,145 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>List what pandas already treats as missing.</li>
+<li>Name a file's own missing markers at load time.</li>
+<li>Explain why an unnamed marker costs you the whole column.</li>
+<li>Count what is missing before deciding what to do about it.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Every file writes "we do not know" differently: blank, n/a, N/A, -, ., NULL, 999. pandas knows some of them. The ones it does not know do not become missing values — they stay as text, and one of them is enough to turn a numeric column into strings and every calculation on it into nonsense.</p>
+</div>
 
 <div class="content-section">
 <h2>What counts as missing</h2>
-<p>pandas already treats an empty field and NA as missing. Real files also use n/a, -, unknown, or 999, and it has no way to guess which of those you meant.</p>
+<p>pandas already treats an empty field, <code>NA</code>, <code>NaN</code>, <code>NULL</code> and a few others as missing. Real files also use <code>n/a</code>, a single dash, a full stop, or a sentinel number like 999.</p>
+<h3 class="h4">The ones it knows</h3>
+<p>An empty field becomes NaN on its own, and the column stays numeric.</p>
 <pre class="code"><code>import pandas as pd
+from io import StringIO
 
-df = pd.read_csv("scores.csv", na_values=["n/a", "unknown", "-"])
-print(df["score"].isna().sum())</code></pre>
+text = "name,score\nAda,92\nGrace,\n"
+df = pd.read_csv(StringIO(text))
+print(df)
+print(df.dtypes)</code></pre>
+<h3 class="h4">Naming your own</h3>
+<p><code>na_values</code> adds to the list. Doing it at load time means the column is numeric from the start, rather than being repaired afterwards.</p>
+<pre class="code"><code>import pandas as pd
+from io import StringIO
 
+text = "name,score\nAda,92\nGrace,n/a\n"
+df = pd.read_csv(StringIO(text), na_values=["n/a", "-", "."])
+print(df)
+print(df.dtypes)</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Name the markers</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>This file uses two different markers. Load it so that both become missing and the column stays numeric.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\nfrom io import StringIO\n\ntext = &quot;name,score\\nAda,92\\nGrace,n/a\\nAlan,-\\n&quot;\n\ndf = pd.read_csv(StringIO(text))\nprint(df.dtypes)\n\n# Now load it again, naming both markers:\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+from io import StringIO
+
+text = "name,score\nAda,92\nGrace,n/a\nAlan,-\n"
+
+df = pd.read_csv(StringIO(text))
+print(df.dtypes)
+
+# Now load it again, naming both markers:
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>A missing marker left unnamed poisons the column</h2>
-<p>One "n/a" in a numeric column makes the whole column text, and every calculation on it then either fails or is wrong. Naming the marker on load is cheaper than converting afterwards.</p>
+<p>One <code>"n/a"</code> in a numeric column makes the whole column text, and every calculation on it is then wrong in a way that does not raise.</p>
+<h3 class="h4">The damage</h3>
+<p>Compare these two loads of the same file. The only difference is whether the marker was named.</p>
+<pre class="code"><code>import pandas as pd
+from io import StringIO
+
+text = "name,score\nAda,92\nGrace,n/a\nAlan,79\n"
+
+bad = pd.read_csv(StringIO(text))
+print(bad["score"].dtype, "|", bad["score"].sum())
+
+good = pd.read_csv(StringIO(text), na_values=["n/a"])
+print(good["score"].dtype, "|", good["score"].sum())</code></pre>
+<p class="note">The first sum concatenated three strings. It did not raise, and on a real file it would have produced a number-shaped answer you might have believed.</p>
+<h3 class="h4">Count before you decide</h3>
+<p>How much is missing is a fact about your data and usually belongs in the write-up. Find it before you fill or drop anything, because afterwards it is gone.</p>
+<pre class="code"><code>import pandas as pd
+from io import StringIO
+
+text = "name,score\nAda,92\nGrace,n/a\nAlan,79\n"
+df = pd.read_csv(StringIO(text), na_values=["n/a"])
+
+print(df.isna().sum())
+print("rows with a score:", int(df["score"].notna().sum()))</code></pre>
+<h3 class="h4">The sentinel that looks like data</h3>
+<p>A missing marker of 999 or -1 is the dangerous kind: the column stays numeric, nothing looks wrong, and the mean is quietly ruined. Only knowing the file catches it.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.read_csv("scores.csv", na_values=["n/a"])
-print(df["score"].dtype)
-print(df["score"].mean())</code></pre>
+with_sentinel = pd.Series([92, 88, 999])
+print(with_sentinel.mean())
 
+cleaned = pd.Series([92, 88, 999]).replace(999, None)
+print(cleaned.mean())</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: How much is missing</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Print the count of missing values per column, and the total across the whole table.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\nfrom io import StringIO\n\ntext = &quot;name,score,city\\nAda,92,\\nGrace,,Leeds\\n&quot;\ndf = pd.read_csv(StringIO(text))\n\nprint(df.isna().sum())\nprint(None)   # the total across every column\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+from io import StringIO
+
+text = "name,score,city\nAda,92,\nGrace,,Leeds\n"
+df = pd.read_csv(StringIO(text))
+
+print(df.isna().sum())
+print(None)   # the total across every column
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Count the known scores</h3>
 <p>A file <code>scores.csv</code> uses <code>n/a</code> for a missing score. Write <code>known_scores(path)</code> that returns how many rows have a score.</p>
 <p class="hint-text">Name "n/a" in na_values so it loads as missing, then count what is left with notna().sum() or by dropping the missing rows.</p>
 
@@ -222,6 +333,32 @@ print(known_scores("scores.csv"))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: The mean without the sentinel</h3>
+<p>A file <code>readings.csv</code> uses <code>999</code> to mean "no reading". Write <code>true_mean(path)</code> that returns the mean of the real readings, rounded to two decimal places. The column is numeric either way, so nothing will warn you.</p>
+<p class="hint-text">na_values=[999] at load time turns the sentinel into NaN, and mean() skips NaN. Filtering with != 999 works too; naming it at load is the habit that scales.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef true_mean(path):\n    # The mean, with 999 treated as missing.\n    return 0.0\n\nprint(true_mean(&quot;readings.csv&quot;))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def true_mean(path):
+    # The mean, with 999 treated as missing.
+    return 0.0
+
+print(true_mean("readings.csv"))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

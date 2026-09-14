@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Turning a measurement into a band you can count.",
+    "prompt": "Binning Values: Letter grades",
     "packages": [
       "pandas"
     ],
@@ -30,42 +30,85 @@
     ],
     "hint": "cut with edges at -1, 69, 79, 89 and 100 puts each boundary score in the band above it, because the right-hand edge belongs to its band."
   },
+  "exercise2": {
+    "prompt": "Binning Values: How many in each band",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "band_counts(__import__(\"pandas\").Series([95, 85, 60]))",
+        "expect": "{'F': 1, 'C': 0, 'B': 1, 'A': 1}"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a grade nobody reached is still reported",
+        "call": "band_counts(__import__(\"pandas\").Series([100]))",
+        "expect": "{'F': 0, 'C': 0, 'B': 0, 'A': 1}"
+      },
+      {
+        "name": "everyone in one band",
+        "call": "band_counts(__import__(\"pandas\").Series([95, 92]))",
+        "expect": "{'F': 0, 'C': 0, 'B': 0, 'A': 2}"
+      },
+      {
+        "name": "the counts are plain integers",
+        "call": "all(type(v).__name__ == \"int\" for v in band_counts(__import__(\"pandas\").Series([95])).values())",
+        "expect": "True"
+      }
+    ],
+    "hint": "cut gives a categorical column, and value_counts on it keeps every category including the empty ones. Sort by the category order and build the dict with int() values."
+  },
   "questions": [
     {
       "id": "d6-bv-1",
       "prompt": "What does pd.cut do?",
       "choices": [
         "Removes rows",
-        "Sorts values into labelled bands",
-        "Trims text",
-        "Splits a table"
+        "Turns a numeric column into labelled bands",
+        "Sorts the values",
+        "Splits the table"
       ],
       "answer": 1,
-      "explain": "It converts a continuous measurement into a category you can count and group by."
+      "explain": "Which is what lets you count a continuous measurement, where every raw value would otherwise be its own group."
     },
     {
       "id": "d6-bv-2",
-      "prompt": "With the default right=True, which band does a value equal to an edge fall into?",
+      "prompt": "How many edges do four bands need?",
       "choices": [
-        "The band below the edge",
-        "The band above it",
-        "Neither",
-        "Both"
+        "Four",
+        "Five",
+        "Three",
+        "Eight"
       ],
-      "answer": 0,
-      "explain": "The right-hand edge belongs to its own band, so a score of 89 with an edge at 89 is in the band that ends there. Getting this backwards moves everyone on a boundary."
+      "answer": 1,
+      "explain": "Each band sits between two edges, so there is always one more edge than label."
     },
     {
       "id": "d6-bv-3",
-      "prompt": "Why does binning make the boundary decision explicit?",
+      "prompt": "Which side of a band does a boundary value fall on, by default?",
       "choices": [
-        "It does not",
-        "You have to write the edges down, so the choice is visible and reviewable",
-        "pandas picks them",
-        "It rounds"
+        "The lower band — the right edge belongs to its band",
+        "The upper band",
+        "Neither, it is NaN",
+        "It raises"
+      ],
+      "answer": 0,
+      "explain": "Bands are right-inclusive by default, which is why grade edges are written at 69, 79 and 89 rather than 70, 80 and 90."
+    },
+    {
+      "id": "d6-bv-4",
+      "prompt": "What is the difference between cut and qcut?",
+      "choices": [
+        "None",
+        "cut makes equal-width bands; qcut makes bands with roughly equal counts",
+        "qcut is faster",
+        "cut only takes integers"
       ],
       "answer": 1,
-      "explain": "A grade boundary buried in a chain of if statements is a decision nobody can find later. The bins list is that decision, written once."
+      "explain": "They answer different questions, and on skewed data they look very different."
     }
   ]
 }

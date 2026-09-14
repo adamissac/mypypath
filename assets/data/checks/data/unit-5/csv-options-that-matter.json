@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Separators, headers and the arguments you reach for on a real file.",
+    "prompt": "CSV Options That Matter: Count the rows in a tab-separated file",
     "packages": [
       "pandas"
     ],
@@ -36,42 +36,102 @@
     ],
     "hint": "Without sep=\"\\t\" the whole line lands in one column and you get one column and three rows -- the row count would look right and the table would be wrong. len(df) or df.shape[0] counts the rows."
   },
+  "exercise2": {
+    "prompt": "CSV Options That Matter: A file with no header",
+    "packages": [
+      "pandas"
+    ],
+    "files": {
+      "raw.csv": "Ada,92\nGrace,88\nAlan,79\n"
+    },
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "headerless(\"raw.csv\")",
+        "expect": "3"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a two-row file gives two rows",
+        "files": {
+          "raw.csv": "a,1\nb,2\n"
+        },
+        "call": "headerless(\"raw.csv\")",
+        "expect": "2"
+      },
+      {
+        "name": "a one-row file is not read as header only",
+        "files": {
+          "raw.csv": "solo,5\n"
+        },
+        "call": "headerless(\"raw.csv\")",
+        "expect": "1"
+      },
+      {
+        "name": "pandas does the reading",
+        "kind": "ast",
+        "requires": {
+          "imports": [
+            "pandas"
+          ],
+          "calls": [
+            "read_csv"
+          ]
+        },
+        "describe": "pd.read_csv rather than the answer typed in"
+      }
+    ],
+    "hint": "Supplying names= tells pandas there is no header to read. Reading it with neither argument takes your first row of data as the column names, and the count comes back one short."
+  },
   "questions": [
     {
       "id": "d5-cot-1",
-      "prompt": "What happens if you read a tab separated file without sep=\"\\t\"?",
+      "prompt": "A file separates fields with tabs. Which argument do you need?",
       "choices": [
-        "An error",
-        "One very wide column holding the whole line",
-        "The tabs are removed",
-        "The rows are skipped"
+        "delim=\"tab\"",
+        "sep=\"\\t\"",
+        "split=\"\\t\"",
+        "tab=True"
       ],
       "answer": 1,
-      "explain": "pandas splits on commas and finds none, so each line becomes a single value. shape tells you immediately: one column where you expected several."
+      "explain": "Without it the whole line lands in one column, and the load succeeds while the table is wrong."
     },
     {
       "id": "d5-cot-2",
       "prompt": "What does header=None do?",
       "choices": [
-        "Removes the header row",
-        "Stops the first row being used as column names",
-        "Hides the columns",
-        "Skips the first row"
+        "Removes the header from the file",
+        "Stops the first row being read as column names",
+        "Hides the column names",
+        "Raises if there is a header"
       ],
       "answer": 1,
-      "explain": "Without it, a file that has no header loses its first row of data to the column names, quietly."
+      "explain": "Without it, your first row of real data becomes the header and you are quietly one row short."
     },
     {
       "id": "d5-cot-3",
-      "prompt": "How do you check the separator was right?",
+      "prompt": "You loaded a six-column file and shape says (1000, 1). What is the likely cause?",
       "choices": [
-        "Read the file again",
-        "Look at df.shape and the column names",
-        "Count the bytes",
-        "You cannot"
+        "The file is corrupt",
+        "The separator is wrong",
+        "There are too many rows",
+        "The dtypes failed"
       ],
       "answer": 1,
-      "explain": "One column where you expected five is the signature of a wrong separator, and shape shows it in one line."
+      "explain": "Each line arrived unsplit as a single value. The shape said so before any of the numbers did."
+    },
+    {
+      "id": "d5-cot-4",
+      "prompt": "An export has a title line and a blank line above the header. What handles it?",
+      "choices": [
+        "skiprows=2",
+        "header=2",
+        "drop=2",
+        "Nothing, it is unreadable"
+      ],
+      "answer": 0,
+      "explain": "skiprows steps over the junk so the real header is where pandas expects it."
     }
   ]
 }

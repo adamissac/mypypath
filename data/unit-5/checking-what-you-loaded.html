@@ -173,37 +173,131 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Run the same four checks on any table you did not build.</li>
+<li>Use the distinct values of a category column as a fifth check.</li>
+<li>Say what each check would have caught.</li>
+<li>Report what you found, rather than only acting on it.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Every silent failure in this unit is caught by one of these checks, and together they take about four lines. The reason to make them a habit rather than a debugging step is that they are cheapest before you have built an analysis on top of the table, and most expensive after you have published one.</p>
+</div>
 
 <div class="content-section">
 <h2>The four questions</h2>
-<p>How many rows, what are the columns, what type is each, and how much is missing. Every import problem this unit covers shows up in one of those four answers.</p>
+<p>How many rows, what are the columns, what type is each, and how much is missing. In that order, because each one can make the next pointless.</p>
+<h3 class="h4">All four, in four lines</h3>
+<p>Shape first — a surprise here means stop and fix the load. Then dtypes, then the gaps.</p>
 <pre class="code"><code>import pandas as pd
+from io import StringIO
 
-df = pd.read_csv("scores.csv")
+text = "name,score,city\nAda,92,Leeds\nGrace,,York\nAlan,79,Leeds\n"
+df = pd.read_csv(StringIO(text))
+
 print(df.shape)
 print(list(df.columns))
 print(df.dtypes.to_dict())
 print(df.isna().sum().to_dict())</code></pre>
+<h3 class="h4">What each one would have caught</h3>
+<p>Shape catches a wrong separator and a lost header row. dtypes catches an unnamed missing marker and a numeric column read as text. The missing counts catch a column that is mostly empty — which is a fact worth reporting rather than a problem to fix silently.</p>
+<pre class="code"><code>import pandas as pd
+from io import StringIO
 
+# A wrong separator: one column, and the name is the whole header line.
+print(pd.read_csv(StringIO("a;b\n1;2\n")).shape)
+
+# An unnamed marker: the column is text, not numbers.
+print(pd.read_csv(StringIO("v\n1\nn/a\n"))["v"].dtype)</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: All four on one table</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Run all four checks on this table and say what each tells you. One of the columns is not the type it should be.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\nfrom io import StringIO\n\ntext = &quot;name,score\\nAda,92\\nGrace,n/a\\n&quot;\ndf = pd.read_csv(StringIO(text))\n\nprint(df.shape)\nprint(list(df.columns))\nprint(df.dtypes.to_dict())\nprint(df.isna().sum().to_dict())\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+from io import StringIO
+
+text = "name,score\nAda,92\nGrace,n/a\n"
+df = pd.read_csv(StringIO(text))
+
+print(df.shape)
+print(list(df.columns))
+print(df.dtypes.to_dict())
+print(df.isna().sum().to_dict())
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Distinct values catch the rest</h2>
-<p>For a column that should hold a handful of categories, the set of what is actually in there finds the stray spellings and the values nobody expected.</p>
+<p>For a column that should hold a handful of categories, the set of what is actually in it is the fastest way to find the fifth problem: the same thing spelled two ways.</p>
+<h3 class="h4">What is actually in there</h3>
+<p><code>value_counts</code> gives the distinct values and how common each is. Two spellings of one city show up immediately, and a group-by would otherwise have split them without a word.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"subject": ["maths", "Maths", "computing"]})
-print(sorted(df["subject"].unique()))</code></pre>
+city = pd.Series(["Leeds", "leeds", "York", "Leeds "])
+print(city.value_counts())
+print(city.nunique())</code></pre>
+<p class="note">Three of those four are the same city. Stripping whitespace and lowercasing before grouping is usually the fix, and knowing it was needed is the point of looking.</p>
+<h3 class="h4">A range check on the numbers</h3>
+<p>For a numeric column, min and max are the cheap version of the same question: are these values possible? A score of 999 or a negative age is a sentinel or an error, and both are easier to see here than in a mean.</p>
+<pre class="code"><code>import pandas as pd
 
+scores = pd.Series([92, 88, 999])
+print(scores.min(), scores.max(), round(scores.mean(), 2))</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Find the duplicate spelling</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Count the distinct cities, then count them again after stripping and lowercasing. The two numbers should differ.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ncity = pd.Series([&quot;Leeds&quot;, &quot;leeds&quot;, &quot;York&quot;, &quot;Leeds &quot;])\n\nprint(city.nunique())\nprint(None)   # after .str.strip().str.lower()\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+city = pd.Series(["Leeds", "leeds", "York", "Leeds "])
+
+print(city.nunique())
+print(None)   # after .str.strip().str.lower()
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
-<p>Write <code>load_report(path)</code> that reads a CSV and returns a tuple of the row count, the sorted column names, and how many values are missing in total.</p>
+<h3 class="h4">Exercise 1: A load report</h3>
+<p>Write <code>load_report(path)</code> that reads a CSV and returns a tuple of the row count, the sorted column names, and how many values are missing in the whole table.</p>
 <p class="hint-text">df.isna().sum() gives a count per column; summing that again gives the total. int() at the end keeps it a plain number.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
@@ -224,6 +318,32 @@ print(load_report("scores.csv"))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: How many distinct, really</h3>
+<p>Write <code>distinct_cities(path)</code> that reads a file with a <code>city</code> column and returns how many distinct cities it holds, treating values that differ only by surrounding spaces or capitals as the same.</p>
+<p class="hint-text">Read the column, then .str.strip().str.lower() before .nunique(). Counting without normalising first is the mistake the first hidden case checks.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef distinct_cities(path):\n    # Distinct cities, ignoring case and surrounding spaces.\n    return 0\n\nprint(distinct_cities(&quot;places.csv&quot;))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def distinct_cities(path):
+    # Distinct cities, ignoring case and surrounding spaces.
+    return 0
+
+print(distinct_cities("places.csv"))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

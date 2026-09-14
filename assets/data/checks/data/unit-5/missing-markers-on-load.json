@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Files write missing values in a dozen ways; na_values names yours.",
+    "prompt": "Missing Markers on Load: Count the known scores",
     "packages": [
       "pandas"
     ],
@@ -34,42 +34,110 @@
     ],
     "hint": "Name \"n/a\" in na_values so it loads as missing, then count what is left with notna().sum() or by dropping the missing rows."
   },
+  "exercise2": {
+    "prompt": "Missing Markers on Load: The mean without the sentinel",
+    "packages": [
+      "pandas"
+    ],
+    "files": {
+      "readings.csv": "value\n10\n20\n999\n"
+    },
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "true_mean(\"readings.csv\")",
+        "expect": "15.0"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "no sentinel leaves the mean alone",
+        "files": {
+          "readings.csv": "value\n2\n4\n"
+        },
+        "call": "true_mean(\"readings.csv\")",
+        "expect": "3.0"
+      },
+      {
+        "name": "several sentinels are all excluded",
+        "files": {
+          "readings.csv": "value\n5\n999\n999\n"
+        },
+        "call": "true_mean(\"readings.csv\")",
+        "expect": "5.0"
+      },
+      {
+        "name": "it rounds to two places",
+        "files": {
+          "readings.csv": "value\n1\n2\n"
+        },
+        "call": "true_mean(\"readings.csv\")",
+        "expect": "1.5"
+      },
+      {
+        "name": "pandas does the reading",
+        "kind": "ast",
+        "requires": {
+          "imports": [
+            "pandas"
+          ],
+          "calls": [
+            "read_csv"
+          ]
+        },
+        "describe": "pd.read_csv rather than the answer typed in"
+      }
+    ],
+    "hint": "na_values=[999] at load time turns the sentinel into NaN, and mean() skips NaN. Filtering with != 999 works too; naming it at load is the habit that scales."
+  },
   "questions": [
     {
       "id": "d5-mm-1",
-      "prompt": "Which of these does pandas treat as missing without being told?",
+      "prompt": "A file writes missing scores as \"n/a\". What happens if you do not say so?",
       "choices": [
-        "n/a",
-        "An empty field",
-        "unknown",
-        "999"
+        "pandas works it out",
+        "The column becomes text",
+        "The rows are dropped",
+        "It raises"
       ],
       "answer": 1,
-      "explain": "An empty field and a few spellings of NA are recognised. Anything your particular source invented has to be named in na_values."
+      "explain": "One unconvertible value takes the whole column to object, and then sum concatenates instead of adding."
     },
     {
       "id": "d5-mm-2",
-      "prompt": "What does one unrecognised \"n/a\" do to a numeric column?",
+      "prompt": "Which argument names a file’s own missing markers?",
       "choices": [
-        "Nothing",
-        "Makes the whole column text",
-        "Removes that row",
-        "Becomes zero"
+        "missing=",
+        "na_values=",
+        "nulls=",
+        "blanks="
       ],
       "answer": 1,
-      "explain": "The column has to hold one type, and the only type that fits both numbers and \"n/a\" is text. Every calculation after that is affected."
+      "explain": "It adds to the list pandas already knows, and doing it at load keeps the column numeric from the start."
     },
     {
       "id": "d5-mm-3",
-      "prompt": "What does s.notna().sum() count?",
+      "prompt": "What does df.isna().sum() give you?",
       "choices": [
-        "The missing values",
-        "The values that are present",
-        "All rows",
-        "The distinct values"
+        "One total",
+        "A count of missing values per column",
+        "The missing rows",
+        "True or False"
       ],
       "answer": 1,
-      "explain": "notna is a mask of \"has a value\", and summing a mask counts the True entries."
+      "explain": "isna gives a boolean frame, and summing a boolean column counts the Trues. Sum it twice for a single total."
+    },
+    {
+      "id": "d5-mm-4",
+      "prompt": "Why is a missing marker of 999 more dangerous than \"n/a\"?",
+      "choices": [
+        "It is longer",
+        "The column stays numeric, so nothing looks wrong and the mean is ruined",
+        "pandas cannot read it",
+        "It is not dangerous"
+      ],
+      "answer": 1,
+      "explain": "A text marker at least breaks the dtype and draws attention. A numeric sentinel is absorbed silently into every statistic."
     }
   ]
 }

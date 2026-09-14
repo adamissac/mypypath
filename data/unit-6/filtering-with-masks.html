@@ -173,33 +173,129 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Filter a table with a condition on one of its columns.</li>
+<li>Combine conditions with <code>&amp;</code> and <code>|</code>, bracketed.</li>
+<li>Say what happens to rows whose value is missing.</li>
+<li>Notice how many rows a filter dropped.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Filtering is the operation you will reach for more than any other, and it has exactly two traps: <code>and</code> does not work, and rows with NaN fall out of both a condition and its opposite. Both are worth meeting on purpose here rather than in an analysis whose totals do not add up.</p>
+</div>
 
 <div class="content-section">
 <h2>A condition on a column selects rows</h2>
-<p>The mask is one True or False per row, and putting it in the brackets keeps the rows it marked.</p>
+<p>The mask is one True or False per row, and putting it in the brackets keeps the rows it marked — the whole row, not just the column you tested.</p>
+<h3 class="h4">Mask, then select</h3>
+<p>Exactly the numpy idea from unit 3, with the difference that the unit of selection is a row.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"name": ["Ada", "Alan"], "score": [92, 79]})
-print(df[df["score"] &gt;= 85])</code></pre>
+df = pd.DataFrame({"name": ["Ada", "Grace", "Alan"], "score": [92, 88, 79]})
+mask = df["score"] &gt; 85
+print(mask)
+print(df[mask])</code></pre>
+<h3 class="h4">Count what you dropped</h3>
+<p>A filter that leaves three rows out of five hundred is either the answer or a bug, and the only way to tell is to look at the number.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"score": [92, 88, 79, 60]})
+kept = df[df["score"] &gt; 85]
+print(f"{len(kept)} of {len(df)} rows kept")</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: How many survived</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Filter to scores above 70 and print how many rows you kept out of how many you started with.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;score&quot;: [92, 88, 79, 60, 45]})\n\nkept = df[df[&quot;score&quot;] > 70]\nprint(len(kept), &quot;of&quot;, len(df))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+df = pd.DataFrame({"score": [92, 88, 79, 60, 45]})
+
+kept = df[df["score"] &gt; 70]
+print(len(kept), "of", len(df))
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Combining conditions</h2>
-<p>Use & and | rather than and and or, and bracket each condition. The plain keywords ask for one True or False and a column cannot give them that.</p>
+<p>Use <code>&amp;</code> and <code>|</code> rather than <code>and</code> and <code>or</code>, and bracket each condition.</p>
+<h3 class="h4">Two conditions</h3>
+<p>The brackets are required because <code>&amp;</code> binds more tightly than the comparison operators.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"score": [92, 79], "subject": ["maths", "maths"]})
-print(df[(df["score"] &gt;= 85) &amp; (df["subject"] == "maths")].shape)</code></pre>
+df = pd.DataFrame({"score": [92, 88, 79, 60], "city": ["L", "Y", "L", "Y"]})
+print(df[(df["score"] &gt; 70) &amp; (df["city"] == "L")])</code></pre>
+<h3 class="h4">Negating one</h3>
+<p><code>~</code> flips a mask. It is the readable way to say "everything except", and it is easier to check than rewriting the condition backwards.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"city": ["L", "Y", "L"]})
+print(df[~(df["city"] == "L")])</code></pre>
+<h3 class="h4">Where the missing rows go</h3>
+<p>A comparison with NaN is never True, so a row with a missing value falls out of the filter <em>and</em> out of its opposite. The two halves do not add up to the whole table, and nothing says so.</p>
+<pre class="code"><code>import pandas as pd
+import numpy as np
+
+df = pd.DataFrame({"score": [92, np.nan, 60]})
+high = df[df["score"] &gt; 80]
+low = df[df["score"] &lt;= 80]
+print(len(high), "+", len(low), "=", len(high) + len(low), "of", len(df))</code></pre>
+<p class="note">If the two halves have to account for every row, filter on <code>.notna()</code> first and report the missing ones separately, rather than letting them vanish.</p>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: The rows that vanish</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Run this and check whether the two halves add up to the whole table. Then fix it so they do.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\nimport numpy as np\n\ndf = pd.DataFrame({&quot;score&quot;: [92, np.nan, 60]})\n\nhigh = df[df[&quot;score&quot;] > 80]\nlow = df[df[&quot;score&quot;] <= 80]\nprint(len(high) + len(low), &quot;of&quot;, len(df))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+import numpy as np
+
+df = pd.DataFrame({"score": [92, np.nan, 60]})
+
+high = df[df["score"] &gt; 80]
+low = df[df["score"] &lt;= 80]
+print(len(high) + len(low), "of", len(df))
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: The names that passed</h3>
 <p>Write <code>passing_names(df, mark)</code> returning a list of names whose score is at least <code>mark</code>, in the order they appear.</p>
 <p class="hint-text">Mask the table, then take the name column of what survives and turn it into a list with .tolist().</p>
 
@@ -221,6 +317,32 @@ print(passing_names(pd.DataFrame({"name": ["Ada"], "score": [92]}), 85))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Account for every row</h3>
+<p>Write <code>split_counts(df, mark)</code> returning a three-element list of [at or above the mark, below it, missing a score]. The three must add up to the number of rows.</p>
+<p class="hint-text">Count the missing ones with .isna().sum() first, then the two comparisons. A comparison is never True for NaN, so those rows fall out of both and have to be counted separately.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef split_counts(df, mark):\n    # [passed, failed, unknown] -- and they must total len(df).\n    return [0, 0, 0]\n\nprint(split_counts(pd.DataFrame({&quot;score&quot;: [92, 60, None]}), 85))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def split_counts(df, mark):
+    # [passed, failed, unknown] -- and they must total len(df).
+    return [0, 0, 0]
+
+print(split_counts(pd.DataFrame({"score": [92, 60, None]}), 85))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

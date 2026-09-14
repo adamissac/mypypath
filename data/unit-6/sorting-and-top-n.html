@@ -173,33 +173,125 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Sort a table by one column, and by several.</li>
+<li>Say what <code>sort_values</code> returns.</li>
+<li>Take the top few rows with <code>nlargest</code>.</li>
+<li>Decide what happens to ties and to missing values.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>Sorting is where the "returns a new table" rule bites hardest, because a sort you forget to assign looks like a sort that did not work. And "the top five" is a question worth asking directly rather than by sorting everything and slicing.</p>
+</div>
 
 <div class="content-section">
 <h2>sort_values returns a new table</h2>
-<p>by names the column, ascending chooses the direction, and the original is untouched.</p>
+<p><code>by</code> names the column, <code>ascending</code> chooses the direction, and the original is untouched unless you reassign.</p>
+<h3 class="h4">The result is the point</h3>
+<p>Same rule as <code>drop</code> and <code>rename</code>. Calling it and ignoring the return is a no-op.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"name": ["Ada", "Alan"], "score": [92, 79]})
-print(df.sort_values("score", ascending=False)["name"].tolist())</code></pre>
+df.sort_values("score")
+print(df)                 # unchanged
+print(df.sort_values("score"))</code></pre>
+<h3 class="h4">Several columns, and ties</h3>
+<p>A list of columns sorts by the first, then breaks ties with the second. Without a tiebreaker the order among equal values is whatever it was — stable, but not meaningful.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"city": ["Y", "L", "L"], "name": ["Bo", "Zoe", "Ada"], "score": [88, 88, 92]})
+print(df.sort_values(["score", "name"], ascending=[False, True]))</code></pre>
+<h3 class="h4">Where missing values go</h3>
+<p>NaN sorts to the end by default, whichever direction you chose. <code>na_position="first"</code> changes it — and if the missing rows matter, saying so beats letting them sit quietly at the bottom.</p>
+<pre class="code"><code>import pandas as pd
+import numpy as np
+
+df = pd.DataFrame({"score": [92, np.nan, 79]})
+print(df.sort_values("score")["score"].tolist())
+print(df.sort_values("score", na_position="first")["score"].tolist())</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: The sort that did nothing</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Run this as it stands, then fix it so the table actually comes back sorted.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;, &quot;Alan&quot;], &quot;score&quot;: [92, 79]})\n\ndf.sort_values(&quot;score&quot;)\nprint(df)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+df = pd.DataFrame({"name": ["Ada", "Alan"], "score": [92, 79]})
+
+df.sort_values("score")
+print(df)
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>nlargest says what you meant</h2>
-<p>Sorting the whole table to look at three rows is more work than the question needs, and nlargest reads better besides.</p>
+<p>Sorting the whole table to look at three rows is more work than the question needs, and reads less clearly.</p>
+<h3 class="h4">The top few, directly</h3>
+<p>It takes the count and the column, and does both the ordering and the slice. Asking for more rows than exist gives you all of them rather than an error.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"name": ["Ada", "Grace", "Alan"], "score": [92, 88, 79]})
-print(df.nlargest(2, "score")["name"].tolist())</code></pre>
+print(df.nlargest(2, "score"))
+print(df.nlargest(10, "score").shape)</code></pre>
+<h3 class="h4">And the bottom few</h3>
+<p><code>nsmallest</code> is the same idea the other way up, and is clearer than sorting ascending and taking the head.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"name": ["Ada", "Grace", "Alan"], "score": [92, 88, 79]})
+print(df.nsmallest(1, "score")["name"].tolist())</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Top three, two ways</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Take the three highest scores by sorting and slicing, and then with <code>nlargest</code>. Check they agree.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;name&quot;: list(&quot;abcde&quot;), &quot;score&quot;: [5, 1, 9, 3, 7]})\n\nprint(df.sort_values(&quot;score&quot;, ascending=False).head(3)[&quot;name&quot;].tolist())\nprint(None)   # the same, with nlargest\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+df = pd.DataFrame({"name": list("abcde"), "score": [5, 1, 9, 3, 7]})
+
+print(df.sort_values("score", ascending=False).head(3)["name"].tolist())
+print(None)   # the same, with nlargest
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: The top scorers</h3>
 <p>Write <code>top_names(df, n)</code> returning the names of the <code>n</code> highest scorers, best first.</p>
 <p class="hint-text">nlargest takes the count and the column and does both the sort and the slice. Sorting ascending and taking the head gives you the worst, not the best.</p>
 
@@ -221,6 +313,32 @@ print(top_names(pd.DataFrame({"name": ["Ada", "Alan"], "score": [92, 79]}), 1))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Break the tie on purpose</h3>
+<p>Write <code>ranked(df)</code> returning every name ordered by score highest first, with ties broken by name alphabetically. Without the tiebreaker the order among equal scores is not meaningful.</p>
+<p class="hint-text">sort_values takes a list of columns and a matching list of directions: ["score", "name"] with ascending=[False, True].</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef ranked(df):\n    # Highest score first; equal scores in alphabetical order.\n    return []\n\nprint(ranked(pd.DataFrame({&quot;name&quot;: [&quot;Zoe&quot;, &quot;Ada&quot;], &quot;score&quot;: [88, 88]})))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def ranked(df):
+    # Highest score first; equal scores in alphabetical order.
+    return []
+
+print(ranked(pd.DataFrame({"name": ["Zoe", "Ada"], "score": [88, 88]})))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

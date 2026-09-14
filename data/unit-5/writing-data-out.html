@@ -173,35 +173,130 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Write a table to CSV.</li>
+<li>Say what <code>to_csv</code> writes that you did not ask for.</li>
+<li>Decide when the index is worth keeping.</li>
+<li>Write only the columns a reader needs.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>The file you write is the one someone else reads, including you next month. An unnamed index column read back as data is the most common way a saved result quietly grows a junk column every time it goes round the loop.</p>
+</div>
 
 <div class="content-section">
 <h2>to_csv writes the index too</h2>
-<p>By default the index becomes an unnamed first column. Reading that file back gives you a stray "Unnamed: 0", which is where most mysterious extra columns come from.</p>
+<p>By default the index becomes an unnamed first column. Reading that file back gives you a column called <code>Unnamed: 0</code>.</p>
+<h3 class="h4">The extra column</h3>
+<p>Nothing is wrong with the data; there is simply a column of row numbers in the file that was never part of your table.</p>
+<pre class="code"><code>import pandas as pd
+
+df = pd.DataFrame({"name": ["Ada"], "score": [92]})
+df.to_csv("out.csv")
+print(open("out.csv").read())</code></pre>
+<h3 class="h4">Round-tripping makes it worse</h3>
+<p>Read it back, write it again, and you have two junk columns. This is how a file ends up with <code>Unnamed: 0</code>, <code>Unnamed: 0.1</code> and so on.</p>
+<pre class="code"><code>import pandas as pd
+
+pd.DataFrame({"name": ["Ada"]}).to_csv("out.csv")
+back = pd.read_csv("out.csv")
+print(list(back.columns))
+back.to_csv("out2.csv")
+print(list(pd.read_csv("out2.csv").columns))</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: See the extra column</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Write this table with the default settings, read it back, and print the columns you got.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;, &quot;Grace&quot;], &quot;score&quot;: [92, 88]})\ndf.to_csv(&quot;out.csv&quot;)\n\nprint(open(&quot;out.csv&quot;).read())\nprint(list(pd.read_csv(&quot;out.csv&quot;).columns))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+df = pd.DataFrame({"name": ["Ada", "Grace"], "score": [92, 88]})
+df.to_csv("out.csv")
+
+print(open("out.csv").read())
+print(list(pd.read_csv("out.csv").columns))
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>
+
+<div class="content-section">
+<h2>Write what you meant to write</h2>
+<p><code>index=False</code> keeps the row numbers out, and <code>columns=</code> picks what goes.</p>
+<h3 class="h4">Without the index</h3>
+<p>When the index is just 0, 1, 2 it carries nothing and should not be written.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"name": ["Ada"], "score": [92]})
 df.to_csv("out.csv", index=False)
 print(open("out.csv").read())</code></pre>
+<h3 class="h4">When the index should be written</h3>
+<p>If the index is the label for the row — a date, a name, an id — then dropping it loses information. Keep it, and give it a name so the column has a header.</p>
+<pre class="code"><code>import pandas as pd
+
+df = pd.DataFrame({"score": [92, 88]}, index=["Ada", "Grace"])
+df.index.name = "name"
+df.to_csv("out.csv")
+print(open("out.csv").read())</code></pre>
+<h3 class="h4">Only the columns that matter</h3>
+<p>A result for a reader is usually narrower than the table you worked in.</p>
+<pre class="code"><code>import pandas as pd
+
+df = pd.DataFrame({"name": ["Ada"], "score": [92], "scratch": [0]})
+df.to_csv("out.csv", index=False, columns=["name", "score"])
+print(open("out.csv").read())</code></pre>
 
 </div>
 
-<div class="content-section">
-<h2>Write what you meant to write</h2>
-<p>columns= picks what goes out, and index=False keeps the row numbers out of it unless they mean something.</p>
-<pre class="code"><code>import pandas as pd
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: A clean round trip</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Write it again without the index, read it back, and confirm the columns match what you started with.</p>
 
-df = pd.DataFrame({"name": ["Ada"], "score": [92], "note": ["x"]})
-df.to_csv("out.csv", index=False, columns=["name", "score"])
-print(open("out.csv").read().strip())</code></pre>
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;, &quot;Grace&quot;], &quot;score&quot;: [92, 88]})\n\ndf.to_csv(&quot;out.csv&quot;, index=False)\nback = pd.read_csv(&quot;out.csv&quot;)\nprint(list(back.columns) == list(df.columns))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
 
+df = pd.DataFrame({"name": ["Ada", "Grace"], "score": [92, 88]})
+
+df.to_csv("out.csv", index=False)
+back = pd.read_csv("out.csv")
+print(list(back.columns) == list(df.columns))
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Save without the index</h3>
 <p>Write <code>save_scores(df, path)</code> that writes the table to <code>path</code> as CSV with no index column, then returns the first line of the file.</p>
 <p class="hint-text">index=False is the argument that keeps the row numbers out. Reading the first line back is what proves it worked.</p>
 
@@ -223,6 +318,32 @@ print(save_scores(pd.DataFrame({"name": ["Ada"], "score": [92]}), "out.csv"))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: A round trip that survives</h3>
+<p>Write <code>round_trip(df, path)</code> that writes the table out, reads it straight back, and returns the column names of what came back. Written properly, they are the names you started with.</p>
+<p class="hint-text">to_csv(path, index=False), then pd.read_csv(path), then list(back.columns). Leaving index=False off adds an Unnamed column, which the second check is looking for.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef round_trip(df, path):\n    # Write it, read it back, return the columns that returned.\n    return []\n\nprint(round_trip(pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;], &quot;score&quot;: [92]}), &quot;out.csv&quot;))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def round_trip(df, path):
+    # Write it, read it back, return the columns that returned.
+    return []
+
+print(round_trip(pd.DataFrame({"name": ["Ada"], "score": [92]}), "out.csv"))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

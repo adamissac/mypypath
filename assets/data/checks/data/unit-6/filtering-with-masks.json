@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "The same idea as numpy, applied to whole rows.",
+    "prompt": "Filtering with Masks: The names that passed",
     "packages": [
       "pandas"
     ],
@@ -21,56 +21,94 @@
         "name": "nobody passing gives an empty list",
         "call": "passing_names(__import__(\"pandas\").DataFrame({\"name\": [\"Bo\"], \"score\": [10]}), 85)",
         "expect": "[]"
-      },
-      {
-        "name": "the boundary is included",
-        "kind": "ast",
-        "requires": {
-          "compares": [
-            "GtE"
-          ]
-        },
-        "describe": "a >= comparison, so the mark itself counts"
       }
     ],
     "hint": "Mask the table, then take the name column of what survives and turn it into a list with .tolist()."
   },
+  "exercise2": {
+    "prompt": "Filtering with Masks: Account for every row",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "split_counts(__import__(\"pandas\").DataFrame({\"score\": [92, 60, None]}), 85)",
+        "expect": "[1, 1, 1]"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "with nothing missing the third is zero",
+        "call": "split_counts(__import__(\"pandas\").DataFrame({\"score\": [90, 10]}), 85)",
+        "expect": "[1, 1, 0]"
+      },
+      {
+        "name": "the three always total the row count",
+        "call": "sum(split_counts(__import__(\"pandas\").DataFrame({\"score\": [1, None, 3, None]}), 2)) == 4",
+        "expect": "True"
+      },
+      {
+        "name": "a score on the mark counts as passed",
+        "call": "split_counts(__import__(\"pandas\").DataFrame({\"score\": [85]}), 85)",
+        "expect": "[1, 0, 0]"
+      },
+      {
+        "name": "an empty table counts nothing",
+        "call": "split_counts(__import__(\"pandas\").DataFrame({\"score\": []}), 85)",
+        "expect": "[0, 0, 0]"
+      }
+    ],
+    "hint": "Count the missing ones with .isna().sum() first, then the two comparisons. A comparison is never True for NaN, so those rows fall out of both and have to be counted separately."
+  },
   "questions": [
     {
       "id": "d6-fwm-1",
-      "prompt": "Why use & rather than and to combine two conditions?",
+      "prompt": "df[df[\"score\"] > 80] returns what?",
       "choices": [
-        "It is shorter",
-        "and wants one True or False, and a column is many",
-        "They are the same",
-        "and is slower"
+        "The score column",
+        "The rows where the condition is True",
+        "A boolean frame",
+        "The first 80 rows"
       ],
       "answer": 1,
-      "explain": "A column of answers cannot collapse to a single truth value, so `and` raises. `&` combines the masks elementwise, which is what you meant."
+      "explain": "The mask is per row, so the whole row survives or none of it does."
     },
     {
       "id": "d6-fwm-2",
-      "prompt": "Why bracket each condition when combining them?",
+      "prompt": "Which operators combine two conditions on a DataFrame?",
       "choices": [
-        "Style",
-        "& binds tighter than the comparisons, so it would group them wrongly",
-        "pandas requires it",
-        "It is faster"
+        "and / or",
+        "& / | with each condition bracketed",
+        "&& / ||",
+        "AND / OR"
       ],
       "answer": 1,
-      "explain": "Without brackets the expression is parsed as something you did not write, and the error message is rarely obvious."
+      "explain": "Python’s and wants a single truth value; the brackets are needed because & binds tighter than the comparisons."
     },
     {
       "id": "d6-fwm-3",
-      "prompt": "What does df[mask] return?",
+      "prompt": "A row has NaN in the column you are filtering on. Where does it end up?",
       "choices": [
-        "True or False",
-        "The rows the mask marked True",
-        "A count",
-        "A column"
+        "In the result",
+        "In neither the filter nor its opposite",
+        "It raises",
+        "It is filled with 0"
       ],
       "answer": 1,
-      "explain": "The rows survive with their columns and their index labels intact."
+      "explain": "A comparison with NaN is never True, so the two halves do not add up to the whole table."
+    },
+    {
+      "id": "d6-fwm-4",
+      "prompt": "What does ~mask do?",
+      "choices": [
+        "Sorts it",
+        "Flips every True and False",
+        "Counts it",
+        "Drops it"
+      ],
+      "answer": 1,
+      "explain": "The readable way to say \"everything except\", and easier to check than rewriting the condition backwards."
     }
   ]
 }

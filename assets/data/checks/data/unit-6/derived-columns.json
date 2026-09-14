@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "The column that answers your question usually is not in the file.",
+    "prompt": "Derived Columns: Each row as a share of the total",
     "packages": [
       "pandas"
     ],
@@ -23,54 +23,103 @@
         "expect": "[25.0, 25.0, 50.0]"
       },
       {
-        "name": "the total is computed from the column",
+        "name": "the total comes from the column",
         "kind": "ast",
-        "requires": {
-          "calls": [
-            "sum"
-          ]
+        "forbids": {
+          "loops": true
         },
-        "describe": "the column total, rather than a number typed in"
+        "describe": "the column divided by its own sum"
       }
     ],
     "hint": "Divide the column by its own sum and multiply by 100. The division broadcasts the single total across every row."
   },
+  "exercise2": {
+    "prompt": "Derived Columns: The best rate, not the biggest total",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "best_rate(__import__(\"pandas\").DataFrame({\"region\": [\"A\", \"B\"], \"sales\": [1000.0, 300.0], \"people\": [500, 50]}))",
+        "expect": "'B'"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "the biggest total can also be the best rate",
+        "call": "best_rate(__import__(\"pandas\").DataFrame({\"region\": [\"A\", \"B\"], \"sales\": [900.0, 100.0], \"people\": [10, 10]}))",
+        "expect": "'A'"
+      },
+      {
+        "name": "one region wins by default",
+        "call": "best_rate(__import__(\"pandas\").DataFrame({\"region\": [\"Solo\"], \"sales\": [5.0], \"people\": [1]}))",
+        "expect": "'Solo'"
+      },
+      {
+        "name": "the rate, not the total, decides",
+        "call": "best_rate(__import__(\"pandas\").DataFrame({\"region\": [\"big\", \"small\"], \"sales\": [1000.0, 10.0], \"people\": [1000, 1]}))",
+        "expect": "'small'"
+      },
+      {
+        "name": "the vectorised form does the work",
+        "kind": "ast",
+        "forbids": {
+          "loops": true
+        },
+        "describe": "column operations rather than a loop"
+      }
+    ],
+    "hint": "Build the rate as a column, then use idxmax to get the row label of the highest and read the region off it. Ranking on sales alone is what the third hidden case catches."
+  },
   "questions": [
     {
       "id": "d6-dc-1",
-      "prompt": "What happens when you divide a column by a single number?",
+      "prompt": "How do you build a rate column from two existing columns?",
       "choices": [
-        "An error",
-        "Every value is divided by it",
-        "Only the first row",
-        "The column is replaced"
+        "df.rate(\"a\", \"b\")",
+        "df[\"rate\"] = df[\"a\"] / df[\"b\"]",
+        "df.apply(rate)",
+        "df.derive(\"rate\")"
       ],
       "answer": 1,
-      "explain": "Broadcasting again: the single value meets every row. A column total divided into the column is the standard \"share of the whole\" line."
+      "explain": "Ordinary column arithmetic, aligned by index and applied to the whole column at once."
     },
     {
       "id": "d6-dc-2",
-      "prompt": "What does assign return?",
+      "prompt": "What does df[\"x\"] / df[\"x\"].sum() give you?",
       "choices": [
-        "Nothing",
-        "A new table with the column added",
-        "The column",
-        "The original table changed"
+        "The total",
+        "Each row’s share of the total",
+        "The mean",
+        "An error"
       ],
       "answer": 1,
-      "explain": "It leaves your table alone and hands back a new one, which is what lets it sit in the middle of a chain."
+      "explain": "The single total is broadcast across every row, which is where a share or a percentage comes from."
     },
     {
       "id": "d6-dc-3",
-      "prompt": "Why is the column you need often not in the file?",
+      "prompt": "What does assign return?",
       "choices": [
-        "Files are badly made",
-        "Files record what happened; the question asks about a rate, a share or a difference",
-        "It is a bug",
-        "It always is"
+        "None",
+        "A new table with the column added",
+        "The column",
+        "The original, modified"
       ],
       "answer": 1,
-      "explain": "A file stores facts. Analysis is mostly the arithmetic between them."
+      "explain": "Which is what lets it sit in the middle of a chain and leave the original alone."
+    },
+    {
+      "id": "d6-dc-4",
+      "prompt": "Why prefer a rate to a total when comparing regions?",
+      "choices": [
+        "It is easier to compute",
+        "The biggest total is often just the biggest region",
+        "Totals are inaccurate",
+        "There is no reason"
+      ],
+      "answer": 1,
+      "explain": "Per head the ranking can reverse, and that reversal is usually the finding."
     }
   ]
 }

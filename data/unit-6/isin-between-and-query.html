@@ -173,33 +173,131 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Test membership of a set with <code>isin</code>.</li>
+<li>Test a range with <code>between</code>, and know which ends it includes.</li>
+<li>Write a condition as a sentence with <code>query</code>.</li>
+<li>Pick the form that reads closest to the question being asked.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>All three of these do things you could already do with masks. They matter because a filter you can read is a filter you can check, and a chain of six <code>|</code>s is not one. Choosing the clearest form is a correctness decision, not a style one.</p>
+</div>
 
 <div class="content-section">
 <h2>isin for a set of values</h2>
-<p>Testing against several values with a chain of == and | works and reads badly. isin says it once.</p>
+<p>Testing against several values with a chain of <code>==</code> and <code>|</code> works and reads badly. <code>isin</code> takes the list.</p>
+<h3 class="h4">The readable form</h3>
+<p>And it does not get longer as the list grows, which matters when the list comes from somewhere else.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"subject": ["maths", "art", "computing"]})
-print(df[df["subject"].isin(["maths", "computing"])].shape)</code></pre>
+print(df[df["subject"].isin(["maths", "computing"])])</code></pre>
+<h3 class="h4">Negating it</h3>
+<p>"Everything except these" is <code>~</code> in front of the whole thing.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"subject": ["maths", "art", "computing"]})
+print(df[~df["subject"].isin(["art"])])</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: A list of subjects</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Select the rows in maths or computing twice — once with <code>|</code> and once with <code>isin</code> — and compare which you would rather read.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;subject&quot;: [&quot;maths&quot;, &quot;art&quot;, &quot;computing&quot;, &quot;art&quot;]})\n\nprint(df[(df[&quot;subject&quot;] == &quot;maths&quot;) | (df[&quot;subject&quot;] == &quot;computing&quot;)])\nprint(None)   # the same thing with isin\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+
+df = pd.DataFrame({"subject": ["maths", "art", "computing", "art"]})
+
+print(df[(df["subject"] == "maths") | (df["subject"] == "computing")])
+print(None)   # the same thing with isin
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>between for a range</h2>
-<p>between is inclusive at both ends by default, which is usually what a range in a sentence means.</p>
+<p><code>between</code> is inclusive at both ends by default, which is usually what a question means by "between 60 and 80".</p>
+<h3 class="h4">Both ends included</h3>
+<p>One call instead of two comparisons and a pair of brackets.</p>
 <pre class="code"><code>import pandas as pd
 
-df = pd.DataFrame({"score": [55, 70, 95]})
-print(df[df["score"].between(60, 90)]["score"].tolist())</code></pre>
+df = pd.DataFrame({"score": [55, 60, 70, 80, 85]})
+print(df[df["score"].between(60, 80)])</code></pre>
+<h3 class="h4">When you meant something else</h3>
+<p>Pass <code>inclusive</code> to change it. Saying so explicitly is better than writing two comparisons and hoping the reader checks them.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"score": [55, 60, 70, 80, 85]})
+print(df[df["score"].between(60, 80, inclusive="neither")])</code></pre>
+
+</div>
+
+<div class="content-section">
+<h2>query for a condition that reads as a sentence</h2>
+<p>Inside <code>query</code> the string is parsed by pandas, so the ordinary words work and the brackets go away.</p>
+<h3 class="h4">Plain and, plain or</h3>
+<p>Column names are bare, and a Python variable is reachable with an <code>@</code> in front of it.</p>
+<pre class="code"><code>import pandas as pd
+
+df = pd.DataFrame({"score": [92, 88, 60], "city": ["L", "Y", "L"]})
+print(df.query("score &gt; 80 and city == 'L'"))
+
+mark = 85
+print(df.query("score &gt; @mark"))</code></pre>
+<p class="note">query is not faster in any way that matters at this size. The argument for it is that the filter reads like the question, which is what makes it checkable.</p>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: The same filter, three ways</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Select scores from 60 to 80 inclusive with a pair of comparisons, with <code>between</code>, and with <code>query</code>.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;score&quot;: [55, 60, 70, 80, 85]})\n\nprint(len(df[(df[&quot;score&quot;] >= 60) & (df[&quot;score&quot;] <= 80)]))\nprint(None)   # between\nprint(None)   # query\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+df = pd.DataFrame({"score": [55, 60, 70, 80, 85]})
+
+print(len(df[(df["score"] &gt;= 60) &amp; (df["score"] &lt;= 80)]))
+print(None)   # between
+print(None)   # query
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Count the rows in a set of subjects</h3>
 <p>Write <code>in_subjects(df, subjects)</code> returning the number of rows whose <code>subject</code> is one of <code>subjects</code>.</p>
 <p class="hint-text">df["subject"].isin(subjects) is the mask. Its sum is the count, and int() makes it a plain number.</p>
 
@@ -221,6 +319,32 @@ print(in_subjects(pd.DataFrame({"subject": ["maths"]}), ["maths"]))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Names in a band</h3>
+<p>Write <code>band_names(df, low, high)</code> returning the names whose score is between <code>low</code> and <code>high</code> inclusive, in the order they appear. Say the range once rather than as two comparisons.</p>
+<p class="hint-text">df["score"].between(low, high) is inclusive at both ends by default. Mask the table with it, then take the name column.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef band_names(df, low, high):\n    # Names scoring between low and high, both ends included.\n    return []\n\nprint(band_names(pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;], &quot;score&quot;: [92]}), 60, 80))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def band_names(df, low, high):
+    # Names scoring between low and high, both ends included.
+    return []
+
+print(band_names(pd.DataFrame({"name": ["Ada"], "score": [92]}), 60, 80))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "A general escape hatch that is slower than the thing it usually replaces.",
+    "prompt": "apply, and When Not To: Clean a column of names",
     "packages": [
       "pandas"
     ],
@@ -26,51 +26,100 @@
         "name": "the vectorised string methods do the work",
         "kind": "ast",
         "forbids": {
-          "calls": [
-            "apply"
-          ]
+          "loops": true
         },
-        "describe": ".str methods rather than apply"
+        "describe": ".str methods rather than apply or a loop"
       }
     ],
     "hint": "names.str.strip().str.lower() does both steps to the whole column, and .tolist() hands back plain strings."
   },
+  "exercise2": {
+    "prompt": "apply, and When Not To: Pass or fail, without a loop",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "verdicts(__import__(\"pandas\").Series([92, 60]), 70)",
+        "expect": "['pass', 'fail']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a score on the mark passes",
+        "call": "verdicts(__import__(\"pandas\").Series([70]), 70)",
+        "expect": "['pass']"
+      },
+      {
+        "name": "everyone can fail",
+        "call": "verdicts(__import__(\"pandas\").Series([1, 2]), 70)",
+        "expect": "['fail', 'fail']"
+      },
+      {
+        "name": "an empty Series gives an empty list",
+        "call": "verdicts(__import__(\"pandas\").Series([], dtype=\"float64\"), 70)",
+        "expect": "[]"
+      },
+      {
+        "name": "no loop and no apply",
+        "kind": "ast",
+        "forbids": {
+          "loops": true
+        },
+        "describe": "np.where rather than apply or a comprehension"
+      }
+    ],
+    "hint": "np.where(scores >= mark, \"pass\", \"fail\") makes the whole column at once. Finish with .tolist() so the result is plain Python strings rather than numpy ones."
+  },
   "questions": [
     {
       "id": "d6-awn-1",
-      "prompt": "Why is apply usually slower than the vectorised equivalent?",
+      "prompt": "What is apply doing underneath?",
       "choices": [
-        "It copies the data",
-        "It calls your Python function once per value",
-        "It sorts first",
-        "It is not slower"
+        "Compiled vectorised code",
+        "A Python loop over the values",
+        "A group-by",
+        "Nothing, it is lazy"
       ],
       "answer": 1,
-      "explain": "The vectorised version does the work once in compiled code; apply pays the Python call overhead for every row."
+      "explain": "Which is why it costs far more than the built-in it usually replaces."
     },
     {
       "id": "d6-awn-2",
-      "prompt": "When is apply the right tool?",
+      "prompt": "Which is the better way to add two columns?",
       "choices": [
-        "Always",
-        "When the logic genuinely has no vectorised form",
-        "Never",
-        "Only on small tables"
+        "df.apply(lambda r: r[\"a\"] + r[\"b\"], axis=1)",
+        "df[\"a\"] + df[\"b\"]",
+        "A for loop",
+        "df.map(add)"
       ],
       "answer": 1,
-      "explain": "It is an escape hatch, not a default. Reaching for it first is how people conclude that pandas is slow."
+      "explain": "Column arithmetic is vectorised; apply with axis=1 builds a Series per row and is the slowest option here."
     },
     {
       "id": "d6-awn-3",
-      "prompt": "What does .str give you on a Series?",
+      "prompt": "What does .str give you?",
       "choices": [
-        "The text of the whole column",
-        "String methods applied to every value",
-        "A conversion to text",
-        "An error"
+        "The column as text",
+        "Vectorised string methods over the whole column",
+        "A single string",
+        "An error on numbers"
       ],
       "answer": 1,
-      "explain": "strip, lower, replace, contains and the rest, each running across the whole column at once."
+      "explain": "strip, lower, contains, len and the rest, applied to every value without a loop."
+    },
+    {
+      "id": "d6-awn-4",
+      "prompt": "When is apply genuinely the right tool?",
+      "choices": [
+        "For any arithmetic",
+        "When the operation has no vectorised form",
+        "For speed",
+        "Never"
+      ],
+      "answer": 1,
+      "explain": "Real branching per row, an awkward parse, an external call. It is the unconsidered apply that costs."
     }
   ]
 }

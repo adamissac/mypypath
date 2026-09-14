@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Saving a result, and the index that gets written with it.",
+    "prompt": "Writing Data Out: Save without the index",
     "packages": [
       "pandas"
     ],
@@ -19,58 +19,91 @@
       },
       {
         "name": "a second table overwrites cleanly",
-        "call": "(save_scores(__import__(\"pandas\").DataFrame({\"name\": [\"Bo\"], \"score\": [1]}), \"out.csv\"), open(\"out.csv\").read().strip().split(\"\\n\")[1])[-1]",
-        "expect": "'Bo,1'"
-      },
-      {
-        "name": "to_csv does the writing",
-        "kind": "ast",
-        "requires": {
-          "calls": [
-            "to_csv"
-          ]
-        },
-        "describe": "df.to_csv rather than hand-built text"
+        "call": "(save_scores(__import__(\"pandas\").DataFrame({\"name\": [\"Bo\"], \"score\": [1]}), \"out.csv\"), len(open(\"out.csv\").read().strip().split(\"\\n\")))[-1]",
+        "expect": "2"
       }
     ],
     "hint": "index=False is the argument that keeps the row numbers out. Reading the first line back is what proves it worked."
   },
+  "exercise2": {
+    "prompt": "Writing Data Out: A round trip that survives",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "round_trip(__import__(\"pandas\").DataFrame({\"name\": [\"Ada\"], \"score\": [92]}), \"out.csv\")",
+        "expect": "['name', 'score']"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "no Unnamed column comes back",
+        "call": "all(not c.startswith(\"Unnamed\") for c in round_trip(__import__(\"pandas\").DataFrame({\"a\": [1], \"b\": [2]}), \"out.csv\"))",
+        "expect": "True"
+      },
+      {
+        "name": "the values survive the trip",
+        "call": "(round_trip(__import__(\"pandas\").DataFrame({\"a\": [7]}), \"out.csv\"), int(__import__(\"pandas\").read_csv(\"out.csv\")[\"a\"].iloc[0]))[-1]",
+        "expect": "7"
+      },
+      {
+        "name": "a one-column table round-trips",
+        "call": "round_trip(__import__(\"pandas\").DataFrame({\"only\": [1, 2]}), \"out.csv\")",
+        "expect": "['only']"
+      }
+    ],
+    "hint": "to_csv(path, index=False), then pd.read_csv(path), then list(back.columns). Leaving index=False off adds an Unnamed column, which the second check is looking for."
+  },
   "questions": [
     {
       "id": "d5-wdo-1",
-      "prompt": "What does to_csv write by default that you usually do not want?",
+      "prompt": "What does to_csv write by default that you may not want?",
       "choices": [
-        "The column names",
-        "The index, as an unnamed first column",
         "The dtypes",
-        "Nothing"
+        "The index, as an unnamed first column",
+        "Nothing extra",
+        "The shape"
       ],
       "answer": 1,
-      "explain": "That unnamed column comes back as \"Unnamed: 0\" when the file is read again, and it accumulates every time the file makes another round trip."
+      "explain": "Read that file back and you get a column called Unnamed: 0, and it grows every round trip."
     },
     {
       "id": "d5-wdo-2",
-      "prompt": "When is index=True the right choice?",
+      "prompt": "Which argument keeps the row numbers out of the file?",
       "choices": [
-        "Never",
-        "When the index carries meaning, like a date or an id",
-        "Always",
-        "Only for small files"
+        "index=False",
+        "header=False",
+        "drop_index=True",
+        "rows=False"
       ],
-      "answer": 1,
-      "explain": "A meaningful index is data and belongs in the file. Row numbers are not, and writing them is what makes the round trip messy."
+      "answer": 0,
+      "explain": "header=False would remove the column names instead, which is almost never what you want."
     },
     {
       "id": "d5-wdo-3",
-      "prompt": "What does columns=[\"name\", \"score\"] do on to_csv?",
+      "prompt": "When should the index be written out?",
       "choices": [
-        "Renames them",
-        "Writes only those columns",
-        "Sorts by them",
-        "Indexes by them"
+        "Always",
+        "Never",
+        "When it is meaningful, such as a date or an id",
+        "Only for JSON"
+      ],
+      "answer": 2,
+      "explain": "If the index is the label for the row, dropping it loses information; give it a name so the column has a header."
+    },
+    {
+      "id": "d5-wdo-4",
+      "prompt": "A saved file has grown Unnamed: 0 and Unnamed: 0.1. What happened?",
+      "choices": [
+        "Corruption",
+        "It has been read and rewritten twice with the index written each time",
+        "Two separators",
+        "A merge"
       ],
       "answer": 1,
-      "explain": "It selects what goes out, which is how you publish a result without publishing your working columns."
+      "explain": "Each round trip turns the previous index into a real column and then writes a new index beside it."
     }
   ]
 }

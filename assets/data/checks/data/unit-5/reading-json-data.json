@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "A list of records is a table waiting to happen.",
+    "prompt": "Reading JSON Data: Columns from records",
     "packages": [
       "pandas"
     ],
@@ -35,42 +35,90 @@
     ],
     "hint": "pd.DataFrame takes the list of dictionaries directly. sorted(df.columns) then gives plain strings in a predictable order."
   },
+  "exercise2": {
+    "prompt": "Reading JSON Data: How complete is each record",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "completeness([{\"a\": 1}, {\"a\": 2, \"b\": 3}])",
+        "expect": "{'a': 2, 'b': 1}"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "a fully populated table counts every row",
+        "call": "completeness([{\"a\": 1, \"b\": 2}, {\"a\": 3, \"b\": 4}])",
+        "expect": "{'a': 2, 'b': 2}"
+      },
+      {
+        "name": "no records give no columns",
+        "call": "completeness([])",
+        "expect": "{}"
+      },
+      {
+        "name": "an explicit None counts as missing",
+        "call": "completeness([{\"a\": None}, {\"a\": 1}])",
+        "expect": "{'a': 1}"
+      },
+      {
+        "name": "the counts are plain integers",
+        "call": "all(type(v).__name__ == \"int\" for v in completeness([{\"a\": 1}]).values())",
+        "expect": "True"
+      }
+    ],
+    "hint": "df.notna().sum() gives a Series of counts per column. Turn it into a dict and make the values plain ints with a comprehension."
+  },
   "questions": [
     {
       "id": "d5-rjd-1",
-      "prompt": "A JSON list of objects maps onto a table how?",
+      "prompt": "What does pd.DataFrame(list_of_dicts) do?",
       "choices": [
-        "One object per column",
-        "One object per row",
-        "One object per cell",
-        "It does not"
+        "Raises",
+        "One row per dictionary, keys as columns",
+        "One column per dictionary",
+        "A Series"
       ],
       "answer": 1,
-      "explain": "Each object is a record, and its keys are the columns. That is why API responses drop straight into a DataFrame."
+      "explain": "A list of records is a table waiting to happen; the union of the keys becomes the columns."
     },
     {
       "id": "d5-rjd-2",
-      "prompt": "One record is missing the \"score\" key. What happens?",
+      "prompt": "A record is missing a key the others have. What goes in that cell?",
       "choices": [
-        "An error",
-        "That row gets a missing value in the score column",
-        "The column is dropped",
-        "The record is skipped"
+        "0",
+        "An empty string",
+        "NaN",
+        "The row is dropped"
       ],
-      "answer": 1,
-      "explain": "The table is the union of all keys, and any record without one simply has a gap there."
+      "answer": 2,
+      "explain": "The column exists because other records have it, and this row simply has no value for it."
     },
     {
       "id": "d5-rjd-3",
-      "prompt": "Why not just read the first record's keys to learn the columns?",
+      "prompt": "A value is itself a dictionary. What does DataFrame give you?",
       "choices": [
-        "It is slower",
-        "Later records can carry keys the first one does not",
-        "It raises",
-        "It is fine"
+        "Flattened columns",
+        "A column holding dictionaries",
+        "An error",
+        "The keys as rows"
       ],
       "answer": 1,
-      "explain": "The first row is not a schema. Any record can introduce a column, which is exactly what the hidden case in the exercise checks."
+      "explain": "json_normalize is what flattens one level into real columns, named with a dot."
+    },
+    {
+      "id": "d5-rjd-4",
+      "prompt": "Whole-number scores with one record missing the key get which dtype?",
+      "choices": [
+        "int64",
+        "float64",
+        "object",
+        "bool"
+      ],
+      "answer": 1,
+      "explain": "NaN is a float, so the column widens to hold it — the same rule as anywhere else in pandas."
     }
   ]
 }

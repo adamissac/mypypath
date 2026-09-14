@@ -173,34 +173,124 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Read only the columns you need with <code>usecols</code>.</li>
+<li>Tidy shouty or spaced column names in one pass.</li>
+<li>Say what a smaller table buys beyond memory.</li>
+<li>Keep an id column as text so it does not lose its leading zeros.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>A real export is forty columns and you want six. Carrying the other thirty-four costs memory, but more importantly it costs attention: every one of them is a column that can surprise you later, and none of them is a column you checked.</p>
+</div>
 
 <div class="content-section">
 <h2>usecols on the way in</h2>
-<p>A wide export is mostly columns you will never touch. Naming the ones you want keeps the table readable and the memory down.</p>
+<p>A wide export is mostly columns you will never touch. Naming the ones you want keeps the table small and the checks short.</p>
+<h3 class="h4">Ask for what you need</h3>
+<p><code>usecols</code> takes the names, and the resulting table has only those. The rest of the file is never turned into columns at all.</p>
 <pre class="code"><code>import pandas as pd
+from io import StringIO
 
-df = pd.read_csv("people.csv", usecols=["name", "score"])
-print(list(df.columns))</code></pre>
+text = "name,city,score,notes\nAda,Leeds,92,ignore me\n"
+df = pd.read_csv(StringIO(text), usecols=["name", "score"])
+print(df)
+print(df.shape)</code></pre>
+<h3 class="h4">The type of an id</h3>
+<p>An id made of digits will be read as a number, and a number has no leading zeros. <code>dtype=</code> keeps it as text so <code>007</code> stays <code>007</code>.</p>
+<pre class="code"><code>import pandas as pd
+from io import StringIO
 
+text = "id,score\n007,92\n"
+print(pd.read_csv(StringIO(text))["id"].iloc[0])
+print(pd.read_csv(StringIO(text), dtype={"id": str})["id"].iloc[0])</code></pre>
+<p class="note">This also matters for joining. An id read as a number in one file and as text in another will match nothing in unit 8, and the merge will succeed with an empty result.</p>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Two of six</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Read only the name and score columns from this wide file, and confirm the shape.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\nfrom io import StringIO\n\ntext = &quot;name,city,score,age,notes,ref\\nAda,Leeds,92,36,x,r1\\n&quot;\n\ndf = pd.read_csv(StringIO(text))\nprint(df.shape)\n\n# Now read just the two you want:\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+from io import StringIO
+
+text = "name,city,score,age,notes,ref\nAda,Leeds,92,36,x,r1\n"
+
+df = pd.read_csv(StringIO(text))
+print(df.shape)
+
+# Now read just the two you want:
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Renaming as you go</h2>
-<p>Column names from real systems are often shouty or spaced. rename takes a dictionary of old to new and hands back a new table.</p>
+<p>Column names from real systems are often shouty, spaced, or both. <code>rename</code> takes a dictionary from old name to new.</p>
+<h3 class="h4">One name at a time</h3>
+<p>A small mapping for the handful you actually care about.</p>
 <pre class="code"><code>import pandas as pd
 
 df = pd.DataFrame({"Full Name": ["Ada"], "SCORE": [92]})
-df = df.rename(columns={"Full Name": "name", "SCORE": "score"})
-print(list(df.columns))</code></pre>
+print(list(df.rename(columns={"Full Name": "name"}).columns))</code></pre>
+<h3 class="h4">A rule for all of them</h3>
+<p>When every name needs the same treatment, build the mapping with a comprehension rather than typing forty pairs.</p>
+<pre class="code"><code>import pandas as pd
 
+df = pd.DataFrame({"Full Name": ["Ada"], "SCORE": [92]})
+tidy = df.rename(columns={c: c.lower().replace(" ", "_") for c in df.columns})
+print(list(tidy.columns))</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Tidy every name</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Lowercase every column name and turn spaces into underscores, in one rename.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;Full Name&quot;: [1], &quot;Home City&quot;: [2], &quot;SCORE&quot;: [3]})\n\nprint(list(df.columns))\nprint(None)   # the tidied names\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+
+df = pd.DataFrame({"Full Name": [1], "Home City": [2], "SCORE": [3]})
+
+print(list(df.columns))
+print(None)   # the tidied names
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
+<h3 class="h4">Exercise 1: Tidy the column names</h3>
 <p>Write <code>tidy_columns(df)</code> that returns a new table whose column names are all lowercase with spaces turned into underscores.</p>
 <p class="hint-text">Build a dictionary from each existing name to its tidy version, then hand it to rename. str.lower() and str.replace(" ", "_") do the work.</p>
 
@@ -222,6 +312,32 @@ print(list(tidy_columns(pd.DataFrame({"Full Name": [1]})).columns))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: Read only what you need</h3>
+<p>A wide file <code>wide.csv</code> is supplied. Write <code>narrow(path, keep)</code> that reads only the columns named in <code>keep</code> and returns the resulting shape as a tuple. Read the columns you want rather than reading everything and dropping the rest.</p>
+<p class="hint-text">pd.read_csv(path, usecols=keep) then .shape. Reading everything and then selecting gives the same shape but does all the work you were trying to avoid.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef narrow(path, keep):\n    # Read only those columns; return (rows, columns).\n    return None\n\nprint(narrow(&quot;wide.csv&quot;, [&quot;name&quot;, &quot;score&quot;]))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def narrow(path, keep):
+    # Read only those columns; return (rows, columns).
+    return None
+
+print(narrow("wide.csv", ["name", "score"]))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

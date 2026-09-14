@@ -1,6 +1,6 @@
 {
   "exercise1": {
-    "prompt": "Four questions to ask a new table before you trust a number from it.",
+    "prompt": "Checking What You Loaded: A load report",
     "packages": [
       "pandas"
     ],
@@ -16,7 +16,7 @@
     ],
     "hiddenCases": [
       {
-        "name": "a clean file reports nothing missing",
+        "name": "a complete file reports nothing missing",
         "files": {
           "scores.csv": "name,score\na,1\nb,2\n"
         },
@@ -24,57 +24,133 @@
         "expect": "(2, ['name', 'score'], 0)"
       },
       {
-        "name": "more gaps are counted",
+        "name": "gaps in more than one column are all counted",
         "files": {
-          "scores.csv": "name,score\na,\nb,\n"
+          "scores.csv": "name,score\n,1\nb,\n"
         },
         "call": "load_report(\"scores.csv\")",
         "expect": "(2, ['name', 'score'], 2)"
+      },
+      {
+        "name": "pandas does the reading",
+        "kind": "ast",
+        "requires": {
+          "imports": [
+            "pandas"
+          ],
+          "calls": [
+            "read_csv"
+          ]
+        },
+        "describe": "pd.read_csv rather than the answer typed in"
       }
     ],
     "hint": "df.isna().sum() gives a count per column; summing that again gives the total. int() at the end keeps it a plain number."
   },
+  "exercise2": {
+    "prompt": "Checking What You Loaded: How many distinct, really",
+    "packages": [
+      "pandas"
+    ],
+    "files": {
+      "places.csv": "city\nLeeds\nleeds\nYork\n"
+    },
+    "cases": [
+      {
+        "name": "returns the right answer",
+        "call": "distinct_cities(\"places.csv\")",
+        "expect": "2"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "name": "surrounding spaces do not make a new city",
+        "files": {
+          "places.csv": "city\nLeeds\nLeeds \n"
+        },
+        "call": "distinct_cities(\"places.csv\")",
+        "expect": "1"
+      },
+      {
+        "name": "genuinely different cities are all counted",
+        "files": {
+          "places.csv": "city\nA\nB\nC\n"
+        },
+        "call": "distinct_cities(\"places.csv\")",
+        "expect": "3"
+      },
+      {
+        "name": "a single row counts one",
+        "files": {
+          "places.csv": "city\nSolo\n"
+        },
+        "call": "distinct_cities(\"places.csv\")",
+        "expect": "1"
+      },
+      {
+        "name": "pandas does the reading",
+        "kind": "ast",
+        "requires": {
+          "imports": [
+            "pandas"
+          ],
+          "calls": [
+            "read_csv"
+          ]
+        },
+        "describe": "pd.read_csv rather than the answer typed in"
+      }
+    ],
+    "hint": "Read the column, then .str.strip().str.lower() before .nunique(). Counting without normalising first is the mistake the first hidden case checks."
+  },
   "questions": [
     {
       "id": "d5-cwl-1",
-      "kind": "multi",
-      "prompt": "Which of these should you check on a table you have just loaded?",
+      "prompt": "Which is NOT one of the four questions to ask a new table?",
       "choices": [
-        "Its shape",
-        "The dtype of each column",
+        "How many rows and columns",
+        "What type is each column",
         "How much is missing",
-        "The file permissions"
+        "What is the mean of every column"
       ],
-      "answers": [
-        0,
-        1,
-        2
-      ],
-      "explain": "Those three answer \"is this what I think it is\". Permissions are a different problem and the read already succeeded."
+      "answer": 3,
+      "explain": "A mean is a result, not a check. The fourth question is what the columns are."
     },
     {
       "id": "d5-cwl-2",
-      "prompt": "What does df.isna().sum() give you?",
+      "prompt": "What does value_counts on a category column catch?",
       "choices": [
-        "One total",
-        "A count of missing values per column",
-        "The missing rows",
-        "True or False"
+        "Missing values only",
+        "The same thing spelled two ways",
+        "Wrong dtypes",
+        "Duplicate rows"
       ],
       "answer": 1,
-      "explain": "isna is a table of masks and summing collapses each column, so you see which column has the gaps rather than just how many there are."
+      "explain": "\"Leeds\" and \"leeds\" are two groups to a group-by and one city to a reader."
     },
     {
       "id": "d5-cwl-3",
-      "prompt": "Why look at the distinct values of a category column?",
+      "prompt": "Why check min and max on a numeric column?",
       "choices": [
         "To sort it",
-        "To find stray spellings and unexpected values",
-        "To count rows",
-        "To change its type"
+        "A sentinel like 999 or a negative age shows up there and not in the mean",
+        "To find duplicates",
+        "To set the dtype"
       ],
       "answer": 1,
-      "explain": "\"maths\", \"Maths\" and \"MATHS\" are three categories to a computer and one to you. The set is where that becomes visible."
+      "explain": "The extremes are where impossible values sit. A mean absorbs them and looks plausible."
+    },
+    {
+      "id": "d5-cwl-4",
+      "prompt": "When are these checks cheapest?",
+      "choices": [
+        "After the analysis",
+        "Before anything is built on the table",
+        "Once published",
+        "They cost the same whenever"
+      ],
+      "answer": 1,
+      "explain": "Every downstream result built on an unchecked table has to be redone once the table turns out to be wrong."
     }
   ]
 }

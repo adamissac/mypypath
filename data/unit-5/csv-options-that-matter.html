@@ -173,34 +173,125 @@
 </aside>
 <section class="lesson-body">
 
+<div class="content-section">
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+<li>Read a file whose fields are not separated by commas.</li>
+<li>Load a file that has no header row, and name the columns yourself.</li>
+<li>Skip junk at the top of a file.</li>
+<li>Recognise a wrong separator from the shape alone.</li>
+</ul>
+</div>
 
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>read_csv makes three assumptions about every file: comma separated, first line is the header, types inferred. Real exports break each of them, and none of the breakages raises — you get a table, it is just the wrong one. Four arguments cover almost every real file you will meet.</p>
+</div>
 
 <div class="content-section">
 <h2>The file is not always comma separated</h2>
-<p>sep tells read_csv what divides the fields. A tab-separated export read with the default gives you one very wide column, which is easy to spot the moment you check shape.</p>
+<p><code>sep</code> tells read_csv what divides the fields. A tab-separated export read with the default gives one column holding the whole line.</p>
+<h3 class="h4">Naming the separator</h3>
+<p>Tabs are <code>"\t"</code>, semicolons are common in exports from locales where the comma is a decimal point. Pipe-separated files turn up too.</p>
 <pre class="code"><code>import pandas as pd
+from io import StringIO
 
-df = pd.read_csv("scores.tsv", sep="\t")
-print(df.shape)</code></pre>
+tabbed = "name\tscore\nAda\t92\n"
+print(pd.read_csv(StringIO(tabbed), sep="\t"))</code></pre>
+<h3 class="h4">What it looks like when you get it wrong</h3>
+<p>The load succeeds. The shape is the tell: one column where you expected several, and a column name that is the entire header line.</p>
+<pre class="code"><code>import pandas as pd
+from io import StringIO
 
+tabbed = "name\tscore\nAda\t92\n"
+wrong = pd.read_csv(StringIO(tabbed))
+print(wrong.shape)
+print(list(wrong.columns))</code></pre>
+<p class="note">This is why <code>df.shape</code> is the first of the four checks. It catches this before any number you compute from the table can mislead you.</p>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #1: Same data, two separators</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>Read this semicolon file twice — once with the default and once correctly — and print both shapes.</p>
+
+<div class="interactive-editor" data-editor-id="practice1">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\nfrom io import StringIO\n\ntext = &quot;name;city;score\\nAda;Leeds;92\\n&quot;\n\nprint(pd.read_csv(StringIO(text)).shape)\nprint(None)   # the same read, done properly\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice1">import pandas as pd
+from io import StringIO
+
+text = "name;city;score\nAda;Leeds;92\n"
+
+print(pd.read_csv(StringIO(text)).shape)
+print(None)   # the same read, done properly
+</textarea>
+<div class="editor-output" id="output-practice1">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="content-section">
 <h2>Headers, and files without one</h2>
-<p>header=None stops pandas taking the first row of data as your column names, and names= supplies your own.</p>
+<p><code>header=None</code> stops pandas taking the first row of data as your column names, and <code>names=</code> supplies your own.</p>
+<h3 class="h4">A file with no header</h3>
+<p>Without <code>header=None</code>, your first row of real data silently becomes the column names and you are quietly one row short.</p>
 <pre class="code"><code>import pandas as pd
+from io import StringIO
 
-df = pd.read_csv("raw.csv", header=None, names=["name", "score"])
-print(list(df.columns))</code></pre>
+raw = "Ada,92\nGrace,88\n"
+print(pd.read_csv(StringIO(raw), header=None, names=["name", "score"]))
+print(len(pd.read_csv(StringIO(raw))))   # one row lost</code></pre>
+<h3 class="h4">Junk above the header</h3>
+<p>Exports from reporting tools often carry a title and a blank line before the real header. <code>skiprows</code> steps over them.</p>
+<pre class="code"><code>import pandas as pd
+from io import StringIO
 
+messy = "Quarterly report\n\nname,score\nAda,92\n"
+print(pd.read_csv(StringIO(messy), skiprows=2))</code></pre>
+
+</div>
+
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #2: Supply the names</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>This file has no header. Load it with your own column names and confirm you have two rows, not one.</p>
+
+<div class="interactive-editor" data-editor-id="practice2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\nfrom io import StringIO\n\nraw = &quot;Ada,92\\nGrace,88\\n&quot;\n\ndf = None   # header=None and names=[...]\nprint(df)\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice2">import pandas as pd
+from io import StringIO
+
+raw = "Ada,92\nGrace,88\n"
+
+df = None   # header=None and names=[...]
+print(df)
+</textarea>
+<div class="editor-output" id="output-practice2">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
 </div>
 
 <div class="exercise-section">
 <h2>End-of-Lesson Exercises</h2>
 
 <div class="exercise-item" data-exercise-id="exercise1">
-<h3 class="h4">Exercise 1: Practice</h3>
-<p>A tab-separated file <code>scores.tsv</code> is supplied with <code>name</code> and <code>score</code> columns. Write <code>row_count(path)</code> that reads it and returns the number of rows.</p>
+<h3 class="h4">Exercise 1: Count the rows in a tab-separated file</h3>
+<p>A tab-separated file <code>scores.tsv</code> is supplied with <code>name</code> and <code>score</code> columns. Write <code>row_count(path)</code> that reads it properly and returns the number of rows.</p>
 <p class="hint-text">Without sep="\t" the whole line lands in one column and you get one column and three rows -- the row count would look right and the table would be wrong. len(df) or df.shape[0] counts the rows.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
@@ -221,6 +312,32 @@ print(row_count("scores.tsv"))
 <div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
 </div>
 <div class="exercise-feedback" id="feedback-exercise1"></div>
+</div>
+</div>
+
+<div class="exercise-item" data-exercise-id="exercise2">
+<h3 class="h4">Exercise 2: A file with no header</h3>
+<p>A file <code>raw.csv</code> holds names and scores with no header row. Write <code>headerless(path)</code> that reads it, naming the columns <code>name</code> and <code>score</code>, and returns the number of rows. Losing a row to the header is the mistake being checked.</p>
+<p class="hint-text">Supplying names= tells pandas there is no header to read. Reading it with neither argument takes your first row of data as the column names, and the count comes back one short.</p>
+
+<div class="interactive-editor" data-editor-id="exercise2">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef headerless(path):\n    # No header in the file. Name the columns and count the rows.\n    return 0\n\nprint(headerless(&quot;raw.csv&quot;))\n')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
+
+def headerless(path):
+    # No header in the file. Name the columns and count the rows.
+    return 0
+
+print(headerless("raw.csv"))
+</textarea>
+<div class="editor-output" id="output-exercise2">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise2"></div>
 </div>
 </div>
 </div>

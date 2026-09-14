@@ -232,7 +232,7 @@ module.exports = {
             ],
             hint: 'pd.DataFrame takes an index= argument. Build the table with it, then return list(df.index) rather than handing back the labels you were given.',
             correct: 'import pandas as pd\n\ndef labelled(columns, labels):\n    df = pd.DataFrame(columns, index=labels)\n    return list(df.index)\n',
-            wrong: 'import pandas as pd\n\ndef labelled(columns, labels):\n    pd.DataFrame(columns)\n    return sorted(labels)\n',
+            wrong: 'import pandas as pd\n\ndef labelled(columns, labels):\n    df = pd.DataFrame(columns)\n    return list(df.index)\n',
           },
         ],
         questions: [
