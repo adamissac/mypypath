@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>sort_values returns a new table</h2>
 <p>by names the column, ascending chooses the direction, and the original is untouched.</p>
@@ -180,6 +182,7 @@
 
 df = pd.DataFrame({"name": ["Ada", "Alan"], "score": [92, 79]})
 print(df.sort_values("score", ascending=False)["name"].tolist())</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -189,14 +192,16 @@ print(df.sort_values("score", ascending=False)["name"].tolist())</code></pre>
 
 df = pd.DataFrame({"name": ["Ada", "Grace", "Alan"], "score": [92, 88, 79]})
 print(df.nlargest(2, "score")["name"].tolist())</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>top_names(df, n)</code> returning the names of the <code>n</code> highest scorers, best first.</p>
+<p class="hint-text">nlargest takes the count and the column and does both the sort and the slice. Sorting ascending and taking the head gives you the worst, not the best.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -213,14 +218,11 @@ def top_names(df, n):
 print(top_names(pd.DataFrame({"name": ["Ada", "Alan"], "score": [92, 79]}), 1))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

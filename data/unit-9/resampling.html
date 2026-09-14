@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>resample is group-by for time</h2>
 <p>With a datetime index, resample buckets rows into periods -- days, weeks, months -- and takes a summary of each.</p>
@@ -181,6 +183,7 @@
 idx = pd.to_datetime(["2024-01-01", "2024-01-02", "2024-02-01"])
 s = pd.Series([1, 2, 5], index=idx)
 print(s.resample("MS").sum().tolist())</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -191,14 +194,16 @@ print(s.resample("MS").sum().tolist())</code></pre>
 idx = pd.to_datetime(["2024-01-01", "2024-03-01"])
 s = pd.Series([1, 1], index=idx)
 print(s.resample("MS").sum().tolist())</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>monthly_totals(s)</code> that takes a Series indexed by date and returns a list of monthly totals, including months with nothing in them.</p>
+<p class="hint-text">resample("MS") buckets by month start. The quiet month in the middle is the whole point: a group-by would skip it and the timeline would lie.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -216,14 +221,11 @@ idx = pd.to_datetime(["2024-01-01", "2024-03-01"])
 print(monthly_totals(pd.Series([1, 1], index=idx)))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

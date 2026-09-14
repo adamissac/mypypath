@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>An inner join keeps the matches</h2>
 <p>merge lines rows up by a shared key. The default keeps only keys present on both sides, so the result can be smaller than either input.</p>
@@ -181,6 +183,7 @@
 people = pd.DataFrame({"id": [1, 2], "name": ["Ada", "Grace"]})
 scores = pd.DataFrame({"id": [1], "score": [92]})
 print(pd.merge(people, scores, on="id").shape)</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -192,14 +195,16 @@ people = pd.DataFrame({"id": [1, 2], "name": ["Ada", "Grace"]})
 scores = pd.DataFrame({"id": [1], "score": [92]})
 out = pd.merge(people, scores, on="id", how="left")
 print(out.shape, int(out["score"].isna().sum()))</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>with_scores(people, scores)</code> that joins on <code>id</code>, keeping every person even when they have no score, and returns the number of people with no score.</p>
+<p class="hint-text">how="left" keeps every person. The people who matched nothing have a missing score, and isna().sum() counts them.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -217,14 +222,11 @@ print(with_scores(pd.DataFrame({"id": [1, 2], "name": ["Ada", "Bo"]}),
                   pd.DataFrame({"id": [1], "score": [92]})))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

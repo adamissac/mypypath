@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>A derived column</h2>
 <p>Assigning to a name that does not exist creates it. The right-hand side is an ordinary column expression, so it lines up row by row.</p>
@@ -181,6 +183,7 @@
 df = pd.DataFrame({"price": [10.0, 20.0]})
 df["with_tax"] = df["price"] * 1.08
 print(df)</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -192,14 +195,16 @@ df = pd.DataFrame({"a": [1], "b": [2]})
 smaller = df.drop(columns=["b"])
 print(list(smaller.columns))
 print(list(df.columns))</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>add_total(df)</code> that returns a new table with a <code>total</code> column equal to <code>price</code> times <code>quantity</code>, leaving the table it was given unchanged.</p>
+<p class="hint-text">Take a copy first, then assign the new column onto the copy. Assigning straight onto df would change the caller's table, which the hidden case checks.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -216,14 +221,11 @@ def add_total(df):
 print(add_total(pd.DataFrame({"price": [2.0], "quantity": [3]})))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

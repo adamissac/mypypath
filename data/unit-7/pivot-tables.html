@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>Rows, columns and a value</h2>
 <p>pivot_table groups by two keys and lays the result out as a grid rather than a long list. Same numbers, different shape.</p>
@@ -181,6 +183,7 @@
 df = pd.DataFrame({"subject": ["m", "m", "a"], "year": [10, 11, 10], "score": [90, 80, 70]})
 out = pd.pivot_table(df, index="subject", columns="year", values="score", aggfunc="mean")
 print(out.shape)</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -191,14 +194,16 @@ print(out.shape)</code></pre>
 df = pd.DataFrame({"a": ["x"], "b": [1], "v": [5]})
 out = pd.pivot_table(df, index="a", columns="b", values="v", aggfunc="mean", fill_value=0)
 print(out.values.tolist())</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>grid_shape(df)</code> that pivots <code>score</code> with <code>subject</code> down the rows and <code>year</code> across the columns, and returns the shape of the result.</p>
+<p class="hint-text">index is what goes down the side, columns is what goes across the top, values is what fills the cells. The shape is distinct subjects by distinct years.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -215,14 +220,11 @@ def grid_shape(df):
 print(grid_shape(pd.DataFrame({"subject": ["m"], "year": [10], "score": [90]})))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

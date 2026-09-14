@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>Records in, table out</h2>
 <p>JSON from an API is usually a list of objects, and each object is a row. DataFrame takes that shape directly.</p>
@@ -182,6 +184,7 @@ raw = '[{"name": "Ada", "score": 92}, {"name": "Grace", "score": 88}]'
 df = pd.DataFrame(json.loads(raw))
 print(list(df.columns))
 print(df.shape)</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -192,14 +195,16 @@ print(df.shape)</code></pre>
 rows = [{"name": "Ada", "score": 92}, {"name": "Alan"}]
 df = pd.DataFrame(rows)
 print(df["score"].isna().sum())</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>from_records(rows)</code> that turns a list of dictionaries into a table and returns its column names, sorted.</p>
+<p class="hint-text">pd.DataFrame takes the list of dictionaries directly. sorted(df.columns) then gives plain strings in a predictable order.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -216,14 +221,11 @@ def from_records(rows):
 print(from_records([{"name": "Ada", "score": 92}]))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

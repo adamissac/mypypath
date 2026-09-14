@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>The file is not always comma separated</h2>
 <p>sep tells read_csv what divides the fields. A tab-separated export read with the default gives you one very wide column, which is easy to spot the moment you check shape.</p>
@@ -180,6 +182,7 @@
 
 df = pd.read_csv("scores.tsv", sep="\t")
 print(df.shape)</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -189,14 +192,16 @@ print(df.shape)</code></pre>
 
 df = pd.read_csv("raw.csv", header=None, names=["name", "score"])
 print(list(df.columns))</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>A tab-separated file <code>scores.tsv</code> is supplied with <code>name</code> and <code>score</code> columns. Write <code>row_count(path)</code> that reads it and returns the number of rows.</p>
+<p class="hint-text">Without sep="\t" the whole line lands in one column and you get one column and three rows -- the row count would look right and the table would be wrong. len(df) or df.shape[0] counts the rows.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -213,14 +218,11 @@ def row_count(path):
 print(row_count("scores.tsv"))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

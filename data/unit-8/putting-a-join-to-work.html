@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>The shape of a real answer</h2>
 <p>Load both, check what came in, join on the key, check the row count survived, then summarise. The checks are the part people skip.</p>
@@ -182,6 +184,7 @@ people = pd.read_csv("people.csv")
 scores = pd.read_csv("scores.csv")
 out = pd.merge(people, scores, on="id", how="left")
 print(len(people), len(out))</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -191,14 +194,16 @@ print(len(people), len(out))</code></pre>
 
 df = pd.DataFrame({"team": ["a", "a", "b"], "score": [90, 80, 70]})
 print(df.groupby("team")["score"].mean().round(1).to_dict())</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Two files are supplied: <code>people.csv</code> with <code>id</code> and <code>team</code>, and <code>scores.csv</code> with <code>id</code> and <code>score</code>. Write <code>team_means(people_path, scores_path)</code> returning a dictionary of team to mean score, rounded to one decimal place.</p>
+<p class="hint-text">Read both, merge on id, group by team, take the mean of score, round it, then to_dict(). The second file set is different, so a typed-in answer fails.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -215,14 +220,11 @@ def team_means(people_path, scores_path):
 print(team_means("people.csv", "scores.csv"))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

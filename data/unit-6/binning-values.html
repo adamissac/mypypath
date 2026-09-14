@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>cut divides a range into labelled bands</h2>
 <p>Grades, age groups and price brackets are all the same operation: choose the edges, name the bands.</p>
@@ -181,6 +183,7 @@
 scores = pd.Series([95, 82, 71])
 bands = pd.cut(scores, bins=[0, 79, 89, 100], labels=["C", "B", "A"])
 print(bands.tolist())</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -190,14 +193,16 @@ print(bands.tolist())</code></pre>
 
 s = pd.Series([89])
 print(pd.cut(s, bins=[0, 89, 100], labels=["low", "high"]).tolist())</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>grade(scores)</code> that returns a list of letter grades: 90 and above is an A, 80 to 89 a B, 70 to 79 a C, and anything below that an F.</p>
+<p class="hint-text">cut with edges at -1, 69, 79, 89 and 100 puts each boundary score in the band above it, because the right-hand edge belongs to its band.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -214,14 +219,11 @@ def grade(scores):
 print(grade(pd.Series([95, 85, 75, 60])))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

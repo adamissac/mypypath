@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>The four questions</h2>
 <p>How many rows, what are the columns, what type is each, and how much is missing. Every import problem this unit covers shows up in one of those four answers.</p>
@@ -183,6 +185,7 @@ print(df.shape)
 print(list(df.columns))
 print(df.dtypes.to_dict())
 print(df.isna().sum().to_dict())</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -192,14 +195,16 @@ print(df.isna().sum().to_dict())</code></pre>
 
 df = pd.DataFrame({"subject": ["maths", "Maths", "computing"]})
 print(sorted(df["subject"].unique()))</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>load_report(path)</code> that reads a CSV and returns a tuple of the row count, the sorted column names, and how many values are missing in total.</p>
+<p class="hint-text">df.isna().sum() gives a count per column; summing that again gives the total. int() at the end keeps it a plain number.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -216,14 +221,11 @@ def load_report(path):
 print(load_report("scores.csv"))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

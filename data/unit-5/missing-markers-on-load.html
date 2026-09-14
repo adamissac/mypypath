@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>What counts as missing</h2>
 <p>pandas already treats an empty field and NA as missing. Real files also use n/a, -, unknown, or 999, and it has no way to guess which of those you meant.</p>
@@ -180,6 +182,7 @@
 
 df = pd.read_csv("scores.csv", na_values=["n/a", "unknown", "-"])
 print(df["score"].isna().sum())</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -190,14 +193,16 @@ print(df["score"].isna().sum())</code></pre>
 df = pd.read_csv("scores.csv", na_values=["n/a"])
 print(df["score"].dtype)
 print(df["score"].mean())</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>A file <code>scores.csv</code> uses <code>n/a</code> for a missing score. Write <code>known_scores(path)</code> that returns how many rows have a score.</p>
+<p class="hint-text">Name "n/a" in na_values so it loads as missing, then count what is left with notna().sum() or by dropping the missing rows.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -214,14 +219,11 @@ def known_scores(path):
 print(known_scores("scores.csv"))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>Every step this course has covered</h2>
 <p>Read the files, fix the types, join on the key, group, round, and return something a reader can use. Each of those was a unit.</p>
@@ -181,6 +183,7 @@
 # people.csv: id,team | scores.csv: id,score
 # read -&gt; to_numeric -&gt; merge -&gt; groupby -&gt; round -&gt; report
 print("the pipeline is the course")</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -191,14 +194,16 @@ print("the pipeline is the course")</code></pre>
 df = pd.DataFrame({"score": ["90", "n/a"]})
 clean = pd.to_numeric(df["score"], errors="coerce")
 print(int(clean.isna().sum()), "dropped of", len(df))</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Two files are supplied. <code>people.csv</code> has <code>id</code> and <code>team</code>; <code>scores.csv</code> has <code>id</code> and <code>score</code>, where some scores are <code>n/a</code>. Write <code>report(people_path, scores_path)</code> returning <code>(team, mean)</code> for the highest-scoring team, ignoring rows with no score, with the mean to one decimal place.</p>
+<p class="hint-text">Read both, convert the score with to_numeric(errors="coerce"), drop the missing rows, merge on id, group by team, take the mean, and pick the highest with idxmax.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -215,14 +220,11 @@ def report(people_path, scores_path):
 print(report("people.csv", "scores.csv"))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

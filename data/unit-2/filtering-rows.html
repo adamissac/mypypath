@@ -173,12 +173,15 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>A filter is a comprehension with a test</h2>
 <p>Say the condition once, in one place. Scattering the same test through the code is how two parts of an analysis end up disagreeing about who counts.</p>
 <pre class="code"><code>rows = [{"score": 92}, {"score": 58}, {"score": 88}]
 passing = [r for r in rows if r["score"] &gt;= 60]
 print(len(passing))</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -187,14 +190,16 @@ print(len(passing))</code></pre>
 <pre class="code"><code>rows = [{"score": 92}, {"score": 58}]
 kept = [r for r in rows if r["score"] &gt;= 60]
 print(len(rows), "-&gt;", len(kept))</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>passing(rows, mark)</code> that returns the rows whose <code>score</code> is at least <code>mark</code>.</p>
+<p class="hint-text">At least the mark means the mark passes. A plain greater-than silently fails everyone sitting exactly on the boundary, which is where marks cluster.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -209,14 +214,11 @@ print(len(rows), "-&gt;", len(kept))</code></pre>
 print(len(passing([{"score": 92}, {"score": 58}], 60)))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

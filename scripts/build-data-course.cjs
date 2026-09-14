@@ -52,13 +52,173 @@ ${items}
 </aside>`;
 }
 
-function lessonMain(unitN, unit, i, lesson, prev, next) {
-  const sections = lesson.sections.map(([heading, prose, code]) => `
+/* ------------------------------------------------------- the lesson schema
+
+   A lesson is normalised before it is rendered, so the content modules can be
+   upgraded one unit at a time instead of all sixty lessons in one commit.
+
+   The shape a rewritten lesson uses:
+
+     objectives  [string]        what the learner will be able to do
+     why         string          why this matters, before the how
+     sections    [ { heading, intro, steps: [ { heading, prose, code, note } ] } ]
+     practices   [ { after, title, prompt, starter } ]   interleaved, not dumped
+     exercises   [ { title, prompt, hint, starter, ... } ]  two or more, graded
+     questions   [ ... ]         the end-of-lesson quiz
+
+   The shape the first draft used, still accepted:
+
+     sections    [ [heading, prose, code] ]
+     exercise    { prompt, starter, ... }                 exactly one
+*/
+function normalise(lesson) {
+  const sections = (lesson.sections || []).map((sec) => {
+    if (Array.isArray(sec)) {
+      const [heading, prose, code] = sec;
+      return { heading, intro: prose, steps: code ? [{ code }] : [] };
+    }
+    return {
+      heading: sec.heading,
+      intro: sec.intro || '',
+      note: sec.note || '',
+      steps: sec.steps || [],
+    };
+  });
+
+  const exercises = lesson.exercises
+    ? lesson.exercises.slice()
+    : (lesson.exercise ? [lesson.exercise] : []);
+
+  return {
+    ...lesson,
+    sections,
+    exercises,
+    objectives: lesson.objectives || [],
+    why: lesson.why || '',
+    practices: lesson.practices || [],
+  };
+}
+
+/* The ids an exercise and its editor share. Kept in one place because the
+   check file, the manifest and the markup all have to agree on them. */
+const exId = (n) => `exercise${n + 1}`;
+
+function objectivesBlock(objectives) {
+  if (!objectives.length) return '';
+  return `
 <div class="content-section">
-<h2>${esc(heading)}</h2>
-<p>${prose}</p>
-<pre class="code"><code>${esc(code)}</code></pre>
-</div>`).join('\n');
+<h2>What You Will Learn in This Lesson</h2>
+<ul class="objective-list">
+${objectives.map((o) => `<li>${o}</li>`).join('\n')}
+</ul>
+</div>`;
+}
+
+function whyBlock(why) {
+  if (!why) return '';
+  return `
+<div class="info-card">
+<h3 class="h4">Why This Matters</h3>
+<p>${why}</p>
+</div>`;
+}
+
+/* A mini practice is an ungraded editor mid-lesson: somewhere to try the thing
+   that was just explained, while it is still the thing being explained. They
+   are interleaved by `after`, which is the index of the section they follow. */
+function practiceBlock(practice, n) {
+  return `
+<div class="practice-box interactive">
+<div class="practice-header">
+<h3 class="h4">Mini Practice #${n}: ${esc(practice.title)}</h3>
+<span class="practice-badge">Try It Yourself</span>
+</div>
+<p>${practice.prompt}</p>
+
+<div class="interactive-editor" data-editor-id="practice${n}">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice${n}')">Run</button>
+<button class="btn-reset" onclick="resetEditor('practice${n}', '${attr(practice.starter)}')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('practice${n}')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice${n}">${esc(practice.starter)}</textarea>
+<div class="editor-output" id="output-practice${n}">
+<div class="output-placeholder">Press Run to see output</div>
+</div>
+</div>
+</div>`;
+}
+
+/* A graded exercise, in the same markup Foundations uses.
+ *
+ * data-exercise-id is what lesson-progress.js counts as a required item, and
+ * .interactive-editor[data-editor-id] is what check-ui.js hangs "Check my
+ * work" on. The first draft emitted only the editor, so a Data lesson had a
+ * run-only sandbox where Foundations had graded work.
+ *
+ * No checkExercise/showSolution buttons: those are the legacy Foundations
+ * path, they need a hand-written exerciseSolutions map, and they would put a
+ * second Check button with a different verdict beside the real one. */
+function exerciseBlock(exercise, n) {
+  const id = exId(n);
+  return `
+<div class="exercise-item" data-exercise-id="${id}">
+<h3 class="h4">Exercise ${n + 1}: ${esc(exercise.title || 'Practice')}</h3>
+<p>${exercise.prompt}</p>
+${exercise.hint ? `<p class="hint-text">${esc(exercise.hint)}</p>` : ''}
+
+<div class="interactive-editor" data-editor-id="${id}">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('${id}')">Run</button>
+<button class="btn-reset" onclick="resetEditor('${id}', '${attr(exercise.starter)}')">Reset</button>
+<button class="btn-clear" onclick="clearSaved('${id}')" title="Clear saved code">Clear Saved</button>
+</div>
+<textarea class="code-editor-small" id="editor-${id}">${esc(exercise.starter)}</textarea>
+<div class="editor-output" id="output-${id}">
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-${id}"></div>
+</div>
+</div>`;
+}
+
+function lessonMain(unitN, unit, i, raw, prev, next) {
+  const lesson = normalise(raw);
+
+  /* Heading levels go h1 -> h2 -> h3, never h2 -> h4. axe's heading-order rule
+     is enabled in scripts/audit-a11y.mjs and the budget is zero; the first
+     draft emitted <h4> here and the violation was fixed in the generated HTML
+     instead of in the generator, so every rebuild put it back. */
+  const body = [];
+  lesson.sections.forEach((sec, idx) => {
+    const steps = (sec.steps || []).map((step) => [
+      step.heading ? `<h3 class="h4">${esc(step.heading)}</h3>` : '',
+      step.prose ? `<p>${step.prose}</p>` : '',
+      step.code ? `<pre class="code"><code>${esc(step.code)}</code></pre>` : '',
+      step.note ? `<p class="note">${step.note}</p>` : '',
+    ].filter(Boolean).join('\n')).join('\n');
+
+    body.push(`
+<div class="content-section">
+<h2>${esc(sec.heading)}</h2>
+${sec.intro ? `<p>${sec.intro}</p>` : ''}
+${steps}
+${sec.note ? `<div class="info-card"><p>${sec.note}</p></div>` : ''}
+</div>`);
+
+    lesson.practices.forEach((pr, pi) => {
+      if (pr.after === idx) body.push(practiceBlock(pr, pi + 1));
+    });
+  });
+
+  // Any practice pointing past the last section still gets rendered.
+  lesson.practices.forEach((pr, pi) => {
+    if (pr.after === undefined || pr.after >= lesson.sections.length) {
+      body.push(practiceBlock(pr, pi + 1));
+    }
+  });
+
+  const exercises = lesson.exercises.map((ex, n) => exerciseBlock(ex, n)).join('\n');
 
   return `<main id="main-content">
 <section class="section reveal-up">
@@ -75,31 +235,13 @@ function lessonMain(unitN, unit, i, lesson, prev, next) {
 <div class="container">
 ${sidebar(unitN, C[`unit${unitN}`].lessons, lesson.slug)}
 <section class="lesson-body">
-${sections}
-
-<div class="practice-box interactive">
-<div class="practice-header">
-<h4>Exercise</h4>
-<span class="practice-badge">Try It Yourself</span>
-</div>
-<p>${lesson.exercise.prompt}</p>
-
-<div class="interactive-editor" data-editor-id="exercise1">
-<div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('exercise1', '${attr(lesson.exercise.starter)}')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
-</div>
-<textarea class="code-editor-small" id="editor-exercise1">${esc(lesson.exercise.starter)}</textarea>
-<div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
-</div>
-</div>
-</div>
+${objectivesBlock(lesson.objectives)}
+${whyBlock(lesson.why)}
+${body.join('\n')}
 
 <div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
+<h2>End-of-Lesson Exercises</h2>
+${exercises}
 </div>
 
 <div class="lesson-nav">
@@ -150,6 +292,11 @@ ${body}
 
 /* ------------------------------------------------------- course + picker pages */
 
+/* The card headings are h2 styled as h3, not h3.
+   These pages have one h1 and then the card grid, so a literal <h3> skips a
+   level and tests/heading-order.test.js fails. Both card builders were fixed
+   in the generated HTML once before and not here, so the next rebuild undid
+   it -- which is the whole reason rule zero exists. */
 function courseCards(courses) {
   return courses.map((c, i) => {
     const ready = c.units.filter((u) => !u.stub).length;
@@ -158,7 +305,7 @@ function courseCards(courses) {
       : `${c.units.length} units`;
     return `<a class="unit-card route" href="${c.curriculum}">
 <div class="unit-ribbon">${i + 1}</div>
-<h3>${esc(c.title)}</h3>
+<h2 class="h3">${esc(c.title)}</h2>
 <p>${esc(c.tagline)}</p>
 <div class="unit-meta">
 <span class="pill"><span class="dot"></span> ${meta}</span>
@@ -171,7 +318,7 @@ function courseCards(courses) {
 function unitCards(course) {
   return course.units.map((u) => `<a class="unit-card route" href="/data/unit-${u.n}.html">
 <div class="unit-ribbon">${u.n}</div>
-<h3>${esc(u.title)}</h3>
+<h2 class="h3">${esc(u.title)}</h2>
 <p>${esc(u.stub ? 'Planned, not written yet.' : C[`unit${u.n}`].blurb)}</p>
 <div class="unit-meta">
 <span class="pill"><span class="dot"></span> ${u.stub ? 'Coming later' : `${C[`unit${u.n}`].lessons.length} lessons`}</span>
@@ -211,28 +358,40 @@ for (const unit of COURSE.units) {
 
     // The check file, in the course's own folder so that unit 1 of each course
     // does not ask for the other's checks.
-    const ex = lesson.exercise;
-    const cases = [];
-    if (ex.expect_stdout) {
-      cases.push({ name: 'produces the expected output', expect_stdout: ex.expect_stdout });
-    } else {
-      cases.push({ name: 'returns the right answer', call: ex.call, expect: ex.expectValue });
-    }
+    //
     // Packages the exercise needs before it can run. Declared on the unit and
     // inherited by its lessons, since a whole unit is about one library.
     const packages = lesson.packages || C[`unit${unit.n}`].packages || null;
+    const exercises = lesson.exercises || (lesson.exercise ? [lesson.exercise] : []);
 
-    const spec = { [`exercise1`]: {
-      prompt: lesson.summary,
-      ...(packages ? { packages } : {}),
-      ...(ex.files ? { files: ex.files } : {}),
-      cases,
-      hiddenCases: ex.hidden || [],
-      hint: ex.hint,
-    }, questions: lesson.questions };
+    const spec = {};
+    exercises.forEach((ex, n) => {
+      const cases = [];
+      if (ex.expect_stdout) {
+        cases.push({ name: 'produces the expected output', expect_stdout: ex.expect_stdout });
+      } else {
+        cases.push({ name: 'returns the right answer', call: ex.call, expect: ex.expectValue });
+      }
+      spec[`exercise${n + 1}`] = {
+        prompt: ex.title ? `${lesson.title}: ${ex.title}` : lesson.summary,
+        ...(packages ? { packages } : {}),
+        ...(ex.files ? { files: ex.files } : {}),
+        cases,
+        hiddenCases: ex.hidden || [],
+        hint: ex.hint,
+      };
+    });
+    spec.questions = lesson.questions;
+
     write(`assets/data/checks/data/unit-${unit.n}/${lesson.slug}.json`,
       `${JSON.stringify(spec, null, 2)}\n`);
     checks++;
+
+    // Every editor on the page, graded or not, so validate-checks can tell an
+    // id that exists from one that does not. The mini practices are editors
+    // only; the exercises are both.
+    const exerciseIds = exercises.map((_, n) => `exercise${n + 1}`);
+    const practiceIds = (lesson.practices || []).map((_, n) => `practice${n + 1}`);
 
     manifest.lessons.push({
       unit: unit.n,
@@ -241,8 +400,8 @@ for (const unit of COURSE.units) {
       path: `/data/unit-${unit.n}/${lesson.slug}.html`,
       title: lesson.title,
       order: i + 1,
-      editors: ['exercise1'],
-      exercises: ['exercise1'],
+      editors: practiceIds.concat(exerciseIds),
+      exercises: exerciseIds,
     });
   });
 }

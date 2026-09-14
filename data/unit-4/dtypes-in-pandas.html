@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>Ask before you calculate</h2>
 <p>dtypes tells you what every column is. A column of numbers read from a file is very often object, which means text, and averaging it will either fail or lie.</p>
@@ -180,6 +182,7 @@
 
 df = pd.DataFrame({"score": ["92", "88"], "n": [1, 2]})
 print(df.dtypes)</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -193,14 +196,16 @@ print(df["score"].sum())
 
 messy = pd.Series(["92", "n/a"])
 print(pd.to_numeric(messy, errors="coerce").tolist())</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>numeric_total(df)</code> that returns the sum of the <code>score</code> column, where the scores arrived as text and anything that is not a number counts as zero.</p>
+<p class="hint-text">to_numeric with errors="coerce" turns the junk into missing values, and fillna(0) then makes them zero before you sum.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -217,14 +222,11 @@ def numeric_total(df):
 print(numeric_total(pd.DataFrame({"score": ["92", "88"]})))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>pivot spreads a column across the top</h2>
 <p>It is melt run backwards: the values of one column become column headers.</p>
@@ -181,6 +183,7 @@
 long = pd.DataFrame({"name": ["Ada", "Ada"], "month": ["jan", "feb"], "score": [90, 80]})
 wide = long.pivot(index="name", columns="month", values="score")
 print(sorted(wide.columns.tolist()))</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -191,14 +194,16 @@ print(sorted(wide.columns.tolist()))</code></pre>
 long = pd.DataFrame({"n": ["a", "a"], "m": ["jan", "jan"], "v": [1, 2]})
 out = pd.pivot_table(long, index="n", columns="m", values="v", aggfunc="mean")
 print(out.values.tolist())</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>month_columns(df)</code> that spreads a long table with <code>name</code>, <code>month</code> and <code>score</code> into one row per name, and returns the sorted column names.</p>
+<p class="hint-text">index is what stays down the side, columns is what spreads across the top, values fills the cells. sorted() on the result keeps the answer stable.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -215,14 +220,11 @@ def month_columns(df):
 print(month_columns(pd.DataFrame({"name": ["Ada"], "month": ["jan"], "score": [90]})))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

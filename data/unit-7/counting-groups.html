@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>value_counts for one column</h2>
 <p>The quickest answer to "how many of each" and sorted by frequency by default.</p>
@@ -180,6 +182,7 @@
 
 s = pd.Series(["maths", "art", "maths"])
 print(s.value_counts().to_dict())</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -190,14 +193,16 @@ print(s.value_counts().to_dict())</code></pre>
 df = pd.DataFrame({"k": ["a", "a"], "v": [1, None]})
 print(df.groupby("k")["v"].size().to_dict())
 print(df.groupby("k")["v"].count().to_dict())</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>counts_by(df, column)</code> returning a dictionary of each distinct value in that column to how many rows have it.</p>
+<p class="hint-text">value_counts on the column gives exactly this. to_dict() makes the keys and values plain, though the counts may need int() to shed their numpy type.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -214,14 +219,11 @@ def counts_by(df, column):
 print(counts_by(pd.DataFrame({"s": ["a", "a", "b"]}), "s"))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

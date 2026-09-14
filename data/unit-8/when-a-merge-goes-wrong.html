@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>A key that repeats multiplies</h2>
 <p>If the right-hand key is not unique, every match on the left is repeated once per match on the right. Two rows becoming six is the classic sign.</p>
@@ -181,6 +183,7 @@
 left = pd.DataFrame({"id": [1], "name": ["Ada"]})
 right = pd.DataFrame({"id": [1, 1], "score": [90, 80]})
 print(pd.merge(left, right, on="id").shape)</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -191,14 +194,16 @@ print(pd.merge(left, right, on="id").shape)</code></pre>
 left = pd.DataFrame({"id": ["1"], "name": ["Ada"]})
 right = pd.DataFrame({"id": [1], "score": [90]})
 print(pd.merge(left, right, on="id").shape)</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>safe_merge(left, right)</code> that joins on <code>id</code> after making both id columns text, and returns the number of rows in the result.</p>
+<p class="hint-text">Convert both id columns with astype(str) on copies, then merge. Converting only one side leaves the mismatch exactly where it was.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -216,14 +221,11 @@ print(safe_merge(pd.DataFrame({"id": ["1"], "name": ["Ada"]}),
                  pd.DataFrame({"id": [1], "score": [90]})))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

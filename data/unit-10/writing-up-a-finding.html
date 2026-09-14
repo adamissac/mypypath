@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>Three parts to a claim</h2>
 <p>The number, the comparison that gives it meaning, and the limit. Without the second it is trivia; without the third it is overstated.</p>
@@ -181,6 +183,7 @@
 df = pd.DataFrame({"team": ["a", "b"], "score": [85.0, 70.0]})
 gap = float(df["score"].max() - df["score"].min())
 print(f"a leads b by {gap:.1f} points, on one term of data")</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -191,14 +194,16 @@ print(f"a leads b by {gap:.1f} points, on one term of data")</code></pre>
 hours = pd.Series([1.0, 2.0, 3.0])
 score = pd.Series([60.0, 70.0, 80.0])
 print(round(float(hours.corr(score)), 2))</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>finding(df)</code> returning a sentence of the form <code>"a scores 15.0 above b (n=3)"</code>, comparing the highest and lowest team means and reporting how many rows the whole comparison rests on.</p>
+<p class="hint-text">Group to means, take idxmax and idxmin, subtract for the gap, and len(df) for n. Reporting n is what stops a difference between two rows reading like a result.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -215,14 +220,11 @@ def finding(df):
 print(finding(pd.DataFrame({"team": ["a", "b"], "score": [85.0, 70.0]})))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

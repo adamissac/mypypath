@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>A moving average</h2>
 <p>rolling takes a window and a summary. A seven-day mean of daily numbers removes the weekday pattern and leaves the trend.</p>
@@ -180,6 +182,7 @@
 
 s = pd.Series([1, 2, 3, 4])
 print(s.rolling(2).mean().tolist())</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -189,14 +192,16 @@ print(s.rolling(2).mean().tolist())</code></pre>
 
 s = pd.Series([1, 2, 3])
 print(s.rolling(3).mean().isna().sum())</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>smoothed(s, window)</code> returning the rolling mean as a list, with the leading gaps dropped.</p>
+<p class="hint-text">s.rolling(window).mean() gives the smoothed series with gaps at the front; dropna() removes them and tolist() hands back plain floats.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -213,14 +218,11 @@ def smoothed(s, window):
 print(smoothed(pd.Series([1.0, 2.0, 3.0]), 2))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

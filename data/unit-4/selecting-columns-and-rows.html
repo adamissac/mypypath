@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>Columns by name</h2>
 <p>One name gives a Series; a list of names gives a smaller DataFrame. The double brackets are a list inside the brackets, not special syntax.</p>
@@ -181,6 +183,7 @@
 df = pd.DataFrame({"name": ["Ada", "Grace"], "score": [92, 88]})
 print(df["score"])
 print(df[["name", "score"]])</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -191,14 +194,16 @@ print(df[["name", "score"]])</code></pre>
 df = pd.DataFrame({"score": [92, 88, 79]}, index=["a", "b", "c"])
 print(df.loc["b", "score"])
 print(df.iloc[1]["score"])</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>score_for(df, name)</code> that returns the score belonging to <code>name</code>, where the table has a <code>name</code> column and a <code>score</code> column.</p>
+<p class="hint-text">Mask on the name column, then read the score off what survives. Assuming a position is the bug the second hidden case is looking for.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -216,14 +221,11 @@ df = pd.DataFrame({"name": ["Ada", "Grace"], "score": [92, 88]})
 print(score_for(df, "Grace"))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

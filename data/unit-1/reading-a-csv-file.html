@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>Why not just split on commas</h2>
 <p>Because a field can contain a comma inside quotes, and splitting breaks the row in the wrong place. csv knows the rules; a split does not.</p>
@@ -181,6 +183,7 @@
 with open("scores.csv") as f:
     for row in csv.reader(f):
         print(row)</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -191,14 +194,16 @@ with open("scores.csv") as f:
 with open("scores.csv") as f:
     for row in csv.DictReader(f):
         print(row["name"], row["score"])</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>A file <code>scores.csv</code> is supplied when your work is checked, with a <code>name</code> and a <code>score</code> column. Print each name and score on its own line, separated by a space. Pressing Run on its own reports a <code>FileNotFoundError</code>, so use <strong>Check my work</strong>.</p>
+<p class="hint-text">DictReader reads the header for you, so row["name"] and row["score"] work straight away. Typing the three lines out passes the first check and fails the second.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -211,14 +216,11 @@ with open("scores.csv") as f:
 # scores.csv has columns: name, score
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

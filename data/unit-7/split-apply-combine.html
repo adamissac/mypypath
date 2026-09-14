@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>Three steps in one call</h2>
 <p>Split the rows into groups by a key, apply a summary to each group, and combine the answers into one result indexed by that key.</p>
@@ -180,6 +182,7 @@
 
 df = pd.DataFrame({"subject": ["maths", "art", "maths"], "score": [90, 70, 80]})
 print(df.groupby("subject")["score"].mean().to_dict())</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -190,14 +193,16 @@ print(df.groupby("subject")["score"].mean().to_dict())</code></pre>
 df = pd.DataFrame({"subject": ["maths", "art"], "score": [90, 70]})
 out = df.groupby("subject")["score"].mean()
 print(out.index.tolist())</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>mean_by_subject(df)</code> returning a dictionary of subject to mean score, each mean rounded to one decimal place.</p>
+<p class="hint-text">groupby the subject, take the score column, ask for the mean, round it, and to_dict() at the end gives plain keys and values.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -214,14 +219,11 @@ def mean_by_subject(df):
 print(mean_by_subject(pd.DataFrame({"subject": ["maths"], "score": [90]})))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

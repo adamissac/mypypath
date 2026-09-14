@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>Rows end to end</h2>
 <p>concat stacks tables that share their columns. ignore_index renumbers the result, which you almost always want after stacking.</p>
@@ -182,6 +184,7 @@ jan = pd.DataFrame({"name": ["Ada"], "score": [92]})
 feb = pd.DataFrame({"name": ["Grace"], "score": [88]})
 both = pd.concat([jan, feb], ignore_index=True)
 print(both.shape)</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -193,14 +196,16 @@ a = pd.DataFrame({"x": [1]})
 b = pd.DataFrame({"x": [2], "y": [3]})
 out = pd.concat([a, b], ignore_index=True)
 print(sorted(out.columns), int(out["y"].isna().sum()))</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>stack(tables)</code> that stacks a list of tables into one with a fresh index, and returns the number of rows.</p>
+<p class="hint-text">pd.concat takes the list. ignore_index=True is what stops two rows both being numbered 0.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -217,14 +222,11 @@ def stack(tables):
 print(stack([pd.DataFrame({"a": [1]}), pd.DataFrame({"a": [2]})]))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>Why long is easier to work with</h2>
 <p>A table with a column per month cannot be grouped by month, because the month is in the header rather than the data. melt moves it into the rows.</p>
@@ -182,6 +184,7 @@ wide = pd.DataFrame({"name": ["Ada"], "jan": [90], "feb": [80]})
 long = wide.melt(id_vars=["name"], var_name="month", value_name="score")
 print(long.shape)
 print(long["month"].tolist())</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -191,14 +194,16 @@ print(long["month"].tolist())</code></pre>
 
 wide = pd.DataFrame({"name": ["Ada"], "jan": [90], "feb": [80]})
 print(wide.melt(id_vars=["name"]).shape)</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>to_long(df)</code> that melts a table with a <code>name</code> column and one column per month into columns <code>name</code>, <code>month</code>, <code>score</code>, and returns the row count.</p>
+<p class="hint-text">id_vars=["name"] keeps the name and folds every other column down. The row count is people times months.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -215,14 +220,11 @@ def to_long(df):
 print(to_long(pd.DataFrame({"name": ["Ada"], "jan": [90], "feb": [80]})))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

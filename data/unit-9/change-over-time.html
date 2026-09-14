@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>shift compares a row with its neighbour</h2>
 <p>diff is the difference from the previous row and pct_change is that as a proportion. Both leave the first row empty, because it has nothing before it.</p>
@@ -181,6 +183,7 @@
 s = pd.Series([100, 110, 99])
 print(s.diff().tolist())
 print(s.pct_change().round(3).tolist())</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -190,14 +193,16 @@ print(s.pct_change().round(3).tolist())</code></pre>
 
 s = pd.Series([0, 5])
 print(s.pct_change().tolist())</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>rises(s)</code> that returns how many times the value went up compared with the row before it.</p>
+<p class="hint-text">diff() gives the change at each step, with the first one missing. Count how many of those are above zero -- a missing value is not, so it takes care of itself.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -214,14 +219,11 @@ def rises(s):
 print(rises(pd.Series([1, 2, 1, 3])))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

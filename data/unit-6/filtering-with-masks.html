@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>A condition on a column selects rows</h2>
 <p>The mask is one True or False per row, and putting it in the brackets keeps the rows it marked.</p>
@@ -180,6 +182,7 @@
 
 df = pd.DataFrame({"name": ["Ada", "Alan"], "score": [92, 79]})
 print(df[df["score"] &gt;= 85])</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -189,14 +192,16 @@ print(df[df["score"] &gt;= 85])</code></pre>
 
 df = pd.DataFrame({"score": [92, 79], "subject": ["maths", "maths"]})
 print(df[(df["score"] &gt;= 85) &amp; (df["subject"] == "maths")].shape)</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>passing_names(df, mark)</code> returning a list of names whose score is at least <code>mark</code>, in the order they appear.</p>
+<p class="hint-text">Mask the table, then take the name column of what survives and turn it into a list with .tolist().</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -213,14 +218,11 @@ def passing_names(df, mark):
 print(passing_names(pd.DataFrame({"name": ["Ada"], "score": [92]}), 85))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">

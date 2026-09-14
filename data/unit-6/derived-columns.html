@@ -173,6 +173,8 @@
 </aside>
 <section class="lesson-body">
 
+
+
 <div class="content-section">
 <h2>Arithmetic between columns</h2>
 <p>Columns combine row by row, so a rate, a total or a difference is one line.</p>
@@ -181,6 +183,7 @@
 df = pd.DataFrame({"price": [10.0, 20.0], "quantity": [3, 1]})
 df["total"] = df["price"] * df["quantity"]
 print(df["total"].tolist())</code></pre>
+
 </div>
 
 <div class="content-section">
@@ -191,14 +194,16 @@ print(df["total"].tolist())</code></pre>
 df = pd.DataFrame({"price": [10.0], "quantity": [2]})
 out = df.assign(total=df["price"] * df["quantity"])
 print(out["total"].tolist())</code></pre>
+
 </div>
 
-<div class="practice-box interactive">
-<div class="practice-header">
-<h3 class="h4">Exercise</h3>
-<span class="practice-badge">Try It Yourself</span>
-</div>
+<div class="exercise-section">
+<h2>End-of-Lesson Exercises</h2>
+
+<div class="exercise-item" data-exercise-id="exercise1">
+<h3 class="h4">Exercise 1: Practice</h3>
 <p>Write <code>percent_of_total(df)</code> returning each row's <code>amount</code> as a percentage of the column total, rounded to one decimal place, as a list.</p>
+<p class="hint-text">Divide the column by its own sum and multiply by 100. The division broadcasts the single total across every row.</p>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
@@ -215,14 +220,11 @@ def percent_of_total(df):
 print(percent_of_total(pd.DataFrame({"amount": [25.0, 75.0]})))
 </textarea>
 <div class="editor-output" id="output-exercise1">
-<div class="output-placeholder">Press Run to see output</div>
+<div class="output-placeholder">Press Run to try it, then Check my work to mark it.</div>
+</div>
+<div class="exercise-feedback" id="feedback-exercise1"></div>
 </div>
 </div>
-</div>
-
-<div class="exercise-section">
-<h2>Check Your Understanding</h2>
-<div data-lesson-quiz></div>
 </div>
 
 <div class="lesson-nav">
