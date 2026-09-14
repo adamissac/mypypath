@@ -1,0 +1,184 @@
+[
+  {
+    "id": "u6d-m01",
+    "prompt": "df[df[\"score\"] > 80] keeps what?",
+    "choices": [
+      "The score column",
+      "The rows where the condition is True",
+      "A boolean frame",
+      "The first 80 rows"
+    ],
+    "answer": 1,
+    "explain": "The mask is per row, so the whole row survives or none of it does.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u6d-m02",
+    "prompt": "Combining two conditions on a DataFrame uses which operators?",
+    "choices": [
+      "and / or",
+      "& / | with brackets around each condition",
+      "&& / ||",
+      "AND / OR"
+    ],
+    "answer": 1,
+    "explain": "Same rule as numpy, and the brackets are needed because & binds tighter than the comparisons.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u6d-m03",
+    "prompt": "df[\"city\"].isin([\"Leeds\", \"York\"]) is equivalent to what?",
+    "choices": [
+      "Two conditions joined with |",
+      "Two conditions joined with &",
+      "A sort",
+      "A group-by"
+    ],
+    "answer": 0,
+    "explain": "It is the readable form of a chain of equality tests, and it does not get longer as the list grows.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u6d-m04",
+    "prompt": "df[\"score\"].between(60, 80) includes the endpoints?",
+    "choices": [
+      "Neither",
+      "Both, by default",
+      "Only the lower",
+      "Only the upper"
+    ],
+    "answer": 1,
+    "explain": "inclusive=\"both\" is the default; pass something else when you mean it.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u6d-m05",
+    "prompt": "What does df.query(\"score > 80 and city == 'Leeds'\") offer?",
+    "choices": [
+      "More speed always",
+      "A condition that reads like the question, with plain and/or",
+      "Type conversion",
+      "Grouping"
+    ],
+    "answer": 1,
+    "explain": "Inside query the string is parsed by pandas, so the ordinary words work and the brackets go away.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u6d-m06",
+    "prompt": "The column that answers your question is usually what?",
+    "choices": [
+      "Already in the file",
+      "Derived from the columns that are",
+      "The index",
+      "The first column"
+    ],
+    "answer": 1,
+    "explain": "Rate per head, difference from a target, share of a total — none of those are usually stored.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u6d-m07",
+    "prompt": "Which is the better way to compute a rate column?",
+    "choices": [
+      "df.apply(lambda r: r[\"a\"] / r[\"b\"], axis=1)",
+      "df[\"a\"] / df[\"b\"]",
+      "A for loop over the rows",
+      "df.map(divide)"
+    ],
+    "answer": 1,
+    "explain": "Column arithmetic is vectorised. apply with axis=1 walks the rows in Python and is far slower.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u6d-m08",
+    "prompt": "When is apply genuinely the right tool?",
+    "choices": [
+      "For any arithmetic",
+      "When there is no vectorised way to express the operation",
+      "For speed",
+      "For sorting"
+    ],
+    "answer": 1,
+    "explain": "It is an escape hatch. Reaching for it first usually means reaching past a faster built-in.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u6d-m09",
+    "prompt": "pd.cut turns a measurement into what?",
+    "choices": [
+      "A count",
+      "A band or category",
+      "A sorted column",
+      "A date"
+    ],
+    "answer": 1,
+    "explain": "Which is what lets you count how many fall in each band.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u6d-m10",
+    "prompt": "The difference between pd.cut and pd.qcut is what?",
+    "choices": [
+      "None",
+      "cut uses the edges you give; qcut splits so each bin holds roughly equal counts",
+      "qcut is faster",
+      "cut only takes integers"
+    ],
+    "answer": 1,
+    "explain": "Equal-width versus equal-frequency, and they answer different questions.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u6d-m11",
+    "prompt": "df.sort_values(\"score\", ascending=False) returns what?",
+    "choices": [
+      "None, sorted in place",
+      "A new sorted frame",
+      "A Series",
+      "The top row"
+    ],
+    "answer": 1,
+    "explain": "Assign it or pass inplace=True. This is the same trap as sorted versus list.sort.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u6d-m12",
+    "prompt": "What is the quickest way to get the five highest scores?",
+    "choices": [
+      "sort_values then head(5)",
+      "nlargest(5, \"score\")",
+      "Both work; nlargest says the intent",
+      "max() five times"
+    ],
+    "answer": 2,
+    "explain": "Both are correct; nlargest is clearer and does not order the rest.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u6d-m13",
+    "prompt": "After filtering, the index has gaps. Why?",
+    "choices": [
+      "A bug",
+      "Labels are kept from the original frame",
+      "Filtering re-indexes",
+      "The frame is sorted"
+    ],
+    "answer": 1,
+    "explain": "Which is exactly when .loc and .iloc stop agreeing. reset_index(drop=True) if you want 0..n again.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u6d-m14",
+    "prompt": "A mask built from a column with NaN treats those rows how?",
+    "choices": [
+      "As True",
+      "As False — a comparison with NaN is never True",
+      "It raises",
+      "They are dropped first"
+    ],
+    "answer": 1,
+    "explain": "So rows with missing data quietly fall out of both a condition and its opposite.",
+    "kind": "mcq"
+  }
+]

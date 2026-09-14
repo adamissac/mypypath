@@ -1,0 +1,184 @@
+[
+  {
+    "id": "u3d-m01",
+    "prompt": "What does a numpy array have that a Python list does not?",
+    "choices": [
+      "Ordering",
+      "One dtype in one block of memory",
+      "Indexing from zero",
+      "A length"
+    ],
+    "answer": 1,
+    "explain": "That is the whole bargain: give up mixed types and you get arithmetic over the whole column at C speed.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u3d-m02",
+    "prompt": "What is the dtype of np.array([1, 2, 3.0])?",
+    "choices": [
+      "int64",
+      "float64",
+      "object",
+      "It raises"
+    ],
+    "answer": 1,
+    "explain": "Everything in an array shares one type, so a single float widens all of it.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u3d-m03",
+    "prompt": "np.arange(0, 10, 2) produces what?",
+    "choices": [
+      "[0 2 4 6 8 10]",
+      "[0 2 4 6 8]",
+      "[2 4 6 8 10]",
+      "[0 1 2 ... 9]"
+    ],
+    "answer": 1,
+    "explain": "The stop is exclusive, exactly like range.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u3d-m04",
+    "prompt": "How does np.linspace(0, 1, 5) differ from arange?",
+    "choices": [
+      "It is exclusive at the end",
+      "You give the count, not the step, and the end is included",
+      "It only makes integers",
+      "It is two-dimensional"
+    ],
+    "answer": 1,
+    "explain": "linspace divides an interval evenly into a number of points you name.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u3d-m05",
+    "prompt": "A slice of a numpy array differs from a list slice how?",
+    "choices": [
+      "It copies",
+      "It is a view, so writing to it changes the original",
+      "It cannot be assigned to",
+      "It reverses the order"
+    ],
+    "answer": 1,
+    "explain": "This is the one behaviour that catches people moving from lists. Use .copy() when you want a copy.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u3d-m06",
+    "prompt": "a[a > 5] returns what?",
+    "choices": [
+      "True or False",
+      "The elements greater than 5",
+      "The positions of elements greater than 5",
+      "An error"
+    ],
+    "answer": 1,
+    "explain": "The comparison makes a boolean array, and indexing with a boolean array selects where it is True.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u3d-m07",
+    "prompt": "What does a > 5 itself evaluate to?",
+    "choices": [
+      "A single bool",
+      "An array of bools the same shape as a",
+      "A list of indices",
+      "The count of matches"
+    ],
+    "answer": 1,
+    "explain": "Elementwise, like every other numpy operation. That array is what does the selecting.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u3d-m08",
+    "prompt": "How do you combine two masks for \"over 5 and under 10\"?",
+    "choices": [
+      "(a > 5) and (a < 10)",
+      "(a > 5) & (a < 10)",
+      "a > 5 && a < 10",
+      "both(a > 5, a < 10)"
+    ],
+    "answer": 1,
+    "explain": "Python’s and wants a single truth value and raises on an array. numpy uses & elementwise, and the brackets matter.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u3d-m09",
+    "prompt": "Broadcasting lets np.array([1, 2, 3]) * 2 work. What does it do?",
+    "choices": [
+      "Repeats the array twice",
+      "Multiplies every element by 2",
+      "Raises a shape error",
+      "Multiplies only the first element"
+    ],
+    "answer": 1,
+    "explain": "The scalar is stretched to the array’s shape rather than copied into a real array.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u3d-m10",
+    "prompt": "Which pair of shapes canNOT broadcast together?",
+    "choices": [
+      "(3,) and (1,)",
+      "(3,) and (3,)",
+      "(3,) and (4,)",
+      "(2, 3) and (3,)"
+    ],
+    "answer": 2,
+    "explain": "Dimensions must match or be 1. 3 and 4 are neither, so there is no rule that makes them meet.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u3d-m11",
+    "prompt": "For a 2-D array, a.sum(axis=0) collapses what?",
+    "choices": [
+      "The columns, giving one number per row",
+      "The rows, giving one number per column",
+      "Everything, giving one number",
+      "Nothing"
+    ],
+    "answer": 1,
+    "explain": "axis=0 runs down the rows, so what survives is a value per column. Naming the axis you are collapsing is the way to keep it straight.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u3d-m12",
+    "prompt": "a.sum() with no axis on a 2-D array gives what?",
+    "choices": [
+      "One number per row",
+      "One number per column",
+      "A single number",
+      "An error"
+    ],
+    "answer": 2,
+    "explain": "With no axis named there is nothing left to keep, so everything collapses.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u3d-m13",
+    "prompt": "Why is for i in range(len(a)): a[i] * 2 the wrong way to double an array?",
+    "choices": [
+      "It is wrong",
+      "It works but throws away the speed arrays exist for",
+      "range does not accept len",
+      "It changes the dtype"
+    ],
+    "answer": 1,
+    "explain": "It gives the right answer the slow way, which is the whole thing arrays are meant to replace.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u3d-m14",
+    "prompt": "An int array is assigned a[0] = 3.7. What is stored?",
+    "choices": [
+      "3.7",
+      "3",
+      "4",
+      "It raises"
+    ],
+    "answer": 1,
+    "explain": "The array’s dtype wins and the value is truncated, silently.",
+    "kind": "mcq"
+  }
+]

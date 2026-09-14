@@ -1,0 +1,58 @@
+[
+  {
+    "id": "u7d-f1",
+    "title": "Summarise each group, with its size",
+    "prompt": "Write a function named group_report that takes a list of dictionaries with \"city\" and \"score\" keys and returns a dictionary mapping each city to a two-element list of [row count, mean score]. Report the count beside the mean, so a group of two is not read as a group of two hundred.",
+    "starter": "import pandas as pd\n\ndef group_report(records):\n    # your code here\n    pass\n",
+    "entry": "group_report",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "args": [
+          [
+            {
+              "city": "A",
+              "score": 10
+            },
+            {
+              "city": "A",
+              "score": 20
+            },
+            {
+              "city": "B",
+              "score": 30
+            }
+          ]
+        ],
+        "expect": {
+          "A": [
+            2,
+            15
+          ],
+          "B": [
+            1,
+            30
+          ]
+        }
+      },
+      {
+        "args": [
+          [
+            {
+              "city": "X",
+              "score": 5
+            }
+          ]
+        ],
+        "expect": {
+          "X": [
+            1,
+            5
+          ]
+        }
+      }
+    ]
+  }
+]

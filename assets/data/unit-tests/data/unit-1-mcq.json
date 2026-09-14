@@ -1,0 +1,184 @@
+[
+  {
+    "id": "u1d-m01",
+    "prompt": "A table is stored as a list of lists. What does table[2] give you?",
+    "choices": [
+      "The third column",
+      "The third row",
+      "The value in row 2, column 2",
+      "The number of rows"
+    ],
+    "answer": 1,
+    "explain": "Indexing the outer list gives a whole row. Columns take a comprehension across every row.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u1d-m02",
+    "prompt": "Which expression pulls the score column out of rows = [[\"Ada\", 92], [\"Grace\", 88]]?",
+    "choices": [
+      "rows[1]",
+      "rows[:, 1]",
+      "[r[1] for r in rows]",
+      "rows.column(1)"
+    ],
+    "answer": 2,
+    "explain": "Plain lists have no column operation, so you walk the rows and take one position from each. rows[:, 1] is numpy, not a list.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u1d-m03",
+    "prompt": "Why store each row as a dictionary rather than a list?",
+    "choices": [
+      "Dictionaries use less memory",
+      "The code stops depending on column order",
+      "Dictionaries keep the rows sorted",
+      "Only dictionaries can be written to CSV"
+    ],
+    "answer": 1,
+    "explain": "A named field survives someone adding a column in the middle of the file; position 3 does not.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u1d-m04",
+    "prompt": "csv.reader gives you each row as what?",
+    "choices": [
+      "A list of strings",
+      "A list of numbers",
+      "A dictionary",
+      "One long string"
+    ],
+    "answer": 0,
+    "explain": "Everything read from a text file is text. Converting is a separate, deliberate step.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u1d-m05",
+    "prompt": "You need the header line to name the fields. Which reader does that for you?",
+    "choices": [
+      "csv.reader",
+      "csv.DictReader",
+      "csv.HeaderReader",
+      "open() with mode=\"h\""
+    ],
+    "answer": 1,
+    "explain": "DictReader takes the first row as field names and hands back a dict per row.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u1d-m06",
+    "prompt": "A column of exam marks has one entry of 0 where the student was absent. Which summary is most distorted?",
+    "choices": [
+      "The maximum",
+      "The minimum",
+      "The mean",
+      "The count"
+    ],
+    "answer": 2,
+    "explain": "The mean moves with every value. The maximum is untouched and the minimum is exactly the 0 you should notice.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u1d-m07",
+    "prompt": "What does the mean hide that the minimum and maximum show?",
+    "choices": [
+      "The number of rows",
+      "The spread of the values",
+      "The order of the rows",
+      "The column names"
+    ],
+    "answer": 1,
+    "explain": "Two very different columns can share a mean. The extremes are the cheapest check on spread.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u1d-m08",
+    "prompt": "Which structure counts how many times each city appears?",
+    "choices": [
+      "A list",
+      "A dictionary keyed by city",
+      "A set",
+      "A tuple"
+    ],
+    "answer": 1,
+    "explain": "A dictionary maps each distinct value to its running count. A set would tell you the distinct cities and nothing about how many.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u1d-m09",
+    "prompt": "counts[city] = counts.get(city, 0) + 1 — what does get's second argument do?",
+    "choices": [
+      "Raises an error if the key is missing",
+      "Supplies 0 the first time a city is seen",
+      "Deletes the key",
+      "Sorts the dictionary"
+    ],
+    "answer": 1,
+    "explain": "It gives the first sighting a starting value, so the increment works without a separate \"is it there yet\" branch.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u1d-m10",
+    "prompt": "Grouping a table by city means building what?",
+    "choices": [
+      "A dictionary from city to a list of its rows",
+      "A sorted copy of the table",
+      "A list of the distinct cities",
+      "A count of the rows"
+    ],
+    "answer": 0,
+    "explain": "Grouping keeps the rows so you can summarise each group afterwards; counting throws them away.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u1d-m11",
+    "prompt": "Analysis has four steps in this unit. Which is the one people skip?",
+    "choices": [
+      "Load the data",
+      "Clean it",
+      "Check the answer against something you already know",
+      "Summarise it"
+    ],
+    "answer": 2,
+    "explain": "A number you cannot sanity-check is a number you cannot defend. The check is the step that makes the other three worth doing.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u1d-m12",
+    "prompt": "sum(scores) / len(scores) raises ZeroDivisionError. What happened?",
+    "choices": [
+      "scores holds text",
+      "scores is empty",
+      "scores holds negatives",
+      "sum needs a start value"
+    ],
+    "answer": 1,
+    "explain": "An empty column is a real case in real files, and it is the one this expression cannot survive.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u1d-m13",
+    "prompt": "Why convert a CSV field to int before comparing it?",
+    "choices": [
+      "int is faster",
+      "Text compares character by character, so \"9\" > \"10\"",
+      "CSV cannot store numbers",
+      "Comparison raises TypeError on text"
+    ],
+    "answer": 1,
+    "explain": "String order is alphabetical: \"9\" sorts after \"10\" because it starts with a later character.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u1d-m14",
+    "prompt": "What does max(rows, key=lambda r: r[1]) return?",
+    "choices": [
+      "The largest value in column 1",
+      "The whole row whose column 1 is largest",
+      "The index of the largest row",
+      "A sorted copy of rows"
+    ],
+    "answer": 1,
+    "explain": "max with a key still returns an element of the sequence — here a row — not the key it compared on.",
+    "kind": "mcq"
+  }
+]

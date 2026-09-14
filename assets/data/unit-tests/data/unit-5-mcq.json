@@ -1,0 +1,184 @@
+[
+  {
+    "id": "u5d-m01",
+    "prompt": "A file separates fields with semicolons. Which argument do you reach for?",
+    "choices": [
+      "delimiter=\";\"  or sep=\";\"",
+      "split=\";\"",
+      "quotechar=\";\"",
+      "header=\";\""
+    ],
+    "answer": 0,
+    "explain": "sep is the usual spelling in read_csv; delimiter is accepted as an alias.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u5d-m02",
+    "prompt": "A file writes missing values as \"N/A\" and \"-\". How do you tell pandas?",
+    "choices": [
+      "Replace them afterwards only",
+      "na_values=[\"N/A\", \"-\"]",
+      "missing=[\"N/A\", \"-\"]",
+      "pandas detects every marker automatically"
+    ],
+    "answer": 1,
+    "explain": "Naming them at load makes them NaN immediately, so the counts you take next are right.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u5d-m03",
+    "prompt": "Why pass usecols when reading a wide file?",
+    "choices": [
+      "It is required",
+      "You stop carrying columns you will not use",
+      "It sorts the columns",
+      "It fixes dtypes"
+    ],
+    "answer": 1,
+    "explain": "Less memory and a shorter table to read, and the columns you did not ask for cannot surprise you later.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u5d-m04",
+    "prompt": "pd.DataFrame(records) where records is a list of dicts does what?",
+    "choices": [
+      "Raises",
+      "Makes one row per dict, with the keys as columns",
+      "Makes one column per dict",
+      "Makes a Series"
+    ],
+    "answer": 1,
+    "explain": "A list of records is a table waiting to happen; the union of the keys becomes the columns.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u5d-m05",
+    "prompt": "A record is missing a key the others have. What appears in that cell?",
+    "choices": [
+      "0",
+      "An empty string",
+      "NaN",
+      "It raises"
+    ],
+    "answer": 2,
+    "explain": "The column exists because other records have it, and this row simply has no value for it.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u5d-m06",
+    "prompt": "df.to_csv(\"out.csv\") writes an extra first column. Why?",
+    "choices": [
+      "A bug",
+      "The index is written by default",
+      "The header is duplicated",
+      "Encoding"
+    ],
+    "answer": 1,
+    "explain": "Pass index=False when the index is just 0,1,2 and carries nothing.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u5d-m07",
+    "prompt": "When SHOULD you write the index out?",
+    "choices": [
+      "Never",
+      "When it is meaningful — a date or an id, not a row number",
+      "Always",
+      "Only for JSON"
+    ],
+    "answer": 1,
+    "explain": "If the index is the label for the row, dropping it loses information.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u5d-m08",
+    "prompt": "Which is NOT one of the four questions to ask a table you just loaded?",
+    "choices": [
+      "How many rows and columns?",
+      "What type is each column?",
+      "How many missing values?",
+      "What is the mean of every column?"
+    ],
+    "answer": 3,
+    "explain": "A mean is a result, not a check. The fourth question is whether the values are in a plausible range.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u5d-m09",
+    "prompt": "df.info() tells you which two things at once?",
+    "choices": [
+      "Mean and standard deviation",
+      "Dtypes and non-null counts",
+      "The first and last rows",
+      "The index only"
+    ],
+    "answer": 1,
+    "explain": "Which makes it the fastest way to spot both a text column that should be numeric and a column full of holes.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u5d-m10",
+    "prompt": "df.isna().sum() returns what?",
+    "choices": [
+      "A single total",
+      "The count of missing values per column",
+      "The rows containing NaN",
+      "True or False"
+    ],
+    "answer": 1,
+    "explain": "isna gives a boolean frame; summing a boolean column counts the Trues.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u5d-m11",
+    "prompt": "A numeric column arrives as object after a load. What is the usual cause?",
+    "choices": [
+      "Too many rows",
+      "At least one value pandas could not read as a number",
+      "The file is JSON",
+      "The index is wrong"
+    ],
+    "answer": 1,
+    "explain": "One \"n/a\" or a stray space is enough. Find it with to_numeric(errors=\"coerce\") and look at what became NaN.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u5d-m12",
+    "prompt": "parse_dates=[\"when\"] at read time does what?",
+    "choices": [
+      "Sorts by date",
+      "Reads that column as datetimes rather than text",
+      "Drops invalid dates",
+      "Sets it as the index"
+    ],
+    "answer": 1,
+    "explain": "Doing it at load is cheaper and less error-prone than converting afterwards.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u5d-m13",
+    "prompt": "Reading a 2 GB file when you only need a sample — which argument helps?",
+    "choices": [
+      "nrows",
+      "usecols",
+      "skiprows",
+      "All of these"
+    ],
+    "answer": 3,
+    "explain": "Each cuts the work a different way, and they combine.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u5d-m14",
+    "prompt": "Why check the row count against the file itself?",
+    "choices": [
+      "It is never needed",
+      "A wrong separator can silently give you one column and the wrong shape",
+      "To find duplicates",
+      "To set the index"
+    ],
+    "answer": 1,
+    "explain": "A misread file usually still loads. The shape is the first thing that shows it did not load as you meant.",
+    "kind": "mcq"
+  }
+]

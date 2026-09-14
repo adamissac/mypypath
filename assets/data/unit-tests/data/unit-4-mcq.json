@@ -1,0 +1,184 @@
+[
+  {
+    "id": "u4d-m01",
+    "prompt": "What does a Series have that a numpy array does not?",
+    "choices": [
+      "A dtype",
+      "An index of labels that travel with the data",
+      "Elementwise maths",
+      "A length"
+    ],
+    "answer": 1,
+    "explain": "The labels are the point: they survive filtering and they align on arithmetic.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u4d-m02",
+    "prompt": "A DataFrame is best described as what?",
+    "choices": [
+      "A list of rows",
+      "A dictionary of columns sharing one index",
+      "A two-dimensional array",
+      "A dictionary of rows"
+    ],
+    "answer": 1,
+    "explain": "Columns are the primary unit, each a Series, all sharing the frame’s index.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u4d-m03",
+    "prompt": "df[\"score\"] returns what?",
+    "choices": [
+      "A DataFrame with one column",
+      "A Series",
+      "A list",
+      "A numpy array"
+    ],
+    "answer": 1,
+    "explain": "Single brackets with one name give the column itself. Double brackets give a one-column frame.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u4d-m04",
+    "prompt": "What is the difference between .loc and .iloc?",
+    "choices": [
+      "loc is faster",
+      "loc goes by label, iloc by position",
+      "loc is for rows, iloc for columns",
+      "There is none"
+    ],
+    "answer": 1,
+    "explain": "And after a filter or a sort the two stop agreeing, which is when the difference starts to matter.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u4d-m05",
+    "prompt": "df.loc[0:2] on a default index returns how many rows?",
+    "choices": [
+      "Two",
+      "Three",
+      "Zero",
+      "It raises"
+    ],
+    "answer": 1,
+    "explain": "loc slices are inclusive of the end label, unlike every other slice in Python.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u4d-m06",
+    "prompt": "How do you add a column holding score minus 10?",
+    "choices": [
+      "df.add(\"adj\", df[\"score\"] - 10)",
+      "df[\"adj\"] = df[\"score\"] - 10",
+      "df.append(\"adj\")",
+      "df.insert(df[\"score\"] - 10)"
+    ],
+    "answer": 1,
+    "explain": "A new column is an assignment, and the arithmetic is elementwise over the whole column.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u4d-m07",
+    "prompt": "df.drop(columns=[\"a\"]) does what by default?",
+    "choices": [
+      "Removes the column in place",
+      "Returns a new frame without it",
+      "Raises if the column is missing rows",
+      "Renames it"
+    ],
+    "answer": 1,
+    "explain": "Assign the result or pass inplace=True; otherwise the original is untouched and it looks like nothing happened.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u4d-m08",
+    "prompt": "A column of whole numbers with one missing value gets which dtype?",
+    "choices": [
+      "int64",
+      "float64",
+      "object",
+      "bool"
+    ],
+    "answer": 1,
+    "explain": "NaN is a float, so the column widens to hold it. This is why an id column sometimes arrives as 3.0.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u4d-m09",
+    "prompt": "A column holding text has which dtype?",
+    "choices": [
+      "str",
+      "text",
+      "object",
+      "string64"
+    ],
+    "answer": 2,
+    "explain": "object means \"Python objects\", which is what pandas falls back to for strings.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u4d-m10",
+    "prompt": "Why check df.dtypes right after reading a file?",
+    "choices": [
+      "To count the rows",
+      "Because a column read as text will not sum or sort correctly",
+      "To see the index",
+      "To find duplicates"
+    ],
+    "answer": 1,
+    "explain": "One stray non-numeric value turns a whole numeric column into object, and nothing announces it.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u4d-m11",
+    "prompt": "pd.read_csv(\"f.csv\") uses the first line as what, by default?",
+    "choices": [
+      "Data",
+      "Column names",
+      "The index",
+      "A comment"
+    ],
+    "answer": 1,
+    "explain": "header=0 is the default. Pass header=None when the file has no header row.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u4d-m12",
+    "prompt": "Which is the quickest way to see whether a load went as expected?",
+    "choices": [
+      "df.sum()",
+      "df.head() with df.shape and df.dtypes",
+      "df.sort_values()",
+      "df.describe() alone"
+    ],
+    "answer": 1,
+    "explain": "Shape says how much, dtypes says what kind, head says whether it lines up. Those three answer most load problems.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u4d-m13",
+    "prompt": "Two Series with different indexes are added. What happens?",
+    "choices": [
+      "Positional addition",
+      "They align on the index, and labels missing from either give NaN",
+      "It raises",
+      "The longer one is truncated"
+    ],
+    "answer": 1,
+    "explain": "Alignment is automatic, which is either exactly what you wanted or a silent source of NaN.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u4d-m14",
+    "prompt": "df.shape returns what?",
+    "choices": [
+      "The number of rows",
+      "A (rows, columns) tuple",
+      "The column names",
+      "The dtypes"
+    ],
+    "answer": 1,
+    "explain": "Rows first, the same order as indexing.",
+    "kind": "mcq"
+  }
+]

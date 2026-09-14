@@ -1,0 +1,184 @@
+[
+  {
+    "id": "u9d-m01",
+    "prompt": "A date column read from a CSV is what, until you say otherwise?",
+    "choices": [
+      "A datetime",
+      "Text",
+      "An integer",
+      "The index"
+    ],
+    "answer": 1,
+    "explain": "And text sorts alphabetically, so \"02/2024\" sorts before \"1/2023\".",
+    "kind": "mcq"
+  },
+  {
+    "id": "u9d-m02",
+    "prompt": "Which converts a column to datetimes?",
+    "choices": [
+      "pd.to_datetime(df[\"when\"])",
+      "df[\"when\"].date()",
+      "pd.date(df[\"when\"])",
+      "df[\"when\"].astype(\"date\")"
+    ],
+    "answer": 0,
+    "explain": "Or parse_dates at read time, which is cheaper.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u9d-m03",
+    "prompt": "pd.to_datetime(..., errors=\"coerce\") does what to an unparseable value?",
+    "choices": [
+      "Raises",
+      "Makes it NaT",
+      "Leaves it as text",
+      "Drops the row"
+    ],
+    "answer": 1,
+    "explain": "NaT is the datetime equivalent of NaN, and counting them tells you how bad the column is.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u9d-m04",
+    "prompt": "A file has dates as 03/04/2024 meaning 3 April. Which argument do you need?",
+    "choices": [
+      "dayfirst=True",
+      "monthfirst=False",
+      "format=\"auto\"",
+      "utc=True"
+    ],
+    "answer": 0,
+    "explain": "Otherwise it is read as 4 March, and every row that could go either way is silently wrong.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u9d-m05",
+    "prompt": "df[\"when\"].dt.year gives what?",
+    "choices": [
+      "One number",
+      "A column of years",
+      "The index",
+      "A string"
+    ],
+    "answer": 1,
+    "explain": "The .dt accessor reaches the datetime parts of every value at once.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u9d-m06",
+    "prompt": "Why put the date on the index?",
+    "choices": [
+      "It is required",
+      "It unlocks slicing by period and resampling",
+      "It sorts the columns",
+      "It saves memory"
+    ],
+    "answer": 1,
+    "explain": "With a DatetimeIndex, df.loc[\"2024-03\"] is a whole month.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u9d-m07",
+    "prompt": "df.loc[\"2024\"] on a DatetimeIndex returns what?",
+    "choices": [
+      "One row",
+      "Every row in 2024",
+      "An error",
+      "The first row of 2024"
+    ],
+    "answer": 1,
+    "explain": "Partial string indexing: the string names a period, not a single instant.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u9d-m08",
+    "prompt": "Resampling is best described as what?",
+    "choices": [
+      "Sorting by date",
+      "Group-by where the key is a time period",
+      "Filling missing dates",
+      "A rolling average"
+    ],
+    "answer": 1,
+    "explain": "df.resample(\"M\").sum() is a monthly total without you building the month key.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u9d-m09",
+    "prompt": "What does resample need to be in place first?",
+    "choices": [
+      "A sorted frame",
+      "A datetime index",
+      "No missing values",
+      "A group-by"
+    ],
+    "answer": 1,
+    "explain": "It works off the index, which is why setting it is the step before.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u9d-m10",
+    "prompt": "A rolling window is for what?",
+    "choices": [
+      "Removing outliers",
+      "Smoothing a noisy series to see the shape underneath",
+      "Filling gaps",
+      "Joining tables"
+    ],
+    "answer": 1,
+    "explain": "It trades responsiveness for legibility, which is a choice you should state.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u9d-m11",
+    "prompt": "df[\"x\"].rolling(7).mean() — what are the first six values?",
+    "choices": [
+      "Zero",
+      "NaN, because the window is not full yet",
+      "The raw values",
+      "The overall mean"
+    ],
+    "answer": 1,
+    "explain": "min_periods lets you change that, at the cost of averaging over fewer points.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u9d-m12",
+    "prompt": ".diff() gives what?",
+    "choices": [
+      "The percentage change",
+      "The difference from the previous row",
+      "The cumulative sum",
+      "The difference from the mean"
+    ],
+    "answer": 1,
+    "explain": "And the first row has nothing before it, so it is NaN.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u9d-m13",
+    "prompt": "Which row has neither a difference nor a growth rate?",
+    "choices": [
+      "The last",
+      "The first",
+      "Every row has both",
+      "The middle"
+    ],
+    "answer": 1,
+    "explain": "There is nothing before it to compare with, and dropping or reporting that row is a decision to make explicitly.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u9d-m14",
+    "prompt": ".pct_change() returns 0.5. What does that mean?",
+    "choices": [
+      "A rise of 0.5 units",
+      "A rise of 50 per cent",
+      "Half the total",
+      "A fall of 50 per cent"
+    ],
+    "answer": 1,
+    "explain": "It is a proportion, so multiply by 100 only when you format it for a reader.",
+    "kind": "mcq"
+  }
+]

@@ -1,0 +1,184 @@
+[
+  {
+    "id": "u2d-m01",
+    "prompt": "Which of these is NOT one of the four problems this unit is about?",
+    "choices": [
+      "Missing values",
+      "Wrong types",
+      "Duplicate rows",
+      "Too many columns"
+    ],
+    "answer": 3,
+    "explain": "A wide table is inconvenient, not dirty. The fourth problem is inconsistent labelling of the same thing.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u2d-m02",
+    "prompt": "A field in a CSV is empty. What does csv.reader give you for it?",
+    "choices": [
+      "None",
+      "An empty string",
+      "0",
+      "It skips the field"
+    ],
+    "answer": 1,
+    "explain": "It is text like every other field, so \"missing\" arrives as \"\" and you decide what it means.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u2d-m03",
+    "prompt": "When is dropping rows with missing values the wrong choice?",
+    "choices": [
+      "Always",
+      "When the rows that are missing differ from the ones that are not",
+      "When there are fewer than ten",
+      "When the column is numeric"
+    ],
+    "answer": 1,
+    "explain": "If absence is related to what you are measuring, dropping quietly biases the answer.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u2d-m04",
+    "prompt": "Filling a missing score with the column mean does what to the mean?",
+    "choices": [
+      "Raises it",
+      "Lowers it",
+      "Leaves it unchanged",
+      "Makes it undefined"
+    ],
+    "answer": 2,
+    "explain": "That is exactly why it is a common choice, and also why it understates the spread.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u2d-m05",
+    "prompt": "Why is \"-5\".isdigit() a bad test for \"is this a number\"?",
+    "choices": [
+      "It is slow",
+      "It returns False for negatives and decimals",
+      "It raises on empty strings",
+      "It only works on bytes"
+    ],
+    "answer": 1,
+    "explain": "isdigit answers a narrower question than the one you are asking. try/except int() answers yours.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u2d-m06",
+    "prompt": "What does int(\"3.0\") do?",
+    "choices": [
+      "Returns 3",
+      "Returns 3.0",
+      "Raises ValueError",
+      "Returns None"
+    ],
+    "answer": 2,
+    "explain": "int parses an integer literal. A decimal point has to go through float first.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u2d-m07",
+    "prompt": "Two rows describe the same person with different capitalisation of the name. Are they duplicates?",
+    "choices": [
+      "Always",
+      "Never",
+      "It depends on what you decide counts as the same row",
+      "Only if every field matches"
+    ],
+    "answer": 2,
+    "explain": "Deciding the key is the work; the removal is one line once you have decided.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u2d-m08",
+    "prompt": "You filter 500 rows down to 3. What should you do next?",
+    "choices": [
+      "Carry on",
+      "Check the condition — three is either the answer or a bug",
+      "Add more rows",
+      "Sort the result"
+    ],
+    "answer": 1,
+    "explain": "A count that surprises you is information. Noticing how many you dropped is part of filtering.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u2d-m09",
+    "prompt": "sorted(rows, key=lambda r: r[\"score\"]) — what does it return?",
+    "choices": [
+      "None, it sorts in place",
+      "A new sorted list",
+      "The largest row",
+      "A dictionary"
+    ],
+    "answer": 1,
+    "explain": "sorted returns a new list. It is list.sort() that sorts in place and returns None.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u2d-m10",
+    "prompt": "A score column read from a file sorts \"100\" before \"20\". Why?",
+    "choices": [
+      "The file is corrupt",
+      "They are strings, compared character by character",
+      "sorted is unstable",
+      "The key function is wrong"
+    ],
+    "answer": 1,
+    "explain": "\"1\" comes before \"2\", so the comparison stops there. Convert to a number and the order is the one you meant.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u2d-m11",
+    "prompt": "Which order makes sense when cleaning?",
+    "choices": [
+      "Filter, then fix types",
+      "Fix types, then filter on the values",
+      "Sort, then fix types",
+      "Order never matters"
+    ],
+    "answer": 1,
+    "explain": "Filtering on a value you have not converted yet compares text, and the comparison is the wrong one.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u2d-m12",
+    "prompt": "What is the risk of filling missing values before you have counted them?",
+    "choices": [
+      "It is slower",
+      "You never learn how much of the column was invented",
+      "It changes the column dtype",
+      "Nothing, it is always safe"
+    ],
+    "answer": 1,
+    "explain": "The count is the thing you have to report. Fill first and the number is gone.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u2d-m13",
+    "prompt": "Two files spell the same city \"NYC\" and \"New York\". What kind of problem is this?",
+    "choices": [
+      "Missing values",
+      "Wrong types",
+      "Inconsistent labels for one thing",
+      "Duplicate rows"
+    ],
+    "answer": 2,
+    "explain": "Nothing is absent and nothing is mistyped; the same real thing has two names, and a group-by will split it.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u2d-m14",
+    "prompt": "After dropping duplicates you have more rows than before. What is the likely cause?",
+    "choices": [
+      "Impossible",
+      "You compared the wrong key and split rows apart",
+      "The file grew",
+      "Duplicates are being counted twice"
+    ],
+    "answer": 1,
+    "explain": "Dropping cannot add rows, so the count came from somewhere else — usually a merge or a re-read.",
+    "kind": "mcq"
+  }
+]

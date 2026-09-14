@@ -271,6 +271,19 @@ pandas loaded into the page, which is a piece of work of its own.</p>
 ${lessons.map((l, i) => `<li><a class="route" href="/data/unit-${unit.n}/${l.slug}.html"><span class="lesson-list__num">${i + 1}</span><span class="lesson-list__title">${esc(l.title)}</span><span class="lesson-list__meta">${esc(l.summary)}</span></a></li>`).join('\n')}
 </ol>`;
 
+  /* The end-of-unit test, which the first draft of this course never linked.
+     ?course=data is what sends unit-test-page.js to this course's questions
+     and its own record key; without it the link would serve Foundations unit N
+     and overwrite a Foundations result. */
+  const test = stub ? '' : `
+<div class="unit-test-card">
+<h2>End of unit test</h2>
+<p>Ten multiple choice questions and one free response problem. You need 70 to
+finish the unit. Retakes are unlimited and your best score is the one that counts.</p>
+<p class="unit-test-status" data-unit-test-status="${unit.n}" hidden></p>
+<a class="btn btn-primary route" data-unit-test-link="${unit.n}" href="/unit-test.html?unit=${unit.n}&amp;course=data">Take the Unit ${unit.n} test</a>
+</div>`;
+
   return `<main id="main-content">
 <section class="section reveal-up">
 <div class="container">
@@ -285,6 +298,7 @@ ${lessons.map((l, i) => `<li><a class="route" href="/data/unit-${unit.n}/${l.slu
 <section class="course-main">
 <div class="container">
 ${body}
+${test}
 </div>
 </section>
 </main>`;

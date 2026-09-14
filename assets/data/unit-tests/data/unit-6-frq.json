@@ -1,0 +1,60 @@
+[
+  {
+    "id": "u6d-f1",
+    "title": "Filter, then report the rate",
+    "prompt": "Write a function named pass_rate that takes a list of dictionaries each with a \"score\" key and a pass mark, builds a pandas DataFrame, and returns the proportion of rows scoring greater than or equal to the mark, as a float between 0 and 1. An empty list returns 0.0.",
+    "starter": "import pandas as pd\n\ndef pass_rate(records, mark):\n    # your code here\n    pass\n",
+    "entry": "pass_rate",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "args": [
+          [
+            {
+              "score": 50
+            },
+            {
+              "score": 70
+            },
+            {
+              "score": 90
+            }
+          ],
+          70
+        ],
+        "expect": 0.6666666666666666
+      },
+      {
+        "args": [
+          [
+            {
+              "score": 70
+            }
+          ],
+          70
+        ],
+        "expect": 1
+      },
+      {
+        "args": [
+          [],
+          70
+        ],
+        "expect": 0
+      },
+      {
+        "args": [
+          [
+            {
+              "score": 10
+            }
+          ],
+          70
+        ],
+        "expect": 0
+      }
+    ]
+  }
+]

@@ -1,0 +1,78 @@
+[
+  {
+    "id": "u8d-f1",
+    "title": "Did every row find a match?",
+    "prompt": "Write a function named join_counts that takes two lists of dictionaries sharing an \"id\" key, builds a DataFrame from each, and returns a two-element list of [rows in an inner join, rows in a left join]. The pair is what tells you whether every left row matched.",
+    "starter": "import pandas as pd\n\ndef join_counts(left, right):\n    # your code here\n    pass\n",
+    "entry": "join_counts",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "args": [
+          [
+            {
+              "id": 1
+            },
+            {
+              "id": 2
+            }
+          ],
+          [
+            {
+              "id": 1,
+              "v": 9
+            }
+          ]
+        ],
+        "expect": [
+          1,
+          2
+        ]
+      },
+      {
+        "args": [
+          [
+            {
+              "id": 1
+            }
+          ],
+          [
+            {
+              "id": 1,
+              "v": 9
+            }
+          ]
+        ],
+        "expect": [
+          1,
+          1
+        ]
+      },
+      {
+        "args": [
+          [
+            {
+              "id": 1
+            }
+          ],
+          [
+            {
+              "id": 1,
+              "v": 9
+            },
+            {
+              "id": 1,
+              "v": 8
+            }
+          ]
+        ],
+        "expect": [
+          2,
+          2
+        ]
+      }
+    ]
+  }
+]

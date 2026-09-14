@@ -1,0 +1,184 @@
+[
+  {
+    "id": "u8d-m01",
+    "prompt": "pd.concat([a, b]) does what by default?",
+    "choices": [
+      "Joins on a key",
+      "Stacks the rows of the two frames",
+      "Adds the columns together",
+      "Raises if the indexes differ"
+    ],
+    "answer": 1,
+    "explain": "axis=0 is the default. It lines columns up by name and stacks.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u8d-m02",
+    "prompt": "Concat leaves duplicate index labels. Which argument fixes that?",
+    "choices": [
+      "reset=True",
+      "ignore_index=True",
+      "drop_index=True",
+      "axis=1"
+    ],
+    "answer": 1,
+    "explain": "Otherwise both frames keep their own 0,1,2 and .loc gets ambiguous.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u8d-m03",
+    "prompt": "A merge brings two tables together on what?",
+    "choices": [
+      "Their row order",
+      "A column they share",
+      "Their length",
+      "The index only"
+    ],
+    "answer": 1,
+    "explain": "Or the index, if you ask for it — but the shared key is the usual case.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u8d-m04",
+    "prompt": "Which join keeps every row of the left table?",
+    "choices": [
+      "inner",
+      "left",
+      "right",
+      "outer"
+    ],
+    "answer": 1,
+    "explain": "Rows with no match get NaN in the columns that came from the right.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u8d-m05",
+    "prompt": "An inner join returns fewer rows than either input. What does that mean?",
+    "choices": [
+      "A bug",
+      "Some keys did not match",
+      "The tables were sorted",
+      "Duplicates were removed"
+    ],
+    "answer": 1,
+    "explain": "Which is the thing worth checking rather than accepting, because the cause is often a type mismatch.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u8d-m06",
+    "prompt": "A key column is int in one table and str in the other. What happens?",
+    "choices": [
+      "pandas converts automatically",
+      "Nothing matches",
+      "It raises",
+      "Only the first row matches"
+    ],
+    "answer": 1,
+    "explain": "3 and \"3\" are different keys, and the merge succeeds with an empty result — the quietest failure in this unit.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u8d-m07",
+    "prompt": "Duplicate keys on both sides of a merge do what to the row count?",
+    "choices": [
+      "Leave it alone",
+      "Multiply — every left match pairs with every right match",
+      "Halve it",
+      "Raise an error"
+    ],
+    "answer": 1,
+    "explain": "Two duplicates each side give four rows. This is how a join quietly inflates a total.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u8d-m08",
+    "prompt": "Which argument makes pandas check your merge assumption?",
+    "choices": [
+      "check=True",
+      "validate=\"one_to_one\" (or \"one_to_many\")",
+      "strict=True",
+      "assert_keys=True"
+    ],
+    "answer": 1,
+    "explain": "It raises when the relationship you claimed is not the one in the data, instead of silently multiplying rows.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u8d-m09",
+    "prompt": "melt turns what into what?",
+    "choices": [
+      "Long into wide",
+      "A column per month into a column saying which month",
+      "Rows into columns",
+      "A merge into a join"
+    ],
+    "answer": 1,
+    "explain": "Wide to long: the column headings become values in a variable column.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u8d-m10",
+    "prompt": "After melting a table with 12 month columns and 50 rows, how many rows?",
+    "choices": [
+      "50",
+      "62",
+      "600",
+      "12"
+    ],
+    "answer": 2,
+    "explain": "50 rows times 12 months, one row per person per month.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u8d-m11",
+    "prompt": "pivot is used for what?",
+    "choices": [
+      "Stacking tables",
+      "Long back to wide — one row per entity again",
+      "Filtering",
+      "Sorting"
+    ],
+    "answer": 1,
+    "explain": "The inverse of melt, for when a person should be one row with a column per period.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u8d-m12",
+    "prompt": "pivot raises \"Index contains duplicate entries\". Why?",
+    "choices": [
+      "The file is corrupt",
+      "More than one row shares the same index/column pair, so there is no single value to put there",
+      "The columns are numeric",
+      "The frame is empty"
+    ],
+    "answer": 1,
+    "explain": "pivot_table with an aggfunc is the answer when duplicates are legitimate.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u8d-m13",
+    "prompt": "Before joining two files, which check is most worth doing?",
+    "choices": [
+      "Sort both",
+      "Compare the key column’s dtype and its distinct values in each",
+      "Count the columns",
+      "Reset both indexes"
+    ],
+    "answer": 1,
+    "explain": "Type mismatches and stray whitespace are the two causes of a join that matches nothing.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u8d-m14",
+    "prompt": "After a join, the row count is what you should compare against what?",
+    "choices": [
+      "Nothing",
+      "The count you expected from the relationship you assumed",
+      "The column count",
+      "The file size"
+    ],
+    "answer": 1,
+    "explain": "A join that changes the row count in a way you did not predict has told you something about the data.",
+    "kind": "mcq"
+  }
+]

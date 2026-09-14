@@ -1,0 +1,184 @@
+[
+  {
+    "id": "u7d-m01",
+    "prompt": "Name the three steps of a group-by.",
+    "choices": [
+      "Sort, filter, count",
+      "Split, apply, combine",
+      "Load, clean, report",
+      "Index, slice, sum"
+    ],
+    "answer": 1,
+    "explain": "Split the table by key, apply a summary to each piece, combine the answers back into one result.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u7d-m02",
+    "prompt": "df.groupby(\"city\") on its own returns what?",
+    "choices": [
+      "A DataFrame",
+      "A grouped object that has not computed anything yet",
+      "A Series of counts",
+      "A list of frames"
+    ],
+    "answer": 1,
+    "explain": "Nothing happens until you name the summary. That is why printing it is unhelpful.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u7d-m03",
+    "prompt": "What is the difference between size() and count() on a group?",
+    "choices": [
+      "None",
+      "size counts rows; count counts non-missing values per column",
+      "count is faster",
+      "size only works on numbers"
+    ],
+    "answer": 1,
+    "explain": "So a group of 10 rows with 3 missing scores gives size 10 and count 7.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u7d-m04",
+    "prompt": "df.groupby(\"city\")[\"score\"].mean() returns what?",
+    "choices": [
+      "A DataFrame",
+      "A Series indexed by city",
+      "A single number",
+      "A list"
+    ],
+    "answer": 1,
+    "explain": "One value per group, labelled by the group key.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u7d-m05",
+    "prompt": "How do you get both the mean and the max per group, named?",
+    "choices": [
+      "Two separate group-bys",
+      ".agg(mean_score=(\"score\", \"mean\"), top=(\"score\", \"max\"))",
+      ".apply(both)",
+      ".describe()"
+    ],
+    "answer": 1,
+    "explain": "Named aggregation gives you the columns you want with the names you want, in one pass.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u7d-m06",
+    "prompt": "Grouping by two keys gives you what?",
+    "choices": [
+      "Two tables",
+      "A row per combination, with a two-level index",
+      "An error",
+      "The first key only"
+    ],
+    "answer": 1,
+    "explain": "Use reset_index() to turn those levels back into ordinary columns.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u7d-m07",
+    "prompt": "transform differs from agg how?",
+    "choices": [
+      "transform is faster",
+      "transform returns one value per row; agg returns one per group",
+      "transform only works on strings",
+      "They are the same"
+    ],
+    "answer": 1,
+    "explain": "Which is what makes transform the way to put a group mean beside every row.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u7d-m08",
+    "prompt": "To compute each row’s score minus its city’s mean, you use what?",
+    "choices": [
+      "agg",
+      "transform",
+      "apply(axis=1)",
+      "merge"
+    ],
+    "answer": 1,
+    "explain": "transform broadcasts the group answer back to the shape of the original frame, so the subtraction lines up.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u7d-m09",
+    "prompt": "A pivot table is best described as what?",
+    "choices": [
+      "A sorted table",
+      "A grouped summary laid out as a grid",
+      "A merge",
+      "A filter"
+    ],
+    "answer": 1,
+    "explain": "Same computation as a two-key group-by, arranged with one key down and the other across.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u7d-m10",
+    "prompt": "In pivot_table, what does aggfunc default to?",
+    "choices": [
+      "sum",
+      "mean",
+      "count",
+      "first"
+    ],
+    "answer": 1,
+    "explain": "Which surprises people expecting a count. Name it when you mean something else.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u7d-m11",
+    "prompt": "A group-by key column containing NaN does what by default?",
+    "choices": [
+      "Forms its own group",
+      "Drops those rows from the result",
+      "Raises",
+      "Is filled with 0"
+    ],
+    "answer": 1,
+    "explain": "dropna=False keeps them. Otherwise rows disappear from your totals without a word.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u7d-m12",
+    "prompt": "After groupby(...).mean(), the group key is where?",
+    "choices": [
+      "A column",
+      "The index",
+      "Dropped",
+      "Duplicated"
+    ],
+    "answer": 1,
+    "explain": "as_index=False or reset_index() puts it back as a column when you want a plain table.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u7d-m13",
+    "prompt": "Why is the count worth reporting next to a group mean?",
+    "choices": [
+      "It is not",
+      "A mean over two rows and a mean over two thousand are not comparable",
+      "It sorts the groups",
+      "It fixes NaN"
+    ],
+    "answer": 1,
+    "explain": "The group with the striking average is very often the group with three rows in it.",
+    "kind": "mcq"
+  },
+  {
+    "id": "u7d-m14",
+    "prompt": "df.groupby(\"city\").agg({\"score\": \"mean\"}) returns what shape?",
+    "choices": [
+      "A Series",
+      "A DataFrame with one column",
+      "A single number",
+      "A list of tuples"
+    ],
+    "answer": 1,
+    "explain": "Passing a dict asks for a frame; the bracketed-column form gives a Series.",
+    "kind": "mcq"
+  }
+]

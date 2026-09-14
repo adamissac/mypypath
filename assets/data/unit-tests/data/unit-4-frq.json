@@ -1,0 +1,57 @@
+[
+  {
+    "id": "u4d-f1",
+    "title": "What each column is holding",
+    "prompt": "Write a function named column_types that takes a list of dictionaries, builds a pandas DataFrame from it, and returns a dictionary mapping each column name to the name of its dtype as a string, for example \"int64\" or \"object\". Return the dictionary, do not print it.",
+    "starter": "import pandas as pd\n\ndef column_types(records):\n    # your code here\n    pass\n",
+    "entry": "column_types",
+    "packages": [
+      "pandas"
+    ],
+    "cases": [
+      {
+        "args": [
+          [
+            {
+              "a": 1,
+              "b": "x"
+            },
+            {
+              "a": 2,
+              "b": "y"
+            }
+          ]
+        ],
+        "expect": {
+          "a": "int64",
+          "b": "object"
+        }
+      },
+      {
+        "args": [
+          [
+            {
+              "a": 1.5
+            }
+          ]
+        ],
+        "expect": {
+          "a": "float64"
+        }
+      },
+      {
+        "args": [
+          [
+            {
+              "a": 1
+            },
+            {}
+          ]
+        ],
+        "expect": {
+          "a": "float64"
+        }
+      }
+    ]
+  }
+]
