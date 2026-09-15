@@ -166,10 +166,31 @@ Both were invisible on the page and obvious the moment anything was measured.
 If a style change appears to have no effect, check what loads after it before
 concluding the selector is wrong.
 
+## The adaptive engine: two languages, one model
+
+`engine/` (Python, scikit-learn, its own venv) trains a skill-mastery model
+offline. `assets/js/recommend.js` scores the frozen export
+(`assets/data/model/mastery-v1.json`) in the browser for the "Practice next"
+panel. The JS is a line-for-line port of `engine/pypath_engine/model_core.py`
+and `policy.py`, held to them by shared fixtures in `tests/fixtures/adaptive/`:
+change one side alone and `tests/recommend-parity.test.js` or
+`engine/tests/test_parity.py` fails, which is the point.
+
+- Rebuild everything: `cd engine && .venv/bin/python -m pypath_engine all`.
+  See `engine/README.md`.
+- The skill taxonomy's source is `scripts/skills-source.mjs`. Never hand-edit
+  `assets/data/skills.json`. `npm run validate:skills` runs inside `npm test`.
+- Results so far are from **simulated** students. `engine/REPORT.md` and
+  `engine/MODEL_CARD.md` say so, and anything quoting them must too.
+- Nothing it produces is a grade or a ranking. The events are self-reported
+  (see the note at the top of `events.js`).
+- The retraining procedure lives in `.claude/skills/pypath-ml/`.
+
 ## Checks
 
 - `npm test` — unit tests (vitest)
 - `npm run test:rules` — Firestore rules against the local emulator (needs Java)
+- `npm run validate:skills` — the skill taxonomy (also inside `npm test`)
 - `npm run serve` — static server on :8080 for browser verification
 
 ## Looking at a populated teacher dashboard
