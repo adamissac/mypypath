@@ -251,3 +251,99 @@
   font-size: 0.95rem;
   line-height: 1.6;
 }
+
+/* ------------------------------------------------------------ practice next */
+
+/* The same card as "Work set by your class", so the two read as one family:
+   what is owed first, then what would help. Numbered because it is a ranked
+   order, and never a percentage, because a number beside your work reads as a
+   mark and this is a suggestion. */
+.pn {
+  margin: 0 0 2rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .9rem;
+  background: var(--panel, #fff);
+  box-shadow: var(--shadow, 0 4px 20px rgba(12, 69, 102, .07));
+}
+
+.pn h2 { margin: 0 0 .3rem; font-size: 1.15rem; }
+
+.pn-lead {
+  margin: 0 0 .9rem;
+  font-size: .9rem;
+  line-height: 1.5;
+  color: var(--muted, #475569);
+}
+
+.pn-list { margin: 0; padding: 0; list-style: none; display: grid; gap: .6rem; }
+
+.pn-item {
+  padding: .8rem .95rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-left: 3px solid var(--primary-ink, #0284c7);
+  border-radius: .6rem;
+  background: color-mix(in srgb, var(--bg-elevated, #f1f5f9) 45%, var(--panel, #fff));
+}
+
+.pn-item--review { border-left-color: #7c3aed; }
+.pn-item--start, .pn-item--relaxed { border-left-color: var(--muted, #475569); }
+
+.pn-item__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .35rem .7rem;
+}
+
+.pn-item__n {
+  flex: none;
+  min-width: 1.6rem;
+  height: 1.6rem;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  background: var(--bg-elevated, #f1f5f9);
+  color: var(--text-strong, #0f172a);
+}
+
+.pn-item__title { margin: 0; flex: 1 1 14rem; font-size: 1rem; font-weight: 700; }
+.pn-item__link { color: var(--text-strong, #0f172a); text-decoration: underline; text-underline-offset: .15em; }
+.pn-item__link:hover { color: var(--primary-ink, #0284c7); }
+
+.pn-item__kind {
+  padding: .12rem .5rem;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 700;
+  background: var(--bg-elevated, #f1f5f9);
+  color: var(--text, #334155);
+}
+
+.pn-item__skill {
+  margin: .35rem 0 .15rem 2.3rem;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .01em;
+  color: var(--primary-ink, #0369a1);
+}
+
+.pn-item__why { margin: 0 0 0 2.3rem; font-size: .9rem; line-height: 1.5; color: var(--text, #334155); }
+
+.pn-how { margin: .8rem 0 0; font-size: .85rem; color: var(--muted, #475569); }
+.pn-how summary { cursor: pointer; font-weight: 600; }
+.pn-how p { margin: .45rem 0 0; line-height: 1.55; }
+
+/* On a phone the number keeps the title's line: the title may shrink and wrap
+   (a long word like "Environment" otherwise refuses to), and the kind label
+   drops beneath, aligned with the text rather than the number. */
+@media (max-width: 480px) {
+  .pn-item__head { flex-wrap: nowrap; align-items: flex-start; }
+  .pn-item__title { flex: 1 1 0; min-width: 0; overflow-wrap: anywhere; }
+  .pn-item__kind { display: none; }
+  .pn-item__skill::after { content: " · " attr(data-kind); font-weight: 600; color: var(--muted, #475569); }
+  .pn-item__skill, .pn-item__why { margin-left: 2.3rem; }
+}
