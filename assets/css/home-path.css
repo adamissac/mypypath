@@ -508,7 +508,8 @@ body.page-home {
 
 .path-journey__track {
   position: relative;
-  height: 520vh;
+  /* Written by scripts/build-trail.mjs from each segment's scroll budget. */
+  height: var(--trail-length, 520vh);
 }
 
 .path-journey__sticky {
@@ -572,10 +573,30 @@ html.reduced-motion .path-journey.is-active .path-map--alive {
   transform: none !important;
 }
 
+/* One <svg> per trail segment, stacked in the same map frame. path-trail.js
+   cross-fades them at the seam; a single segment renders exactly as before. */
 .path-map {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   display: block;
+  opacity: var(--segment-opacity, 1);
+}
+
+.path-map:not(.is-scene) {
+  pointer-events: none;
+}
+
+.path-journey .path-head.is-hidden {
+  opacity: 0;
+}
+
+.path-map__defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 }
 
 .path-map__grid {
@@ -839,7 +860,7 @@ html.reduced-motion .path-journey.is-active .path-map--alive {
 
 @media (max-width: 560px) {
   .path-journey__track {
-    height: 480vh;
+    height: var(--trail-length-mobile, 480vh);
   }
 
   .path-journey__map {
