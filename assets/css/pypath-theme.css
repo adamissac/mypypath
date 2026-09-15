@@ -111,8 +111,7 @@ body.page:not(.page-home)::before {
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(90% 55% at 85% -10%, color-mix(in srgb, var(--pp-line) 14%, transparent), transparent 55%),
-    radial-gradient(70% 45% at 0% 100%, color-mix(in srgb, var(--pp-mark) 10%, transparent), transparent 50%);
+    none;
   opacity: 0.9;
 }
 
@@ -147,7 +146,7 @@ body.page:not(.page-home) > .site-footer {
   align-items: center;
   justify-content: center;
   padding: 0 2.75rem;
-  background: linear-gradient(90deg, #075985 0%, #0369a1 55%, #0284c7 100%);
+  background: #0c4566;
   color: #ffffff;
   box-shadow: 0 6px 18px rgba(3, 40, 70, 0.28);
   transform: translateY(-110%);
@@ -1085,7 +1084,6 @@ main .container,
 /* ── About (restore mission + founder layout; fill width) ─ */
 .page-about .about-page {
   background:
-    radial-gradient(ellipse 90% 60% at 50% -20%, color-mix(in srgb, var(--pp-line) 12%, transparent), transparent),
     var(--pp-paper);
   padding: clamp(1.75rem, 4vh, 2.75rem) clamp(1.5rem, 4.5vw, 3.5rem) clamp(2rem, 5vh, 3.25rem);
 }
@@ -1503,14 +1501,7 @@ main .container,
      then again every few seconds. Gradient uses the page's own ink
      and line tokens, clipped to the letterforms. */
   html.pp-go body.page-home .home-brand span {
-    background: linear-gradient(
-      105deg,
-      var(--home-ink, var(--pp-ink)) 0%,
-      var(--home-ink, var(--pp-ink)) 40%,
-      var(--home-line, var(--pp-line)) 50%,
-      var(--home-ink, var(--pp-ink)) 60%,
-      var(--home-ink, var(--pp-ink)) 100%
-    );
+    background: var(--pp-ink);
     background-size: 300% 100%;
     background-position: 110% 0;
     -webkit-background-clip: text;
@@ -1552,12 +1543,7 @@ main .container,
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: linear-gradient(
-      105deg,
-      transparent 38%,
-      rgba(255, 255, 255, 0.32) 50%,
-      transparent 62%
-    );
+    background: none;
     transform: translateX(-130%);
   }
 
@@ -1607,7 +1593,7 @@ main .container,
   padding: 24px 26px;
   border: 1px solid var(--border, #cfe3f2);
   border-radius: 14px;
-  background: linear-gradient(180deg, rgba(56, 189, 248, 0.08), transparent);
+  background: var(--pp-fog);
   text-align: center;
 }
 .lesson-finish h2 { margin: 0 0 6px; }
@@ -1638,10 +1624,7 @@ main .container,
        true. Kept to the lower band so it never crosses the content, and drawn
        in CSS rather than authored into ten lesson files. It is decoration:
        everything it suggests, the words already say. */
-    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" preserveAspectRatio="none"><path d="M0 300 L180 170 L260 215 L420 90 L520 175 L640 120 L760 220 L900 140 L1010 205 L1200 95 L1200 300 Z" fill="rgba(125,211,252,0.05)" stroke="rgba(125,211,252,0.20)" stroke-width="2"/></svg>')
-      right bottom / 100% 42% no-repeat,
-    radial-gradient(120% 140% at 12% 0%, rgba(56, 189, 248, 0.28), transparent 58%),
-    linear-gradient(135deg, #0c4566 0%, #082f47 100%);
+    #0c4566;
   background-color: #0c3d5c;
   box-shadow: 0 14px 40px rgba(9, 51, 76, 0.28);
 }
@@ -1656,7 +1639,7 @@ main .container,
   flex: none;
   border-radius: 50%;
   color: #0c4566;
-  background: linear-gradient(140deg, #bae6fd, #7dd3fc);
+  background: var(--warm);
   box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
 }
 .lesson-finish__badge svg { width: 1.5rem; height: 1.5rem; }
@@ -1812,10 +1795,10 @@ main .container,
   display: block;
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #38bdf8, #7dd3fc);
+  background: var(--primary);
 }
 
-.ut-score__fill.is-pass { background: linear-gradient(90deg, #34d399, #86efac); }
+.ut-score__fill.is-pass { background: #34d399; }
 
 /* The pass mark, drawn on the track. A notch rather than a colour change, so
    it survives greyscale and a printout like every other mark on this site. */
@@ -2010,5 +1993,69 @@ html[data-course="data"][data-theme="dark"] .btn-run {
    shared pages and live trail changes. Keep the existing image's alt text,
    dimensions, and motion wrapper. */
 html[data-course="data"] img.logo {
-  content: url("/assets/img/pyPathLogo-data.png");
+  content: url("/assets/img/pyPathLogo-data.png?v=b9b963e193");
 }
+
+/* Shared code colors follow the active journey, including the live home editor. */
+:root {
+  --code-keyword: #075985;
+  --code-function: #0369a1;
+  --code-string: #166534;
+  --code-number: #92400e;
+  --code-comment: #526577;
+}
+[data-theme="dark"] {
+  --code-keyword: #7dd3fc;
+  --code-function: #bae6fd;
+  --code-string: #86efac;
+  --code-number: #fcd34d;
+  --code-comment: #a8b9c7;
+}
+html[data-course="data"], html[data-course="data"] body, html[data-course="data"] [data-theme="light"] {
+  --code-keyword: #683ba3;
+  --code-function: #794b91;
+  --code-string: #7d4c16;
+  --code-number: #8c3c63;
+  --code-comment: #72617f;
+}
+html[data-course="data"][data-theme="dark"], html[data-course="data"] [data-theme="dark"] {
+  --code-keyword: #d2b5ff;
+  --code-function: #edd5ff;
+  --code-string: #ffe45e;
+  --code-number: #f2b3d2;
+  --code-comment: #bfaed0;
+}
+.cm-s-pypath span.cm-keyword, .cm-s-pypath span.cm-operator { color: var(--code-keyword); }
+.cm-s-pypath span.cm-def, .cm-s-pypath span.cm-builtin, .cm-s-pypath span.cm-variable-2 { color: var(--code-function); }
+.cm-s-pypath span.cm-string, .cm-s-pypath span.cm-string-2 { color: var(--code-string); }
+.cm-s-pypath span.cm-number, .cm-s-pypath span.cm-atom { color: var(--code-number); }
+.cm-s-pypath span.cm-comment { color: var(--code-comment); }
+html[data-course="data"] .CodeMirror,
+html[data-course="data"] .cm-s-pypath.CodeMirror { background: var(--pp-mist); color: var(--pp-ink); }
+html[data-course="data"] .CodeMirror-gutters { background: var(--pp-fog); border-color: var(--pp-border); }
+html[data-course="data"] .CodeMirror-linenumber { color: var(--pp-muted); }
+html[data-course="data"] .CodeMirror-cursor { border-left-color: var(--pp-ink); }
+html[data-course="data"] .CodeMirror-selected { background: var(--pp-border); }
+html[data-course="data"] .CodeMirror-activeline-background { background: var(--pp-fog); }
+html[data-course="data"] .pp-boot-term { background: #21162e; border-color: #544069; }
+html[data-course="data"] .pp-boot-term .pp-boot-cmd { color: #eee5f9; }
+html[data-course="data"] .pp-boot-term .pp-boot-ok { color: #ffe45e; }
+html[data-course="data"] .pp-boot-caret { background: #ffe45e; }
+html[data-course="data"] .btn-check-work:hover:not(:disabled) { background: var(--pp-ink); border-color: var(--pp-ink); }
+/* Flat lettering and buttons replace the old sweeping sheen. */
+html.pp-go body.page-home .home-brand span {
+  background: none; color: var(--pp-ink); -webkit-text-fill-color: currentColor; animation: none;
+}
+.btn-path--primary::after, .btn.btn-primary::after { display: none; }
+html[data-course="data"] .hero-live-editor {
+  --hero-code-bg: var(--pp-mist);
+  --hero-selection: #bfa6d9;
+  --hero-tok-kw: var(--code-keyword);
+  --hero-tok-fn: var(--code-function);
+  --hero-tok-str: var(--code-string);
+  --hero-tok-builtin: var(--code-function);
+  --hero-tok-num: var(--code-number);
+  --hero-tok-comment: var(--code-comment);
+}
+
+html[data-course="data"] .pp-boot-term .pp-boot-prompt { color: #bfaed0; }

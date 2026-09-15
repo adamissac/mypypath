@@ -41,7 +41,9 @@ describe('the Python for Data course theme', () => {
 
   it('has no gradients in the course theme', () => {
     const css = fs.readFileSync('assets/css/pypath-theme.css', 'utf8');
-    const block = css.slice(css.indexOf('Python for Data course theme'));
-    expect(block).not.toMatch(/gradient\(/);
+    expect(css).not.toMatch(/gradient\(/);
+    for (const name of fs.readdirSync('assets/css').filter(name => name.endsWith('.css'))) {
+      expect(fs.readFileSync(`assets/css/${name}`, 'utf8'), name).not.toMatch(/gradient\(/);
+    }
   });
 });
