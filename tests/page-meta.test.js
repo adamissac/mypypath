@@ -107,7 +107,7 @@ describe('the generated block is safe to regenerate', () => {
     const home = fs.readFileSync('index.html', 'utf8');
     expect(home).not.toContain('meta:begin');
     expect(home).toContain('property="og:title"');
-    expect(home).toContain('Follow the PyPath');
+    expect(home).toContain('Learn Python in 20 units');
   });
 
   it('the card image is a real file, at the size the tags claim', () => {

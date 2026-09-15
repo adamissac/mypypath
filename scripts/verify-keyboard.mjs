@@ -57,8 +57,13 @@ const DESCRIBE = `(() => {
     tag: el.tagName.toLowerCase(),
     cls: String(el.className || '').split(' ')[0] || '',
     text: (el.textContent || el.value || el.getAttribute('aria-label') || '').trim().slice(0, 30),
+    /* Where the element is, plus what it points at. Position alone called two
+       different links the same element when they are stacked in one place --
+       the home trail's cards share a slot and swap as you move along it -- and
+       Tab from one to the next was reported as a trap. */
     key: el.tagName + '|' + String(el.className || '') + '|'
-       + (el.id || '') + '|' + Math.round(r.top) + ',' + Math.round(r.left),
+       + (el.id || '') + '|' + Math.round(r.top) + ',' + Math.round(r.left)
+       + '|' + (el.getAttribute('href') || '') + '|' + (el.textContent || '').trim().slice(0, 40),
     outline: cs.outlineStyle + ' ' + cs.outlineWidth,
     boxShadow: cs.boxShadow,
     hidden: r.width === 0 || r.height === 0,

@@ -497,6 +497,7 @@ body.page-home {
 }
 
 .path-journey__intro {
+  position: relative;
   width: min(720px, calc(100% - 2.5rem));
   margin: 0 auto;
   padding: clamp(3.5rem, 8vh, 5.5rem) 0 1.5rem;
@@ -601,6 +602,8 @@ html.reduced-motion .path-journey.is-active .path-map--alive {
   pointer-events: none;
 }
 
+/* Four classes: it has to beat .path-journey.is-active .path-head below. */
+.path-journey.is-active .path-head.is-hidden,
 .path-journey .path-head.is-hidden {
   opacity: 0;
 }
@@ -627,7 +630,7 @@ html.reduced-motion .path-journey.is-active .path-map--alive {
 
 .path-map__draw {
   fill: none;
-  stroke: url(#pathGradient);
+  /* The gradient comes from the path's own stroke attribute: one per segment. */
   stroke-width: 6;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -782,13 +785,26 @@ html.reduced-motion .path-journey.is-active .path-map--alive {
   z-index: 1;
 }
 
+.path-stop-card__head {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.85rem;
+}
+
+.path-stop-card__course {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--home-muted);
+}
+
 .path-stop-card__num {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex: none;
   width: 2rem;
   height: 2rem;
-  margin-bottom: 0.85rem;
   border-radius: 9px;
   font-family: var(--home-display);
   font-size: 0.9rem;
@@ -854,6 +870,14 @@ html.reduced-motion .path-journey.is-active .path-map--alive {
     gap: 0.5rem;
   }
 
+  /* Map and card sit together, centred as a pair. A stretched map row left a
+     band of empty space above and below the map and pushed the card's button
+     off the bottom of a phone screen. */
+  .path-journey__sticky {
+    grid-template-rows: auto auto;
+    align-content: safe center;
+  }
+
   .path-journey__map {
     height: min(52vh, 420px);
   }
@@ -877,8 +901,204 @@ html.reduced-motion .path-journey.is-active .path-map--alive {
   }
 
   .path-journey__map {
-    height: min(46vh, 340px);
+    height: min(40vh, 300px);
     border-radius: 14px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Trail scenery: two segments, two scenes
+   Foundations is the daylight survey map. Python for Data happens at
+   dusk: the same kind of trail under a night sky, where the stars are
+   plotted points and the skyline is a bar chart. path-trail.js sets
+   data-scene on the section and --seam (0..1) across the cross-fade;
+   the scene 2 layers fade in on --seam rather than switching, so the
+   change of scenery follows the scroll, not a timer.
+
+   A second option, a light graph-paper scene, was built and compared
+   (REVIEW/screenshots/trail-c2-optA-*) and dropped: blue to pale green
+   read as a recolour, not as somewhere new.
+   ═══════════════════════════════════════════════════════════ */
+
+.path-journey {
+  --s2-sky: radial-gradient(90% 60% at 50% 0%, color-mix(in srgb, #6d28d9 12%, transparent), transparent 72%), #f6f4fb;
+  --s2-frame: linear-gradient(180deg, #1b1840 0%, #2d2463 58%, #5a3b73 100%);
+  --s2-grid: rgba(255, 255, 255, 0.045);
+  --s2-bars: rgba(14, 11, 38, 0.85);
+  --s2-points: rgba(254, 243, 199, 0.7);
+  --s2-ink: #f5f3ff;
+  --s2-paper: #1f1b48;
+  --s2-line: #d97706;
+  --s2-line-deep: #b45309;
+  --s2-mark: #fbbf24;
+  --s2-grad-a: #f59e0b;
+  --s2-grad-b: #fbbf24;
+  --s2-grad-c: #fde68a;
+  --s2-lit-num: #1b1840;
+}
+
+[data-theme="dark"] .path-journey {
+  --s2-sky: radial-gradient(90% 60% at 50% 0%, color-mix(in srgb, #7c3aed 16%, transparent), transparent 72%), #110f22;
+  --s2-frame: linear-gradient(180deg, #121030 0%, #221c4d 58%, #432c58 100%);
+  --s2-line-deep: #fcd34d;
+}
+
+.path-journey::before,
+.path-journey__map::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--seam, 0);
+}
+
+.path-journey::before {
+  background: var(--s2-sky);
+}
+
+.path-journey__map::before {
+  background: var(--s2-frame);
+}
+
+.path-journey__marker {
+  position: absolute;
+  top: var(--at, 0);
+  left: 0;
+  width: 1px;
+  height: 1px;
+  scroll-margin-top: 0;
+}
+
+.path-map[data-segment="2"] {
+  --home-ink: var(--s2-ink);
+  --home-paper: var(--s2-paper);
+  --home-line: var(--s2-line);
+  --home-line-deep: var(--s2-line-deep);
+  --home-mark: var(--s2-mark);
+}
+
+.path-gradient2-a { stop-color: var(--s2-grad-a); }
+.path-gradient2-b { stop-color: var(--s2-grad-b); }
+.path-gradient2-c { stop-color: var(--s2-grad-c); }
+
+.path-scenery__grid {
+  fill: none;
+  stroke: var(--s2-grid);
+  stroke-width: 1;
+}
+
+.path-scenery__bars { fill: var(--s2-bars); }
+.path-scenery__points { fill: var(--s2-points); }
+
+.path-map[data-segment="2"] .path-map__draw {
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--s2-line) 30%, transparent));
+}
+
+.path-map[data-segment="2"] .g-stop.is-lit .path-stop-num,
+[data-theme="dark"] .path-map[data-segment="2"] .g-stop.is-lit .path-stop-num {
+  fill: var(--s2-lit-num);
+}
+
+/* The panel takes the scene's accent once the scene has switched. */
+.path-journey[data-scene="2"] .path-panel {
+  --home-line: var(--s2-line);
+  --home-line-deep: var(--s2-line-deep);
+  --home-mark: var(--s2-mark);
+}
+
+.path-panel__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem 1rem;
+  margin: 0 0 0.5rem;
+}
+
+.path-panel__head .path-panel__kicker {
+  margin: 0;
+}
+
+.path-panel__jump {
+  display: none;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--home-ink) 16%, transparent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--home-ink);
+  text-decoration: none;
+  background: color-mix(in srgb, var(--home-paper) 80%, transparent);
+  transition: border-color 150ms ease, color 150ms ease;
+}
+
+.path-panel__jump:hover {
+  border-color: var(--home-line);
+  color: var(--home-line-deep);
+}
+
+.path-panel__jump:focus-visible {
+  outline: 3px solid var(--home-line-deep);
+  outline-offset: 2px;
+}
+
+/* Offer the course you are not on. Nothing shows until the script has set a
+   scene, because without it a jump would move the page and nothing else. */
+.path-journey[data-scene="1"] [data-trail-jump="2"],
+.path-journey[data-scene="2"] [data-trail-jump="1"] {
+  display: inline-flex;
+}
+
+/* Every card stays in the accessibility tree and in the tab order once there
+   are two segments, so all 20 units can be reached without scrolling: a card
+   that takes focus scrolls the trail to its stop (path-trail.js) and becomes
+   the visible one. With one segment the cards behave as they always did. */
+.path-journey[data-scene] .path-panel__stage:has([data-segment="2"]) .path-stop-card {
+  visibility: visible;
+}
+
+.path-stop-card:focus-within {
+  z-index: 2;
+}
+
+@media (max-width: 560px) {
+  .path-journey__marker {
+    top: var(--at-mobile, 0);
+  }
+
+  .path-panel__head {
+    margin-bottom: 0.35rem;
+  }
+
+  .path-stop-card__head {
+    margin-bottom: 0.5rem;
+  }
+
+  .path-stop-card__num {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .path-stop-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .path-stop-card p {
+    margin-bottom: 0.6rem;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    max-width: none;
+  }
+
+  .path-stop-card__meta {
+    margin-bottom: 0.6rem;
+  }
+
+  .path-panel__progress {
+    margin-bottom: 0.8rem;
   }
 }
 

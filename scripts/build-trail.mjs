@@ -36,18 +36,60 @@ const ROUTE_1 = {
   d: 'M 72 72 C 150 72 150 150 230 150 S 310 72 390 72 S 500 150 500 210 S 420 290 340 290 S 220 230 160 290 S 160 390 240 390 S 360 450 440 390 S 560 330 560 420 S 480 500 400 500',
   anchors: [[72, 72], [230, 150], [390, 72], [500, 210], [340, 290], [160, 290], [240, 390], [440, 390], [560, 420], [400, 500]],
   label: [[96, 56, ''], [248, 178, ''], [414, 56, ''], [420, 230, 'end'], [358, 268, ''], [90, 268, ''], [258, 418, ''], [458, 372, ''], [480, 448, 'end'], [418, 522, '']],
+  // path-trail.js's alternating rule, except stop 9, whose label ran off the
+  // right edge of the map ("Advanced Topics" showed as "Advancec").
+  offsets: [[22, -18, 'start'], [-22, 22, 'end'], [22, -18, 'start'], [-22, -18, 'end'], [22, 22, 'start'],
+    [-22, -18, 'end'], [22, -18, 'start'], [-22, 22, 'end'], [-24, 5, 'end'], [-22, -18, 'end']],
 };
 
+/* Python for Data climbs the other way: it starts low on the left and rises
+   to the top right, like the line on a chart, so the second map never reads
+   as the first one again. Its line is drawn through the anchors as a
+   Catmull-Rom spline, which keeps a new route to ten points and no hand-set
+   control handles. */
+const ROUTE_2 = routeThrough(
+  [[80, 480], [210, 500], [300, 410], [180, 330], [290, 250], [430, 300], [560, 360], [540, 230], [420, 140], [560, 70]],
+  // Label offsets from each stop (dx, dy, text-anchor), set by eye so no label
+  // sits on the line or runs off the right edge of the map.
+  [[22, -18, 'start'], [0, 34, 'middle'], [24, 5, 'start'], [-24, 5, 'end'], [0, -26, 'middle'],
+    [0, 36, 'middle'], [0, 36, 'middle'], [24, 5, 'start'], [-24, 5, 'end'], [0, -26, 'middle']]
+);
+
 /* Segments, in trail order. `span` is the scroll budget in viewport heights
-   for the whole segment; `seam` is the scroll between this segment and the
-   next, where the scenery cross-fades. */
+   for the whole segment; `seam` is the scroll after it, where the maps and the
+   scenery cross-fade into the next segment.
+
+   Foundations gets 40vh a stop, the pace the ten-stop trail always had. Python
+   for Data is a little quicker at 32vh a stop: by then the reader knows how the
+   trail works, and 20 stops at the first pace is a long scroll. */
 export const SEGMENTS = [
-  { course: 'foundations', scene: 1, route: ROUTE_1, span: 420, seam: 0 },
+  { course: 'foundations', scene: 1, route: ROUTE_1, span: 400, seam: 30, jump: 'Back to Python Foundations' },
+  { course: 'data', scene: 2, route: ROUTE_2, span: 320, seam: 0, jump: 'Jump to Python for Data' },
 ];
 
 // The page adds one viewport of track so the last stop is reachable, and the
 // sticky layout on phones is shorter, so it gets proportionally less.
 const MOBILE_SCALE = 380 / 420;
+
+function round(n) {
+  return Math.round(n * 10) / 10;
+}
+
+function routeThrough(anchors, offsets) {
+  const at = (i) => anchors[Math.max(0, Math.min(anchors.length - 1, i))];
+  let d = `M ${anchors[0][0]} ${anchors[0][1]}`;
+  for (let i = 0; i < anchors.length - 1; i++) {
+    const [p0, p1, p2, p3] = [at(i - 1), at(i), at(i + 1), at(i + 2)];
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    d += ` C ${round(c1[0])} ${round(c1[1])} ${round(c2[0])} ${round(c2[1])} ${p2[0]} ${p2[1]}`;
+  }
+  const label = anchors.map(([x, y], i) => {
+    const [dx, dy, anchor] = offsets[i];
+    return [x + dx, y + dy, anchor === 'start' ? '' : anchor];
+  });
+  return { d, anchors, label, offsets };
+}
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -74,30 +116,75 @@ function unitsFor(course) {
   });
 }
 
+/* Scenery. Foundations keeps the soft survey grid it always had. Python for
+   Data's map is drawn over a dusk scene, emitted only into its own svg so
+   it cross-fades with that map. Every mark is placed from a fixed seed, so a
+   rebuild never changes the page unless the route does. */
+function seeded(seed) {
+  let x = seed;
+  return () => {
+    x = (x * 1664525 + 1013904223) % 4294967296;
+    return x / 4294967296;
+  };
+}
+
+function scenery(seg) {
+  if (seg.scene === 1) {
+    return `
+                <!-- soft grid -->
+                <g class="path-map__grid" opacity="0.7">
+                  <path d="M40 40 H600 M40 120 H600 M40 200 H600 M40 280 H600 M40 360 H600 M40 440 H600 M40 520 H600" />
+                  <path d="M80 20 V540 M160 20 V540 M240 20 V540 M320 20 V540 M400 20 V540 M480 20 V540 M560 20 V540" />
+                </g>`;
+  }
+  const rand = seeded(seg.scene * 7919);
+  // Faint sky grid every 100 units, drawn well past the viewBox so a wide
+  // frame never shows where it stops.
+  let grid = '';
+  for (let x = -400; x <= 1040; x += 100) grid += `M${x} -200 V760 `;
+  for (let y = -200; y <= 760; y += 100) grid += `M-400 ${y} H1040 `;
+  // A bar chart along the foot of the map that reads as a skyline, and plotted
+  // points that read as stars.
+  let bars = '';
+  for (let x = -380; x < 1040; x += 36) {
+    const h = round(30 + rand() * 70 + (x > 0 && x < 640 ? (x / 640) * 40 : 0));
+    bars += `<rect x="${x}" y="${round(560 - h)}" width="22" height="${h}" rx="3" />`;
+  }
+  let points = '';
+  for (let i = 0; i < 46; i++) {
+    const x = round(-300 + rand() * 1240);
+    const y = round(20 + rand() * 440);
+    points += `<circle cx="${x}" cy="${y}" r="${round(2 + rand() * 2.5)}" />`;
+  }
+  return `
+                <!-- dusk: a sky grid, a bar-chart skyline and plotted stars -->
+                <g class="path-scenery" aria-hidden="true">
+                  <path class="path-scenery__grid" d="${grid.trim()}" />
+                  <g class="path-scenery__bars">${bars}</g>
+                  <g class="path-scenery__points">${points}</g>
+                </g>`;
+}
+
 function segmentSvg(seg, units, offset) {
   const { route } = seg;
   const stops = units.map((u, i) => {
     const [cx, cy] = route.anchors[i];
     const [lx, ly, anchor] = route.label[i];
     return `
-                <g class="g-stop" data-stop data-stop-index="${offset + i}">
+                <g class="g-stop" data-stop data-stop-index="${offset + i}"${route.offsets ? ` data-label="${route.offsets[i].join(' ')}"` : ''}>
                   <circle class="path-stop-dot" cx="${cx}" cy="${cy}" r="14" />
                   <text class="path-stop-num" x="${cx}" y="${cy}">${offset + i + 1}</text>
                   <text class="path-stop-label" x="${lx}" y="${ly}"${anchor ? ` text-anchor="${anchor}"` : ''}>${esc(u.label)}</text>
                 </g>`;
   }).join('');
   const [hx, hy] = route.anchors[0];
+  const gradient = seg.scene === 1 ? 'pathGradient' : `pathGradient${seg.scene}`;
   return `
-              <svg class="path-map" data-segment="${seg.scene}" data-course="${seg.course}" data-span="${seg.span}" data-seam="${seg.seam}" viewBox="0 0 640 560" preserveAspectRatio="xMidYMid meet">
-                <!-- soft grid -->
-                <g class="path-map__grid" opacity="0.7">
-                  <path d="M40 40 H600 M40 120 H600 M40 200 H600 M40 280 H600 M40 360 H600 M40 440 H600 M40 520 H600" />
-                  <path d="M80 20 V540 M160 20 V540 M240 20 V540 M320 20 V540 M400 20 V540 M480 20 V540 M560 20 V540" />
-                </g>
+              <svg class="path-map" data-segment="${seg.scene}" data-course="${seg.course}" data-span="${seg.span}" data-seam="${seg.seam}" viewBox="0 0 640 560" preserveAspectRatio="xMidYMid meet">${scenery(seg)}
 
                 <!-- base + draw share the same route -->
                 <path class="path-map__base" pathLength="1" d="${route.d}" />
-                <path class="path-map__draw" pathLength="1" d="${route.d}" />
+                <path class="path-map__draw" pathLength="1" d="${route.d}" stroke="url(#${gradient})" />
 ${stops}
 
                 <!-- traveler head that follows the stroke -->
@@ -112,7 +199,7 @@ function card(u, index, course, seg, first) {
   const button = course.slug === 'foundations' ? `Open Unit ${u.n}` : `Open ${u.title}`;
   return `
                 <article class="path-stop-card${first ? ' is-active' : ''}" data-stop-card data-stop-index="${index}" data-segment="${seg.scene}">
-                  <div class="path-stop-card__num">${index + 1}</div>
+                  <div class="path-stop-card__head"><span class="path-stop-card__num">${index + 1}</span><span class="path-stop-card__course">${esc(course.title)}</span></div>
                   <h3>${esc(u.title)}</h3>
                   <p>${esc(u.blurb)}</p>
                   <div class="path-stop-card__meta"><span>${esc(u.hours)}</span><span>${esc(u.level)}</span></div>
@@ -124,7 +211,10 @@ export function buildTrail(segments = SEGMENTS, courses = coursesBySlug()) {
   let offset = 0;
   const svgs = [];
   const cards = [];
-  let spanTotal = 0;
+  const markers = [];
+  const jumps = [];
+  const spanTotal = segments.reduce((sum, seg, si) => sum + seg.span + (si < segments.length - 1 ? seg.seam : 0), 0);
+  let at = 0;
   segments.forEach((seg, si) => {
     const course = courses[seg.course];
     if (!course) throw new Error(`no course ${seg.course} in courses.json`);
@@ -134,13 +224,28 @@ export function buildTrail(segments = SEGMENTS, courses = coursesBySlug()) {
     }
     svgs.push(segmentSvg(seg, units, offset));
     units.forEach((u, i) => cards.push(card(u, offset + i, course, seg, offset + i === 0)));
+    if (segments.length > 1) {
+      // Where this segment starts on the scroll track. The jump link lands here
+      // with scripting, and an in-page link to the marker is the fallback.
+      markers.push(`
+          <span class="path-journey__marker" id="trail-${seg.course}" style="--at: ${at}vh; --at-mobile: ${round(at * MOBILE_SCALE)}vh"></span>`);
+      jumps.push(`<a class="path-panel__jump" href="#trail-${seg.course}" data-trail-jump="${seg.scene}" data-stop-index="${offset}">${esc(seg.jump)}</a>`);
+    }
     offset += units.length;
-    spanTotal += seg.span + (si < segments.length - 1 ? seg.seam : 0);
+    at += seg.span + (si < segments.length - 1 ? seg.seam : 0);
   });
   const desktop = 100 + spanTotal;
   const mobile = Math.round(100 + spanTotal * MOBILE_SCALE);
+  const head = jumps.length
+    ? `
+              <div class="path-panel__head">
+                <p class="path-panel__kicker">Now on the trail</p>
+                ${jumps.join('\n                ')}
+              </div>`
+    : `
+              <p class="path-panel__kicker">Now on the trail</p>`;
   return `${BEGIN}
-        <div class="path-journey__track" data-stops="${offset}" style="--trail-length: ${desktop}vh; --trail-length-mobile: ${mobile}vh">
+        <div class="path-journey__track" data-stops="${offset}" style="--trail-length: ${desktop}vh; --trail-length-mobile: ${mobile}vh">${markers.join('')}
           <div class="path-journey__sticky">
             <div class="path-journey__map" aria-hidden="true">
               <svg class="path-map__defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -149,13 +254,17 @@ export function buildTrail(segments = SEGMENTS, courses = coursesBySlug()) {
                     <stop offset="0%" stop-color="#0284c7" />
                     <stop offset="55%" stop-color="#0ea5e9" />
                     <stop offset="100%" stop-color="#38bdf8" />
-                  </linearGradient>
+                  </linearGradient>${segments.length > 1 ? `
+                  <linearGradient id="pathGradient2" x1="0%" y1="100%" x2="100%" y2="0%">
+                    <stop class="path-gradient2-a" offset="0%" />
+                    <stop class="path-gradient2-b" offset="55%" />
+                    <stop class="path-gradient2-c" offset="100%" />
+                  </linearGradient>` : ''}
                 </defs>
               </svg>${svgs.join('')}
             </div>
 
-            <aside class="path-panel" aria-live="polite">
-              <p class="path-panel__kicker">Now on the trail</p>
+            <aside class="path-panel" aria-label="Units on the trail">${head}
               <div class="path-panel__progress" aria-hidden="true"><span></span></div>
               <div class="path-panel__stage">${cards.join('')}
               </div>

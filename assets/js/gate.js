@@ -96,7 +96,11 @@
   }
 
   function markLockedCards(signedIn) {
-    var links = document.querySelectorAll('a[href^="/units/unit-"]');
+    // Every course root, so a card linking into Python for Data is badged by
+    // the same rule as one linking into Foundations.
+    var links = document.querySelectorAll(COURSE_ROOTS.map(function (root) {
+      return 'a[href^="/' + root + '/unit-"]';
+    }).join(', '));
     var teacher = teaching();
     Array.prototype.forEach.call(links, function (a) {
       // Header nav and footer link lists are not cards. Badging them would put

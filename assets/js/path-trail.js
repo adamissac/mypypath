@@ -15,6 +15,10 @@
  * CSS keys the scenery off data-scene. The traveller head follows the active
  * segment's line and is hidden while the maps are mid-fade, so it never flies
  * from the end of one line to the start of the next.
+ *
+ * Every unit is reachable without scrolling. A card that takes keyboard focus
+ * scrolls the page to its stop, and the jump link moves straight to the start
+ * of the other course and puts focus on its first card.
  */
 (function () {
   const section = document.querySelector("[data-path-journey]");
@@ -88,12 +92,16 @@
         num.setAttribute("y", String(pt.y));
       }
       if (label) {
+        // A route can set each label's offset (data-label="dx dy anchor") where
+        // the default zig-zag would put it on the line; otherwise alternate sides.
+        const set = (stop.getAttribute("data-label") || "").split(" ");
         const side = i % 2 === 0 ? 1 : -1;
-        const lx = pt.x + side * 22;
-        const ly = pt.y + (i % 3 === 1 ? 22 : -18);
-        label.setAttribute("x", String(lx));
-        label.setAttribute("y", String(ly));
-        if (side < 0) label.setAttribute("text-anchor", "end");
+        const dx = set.length === 3 ? Number(set[0]) : side * 22;
+        const dy = set.length === 3 ? Number(set[1]) : i % 3 === 1 ? 22 : -18;
+        const anchor = set.length === 3 ? set[2] : side < 0 ? "end" : "start";
+        label.setAttribute("x", String(pt.x + dx));
+        label.setAttribute("y", String(pt.y + dy));
+        if (anchor !== "start") label.setAttribute("text-anchor", anchor);
         else label.removeAttribute("text-anchor");
       }
     }
@@ -104,6 +112,10 @@
   }
 
   const clamp01 = (x) => Math.min(1, Math.max(0, x));
+  const smooth = (a, b, x) => {
+    const t = clamp01((x - a) / (b - a));
+    return t * t * (3 - 2 * t);
+  };
 
   /* Where overall progress p lands: the scene on show, each segment's own
      progress, and how far through a seam's cross-fade we are. */
@@ -124,14 +136,15 @@
     return { sceneIndex, seamIndex, seamT };
   }
 
-  function setProgress(p, { lightAll = false } = {}) {
+  function setProgress(p, { lightAll = false, stepped = false } = {}) {
     const progress = clamp01(p);
     section.style.setProperty("--path-progress", String(progress));
 
     const where = locate(progress);
     const scene = segments[where.sceneIndex];
     section.setAttribute("data-scene", scene.scene);
-    section.style.setProperty("--seam", String(where.seamIndex === -1 ? (where.sceneIndex > 0 ? 1 : 0) : where.seamT));
+    const fading = where.seamIndex !== -1 && !stepped;
+    section.style.setProperty("--seam", String(fading ? where.seamT : where.sceneIndex > 0 ? 1 : 0));
     section.classList.toggle("is-seaming", where.seamIndex !== -1);
 
     let activeCard = 0;
@@ -143,28 +156,35 @@
       seg.svg.classList.toggle("is-scene", si === where.sceneIndex);
       // Each map fades out across the seam after it and in across the seam before it.
       let opacity = si === where.sceneIndex ? 1 : 0;
-      if (where.seamIndex !== -1 && (si === where.seamIndex || si === where.seamIndex + 1)) {
-        opacity = si === where.seamIndex ? 1 - where.seamT : where.seamT;
+      // The outgoing map is gone by 60% of the seam and the incoming one starts
+      // at 40%, so the two routes overlap briefly instead of for the whole fade.
+      if (fading && (si === where.seamIndex || si === where.seamIndex + 1)) {
+        opacity = si === where.seamIndex ? 1 - smooth(0, 0.6, where.seamT) : smooth(0.4, 1, where.seamT);
       }
       seg.svg.style.setProperty("--segment-opacity", String(opacity));
 
       const count = seg.stops.length;
-      let lastLit = -1;
+      // `reached` is where the scroll is; `lit` is what is drawn. They differ
+      // only under reduced motion, where every stop is lit but the card still
+      // follows the scroll, one step at a time.
+      const scrolled = width > 0 ? clamp01((progress - seg.start) / width) : progress >= seg.start ? 1 : 0;
+      let lastReached = -1;
       for (let i = 0; i < count; i++) {
         const threshold = seg.stopAt[i] != null ? seg.stopAt[i] : count === 1 ? 0 : i / (count - 1);
-        const lit = lightAll || (progress >= seg.start && local >= Math.max(0, threshold - 0.012));
+        const reached = progress >= seg.start && scrolled >= Math.max(0, threshold - 0.012);
+        const lit = lightAll || reached;
         const stop = seg.stops[i];
         stop.classList.toggle("is-lit", lit);
         const dot = stop.querySelector(".path-stop-dot");
         if (dot) dot.classList.toggle("is-lit", lit);
-        if (lit) lastLit = i;
+        if (reached) lastReached = i;
       }
       if (si === where.sceneIndex) {
-        activeCard = offset + Math.max(0, lastLit);
+        activeCard = offset + Math.max(0, lastReached);
       }
 
       if (seg.head && seg.drawPath && typeof seg.drawPath.getTotalLength === "function") {
-        const onShow = si === where.sceneIndex && where.seamIndex === -1;
+        const onShow = si === where.sceneIndex && (where.seamIndex === -1 || stepped);
         seg.head.classList.toggle("is-hidden", !onShow);
         if (onShow) {
           try {
@@ -193,15 +213,42 @@
     return scrolled / total;
   }
 
+  /* Overall progress at which stop `index` (counted across segments) lights. */
+  function progressForStop(index) {
+    let offset = 0;
+    for (const seg of segments) {
+      const count = seg.stops.length;
+      if (index < offset + count) {
+        const i = index - offset;
+        const at = seg.stopAt[i] != null ? seg.stopAt[i] : count === 1 ? 0 : i / (count - 1);
+        return Math.min(seg.end, seg.start + at * (seg.end - seg.start) + 0.001);
+      }
+      offset += count;
+    }
+    return 1;
+  }
+
+  function scrollToProgress(p) {
+    if (!track) return;
+    const total = track.offsetHeight - window.innerHeight;
+    const top = track.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({ top: Math.round(top + clamp01(p) * Math.max(0, total)), behavior: "instant" });
+    render();
+  }
+
+  function render() {
+    const p = measure();
+    setProgress(p, { lightAll: reduced, stepped: reduced });
+    section.classList.toggle("is-active", reduced || (p > 0.008 && p < 0.995));
+  }
+
   let ticking = false;
   function onScroll() {
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(() => {
       ticking = false;
-      const p = measure();
-      setProgress(p, { lightAll: reduced });
-      section.classList.toggle("is-active", p > 0.008 && p < 0.995);
+      render();
     });
   }
 
@@ -209,9 +256,9 @@
   placeAll();
 
   /* Reduced motion: no drawing and no fading. Every line is shown whole and
-     every stop lit, and scroll switches scenes and cards in single steps
-     (the CSS removes every transition), so a visitor who asked for less
-     motion still reaches both courses. With one segment there is nothing to
+     every stop lit, and scroll switches the scene and the card for the stop
+     you have reached in single steps (the CSS removes every transition), so a
+     visitor who asked for less motion still reaches all twenty units. With one segment there is nothing to
      switch between, so it keeps the original behaviour: the whole line, every
      stop lit, the last card showing, and no scroll listener at all. */
   if (reduced) {
@@ -224,7 +271,29 @@
     }
   }
 
-  setProgress(reduced ? measure() : 0, { lightAll: reduced });
+  setProgress(reduced ? measure() : 0, { lightAll: reduced, stepped: reduced });
+
+  if (segments.length > 1) {
+    const stage = section.querySelector(".path-panel__stage");
+    if (stage) {
+      stage.addEventListener("focusin", (e) => {
+        const card = e.target.closest("[data-stop-card]");
+        if (!card || card.classList.contains("is-active")) return;
+        scrollToProgress(progressForStop(Number(card.getAttribute("data-stop-index"))));
+      });
+    }
+    section.querySelectorAll("[data-trail-jump]").forEach((link) => {
+      link.addEventListener("click", (e) => {
+        const index = Number(link.getAttribute("data-stop-index"));
+        const card = cards[index];
+        if (!card) return;
+        e.preventDefault();
+        scrollToProgress(progressForStop(index));
+        const target = card.querySelector("a");
+        if (target) target.focus({ preventScroll: true });
+      });
+    });
+  }
 
   // Listen on window + body: legacy site CSS sometimes makes body the scrollport
   window.addEventListener("scroll", onScroll, { passive: true });
@@ -240,5 +309,5 @@
   );
   onScroll();
 
-  window.PyPathTrail = { locate, segments, setProgress, measure };
+  window.PyPathTrail = { locate, segments, setProgress, measure, progressForStop, scrollToProgress };
 })();

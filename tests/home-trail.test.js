@@ -52,6 +52,43 @@ describe('the generated trail in index.html', () => {
     }
   });
 
+  it('runs Foundations then Python for Data, ten stops each, 20 in all', () => {
+    const svgs = [...section.querySelectorAll('.path-map[data-segment]')];
+    expect(svgs.map((s) => [s.getAttribute('data-course'), s.querySelectorAll('[data-stop]').length]))
+      .toEqual([['foundations', 10], ['data', 10]]);
+    const nums = svgs.map((s) => [...s.querySelectorAll('.path-stop-num')].map((t) => Number(t.textContent)));
+    expect(nums[0]).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    expect(nums[1]).toEqual([11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
+    const dataCards = [...section.querySelectorAll('[data-stop-card][data-segment="2"] a')];
+    expect(dataCards.map((a) => a.getAttribute('href')))
+      .toEqual(courses.find((c) => c.slug === 'data').units.map((u) => u.first));
+  });
+
+  it('gives each segment its scroll budget, the second a little quicker per stop', () => {
+    const [one, two] = [...section.querySelectorAll('.path-map[data-segment]')];
+    const perStop = (svg) => Number(svg.getAttribute('data-span')) / svg.querySelectorAll('[data-stop]').length;
+    expect(perStop(one)).toBe(40);
+    expect(perStop(two)).toBeLessThan(perStop(one));
+    const total = Number(one.getAttribute('data-span')) + Number(one.getAttribute('data-seam')) + Number(two.getAttribute('data-span'));
+    const track = section.querySelector('.path-journey__track');
+    expect(track.getAttribute('style')).toContain(`--trail-length: ${100 + total}vh`);
+  });
+
+  it('offers a jump to Python for Data that lands on its first stop', () => {
+    const jump = section.querySelector('[data-trail-jump="2"]');
+    expect(jump.textContent).toBe('Jump to Python for Data');
+    expect(jump.getAttribute('href')).toBe('#trail-data');
+    expect(jump.getAttribute('data-stop-index')).toBe('10');
+    const one = section.querySelector('.path-map[data-segment="1"]');
+    const at = Number(one.getAttribute('data-span')) + Number(one.getAttribute('data-seam'));
+    expect(section.querySelector('#trail-data').getAttribute('style')).toContain(`--at: ${at}vh`);
+  });
+
+  it('keeps the map out of the accessibility tree and the units in it', () => {
+    expect(section.querySelector('.path-journey__map').getAttribute('aria-hidden')).toBe('true');
+    expect(section.querySelector('.path-panel').closest('[aria-hidden]')).toBeNull();
+  });
+
   it('refuses a unit with missing card data', () => {
     const broken = JSON.parse(JSON.stringify(courses));
     delete broken[0].units[0].hours;
