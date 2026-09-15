@@ -1,0 +1,45 @@
+/* Two expeditions, drawn with solid surfaces and crisp orbital lines. */
+.page-courses .journeys { padding-top: clamp(50px, 7vw, 96px); padding-bottom: 72px; }
+.journeys-intro { max-width: 780px; margin-bottom: 48px; }
+.journeys-eyebrow { font-size: .75rem; font-weight: 700; letter-spacing: .18em; color: var(--pp-line-ink); }
+.journeys-intro h1 { font-size: clamp(3rem, 7.5vw, 6rem); line-height: 1.02; margin: 18px 0 24px; letter-spacing: -.065em; }
+.journeys-intro > p:not(.journeys-eyebrow) { font-size: 1.1rem; max-width: 560px; line-height: 1.7; }
+.journeys-facts { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: 26px; font-size: .8rem; font-weight: 600; }
+.journeys-facts span::before { content: '✦'; margin-right: 8px; color: var(--pp-line-ink); }
+.journey-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 26px; }
+.journey-card { --card-bg: #f1f8fc; --card-ink: #123e56; --card-muted: #416478; --card-line: #c4dae6; --scene-bg: #dcecf4; --scene-ink: #315a72; display: block; border: 1px solid var(--card-line); border-radius: 24px; overflow: hidden; background: var(--card-bg); color: var(--card-ink); text-decoration: none; transition: transform .25s ease, box-shadow .25s ease; }
+.journey-card--space { --card-bg: #f5f0fb; --card-ink: #322043; --card-muted: #665278; --card-line: #d9cce9; --scene-bg: #22162f; --scene-ink: #d4c1ec; }
+.journey-card:hover { transform: translateY(-5px); box-shadow: 0 10px 0 var(--card-line); text-decoration: none; }
+.journey-card:focus-visible { outline: 3px solid var(--pp-line-ink); outline-offset: 6px; }
+.journey-card__scene { position: relative; height: clamp(245px, 27vw, 360px); background: var(--scene-bg); overflow: hidden; color: var(--scene-ink); }
+.journey-card__coordinates { position: absolute; top: 24px; left: 26px; font: 600 .75rem ui-monospace, monospace; letter-spacing: .08em; z-index: 1; }
+.journey-card__world { position: absolute; left: 24px; top: 60px; font: 800 clamp(2.6rem,4.6vw,4.3rem)/1 var(--pp-display); opacity: .17; letter-spacing: -.06em; white-space: nowrap; }
+.journey-card__scene img { position: absolute; height: 112%; width: 100%; object-fit: contain; top: 5%; left: 0; }
+.journey-card--mountain .journey-card__scene img { height: 104%; top: 8%; }
+.journey-card__range { position: absolute; bottom: 20px; right: 24px; font: 600 .85rem ui-monospace, monospace; letter-spacing: .12em; }
+.journey-card__body { padding: 28px; }
+.journey-card__level { color: var(--card-muted); font-size: .75rem; line-height: 1.6; letter-spacing: .075em; font-weight: 700; }
+.journey-card h2 { color: var(--card-ink); font-size: clamp(1.65rem,2.5vw,2.1rem); margin: 12px 0; }
+.journey-card p { color: var(--card-muted); font-size: .94rem; line-height: 1.75; margin-bottom: 22px; }
+.journey-card__skills { display: flex; flex-wrap: wrap; list-style: none; padding: 0; gap: 8px; margin: 0 0 30px; }
+.journey-card__skills li { color: var(--card-ink); border: 1px solid var(--card-line); border-radius: 7px; padding: 6px 9px; font-size: .75rem; }
+.journey-card__footer { display: flex; align-items: center; justify-content: space-between; gap: 15px; border-top: 1px solid var(--card-line); padding-top: 22px; font-size: .85rem; font-weight: 700; }
+.journey-card__footer > span:last-child { color: var(--card-muted); white-space: nowrap; font-weight: 500; }
+.journey-card__footer span span { display: inline-block; margin-left: 8px; font-size: 1.3rem; }
+.journeys-start { display: flex; gap: 24px; align-items: center; padding: 30px 0; margin-top: 36px; border-top: 1px solid var(--pp-border); }
+.journeys-start__symbol { font-size: 2.5rem; color: var(--pp-line-ink); }
+.journeys-start h2 { font-size: 1.2rem; margin: 0 0 8px; }
+.journeys-start p { max-width: 620px; font-size: .85rem; margin: 0; line-height: 1.7; }
+.journeys-start > a { flex-shrink: 0; color: var(--pp-line-ink); font-size: .85rem; font-weight: 700; padding: 14px 0; margin-left: auto; }
+[data-theme="dark"] .journey-card--mountain { --card-bg: #142731; --card-ink: #e0f0f8; --card-muted: #a8c4d4; --card-line: #324d5b; --scene-bg: #1b3543; --scene-ink: #bedcea; }
+[data-theme="dark"] .journey-card--space { --card-bg: #251a33; --card-ink: #f0e6ff; --card-muted: #c7b4dd; --card-line: #4b365f; }
+@media (max-width: 700px) {
+ .journey-grid { grid-template-columns: 1fr; gap: 24px; }
+ .journeys-intro { margin-bottom: 32px; }
+ .journey-card__scene { height: 290px; }
+ .journey-card__body { padding: 23px; }
+ .journeys-start { flex-wrap: wrap; gap: 16px; }
+ .journeys-start__symbol { display: none; }
+ .journeys-start > a { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .journey-card { transition: none; } .journey-card:hover { transform: none; } }
