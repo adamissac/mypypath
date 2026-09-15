@@ -485,15 +485,305 @@ body.page-home {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   PATH JOURNEY — sticky SVG trail, draws on scroll
+   PATH JOURNEY: the sticky trail map, drawn on scroll
+   Markup: scripts/build-trail.mjs. Behaviour: assets/js/path-trail.js.
    ═══════════════════════════════════════════════════════════ */
+
+/* ── Palettes ───────────────────────────────────────────────
+   Each course is a scene, and each scene is a palette of tokens.
+   Components only ever read --trail-*; a scene maps --trail-* to
+   one palette. Changing course is a change of variables, not a
+   second set of rules.
+
+   Day survey    Python Foundations. The site's own sky blue.
+   Night survey  Python for Data. Built with theme-factory from
+                 Midnight Galaxy (deep purple, cosmic blue,
+                 lavender, silver) with a marigold lamp for the
+                 lit route, so progress still reads as warm light.
+   Field notes   The alternative Python for Data palette that was
+                 compared and not chosen (Botanical Garden). Kept
+                 behind data-palette="field" for the comparison
+                 screenshots; see REVIEW/trail-repair-report.md. */
+
+.path-journey {
+  --day-sky: radial-gradient(80% 50% at 50% 0%, color-mix(in srgb, #0ea5e9 12%, transparent), transparent 70%), #f7fbfe;
+  --day-frame: linear-gradient(180deg, #eaf5fb 0%, #f7fbfe 100%);
+  --day-edge: rgba(12, 69, 102, 0.1);
+  --day-grid: rgba(12, 69, 102, 0.06);
+  --day-line-a: #0369a1;
+  --day-line-b: #0ea5e9;
+  --day-line-c: #38bdf8;
+  --day-glow: rgba(14, 165, 233, 0.28);
+  --day-base: rgba(12, 69, 102, 0.14);
+  --day-base-dash: none;
+  --day-dot: #ffffff;
+  --day-dot-stroke: rgba(12, 69, 102, 0.3);
+  --day-num: #3d6680;
+  --day-lit: #d6effc;
+  --day-lit-stroke: #0284c7;
+  --day-lit-num: #0c4566;
+  --day-active: #0369a1;
+  --day-active-stroke: #ffffff;
+  --day-active-num: #ffffff;
+  --day-halo: rgba(14, 165, 233, 0.22);
+  --day-head: #0ea5e9;
+  --day-pill: #0c4566;
+  --day-pill-ink: #f3f9fc;
+  --day-peek: #ffffff;
+  --day-peek-ink: #0c4566;
+  --day-star: transparent;
+  --day-bright: transparent;
+  --day-skyline: transparent;
+  --day-accent: #0369a1;
+  --day-bar-a: #0ea5e9;
+  --day-bar-b: #38bdf8;
+
+  --night-sky: radial-gradient(90% 60% at 50% 0%, color-mix(in srgb, #4a4e8f 16%, transparent), transparent 72%), #f4f2f8;
+  --night-frame: linear-gradient(180deg, #150e21 0%, #2b1e3e 58%, #3f3b78 100%);
+  --night-edge: rgba(43, 30, 62, 0.35);
+  --night-grid: transparent;
+  --night-line-a: #f9a620;
+  --night-line-b: #f7c257;
+  --night-line-c: #f2e6c9;
+  --night-glow: rgba(249, 166, 32, 0.45);
+  --night-base: rgba(164, 144, 194, 0.55);
+  --night-base-dash: 0.004 0.011;
+  --night-dot: #2b1e3e;
+  --night-dot-stroke: rgba(164, 144, 194, 0.8);
+  --night-num: #dcd6ee;
+  --night-lit: #4d3a22;
+  --night-lit-stroke: #f9a620;
+  --night-lit-num: #fff4dc;
+  --night-active: #f9a620;
+  --night-active-stroke: #fff4dc;
+  --night-active-num: #24182f;
+  --night-halo: rgba(249, 166, 32, 0.3);
+  --night-head: #f7c257;
+  --night-pill: #e6e6fa;
+  --night-pill-ink: #24182f;
+  --night-peek: #2b1e3e;
+  --night-peek-ink: #e6e6fa;
+  --night-star: rgba(230, 230, 250, 0.72);
+  --night-bright: #f7c257;
+  --night-skyline: #110b1b;
+  --night-accent: #5b3f8f;
+  --night-bar-a: #f9a620;
+  --night-bar-b: #a490c2;
+
+  --field-sky: radial-gradient(90% 60% at 50% 100%, color-mix(in srgb, #4a7c59 14%, transparent), transparent 72%), #f7f5ee;
+  --field-frame: linear-gradient(180deg, #f8f6ef 0%, #ebe7d8 100%);
+  --field-edge: rgba(45, 74, 43, 0.14);
+  --field-grid: rgba(74, 124, 89, 0.08);
+  --field-line-a: #2d4a2b;
+  --field-line-b: #4a7c59;
+  --field-line-c: #8fb996;
+  --field-glow: rgba(74, 124, 89, 0.25);
+  --field-base: rgba(74, 124, 89, 0.24);
+  --field-base-dash: 0.004 0.011;
+  --field-dot: #fffdf7;
+  --field-dot-stroke: rgba(45, 74, 43, 0.35);
+  --field-num: #4a5a48;
+  --field-lit: #dbe8d6;
+  --field-lit-stroke: #4a7c59;
+  --field-lit-num: #2d4a2b;
+  --field-active: #f9a620;
+  --field-active-stroke: #2d4a2b;
+  --field-active-num: #2d2412;
+  --field-halo: rgba(249, 166, 32, 0.3);
+  --field-head: #4a7c59;
+  --field-pill: #2d4a2b;
+  --field-pill-ink: #faf9f6;
+  --field-peek: #fffdf7;
+  --field-peek-ink: #2d4a2b;
+  --field-star: rgba(74, 124, 89, 0.28);
+  --field-bright: #f9a620;
+  --field-skyline: rgba(74, 124, 89, 0.2);
+  --field-accent: #3b6b49;
+  --field-bar-a: #4a7c59;
+  --field-bar-b: #f9a620;
+}
+
+[data-theme="dark"] .path-journey {
+  --day-sky: radial-gradient(80% 50% at 50% 0%, color-mix(in srgb, #38bdf8 10%, transparent), transparent 70%), #0e161d;
+  --day-frame: linear-gradient(180deg, #101c26 0%, #0c141b 100%);
+  --day-edge: rgba(232, 244, 251, 0.08);
+  --day-grid: rgba(232, 244, 251, 0.05);
+  --day-line-a: #38bdf8;
+  --day-line-b: #7dd3fc;
+  --day-line-c: #bae6fd;
+  --day-base: rgba(232, 244, 251, 0.16);
+  --day-dot: #0e161d;
+  --day-dot-stroke: rgba(232, 244, 251, 0.32);
+  --day-num: #a9c7d8;
+  --day-lit: #0c3a55;
+  --day-lit-stroke: #38bdf8;
+  --day-lit-num: #e8f4fb;
+  --day-active: #38bdf8;
+  --day-active-stroke: #0e161d;
+  --day-active-num: #04202c;
+  --day-halo: rgba(56, 189, 248, 0.25);
+  --day-head: #7dd3fc;
+  --day-pill: #e8f4fb;
+  --day-pill-ink: #04202c;
+  --day-peek: #0e161d;
+  --day-peek-ink: #e8f4fb;
+  --day-accent: #7dd3fc;
+
+  --night-sky: radial-gradient(90% 60% at 50% 0%, color-mix(in srgb, #4a4e8f 22%, transparent), transparent 72%), #100b18;
+  --night-frame: linear-gradient(180deg, #0f0918 0%, #22172f 58%, #33305f 100%);
+  --night-edge: rgba(164, 144, 194, 0.2);
+  --night-accent: #c9b8ee;
+
+  --field-sky: radial-gradient(90% 60% at 50% 100%, color-mix(in srgb, #4a7c59 18%, transparent), transparent 72%), #0f1510;
+  --field-frame: linear-gradient(180deg, #141c15 0%, #0f1610 100%);
+  --field-edge: rgba(143, 185, 150, 0.14);
+  --field-grid: rgba(143, 185, 150, 0.06);
+  --field-line-a: #8fb996;
+  --field-line-b: #b5d6b8;
+  --field-line-c: #f9d27a;
+  --field-base: rgba(143, 185, 150, 0.24);
+  --field-dot: #141c15;
+  --field-dot-stroke: rgba(181, 214, 184, 0.4);
+  --field-num: #c3d6c3;
+  --field-lit: #26402a;
+  --field-lit-stroke: #8fb996;
+  --field-lit-num: #eef6ee;
+  --field-active-stroke: #141c15;
+  --field-pill: #eef6ee;
+  --field-pill-ink: #1b2a1c;
+  --field-peek: #141c15;
+  --field-peek-ink: #eef6ee;
+  --field-star: rgba(181, 214, 184, 0.22);
+  --field-skyline: rgba(143, 185, 150, 0.14);
+  --field-accent: #b5d6b8;
+}
+
+/* The chosen palette for the second course. One line to swap. */
+.path-journey {
+  --s2-sky: var(--night-sky);
+  --s2-frame: var(--night-frame);
+}
+
+.path-journey[data-palette="field"] {
+  --s2-sky: var(--field-sky);
+  --s2-frame: var(--field-frame);
+}
+
+/* Scene mapping: --trail-* from a palette. */
+.path-journey,
+.path-map[data-segment="1"] {
+  --trail-grid: var(--day-grid);
+  --trail-line-a: var(--day-line-a);
+  --trail-line-b: var(--day-line-b);
+  --trail-line-c: var(--day-line-c);
+  --trail-glow: var(--day-glow);
+  --trail-base: var(--day-base);
+  --trail-base-dash: var(--day-base-dash);
+  --trail-dot: var(--day-dot);
+  --trail-dot-stroke: var(--day-dot-stroke);
+  --trail-num: var(--day-num);
+  --trail-lit: var(--day-lit);
+  --trail-lit-stroke: var(--day-lit-stroke);
+  --trail-lit-num: var(--day-lit-num);
+  --trail-active: var(--day-active);
+  --trail-active-stroke: var(--day-active-stroke);
+  --trail-active-num: var(--day-active-num);
+  --trail-halo: var(--day-halo);
+  --trail-head: var(--day-head);
+  --trail-pill: var(--day-pill);
+  --trail-pill-ink: var(--day-pill-ink);
+  --trail-peek: var(--day-peek);
+  --trail-peek-ink: var(--day-peek-ink);
+  --trail-star: var(--day-star);
+  --trail-bright: var(--day-bright);
+  --trail-skyline: var(--day-skyline);
+  --trail-accent: var(--day-accent);
+  --trail-bar-a: var(--day-bar-a);
+  --trail-bar-b: var(--day-bar-b);
+}
+
+.path-map[data-segment="2"],
+.path-journey[data-scene="2"] .path-panel,
+.path-journey__gate {
+  --trail-grid: var(--night-grid);
+  --trail-line-a: var(--night-line-a);
+  --trail-line-b: var(--night-line-b);
+  --trail-line-c: var(--night-line-c);
+  --trail-glow: var(--night-glow);
+  --trail-base: var(--night-base);
+  --trail-base-dash: var(--night-base-dash);
+  --trail-dot: var(--night-dot);
+  --trail-dot-stroke: var(--night-dot-stroke);
+  --trail-num: var(--night-num);
+  --trail-lit: var(--night-lit);
+  --trail-lit-stroke: var(--night-lit-stroke);
+  --trail-lit-num: var(--night-lit-num);
+  --trail-active: var(--night-active);
+  --trail-active-stroke: var(--night-active-stroke);
+  --trail-active-num: var(--night-active-num);
+  --trail-halo: var(--night-halo);
+  --trail-head: var(--night-head);
+  --trail-pill: var(--night-pill);
+  --trail-pill-ink: var(--night-pill-ink);
+  --trail-peek: var(--night-peek);
+  --trail-peek-ink: var(--night-peek-ink);
+  --trail-star: var(--night-star);
+  --trail-bright: var(--night-bright);
+  --trail-skyline: var(--night-skyline);
+  --trail-accent: var(--night-accent);
+  --trail-bar-a: var(--night-bar-a);
+  --trail-bar-b: var(--night-bar-b);
+}
+
+.path-journey[data-palette="field"] .path-map[data-segment="2"],
+.path-journey[data-palette="field"][data-scene="2"] .path-panel,
+.path-journey[data-palette="field"] .path-journey__gate {
+  --trail-grid: var(--field-grid);
+  --trail-line-a: var(--field-line-a);
+  --trail-line-b: var(--field-line-b);
+  --trail-line-c: var(--field-line-c);
+  --trail-glow: var(--field-glow);
+  --trail-base: var(--field-base);
+  --trail-base-dash: var(--field-base-dash);
+  --trail-dot: var(--field-dot);
+  --trail-dot-stroke: var(--field-dot-stroke);
+  --trail-num: var(--field-num);
+  --trail-lit: var(--field-lit);
+  --trail-lit-stroke: var(--field-lit-stroke);
+  --trail-lit-num: var(--field-lit-num);
+  --trail-active: var(--field-active);
+  --trail-active-stroke: var(--field-active-stroke);
+  --trail-active-num: var(--field-active-num);
+  --trail-halo: var(--field-halo);
+  --trail-head: var(--field-head);
+  --trail-pill: var(--field-pill);
+  --trail-pill-ink: var(--field-pill-ink);
+  --trail-peek: var(--field-peek);
+  --trail-peek-ink: var(--field-peek-ink);
+  --trail-star: var(--field-star);
+  --trail-bright: var(--field-bright);
+  --trail-skyline: var(--field-skyline);
+  --trail-accent: var(--field-accent);
+  --trail-bar-a: var(--field-bar-a);
+  --trail-bar-b: var(--field-bar-b);
+}
+
+/* ── Section and intro ──────────────────────────────────── */
 
 .path-journey {
   position: relative;
   --path-progress: 0;
-  background:
-    radial-gradient(80% 50% at 50% 0%, color-mix(in srgb, var(--home-line) 12%, transparent), transparent 70%),
-    var(--home-paper);
+  background: var(--day-sky);
+}
+
+/* The second scene's sky fades in across the seam, tied to scroll. */
+.path-journey::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--s2-sky);
+  opacity: var(--seam, 0);
 }
 
 .path-journey__intro {
@@ -526,69 +816,53 @@ body.page-home {
   height: var(--trail-length, 520vh);
 }
 
+.path-journey__marker {
+  position: absolute;
+  top: var(--at, 0);
+  left: 0;
+  width: 1px;
+  height: 1px;
+}
+
 .path-journey__sticky {
   position: sticky;
   top: var(--header-height, 60px);
   height: calc(100vh - var(--header-height, 60px));
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
-  gap: clamp(1rem, 3vw, 2.5rem);
+  grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+  gap: clamp(1.5rem, 3.5vw, 3.5rem);
   align-items: center;
-  width: min(1180px, calc(100% - 2rem));
+  width: min(1200px, calc(100% - 2rem));
   margin: 0 auto;
-  padding: 1rem 0 1.5rem;
+  padding: 1rem 0 1.25rem;
 }
+
+/* ── The map frame ──────────────────────────────────────────
+   The frame takes the drawing's own aspect ratio (--map-ratio,
+   from the generator), capped by the viewport height, so the
+   route fills the card instead of floating in the top of it. */
 
 .path-journey__map {
   position: relative;
-  width: 100%;
-  height: min(78vh, 640px);
-  border-radius: 20px;
+  justify-self: center;
+  width: min(100%, calc((100vh - var(--header-height, 60px) - 3rem) * var(--map-ratio, 1.4)));
+  aspect-ratio: var(--map-ratio, 1.4);
+  border-radius: 22px;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--home-line) 14%, transparent), transparent 45%),
-    radial-gradient(circle at 80% 75%, color-mix(in srgb, var(--home-mark) 12%, transparent), transparent 40%),
-    linear-gradient(180deg, color-mix(in srgb, var(--home-fog) 80%, transparent), color-mix(in srgb, var(--home-mist) 90%, transparent));
-  border: 1px solid color-mix(in srgb, var(--home-ink) 8%, transparent);
-  transition: transform 500ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
-    box-shadow 500ms ease;
-}
-
-.path-map--alive {
+  background: var(--day-frame);
+  border: 1px solid var(--day-edge);
   box-shadow: 0 18px 50px color-mix(in srgb, var(--home-ink) 8%, transparent);
 }
 
-.path-journey.is-active .path-map--alive {
-  transform: translateY(-2px);
-  box-shadow: 0 22px 56px color-mix(in srgb, var(--home-line) 14%, transparent);
+.path-journey__map::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--s2-frame);
+  opacity: var(--seam, 0);
 }
 
-.g-stop {
-  transition: opacity 280ms ease;
-}
-
-.g-stop .path-stop-dot {
-  transition: fill 220ms ease, stroke 220ms ease, transform 320ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
-}
-
-.g-stop.is-lit .path-stop-dot {
-  animation: path-stop-pop 420ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
-}
-
-@keyframes path-stop-pop {
-  0% { transform: scale(0.85); }
-  55% { transform: scale(1.22); }
-  100% { transform: scale(1.18); }
-}
-
-html.reduced-motion .g-stop.is-lit .path-stop-dot,
-html.reduced-motion .path-journey.is-active .path-map--alive {
-  animation: none !important;
-  transform: none !important;
-}
-
-/* One <svg> per trail segment, stacked in the same map frame. path-trail.js
-   cross-fades them at the seam; a single segment renders exactly as before. */
 .path-map {
   position: absolute;
   inset: 0;
@@ -598,14 +872,13 @@ html.reduced-motion .path-journey.is-active .path-map--alive {
   opacity: var(--segment-opacity, 1);
 }
 
-.path-map:not(.is-scene) {
-  pointer-events: none;
+/* Before the script runs, only the first course's map shows. */
+.path-map[data-segment]:not([data-segment="1"]) {
+  opacity: var(--segment-opacity, 0);
 }
 
-/* Four classes: it has to beat .path-journey.is-active .path-head below. */
-.path-journey.is-active .path-head.is-hidden,
-.path-journey .path-head.is-hidden {
-  opacity: 0;
+.path-map:not(.is-scene) {
+  pointer-events: none;
 }
 
 .path-map__defs {
@@ -615,102 +888,217 @@ html.reduced-motion .path-journey.is-active .path-map--alive {
   overflow: hidden;
 }
 
-.path-map__grid {
-  stroke: color-mix(in srgb, var(--home-ink) 7%, transparent);
+.trail-line-1a { stop-color: var(--day-line-a); }
+.trail-line-1b { stop-color: var(--day-line-b); }
+.trail-line-1c { stop-color: var(--day-line-c); }
+.trail-line-2a { stop-color: var(--night-line-a); }
+.trail-line-2b { stop-color: var(--night-line-b); }
+.trail-line-2c { stop-color: var(--night-line-c); }
+.path-journey[data-palette="field"] .trail-line-2a { stop-color: var(--field-line-a); }
+.path-journey[data-palette="field"] .trail-line-2b { stop-color: var(--field-line-b); }
+.path-journey[data-palette="field"] .trail-line-2c { stop-color: var(--field-line-c); }
+
+/* Scenery */
+.trail-scenery__grid {
+  fill: none;
+  stroke: var(--trail-grid);
   stroke-width: 1;
 }
 
+.trail-scenery__stars { fill: var(--trail-star); }
+.trail-scenery__bright { fill: var(--trail-bright); }
+.trail-scenery__skyline { fill: var(--trail-skyline); }
+
+/* The route */
 .path-map__base {
   fill: none;
-  stroke: color-mix(in srgb, var(--home-ink) 12%, transparent);
-  stroke-width: 6;
+  stroke: var(--trail-base);
+  stroke-width: 5;
   stroke-linecap: round;
   stroke-linejoin: round;
+  stroke-dasharray: var(--trail-base-dash);
 }
 
 .path-map__draw {
   fill: none;
-  /* The gradient comes from the path's own stroke attribute: one per segment. */
   stroke-width: 6;
   stroke-linecap: round;
   stroke-linejoin: round;
-  /* pathLength="1" → dasharray 1 = full length; --path-progress from scroll */
+  /* pathLength="1": a dash of 1 is the whole route. */
   stroke-dasharray: 1;
   stroke-dashoffset: calc(1 - var(--path-progress, 0));
-  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--home-line) 28%, transparent));
-  transition: none;
-  will-change: stroke-dashoffset;
+  filter: drop-shadow(0 0 6px var(--trail-glow));
 }
 
-.path-stop-dot {
-  fill: var(--home-paper);
-  stroke: color-mix(in srgb, var(--home-ink) 22%, transparent);
+/* A map that is leaving recedes: a thinner, quieter line. */
+.path-map.is-receded .path-map__draw {
   stroke-width: 3;
-  transition: fill 220ms ease, stroke 220ms ease, transform 220ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+  filter: none;
+}
+
+/* ── Stops ──────────────────────────────────────────────────
+   Numbers only. Figures are tabular so 1 and 20 are the same
+   set; the dot is sized for two digits. */
+
+.path-map {
+  --mark-scale: 1;
+}
+
+.trail-stop {
+  cursor: pointer;
+}
+
+.trail-stop__mark {
   transform-box: fill-box;
   transform-origin: center;
+  transform: scale(var(--mark-scale));
+  transition: transform 260ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
 }
 
-.path-stop-dot.is-lit {
-  fill: var(--home-mark);
-  stroke: var(--home-line-deep);
-  transform: scale(1.18);
+.trail-stop.is-active .trail-stop__mark {
+  transform: scale(calc(var(--mark-scale) * 1.4));
 }
 
-.path-stop-num {
-  fill: color-mix(in srgb, var(--home-ink) 45%, transparent);
-  font-family: var(--home-display);
-  font-size: 12px;
-  font-weight: 700;
-  text-anchor: middle;
-  dominant-baseline: central;
-  pointer-events: none;
-  transition: fill 220ms ease;
-}
-
-.path-stop-dot.is-lit + .path-stop-num,
-.g-stop.is-lit .path-stop-num {
-  fill: var(--home-ink);
-}
-
-[data-theme="dark"] .path-stop-dot.is-lit + .path-stop-num,
-[data-theme="dark"] .g-stop.is-lit .path-stop-num {
-  fill: #04202c;
-}
-
-.path-stop-label {
-  font-family: var(--home-body);
-  font-size: 13px;
-  font-weight: 600;
-  fill: color-mix(in srgb, var(--home-ink) 35%, transparent);
-  transition: fill 220ms ease, opacity 220ms ease;
-  opacity: 0.55;
-}
-
-.g-stop.is-lit .path-stop-label {
-  fill: var(--home-ink);
-  opacity: 1;
-}
-
-.path-head {
-  fill: var(--home-line);
+.trail-stop__halo {
+  fill: var(--trail-halo);
   opacity: 0;
   transition: opacity 200ms ease;
 }
 
-.path-journey.is-active .path-head {
+.trail-stop.is-active .trail-stop__halo {
+  opacity: 1;
+}
+
+.trail-stop__dot {
+  fill: var(--trail-dot);
+  stroke: var(--trail-dot-stroke);
+  stroke-width: 2.5;
+  transition: fill 200ms ease, stroke 200ms ease;
+}
+
+.trail-stop__num {
+  font-family: var(--home-body);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  text-anchor: middle;
+  dominant-baseline: central;
+  fill: var(--trail-num);
+  pointer-events: none;
+}
+
+.trail-stop.is-lit .trail-stop__dot {
+  fill: var(--trail-lit);
+  stroke: var(--trail-lit-stroke);
+}
+
+.trail-stop.is-lit .trail-stop__num {
+  fill: var(--trail-lit-num);
+}
+
+.trail-stop.is-active .trail-stop__dot {
+  fill: var(--trail-active);
+  stroke: var(--trail-active-stroke);
+}
+
+.trail-stop.is-active .trail-stop__num {
+  fill: var(--trail-active-num);
+}
+
+/* Finish and gateway: the change of course is an event on the map. */
+.trail-stop__flag {
+  fill: var(--trail-dot);
+  stroke: var(--trail-dot-stroke);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.trail-stop.is-lit .trail-stop__flag {
+  fill: var(--trail-line-a);
+  stroke: var(--trail-lit-stroke);
+}
+
+.trail-stop__gate {
+  fill: none;
+  stroke: var(--trail-lit-stroke);
+  stroke-width: 2;
+  stroke-dasharray: 4 4;
+  opacity: 0.8;
+}
+
+/* ── Labels ─────────────────────────────────────────────── */
+
+.trail-callout {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+}
+
+.trail-callout.is-shown {
+  opacity: 1;
+}
+
+.trail-callout__body {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.trail-callout__pill {
+  fill: var(--trail-pill);
+}
+
+.trail-callout__leader {
+  stroke: var(--trail-pill);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.trail-callout__text {
+  font-family: var(--home-body);
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-anchor: middle;
+  dominant-baseline: central;
+  fill: var(--trail-pill-ink);
+}
+
+.trail-callout--peek .trail-callout__pill {
+  fill: var(--trail-peek);
+  stroke: var(--trail-dot-stroke);
+  stroke-width: 1;
+}
+
+.trail-callout--peek .trail-callout__leader {
+  stroke: var(--trail-dot-stroke);
+}
+
+.trail-callout--peek .trail-callout__text {
+  fill: var(--trail-peek-ink);
+}
+
+/* ── The traveller ──────────────────────────────────────── */
+
+.path-head {
+  opacity: 0;
+  transition: opacity 180ms ease;
+  pointer-events: none;
+}
+
+.path-journey.is-active .path-head:not(.is-hidden) {
   opacity: 1;
 }
 
 .path-head__core {
-  fill: var(--home-line);
+  fill: var(--trail-head);
 }
 
 .path-head__ring {
   fill: none;
-  stroke: var(--home-mark);
+  stroke: var(--trail-head);
   stroke-width: 2;
-  opacity: 0.7;
+  opacity: 0.6;
   transform-origin: center;
   transform-box: fill-box;
   animation: path-head-pulse 1.8s ease-in-out infinite;
@@ -718,62 +1106,150 @@ html.reduced-motion .path-journey.is-active .path-map--alive {
 
 @keyframes path-head-pulse {
   0%, 100% { transform: scale(1); opacity: 0.55; }
-  50% { transform: scale(1.35); opacity: 0.15; }
+  50% { transform: scale(1.4); opacity: 0.12; }
 }
 
-/* Side panel — active unit detail */
+/* ── The seam's caption ─────────────────────────────────────
+   Rises and falls with the cross-fade (--seam-beat is sin(pi t)
+   across the seam), so arriving at the second course has a beat
+   of its own. */
+
+.path-journey__gate {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: 0;
+  display: grid;
+  gap: 0.2rem;
+  justify-items: center;
+  padding: 0.85rem 1.4rem;
+  border-radius: 18px;
+  background: var(--trail-pill);
+  color: var(--trail-pill-ink);
+  font-family: var(--home-display);
+  font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: var(--seam-beat, 0);
+  transform: translate(-50%, -50%) scale(calc(0.94 + var(--seam-beat, 0) * 0.06));
+}
+
+.path-journey__gate span {
+  font-family: var(--home-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  opacity: 0.8;
+}
+
+/* ── Side panel ─────────────────────────────────────────── */
+
 .path-panel {
   display: flex;
   flex-direction: column;
+  gap: 1.1rem;
+  min-width: 0;
+}
+
+/* Course switcher: a segmented control. */
+.path-courses {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--home-ink) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--home-ink) 9%, transparent);
+}
+
+.path-courses__link {
+  display: flex;
+  align-items: center;
   justify-content: center;
-  min-height: 0;
-  padding: 0.25rem 0.25rem 0.25rem 0;
+  min-height: 2.5rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-family: var(--home-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  color: var(--home-muted);
+  transition: background-color 150ms ease, color 150ms ease;
 }
 
-.path-panel__kicker {
-  margin: 0 0 0.5rem;
-  /* Floored at 12px. 0.72rem is 11.5px, which reads on a laptop and does not
-     on a phone held in one hand -- and this is the label telling someone where
-     they are on the trail. See the note in style.css. */
-  font-size: max(12px, 0.72rem);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--home-line-deep);
+.path-courses__link:hover {
+  color: var(--home-ink);
 }
 
+.path-courses__link[aria-current="true"] {
+  background: var(--home-paper);
+  color: var(--home-ink);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--home-ink) 12%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--home-ink) 8%, transparent);
+}
+
+[data-theme="dark"] .path-courses__link[aria-current="true"] {
+  background: color-mix(in srgb, var(--home-ink) 14%, transparent);
+}
+
+.path-courses__link:focus-visible {
+  outline: 3px solid var(--trail-accent);
+  outline-offset: 2px;
+}
+
+/* Progress: its own row, never shared with the switcher. */
 .path-panel__progress {
-  height: 3px;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.path-panel__count {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--home-muted);
+}
+
+.path-panel__count [data-trail-count] {
+  color: var(--trail-accent);
+}
+
+.path-panel__bar {
+  height: 4px;
   border-radius: 99px;
   background: color-mix(in srgb, var(--home-ink) 10%, transparent);
-  margin-bottom: 1.4rem;
   overflow: hidden;
 }
 
-.path-panel__progress > span {
+.path-panel__bar > span {
   display: block;
   height: 100%;
   width: calc(var(--path-progress, 0) * 100%);
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--home-line), var(--home-mark));
+  background: linear-gradient(90deg, var(--trail-bar-a), var(--trail-bar-b));
 }
 
+/* Cards */
 .path-panel__stage {
   position: relative;
-  min-height: 11.5rem;
+  min-height: 15.5rem;
 }
 
 .path-stop-card {
   position: absolute;
-  inset: 0;
+  inset: 0 0 auto;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(12px);
+  transform: translateY(10px);
   pointer-events: none;
-  transition: opacity 280ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
-    transform 280ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
-    visibility 0s linear 280ms;
-  z-index: 0;
+  transition: opacity 240ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+    transform 240ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+    visibility 0s linear 240ms;
 }
 
 .path-stop-card.is-active {
@@ -785,276 +1261,9 @@ html.reduced-motion .path-journey.is-active .path-map--alive {
   z-index: 1;
 }
 
-.path-stop-card__head {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  margin-bottom: 0.85rem;
-}
-
-.path-stop-card__course {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--home-muted);
-}
-
-.path-stop-card__num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 9px;
-  font-family: var(--home-display);
-  font-size: 0.9rem;
-  font-weight: 700;
-  background: color-mix(in srgb, var(--home-line) 16%, transparent);
-  color: var(--home-line-deep);
-}
-
-.path-stop-card h3 {
-  margin: 0 0 0.55rem;
-  font-size: clamp(1.45rem, 2.4vw, 1.85rem);
-  font-weight: 750;
-  letter-spacing: -0.03em;
-  line-height: 1.15;
-}
-
-.path-stop-card p {
-  margin: 0 0 1.15rem;
-  font-size: 1rem;
-  line-height: 1.55;
-  color: var(--home-muted);
-  max-width: 28ch;
-}
-
-.path-stop-card__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 0.85rem;
-  margin-bottom: 1.25rem;
-  font-size: 0.82rem;
-  color: var(--home-muted);
-}
-
-.path-stop-card__meta span {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.path-stop-card__meta span::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--home-mark);
-}
-
-.path-stop-card .btn-path {
-  padding: 0.7rem 1.1rem;
-  font-size: 0.88rem;
-}
-
-.path-panel__list {
-  display: none;
-}
-
-@media (max-width: 900px) {
-  .path-journey__sticky {
-    grid-template-columns: 1fr;
-    grid-template-rows: minmax(0, 1fr) auto;
-    align-content: stretch;
-    height: calc(100vh - var(--header-height, 60px));
-    gap: 0.5rem;
-  }
-
-  /* Map and card sit together, centred as a pair. A stretched map row left a
-     band of empty space above and below the map and pushed the card's button
-     off the bottom of a phone screen. */
-  .path-journey__sticky {
-    grid-template-rows: auto auto;
-    align-content: safe center;
-  }
-
-  .path-journey__map {
-    height: min(52vh, 420px);
-  }
-
-  .path-panel {
-    padding: 0;
-  }
-
-  .path-panel__stage {
-    min-height: 9.5rem;
-  }
-
-  .path-stop-label {
-    display: none;
-  }
-}
-
-@media (max-width: 560px) {
-  .path-journey__track {
-    height: var(--trail-length-mobile, 480vh);
-  }
-
-  .path-journey__map {
-    height: min(40vh, 300px);
-    border-radius: 14px;
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════
-   Trail scenery: two segments, two scenes
-   Foundations is the daylight survey map. Python for Data happens at
-   dusk: the same kind of trail under a night sky, where the stars are
-   plotted points and the skyline is a bar chart. path-trail.js sets
-   data-scene on the section and --seam (0..1) across the cross-fade;
-   the scene 2 layers fade in on --seam rather than switching, so the
-   change of scenery follows the scroll, not a timer.
-
-   A second option, a light graph-paper scene, was built and compared
-   (REVIEW/screenshots/trail-c2-optA-*) and dropped: blue to pale green
-   read as a recolour, not as somewhere new.
-   ═══════════════════════════════════════════════════════════ */
-
-.path-journey {
-  --s2-sky: radial-gradient(90% 60% at 50% 0%, color-mix(in srgb, #6d28d9 12%, transparent), transparent 72%), #f6f4fb;
-  --s2-frame: linear-gradient(180deg, #1b1840 0%, #2d2463 58%, #5a3b73 100%);
-  --s2-grid: rgba(255, 255, 255, 0.045);
-  --s2-bars: rgba(14, 11, 38, 0.85);
-  --s2-points: rgba(254, 243, 199, 0.7);
-  --s2-ink: #f5f3ff;
-  --s2-paper: #1f1b48;
-  --s2-line: #d97706;
-  --s2-line-deep: #b45309;
-  --s2-mark: #fbbf24;
-  --s2-grad-a: #f59e0b;
-  --s2-grad-b: #fbbf24;
-  --s2-grad-c: #fde68a;
-  --s2-lit-num: #1b1840;
-}
-
-[data-theme="dark"] .path-journey {
-  --s2-sky: radial-gradient(90% 60% at 50% 0%, color-mix(in srgb, #7c3aed 16%, transparent), transparent 72%), #110f22;
-  --s2-frame: linear-gradient(180deg, #121030 0%, #221c4d 58%, #432c58 100%);
-  --s2-line-deep: #fcd34d;
-}
-
-.path-journey::before,
-.path-journey__map::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: var(--seam, 0);
-}
-
-.path-journey::before {
-  background: var(--s2-sky);
-}
-
-.path-journey__map::before {
-  background: var(--s2-frame);
-}
-
-.path-journey__marker {
-  position: absolute;
-  top: var(--at, 0);
-  left: 0;
-  width: 1px;
-  height: 1px;
-  scroll-margin-top: 0;
-}
-
-.path-map[data-segment="2"] {
-  --home-ink: var(--s2-ink);
-  --home-paper: var(--s2-paper);
-  --home-line: var(--s2-line);
-  --home-line-deep: var(--s2-line-deep);
-  --home-mark: var(--s2-mark);
-}
-
-.path-gradient2-a { stop-color: var(--s2-grad-a); }
-.path-gradient2-b { stop-color: var(--s2-grad-b); }
-.path-gradient2-c { stop-color: var(--s2-grad-c); }
-
-.path-scenery__grid {
-  fill: none;
-  stroke: var(--s2-grid);
-  stroke-width: 1;
-}
-
-.path-scenery__bars { fill: var(--s2-bars); }
-.path-scenery__points { fill: var(--s2-points); }
-
-.path-map[data-segment="2"] .path-map__draw {
-  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--s2-line) 30%, transparent));
-}
-
-.path-map[data-segment="2"] .g-stop.is-lit .path-stop-num,
-[data-theme="dark"] .path-map[data-segment="2"] .g-stop.is-lit .path-stop-num {
-  fill: var(--s2-lit-num);
-}
-
-/* The panel takes the scene's accent once the scene has switched. */
-.path-journey[data-scene="2"] .path-panel {
-  --home-line: var(--s2-line);
-  --home-line-deep: var(--s2-line-deep);
-  --home-mark: var(--s2-mark);
-}
-
-.path-panel__head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.35rem 1rem;
-  margin: 0 0 0.5rem;
-}
-
-.path-panel__head .path-panel__kicker {
-  margin: 0;
-}
-
-.path-panel__jump {
-  display: none;
-  align-items: center;
-  min-height: 2rem;
-  padding: 0.3rem 0.8rem;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--home-ink) 16%, transparent);
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--home-ink);
-  text-decoration: none;
-  background: color-mix(in srgb, var(--home-paper) 80%, transparent);
-  transition: border-color 150ms ease, color 150ms ease;
-}
-
-.path-panel__jump:hover {
-  border-color: var(--home-line);
-  color: var(--home-line-deep);
-}
-
-.path-panel__jump:focus-visible {
-  outline: 3px solid var(--home-line-deep);
-  outline-offset: 2px;
-}
-
-/* Offer the course you are not on. Nothing shows until the script has set a
-   scene, because without it a jump would move the page and nothing else. */
-.path-journey[data-scene="1"] [data-trail-jump="2"],
-.path-journey[data-scene="2"] [data-trail-jump="1"] {
-  display: inline-flex;
-}
-
-/* Every card stays in the accessibility tree and in the tab order once there
-   are two segments, so all 20 units can be reached without scrolling: a card
-   that takes focus scrolls the trail to its stop (path-trail.js) and becomes
-   the visible one. With one segment the cards behave as they always did. */
+/* Every card stays in the accessibility tree and the tab order once there
+   are two courses, so all 20 units can be reached without scrolling: a card
+   that takes focus scrolls the trail to its stop (path-trail.js). */
 .path-journey[data-scene] .path-panel__stage:has([data-segment="2"]) .path-stop-card {
   visibility: visible;
 }
@@ -1063,46 +1272,118 @@ html.reduced-motion .path-journey.is-active .path-map--alive {
   z-index: 2;
 }
 
+/* Numbering: the badge is the course's own unit; the stop number lives in
+   the progress row above. A bare stop number never sits beside a course. */
+.path-stop-card__where {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.6rem;
+  margin: 0 0 0.7rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--home-muted);
+}
+
+.path-stop-card__unit {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--trail-accent);
+  background: color-mix(in srgb, var(--trail-accent) 12%, transparent);
+}
+
+.path-stop-card h3 {
+  margin: 0 0 0.5rem;
+  max-width: 20ch;
+  font-size: clamp(1.3rem, 0.9rem + 1.1vw, 1.65rem);
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  line-height: 1.18;
+  text-wrap: balance;
+}
+
+.path-stop-card__blurb {
+  margin: 0 0 0.9rem;
+  max-width: 36ch;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--home-muted);
+}
+
+.path-stop-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  margin-bottom: 1.1rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--home-muted);
+}
+
+.path-stop-card__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.path-stop-card__meta span::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--trail-bar-a);
+}
+
+.path-stop-card .btn-path {
+  padding: 0.7rem 1.1rem;
+  font-size: 0.92rem;
+}
+
+/* ── Narrow screens ─────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .path-journey__sticky {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    align-content: safe center;
+    gap: 0.9rem;
+  }
+
+  .path-journey__map {
+    width: min(100%, calc(40vh * var(--map-ratio, 1.4)));
+  }
+
+  .path-panel {
+    gap: 0.75rem;
+  }
+
+  .path-panel__stage {
+    min-height: 13.5rem;
+  }
+}
+
 @media (max-width: 560px) {
+  .path-journey__track {
+    height: var(--trail-length-mobile, 480vh);
+  }
+
   .path-journey__marker {
     top: var(--at-mobile, 0);
   }
 
-  .path-panel__head {
-    margin-bottom: 0.35rem;
-  }
-
-  .path-stop-card__head {
-    margin-bottom: 0.5rem;
-  }
-
-  .path-stop-card__num {
-    width: 1.75rem;
-    height: 1.75rem;
-  }
-
-  .path-stop-card h3 {
-    font-size: 1.3rem;
-    margin-bottom: 0.35rem;
-  }
-
-  .path-stop-card p {
-    margin-bottom: 0.6rem;
-    font-size: 0.95rem;
-    line-height: 1.45;
-    max-width: none;
-  }
-
-  .path-stop-card__meta {
-    margin-bottom: 0.6rem;
-  }
-
-  .path-panel__progress {
-    margin-bottom: 0.8rem;
+  .path-journey__map {
+    border-radius: 16px;
   }
 }
 
-/* Reduced motion: show full path, no draw */
+/* ── Reduced motion ─────────────────────────────────────────
+   The script steps the scenes instead of fading them, and the
+   site-wide backstop in style.css removes every transition. */
 @media (prefers-reduced-motion: reduce) {
   .home-hero__topo path,
   .home-brand,
@@ -1120,21 +1401,6 @@ html.reduced-motion .path-journey.is-active .path-map--alive {
     stroke-dasharray: none;
     stroke-dashoffset: 0;
   }
-
-  .path-map__draw {
-    stroke-dashoffset: 0 !important;
-    animation: none !important;
-  }
-
-  .path-stop-dot,
-  .g-stop {
-    /* all lit via JS when reduced motion */
-  }
-}
-
-html.reduced-motion .path-map__draw {
-  stroke-dashoffset: 0 !important;
-  animation: none !important;
 }
 
 /* ═══════════════════════════════════════════════════════════
