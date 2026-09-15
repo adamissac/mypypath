@@ -199,7 +199,7 @@ def settle(page):
     page.wait_for_timeout(600)
 
 
-def run(base, reduced, only, theme=None):
+def run(base, reduced, only, theme=None, steps=STEPS):
     total_fail = 0
     report = {}
     with sync_playwright() as p:
@@ -224,7 +224,7 @@ def run(base, reduced, only, theme=None):
                 page.evaluate("(t) => document.documentElement.setAttribute('data-theme', t)", theme)
             failures = []
             shot = False
-            for step in STEPS:
+            for step in steps:
                 page.evaluate("(p) => window.PyPathTrail.scrollToProgress(p)", step)
                 page.mouse.move(2, 2)
                 page.wait_for_timeout(450)
@@ -262,7 +262,7 @@ def run(base, reduced, only, theme=None):
         browser.close()
 
     for width, failures in report.items():
-        print(f"\n{width}px  {len(STEPS)} steps  {'PASS' if not failures else f'{len(failures)} failure(s)'}")
+        print(f"\n{width}px  {len(steps)} steps  {'PASS' if not failures else f'{len(failures)} failure(s)'}")
         for f in failures[:40]:
             print("   ", f)
         if len(failures) > 40:
@@ -326,7 +326,9 @@ if __name__ == "__main__":
     ap.add_argument("--theme", choices=["light", "dark"])
     ap.add_argument("--width", type=int, action="append")
     ap.add_argument("--self-test", action="store_true")
+    ap.add_argument("--step", type=float, default=0.05, help="scroll step; 0.01 for a fine sweep")
     args = ap.parse_args()
     if args.self_test:
         sys.exit(self_test(args.base.rstrip("/")))
-    sys.exit(run(args.base.rstrip("/"), args.reduced, args.width, args.theme))
+    n = int(round(1 / args.step))
+    sys.exit(run(args.base.rstrip("/"), args.reduced, args.width, args.theme, [round(i / n, 4) for i in range(n + 1)]))

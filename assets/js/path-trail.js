@@ -47,6 +47,14 @@
   const LABEL_GAP = 12; // viewBox units between a dot's edge and its label
   const LEADER_MIN = 12; // a hovered label further than this gets a leader
 
+  /* Phones: the map is a follow camera. The same drawing, the same stops and
+     the same label measurements, but the viewBox is a window CAMERA_W units
+     wide that travels along the route just behind the traveller, so the
+     stop you are on and the next one are always in frame at a readable size
+     instead of twenty dots shrunk to fit 390px. */
+  const cameraQuery = window.matchMedia("(max-width: 560px)");
+  const CAMERA_W = 330;
+
   const clamp01 = (x) => Math.min(1, Math.max(0, x));
   const smooth = (a, b, x) => {
     const t = clamp01((x - a) / (b - a));
@@ -85,7 +93,14 @@
       start: 0,
       end: 0,
       len: 0,
-      box: { w: 560, h: 400 },
+      // The whole drawing, from the generated viewBox; on phones the viewBox
+      // itself becomes a moving camera window, so read this once.
+      box: (() => {
+        const v = (svg.getAttribute("viewBox") || "0 0 560 400").split(/[ ,]+/).map(Number);
+        return { w: v[2] || 560, h: v[3] || 400 };
+      })(),
+      frame: { w: 0, h: 0 },
+      cam: null,
       samples: [],
       labels: [],
       state: { active: -2, lit: -2, peek: -1 },
@@ -169,8 +184,8 @@
   }
 
   function measureSegment(seg) {
-    const vb = seg.svg.viewBox && seg.svg.viewBox.baseVal;
-    if (vb && vb.width) seg.box = { w: vb.width, h: vb.height };
+    const fr = seg.svg.getBoundingClientRect();
+    seg.frame = { w: fr.width, h: fr.height };
     const path = seg.drawPath;
     if (!path || typeof path.getTotalLength !== "function") return;
     try {
@@ -315,6 +330,30 @@
     group.removeAttribute("data-for");
   }
 
+  /* Keep a label inside the camera window, taking the best measured
+     candidate that still fits clear of every dot once it is moved in. */
+  function fitLabel(seg, index) {
+    const entry = seg.labels[index];
+    const cam = seg.cam;
+    if (!cam) return entry.rect;
+    const stop = seg.stops[index];
+    const scale = 1;
+    let fallback = null;
+    for (const c of entry.cands) {
+      const r = { ...c.rect };
+      r.x = Math.min(cam.x + cam.w - 4 - r.w, Math.max(cam.x + 4, r.x));
+      r.y = Math.min(cam.y + cam.h - 4 - r.h, Math.max(cam.y + 4, r.y));
+      if (!fallback) fallback = r;
+      if (rectHitsCircle(r, stop.x, stop.y, entry.reach + 2)) continue;
+      const own = distanceToRect(stop.x, stop.y, r);
+      const clear = seg.stops.every(
+        (o) => o === stop || (!rectHitsCircle(r, o.x, o.y, o.reach * scale + 6) && distanceToRect(o.x, o.y, r) > own + 2)
+      );
+      if (clear) return r;
+    }
+    return fallback;
+  }
+
   function renderLabels(seg) {
     const active = seg.state.active;
     const cache = seg.labels;
@@ -324,7 +363,7 @@
       return;
     }
     const a = cache[active];
-    drawLabel(seg.callout, seg.stops[active], a.rect, a.reach, true);
+    drawLabel(seg.callout, seg.stops[active], fitLabel(seg, active), a.reach, true);
 
     const pi = seg.state.peek;
     if (pi < 0 || pi === active || !cache[pi]) {
@@ -432,6 +471,17 @@
       }
       if (isScene) activeCard = seg.offset + active;
 
+      if (seg.len) {
+        const cam = cameraQuery.matches && seg.frame.w ? cameraFor(seg, k) : null;
+        const key = cam ? `${cam.x.toFixed(1)} ${cam.y.toFixed(1)} ${cam.w.toFixed(1)} ${cam.h.toFixed(1)}` : `0 0 ${seg.box.w} ${seg.box.h}`;
+        if (key !== seg.camKey) {
+          seg.cam = cam;
+          seg.camKey = key;
+          seg.svg.setAttribute("viewBox", key);
+          if (active >= 0) renderLabels(seg);
+        }
+      }
+
       if (seg.head) {
         const onShow = isScene && where.seamIndex === -1 && seg.len > 0;
         seg.head.classList.toggle("is-hidden", !onShow);
@@ -448,6 +498,19 @@
       if (link.getAttribute("data-trail-jump") === scene.scene) link.setAttribute("aria-current", "true");
       else link.removeAttribute("aria-current");
     });
+  }
+
+  /* The camera window for stop-space position k. It centres half a stop behind
+     the traveller, so the stop you are on and the traveller are each at most
+     half a stop from the middle of the frame, including across a row turn
+     where the next stop is a whole row away. */
+  function cameraFor(seg, k) {
+    const w = Math.min(CAMERA_W, seg.box.w);
+    const h = Math.min(seg.box.h, (w * seg.frame.h) / seg.frame.w);
+    const pt = seg.drawPath.getPointAtLength(pathFraction(seg, Math.max(0, k - 0.5)) * seg.len);
+    const x = Math.min(seg.box.w - w, Math.max(0, pt.x - w / 2));
+    const y = Math.min(seg.box.h - h, Math.max(0, pt.y - h / 2));
+    return { x, y, w, h };
   }
 
   function measureScroll() {
@@ -501,6 +564,11 @@
     resizeQueued = true;
     requestAnimationFrame(() => {
       resizeQueued = false;
+      segments.forEach((seg) => {
+        seg.svg.setAttribute("viewBox", `0 0 ${seg.box.w} ${seg.box.h}`);
+        seg.camKey = null;
+        seg.cam = null;
+      });
       measure();
       segments.forEach((seg) => renderLabels(seg));
       render();

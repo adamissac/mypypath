@@ -1188,6 +1188,12 @@ body.page-home {
   color: var(--home-muted);
 }
 
+/* gate.js pins an "Account required" badge to the card's top right; the
+   unit row makes room for it rather than running underneath. */
+.path-stop-card.is-gate-locked .path-stop-card__where {
+  padding-right: 10.5rem;
+}
+
 .path-stop-card__unit {
   display: inline-flex;
   align-items: center;
@@ -1279,8 +1285,40 @@ body.page-home {
     top: var(--at-mobile, 0);
   }
 
+  /* Phones get a follow camera onto the same map (path-trail.js), so the
+     frame is a fixed, taller window rather than the whole drawing shrunk. */
   .path-journey__map {
+    width: 100%;
+    aspect-ratio: 1.3;
     border-radius: 16px;
+  }
+
+  .path-courses__link {
+    font-size: 0.85rem;
+    padding-inline: 0.5rem;
+  }
+
+  .path-panel__stage {
+    min-height: 13rem;
+  }
+
+  .path-stop-card__where {
+    margin-bottom: 0.45rem;
+  }
+
+  .path-stop-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .path-stop-card__blurb {
+    margin-bottom: 0.6rem;
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  .path-stop-card__meta {
+    margin-bottom: 0.75rem;
   }
 }
 
