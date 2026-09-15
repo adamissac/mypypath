@@ -378,7 +378,9 @@
     const fading = where.seamIndex !== -1 && !stepped;
     section.setAttribute("data-scene", scene.scene);
     section.style.setProperty("--seam", String(fading ? where.seamT : where.sceneIndex > 0 ? 1 : 0));
-    section.style.setProperty("--seam-beat", String(where.seamIndex !== -1 ? Math.sin(Math.PI * where.seamT) : 0));
+    // The title card covers the map from 35% to 65% of the seam.
+    const curtain = where.seamIndex === -1 ? 0 : stepped ? 1 : smooth(0, 0.35, where.seamT) * (1 - smooth(0.65, 1, where.seamT));
+    section.style.setProperty("--seam-curtain", String(curtain));
     section.classList.toggle("is-seaming", where.seamIndex !== -1);
 
     let activeCard = 0;

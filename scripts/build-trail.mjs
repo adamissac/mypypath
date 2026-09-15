@@ -184,15 +184,16 @@ export function serpentine({ rows, seed = 1, climb = false, startRight = false, 
    for the whole segment; `seam` is the scroll after it, where the maps and the
    scenery cross-fade into the next segment.
 
-   Foundations gets 40vh a stop. Python for Data is a little quicker at 32vh a
-   stop: by then the reader knows how the trail works.
+   Both courses get 36vh a stop, and the 60vh seam sits in the middle of the
+   track (46% to 54%), so the arrival at the second course is the midpoint of
+   the scroll rather than an event squeezed in after it.
 
    Python for Data climbs back up from where Foundations ends (its first stop is
-   pinned to Foundations' last), with its rows the other way round, so the
-   traveller never jumps and the second map is a different shape. */
+   pinned to Foundations' last), with its rows the other way round, so the two
+   maps are different shapes and the gateway sits where the finish was. */
 export const SEGMENTS = [
-  { course: 'foundations', scene: 1, rows: [3, 4, 3], seed: 11, climb: false, startRight: false, span: 400, seam: 30 },
-  { course: 'data', scene: 2, rows: [3, 3, 4], seed: 29, climb: true, startRight: true, pinToPrevious: true, span: 320, seam: 0 },
+  { course: 'foundations', scene: 1, rows: [3, 4, 3], seed: 11, climb: false, startRight: false, span: 360, seam: 60 },
+  { course: 'data', scene: 2, rows: [3, 3, 4], seed: 29, climb: true, startRight: true, pinToPrevious: true, span: 360, seam: 0 },
 ];
 
 // The page adds one viewport of track so the last stop is reachable, and the
@@ -417,7 +418,7 @@ export function buildTrail(segments = SEGMENTS, courses = coursesBySlug()) {
                   </linearGradient>`).join('')}
                 </defs>
               </svg>${svgs.join('')}${segments.length > 1 ? `
-              <p class="path-journey__gate"><span>Next course</span> ${esc(courses[segments[1].course].title)}</p>` : ''}
+              <p class="path-journey__gate"><span>${esc(courses[segments[0].course].title)} complete. Next course</span> ${esc(courses[segments[1].course].title)}</p>` : ''}
             </div>
 
             <aside class="path-panel" aria-label="Units on the trail">${nav}

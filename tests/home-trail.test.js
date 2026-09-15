@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import { JSDOM } from 'jsdom';
-import { buildTrail, coursesBySlug, renderIndex, SEGMENTS } from '../scripts/build-trail.mjs';
+import { buildTrail, coursesBySlug, geometryFor, MAP, renderIndex, rowsFor, SEGMENTS, serpentine } from '../scripts/build-trail.mjs';
 
 /* The home page trail is generated from assets/data/courses.json by
    scripts/build-trail.mjs. These pin the generated region to its source, so a
@@ -30,8 +30,10 @@ describe('the generated trail in index.html', () => {
     expect(stops).toHaveLength(expected.length);
     expect(cards).toHaveLength(expected.length);
     expected.forEach((unit, i) => {
-      expect(stops[i].querySelector('.path-stop-num').textContent).toBe(String(i + 1));
-      expect(cards[i].querySelector('.path-stop-card__num').textContent).toBe(String(i + 1));
+      expect(stops[i].querySelector('.trail-stop__num').textContent).toBe(String(i + 1));
+      expect(cards[i].getAttribute('data-stop-index')).toBe(String(i));
+      // One numbering scheme per place: the card says the course's own unit.
+      expect(cards[i].querySelector('.path-stop-card__unit').textContent).toBe(`Unit ${unit.n}`);
       expect(cards[i].querySelector('h3').textContent).toBe(unit.title);
       expect(cards[i].querySelector('a').getAttribute('href')).toBe(unit.first);
     });
@@ -56,7 +58,7 @@ describe('the generated trail in index.html', () => {
     const svgs = [...section.querySelectorAll('.path-map[data-segment]')];
     expect(svgs.map((s) => [s.getAttribute('data-course'), s.querySelectorAll('[data-stop]').length]))
       .toEqual([['foundations', 10], ['data', 10]]);
-    const nums = svgs.map((s) => [...s.querySelectorAll('.path-stop-num')].map((t) => Number(t.textContent)));
+    const nums = svgs.map((s) => [...s.querySelectorAll('.trail-stop__num')].map((t) => Number(t.textContent)));
     expect(nums[0]).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     expect(nums[1]).toEqual([11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
     const dataCards = [...section.querySelectorAll('[data-stop-card][data-segment="2"] a')];
@@ -64,24 +66,35 @@ describe('the generated trail in index.html', () => {
       .toEqual(courses.find((c) => c.slug === 'data').units.map((u) => u.first));
   });
 
-  it('gives each segment its scroll budget, the second a little quicker per stop', () => {
+  it('puts the seam in the middle of the track', () => {
     const [one, two] = [...section.querySelectorAll('.path-map[data-segment]')];
-    const perStop = (svg) => Number(svg.getAttribute('data-span')) / svg.querySelectorAll('[data-stop]').length;
-    expect(perStop(one)).toBe(40);
-    expect(perStop(two)).toBeLessThan(perStop(one));
-    const total = Number(one.getAttribute('data-span')) + Number(one.getAttribute('data-seam')) + Number(two.getAttribute('data-span'));
+    const span1 = Number(one.getAttribute('data-span'));
+    const seam = Number(one.getAttribute('data-seam'));
+    const span2 = Number(two.getAttribute('data-span'));
+    const total = span1 + seam + span2;
+    expect(span1 / total).toBeLessThan(0.5);
+    expect((span1 + seam) / total).toBeGreaterThan(0.5);
     const track = section.querySelector('.path-journey__track');
     expect(track.getAttribute('style')).toContain(`--trail-length: ${100 + total}vh`);
   });
 
-  it('offers a jump to Python for Data that lands on its first stop', () => {
-    const jump = section.querySelector('[data-trail-jump="2"]');
-    expect(jump.textContent).toBe('Jump to Python for Data');
-    expect(jump.getAttribute('href')).toBe('#trail-data');
-    expect(jump.getAttribute('data-stop-index')).toBe('10');
+  it('has a course switcher that lands on each course\'s first stop', () => {
+    const links = [...section.querySelectorAll('.path-courses [data-trail-jump]')];
+    expect(links.map((a) => [a.textContent, a.getAttribute('href'), a.getAttribute('data-stop-index')]))
+      .toEqual([['Python Foundations', '#trail-foundations', '0'], ['Python for Data', '#trail-data', '10']]);
     const one = section.querySelector('.path-map[data-segment="1"]');
     const at = Number(one.getAttribute('data-span')) + Number(one.getAttribute('data-seam'));
     expect(section.querySelector('#trail-data').getAttribute('style')).toContain(`--at: ${at}vh`);
+    // The progress row is its own element, never inside the switcher.
+    expect(section.querySelector('.path-courses .path-panel__bar')).toBeNull();
+    expect(section.querySelector('.path-panel__count').textContent).toBe('Stop 1 of 20');
+  });
+
+  it('marks the finish and the gateway', () => {
+    const [one, two] = [...section.querySelectorAll('.path-map[data-segment]')];
+    expect(one.querySelector('.trail-stop:last-of-type.trail-stop--end, .trail-stop--end').getAttribute('data-stop-index')).toBe('9');
+    expect(two.querySelector('.trail-stop--start').getAttribute('data-stop-index')).toBe('10');
+    expect(two.querySelector('.trail-stop--end').getAttribute('data-stop-index')).toBe('19');
   });
 
   it('keeps the map out of the accessibility tree and the units in it', () => {
@@ -112,5 +125,55 @@ describe('the trail assets are versioned with the markup', () => {
     expect(bumped).toContain('/assets/css/home-path.css?v=abc123"');
     expect(bumped).toContain('/assets/js/path-trail.js?v=def456"');
     expect(bumped).not.toMatch(/home-path\.css\?v=[0-9a-f]+\?v=/);
+  });
+});
+
+describe('the serpentine geometry', () => {
+  const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+
+  it('lays out rows of 3 and 4 for 10, 20 and 30 stops', () => {
+    expect(rowsFor(10)).toEqual([3, 4, 3]);
+    expect(rowsFor(20)).toEqual([3, 4, 3, 4, 3, 3]);
+    expect(rowsFor(30).reduce((a, b) => a + b, 0)).toBe(30);
+  });
+
+  for (const count of [10, 20, 30]) {
+    it(`spaces ${count} stops evenly on screen and keeps them inside the map`, () => {
+      const geo = serpentine({ rows: rowsFor(count), seed: 7 });
+      expect(geo.stops).toHaveLength(count);
+      const gaps = geo.stops.slice(1).map((s, i) => dist(s, geo.stops[i]));
+      expect(Math.max(...gaps) / Math.min(...gaps)).toBeLessThan(1.3);
+      for (const p of geo.points) {
+        expect(p.x).toBeGreaterThanOrEqual(20);
+        expect(p.x).toBeLessThanOrEqual(geo.width - 20);
+        expect(p.y).toBeGreaterThan(MAP.top - geo.spacing * MAP.wave - MAP.jitter - 1);
+        expect(p.y).toBeLessThan(geo.height - MAP.bottom + geo.spacing * MAP.wave + MAP.jitter + 1);
+      }
+      // No two stops, adjacent or not, closer than 80% of the column spacing.
+      for (let i = 0; i < count; i++) {
+        for (let j = i + 1; j < count; j++) expect(dist(geo.stops[i], geo.stops[j])).toBeGreaterThan(geo.spacing * 0.8);
+      }
+    });
+  }
+
+  it('routes the line through the dots it places', () => {
+    const [geo] = geometryFor();
+    expect(geo.d.startsWith(`M ${geo.stops[0].x} ${geo.stops[0].y}`)).toBe(true);
+    const ends = [...geo.d.matchAll(/C [\d.-]+ [\d.-]+ [\d.-]+ [\d.-]+ ([\d.-]+) ([\d.-]+)/g)].map((m) => ({ x: Number(m[1]), y: Number(m[2]) }));
+    for (const stop of geo.stops.slice(1)) expect(ends.some((e) => e.x === stop.x && e.y === stop.y)).toBe(true);
+    expect(geo.at[0]).toBe(0);
+    expect(geo.at[geo.at.length - 1]).toBe(1);
+    geo.at.slice(1).forEach((a, i) => expect(a).toBeGreaterThan(geo.at[i]));
+  });
+
+  it('starts Python for Data where Foundations finishes, in a different shape', () => {
+    const [one, two] = geometryFor();
+    expect(two.stops[0]).toEqual(one.stops[one.stops.length - 1]);
+    expect(two.d).not.toBe(one.d);
+    expect(two.height).toBe(one.height);
+  });
+
+  it('is the same on every build', () => {
+    expect(geometryFor()).toEqual(geometryFor());
   });
 });
