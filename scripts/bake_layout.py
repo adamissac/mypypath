@@ -694,7 +694,10 @@ def normalize_head(html: str) -> str:
 
 def version_course_assets(html: str) -> str:
     """Keep course colours and logo selection fresh despite shared-asset caching."""
-    for rel in ('assets/css/pypath-theme.css', 'assets/js/theme-init.js'):
+    for rel in ('assets/css/pypath-theme.css', 'assets/js/theme-init.js',
+                'assets/css/pypath-fast.css', 'assets/css/lesson-progress.css',
+                'assets/css/courses.css', 'assets/img/data-moon.svg',
+                'assets/img/placeholder-avatar.svg'):
         version = hashlib.sha256((ROOT / rel).read_bytes()).hexdigest()[:10]
         html = re.sub(
             r'(["\'])/' + re.escape(rel) + r'(?:\?v=[0-9a-f]+)?\1',
