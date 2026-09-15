@@ -199,6 +199,15 @@ def settle(page):
     page.wait_for_timeout(600)
 
 
+def accept_course_transition(page):
+    # Exercise the actual opt-in before sweeping the second course's geometry.
+    # Decline/Escape and the closed gate are covered by trail_transition.mjs.
+    if page.locator(".trail-transition").count():
+        page.evaluate("window.PyPathTrail.scrollToProgress(0.6)")
+        page.get_by_role("button", name="Yes, explore space").click()
+        page.evaluate("window.PyPathTrail.scrollToProgress(0)")
+
+
 def run(base, reduced, only, theme=None, steps=STEPS):
     total_fail = 0
     report = {}
@@ -220,6 +229,7 @@ def run(base, reduced, only, theme=None, steps=STEPS):
                 page.add_init_script(f"try {{ localStorage.setItem('theme', '{theme}') }} catch (e) {{}}")
             page.goto(f"{base}/index.html?invariants=1", wait_until="load")
             settle(page)
+            accept_course_transition(page)
             if theme:
                 page.evaluate("(t) => document.documentElement.setAttribute('data-theme', t)", theme)
             failures = []
@@ -299,6 +309,7 @@ def self_test(base):
             page = browser.new_context(viewport={"width": 1440, "height": 900}).new_page()
             page.goto(f"{base}/index.html?selftest={rule}", wait_until="load")
             settle(page)
+            accept_course_transition(page)
             if rule == 6 and page.evaluate("window.PyPathTrail.segments.length") < 2:
                 print("rule 6: n/a with one segment")
                 page.context.close()

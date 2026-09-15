@@ -81,6 +81,21 @@ async function run() {
     await p.goto(`http://127.0.0.1:${PORT}${page}`, { waitUntil: 'domcontentloaded' });
     await p.waitForTimeout(3000);
 
+    // The second course now requires a choice. Exercise that choice by
+    // keyboard before walking its controls; a native modal intentionally
+    // keeps Tab inside it until the visitor answers.
+    if (await p.locator('.trail-transition').count()) {
+      await p.evaluate(() => window.PyPathTrail.scrollToProgress(0.6));
+      await p.locator('.trail-transition').waitFor({ state: 'visible' });
+      await p.keyboard.press('Shift+Tab'); // Stay (autofocus) -> Continue
+      if (!await p.evaluate(() => document.activeElement.matches('[data-trail-continue]'))) {
+        throw new Error('The course confirmation cannot be reached by keyboard');
+      }
+      await p.keyboard.press('Enter');
+      await p.locator('.trail-transition').waitFor({ state: 'hidden' });
+      await p.evaluate(() => window.PyPathTrail.scrollToProgress(0));
+    }
+
     // Everything a sighted mouse user can reach.
     const interactive = await p.evaluate(`(() => {
       const SEL = 'a[href], button, input:not([type=hidden]), select, textarea, summary,'

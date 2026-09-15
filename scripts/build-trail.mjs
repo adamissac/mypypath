@@ -226,14 +226,9 @@ function unitsFor(course) {
 }
 
 /* ── Scenery ─────────────────────────────────────────────────────────────
-   Foundations is a survey map: a faint graticule and topographic contour
-   rings around a few seeded hills, with the route drawn as a cased trail with
-   markers. Python for Data is the same survey at night, drawn flat: stars, a
-   few bright ones, and a bar-chart skyline, with a solid route and no
-   gradients. Colours are
-   tokens in home-path.css (--trail-*), so the change of scene is a change of
-   variables, not a second set of rules. Points keep clear of the route so
-   nothing competes with a stop. */
+   Sparse terraces occupy the spaces between route rows. All scenery shares
+   the route's viewBox, so resizing never separates landmarks from the path.
+   Palette tokens live in home-path.css; no runtime work or image assets. */
 function nearRoute(geo, x, y, clearance) {
   return geo.points.some((p, i) => {
     const q = geo.points[i + 1];
@@ -245,85 +240,54 @@ function nearRoute(geo, x, y, clearance) {
   });
 }
 
-function closedSpline(pts) {
-  const n = pts.length;
-  let d = `M ${round(pts[0].x)} ${round(pts[0].y)}`;
-  for (let i = 0; i < n; i++) {
-    const [c1, c2] = controls(pts[(i - 1 + n) % n], pts[i], pts[(i + 1) % n], pts[(i + 2) % n]);
-    const to = pts[(i + 1) % n];
-    d += ` C ${round(c1.x)} ${round(c1.y)} ${round(c2.x)} ${round(c2.y)} ${round(to.x)} ${round(to.y)}`;
-  }
-  return `${d} Z`;
+function spaceLandmark(kind) {
+  if (kind === 0) return '<circle r="17" /><circle cx="-6" cy="-4" r="4" /><circle cx="7" cy="6" r="3" /><path d="M2 -12 a9 9 0 0 1 9 9" />';
+  if (kind === 1) return '<circle r="12" /><ellipse rx="25" ry="6" transform="rotate(-25)" />';
+  return '<path d="M-15 7 Q-7 -11 8 -15 Q14 -1 3 11 Z M-9 1 L-18 0 L-21 11 L-11 9 M4 7 L7 18 L-4 21 L-4 12 M-13 14 L-19 20" /><circle cx="3" cy="-5" r="3" />';
 }
 
-function contours(seg, geo) {
+function landmark(kind) {
+  if (kind === 0) return '<path d="M-14 6 L-2 -12 L12 6 Z M-5 6 L9 -6 L20 6 M-6 -6 L-2 -2 L2 -6" />';
+  if (kind === 1) return '<path d="M-16 9 L-3 -14 L10 9 Z M-7 -6 L-3 -2 L1 -6 M5 9 L15 -6 L25 9" />';
+  return '<path d="M-12 13 V-10 M-21 2 L-12 -13 L-3 2 Z M2 9 L13 -9 L24 9 Z" />';
+}
+
+export function scenery(seg, geo) {
   const { width: w, height: h } = geo;
-  const rand = seeded(seg.seed * 104729);
-  const hills = [];
-  for (let tries = 0; hills.length < 4 && tries < 400; tries++) {
-    const c = { x: 40 + rand() * (w - 80), y: 40 + rand() * (h - 80) };
-    if (hills.every((o) => Math.hypot(o.x - c.x, o.y - c.y) > 170)) hills.push(c);
-  }
-  let major = '';
-  let minor = '';
-  hills.forEach((c) => {
-    const p1 = rand() * Math.PI * 2;
-    const p2 = rand() * Math.PI * 2;
-    const stretch = 1.1 + rand() * 0.5;
-    const tilt = rand() * Math.PI;
-    for (let k = 0; k < 5; k++) {
-      const base = 16 + k * 17;
-      const pts = [];
-      for (let i = 0; i < 16; i++) {
-        const a = (i / 16) * Math.PI * 2;
-        const r = base * (1 + 0.16 * Math.sin(3 * a + p1 + k * 0.3) + 0.08 * Math.sin(5 * a + p2));
-        const ex = Math.cos(a) * r * stretch;
-        const ey = Math.sin(a) * r;
-        pts.push({ x: c.x + ex * Math.cos(tilt) - ey * Math.sin(tilt), y: c.y + ex * Math.sin(tilt) + ey * Math.cos(tilt) });
+  const clusters = [];
+  // Search in the lower half of each row gap, below the next label band.
+  for (let row = 0; row < seg.rows.length - 1; row++) {
+    const y = round(MAP.top + (row + 0.48) * geo.rowH);
+    const candidates = row % 2 ? [w * 0.68, w * 0.32] : [w * 0.3, w * 0.7];
+    candidates.forEach((x, i) => {
+      if (nearRoute(geo, x, y, 50)) return;
+      if (seg.scene === 2) {
+        clusters.push(`<g class="trail-landscape__cluster trail-landscape__space" transform="translate(${round(x)} ${y})"><g class="trail-landscape__landmark">${spaceLandmark((row + i) % 3)}</g><path class="trail-landscape__detail" d="M-37 -15 h6 m-3 -3 v6 M29 22 h6 m-3 -3 v6" /></g>`);
+        return;
       }
-      if (k % 2 === 0) major += `${closedSpline(pts)} `;
-      else minor += `${closedSpline(pts)} `;
-    }
-  });
-  return { major: major.trim(), minor: minor.trim() };
-}
-
-function scenery(seg, geo) {
-  const { width: w, height: h } = geo;
-  if (seg.scene === 1) {
-    let grid = '';
-    for (let x = 35; x < w; x += 70) grid += `M${x} 0 V${h} `;
-    for (let y = 22; y < h; y += 70) grid += `M0 ${y} H${w} `;
-    const topo = contours(seg, geo);
-    return `
-                <path class="trail-scenery__grid" d="${grid.trim()}" />
-                <path class="trail-scenery__contour" d="${topo.minor}" />
-                <path class="trail-scenery__contour trail-scenery__contour--major" d="${topo.major}" />`;
+      clusters.push(`<g class="trail-landscape__cluster" transform="translate(${round(x)} ${y})">
+                  <path class="trail-landscape__shelf" d="M-44 10 Q-50 -5 -31 -12 L-9 -19 Q6 -24 25 -12 L44 0 Q53 14 32 21 L4 27 Q-12 30 -29 21 Z" />
+                  <path class="trail-landscape__terrace" d="M-44 4 Q-50 -11 -31 -18 L-9 -25 Q6 -30 25 -18 L44 -6 Q53 8 32 15 L4 21 Q-12 24 -29 15 Z" />
+                  <g class="trail-landscape__landmark">${landmark((row + i + (seg.scene - 1)) % 3)}</g>
+                  <path class="trail-landscape__detail" d="M-31 34 h12 m4 0 h3 M31 -28 h7 m-3.5 -3.5 v7" />
+                </g>`);
+    });
   }
-  const rand = seeded(seg.seed * 7919);
   let stars = '';
-  let bright = '';
-  for (let tries = 0, placed = 0; placed < 44 && tries < 800; tries++) {
-    const x = round(8 + rand() * (w - 16));
-    const y = round(8 + rand() * (h - 50));
-    const r = round(0.8 + rand() * 1.6);
-    if (nearRoute(geo, x, y, 26)) continue;
-    placed++;
-    if (placed % 9 === 0) {
-      bright += `<path d="M${x} ${round(y - 5)} L${round(x + 1.2)} ${round(y - 1.2)} L${round(x + 5)} ${y} L${round(x + 1.2)} ${round(y + 1.2)} L${x} ${round(y + 5)} L${round(x - 1.2)} ${round(y + 1.2)} L${round(x - 5)} ${y} L${round(x - 1.2)} ${round(y - 1.2)} Z" />`;
-    } else {
-      stars += `<circle cx="${x}" cy="${y}" r="${r}" />`;
+  if (seg.scene === 2) {
+    const rand = seeded(seg.seed);
+    for (let i = 0; i < 36; i++) {
+      const x = round(20 + rand() * (w - 40));
+      const y = round(20 + rand() * (h - 40));
+      if (!nearRoute(geo, x, y, 32)) stars += `<circle cx="${x}" cy="${y}" r="${i % 4 === 0 ? 1.5 : 0.8}" />`;
     }
-  }
-  let bars = '';
-  for (let x = 4, i = 0; x < w; x += 20, i++) {
-    const bh = round(8 + rand() * 18 + (i % 5 === 2 ? 8 : 0));
-    bars += `<rect x="${x}" y="${round(h - bh)}" width="13" height="${bh}" rx="2" />`;
   }
   return `
-                <g class="trail-scenery__stars">${stars}</g>
-                <g class="trail-scenery__bright">${bright}</g>
-                <g class="trail-scenery__skyline">${bars}</g>`;
+                <g class="trail-landscape" aria-hidden="true" focusable="false">
+                  <path class="trail-landscape__edge" d="M18 36 V18 H40 M${w - 40} 18 H${w - 18} V36 M18 ${h - 36} V${h - 18} H40 M${w - 40} ${h - 18} H${w - 18} V${h - 36}" />
+                  <g class="trail-landscape__stars">${stars}</g>${clusters.join('')}
+                  <g class="trail-landscape__detail" transform="translate(${w / 2} ${h - 20})"><path d="M-22 0 h12 M10 0 h12" /><circle r="2" /></g>
+                </g>`;
 }
 
 function callout(extra, label, x, y) {
@@ -341,15 +305,15 @@ function callout(extra, label, x, y) {
 }
 
 /* The route. A `marked` line is a cased trail: a soft casing, the unwalked
-   line, the walked line in a gradient, and a row of trail markers that only
+   line, the walked line in a solid color, and a row of trail markers that only
    show on the walked part (masked by the same scroll progress). A `flat` line
-   is one solid colour over a dotted unwalked line, with no gradient. */
+   is one solid colour over a dotted unwalked line, with flat colors. */
 function route(seg, geo) {
   if (seg.line === 'marked') {
     return `
                 <path class="path-map__casing" d="${geo.d}" />
                 <path class="path-map__base" pathLength="1" d="${geo.d}" />
-                <path class="path-map__draw" pathLength="1" d="${geo.d}" stroke="url(#trailLine${seg.scene})" />
+                <path class="path-map__draw" pathLength="1" d="${geo.d}" />
                 <mask id="trailReveal${seg.scene}" maskUnits="userSpaceOnUse" x="0" y="0" width="${geo.width}" height="${geo.height}">
                   <path class="path-map__reveal" pathLength="1" d="${geo.d}" />
                 </mask>
@@ -477,16 +441,8 @@ export function buildTrail(segments = SEGMENTS, courses = coursesBySlug()) {
         <div class="path-journey__track" data-stops="${offset}" style="--trail-length: ${desktop}vh; --trail-length-mobile: ${mobile}vh">${markers.join('')}
           <div class="path-journey__sticky">
             <div class="path-journey__map" aria-hidden="true" style="--map-ratio: ${ratio}">
-              <svg class="path-map__defs" width="0" height="0" aria-hidden="true" focusable="false">
-                <defs>${segments.filter((seg) => seg.line === 'marked').map((seg) => `
-                  <linearGradient id="trailLine${seg.scene}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${geos[0].width}" y2="${geos[0].height}">
-                    <stop class="trail-line-${seg.scene}a" offset="0%" />
-                    <stop class="trail-line-${seg.scene}b" offset="55%" />
-                    <stop class="trail-line-${seg.scene}c" offset="100%" />
-                  </linearGradient>`).join('')}
-                </defs>
-              </svg>${svgs.join('')}${segments.length > 1 ? `
-              <p class="path-journey__gate"><span>${esc(courses[segments[0].course].title)} complete. Next course</span> ${esc(courses[segments[1].course].title)}</p>` : ''}
+${svgs.join('')}${segments.length > 1 ? `
+              <p class="path-journey__gate"><span>Next adventure</span> ${esc(courses[segments[1].course].title)}</p>` : ''}
             </div>
 
             <aside class="path-panel" aria-label="Units on the trail">${nav}
@@ -498,6 +454,15 @@ export function buildTrail(segments = SEGMENTS, courses = coursesBySlug()) {
               </div>
             </aside>
           </div>
+          <dialog class="trail-transition" aria-labelledby="trail-transition-title" aria-describedby="trail-transition-description">
+            <p class="trail-transition__eyebrow">Next adventure · Stops 11–20</p>
+            <h2 id="trail-transition-title">Ready to explore Python for Data?</h2>
+            <p id="trail-transition-description">Leave the mountain for a journey through space. Explore data, discover patterns, and build on your Python skills.</p>
+            <div class="trail-transition__actions">
+              <button type="button" class="btn-path btn-path--primary" data-trail-continue>Yes, explore space</button>
+              <button type="button" class="btn-path btn-path--ghost" data-trail-stay autofocus>Stay on Foundations</button>
+            </div>
+          </dialog>
         </div>
         ${END}`;
 }

@@ -111,6 +111,42 @@
   if (!segments.length) return;
   const totalStops = offset;
 
+  const transition = section.querySelector('.trail-transition');
+  let dataAccepted = false;
+  let transitionDismissed = false;
+  let returningFromTransition = false;
+
+  function requestDataTransition() {
+    if (!transition || dataAccepted || transition.open || returningFromTransition) return;
+    transitionDismissed = true;
+    scrollToProgress(progressForStop(segments[0].stops.length - 1));
+    transition.showModal();
+  }
+
+  function stayOnFoundations() {
+    // close() restores the previously focused link synchronously. If that
+    // link belongs to Data, its focusin must not reopen the dialog.
+    returningFromTransition = true;
+    transition.close();
+    scrollToProgress(progressForStop(segments[0].stops.length - 1));
+    jumps[0]?.focus({ preventScroll: true });
+    returningFromTransition = false;
+  }
+
+  if (transition) {
+    transition.querySelector('[data-trail-stay]').addEventListener('click', stayOnFoundations);
+    transition.addEventListener('cancel', (event) => {
+      event.preventDefault();
+      stayOnFoundations();
+    });
+    transition.querySelector('[data-trail-continue]').addEventListener('click', () => {
+      dataAccepted = true;
+      transition.close();
+      scrollToProgress(progressForStop(segments[1].offset));
+      cards[segments[1].offset]?.querySelector('a')?.focus({ preventScroll: true });
+    });
+  }
+
   /* Divide overall progress 0..1 between segments and seams by their budgets. */
   function layout() {
     const total =
@@ -542,18 +578,21 @@
     render();
   }
 
-  /* While the trail is on screen and on a course with its own theme, the
-     whole page wears it (html[data-course], see pypath-theme.css). Leaving
-     the trail, above or below, hands the page back to the site's colours. */
+  /* Carry the selected course across shared pages. Only change selection
+     while the trail is visible; leaving it keeps the current palette. */
   const root = document.documentElement;
   function applyCourseTheme() {
     if (!track) return;
     const r = track.getBoundingClientRect();
     const mid = window.innerHeight / 2;
     const onTrail = r.top < mid && r.bottom > mid;
+    if (!onTrail) return;
     const scene = segments[locate(lastProgress).sceneIndex];
-    const course = onTrail && scene && scene.svg.getAttribute("data-course");
+    const course = scene && scene.svg.getAttribute("data-course");
     const want = course && course !== "foundations" ? course : null;
+    try {
+      if (localStorage.getItem("pypath-course") !== course) localStorage.setItem("pypath-course", course);
+    } catch {}
     if (want) {
       if (root.getAttribute("data-course") !== want) root.setAttribute("data-course", want);
     } else if (root.hasAttribute("data-course")) {
@@ -563,8 +602,15 @@
 
   function render() {
     const p = measureScroll();
-    setProgress(p);
+    // Keep normal page scrolling available after declining, but never reveal
+    // the next course or change its palette without an explicit choice.
+    const blocked = transition && !dataAccepted && p > segments[0].end;
+    setProgress(blocked ? progressForStop(segments[0].stops.length - 1) : p);
     applyCourseTheme();
+    if (!blocked && p < progressForStop(segments[0].stops.length - 2)) transitionDismissed = false;
+    const rect = track.getBoundingClientRect();
+    const onTrail = rect.top < innerHeight / 2 && rect.bottom > innerHeight / 2;
+    if (blocked && onTrail && !transitionDismissed) requestDataTransition();
     section.classList.toggle("is-active", reduced || (p > 0.002 && p < 0.998));
   }
 
@@ -633,7 +679,12 @@
     stage.addEventListener("focusin", (e) => {
       const card = e.target.closest("[data-stop-card]");
       if (!card || card.classList.contains("is-active")) return;
-      scrollToProgress(progressForStop(Number(card.getAttribute("data-stop-index"))));
+      const index = Number(card.getAttribute("data-stop-index"));
+      if (transition && !dataAccepted && index >= segments[1].offset) {
+        requestDataTransition();
+        return;
+      }
+      scrollToProgress(progressForStop(index));
     });
   }
   jumps.forEach((link) => {
@@ -642,6 +693,10 @@
       const card = cards[index];
       if (!card) return;
       e.preventDefault();
+      if (transition && !dataAccepted && index >= segments[1].offset) {
+        requestDataTransition();
+        return;
+      }
       scrollToProgress(progressForStop(index));
       const target = card.querySelector("a");
       if (target) target.focus({ preventScroll: true });

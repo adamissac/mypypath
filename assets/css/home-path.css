@@ -217,10 +217,7 @@ body.page-home .site-header {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background:
-    radial-gradient(120% 80% at 78% 18%, color-mix(in srgb, var(--home-line) 28%, transparent), transparent 55%),
-    radial-gradient(90% 70% at 12% 88%, color-mix(in srgb, var(--home-mark) 22%, transparent), transparent 50%),
-    linear-gradient(165deg, var(--home-mist) 0%, var(--home-fog) 48%, color-mix(in srgb, var(--home-line) 10%, var(--home-mist)) 100%);
+  background: var(--home-mist);
 }
 
 .home-hero__topo {
@@ -529,19 +526,13 @@ body.page-home .site-header {
    one palette. Changing course is a change of variables, not a
    second set of rules.
 
-   Day survey    Python Foundations. The site's own sky blue.
-   Night survey  Python for Data. Built with theme-factory from
-                 Midnight Galaxy (deep purple, lavender, silver)
-                 with a marigold lamp for the lit route. Flat:
-                 no gradients anywhere in this scene.
-   A second option, Field notes (Botanical Garden: cream, fern
-   green, marigold), was built and compared at checkpoint 2 and not
-   chosen: a light green map after a light blue one read as the
-   same place recoloured. Screenshots: trail-r2-field-*. */
+   Foundations uses the site's blue palette; Python for Data uses deep
+   purple and marigold. Both landscapes use solid terraces and sparse
+   landmarks. Colours stay independent from route geometry. */
 
 .path-journey {
-  --day-sky: radial-gradient(80% 50% at 50% 0%, color-mix(in srgb, #0ea5e9 12%, transparent), transparent 70%), #f7fbfe;
-  --day-frame: linear-gradient(180deg, #eaf5fb 0%, #f7fbfe 100%);
+  --day-sky: #f7fbfe;
+  --day-frame: #edf5fa;
   --day-edge: rgba(12, 69, 102, 0.1);
   --day-grid: rgba(12, 69, 102, 0.045);
   --day-contour: rgba(12, 69, 102, 0.09);
@@ -614,8 +605,8 @@ body.page-home .site-header {
 }
 
 [data-theme="dark"] .path-journey {
-  --day-sky: radial-gradient(80% 50% at 50% 0%, color-mix(in srgb, #38bdf8 10%, transparent), transparent 70%), #0e161d;
-  --day-frame: linear-gradient(180deg, #101c26 0%, #0c141b 100%);
+  --day-sky: #0e161d;
+  --day-frame: #101c26;
   --day-edge: rgba(232, 244, 251, 0.08);
   --day-grid: rgba(232, 244, 251, 0.04);
   --day-contour: rgba(232, 244, 251, 0.06);
@@ -658,7 +649,9 @@ body.page-home .site-header {
 /* Scene mapping: --trail-* from a palette. */
 .path-journey,
 .path-map[data-segment="1"] {
-  --trail-grid: var(--day-grid);
+  --trail-terrain: color-mix(in srgb, var(--day-line-a) 5%, var(--day-frame));
+  --trail-terrain-edge: color-mix(in srgb, var(--day-line-a) 10%, var(--day-frame));
+  --trail-detail: color-mix(in srgb, var(--day-line-a) 24%, var(--day-frame));
   --trail-contour: var(--day-contour);
   --trail-contour-major: var(--day-contour-major);
   --trail-casing: var(--day-casing);
@@ -695,7 +688,9 @@ body.page-home .site-header {
 .path-map[data-segment="2"],
 .path-journey[data-scene="2"] .path-panel,
 .path-journey__gate {
-  --trail-grid: var(--night-grid);
+  --trail-terrain: #302343;
+  --trail-terrain-edge: #392b4d;
+  --trail-detail: #716180;
   --trail-contour: var(--night-contour);
   --trail-contour-major: var(--night-contour-major);
   --trail-casing: var(--night-casing);
@@ -808,11 +803,11 @@ body.page-home .site-header {
   justify-self: center;
   width: min(100%, calc((100vh - var(--header-height, 60px) - 3rem) * var(--map-ratio, 1.4)));
   aspect-ratio: var(--map-ratio, 1.4);
-  border-radius: 22px;
+  border-radius: 18px;
   overflow: hidden;
   background: var(--day-frame);
   border: 1px solid var(--day-edge);
-  box-shadow: 0 18px 50px color-mix(in srgb, var(--home-ink) 8%, transparent);
+  box-shadow: 0 5px 0 color-mix(in srgb, var(--home-ink) 7%, transparent);
 }
 
 .path-journey__map::before {
@@ -842,38 +837,21 @@ body.page-home .site-header {
   pointer-events: none;
 }
 
-.path-map__defs {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-}
-
-.trail-line-1a { stop-color: var(--day-line-a); }
-.trail-line-1b { stop-color: var(--day-line-b); }
-.trail-line-1c { stop-color: var(--day-line-c); }
-
-/* Scenery */
-.trail-scenery__grid {
+/* Quiet, flat terraces and landmarks; the route remains the strongest line. */
+.trail-landscape { pointer-events: none; }
+.trail-landscape__shelf { fill: var(--trail-terrain-edge); }
+.trail-landscape__terrace { fill: var(--trail-terrain); }
+.trail-landscape__landmark,
+.trail-landscape__detail,
+.trail-landscape__edge {
   fill: none;
-  stroke: var(--trail-grid);
-  stroke-width: 1;
+  stroke: var(--trail-detail);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
-
-.trail-scenery__contour {
-  fill: none;
-  stroke: var(--trail-contour);
-  stroke-width: 1;
-}
-
-.trail-scenery__contour--major {
-  stroke: var(--trail-contour-major);
-  stroke-width: 1.3;
-}
-
-.trail-scenery__stars { fill: var(--trail-star); }
-.trail-scenery__bright { fill: var(--trail-bright); }
-.trail-scenery__skyline { fill: var(--trail-skyline); }
+.trail-landscape__detail { opacity: 0.65; }
+.trail-landscape__edge { opacity: 0.5; }
 
 /* The route */
 .path-map__base {
@@ -893,13 +871,12 @@ body.page-home .site-header {
   /* pathLength="1": a dash of 1 is the whole route. */
   stroke-dasharray: 1;
   stroke-dashoffset: calc(1 - var(--path-progress, 0));
-  filter: drop-shadow(0 0 6px var(--trail-glow));
+  stroke: var(--trail-line-a);
 }
 
 /* Foundations' trail: a soft casing under the route, and trail markers that
    only show on the walked part (the mask reveals them with the same progress
-   that draws the line). The markers drift slowly along the trail; the
-   reduced-motion backstop in style.css stops them. */
+   that draws the line). The markers are stationary. */
 .path-map__casing {
   fill: none;
   stroke: var(--trail-casing);
@@ -924,11 +901,7 @@ body.page-home .site-header {
   stroke-linecap: round;
   stroke-dasharray: 0.1 11;
   opacity: 0.9;
-  animation: trail-march 1.6s linear infinite;
-}
 
-@keyframes trail-march {
-  to { stroke-dashoffset: -11.1; }
 }
 
 /* Python for Data's line is one flat colour, no gradient and no glow. */
@@ -968,6 +941,8 @@ body.page-home .site-header {
 
 .trail-stop__halo {
   fill: var(--trail-halo);
+  stroke: var(--trail-line-a);
+  stroke-width: 0.8;
   opacity: 0;
   transition: opacity 200ms ease;
 }
@@ -1183,7 +1158,7 @@ body.page-home .site-header {
   line-height: 1.2;
   text-align: center;
   text-decoration: none;
-  color: var(--home-muted);
+  color: var(--home-ink-soft);
   transition: background-color 150ms ease, color 150ms ease;
 }
 
@@ -1237,7 +1212,7 @@ body.page-home .site-header {
   height: 100%;
   width: calc(var(--path-progress, 0) * 100%);
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--trail-bar-a), var(--trail-bar-b));
+  background: var(--trail-bar-a);
 }
 
 /* Flat in the second course: one colour, no gradient. */
@@ -1491,7 +1466,7 @@ body.page-home .site-header {
   border: 1px solid color-mix(in srgb, var(--home-ink) 10%, transparent);
   background: var(--panel, #fff);
   overflow: hidden;
-  box-shadow: 0 18px 50px color-mix(in srgb, var(--home-ink) 8%, transparent);
+  box-shadow: 0 5px 0 color-mix(in srgb, var(--home-ink) 7%, transparent);
 }
 
 [data-theme="dark"] .home-practice .hero-live-editor {
@@ -1927,3 +1902,33 @@ html.reduced-motion .page-home .home-practice .hero-live-editor::before,
 html.reduced-motion .page-home .home-endcta::before {
   animation: none;
 }
+
+
+/* Course transition: a deliberate choice before entering the space trail. */
+.trail-transition {
+  width: min(480px, calc(100% - 2rem));
+  max-height: calc(100dvh - 2rem);
+  box-sizing: border-box;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border: 1px solid var(--pp-border);
+  border-radius: 20px;
+  background: var(--pp-paper);
+  color: var(--pp-ink-soft);
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--pp-ink) 15%, transparent);
+}
+.trail-transition::backdrop { background: rgba(18, 12, 28, 0.55); }
+.trail-transition h2 { margin: 0 0 1rem; font-size: 1.65rem; line-height: 1.2; }
+.trail-transition p { line-height: 1.6; }
+.trail-transition__eyebrow { color: var(--pp-ink); font-weight: 700; font-size: 0.85rem; }
+.trail-transition__actions { display: grid; gap: 0.75rem; margin-top: 1.5rem; }
+.trail-transition button { cursor: pointer; min-height: 44px; }
+.trail-landscape__stars { fill: var(--trail-detail); opacity: 0.7; }
+.trail-landscape__space .trail-landscape__landmark { stroke-width: 1.4; }
+.home-summit__moon { display: none; width: 100%; height: auto; aspect-ratio: 1; }
+html[data-course="data"] .home-summit__mountain,
+html[data-course="data"] .home-summit__art,
+html[data-course="data"] .home-summit__canvas { display: none; }
+html[data-course="data"] .home-summit__moon { display: block; }
+
+html[data-course="data"] .home-hero__topo { display: none; }
+.path-journey .btn-path--primary::after { display: none; }
