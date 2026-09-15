@@ -6,6 +6,8 @@
 from __future__ import annotations
 
 import re
+import hashlib
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -690,6 +692,27 @@ def normalize_head(html: str) -> str:
     return html
 
 
+def version_course_assets(html: str) -> str:
+    """Keep course colours and logo selection fresh despite shared-asset caching."""
+    for rel in ('assets/css/pypath-theme.css', 'assets/js/theme-init.js'):
+        version = hashlib.sha256((ROOT / rel).read_bytes()).hexdigest()[:10]
+        html = re.sub(
+            r'(["\'])/' + re.escape(rel) + r'(?:\?v=[0-9a-f]+)?\1',
+            lambda match: f'{match[1]}/{rel}?v={version}{match[1]}',
+            html,
+        )
+    return html
+
+
+def version_course_file(path: Path) -> bool:
+    html = path.read_text(encoding='utf-8')
+    updated = version_course_assets(html)
+    if html == updated:
+        return False
+    path.write_text(updated, encoding='utf-8')
+    return True
+
+
 def process(path: Path) -> bool:
     html = path.read_text(encoding='utf-8')
     orig = html
@@ -701,6 +724,7 @@ def process(path: Path) -> bool:
     html = replace_footer(html)
     html = fix_unit_redirect(html, path)
     html = misc_fixes(html, path)
+    html = version_course_assets(html)
     if html != orig:
         path.write_text(html, encoding='utf-8')
         return True
@@ -708,7 +732,8 @@ def process(path: Path) -> bool:
 
 
 def main():
-    count = sum(1 for p in ROOT.rglob('*.html') if not skipped(p) and process(p))
+    transform = version_course_file if '--version-course-assets' in sys.argv else process
+    count = sum(1 for p in ROOT.rglob('*.html') if not skipped(p) and transform(p))
     print(f'Baked layout into {count} HTML files.')
 
 
