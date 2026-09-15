@@ -158,7 +158,7 @@ def learning_curves(rows: Rows, p: np.ndarray, tax, max_opp: int = 15, p_item: O
     return out
 
 
-def run(ingest_dir: Path, sim_dir: Optional[Path], out_dir: Path, specs: List[str], seed: int = 7,
+def run(ingest_dir: Path, sim_dir: Optional[Path], out_dir: Path, specs: List[str], seed: int = 20260914,
         folds: int = 5, reps: int = 200, label: str = "main") -> dict:
     t0 = time.time()
     tax = load()

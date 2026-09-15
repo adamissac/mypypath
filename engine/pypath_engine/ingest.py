@@ -221,6 +221,16 @@ def attempts_table(by_student: Dict[str, List[dict]], flags: Dict[str, dict], ta
     return rows
 
 
+def _display_path(p: Path) -> str:
+    """Repo-relative when inside the repo, so a committed summary does not carry
+    someone's home directory."""
+    from . import paths
+    try:
+        return str(Path(p).resolve().relative_to(paths.REPO))
+    except ValueError:
+        return Path(p).name
+
+
 def run(src: Path, out_dir: Path, salt: Optional[str] = None) -> dict:
     salt = salt or os.environ.get("PYPATH_INGEST_SALT")
     raw = read_events(src)
@@ -238,7 +248,7 @@ def run(src: Path, out_dir: Path, salt: Optional[str] = None) -> dict:
             w.writeheader()
             w.writerows(rows)
     summary = {
-        "source": str(src), "students": len(by_student), "attempt_rows": len(rows),
+        "source": _display_path(src), "students": len(by_student), "attempt_rows": len(rows),
         "events_kept": sum(len(v) for v in by_student.values()),
         "cleaning": dict(report),
         "students_left_mid_unit": sum(1 for f in flags.values() if f["left_mid_unit"]),

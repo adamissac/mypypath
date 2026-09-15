@@ -5,7 +5,7 @@
 
 # PyPath adaptive engine: evaluation report
 
-Generated 2026-09-15 00:17 UTC from commit `b9fc9f0` by `python -m pypath_engine all` (engine 0.1.0, model `mastery-v1`, Python 3.9.6, numpy 2.0.2, pandas 2.2.3, sklearn 1.6.1, scipy 1.13.1, matplotlib 3.9.4).
+Generated 2026-09-15 01:30 UTC from commit `7ba5007` by `python -m pypath_engine all` (engine 0.1.0, model `mastery-v1`, Python 3.9.6, numpy 2.0.2, pandas 2.2.3, sklearn 1.6.1, scipy 1.13.1, matplotlib 3.9.4).
 
 Every number below is read from `engine/reports/metrics-*.json` produced by that command.
 
@@ -21,20 +21,20 @@ Every number below is read from `engine/reports/metrics-*.json` produced by that
 
 - **Cross-validation:** GroupKFold(n_splits=5) on student id. No student is in both train and test. Confidence intervals: 95%, 200 bootstrap resamples of *students* over the pooled out-of-fold predictions.
 - **Temporal holdout:** per student: first 80% of attempts train (students with <20 attempts train only); predict the next attempt and the next ten (392 students cut).
-- Regularisation: C chosen per logistic model on 20% of the first fold's training students: `{'item': 1.0, 'afm': 3.0, 'pfa': 1.0, 'full': 0.3}`.
+- Regularisation: C chosen per logistic model on 20% of the first fold's training students: `{'item': 0.3, 'afm': 3.0, 'pfa': 0.3, 'full': 0.3}`.
 
 ## Cross-validated results
 
 | Model | AUC (pooled) | 95% CI | AUC fold mean ± sd | Log loss | 95% CI | Brier | ECE |
 |---|---|---|---|---|---|---|---|
-| Global base rate | 0.485 | [0.467, 0.507] | 0.500 ± 0.000 | 0.665 | [0.657, 0.672] | 0.236 | 0.000 |
-| Item difficulty only | 0.709 | [0.705, 0.713] | 0.709 ± 0.007 | 0.597 | [0.591, 0.604] | 0.205 | 0.003 |
-| Logistic, AFM (skill + opportunities + item) | 0.718 | [0.714, 0.721] | 0.718 ± 0.004 | 0.591 | [0.584, 0.598] | 0.202 | 0.006 |
-| Logistic, PFA (skill + successes + failures + item) | 0.740 | [0.736, 0.744] | 0.740 ± 0.003 | 0.574 | [0.568, 0.579] | 0.195 | 0.007 |
-| **Logistic, PFA + history features (ships)** | 0.766 | [0.762, 0.771] | 0.766 ± 0.002 | 0.553 | [0.547, 0.557] | 0.186 | 0.015 |
-| Logistic full, isotonic-calibrated | 0.766 | [0.761, 0.771] | 0.766 ± 0.002 | 0.551 | [0.545, 0.557] | 0.185 | 0.002 |
-| HistGradientBoosting | 0.770 | [0.766, 0.775] | 0.770 ± 0.003 | 0.547 | [0.541, 0.552] | 0.184 | 0.007 |
-| HistGradientBoosting, isotonic-calibrated | 0.771 | [0.767, 0.775] | 0.770 ± 0.003 | 0.547 | [0.541, 0.552] | 0.183 | 0.002 |
+| Global base rate | 0.485 | [0.467, 0.502] | 0.500 ± 0.000 | 0.665 | [0.657, 0.671] | 0.236 | 0.000 |
+| Item difficulty only | 0.709 | [0.705, 0.712] | 0.709 ± 0.007 | 0.597 | [0.590, 0.604] | 0.205 | 0.006 |
+| Logistic, AFM (skill + opportunities + item) | 0.718 | [0.714, 0.721] | 0.718 ± 0.004 | 0.591 | [0.584, 0.597] | 0.202 | 0.006 |
+| Logistic, PFA (skill + successes + failures + item) | 0.740 | [0.736, 0.743] | 0.740 ± 0.003 | 0.574 | [0.568, 0.580] | 0.195 | 0.006 |
+| **Logistic, PFA + history features (ships)** | 0.766 | [0.762, 0.770] | 0.766 ± 0.002 | 0.553 | [0.547, 0.558] | 0.186 | 0.015 |
+| Logistic full, isotonic-calibrated | 0.766 | [0.762, 0.770] | 0.766 ± 0.002 | 0.551 | [0.545, 0.557] | 0.185 | 0.002 |
+| HistGradientBoosting | 0.770 | [0.766, 0.774] | 0.770 ± 0.003 | 0.547 | [0.541, 0.553] | 0.184 | 0.005 |
+| HistGradientBoosting, isotonic-calibrated | 0.770 | [0.766, 0.774] | 0.770 ± 0.003 | 0.547 | [0.541, 0.553] | 0.184 | 0.003 |
 
 The base rate's pooled AUC is below 0.5 only because its constant differs slightly between folds; its fold-mean AUC is 0.5.
 
@@ -42,13 +42,13 @@ The base rate's pooled AUC is below 0.5 only because its constant differs slight
 
 | Model | Log loss vs base | 95% CI | Rel. reduction | AUC vs item | 95% CI | Log loss vs item | 95% CI |
 |---|---|---|---|---|---|---|---|
-| Item difficulty only | -0.0674 | [-0.0704, -0.0646] | 10.1% | +0.0000 | [0.0000, 0.0000] | +0.0000 | [0.0000, 0.0000] |
-| Logistic, AFM (skill + opportunities + item) | -0.0734 | [-0.0762, -0.0707] | 11.0% | +0.0090 | [0.0065, 0.0114] | -0.0060 | [-0.0078, -0.0043] |
-| Logistic, PFA (skill + successes + failures + item) | -0.0903 | [-0.0944, -0.0870] | 13.6% | +0.0314 | [0.0257, 0.0369] | -0.0229 | [-0.0272, -0.0187] |
-| **Logistic, PFA + history features (ships)** | -0.1122 | [-0.1168, -0.1079] | 16.9% | +0.0573 | [0.0504, 0.0642] | -0.0448 | [-0.0503, -0.0394] |
-| Logistic full, isotonic-calibrated | -0.1133 | [-0.1180, -0.1089] | 17.0% | +0.0570 | [0.0501, 0.0639] | -0.0458 | [-0.0514, -0.0404] |
-| HistGradientBoosting | -0.1177 | [-0.1223, -0.1134] | 17.7% | +0.0614 | [0.0545, 0.0681] | -0.0503 | [-0.0559, -0.0448] |
-| HistGradientBoosting, isotonic-calibrated | -0.1180 | [-0.1227, -0.1137] | 17.8% | +0.0618 | [0.0551, 0.0687] | -0.0505 | [-0.0563, -0.0452] |
+| Item difficulty only | -0.0674 | [-0.0698, -0.0649] | 10.1% | +0.0000 | [0.0000, 0.0000] | +0.0000 | [0.0000, 0.0000] |
+| Logistic, AFM (skill + opportunities + item) | -0.0734 | [-0.0759, -0.0707] | 11.0% | +0.0090 | [0.0068, 0.0116] | -0.0060 | [-0.0077, -0.0044] |
+| Logistic, PFA (skill + successes + failures + item) | -0.0903 | [-0.0937, -0.0868] | 13.6% | +0.0315 | [0.0266, 0.0368] | -0.0229 | [-0.0266, -0.0196] |
+| **Logistic, PFA + history features (ships)** | -0.1122 | [-0.1163, -0.1078] | 16.9% | +0.0573 | [0.0517, 0.0637] | -0.0448 | [-0.0499, -0.0406] |
+| Logistic full, isotonic-calibrated | -0.1133 | [-0.1175, -0.1089] | 17.0% | +0.0571 | [0.0514, 0.0634] | -0.0458 | [-0.0509, -0.0415] |
+| HistGradientBoosting | -0.1177 | [-0.1220, -0.1137] | 17.7% | +0.0615 | [0.0556, 0.0682] | -0.0502 | [-0.0553, -0.0458] |
+| HistGradientBoosting, isotonic-calibrated | -0.1176 | [-0.1219, -0.1136] | 17.7% | +0.0615 | [0.0558, 0.0680] | -0.0502 | [-0.0552, -0.0457] |
 
 ## Temporal holdout: predicting what a student does next
 
@@ -57,36 +57,36 @@ The base rate's pooled AUC is below 0.5 only because its constant differs slight
 | Model | n | AUC | Log loss | Brier |
 |---|---|---|---|---|
 | Global base rate | 392 | 0.500 | 0.638 | 0.223 |
-| Item difficulty only | 392 | 0.678 | 0.568 | 0.191 |
+| Item difficulty only | 392 | 0.677 | 0.567 | 0.191 |
 | Logistic, AFM (skill + opportunities + item) | 392 | 0.685 | 0.566 | 0.190 |
-| Logistic, PFA (skill + successes + failures + item) | 392 | 0.721 | 0.539 | 0.179 |
+| Logistic, PFA (skill + successes + failures + item) | 392 | 0.723 | 0.538 | 0.179 |
 | **Logistic, PFA + history features (ships)** | 392 | 0.749 | 0.523 | 0.172 |
 | Logistic full, isotonic-calibrated | 392 | 0.750 | 0.518 | 0.171 |
-| HistGradientBoosting | 392 | 0.750 | 0.521 | 0.172 |
-| HistGradientBoosting, isotonic-calibrated | 392 | 0.747 | 0.522 | 0.172 |
+| HistGradientBoosting | 392 | 0.749 | 0.522 | 0.172 |
+| HistGradientBoosting, isotonic-calibrated | 392 | 0.746 | 0.521 | 0.172 |
 
 **Next ten attempts**
 
 | Model | n | AUC | Log loss | Brier |
 |---|---|---|---|---|
 | Global base rate | 3888 | 0.500 | 0.638 | 0.223 |
-| Item difficulty only | 3888 | 0.654 | 0.582 | 0.197 |
+| Item difficulty only | 3888 | 0.653 | 0.580 | 0.196 |
 | Logistic, AFM (skill + opportunities + item) | 3888 | 0.683 | 0.572 | 0.192 |
-| Logistic, PFA (skill + successes + failures + item) | 3888 | 0.720 | 0.548 | 0.183 |
+| Logistic, PFA (skill + successes + failures + item) | 3888 | 0.722 | 0.547 | 0.182 |
 | **Logistic, PFA + history features (ships)** | 3888 | 0.758 | 0.523 | 0.173 |
 | Logistic full, isotonic-calibrated | 3888 | 0.758 | 0.521 | 0.172 |
-| HistGradientBoosting | 3888 | 0.754 | 0.526 | 0.174 |
-| HistGradientBoosting, isotonic-calibrated | 3888 | 0.755 | 0.524 | 0.174 |
+| HistGradientBoosting | 3888 | 0.756 | 0.524 | 0.173 |
+| HistGradientBoosting, isotonic-calibrated | 3888 | 0.755 | 0.525 | 0.174 |
 
 ## Which model ships
 
-Gradient boosting minus the full logistic model, cross-validated AUC: **+0.0041**. The threshold, fixed in code before any run (`SHIP_THRESHOLD_AUC`), was +0.01. It was not met, so **the logistic model ships**: its coefficients can be read and explained to a teacher, and it runs in the browser as a weighted sum.
+Gradient boosting minus the full logistic model, cross-validated AUC: **+0.0042**. The threshold, fixed in code before any run (`SHIP_THRESHOLD_AUC`), was +0.01. It was not met, so **the logistic model ships**: its coefficients can be read and explained to a teacher, and it runs in the browser as a weighted sum.
 
 ## Calibration
 
 ![calibration](reports/calibration.png)
 
-Expected calibration error, out-of-fold: full logistic 0.015, calibrated 0.002; gradient boosting 0.007, calibrated 0.002. Isotonic calibration does not buy enough to justify shipping a second, non-linear stage, so the shipped model is uncalibrated.
+Expected calibration error, out-of-fold: full logistic 0.015, calibrated 0.002; gradient boosting 0.005, calibrated 0.003. Isotonic calibration does not buy enough to justify shipping a second, non-linear stage, so the shipped model is uncalibrated.
 
 ## How close to the ceiling
 
@@ -121,7 +121,7 @@ The shipped default is 0.85, chosen from this table on an earlier run of the sam
 
 **Raw curves mostly do not look like learning.** Observed error at a skill's fifth opportunity is lower than at its first for only **16 of 51** skills (at least 30 attempts at both points). That is not because the simulated students do not learn -- they do, by construction -- but because opportunity number is confounded with curriculum order: every lesson puts its easier quiz questions before its harder graded exercises, so opportunities 1-3 are mostly easy items and 4-5 hard ones. The model's out-of-fold prediction (orange) follows the observed curve, so it has learned the item mix rather than misread it.
 
-**Adjusted for item difficulty** (outcome minus the out-of-fold item-only prediction), success at the fifth opportunity is higher than at the first for **35 of 51** skills. Pooled, the adjusted curve rises for the first few opportunities and then flattens and dips: later opportunities are increasingly retries, made by the students who were struggling, which is a selection effect a raw per-opportunity average cannot remove. On real data this is the plot to read, and the raw one is the plot to distrust.
+**Adjusted for item difficulty** (outcome minus the out-of-fold item-only prediction), success at the fifth opportunity is higher than at the first for **32 of 51** skills. Pooled, the adjusted curve rises for the first few opportunities and then flattens and dips: later opportunities are increasingly retries, made by the students who were struggling, which is a selection effect a raw per-opportunity average cannot remove. On real data this is the plot to read, and the raw one is the plot to distrust.
 
 ![adjusted learning curve](reports/learning_curve_adjusted.png)
 

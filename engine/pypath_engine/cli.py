@@ -21,6 +21,11 @@ from pathlib import Path
 
 from . import paths
 
+# One seed for every command. `evaluate` and `train` used to default to 7 while
+# `all` passed 20260914, so a standalone evaluate wrote different metrics from
+# the ones `all` reproduces.
+SEED = 20260914
+
 ALL_SPECS = ["base", "item", "afm", "pfa", "full", "full_cal", "hgb", "hgb_cal"]
 
 
@@ -111,7 +116,7 @@ def main(argv=None):
     s = sub.add_parser("simulate")
     s.add_argument("--out", default=str(paths.DATA / "sim" / "main"))
     s.add_argument("--students", type=int, default=400)
-    s.add_argument("--seed", type=int, default=20260914)
+    s.add_argument("--seed", type=int, default=SEED)
     s.add_argument("--generator", choices=["logistic", "bkt"], default="logistic")
     s.set_defaults(fn=cmd_simulate)
     s = sub.add_parser("ingest")
@@ -122,13 +127,13 @@ def main(argv=None):
     s = sub.add_parser("train")
     s.add_argument("--ingest", default=str(paths.DATA / "ingest" / "main"))
     s.add_argument("--out", default=str(paths.DATA / "model"))
-    s.add_argument("--seed", type=int, default=7)
+    s.add_argument("--seed", type=int, default=SEED)
     s.set_defaults(fn=cmd_train)
     s = sub.add_parser("evaluate")
     s.add_argument("--ingest", default=str(paths.DATA / "ingest" / "main"))
     s.add_argument("--sim", default=str(paths.DATA / "sim" / "main"))
     s.add_argument("--specs", default=None)
-    s.add_argument("--seed", type=int, default=7)
+    s.add_argument("--seed", type=int, default=SEED)
     s.add_argument("--reps", type=int, default=200)
     s.add_argument("--label", default="main")
     s.set_defaults(fn=cmd_evaluate)
@@ -150,7 +155,7 @@ def main(argv=None):
     s.set_defaults(fn=cmd_fixtures)
     s = sub.add_parser("all")
     s.add_argument("--students", type=int, default=400)
-    s.add_argument("--seed", type=int, default=20260914)
+    s.add_argument("--seed", type=int, default=SEED)
     s.add_argument("--reps", type=int, default=200)
     s.set_defaults(fn=cmd_all)
     a = p.parse_args(argv)

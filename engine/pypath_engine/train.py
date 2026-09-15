@@ -19,7 +19,7 @@ from .features import build_rows, load_clean_events
 from .taxonomy import load
 
 
-def run(ingest_dir: Path, out_dir: Path, seed: int = 7) -> dict:
+def run(ingest_dir: Path, out_dir: Path, seed: int = 20260914) -> dict:
     tax = load()
     by_student = load_clean_events(ingest_dir / "clean_events.jsonl")
     rows = build_rows(by_student, tax)
