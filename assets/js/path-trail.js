@@ -542,9 +542,29 @@
     render();
   }
 
+  /* While the trail is on screen and on a course with its own theme, the
+     whole page wears it (html[data-course], see pypath-theme.css). Leaving
+     the trail, above or below, hands the page back to the site's colours. */
+  const root = document.documentElement;
+  function applyCourseTheme() {
+    if (!track) return;
+    const r = track.getBoundingClientRect();
+    const mid = window.innerHeight / 2;
+    const onTrail = r.top < mid && r.bottom > mid;
+    const scene = segments[locate(lastProgress).sceneIndex];
+    const course = onTrail && scene && scene.svg.getAttribute("data-course");
+    const want = course && course !== "foundations" ? course : null;
+    if (want) {
+      if (root.getAttribute("data-course") !== want) root.setAttribute("data-course", want);
+    } else if (root.hasAttribute("data-course")) {
+      root.removeAttribute("data-course");
+    }
+  }
+
   function render() {
     const p = measureScroll();
     setProgress(p);
+    applyCourseTheme();
     section.classList.toggle("is-active", reduced || (p > 0.002 && p < 0.998));
   }
 

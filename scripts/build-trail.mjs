@@ -192,8 +192,8 @@ export function serpentine({ rows, seed = 1, climb = false, startRight = false, 
    pinned to Foundations' last), with its rows the other way round, so the two
    maps are different shapes and the gateway sits where the finish was. */
 export const SEGMENTS = [
-  { course: 'foundations', scene: 1, rows: [3, 4, 3], seed: 11, climb: false, startRight: false, span: 360, seam: 60 },
-  { course: 'data', scene: 2, rows: [3, 3, 4], seed: 29, climb: true, startRight: true, pinToPrevious: true, span: 360, seam: 0 },
+  { course: 'foundations', scene: 1, line: 'marked', rows: [3, 4, 3], seed: 11, climb: false, startRight: false, span: 360, seam: 60 },
+  { course: 'data', scene: 2, line: 'flat', rows: [3, 3, 4], seed: 29, climb: true, startRight: true, pinToPrevious: true, span: 360, seam: 0 },
 ];
 
 // The page adds one viewport of track so the last stop is reachable, and the
@@ -226,11 +226,14 @@ function unitsFor(course) {
 }
 
 /* ── Scenery ─────────────────────────────────────────────────────────────
-   Foundations is a daylight survey: a faint grid. Python for Data is the same
-   survey at night: stars, some of them bright, and a low bar-chart skyline on
-   the horizon. Colours are tokens in home-path.css (--trail-*), so the change
-   of scene is a change of variables, not a second set of rules. Stars keep
-   clear of the route so nothing competes with a stop. */
+   Foundations is a survey map: a faint graticule and topographic contour
+   rings around a few seeded hills, with the route drawn as a cased trail with
+   markers. Python for Data is the same survey at night, drawn flat: stars, a
+   few bright ones, and a bar-chart skyline, with a solid route and no
+   gradients. Colours are
+   tokens in home-path.css (--trail-*), so the change of scene is a change of
+   variables, not a second set of rules. Points keep clear of the route so
+   nothing competes with a stop. */
 function nearRoute(geo, x, y, clearance) {
   return geo.points.some((p, i) => {
     const q = geo.points[i + 1];
@@ -242,14 +245,60 @@ function nearRoute(geo, x, y, clearance) {
   });
 }
 
+function closedSpline(pts) {
+  const n = pts.length;
+  let d = `M ${round(pts[0].x)} ${round(pts[0].y)}`;
+  for (let i = 0; i < n; i++) {
+    const [c1, c2] = controls(pts[(i - 1 + n) % n], pts[i], pts[(i + 1) % n], pts[(i + 2) % n]);
+    const to = pts[(i + 1) % n];
+    d += ` C ${round(c1.x)} ${round(c1.y)} ${round(c2.x)} ${round(c2.y)} ${round(to.x)} ${round(to.y)}`;
+  }
+  return `${d} Z`;
+}
+
+function contours(seg, geo) {
+  const { width: w, height: h } = geo;
+  const rand = seeded(seg.seed * 104729);
+  const hills = [];
+  for (let tries = 0; hills.length < 4 && tries < 400; tries++) {
+    const c = { x: 40 + rand() * (w - 80), y: 40 + rand() * (h - 80) };
+    if (hills.every((o) => Math.hypot(o.x - c.x, o.y - c.y) > 170)) hills.push(c);
+  }
+  let major = '';
+  let minor = '';
+  hills.forEach((c) => {
+    const p1 = rand() * Math.PI * 2;
+    const p2 = rand() * Math.PI * 2;
+    const stretch = 1.1 + rand() * 0.5;
+    const tilt = rand() * Math.PI;
+    for (let k = 0; k < 5; k++) {
+      const base = 16 + k * 17;
+      const pts = [];
+      for (let i = 0; i < 16; i++) {
+        const a = (i / 16) * Math.PI * 2;
+        const r = base * (1 + 0.16 * Math.sin(3 * a + p1 + k * 0.3) + 0.08 * Math.sin(5 * a + p2));
+        const ex = Math.cos(a) * r * stretch;
+        const ey = Math.sin(a) * r;
+        pts.push({ x: c.x + ex * Math.cos(tilt) - ey * Math.sin(tilt), y: c.y + ex * Math.sin(tilt) + ey * Math.cos(tilt) });
+      }
+      if (k % 2 === 0) major += `${closedSpline(pts)} `;
+      else minor += `${closedSpline(pts)} `;
+    }
+  });
+  return { major: major.trim(), minor: minor.trim() };
+}
+
 function scenery(seg, geo) {
   const { width: w, height: h } = geo;
   if (seg.scene === 1) {
     let grid = '';
     for (let x = 35; x < w; x += 70) grid += `M${x} 0 V${h} `;
     for (let y = 22; y < h; y += 70) grid += `M0 ${y} H${w} `;
+    const topo = contours(seg, geo);
     return `
-                <path class="trail-scenery__grid" d="${grid.trim()}" />`;
+                <path class="trail-scenery__grid" d="${grid.trim()}" />
+                <path class="trail-scenery__contour" d="${topo.minor}" />
+                <path class="trail-scenery__contour trail-scenery__contour--major" d="${topo.major}" />`;
   }
   const rand = seeded(seg.seed * 7919);
   let stars = '';
@@ -291,6 +340,26 @@ function callout(extra, label, x, y) {
                 </g>`;
 }
 
+/* The route. A `marked` line is a cased trail: a soft casing, the unwalked
+   line, the walked line in a gradient, and a row of trail markers that only
+   show on the walked part (masked by the same scroll progress). A `flat` line
+   is one solid colour over a dotted unwalked line, with no gradient. */
+function route(seg, geo) {
+  if (seg.line === 'marked') {
+    return `
+                <path class="path-map__casing" d="${geo.d}" />
+                <path class="path-map__base" pathLength="1" d="${geo.d}" />
+                <path class="path-map__draw" pathLength="1" d="${geo.d}" stroke="url(#trailLine${seg.scene})" />
+                <mask id="trailReveal${seg.scene}" maskUnits="userSpaceOnUse" x="0" y="0" width="${geo.width}" height="${geo.height}">
+                  <path class="path-map__reveal" pathLength="1" d="${geo.d}" />
+                </mask>
+                <path class="path-map__markers" d="${geo.d}" mask="url(#trailReveal${seg.scene})" />`;
+  }
+  return `
+                <path class="path-map__base" pathLength="1" d="${geo.d}" />
+                <path class="path-map__draw path-map__draw--flat" pathLength="1" d="${geo.d}" />`;
+}
+
 /* A segment's first stop, after the first segment, is a gateway, and every
    segment's last stop is a finish: the change of course is marked on the map,
    not just in the colours. */
@@ -323,8 +392,7 @@ function segmentSvg(seg, geo, units, offset, si) {
   return `
               <svg class="path-map" data-segment="${seg.scene}" data-course="${seg.course}" data-span="${seg.span}" data-seam="${seg.seam}" data-stops="${units.length}" viewBox="0 0 ${geo.width} ${geo.height}" preserveAspectRatio="xMidYMid meet">${scenery(seg, geo)}
 
-                <path class="path-map__base" pathLength="1" d="${geo.d}" />
-                <path class="path-map__draw" pathLength="1" d="${geo.d}" stroke="url(#trailLine${seg.scene})" />
+${route(seg, geo)}
 
                 <g class="path-head" transform="translate(${first.x} ${first.y})">
                   <circle class="path-head__ring" r="12" />
@@ -410,7 +478,7 @@ export function buildTrail(segments = SEGMENTS, courses = coursesBySlug()) {
           <div class="path-journey__sticky">
             <div class="path-journey__map" aria-hidden="true" style="--map-ratio: ${ratio}">
               <svg class="path-map__defs" width="0" height="0" aria-hidden="true" focusable="false">
-                <defs>${segments.map((seg) => `
+                <defs>${segments.filter((seg) => seg.line === 'marked').map((seg) => `
                   <linearGradient id="trailLine${seg.scene}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${geos[0].width}" y2="${geos[0].height}">
                     <stop class="trail-line-${seg.scene}a" offset="0%" />
                     <stop class="trail-line-${seg.scene}b" offset="55%" />

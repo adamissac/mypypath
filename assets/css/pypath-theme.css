@@ -1836,3 +1836,172 @@ main .container,
 .unit-card:has(.unit-ribbon) h2.h3 {
   padding-right: 2.75rem;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   Python for Data course theme
+
+   Every page of the second course, and the home page while the trail is
+   on that course, trades the site's sky blue for the course's own night
+   survey colours: deep purple ink, lavender surfaces and a marigold lamp
+   for fills and highlights. html[data-course="data"] is set by
+   theme-init.js from the URL (before first paint) and by path-trail.js on
+   the home page.
+
+   Flat by request: no gradients anywhere in this theme. Marigold is only
+   ever a fill or a line on light surfaces, never text there (it is under
+   2:1 on white); text accents are purple. In dark mode marigold is text
+   as well, on deep purple, where it is over 8:1.
+   ═══════════════════════════════════════════════════════════════ */
+
+html[data-course="data"] {
+  --pp-ink: #2b1e3e;
+  --pp-ink-soft: #45355e;
+  --pp-fog: #efe9f7;
+  --pp-mist: #f8f5fc;
+  --pp-paper: #fbf9fd;
+  --pp-line: #f9a620;
+  --pp-line-deep: #5b3f8f;
+  --pp-line-ink: #5b3f8f;
+  --pp-mark: #f9a620;
+  --pp-muted: #635478;
+  --pp-border: #e2d8ef;
+
+  --bg: var(--pp-paper);
+  --bg-elevated: var(--pp-fog);
+  --panel: #ffffff;
+  --text: var(--pp-ink-soft);
+  --text-strong: var(--pp-ink);
+  --muted: var(--pp-muted);
+  --border: var(--pp-border);
+  --primary: #5b3f8f;
+  --primary-strong: #2b1e3e;
+  --primary-ink: #5b3f8f;
+  --accent: #5b3f8f;
+  --accent-alt: #a490c2;
+  --ring: 0 0 0 4px rgba(249, 166, 32, 0.3);
+  --shadow: 0 4px 20px rgba(43, 30, 62, 0.08);
+  --shadow-strong: 0 12px 36px rgba(43, 30, 62, 0.14);
+  --warm: #fbd38d;
+  --warm-soft: #fdebc8;
+}
+
+/* theme.js stamps data-theme on <body> as well as <html>, and the site's
+   [data-theme="dark"] tokens re-declare on both, so the course's dark tokens
+   have to as well. */
+html[data-course="data"][data-theme="dark"],
+html[data-course="data"] body[data-theme="dark"] {
+  --pp-ink: #f1ecf8;
+  --pp-ink-soft: #d5cae6;
+  --pp-fog: #1d1529;
+  --pp-mist: #150f1f;
+  --pp-paper: #120d1b;
+  --pp-line: #f9a620;
+  --pp-line-deep: #fbc15e;
+  --pp-line-ink: #fbc15e;
+  --pp-mark: #f9a620;
+  --pp-muted: #b3a5c9;
+  --pp-border: #3a2d4f;
+
+  --bg-elevated: #1d1529;
+  --panel: #1d1529;
+  --primary: #f9a620;
+  --primary-strong: #fbc15e;
+  --primary-ink: #fbc15e;
+  --accent: #fbc15e;
+  --accent-alt: #a490c2;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  --shadow-strong: 0 12px 36px rgba(0, 0, 0, 0.45);
+}
+
+/* The few places the site hardcodes its blue, or paints a gradient. */
+html[data-course="data"] .inspire-banner {
+  background: #2b1e3e;
+  box-shadow: 0 6px 18px rgba(21, 14, 33, 0.3);
+}
+
+html[data-course="data"] .inspire-banner a,
+html[data-course="data"] .inspire-banner__link {
+  color: #fbc15e;
+}
+
+html[data-course="data"][data-theme="dark"] .btn-primary,
+html[data-course="data"][data-theme="dark"] .btn.btn-primary.header-cta {
+  color: #24182f !important;
+}
+
+html[data-course="data"] .lesson-finish--test {
+  background: #2b1e3e;
+  box-shadow: 0 14px 40px rgba(21, 14, 33, 0.3);
+}
+
+html[data-course="data"] .lesson-finish--test .lesson-finish__eyebrow {
+  color: #fbc15e;
+}
+
+html[data-course="data"] .lesson-finish--test .btn-primary {
+  color: #2b1e3e;
+}
+
+html[data-course="data"] .lesson-finish__badge {
+  color: #2b1e3e;
+  background: #f9a620;
+  box-shadow: none;
+}
+
+html[data-course="data"] .ut-score__fill:not(.is-pass) {
+  background: #f9a620;
+}
+
+html[data-course="data"] .unit-lock-screen.is-stage {
+  background: var(--bg-elevated);
+}
+
+html[data-course="data"] .teacher-view-note {
+  background: var(--panel);
+}
+
+html[data-course="data"] .teacher-view-note__badge {
+  background: #5b3f8f;
+  box-shadow: none;
+}
+
+html[data-course="data"] .skip-link:focus {
+  outline-color: #f9a620;
+}
+
+/* Marigold where the site uses its accent: the header call to action, the
+   current page in the nav, and the unit number ribbons. Purple text on
+   marigold is 8.4:1. */
+html[data-course="data"] .header-cta,
+html[data-course="data"] .btn.btn-primary.header-cta,
+html[data-course="data"][data-theme="dark"] .btn.btn-primary.header-cta {
+  background: #f9a620 !important;
+  color: #2b1e3e !important;
+}
+
+html[data-course="data"] .header-cta:hover,
+html[data-course="data"] .btn.btn-primary.header-cta:hover {
+  background: #fbc15e !important;
+  color: #2b1e3e !important;
+}
+
+html[data-course="data"] .nav-pill .menu a.active {
+  background: #fdebc8;
+  color: #2b1e3e;
+}
+
+html[data-course="data"][data-theme="dark"] .nav-pill .menu a.active {
+  background: #3a2d4f;
+  color: #fbc15e;
+}
+
+html[data-course="data"] .unit-ribbon {
+  background: #f9a620;
+  color: #2b1e3e;
+}
+
+/* In dark mode the course's primary is marigold, so text on it is purple. */
+html[data-course="data"][data-theme="dark"] .practice-badge,
+html[data-course="data"][data-theme="dark"] .btn-run {
+  color: #24182f;
+}
