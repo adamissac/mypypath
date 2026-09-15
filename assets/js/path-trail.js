@@ -558,12 +558,22 @@
     });
   }
 
+  // Phone browsers fire resize while the URL bar collapses during a scroll.
+  // Only the width changes what labels and the camera measure, so a
+  // height-only resize re-renders from the cache instead of re-measuring.
   let resizeQueued = false;
-  function onResize() {
+  let measuredWidth = -1;
+  function onResize(force) {
     if (resizeQueued) return;
     resizeQueued = true;
     requestAnimationFrame(() => {
       resizeQueued = false;
+      const width = document.documentElement.clientWidth;
+      if (force !== true && width === measuredWidth) {
+        render();
+        return;
+      }
+      measuredWidth = width;
       segments.forEach((seg) => {
         seg.svg.setAttribute("viewBox", `0 0 ${seg.box.w} ${seg.box.h}`);
         seg.camKey = null;
@@ -577,6 +587,7 @@
 
   layout();
   measure();
+  measuredWidth = document.documentElement.clientWidth;
   if (reduced) section.classList.add("is-active");
   setProgress(measureScroll());
 
@@ -623,7 +634,7 @@
   document.documentElement.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", onResize, { passive: true });
   // Web fonts change label widths; measure again once they are in.
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(onResize);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => onResize(true));
   onScroll();
 
   window.PyPathTrail = {
