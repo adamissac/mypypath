@@ -1,9 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="none">
+  <style>
+    @media (prefers-reduced-motion: no-preference) {
+      .orbit-track { animation: orbit-dash 28s linear infinite; }
+      .lunar-satellite { transform-origin: 310px 300px; animation: satellite-orbit 45s linear infinite; }
+      .lunar-stars { animation: star-breathe 5s ease-in-out infinite alternate; }
+    }
+    @keyframes orbit-dash { to { stroke-dashoffset: -240; } }
+    @keyframes satellite-orbit { to { transform: rotate(360deg); } }
+    @keyframes star-breathe { from { opacity: .4; } to { opacity: 1; } }
+  </style>
   <title>Lunar expedition: Python for Data, stops 11 through 20</title>
   <defs><clipPath id="moon-disc"><circle cx="310" cy="300" r="207"/></clipPath></defs>
   <!-- Broken orbital track, behind the lunar body. -->
-  <ellipse cx="310" cy="310" rx="279" ry="89" transform="rotate(-29 310 310)" stroke="#a490c2" stroke-width="1.2" stroke-dasharray="3 9" opacity=".55"/>
-  <g fill="#a490c2">
+  <ellipse class="orbit-track" cx="310" cy="310" rx="279" ry="89" transform="rotate(-29 310 310)" stroke="#a490c2" stroke-width="1.2" stroke-dasharray="3 9" opacity=".55"/>
+  <g class="lunar-stars" fill="#a490c2">
     <circle cx="137" cy="105" r="2"/><circle cx="525" cy="305" r="2"/><circle cx="94" cy="375" r="2.5"/><circle cx="427" cy="517" r="2"/><circle cx="349" cy="63" r="1.5"/><circle cx="187" cy="494" r="1.5"/>
   </g>
   <g stroke="#a490c2" stroke-width="1.5" stroke-linecap="round">
@@ -152,13 +162,14 @@
     </g>
   <!-- Mission flag and a small satellite, separate from the lesson marks. -->
   <g stroke-linejoin="round"><path d="M370 330 V301 L396 309 L370 318" fill="#f9a620" stroke="#3a2853" stroke-width="2"/><path d="M373 304 L387 309 L373 313Z" fill="#ffe5ac"/></g>
-  <g transform="translate(504 138) rotate(28)">
+  <g class="lunar-satellite"><g transform="translate(504 138) rotate(28)">
     <path d="M-36 -11 h23 v24 h-23Z M13 -11 h23 v24 h-23Z" fill="#5b3f8f" stroke="#a490c2" stroke-width="1.5"/>
     <path d="M-28 -11 v24 M-20 -11 v24 M21 -11 v24 M29 -11 v24 M-36 1 h23 M13 1 h23" stroke="#a490c2" stroke-width="1"/>
     <path d="M-13 1 H13 M0 -13 V-23" stroke="#f9a620" stroke-width="3"/>
     <rect x="-9" y="-13" width="18" height="28" rx="4" fill="#e6def0" stroke="#4d365f" stroke-width="2"/>
     <path d="M-4 -8 h8 v9 h-8Z" fill="#f9a620"/><circle cy="8" r="2" fill="#5b3f8f"/>
     <path d="M-10 -25 Q0 -14 10 -25" stroke="#f9a620" stroke-width="2" stroke-linecap="round"/>
+  </g>
   </g>
   <g stroke="#a490c2" stroke-width="1" opacity=".55"><path d="M257 555 h30 m66 0 h30"/><circle cx="320" cy="555" r="3"/></g>
 </svg>
