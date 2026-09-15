@@ -392,7 +392,7 @@
       // the middle of the seam: its first stop, the gateway, lights on arrival.
       const started = si === 0 || progress >= seg.start || isScene;
       const k = started ? stopPosition(seg, u) : 0;
-      const reachedIndex = started ? Math.floor(k + 1e-6) : -1;
+      const reachedIndex = started ? Math.floor(k + 0.02) : -1;
       const frac = started ? pathFraction(seg, k) : 0;
 
       seg.svg.style.setProperty("--path-progress", String(frac));

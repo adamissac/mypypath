@@ -12,6 +12,8 @@ them at every 5% of the scroll track, at 1440px, 1024px and 390px:
   6. Past the seam, a stop of the next course is lit and has a real box.
   7. The active stop is never inside something with opacity 0.
 
+  8. Label text and the active stop's number meet 4.5:1 contrast.
+
 plus: the active stop has a label, and the active stop's dot is inside the map.
 At the two wider widths each step is checked again with the pointer on the next
 stop, so the hover label is held to the same rules.
@@ -148,6 +150,23 @@ PROBE = r"""
     if (opacityChain(segs[i].svg) < 0.99) fail(6, `segment ${i + 1} is not fully shown past its seam`);
   }
 
+  // 8. Label text is readable on its pill (WCAG AA, 4.5:1), and the active
+  //    stop's number is readable on its dot.
+  const rgb = (c) => (c.match(/[\d.]+/g) || []).slice(0, 3).map(Number);
+  const lum = ([r, g, b]) => {
+    const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+    return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+  };
+  const ratio = (a, b) => { const [x, y] = [lum(rgb(a)), lum(rgb(b))].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
+  for (const l of labels) {
+    const r = ratio(getComputedStyle(l.g.querySelector('.trail-callout__pill')).fill, getComputedStyle(l.g.querySelector('.trail-callout__text')).fill);
+    if (r < 4.5) fail(8, `label for stop ${l.for + 1} has contrast ${r.toFixed(2)}`);
+  }
+  for (const s of section.querySelectorAll('.path-map.is-scene .trail-stop.is-active')) {
+    const r = ratio(getComputedStyle(s.querySelector('.trail-stop__dot')).fill, getComputedStyle(s.querySelector('.trail-stop__num')).fill);
+    if (r < 4.5) fail(8, `active stop number has contrast ${r.toFixed(2)}`);
+  }
+
   // 7. The active stop is visible, labelled and inside the map.
   const activeStops = [...section.querySelectorAll('.trail-stop.is-active')];
   if (activeStops.length !== 1) fail(7, `${activeStops.length} active stops`);
@@ -180,7 +199,7 @@ def settle(page):
     page.wait_for_timeout(600)
 
 
-def run(base, reduced, only):
+def run(base, reduced, only, theme=None):
     total_fail = 0
     report = {}
     with sync_playwright() as p:
@@ -197,8 +216,12 @@ def run(base, reduced, only):
             page = ctx.new_page()
             errors = []
             page.on("pageerror", lambda e: errors.append(str(e)))
+            if theme:
+                page.add_init_script(f"try {{ localStorage.setItem('theme', '{theme}') }} catch (e) {{}}")
             page.goto(f"{base}/index.html?invariants=1", wait_until="load")
             settle(page)
+            if theme:
+                page.evaluate("(t) => document.documentElement.setAttribute('data-theme', t)", theme)
             failures = []
             shot = False
             for step in STEPS:
@@ -244,7 +267,7 @@ def run(base, reduced, only):
             print("   ", f)
         if len(failures) > 40:
             print(f"    ... and {len(failures) - 40} more")
-    print(f"\n{'PASS' if not total_fail else 'FAIL'}: trail invariants{' (reduced motion)' if reduced else ''}")
+    print(f"\n{'PASS' if not total_fail else 'FAIL'}: trail invariants{' (reduced motion)' if reduced else ''}{f' ({theme} theme)' if theme else ''}")
     return 1 if total_fail else 0
 
 
@@ -263,6 +286,8 @@ SABOTAGE = {
     6: """() => { const s = window.PyPathTrail.segments; const last = s[s.length - 1];
           last.svg.querySelectorAll('.trail-stop').forEach((e) => e.classList.remove('is-lit')); }""",
     7: """() => { document.querySelector('.path-map.is-scene .trail-stop.is-active').style.opacity = '0'; }""",
+    8: """() => { const g = document.querySelector('.path-map.is-scene .trail-callout.is-shown');
+          g.querySelector('.trail-callout__text').style.fill = getComputedStyle(g.querySelector('.trail-callout__pill')).fill; }""",
 }
 
 
@@ -298,9 +323,10 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", default=os.environ.get("TRAIL_BASE", "http://localhost:8080"))
     ap.add_argument("--reduced", action="store_true")
+    ap.add_argument("--theme", choices=["light", "dark"])
     ap.add_argument("--width", type=int, action="append")
     ap.add_argument("--self-test", action="store_true")
     args = ap.parse_args()
     if args.self_test:
         sys.exit(self_test(args.base.rstrip("/")))
-    sys.exit(run(args.base.rstrip("/"), args.reduced, args.width))
+    sys.exit(run(args.base.rstrip("/"), args.reduced, args.width, args.theme))
