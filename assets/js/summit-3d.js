@@ -11,6 +11,19 @@
   var THREE_SRC = '/assets/vendor/three.min.js';
   var TURN_SECONDS = 36;  // mountain: one full rotation
   var CLOUD_SECONDS = 70; // clouds drift slower for parallax
+  var host = document.querySelector('.home-summit');
+  var mountain = host && host.querySelector('.home-summit__mountain');
+  var moon = host && host.querySelector('.home-summit__moon');
+  var started = false;
+
+  // Mount exactly one scene. Keep the inactive scene detached so it cannot
+  // flash, occupy space, or remain in the accessibility tree.
+  function syncCourseArtwork() {
+    if (!host || !mountain || !moon) return;
+    var next = document.documentElement.dataset.course === 'data' ? moon : mountain;
+    if (host.firstElementChild !== next || host.children.length !== 1) host.replaceChildren(next);
+    if (next === mountain) boot();
+  }
 
   function prefersReduced() {
     if (window.PyMotion && typeof window.PyMotion.prefersReduced === 'function') {
@@ -363,8 +376,7 @@
   }
 
   function init() {
-    var host = document.querySelector('.home-summit');
-    var img = host && host.querySelector('.home-summit__art');
+    var img = mountain && mountain.querySelector('.home-summit__art');
     if (!host || !img) return;
 
     var scene = new THREE.Scene();
@@ -400,7 +412,7 @@
     }
     size();
 
-    host.appendChild(renderer.domElement);
+    mountain.appendChild(renderer.domElement);
     host.classList.add('is-3d');
 
     if (window.ResizeObserver) {
@@ -433,7 +445,7 @@
     }
 
     function schedule() {
-      if (onScreen && !document.hidden && rafId === null) {
+      if (onScreen && !document.hidden && document.documentElement.dataset.course !== 'data' && rafId === null) {
         rafId = window.requestAnimationFrame(frame);
       }
     }
@@ -456,19 +468,30 @@
       if (document.hidden) halt(); else schedule();
     });
 
+    new MutationObserver(function () {
+      if (document.documentElement.dataset.course === 'data') halt(); else schedule();
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-course'] });
     schedule();
   }
 
   function boot() {
+    if (started || document.documentElement.dataset.course === 'data') return;
     if (!document.body || !document.body.classList.contains('page-home')) return;
     if (prefersReduced() || !webglAvailable()) return;
-    if (!document.querySelector('.home-summit .home-summit__art')) return;
+    if (!mountain || !mountain.querySelector('.home-summit__art')) return;
+    started = true;
     loadThree(init);
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot);
+  // Deferred scripts run while readyState is interactive, before other
+  // modules have finished. Do not let the optional 3D library compete with
+  // those modules: wait for DOMContentLoaded even in that intermediate state.
+  if (document.readyState !== 'complete') {
+    document.addEventListener('DOMContentLoaded', syncCourseArtwork, { once: true });
   } else {
-    boot();
+    syncCourseArtwork();
   }
+  new MutationObserver(syncCourseArtwork).observe(document.documentElement, {
+    attributes: true, attributeFilter: ['data-course'],
+  });
 })();

@@ -476,7 +476,7 @@ ${svgs.join('')}${segments.length > 1 ? `
    drawn through them, all 20 stops piled onto the first line. The markup and
    these two files are only correct together, so their URLs change whenever
    either file does, and --check fails if index.html still points at old ones. */
-export const VERSIONED = ['assets/css/home-path.css', 'assets/js/path-trail.js'];
+export const VERSIONED = ['assets/css/home-path.css', 'assets/js/path-trail.js', 'assets/js/summit-3d.js', 'assets/img/data-moon.svg'];
 
 export function assetVersion(rel) {
   return createHash('sha256').update(fs.readFileSync(path.join(ROOT, rel))).digest('hex').slice(0, 10);
