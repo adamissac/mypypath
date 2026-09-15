@@ -34,6 +34,19 @@ body.page-home {
   overflow-y: visible;
 }
 
+/* style.css sets overflow-x: hidden !important on html, body and main at
+   980px and below. hidden (unlike clip) turns body and main into scroll
+   containers that never scroll, and the trail's sticky viewport pins to
+   main instead of the page, so it scrolled away on phones and tablets.
+   clip still stops sideways overflow without making a scroll container. */
+@media (max-width: 980px) {
+  html:has(body.page-home),
+  body.page-home,
+  body.page-home main {
+    overflow-x: clip !important;
+  }
+}
+
 [data-theme="dark"] .page-home {
   --home-ink: #e8f4fb;
   --home-ink-soft: #b7d4e4;

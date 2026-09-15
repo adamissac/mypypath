@@ -17,6 +17,11 @@
  *   A control overlapping another control, which is how a mobile layout
  *   usually fails first.
  *
+ *   A sticky scroll scene that does not stick. The home trail pins its map
+ *   while the track scrolls past; if an ancestor becomes a scroll container
+ *   (overflow-x: hidden does that, clip does not) the map scrolls away and
+ *   the middle of the trail is a blank screen. Checked halfway down the track.
+ *
  *     node scripts/verify-mobile.mjs
  *     node scripts/verify-mobile.mjs --json
  */
@@ -143,6 +148,19 @@ const PROBE = `(() => {
   return out;
 })()`;
 
+const STICKY_PROBE = `(async () => {
+  const track = document.querySelector('.path-journey__track');
+  const sticky = track && track.querySelector('.path-journey__sticky');
+  if (!sticky) return null;
+  const top = track.getBoundingClientRect().top + scrollY;
+  scrollTo(0, top + (track.offsetHeight - innerHeight) / 2);
+  await new Promise((r) => setTimeout(r, 300));
+  const want = parseFloat(getComputedStyle(sticky).top) || 0;
+  const got = sticky.getBoundingClientRect().top;
+  scrollTo(0, 0);
+  return Math.abs(got - want) > 2 ? { want: Math.round(want), got: Math.round(got) } : null;
+})()`;
+
 async function run() {
   const server = await serve();
   const browser = await chromium.launch();
@@ -161,6 +179,7 @@ async function run() {
         await p.goto(`http://127.0.0.1:${PORT}${page}`, { waitUntil: 'domcontentloaded', timeout: 45000 });
         await p.waitForTimeout(2500);
         const r = await p.evaluate(PROBE);
+        r.unstuck = await p.evaluate(STICKY_PROBE);
         report.push({ viewport: vp.name, page, ...r });
       } catch (e) {
         report.push({ viewport: vp.name, page, error: String(e).slice(0, 160) });
@@ -176,7 +195,7 @@ async function run() {
 
   let bad = 0;
   for (const r of report) {
-    const issues = (r.overflow?.length ? 1 : 0) + (r.small?.length || 0) + (r.tiny?.length || 0);
+    const issues = (r.overflow?.length ? 1 : 0) + (r.small?.length || 0) + (r.tiny?.length || 0) + (r.unstuck ? 1 : 0);
     if (!issues && !r.error) continue;
     bad += 1;
     console.log(`\n${r.viewport}  ${r.page}`);
@@ -189,6 +208,9 @@ async function run() {
     }
     for (const s of (r.small || []).slice(0, 5)) {
       console.log(`    TARGET    ${s.tag}.${s.cls || '(none)'} ${s.w}x${s.h}  "${s.text}"`);
+    }
+    if (r.unstuck) {
+      console.log(`    UNSTUCK   .path-journey__sticky is at ${r.unstuck.got}px mid-track, should pin at ${r.unstuck.want}px`);
     }
     for (const t of r.tiny || []) {
       console.log(`    TINY TEXT ${t.tag} ${t.size}px  "${t.text}"`);
