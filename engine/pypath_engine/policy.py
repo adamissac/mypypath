@@ -3,11 +3,13 @@ likely a student is to get something right; this decides what to do about it.
 
   1. Estimate mastery for every skill in scope: the model's p(correct) on a
      typical first-attempt question on that skill, now.
-  2. A skill is mastered when, at the last time it was practised, p >= 0.8 and
+  2. A skill is mastered when, at the last time it was practised, p >= 0.85 and
      it had at least two successes. Time away lowers today's estimate (which
      drives review) without re-locking the skills built on it.
   3. The frontier is every unmastered skill whose in-scope prerequisites are all
-     mastered. Nothing past the frontier is ever recommended: a student stuck
+     mastered, and which is taught no more than one unit beyond the furthest unit
+     the student has attempted in that course (so a prerequisite graph that
+     happens to allow unit 9 does not send a unit 2 student there). Nothing past the frontier is ever recommended: a student stuck
      below it is sent to the prerequisite, which is on the frontier.
   4. Mastered skills come back for review on a doubling schedule (3, 6, 12 ...
      up to 60 days, doubling with each success past mastery).
@@ -42,7 +44,7 @@ DEFAULTS = {
     "per_skill_cap": 2,
     "band": [0.6, 0.8],
     "band_width": 0.1,
-    "mastered_at": 0.8,
+    "mastered_at": 0.85,
     "mastered_min_successes": 2,
     "recent_exclude_hours": 24,
     "correct_exclude_days": 7,
@@ -72,6 +74,16 @@ class ArtifactTaxonomy:
         self.lesson_skills = {p: tuple(v) for p, v in art["lesson_skills"].items()}
         self.prerequisites = {s: tuple(d["prerequisites"]) for s, d in art["skills"].items()}
         self.skill_order = list(art["skill_order"])
+        # Where each skill is first taught: the earliest practice item carrying it.
+        self.skill_first: Dict[str, int] = {}
+        self.skill_unit: Dict[str, int] = {}
+        for it in self.items.values():
+            if it.kind not in ("question", "exercise"):
+                continue
+            for s in it.skills:
+                if s not in self.skill_first or it.order < self.skill_first[s]:
+                    self.skill_first[s] = it.order
+                    self.skill_unit[s] = it.unit
 
 
 def local_to_events(storage: Dict[str, str]) -> List[dict]:
@@ -126,7 +138,8 @@ def _band_weight(p: float, o: dict) -> float:
     if lo <= p <= hi:
         return 1.0
     d = (lo - p) if p < lo else (p - hi)
-    return math.exp(-((d / o["band_width"]) ** 2))
+    x = d / o["band_width"]
+    return math.exp(-(x * x))   # x * x, not ** 2: JS must round it identically
 
 
 def skill_status(art: dict, events: List[dict], now: int, courses: Optional[List[str]] = None,
@@ -165,7 +178,16 @@ def skill_status(art: dict, events: List[dict], now: int, courses: Optional[List
     def prereq_ok(s: str) -> bool:
         return all(mastered.get(p, False) for p in tax.prerequisites[s] if skills_meta[p]["course"] in scope)
 
-    frontier = [s for s in in_scope if not mastered[s] and prereq_ok(s)]
+    reach: Dict[str, int] = {}
+    for key in state.item_attempts:
+        it = tax.items.get(key)
+        if it is not None and it.unit > reach.get(it.course, 0):
+            reach[it.course] = it.unit
+
+    def within_reach(s: str) -> bool:
+        return tax.skill_unit.get(s, 1) <= reach.get(skills_meta[s]["course"], 1) + 1
+
+    frontier = [s for s in in_scope if not mastered[s] and prereq_ok(s) and within_reach(s)]
     due: Dict[str, int] = {}
     for s in in_scope:
         st = state.skills.get(s)
@@ -176,7 +198,8 @@ def skill_status(art: dict, events: List[dict], now: int, courses: Optional[List
             if days >= interval:
                 due[s] = int(days)
     return {"o": o, "tax": tax, "state": state, "courses": courses, "scope": scope, "in_scope": in_scope,
-            "mastery": mastery, "mastered": mastered, "prereq_ok": prereq_ok, "frontier": frontier, "due": due}
+            "mastery": mastery, "mastered": mastered, "prereq_ok": prereq_ok, "frontier": frontier, "due": due,
+            "reach": reach}
 
 
 def recommend(art: dict, events: List[dict], now: int, courses: Optional[List[str]] = None,
@@ -246,7 +269,7 @@ def recommend(art: dict, events: List[dict], now: int, courses: Optional[List[st
     if not picked:
         # Cold start, or nothing ranked: curriculum order over the frontier (or,
         # if everything is mastered, over everything in scope), easiest first.
-        pool_skills = frontier or in_scope
+        pool_skills = sorted(frontier or in_scope, key=lambda s: (tax.skill_first.get(s, 10 ** 9), tax.skill_order.index(s)))
         for relax in (False, True):
             for s in pool_skills:
                 items = [it for it in practice if it.skills[0] == s and all(prereq_ok(x) for x in it.skills)

@@ -137,3 +137,21 @@ def test_mastered_skills_come_back_for_review(artifact):
 def test_the_taxonomy_the_policy_walks_has_no_cycles():
     tax = load()
     assert find_cycle({s: tax.prerequisites[s] for s in tax.prerequisites}) is None
+
+
+@SETTINGS
+@given(raw=history, now_days=st.integers(0, 90), courses=scopes)
+def test_frontier_recommendations_stay_within_curriculum_reach(artifact, practice_keys, raw, now_days, courses):
+    events, now = build(artifact, practice_keys, raw, now_days)
+    status = policy.skill_status(artifact, events, now, courses)
+    tax = policy.ArtifactTaxonomy(artifact)
+    for r in policy.recommend(artifact, events, now, courses):
+        if r["reason_code"] == "frontier":
+            course = artifact["skills"][r["skill"]]["course"]
+            assert tax.skill_unit[r["skill"]] <= status["reach"].get(course, 1) + 1
+
+
+def test_a_new_data_student_starts_at_unit_one(artifact):
+    recs = policy.recommend(artifact, [], BASE, ["data"])
+    assert recs[0]["skill"] == "data.records"
+    assert all(artifact["items"][r["item"]]["unit"] <= 2 for r in recs)

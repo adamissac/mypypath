@@ -236,7 +236,11 @@ def simulate(cfg: SimConfig, tax: Optional[Taxonomy] = None):
 
             em.new_page()
             t += rng.randint(5_000, 40_000)
-            em.record(t, "lesson.opened", path, unit, {"lessonPath": path, "unit": unit})
+            # curriculum.js unitOf() only matches /units/ paths, so the real site
+            # never records lesson.opened on a Python for Data page. Reproduced,
+            # so the model cannot come to lean on a signal real Data students lack.
+            if path.startswith("/units/"):
+                em.record(t, "lesson.opened", path, unit, {"lessonPath": path, "unit": unit})
             learn(lesson_skills, 0.12)
             runs = rng.randint(1, 4) + (520 if loops and rng.random() < 0.08 else 0)
             for _ in range(runs):

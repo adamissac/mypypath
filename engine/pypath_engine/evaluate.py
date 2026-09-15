@@ -116,7 +116,8 @@ def recovery(fitted_full: models.Fitted, by_student: Dict[str, List[dict]], stud
             n = st.succ + st.fail
             if n == 0:
                 continue
-            est.append(model_core.mastery(art, state, skill, at, tax.prerequisites))
+            # At the skill's last practice, the moment policy.py judges mastery at.
+            est.append(model_core.mastery(art, state, skill, st.last_at or at, tax.prerequisites))
             lap.append(model_core.laplace(st))
             true.append(truth_students[s]["final_mastery"][skill])
             opp.append(n)
@@ -130,20 +131,30 @@ def corr_block(x, y) -> dict:
     return {"n": int(len(x)), "pearson": float(stats.pearsonr(x, y)[0]), "spearman": float(stats.spearmanr(x, y)[0])}
 
 
-def learning_curves(rows: Rows, p: np.ndarray, tax, max_opp: int = 15) -> List[dict]:
+def learning_curves(rows: Rows, p: np.ndarray, tax, max_opp: int = 15, p_item: Optional[np.ndarray] = None) -> List[dict]:
+    """Error rate by opportunity per skill, observed and predicted, plus a
+    difficulty-adjusted success: mean(outcome - item-only prediction).
+
+    The raw curve is confounded by curriculum order: within every lesson the
+    easier quiz questions come before the harder graded exercises, so early
+    opportunities are easy items and later ones hard, and raw error can rise
+    while students learn. Subtracting what item difficulty alone predicts
+    removes most of that."""
     kinds = np.isin(rows.kind, ["question", "exercise"])
     opp = np.rint(np.expm1(rows.sk_ls) + np.expm1(rows.sk_lf)).astype(int) + 1
     keep = kinds[rows.sk_row] & (opp <= max_opp)
     out = []
     agg: Dict[tuple, list] = {}
     for r, c, o in zip(rows.sk_row[keep], rows.sk_col[keep], opp[keep]):
-        a = agg.setdefault((c, o), [0, 0.0, 0.0])
+        a = agg.setdefault((c, o), [0, 0.0, 0.0, 0.0])
         a[0] += 1
         a[1] += 1 - rows.y[r]
         a[2] += 1 - p[r]
-    for (c, o), (n, err, perr) in sorted(agg.items()):
+        a[3] += (rows.y[r] - p_item[r]) if p_item is not None else 0.0
+    for (c, o), (n, err, perr, adj) in sorted(agg.items()):
         out.append({"skill": tax.topo_order[c], "opportunity": int(o), "n": n,
-                    "observed_error": err / n, "predicted_error": perr / n})
+                    "observed_error": err / n, "predicted_error": perr / n,
+                    "adjusted_success": adj / n if p_item is not None else None})
     return out
 
 
@@ -227,10 +238,23 @@ def run(ingest_dir: Path, sim_dir: Optional[Path], out_dir: Path, specs: List[st
             "model_opp_ge_5": corr_block(np.array(rec["est"])[opp >= 5], np.array(rec["true"])[opp >= 5]),
             "laplace_opp_ge_5": corr_block(np.array(rec["laplace"])[opp >= 5], np.array(rec["true"])[opp >= 5]),
         }
+        # How well "mastered" (estimate >= t) picks out true mastery >= 0.8, for
+        # skills with 3+ attempts: the table policy.DEFAULTS["mastered_at"] was set from.
+        est_a, true_a = np.array(rec["est"]), np.array(rec["true"])
+        m3 = opp >= 3
+        rows_t = []
+        for t in (0.7, 0.75, 0.8, 0.85, 0.9):
+            pred, actual = est_a[m3] >= t, true_a[m3] >= 0.8
+            tp = int((pred & actual).sum())
+            prec = tp / max(1, int(pred.sum()))
+            recl = tp / max(1, int(actual.sum()))
+            rows_t.append({"threshold": t, "precision": prec, "recall": recl,
+                           "f1": 2 * prec * recl / max(1e-9, prec + recl), "declared": float(pred.mean())})
+        result["recovery"]["mastery_threshold"] = {"pairs": int(m3.sum()), "true_share": float((true_a[m3] >= 0.8).mean()), "rows": rows_t}
 
     # ------------------------------------------------------ learning curves
     if "full" in specs:
-        result["learning_curves"] = learning_curves(rows, oof["full"], tax)
+        result["learning_curves"] = learning_curves(rows, oof["full"], tax, p_item=oof.get("item"))
 
     # ------------------------------------------------------------ temporal
     order = {}
