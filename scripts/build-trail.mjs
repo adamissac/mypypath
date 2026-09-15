@@ -20,6 +20,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
@@ -274,11 +275,33 @@ export function buildTrail(segments = SEGMENTS, courses = coursesBySlug()) {
         ${END}`;
 }
 
-export function renderIndex(html, trail = buildTrail()) {
+/* The trail's stylesheet and script are versioned by content.
+
+   index.html is served must-revalidate, but /assets/(css|js)/* is cached for an
+   hour and then served stale for up to a day while it revalidates. On
+   unversioned URLs a returning visitor got the new trail markup with the old
+   CSS and JS: both jump links as one underlined string, the progress bar
+   drawn through them, all 20 stops piled onto the first line. The markup and
+   these two files are only correct together, so their URLs change whenever
+   either file does, and --check fails if index.html still points at old ones. */
+export const VERSIONED = ['assets/css/home-path.css', 'assets/js/path-trail.js'];
+
+export function assetVersion(rel) {
+  return createHash('sha256').update(fs.readFileSync(path.join(ROOT, rel))).digest('hex').slice(0, 10);
+}
+
+export function renderIndex(html, trail = buildTrail(), versions = Object.fromEntries(VERSIONED.map((rel) => [rel, assetVersion(rel)]))) {
   const start = html.indexOf(BEGIN);
   const end = html.indexOf(END);
   if (start === -1 || end === -1) throw new Error('index.html has no trail:begin / trail:end markers');
-  return html.slice(0, start) + trail + html.slice(end + END.length);
+  let out = html.slice(0, start) + trail + html.slice(end + END.length);
+  for (const [rel, v] of Object.entries(versions)) {
+    const url = '/' + rel;
+    const re = new RegExp(`(["'])${url.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')}(?:\\?v=[0-9a-f]+)?\\1`, 'g');
+    if (!re.test(out)) throw new Error(`index.html does not reference ${url}`);
+    out = out.replace(re, `$1${url}?v=${v}$1`);
+  }
+  return out;
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

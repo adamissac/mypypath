@@ -95,3 +95,22 @@ describe('the generated trail in index.html', () => {
     expect(() => buildTrail(SEGMENTS, coursesBySlug({ courses: broken }))).toThrow(/has no hours/);
   });
 });
+
+describe('the trail assets are versioned with the markup', () => {
+  /* Unversioned, a returning visitor paired the new markup with a day-old
+     cached stylesheet and script, and the trail rendered broken. */
+  it('points index.html at the current content of home-path.css and path-trail.js', async () => {
+    const { VERSIONED, assetVersion } = await import('../scripts/build-trail.mjs');
+    for (const rel of VERSIONED) {
+      expect(html).toContain(`/${rel}?v=${assetVersion(rel)}`);
+    }
+  });
+
+  it('changes the URL when a file changes', async () => {
+    const { renderIndex } = await import('../scripts/build-trail.mjs');
+    const bumped = renderIndex(html, undefined, { 'assets/css/home-path.css': 'abc123', 'assets/js/path-trail.js': 'def456' });
+    expect(bumped).toContain('/assets/css/home-path.css?v=abc123"');
+    expect(bumped).toContain('/assets/js/path-trail.js?v=def456"');
+    expect(bumped).not.toMatch(/home-path\.css\?v=[0-9a-f]+\?v=/);
+  });
+});
