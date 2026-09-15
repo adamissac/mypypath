@@ -193,3 +193,55 @@ describe('the buffer', () => {
     expect(E.pending()).toBe(0);
   });
 });
+
+/* The local mirror recommend.js reads. Device-only, capped, and the same
+   sanitised payloads as the log: it must not become a side door for anything
+   the log itself refuses. */
+describe('the local event mirror', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    E.reset();
+  });
+
+  it('records for a guest, who has no class and no Firestore log', () => {
+    E.setEnabled(false);
+    expect(E.record('check.answered', { lessonPath: LESSON, questionId: 'u1-first-1', correct: true, attempt: 1 })).toBe(false);
+    const local = E.readLocal();
+    expect(local).toHaveLength(1);
+    expect(local[0]).toMatchObject({ type: 'check.answered', payload: { questionId: 'u1-first-1', correct: true } });
+    expect(typeof local[0].at).toBe('number');
+  });
+
+  it('keeps only the sanitised payload, never extra fields', () => {
+    E.record('code.error', { lessonPath: LESSON, editorId: 'exercise1', errorType: 'NameError: name "secret" is not defined', code: 'print(secret)' });
+    const [e] = E.readLocal();
+    expect(JSON.stringify(e)).not.toContain('secret');
+    expect(e.payload).toEqual({ lessonPath: LESSON, editorId: 'exercise1', errorType: 'UnknownError' });
+  });
+
+  it('drops what the vocabulary rejects', () => {
+    E.record('not.a.type', { lessonPath: LESSON });
+    E.record('check.answered', { lessonPath: LESSON });   // no questionId
+    expect(E.readLocal()).toEqual([]);
+  });
+
+  it('is capped, keeping the most recent', () => {
+    for (let i = 0; i < E.LOCAL_CAP + 30; i++) {
+      if (i % 400 === 0) E.reset();   // a new page session, so the per-session cap does not stop it first
+      E.record('code.run', { lessonPath: LESSON, editorId: 'practice1', ok: i % 2 === 0 });
+    }
+    expect(E.readLocal()).toHaveLength(E.LOCAL_CAP);
+  });
+
+  it('never syncs', () => {
+    new Function(fs.readFileSync('assets/js/storage-keys.js', 'utf8')).call(window);
+    expect(window.PyPathKeys.isSyncable(E.LOCAL_KEY)).toBe(false);
+  });
+
+  it('survives broken storage', () => {
+    localStorage.setItem(E.LOCAL_KEY, '{nope');
+    expect(E.readLocal()).toEqual([]);
+    E.record('code.run', { lessonPath: LESSON, editorId: 'practice1', ok: true });
+    expect(E.readLocal()).toHaveLength(1);
+  });
+});

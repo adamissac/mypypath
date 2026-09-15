@@ -248,7 +248,50 @@
 
   function isEnabled() { return enabled; }
 
+  /* THE LOCAL MIRROR. The same sanitised events, kept on this device only, for
+     everyone -- guests and students in no class included -- so the "practice
+     next" panel (recommend.js) can work from what this learner actually did
+     without reading their Firestore log, which would cost up to 500 reads per
+     visit against the project's daily budget.
+
+     Nothing new is recorded: it is makeEvent's own output, the same whitelist
+     and 512-character cap, plus the time. The key is not in storage-keys.js's
+     sync allowlist, so it never leaves the browser, and it is capped so it
+     cannot grow without bound. It is self-reported like everything else here. */
+  var LOCAL_KEY = 'pypath-local-events';
+  var LOCAL_CAP = 800;
+  var mirrored = 0;
+
+  function mirrorLocal(type, input) {
+    if (mirrored >= SESSION_CAP) return;
+    var event = makeEvent(type, input);
+    if (!event) return;
+    try {
+      var store = window.localStorage;
+      if (!store) return;
+      var list = [];
+      try { list = JSON.parse(store.getItem(LOCAL_KEY) || '[]'); } catch (e) { list = []; }
+      if (!Array.isArray(list)) list = [];
+      list.push({ type: event.type, lessonPath: event.lessonPath, unit: event.unit, at: Date.now(), payload: event.payload });
+      if (list.length > LOCAL_CAP) list = list.slice(list.length - LOCAL_CAP);
+      store.setItem(LOCAL_KEY, JSON.stringify(list));
+      mirrored += 1;
+    } catch (e) {
+      // Private mode or a full quota: the panel falls back to what else is stored.
+    }
+  }
+
+  function readLocal() {
+    try {
+      var list = JSON.parse(window.localStorage.getItem(LOCAL_KEY) || '[]');
+      return Array.isArray(list) ? list : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
   function record(type, input) {
+    mirrorLocal(type, input);
     if (!enabled) return false;
     var event = makeEvent(type, input);
     if (!event) return false;
@@ -277,6 +320,7 @@
     buffer = [];
     dropped = 0;
     recorded = 0;
+    mirrored = 0;
     enabled = false;
   }
 
@@ -292,6 +336,9 @@
     setEnabled: setEnabled,
     isEnabled: isEnabled,
     record: record,
+    readLocal: readLocal,
+    LOCAL_KEY: LOCAL_KEY,
+    LOCAL_CAP: LOCAL_CAP,
     drain: drain,
     pending: pending,
     dropped: droppedCount,
