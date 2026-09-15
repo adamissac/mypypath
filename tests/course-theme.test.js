@@ -9,8 +9,9 @@ import { JSDOM } from 'jsdom';
 
 const src = fs.readFileSync('assets/js/theme-init.js', 'utf8');
 
-function courseFor(pathname) {
+function courseFor(pathname, stored) {
   const dom = new JSDOM('<!doctype html><html><head></head><body></body></html>', { url: `https://mypypath.com${pathname}`, runScripts: 'outside-only' });
+  if (stored) dom.window.localStorage.setItem("pypath-course", stored);
   dom.window.eval(src);
   return dom.window.document.documentElement.getAttribute('data-course');
 }
@@ -26,6 +27,16 @@ describe('the Python for Data course theme', () => {
     for (const p of ['/', '/index.html', '/curriculum.html', '/units/unit-3.html', '/units/unit-1/what-is-python.html', '/database.html', '/data-privacy.html', '/sandbox.html']) {
       expect(courseFor(p), p).toBeNull();
     }
+  });
+
+  it('carries the Data palette into shared pages and resets for Foundations', () => {
+    for (const path of ['/settings.html', '/sandbox.html', '/', '/courses.html']) {
+      expect(courseFor(path, 'data')).toBe('data');
+    }
+    for (const path of ['/curriculum.html', '/units/unit-3.html']) {
+      expect(courseFor(path, 'data')).toBeNull();
+    }
+    expect(courseFor('/settings.html', 'invalid')).toBeNull();
   });
 
   it('has no gradients in the course theme', () => {

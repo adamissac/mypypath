@@ -10,13 +10,20 @@
         window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
       );
     }
-    // Python for Data pages wear their course's colours (pypath-theme.css,
-    // html[data-course="data"]). Set here so the first paint is already right.
-    if (/^\/data(\.html$|\/)/.test(location.pathname)) {
-      document.documentElement.setAttribute('data-course', 'data');
-    }
     if (sessionStorage.getItem('pypath-nav') === '1') {
       document.documentElement.classList.add('page-from-nav');
     }
   } catch (e) { /* ignore */ }
+})();
+// Course selection is independent of light/dark mode and storage availability.
+(function () {
+  var course = null;
+  try { course = localStorage.getItem('pypath-course'); } catch (e) {}
+  if (/^\/data(\.html$|\/)/.test(location.pathname)) course = 'data';
+  else if (/^\/(curriculum\.html$|units\/)/.test(location.pathname)) course = 'foundations';
+  if (course === 'data') document.documentElement.setAttribute('data-course', 'data');
+  else document.documentElement.removeAttribute('data-course');
+  if (course === 'data' || course === 'foundations') {
+    try { localStorage.setItem('pypath-course', course); } catch (e) {}
+  }
 })();
