@@ -648,6 +648,48 @@ function paintAttention() {
     tr.appendChild(go);
     body.appendChild(tr);
   }
+  paintSkillGaps();
+}
+
+/* "Where the class is stuck": per-skill counts from the same summary-backed
+   events the attention table uses, so it costs no reads beyond the model
+   artifact (one static file, fetched once). class-skill-gaps.js explains why
+   this counts attempts rather than running the practice model. */
+let skillArtifact;
+function paintSkillGaps() {
+  const section = $('[data-cr-gaps]');
+  const body = $('[data-cr-gaps-body]');
+  const G = window.PyPathSkillGaps;
+  if (!section || !body || !G) return;
+  if (skillArtifact === undefined) {
+    skillArtifact = null;
+    fetch('/assets/data/model/mastery-v1.json')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((art) => { skillArtifact = art || false; paintSkillGaps(); })
+      .catch(() => { skillArtifact = false; });
+    return;
+  }
+  if (!skillArtifact) return;
+  const rows = G.classSkillGaps(students, skillArtifact, CORE.attemptsByExercise);
+  body.innerHTML = '';
+  show($('[data-cr-gaps-table]'), rows.length > 0);
+  show($('[data-cr-gaps-empty]'), rows.length === 0);
+  for (const row of rows) {
+    const tr = el('tr', 'cr-gap');
+    const th = el('th', 'cr-gap__skill', row.name);
+    th.scope = 'row';
+    tr.appendChild(th);
+    tr.appendChild(el('td', 'cr-gap__evidence', row.evidence));
+    const go = el('td', 'cr-gap__go');
+    if (row.lessonPath) {
+      const link = el('a', 'cr-link', row.lessonTitle);
+      link.href = row.lessonPath;
+      go.appendChild(link);
+    }
+    tr.appendChild(go);
+    body.appendChild(tr);
+  }
+  show(section, true);
 }
 
 function sortedStudents() {

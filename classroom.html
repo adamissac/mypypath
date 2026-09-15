@@ -54,6 +54,7 @@
     <script type="module" src="/assets/js/activity.js"></script>
     <script type="module" src="/assets/js/auth-ui.js"></script>
     <script defer src="/assets/js/classroom-core.js"></script>
+    <script defer src="/assets/js/class-skill-gaps.js"></script>
     <script defer src="/assets/js/xlsx-writer.js"></script>
     <script defer src="/assets/js/classroom-export.js"></script>
     <script type="module" src="/assets/js/classroom-page.js"></script>
@@ -255,6 +256,37 @@
                   </tr>
                 </thead>
                 <tbody data-cr-attention-body></tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- A2: per-skill evidence. Counts of logged attempts, not a
+               model score and never a list of students; rendered by
+               class-skill-gaps.js from the same summaries as the table above. -->
+          <section class="cr-gaps" data-cr-gaps aria-labelledby="cr-gaps-h" hidden>
+            <h2 id="cr-gaps-h">Where the class is stuck</h2>
+            <p class="cr-gaps__lead">
+              Skills where students have tried the graded exercises and not got
+              there yet, counted from the attempts they logged. A place to start a
+              conversation, not a score: these events come from each student's own
+              browser.
+            </p>
+            <p class="cr-empty-note" data-cr-gaps-empty hidden>
+              No skill has several students with an unfinished exercise right now.
+            </p>
+            <div class="cr-tablewrap">
+              <table class="cr-table" data-cr-gaps-table hidden>
+                <caption class="visually-hidden">
+                  Skills with unfinished exercise attempts, most widespread first
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Skill</th>
+                    <th scope="col">What the attempts show</th>
+                    <th scope="col">Lesson to revisit</th>
+                  </tr>
+                </thead>
+                <tbody data-cr-gaps-body></tbody>
               </table>
             </div>
           </section>

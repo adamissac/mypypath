@@ -1940,3 +1940,34 @@
     transition: transform 120ms ease;
   }
 }
+
+/* ---------- where the class is stuck ---------- */
+
+/* A sibling of "Needs attention" and deliberately quieter: that panel names
+   people to act on today; this one names skills to revisit, so it drops the
+   accent edge and keeps the same card. */
+.cr-gaps {
+  margin: 0 0 1.5rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .9rem;
+  background: var(--panel, #fff);
+  box-shadow: var(--shadow, 0 4px 20px rgba(12, 69, 102, .07));
+}
+
+.cr-gaps > h2 { margin-top: 0; }
+
+.cr-gaps__lead {
+  margin: -.25rem 0 .85rem;
+  max-width: 62ch;
+  font-size: .9rem;
+  line-height: 1.55;
+  color: var(--muted, #475569);
+}
+
+.cr-gap__skill { font-weight: 700; white-space: nowrap; }
+.cr-gap__evidence { line-height: 1.5; }
+
+@media (max-width: 640px) {
+  .cr-gap__skill { white-space: normal; }
+}
