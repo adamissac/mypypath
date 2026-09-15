@@ -62,7 +62,8 @@ def test_never_empty_and_within_caps(artifact, practice_keys, raw, now_days, cou
     per = {}
     for r in recs:
         per[r["skill"]] = per.get(r["skill"], 0) + 1
-    assert max(per.values()) <= o["per_skill_cap"]
+    # The cap only gives way to reach the minimum list length.
+    assert max(per.values()) <= o["per_skill_cap"] or len(recs) <= o["min_items"]
     assert len({r["item"] for r in recs}) == len(recs)
 
 
@@ -106,7 +107,8 @@ def test_spacing_and_readable_reasons(artifact, practice_keys, raw, now_days, co
 
 def test_cold_start_follows_curriculum_order(artifact):
     recs = policy.recommend(artifact, [], BASE, ["foundations"])
-    assert recs and all(r["reason_code"] == "start" for r in recs)
+    assert len(recs) >= artifact["policy"]["min_items"]
+    assert all(r["reason_code"] == "start" for r in recs)
     assert recs[0]["skill"] == "py.running-code"
 
 

@@ -21,7 +21,9 @@ likely a student is to get something right; this decides what to do about it.
      skill, a fixed review weight for a due one, times how close the item's own
      predicted p(correct) is to the productive band 0.6-0.8.
   7. Highest gain first, at most 2 items per skill and 5 overall; ties broken
-     by curriculum order, so the same input always gives the same list.
+     by curriculum order, so the same input always gives the same list. If
+     fewer than 3 qualify, the list is topped up past the per-skill cap from
+     the same eligible items (a new learner has one skill open, not five).
   8. It never returns nothing. A student with no attempts yet gets curriculum
      order. If the ranking is empty -- everything excluded, say -- it falls back to the earliest frontier skills in
      curriculum order, easiest items first; and if exclusions leave nothing at
@@ -41,6 +43,7 @@ from . import model_core
 
 DEFAULTS = {
     "max_items": 5,
+    "min_items": 3,
     "per_skill_cap": 2,
     "band": [0.6, 0.8],
     "band_width": 0.1,
@@ -266,6 +269,15 @@ def recommend(art: dict, events: List[dict], now: int, courses: Optional[List[st
             continue
         take(it, target, p, gain, code)
 
+    if picked and len(picked) < o["min_items"]:
+        taken = {r["item"] for r in picked}
+        for _, _, _, it, target, p, gain, code in scored:
+            if len(picked) >= o["min_items"]:
+                break
+            if it.key not in taken:
+                take(it, target, p, gain, code)
+                taken.add(it.key)
+
     if not picked:
         # Cold start, or nothing ranked: curriculum order over the frontier (or,
         # if everything is mastered, over everything in scope), easiest first.
@@ -282,6 +294,21 @@ def recommend(art: dict, events: List[dict], now: int, courses: Optional[List[st
                 if len(picked) >= o["max_items"]:
                     break
             if picked:
+                break
+    if picked and len(picked) < o["min_items"] and all(r["reason_code"] in ("start", "relaxed") for r in picked):
+        taken = {r["item"] for r in picked}
+        relaxed = picked[0]["reason_code"] == "relaxed"
+        pool_skills = sorted(frontier or in_scope, key=lambda s: (tax.skill_first.get(s, 10 ** 9), tax.skill_order.index(s)))
+        for s in pool_skills:
+            items = [it for it in practice if it.skills[0] == s and all(prereq_ok(x) for x in it.skills)
+                     and it.key not in taken and (relaxed or not excluded(it.key))]
+            items.sort(key=lambda it: (-model["items"].get(it.key, 0.0), it.order, it.key))
+            for it in items:
+                if len(picked) >= o["min_items"]:
+                    break
+                take(it, s, p_item(it), 0.0, "relaxed" if relaxed else "start")
+                taken.add(it.key)
+            if len(picked) >= o["min_items"]:
                 break
     if not picked and practice:
         it = practice[0]

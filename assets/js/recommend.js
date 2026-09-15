@@ -527,6 +527,18 @@
       take(r.key, r.it, r.target, r.p, r.gain, r.code);
     }
 
+    if (picked.length && picked.length < o.min_items) {
+      var takenTop = {};
+      picked.forEach(function (r) { takenTop[r.item] = true; });
+      for (var u = 0; u < scored.length; u++) {
+        if (picked.length >= o.min_items) break;
+        if (!takenTop[scored[u].key]) {
+          take(scored[u].key, scored[u].it, scored[u].target, scored[u].p, scored[u].gain, scored[u].code);
+          takenTop[scored[u].key] = true;
+        }
+      }
+    }
+
     if (!picked.length) {
       var place = skillPlacement(art);
       var pool = (S.frontier.length ? S.frontier : S.inScope).slice().sort(function (a, b) {
@@ -555,6 +567,33 @@
           if (picked.length >= o.max_items) break;
         }
         if (picked.length) break;
+      }
+    }
+    if (picked.length && picked.length < o.min_items &&
+        picked.every(function (r) { return r.reason_code === 'start' || r.reason_code === 'relaxed'; })) {
+      var takenFb = {};
+      picked.forEach(function (r) { takenFb[r.item] = true; });
+      var relaxedFb = picked[0].reason_code === 'relaxed';
+      var placeFb = skillPlacement(art);
+      var poolFb = (S.frontier.length ? S.frontier : S.inScope).slice().sort(function (a, b) {
+        var fa = Object.prototype.hasOwnProperty.call(placeFb.first, a) ? placeFb.first[a] : 1e9;
+        var fb = Object.prototype.hasOwnProperty.call(placeFb.first, b) ? placeFb.first[b] : 1e9;
+        return cmp(fa, fb) || cmp(art.skill_order.indexOf(a), art.skill_order.indexOf(b));
+      });
+      for (var pf = 0; pf < poolFb.length && picked.length < o.min_items; pf++) {
+        var sf = poolFb[pf];
+        var itemsFb = practice.filter(function (kv) {
+          return kv[1].skills[0] === sf && kv[1].skills.every(S.prereqOk) && !takenFb[kv[0]] && (relaxedFb || !excluded(kv[0]));
+        });
+        itemsFb.sort(function (a, b) {
+          var ea = Object.prototype.hasOwnProperty.call(art.model.items, a[0]) ? art.model.items[a[0]] : 0.0;
+          var eb = Object.prototype.hasOwnProperty.call(art.model.items, b[0]) ? art.model.items[b[0]] : 0.0;
+          return cmp(-ea, -eb) || cmp(a[1].order, b[1].order) || cmp(a[0], b[0]);
+        });
+        for (var q2 = 0; q2 < itemsFb.length && picked.length < o.min_items; q2++) {
+          take(itemsFb[q2][0], itemsFb[q2][1], sf, scoreItem(art, state, itemsFb[q2][0], now), 0.0, relaxedFb ? 'relaxed' : 'start');
+          takenFb[itemsFb[q2][0]] = true;
+        }
       }
     }
     if (!picked.length && practice.length) {
