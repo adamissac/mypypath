@@ -18,7 +18,7 @@ const CALLS = (calls, describe) => ({
 module.exports = {
   unit8: {
     title: 'Combining Tables',
-    blurb: 'Stacking, joining and reshaping, with the checks that keep a join honest.',
+    blurb: 'Join two pandas tables on a shared column and reshape the result.',
     packages: ['pandas'],
     lessons: [
       /* ---------------------------------------------------------------- 1 */

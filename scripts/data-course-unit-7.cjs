@@ -20,7 +20,7 @@ const pdf = (literal) => `__import__("pandas").DataFrame(${literal})`;
 module.exports = {
   unit7: {
     title: 'Grouping and Aggregating',
-    blurb: 'Split the table by a key, summarise each piece, and put the answers back together.',
+    blurb: 'Group pandas rows by category to get counts, totals and averages.',
     packages: ['pandas'],
     lessons: [
       /* ---------------------------------------------------------------- 1 */

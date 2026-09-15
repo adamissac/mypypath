@@ -21,7 +21,7 @@ const CALLS = (calls, describe) => ({
 module.exports = {
   unit10: {
     title: 'Visualising and Reporting',
-    blurb: 'The chart the question asks for, and the write-up that survives a reader.',
+    blurb: 'Pick the right chart and write up what your data shows.',
     packages: ['pandas'],
     lessons: [
       /* ---------------------------------------------------------------- 1 */

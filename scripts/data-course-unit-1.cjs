@@ -18,7 +18,7 @@ const LOOPS = (describe) => ({
 module.exports = {
   unit1: {
     title: 'Data in Plain Python',
-    blurb: 'Rows, records, files and summaries, using nothing but the standard library.',
+    blurb: 'Read CSV files and summarise rows with plain Python lists and dictionaries.',
     lessons: [
       /* ---------------------------------------------------------------- 1 */
       {

@@ -21,7 +21,7 @@ const pds = (literal) => `__import__("pandas").Series(${literal})`;
 module.exports = {
   unit6: {
     title: 'Filtering and Deriving',
-    blurb: 'Selecting the rows you meant, and building the column that answers the question.',
+    blurb: 'Filter pandas rows with conditions and add columns that answer questions.',
     packages: ['pandas'],
     lessons: [
       /* ---------------------------------------------------------------- 1 */

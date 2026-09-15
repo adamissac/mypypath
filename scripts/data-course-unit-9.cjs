@@ -21,7 +21,7 @@ const CALLS = (calls, describe) => ({
 module.exports = {
   unit9: {
     title: 'Time Series',
-    blurb: 'Parsing dates, grouping by period, smoothing, and measuring change.',
+    blurb: 'Turn text into pandas dates, then track totals by week or month.',
     packages: ['pandas'],
     lessons: [
       /* ---------------------------------------------------------------- 1 */

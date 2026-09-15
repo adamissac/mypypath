@@ -16,7 +16,7 @@ const pds = (literal) => `__import__("pandas").Series(${literal})`;
 module.exports = {
   unit4: {
     title: 'Series and DataFrames',
-    blurb: 'The two pandas objects, and the labels that make them different from arrays.',
+    blurb: 'Build pandas tables and pick out the rows and columns you need.',
     packages: ['pandas'],
     lessons: [
       /* ---------------------------------------------------------------- 1 */

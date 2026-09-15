@@ -19,7 +19,7 @@ const pdf = (literal) => `__import__("pandas").DataFrame(${literal})`;
 module.exports = {
   unit5: {
     title: 'Getting Data In',
-    blurb: 'Separators, missing markers, the columns you keep, and checking what arrived.',
+    blurb: 'Load CSV and JSON files into pandas and check what arrived.',
     packages: ['pandas'],
     lessons: [
       /* ---------------------------------------------------------------- 1 */

@@ -28,7 +28,7 @@ const NO_LOOP = {
 module.exports = {
   unit3: {
     title: 'Arrays with numpy',
-    blurb: 'One type, one block of memory, and arithmetic that applies to everything at once.',
+    blurb: 'Use numpy arrays to do maths on a whole column at once.',
     packages: ['numpy'],
     lessons: [
       /* ---------------------------------------------------------------- 1 */

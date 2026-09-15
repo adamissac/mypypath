@@ -16,7 +16,7 @@
 module.exports = {
   unit2: {
     title: 'Cleaning and Shaping',
-    blurb: 'Missing values, wrong types, duplicates and the order you fix them in.',
+    blurb: 'Fix missing values, wrong types and duplicate rows before you count anything.',
     lessons: [
       /* ---------------------------------------------------------------- 1 */
       {
