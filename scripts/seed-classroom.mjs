@@ -192,6 +192,23 @@ for (let u = 1; u <= 4; u += 1) LESSONS[u] = CURRICULUM.lessonsIn(u);
 
 const pathFor = (unit, i) => LESSONS[unit][i];
 
+/* The graded exercises and quiz questions a lesson really has, from its check
+   spec. Seeded events used to carry editorId 'ex1', an id no lesson has, so
+   nothing that maps attempts to skills (class-skill-gaps.js, the practice
+   model) could see them. */
+function specFor(path) {
+  const m = /^\/units\/(unit-\d+)\/([a-z0-9-]+)\.html$/.exec(path);
+  if (!m) return {};
+  try {
+    return JSON.parse(readFileSync(join(ROOT, 'assets/data/checks', m[1], `${m[2]}.json`), 'utf8'));
+  } catch {
+    return {};
+  }
+}
+const exercisesIn = (path) => Object.keys(specFor(path)).filter((k) => /^exercise\d+$/.test(k)).sort();
+const firstExercise = (path) => exercisesIn(path)[0] || 'exercise1';
+const questionsIn = (path) => (specFor(path).questions || []).map((q) => q.id);
+
 /* ------------------------------------------------------------ the class */
 
 /* Fourteen students, written as profiles rather than as random noise.
@@ -231,7 +248,10 @@ const STUDENTS = [
  * So STUDENTS=30 cycles the fourteen profiles to fill the roster. The extra
  * rows are repeats with distinct names and uids, which is fine for a cost
  * measurement and is why the default stays at fourteen for everything else. */
-const CLASS_SIZE = Math.max(1, Number(process.env.STUDENTS) || 0);
+// Unset means the fourteen profiles as written. This used to be
+// Math.max(1, Number(process.env.STUDENTS) || 0), which turns "unset" into 1,
+// so a plain `npm run seed` seeded a class of one student.
+const CLASS_SIZE = Number(process.env.STUDENTS) > 0 ? Math.floor(Number(process.env.STUDENTS)) : 0;
 
 function roster() {
   if (!CLASS_SIZE || CLASS_SIZE === STUDENTS.length) return STUDENTS;
@@ -302,21 +322,57 @@ function makeEvents(profile) {
    * student who kept trying until it worked. */
   function exercise(unit, i, firstTry) {
     const p = pathFor(unit, i);
+    const ed = firstExercise(p);
     clock -= STEP;
     push('lesson.opened', clock, { lessonPath: p, unit, payload: { lessonPath: p, unit } });
     if (!firstTry) {
       const tries = 1 + ((i + unit) % 3);
       for (let a = 0; a < tries; a += 1) {
-        push('code.run', clock, { lessonPath: p, unit, payload: { lessonPath: p, editorId: 'ex1', ok: false } });
+        push('code.run', clock, { lessonPath: p, unit, payload: { lessonPath: p, editorId: ed, ok: false } });
         push('code.error', clock, {
           lessonPath: p, unit,
-          payload: { lessonPath: p, editorId: 'ex1', errorType: a % 2 ? 'NameError' : 'SyntaxError' },
+          payload: { lessonPath: p, editorId: ed, errorType: a % 2 ? 'NameError' : 'SyntaxError' },
         });
       }
     }
     push('code.tests_passed', clock, {
-      lessonPath: p, unit, payload: { lessonPath: p, editorId: 'ex1', passed: 3, total: 3 },
+      lessonPath: p, unit, payload: { lessonPath: p, editorId: ed, passed: 3, total: 3 },
     });
+  }
+
+  /* Practice on the unit a student is part-way through: the lesson's own quiz
+     questions (check.answered, one retry after a miss) and, for students who
+     are not sailing through, a second exercise tried and not yet passed.
+
+     Only the current unit, on purpose. The dashboard reads a student's most
+     recent 500 events, and quiz answers on every finished unit would push
+     those units' completions out of that window and quietly change the grid
+     this fixture was built to show. Deterministic like everything above. */
+  function practice(unit, i) {
+    const p = pathFor(unit, i);
+    questionsIn(p).forEach((qid, qi) => {
+      const hit = (profile.name.charCodeAt(1) * 13 + unit * 7 + i * 5 + qi * 11) % 100;
+      const right = hit < Math.round((FIRST_TRY[profile.kind] + 0.1) * 100);
+      push('check.answered', clock, {
+        lessonPath: p, unit, payload: { lessonPath: p, questionId: qid, correct: right, attempt: 1 },
+      });
+      if (!right) {
+        push('check.answered', clock, {
+          lessonPath: p, unit, payload: { lessonPath: p, questionId: qid, correct: hit % 3 !== 0, attempt: 2 },
+        });
+      }
+    });
+    const second = exercisesIn(p)[1];
+    if (second && ['behind', 'stuck', 'ontrack'].includes(profile.kind) && (i + profile.name.length) % 2 === 0) {
+      // One or two tries, under STUCK_ATTEMPTS: an unfinished exercise, not a
+      // student the attention list should name. The stuck profiles cover that.
+      const tries = 1 + ((profile.name.length + i) % 2);
+      for (let a = 0; a < tries; a += 1) {
+        push('code.tests_passed', clock, {
+          lessonPath: p, unit, payload: { lessonPath: p, editorId: second, passed: a, total: 4 },
+        });
+      }
+    }
   }
 
   // Whole units, finished.
@@ -338,18 +394,20 @@ function makeEvents(profile) {
          pass at the end of it. Written as a real sequence rather than one event
          carrying a big number, because a sequence is what the reader counts. */
       const p = pathFor(unit, i);
+      const ed = firstExercise(p);
       clock -= STEP;
       push('lesson.opened', clock, { lessonPath: p, unit, payload: { lessonPath: p, unit } });
       for (let a = 0; a < 6; a += 1) {
-        push('code.run', clock, { lessonPath: p, unit, payload: { lessonPath: p, editorId: 'ex1', ok: false } });
+        push('code.run', clock, { lessonPath: p, unit, payload: { lessonPath: p, editorId: ed, ok: false } });
         push('code.error', clock, {
           lessonPath: p, unit,
-          payload: { lessonPath: p, editorId: 'ex1', errorType: a % 2 ? 'IndentationError' : 'TypeError' },
+          payload: { lessonPath: p, editorId: ed, errorType: a % 2 ? 'IndentationError' : 'TypeError' },
         });
       }
     } else {
       exercise(unit, i, passesFirstTry(profile, unit, i));
     }
+    practice(unit, i);
   }
 
   // A sitting under the mark, so the grid and the end-of-unit card have a
