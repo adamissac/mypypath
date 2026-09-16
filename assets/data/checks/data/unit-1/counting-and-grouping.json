@@ -15,6 +15,11 @@
         "expect": "{}"
       },
       {
+        "name": "zero scores still count as rows",
+        "call": "count_subjects([(\"art\", 0), (\"art\", 0), (\"maths\", 1)])",
+        "expect": "{'art': 2, 'maths': 1}"
+      },
+      {
         "name": "one subject counts once",
         "call": "count_subjects([(\"art\", 70)])",
         "expect": "{'art': 1}"
@@ -49,6 +54,11 @@
         "name": "no rows gives no groups",
         "call": "mean_by_subject([])",
         "expect": "{}"
+      },
+      {
+        "name": "unequal group sizes and zero scores",
+        "call": "mean_by_subject([(\"art\", 0), (\"maths\", 90), (\"art\", 60)])",
+        "expect": "{'art': 30.0, 'maths': 90.0}"
       },
       {
         "name": "each group is averaged on its own",

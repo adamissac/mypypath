@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/style.css" />
     <link rel="stylesheet" href="/assets/css/pypath-fast.css?v=cc6413aa7f" />
-    <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=3baf420101" />
+    <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=7a676cc9ed" />
     <link rel="stylesheet" href="/assets/css/auth.css" />
     <link rel="stylesheet" href="/assets/css/gate.css" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=ddfe7d394a" />
@@ -52,7 +52,7 @@
     <script type="module" src="/assets/js/role-nav.js"></script>
     <script type="module" src="/assets/js/activity.js"></script>
     <script type="module" src="/assets/js/auth-ui.js"></script>
-<script defer src="/assets/js/lesson-ui.js"></script>
+<script defer src="/assets/js/lesson-ui.js?v=c9045f093f"></script>
 <script defer src="/assets/js/checker.js"></script>
 <script defer src="/assets/js/check-ui.js"></script>
 <script defer src="/assets/js/lesson-quiz.js"></script>
@@ -213,7 +213,7 @@
               <div class="content-section">
                 <h2>Step 1: What Are Variables?</h2>
                 <p>A variable is a named container that stores a value. Think of it like a labeled box. You put something in the box (a value) and write a label on it (the variable name). Later, you can use the label to get what's inside.</p>
-                
+
                 <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
                   <div class="feature-card">
                     <h3 class="h4">Real-World Analogy</h3>
@@ -271,13 +271,25 @@ price = 19.99</code></pre>
                 </div>
               </div>
 
-              <div class="practice-box interactive">
+
+<section class="content-section lesson-checkpoint">
+<h2>Predict, then check: Assignment takes the current value</h2><p>If you change score after assigning a copy, does the copy change too?</p>
+<pre class="code"><code>score = 10
+previous = score
+score = score + 5
+print(previous)
+print(score)</code></pre>
+<details class="worked-answer"><summary>Show the output and explanation</summary>
+<pre class="checkpoint-output" aria-label="Expected output">10
+15</pre><p>Python evaluates the right-hand side when an assignment runs. previous receives the integer 10; it is not a formula that keeps following score. The last assignment evaluates score + 5 using the old value, then stores 15 under score.</p></details>
+<p><strong>Try one change:</strong> Add previous = score immediately before the print calls. Explain why both lines now show 15.</p></section>
+<div class="practice-box interactive">
                 <div class="practice-header">
-                  <h4>Mini Practice #1: Create Variables</h4>
+                  <h3 class="h4">Mini Practice #1: Create Variables</h3>
                   <span class="practice-badge">Try It Yourself</span>
                 </div>
                 <p>Try creating some variables. Notice how Python stores them and you can use them later:</p>
-                
+
                 <div class="interactive-editor" data-editor-id="practice1">
                   <div class="editor-toolbar-small">
                     <button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
@@ -345,7 +357,7 @@ z = "Hello"  # Python knows this is a string</code></pre>
                   <span class="practice-badge">Try It Yourself</span>
                 </div>
                 <p>Try creating variables with different data types. Notice how Python handles each one:</p>
-                
+
                 <div class="interactive-editor" data-editor-id="practice2">
                   <div class="editor-toolbar-small">
                     <button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
@@ -448,7 +460,7 @@ print(age)  # Prints 26</code></pre>
                   <span class="practice-badge">Try It Yourself</span>
                 </div>
                 <p>Try using variables in calculations and see how they work:</p>
-                
+
                 <div class="interactive-editor" data-editor-id="practice3">
                   <div class="editor-toolbar-small">
                     <button class="btn-run" onclick="runEditorCode('practice3')">Run</button>
@@ -469,12 +481,12 @@ print("Area:", area)</textarea>
 
               <div class="exercise-section">
                 <h3>End-of-Lesson Exercises</h3>
-                
+
                 <div class="exercise-item" data-exercise-id="exercise1">
                   <h4>Exercise 1: Create Variables</h4>
                   <p>Create three variables: one integer, one float, and one string. Then print all three.</p>
                   <p class="hint-text">Remember: integers are whole numbers, floats have decimals, and strings are text in quotes.</p>
-                  
+
                   <div class="interactive-editor" data-editor-id="exercise1">
                     <div class="editor-toolbar-small">
                       <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
@@ -493,7 +505,7 @@ print("Area:", area)</textarea>
                   <h4>Exercise 2: Use Variables in Calculation</h4>
                   <p>Create two variables: <code>price</code> (set to 15.50) and <code>quantity</code> (set to 4). Calculate and print the total cost.</p>
                   <p class="hint-text">Multiply price by quantity to get the total.</p>
-                  
+
                   <div class="interactive-editor" data-editor-id="exercise2">
                     <div class="editor-toolbar-small">
                       <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
@@ -547,7 +559,7 @@ print("Area:", area)</textarea>
           validator: function(code, output) {
             const trimmed = code.trim();
             const lines = trimmed.split('\n').filter(l => l.trim().length > 0);
-            
+
             // Check for variable assignments
             const assignments = lines.filter(line => line.includes('=') && !line.trim().startsWith('#'));
             if (assignments.length < 3) {
@@ -557,7 +569,7 @@ print("Area:", area)</textarea>
                 hints: ['Create one variable for an integer (whole number)', 'Create one variable for a float (decimal number)', 'Create one variable for a string (text in quotes)']
               };
             }
-            
+
             // Check for print statements
             const printCount = (trimmed.match(/print\(/g) || []).length;
             if (printCount < 3) {
@@ -567,7 +579,7 @@ print("Area:", area)</textarea>
                 hints: ['Print each variable after creating it', 'Use print(variable_name) for each variable']
               };
             }
-            
+
             // Check if it executes without errors
             if (output.error) {
               return {
@@ -576,7 +588,7 @@ print("Area:", area)</textarea>
                 hints: ['Check that all quotes match', 'Make sure variable names don\'t start with numbers', 'Check your syntax']
               };
             }
-            
+
             // Check output has content
             if (!output.stdout || output.stdout.trim().length === 0) {
               return {
@@ -585,7 +597,7 @@ print("Area:", area)</textarea>
                 hints: ['Make sure you have print() statements', 'Print each variable you created']
               };
             }
-            
+
             return {
               correct: true,
               message: 'Correct! You successfully created variables of different types and printed them.'
@@ -596,7 +608,7 @@ print("Area:", area)</textarea>
           solution: 'price = 15.50\nquantity = 4\ntotal = price * quantity\nprint(total)',
           validator: function(code, output) {
             const trimmed = code.trim();
-            
+
             // Check for price variable
             if (!trimmed.includes('price') || !trimmed.includes('15.50')) {
               return {
@@ -605,7 +617,7 @@ print("Area:", area)</textarea>
                 hints: ['Write: price = 15.50', 'Make sure it\'s a float (has a decimal point)']
               };
             }
-            
+
             // Check for quantity variable
             if (!trimmed.includes('quantity') || !trimmed.includes('4')) {
               return {
@@ -614,7 +626,7 @@ print("Area:", area)</textarea>
                 hints: ['Write: quantity = 4', 'This should be an integer']
               };
             }
-            
+
             // Check for calculation
             if (!trimmed.includes('*') && !trimmed.includes('total')) {
               return {
@@ -623,7 +635,7 @@ print("Area:", area)</textarea>
                 hints: ['Multiply price by quantity', 'Store the result in a variable called total', 'Use: total = price * quantity']
               };
             }
-            
+
             // Check for print
             if (!trimmed.includes('print')) {
               return {
@@ -632,7 +644,7 @@ print("Area:", area)</textarea>
                 hints: ['Add a print statement', 'Print the total variable']
               };
             }
-            
+
             // Check if it executes without errors
             if (output.error) {
               return {
@@ -641,7 +653,7 @@ print("Area:", area)</textarea>
                 hints: ['Check your syntax', 'Make sure all variable names are spelled correctly', 'Check that you used the multiplication operator *']
               };
             }
-            
+
             // Check output contains 62 (15.50 * 4 = 62.0)
             const outputText = output.stdout || '';
             if (!outputText.includes('62')) {
@@ -651,7 +663,7 @@ print("Area:", area)</textarea>
                 hints: ['Check your calculation', 'Make sure you multiplied price by quantity', 'The answer should be 62.0']
               };
             }
-            
+
             return {
               correct: true,
               message: 'Correct! You successfully used variables in a calculation and got the right answer.'

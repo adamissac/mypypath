@@ -123,3 +123,7 @@ appends the questions after the exercises at runtime. The markup is the
 same as a Foundations lesson's on purpose: the two courses share one
 stylesheet, and `core.js`, `check-ui.js` and `lesson-progress.js` find
 elements by those classes.
+
+## Optional prediction checkpoint
+
+A lesson may include `checkpoint: { title, prompt, code, output, explain, tryIt }`. The generator renders a prediction prompt, runnable code, an output/explanation disclosure, and a follow-up variation before the usage section. These fields are plain text; examples in Data Unit 1 are executed against their stated output in `tests/lesson-flow.test.js`. Keep the checkpoint focused on one misconception.

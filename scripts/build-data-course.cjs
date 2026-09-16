@@ -267,6 +267,18 @@ function lessonMain(unitN, unit, i, raw, prev, next, nextTitle) {
     }
   });
 
+  if (lesson.checkpoint) {
+    const c = lesson.checkpoint;
+    body.push(`<section class="content-section lesson-checkpoint">
+<h2>Predict, then check: ${esc(c.title)}</h2>
+<p>${esc(c.prompt)}</p>
+<pre class="code"><code>${esc(c.code)}</code></pre>
+<details class="worked-answer"><summary>Show the output and explanation</summary>
+<pre class="checkpoint-output" aria-label="Expected output">${esc(c.output)}</pre>
+<p>${esc(c.explain)}</p></details>
+<p><strong>Try one change:</strong> ${esc(c.tryIt)}</p>
+</section>`);
+  }
   body.push(useSection(lesson.use, lesson.sections.length + 1));
 
   const exercises = lesson.exercises.map((ex, n) => exerciseBlock(ex, n)).join('\n');
@@ -523,24 +535,12 @@ ${unitCards(COURSE)}
 </main>`));
 pages++;
 
+// The course picker is authored once and preserved through every lesson rebuild.
+const pickerMain = fs.readFileSync(path.join(__dirname, 'templates/course-picker.html'), 'utf8');
 write('courses.html', shell('Courses \u2022 PyPath',
-  'Two Python courses: Foundations, and Python for Data.',
-  `<main id="main-content">
-<section class="section reveal-up">
-<div class="container">
-<h1>Courses</h1>
-<p class="lead">Two courses. Pick one, then pick where in it you want to start.
-Units 1 and 2 of each are free; the rest open with an account.</p>
-</div>
-</section>
-<section class="course-main">
-<div class="container">
-<div class="grid units-grid stagger">
-${courseCards(allCourses)}
-</div>
-</div>
-</section>
-</main>`));
+  'Two Python courses: Foundations, and Python for Data.', pickerMain)
+  .replace('class="page page-unit"', 'class="page page-courses"')
+  .replace('</head>', '<link rel="stylesheet" href="/assets/css/courses.css" />\n</head>'));
 pages++;
 
 console.log(`wrote ${pages} pages and ${checks} check files`);

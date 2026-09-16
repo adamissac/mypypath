@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/style.css" />
     <link rel="stylesheet" href="/assets/css/pypath-fast.css?v=cc6413aa7f" />
-    <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=3baf420101" />
+    <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=7a676cc9ed" />
     <link rel="stylesheet" href="/assets/css/auth.css" />
     <link rel="stylesheet" href="/assets/css/gate.css" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=ddfe7d394a" />
@@ -52,7 +52,7 @@
     <script type="module" src="/assets/js/role-nav.js"></script>
     <script type="module" src="/assets/js/activity.js"></script>
     <script type="module" src="/assets/js/auth-ui.js"></script>
-<script defer src="/assets/js/lesson-ui.js"></script>
+<script defer src="/assets/js/lesson-ui.js?v=c9045f093f"></script>
 <script defer src="/assets/js/checker.js"></script>
 <script defer src="/assets/js/check-ui.js"></script>
 <script defer src="/assets/js/lesson-quiz.js"></script>
@@ -365,6 +365,18 @@ print("computed:", len(rows))
 </div>
 </div>
 </div>
+<section class="content-section lesson-checkpoint">
+<h2>Predict, then check: A boundary can change the answer</h2>
+<p>Before you run this, predict both lists. Does a score of exactly 60 count as a pass?</p>
+<pre class="code"><code>scores = [59, 60, 61]
+print([score for score in scores if score &gt; 60])
+print([score for score in scores if score &gt;= 60])</code></pre>
+<details class="worked-answer"><summary>Show the output and explanation</summary>
+<pre class="checkpoint-output" aria-label="Expected output">[61]
+[60, 61]</pre>
+<p>The first condition excludes 60; the second includes it. Translate “60 or more” into &gt;= before choosing a function. A calculation can run perfectly and still answer the wrong question.</p></details>
+<p><strong>Try one change:</strong> Change the passing threshold to 61. Predict which list becomes empty before running again.</p>
+</section>
 
 <div class="content-section">
 <h2>Step 4: When to Use It</h2>
@@ -418,7 +430,7 @@ print("computed:", len(rows))
 
 <div class="exercise-item" data-exercise-id="exercise2">
 <h3 class="h4">Exercise 2: Answer three questions</h3>
-<p>Write <code>quick_look(scores)</code> that returns a tuple <code>(count, lowest, passed)</code>: how many scores there are, the lowest one, and how many are 60 or more.</p>
+<p>Write <code>quick_look(scores)</code> that returns a tuple <code>(count, lowest, passed)</code>: how many scores there are, the lowest one, and how many are 60 or more. The input is a non-empty list of numbers. Count zero scores as observations, and include exactly 60 as a pass. Return the tuple; do not just print it.</p>
 <p class="hint-text">len(scores) and min(scores) give the first two. For the third, count the scores where s &gt;= 60 — a comprehension inside len() does it in one line.</p>
 
 <div class="interactive-editor" data-editor-id="exercise2">

@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/style.css" />
     <link rel="stylesheet" href="/assets/css/pypath-fast.css?v=cc6413aa7f" />
-    <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=3baf420101" />
+    <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=7a676cc9ed" />
     <link rel="stylesheet" href="/assets/css/auth.css" />
     <link rel="stylesheet" href="/assets/css/gate.css" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=ddfe7d394a" />
@@ -52,7 +52,7 @@
     <script type="module" src="/assets/js/role-nav.js"></script>
     <script type="module" src="/assets/js/activity.js"></script>
     <script type="module" src="/assets/js/auth-ui.js"></script>
-<script defer src="/assets/js/lesson-ui.js"></script>
+<script defer src="/assets/js/lesson-ui.js?v=c9045f093f"></script>
 <script defer src="/assets/js/checker.js"></script>
 <script defer src="/assets/js/check-ui.js"></script>
 <script defer src="/assets/js/lesson-quiz.js"></script>
@@ -376,6 +376,17 @@ print(sum(scores) / len(scores))</code></pre>
 </div>
 
 </div>
+<section class="content-section lesson-checkpoint">
+<h2>Predict, then check: Trace one row at a time</h2>
+<p>Which names will remain, and in what order? Trace the condition for each row before reading the answer.</p>
+<pre class="code"><code>table = [["Zoe", 0, "art"], ["Ada", 85, "maths"], ["Kai", 70, "art"]]
+names = [row[0] for row in table if row[2] == "art"]
+print(names)</code></pre>
+<details class="worked-answer"><summary>Show the output and explanation</summary>
+<pre class="checkpoint-output" aria-label="Expected output">['Zoe', 'Kai']</pre>
+<p>The condition uses column 2, while the result takes column 0. Zoe still belongs to art even though her score is zero. A filter keeps the original order unless you explicitly sort it.</p></details>
+<p><strong>Try one change:</strong> Change Zoe’s subject to maths, then add a new art row. Predict the new list.</p>
+</section>
 
 <div class="content-section">
 <h2>Step 4: When to Use It</h2>

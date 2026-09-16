@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/style.css" />
     <link rel="stylesheet" href="/assets/css/pypath-fast.css?v=cc6413aa7f" />
-    <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=3baf420101" />
+    <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=7a676cc9ed" />
     <link rel="stylesheet" href="/assets/css/auth.css" />
     <link rel="stylesheet" href="/assets/css/gate.css" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=ddfe7d394a" />
@@ -52,7 +52,7 @@
     <script type="module" src="/assets/js/role-nav.js"></script>
     <script type="module" src="/assets/js/activity.js"></script>
     <script type="module" src="/assets/js/auth-ui.js"></script>
-<script defer src="/assets/js/lesson-ui.js"></script>
+<script defer src="/assets/js/lesson-ui.js?v=c9045f093f"></script>
 <script defer src="/assets/js/checker.js"></script>
 <script defer src="/assets/js/check-ui.js"></script>
 <script defer src="/assets/js/lesson-quiz.js"></script>
@@ -212,7 +212,7 @@
               <div class="content-section">
                 <h2>Step 1: Understanding Interactive Mode vs Script Mode</h2>
                 <p>Python can run code in two different ways. Understanding the difference helps you choose the right approach for different tasks.</p>
-                
+
                 <div class="feature-grid" style="grid-template-columns: 1fr 1fr; margin: 24px 0;">
                   <div class="feature-card">
                     <h3 class="h4">Interactive Mode (Python Shell)</h3>
@@ -234,7 +234,7 @@
               <div class="content-section">
                 <h2>Step 2: Your First Program: Hello, World!</h2>
                 <p>The "Hello, World!" program is a tradition in programming. It's the first program most people write when learning a new language. It's simple but teaches you the basics of how to write and run code.</p>
-                
+
                 <div class="code-example">
                   <div class="code-header">Hello, World! Program</div>
                   <pre class="code"><code>print("Hello, World!")</code></pre>
@@ -274,13 +274,22 @@
                 </div>
               </div>
 
-              <div class="practice-box interactive">
+
+<section class="content-section lesson-checkpoint">
+<h2>Predict, then check: Text or a calculation?</h2><p>Predict which line prints a calculation and which prints the characters you typed.</p>
+<pre class="code"><code>print(2 + 3)
+print(&quot;2 + 3&quot;)</code></pre>
+<details class="worked-answer"><summary>Show the output and explanation</summary>
+<pre class="checkpoint-output" aria-label="Expected output">5
+2 + 3</pre><p>Without quotes, Python evaluates the addition before print receives the result. Inside quotes, the characters are text. The quotation marks tell Python how to interpret your input; they are not included in the output.</p></details>
+<p><strong>Try one change:</strong> Change both lines to use 4 * 3. Predict the result before pressing Run.</p></section>
+<div class="practice-box interactive">
                 <div class="practice-header">
-                  <h4>Mini Practice #1: Try Hello, World!</h4>
+                  <h3 class="h4">Mini Practice #1: Try Hello, World!</h3>
                   <span class="practice-badge">Try It Yourself</span>
                 </div>
                 <p>Type the Hello, World! program in the editor below and click <strong>Run</strong> to see it execute:</p>
-                
+
                 <div class="interactive-editor" data-editor-id="practice1">
                   <div class="editor-toolbar-small">
                     <button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
@@ -389,7 +398,7 @@
                   <span class="practice-badge">Try It Yourself</span>
                 </div>
                 <p>Try writing multiple <code>print()</code> statements. Notice how Python executes them in order:</p>
-                
+
                 <div class="interactive-editor" data-editor-id="practice2">
                   <div class="editor-toolbar-small">
                     <button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
@@ -449,12 +458,12 @@ print("Third line")</textarea>
 
               <div class="exercise-section">
                 <h3>End-of-Lesson Exercises</h3>
-                
+
                 <div class="exercise-item" data-exercise-id="exercise1">
                   <h4>Exercise 1: Customize Your Hello Message</h4>
                   <p>Write a program that prints your own custom message. Use the <code>print()</code> function with text inside quotation marks.</p>
                   <p class="hint-text">Remember: the text must be inside quotation marks (single or double quotes work).</p>
-                  
+
                   <div class="interactive-editor" data-editor-id="exercise1">
                     <div class="editor-toolbar-small">
                       <button class="btn-check" onclick="checkExercise('exercise1')">Check Answer</button>
@@ -474,7 +483,7 @@ print("Third line")</textarea>
                   <h4>Exercise 2: Print Multiple Lines</h4>
                   <p>Write a program that prints three different lines of text. Each line should use a separate <code>print()</code> statement.</p>
                   <p class="hint-text">Each <code>print()</code> statement will create a new line in the output. Try printing your name, your favorite color, and your favorite food.</p>
-                  
+
                   <div class="interactive-editor" data-editor-id="exercise2">
                     <div class="editor-toolbar-small">
                       <button class="btn-check" onclick="checkExercise('exercise2')">Check Answer</button>
@@ -571,7 +580,7 @@ print("Third line")</textarea>
           validator: function(code, output) {
             const trimmed = code.trim();
             const lines = trimmed.split('\n').filter(line => line.trim().length > 0);
-            
+
             // Check if there are at least 3 print statements
             const printCount = (trimmed.match(/print\(/g) || []).length;
             if (printCount < 3) {
@@ -581,7 +590,7 @@ print("Third line")</textarea>
                 hints: ['Write print("something") on the first line', 'Write another print("something") on the second line', 'Write a third print("something") on the third line']
               };
             }
-            
+
             // Check if each line has quotes
             let hasQuotes = true;
             for (let line of lines) {
@@ -590,7 +599,7 @@ print("Third line")</textarea>
                 break;
               }
             }
-            
+
             if (!hasQuotes) {
               return {
                 correct: false,
@@ -598,7 +607,7 @@ print("Third line")</textarea>
                 hints: ['Put quotes around the text in each print statement', 'Example: print("your text")']
               };
             }
-            
+
             // Check if it executes without errors
             if (output.error) {
               return {
@@ -607,7 +616,7 @@ print("Third line")</textarea>
                 hints: ['Check that all your quotes match', 'Make sure each print() has closing parentheses']
               };
             }
-            
+
             // Check if output has at least 3 lines
             const outputLines = output.stdout ? output.stdout.trim().split('\n').filter(l => l.trim().length > 0) : [];
             if (outputLines.length < 3) {
@@ -617,7 +626,7 @@ print("Third line")</textarea>
                 hints: ['Put each print() statement on a separate line', 'Each print() will create one line of output']
               };
             }
-            
+
             return {
               correct: true,
               message: 'Correct! You successfully created a program with three print statements that each output a separate line.'

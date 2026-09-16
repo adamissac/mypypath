@@ -23,6 +23,14 @@ module.exports = {
       /* ---------------------------------------------------------------- 1 */
       {
         slug: 'what-is-data-analysis',
+        checkpoint: {
+          "title": "A boundary can change the answer",
+          "prompt": "Before you run this, predict both lists. Does a score of exactly 60 count as a pass?",
+          "code": "scores = [59, 60, 61]\nprint([score for score in scores if score > 60])\nprint([score for score in scores if score >= 60])",
+          "output": "[61]\n[60, 61]",
+          "explain": "The first condition excludes 60; the second includes it. Translate “60 or more” into >= before choosing a function. A calculation can run perfectly and still answer the wrong question.",
+          "tryIt": "Change the passing threshold to 61. Predict which list becomes empty before running again."
+        },
         title: 'What Data Analysis Actually Is',
         summary: 'Four steps that turn a file of rows into an answer you can defend.',
         objectives: [
@@ -120,11 +128,12 @@ module.exports = {
           },
           {
             title: 'Answer three questions',
-            prompt: 'Write <code>quick_look(scores)</code> that returns a tuple <code>(count, lowest, passed)</code>: how many scores there are, the lowest one, and how many are 60 or more.',
+            prompt: 'Write <code>quick_look(scores)</code> that returns a tuple <code>(count, lowest, passed)</code>: how many scores there are, the lowest one, and how many are 60 or more. The input is a non-empty list of numbers. Count zero scores as observations, and include exactly 60 as a pass. Return the tuple; do not just print it.',
             starter: 'def quick_look(scores):\n    # (how many, the lowest, how many are 60 or above)\n    return (0, 0, 0)\n\nprint(quick_look([92, 88, 55]))\n',
             call: 'quick_look([92, 88, 55])',
             expectValue: '(3, 55, 2)',
             hidden: [
+              {"name":"zero is a real observation","call":"quick_look([0, 60, 60])","expect":"(3, 0, 2)"},
               { name: 'a score of exactly 60 passes', call: 'quick_look([60, 59])', expect: '(2, 59, 1)' },
               { name: 'everyone can fail', call: 'quick_look([10, 20, 30])', expect: '(3, 10, 0)' },
               { name: 'a single score is its own lowest', call: 'quick_look([75])', expect: '(1, 75, 1)' },
@@ -155,6 +164,14 @@ module.exports = {
       /* ---------------------------------------------------------------- 2 */
       {
         slug: 'rows-and-columns-with-lists',
+        checkpoint: {
+          "title": "Trace one row at a time",
+          "prompt": "Which names will remain, and in what order? Trace the condition for each row before reading the answer.",
+          "code": "table = [[\"Zoe\", 0, \"art\"], [\"Ada\", 85, \"maths\"], [\"Kai\", 70, \"art\"]]\nnames = [row[0] for row in table if row[2] == \"art\"]\nprint(names)",
+          "output": "['Zoe', 'Kai']",
+          "explain": "The condition uses column 2, while the result takes column 0. Zoe still belongs to art even though her score is zero. A filter keeps the original order unless you explicitly sort it.",
+          "tryIt": "Change Zoe’s subject to maths, then add a new art row. Predict the new list."
+        },
         title: 'Rows and Columns with Lists',
         summary: 'A table is a list of lists, and a column is what you pull out of it.',
         objectives: [
@@ -290,6 +307,14 @@ module.exports = {
       /* ---------------------------------------------------------------- 3 */
       {
         slug: 'records-as-dictionaries',
+        checkpoint: {
+          "title": "Missing is different from zero",
+          "prompt": "One record has no score; another has a score of zero. Which values should contribute to the average?",
+          "code": "records = [{\"score\": 0}, {\"name\": \"Ada\"}, {\"score\": 80}]\nvalues = [r[\"score\"] for r in records if \"score\" in r]\nprint(values)\nprint(sum(values) / len(values))",
+          "output": "[0, 80]\n40.0",
+          "explain": "Membership checks whether a field exists. A truthiness check such as if r.get(\"score\") would discard the real zero and report 80.0. Filling the missing field with zero would instead divide by three. Those are different assumptions, not interchangeable shortcuts.",
+          "tryIt": "Add another record with score 40. Work out the new denominator before running."
+        },
         title: 'Records as Dictionaries',
         summary: 'Name the columns, and the code stops depending on their order.',
         objectives: [
@@ -398,6 +423,7 @@ module.exports = {
             expectValue: "[{'name': 'Ada', 'score': 92}, {'name': 'Grace', 'score': 88}]",
             hidden: [
               { name: 'an empty table gives no records', call: 'to_records(["a"], [])', expect: '[]' },
+              {"name":"zero is present and must be included","call":"average_of([{\"score\": 0}, {\"score\": 80}, {\"name\": \"x\"}], \"score\")","expect":"40.0"},
               { name: 'the average reads the named field', call: 'average_of([{"age": 40, "score": 90}, {"age": 20, "score": 70}], "score")', expect: '80.0' },
               { name: 'records missing the field are skipped, not counted as 0', call: 'average_of([{"score": 90}, {"name": "x"}], "score")', expect: '90.0' },
               { name: 'no record has it', call: 'average_of([{"name": "x"}], "score")', expect: 'None' },
@@ -427,6 +453,14 @@ module.exports = {
       /* ---------------------------------------------------------------- 4 */
       {
         slug: 'reading-a-csv-file',
+        checkpoint: {
+          "title": "Parse first, convert second",
+          "prompt": "The header is deliberately in a different order, and the name contains a comma. Predict the two printed values.",
+          "code": "import csv\nimport io\n\ntext = 'score,name\\n7,\"Hopper, Grace\"\\n'\nrow = next(csv.DictReader(io.StringIO(text)))\nprint(row[\"name\"])\nprint(int(row[\"score\"]) + 1)",
+          "output": "Hopper, Grace\n8",
+          "explain": "DictReader uses the header names, so changing the column order does not change the meaning. It handles the quoted comma as part of the name. The score is still text: int converts it before addition. Opening a real CSV with newline=\"\" lets the csv module handle line endings itself.",
+          "tryIt": "Change the score to 12 and reverse the header and values together. The name should still print correctly."
+        },
         title: 'Reading a CSV File',
         summary: 'The csv module turns a file of text into rows you can work with.',
         objectives: [
@@ -526,13 +560,14 @@ module.exports = {
           },
           {
             title: 'Total a column from a file',
-            prompt: 'Write <code>total_score(path)</code> that reads the CSV at <code>path</code> (columns <code>name</code> and <code>score</code>) and returns the sum of the scores as a number. A quoted name may contain a comma.',
+            prompt: 'Write <code>total_score(path)</code> that reads the CSV at <code>path</code> (columns <code>name</code> and <code>score</code>) and returns the sum of the scores as a number. Scores are integer text. A quoted name may contain a comma, columns may be reordered, and a header-only file should return 0. Use the path passed into the function; return the number rather than printing it.',
             starter: 'import csv\n\ndef total_score(path):\n    # Read the file and add up the score column.\n    return 0\n\nprint(total_score("scores.csv"))\n',
             files: { 'scores.csv': 'name,score\n"Lovelace, Ada",92\nGrace,88\nAlan,79\n' },
             call: 'total_score("scores.csv")',
             expectValue: '259',
             hidden: [
               { name: 'a different file gives a different total', files: { 'scores.csv': 'name,score\nKatherine,99\n' }, call: 'total_score("scores.csv")', expect: '99' },
+              {"name":"use the provided path and header names","files":{"reordered.csv":"score,name\n0,Ada\n12,Grace\n"},"call":"total_score(\"reordered.csv\")","expect":"12"},
               { name: 'a file with only a header totals 0', files: { 'scores.csv': 'name,score\n' }, call: 'total_score("scores.csv")', expect: '0' },
               { name: 'a comma inside quotes does not shift the columns', files: { 'scores.csv': 'name,score\n"Hopper, Grace",10\n"Turing, Alan",5\n' }, call: 'total_score("scores.csv")', expect: '15' },
               { name: 'the csv module does the reading', kind: 'ast', requires: { imports: ['csv'] }, describe: 'the csv module, which understands quotes' },
@@ -560,6 +595,14 @@ module.exports = {
       /* ---------------------------------------------------------------- 5 */
       {
         slug: 'summarising-numbers',
+        checkpoint: {
+          "title": "One outlier, two summaries",
+          "prompt": "A slow response appears beside three ordinary ones. Predict which summary changes most when 100 becomes 1000.",
+          "code": "import statistics\n\ntimes = [2, 3, 3, 100]\nprint(statistics.mean(times))\nprint(statistics.median(times))",
+          "output": "27\n3.0",
+          "explain": "The mean uses every value, so the 100 affects it strongly. The median uses the middle two values after sorting: (3 + 3) / 2. Report what the numbers measure and the sample size; neither summary alone describes the whole distribution.",
+          "tryIt": "Replace 100 with 1000, then compare both summaries. Explain which is more useful for a typical response time."
+        },
         title: 'Summarising Numbers',
         summary: 'Totals, averages and extremes, and what each one hides.',
         objectives: [
@@ -671,6 +714,7 @@ module.exports = {
             call: 'median([79, 92, 88])',
             expectValue: '88',
             hidden: [
+              {"name":"negative and repeated values are retained","call":"median([4, -2, -2, 0])","expect":"-1.0"},
               { name: 'an even count averages the middle two', call: 'median([79, 92, 88, 55])', expect: '83.5' },
               { name: 'an empty list has no median', call: 'median([])', expect: 'None' },
               { name: 'an outlier does not drag it', call: 'median([88, 90, 92, 900, 91])', expect: '91' },
@@ -701,6 +745,14 @@ module.exports = {
       /* ---------------------------------------------------------------- 6 */
       {
         slug: 'counting-and-grouping',
+        checkpoint: {
+          "title": "Keep each group’s denominator",
+          "prompt": "Art has two results and maths has one. Predict both averages without combining the groups.",
+          "code": "rows = [(\"art\", 0), (\"maths\", 90), (\"art\", 60)]\ngroups = {}\nfor subject, score in rows:\n    groups.setdefault(subject, []).append(score)\nfor subject, scores in groups.items():\n    print(subject, len(scores), round(sum(scores) / len(scores), 1))",
+          "output": "art 2 30.0\nmaths 1 90.0",
+          "explain": "Each group has its own total and count. Dividing art’s total by all three rows would give 20.0, which is not its mean. Keeping the count beside the average also shows that maths has only one observation.",
+          "tryIt": "Add (\"maths\", 30). Predict the new count and mean for maths; art should stay unchanged."
+        },
         title: 'Counting and Grouping',
         summary: 'A dictionary is how you count things, and how you split a table into groups.',
         objectives: [
@@ -785,12 +837,13 @@ module.exports = {
         exercises: [
           {
             title: 'Rows per subject',
-            prompt: 'Write <code>count_subjects(rows)</code> that takes a list of <code>(subject, score)</code> pairs and returns a dictionary of how many rows each subject has.',
+            prompt: 'Write <code>count_subjects(rows)</code> that takes a list of <code>(subject, score)</code> pairs and returns a dictionary of how many rows each subject has. Count every row, including a zero score, and return an empty dictionary for no rows.',
             starter: 'def count_subjects(rows):\n    # Return {subject: how many rows}\n    return {}\n\nprint(count_subjects([("maths", 92), ("computing", 88), ("maths", 79)]))\n',
             call: 'count_subjects([("maths", 92), ("computing", 88), ("maths", 79)])',
             expectValue: "{'maths': 2, 'computing': 1}",
             hidden: [
               { name: 'an empty list counts nothing', call: 'count_subjects([])', expect: '{}' },
+              {"name":"zero scores still count as rows","call":"count_subjects([(\"art\", 0), (\"art\", 0), (\"maths\", 1)])","expect":"{'art': 2, 'maths': 1}"},
               { name: 'one subject counts once', call: 'count_subjects([("art", 70)])', expect: "{'art': 1}" },
               { name: 'the counting is done by a loop', kind: 'ast', requires: { loops: ['for'], functions: ['count_subjects'] }, describe: 'a loop building the dictionary up' },
             ],
@@ -806,6 +859,7 @@ module.exports = {
             expectValue: "{'maths': 85.5, 'computing': 88.0}",
             hidden: [
               { name: 'no rows gives no groups', call: 'mean_by_subject([])', expect: '{}' },
+              {"name":"unequal group sizes and zero scores","call":"mean_by_subject([(\"art\", 0), (\"maths\", 90), (\"art\", 60)])","expect":"{'art': 30.0, 'maths': 90.0}"},
               { name: 'each group is averaged on its own', call: 'mean_by_subject([("a", 1), ("b", 10), ("a", 2), ("b", 20)])', expect: "{'a': 1.5, 'b': 15.0}" },
               { name: 'the mean is rounded to one place', call: 'mean_by_subject([("a", 1), ("a", 1), ("a", 2)])', expect: "{'a': 1.3}" },
               { name: 'the rows are split by a loop', kind: 'ast', requires: { loops: true }, describe: 'the rows walked into groups' },

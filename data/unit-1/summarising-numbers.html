@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/style.css" />
     <link rel="stylesheet" href="/assets/css/pypath-fast.css?v=cc6413aa7f" />
-    <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=3baf420101" />
+    <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=7a676cc9ed" />
     <link rel="stylesheet" href="/assets/css/auth.css" />
     <link rel="stylesheet" href="/assets/css/gate.css" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=ddfe7d394a" />
@@ -52,7 +52,7 @@
     <script type="module" src="/assets/js/role-nav.js"></script>
     <script type="module" src="/assets/js/activity.js"></script>
     <script type="module" src="/assets/js/auth-ui.js"></script>
-<script defer src="/assets/js/lesson-ui.js"></script>
+<script defer src="/assets/js/lesson-ui.js?v=c9045f093f"></script>
 <script defer src="/assets/js/checker.js"></script>
 <script defer src="/assets/js/check-ui.js"></script>
 <script defer src="/assets/js/lesson-quiz.js"></script>
@@ -381,6 +381,20 @@ heights = [160, 170, 165, 175, 168]
 </div>
 </div>
 </div>
+<section class="content-section lesson-checkpoint">
+<h2>Predict, then check: One outlier, two summaries</h2>
+<p>A slow response appears beside three ordinary ones. Predict which summary changes most when 100 becomes 1000.</p>
+<pre class="code"><code>import statistics
+
+times = [2, 3, 3, 100]
+print(statistics.mean(times))
+print(statistics.median(times))</code></pre>
+<details class="worked-answer"><summary>Show the output and explanation</summary>
+<pre class="checkpoint-output" aria-label="Expected output">27
+3.0</pre>
+<p>The mean uses every value, so the 100 affects it strongly. The median uses the middle two values after sorting: (3 + 3) / 2. Report what the numbers measure and the sample size; neither summary alone describes the whole distribution.</p></details>
+<p><strong>Try one change:</strong> Replace 100 with 1000, then compare both summaries. Explain which is more useful for a typical response time.</p>
+</section>
 
 <div class="content-section">
 <h2>Step 4: When to Use It</h2>
