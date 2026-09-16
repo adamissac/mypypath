@@ -10,7 +10,12 @@
   font-weight: 600;
   letter-spacing: 0.02em;
   color: var(--muted, #5b7c92);
-  background: var(--surface, #f4f9fd);
+  /* --surface is defined by no theme in this codebase, so this always painted
+     the literal — a near-white chip that happened to look right in light mode
+     and put lavender text at 2.17:1 on Data pages in dark. --bg-elevated is
+     declared by all four combinations (site and Data course, light and dark)
+     and clears 4.5:1 against --muted in every one. */
+  background: var(--bg-elevated, #f4f9fd);
 }
 
 .lesson-progress-chip.is-complete {
