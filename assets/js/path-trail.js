@@ -581,24 +581,6 @@
   /* Carry the selected course across shared pages. Only change selection
      while the trail is visible; leaving it keeps the current palette. */
   const root = document.documentElement;
-
-  /* A course carries a mode as well as a palette — Data is a night survey,
-     Foundations daylight — the same pair theme-init.js applies on the way into
-     a course page. Only when the trail actually changes course, so the theme
-     control still belongs to the reader in between. Through PyTheme so body
-     gets stamped and the cross-fade runs; the attribute alone if it is absent. */
-  function applyCourseMode(course) {
-    if (course !== "data" && course !== "foundations") return;
-    const mode = course === "data" ? "dark" : "light";
-    try { localStorage.setItem("pypath-theme", mode); } catch {}
-    if (window.PyTheme && window.PyTheme.applyTheme) {
-      window.PyTheme.applyTheme(mode);
-    } else {
-      root.setAttribute("data-theme", mode);
-      document.body.setAttribute("data-theme", mode);
-    }
-  }
-
   function applyCourseTheme() {
     if (!track) return;
     const r = track.getBoundingClientRect();
@@ -608,12 +590,9 @@
     const scene = segments[locate(lastProgress).sceneIndex];
     const course = scene && scene.svg.getAttribute("data-course");
     const want = course && course !== "foundations" ? course : null;
-    let changed = false;
     try {
-      changed = localStorage.getItem("pypath-course") !== course;
-      if (changed) localStorage.setItem("pypath-course", course);
+      if (localStorage.getItem("pypath-course") !== course) localStorage.setItem("pypath-course", course);
     } catch {}
-    if (changed) applyCourseMode(course);
     if (want) {
       if (root.getAttribute("data-course") !== want) root.setAttribute("data-course", want);
     } else if (root.hasAttribute("data-course")) {

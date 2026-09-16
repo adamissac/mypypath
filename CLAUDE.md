@@ -166,26 +166,6 @@ Both were invisible on the page and obvious the moment anything was measured.
 If a style change appears to have no effect, check what loads after it before
 concluding the selector is wrong.
 
-## A course sets light/dark, but only on the way in
-
-Each course carries a mode as well as a palette: Python for Data is a night
-survey (purple, marigold, **dark**), Foundations is daylight (sky blue,
-**light**). Two places apply it, and they have to agree — `theme-init.js` when
-a course page loads, `path-trail.js` when the home trail crosses between
-courses.
-
-The rule in both is *on the course change, never on every page of the course*.
-Writing the mode on each load would overrule the theme control in settings on
-the next click inside the course, which reads as the toggle being broken. So
-the flip is gated on the stored `pypath-course` differing from where you now
-are, and it writes `pypath-theme` so `theme.js` and the settings radios agree
-with what is on screen.
-
-Consequence worth knowing before "fixing" it: a manual light/dark choice
-survives until the reader changes course, and then it is deliberately replaced.
-`tests/course-theme.test.js` pins every case; `tests/browser/trail_transition.mjs`
-pins the home-page half in a real browser.
-
 ## The adaptive engine: two languages, one model
 
 `engine/` (Python, scikit-learn, its own venv) trains a skill-mastery model
