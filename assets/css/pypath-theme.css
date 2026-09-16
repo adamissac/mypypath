@@ -49,6 +49,7 @@
   --pp-paper: #0e161d;
   --pp-line: #38bdf8;
   --pp-line-deep: #7dd3fc;
+  --pp-line-ink: #7dd3fc;
   --pp-mark: #7dd3fc;
   --pp-muted: #89a8ba;
   --pp-border: #2a3c48;
@@ -1993,7 +1994,7 @@ html[data-course="data"][data-theme="dark"] .btn-run {
    shared pages and live trail changes. Keep the existing image's alt text,
    dimensions, and motion wrapper. */
 html[data-course="data"] img.logo {
-  content: url("/assets/img/pyPathLogo-data.png?v=b9b963e193");
+  content: url("/assets/img/pyPathLogo-data.png?v=dea2f71afa");
 }
 
 /* Shared code colors follow the active journey, including the live home editor. */
@@ -2059,3 +2060,71 @@ html[data-course="data"] .hero-live-editor {
 }
 
 html[data-course="data"] .pp-boot-term .pp-boot-prompt { color: #bfaed0; }
+
+/* Reading-first lessons: one calm surface, clear sections and distinct practice. */
+body.lesson-reading .layout-course {
+  max-width: 1280px !important;
+  margin-inline: auto !important;
+  gap: 28px !important;
+}
+body.lesson-reading .lesson-title { font-size: clamp(1.75rem, 3vw, 2.5rem); line-height: 1.2; margin: 12px 0 24px; }
+body.lesson-reading .lesson-content > .content-section {
+  background: transparent; border: 0; border-radius: 0; padding: 24px 0; margin: 0 0 12px;
+}
+body.lesson-reading .lesson-content h2 { font-size: clamp(1.2rem, 2vw, 1.45rem); line-height: 1.4; }
+body.lesson-reading .lesson-content h2[id] { scroll-margin-top: calc(var(--header-height, 80px) + 24px); }
+body.lesson-reading .lesson-content p, body.lesson-reading .lesson-content li { line-height: 1.8; }
+body.lesson-reading .lesson-overview { border: 1px solid var(--pp-border); border-top: 3px solid var(--pp-line-ink); background: var(--panel); }
+body.lesson-reading .process-steps { padding: 0; background: transparent; border: 0; box-shadow: none; }
+body.lesson-reading .process-steps .step { background: var(--panel); border: 1px solid var(--pp-border); box-shadow: none; padding: 22px; margin: 18px 0; }
+body.lesson-reading .step-number { background: var(--pp-line-ink); color: var(--panel); box-shadow: none; }
+body.lesson-reading .practice-box { background: var(--panel); border: 1px solid var(--pp-border); border-left: 4px solid var(--pp-line-ink); border-radius: 14px; padding: 24px; margin: 28px 0; box-shadow: none; }
+body.lesson-reading .practice-badge { background: var(--pp-fog); color: var(--pp-ink); font-size: .75rem; }
+body.lesson-reading .info-card { background: var(--pp-mist); border: 1px solid var(--pp-border); box-shadow: none; }
+body.lesson-reading .interactive-editor { border: 1px solid var(--pp-border); border-radius: 10px; overflow: hidden; margin-top: 16px; background: var(--pp-mist); }
+body.lesson-reading .editor-toolbar-small { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; background: var(--panel); border-bottom: 1px solid var(--pp-border); }
+body.lesson-reading .editor-toolbar-small button { min-height: 40px; padding: 8px 12px; font-size: .8rem; border-radius: 7px; }
+body.lesson-reading .btn-run { background: var(--pp-line-ink); color: var(--panel); border-color: var(--pp-line-ink); }
+body.lesson-reading .btn-reset, body.lesson-reading .btn-clear { background: var(--panel); color: var(--pp-ink-soft); border: 1px solid var(--pp-border); }
+body.lesson-reading .btn-reset:hover, body.lesson-reading .btn-clear:hover { background: var(--pp-fog); border-color: var(--pp-line-ink); }
+body.lesson-reading .editor-output { background: var(--pp-fog); border-top: 1px solid var(--pp-border); color: var(--pp-ink); padding: 16px; min-height: 72px; }
+body.lesson-reading .editor-keyboard-hint { margin: 0; padding: 10px 12px; font-size: .75rem; color: var(--pp-muted); line-height: 1.5; border-top: 1px solid var(--pp-border); }
+body.lesson-reading .CodeMirror { border-radius: 0; font-size: 14px; line-height: 1.75; }
+body.lesson-reading pre.code { background: var(--pp-mist); color: var(--pp-ink); border-color: var(--pp-border); }
+body.lesson-reading .exercise-section { border: 1px solid var(--pp-border); border-top: 3px solid var(--pp-line-ink); background: var(--panel); padding: 24px; }
+body.lesson-reading .lesson-outline { border-block: 1px solid var(--pp-border); margin: 24px 0 8px; padding: 0; }
+.lesson-outline summary { display: flex; align-items: center; gap: 12px; min-height: 52px; cursor: pointer; font-weight: 650; color: var(--pp-ink); }
+.lesson-outline summary::before { content: '+'; font-size: 1.3rem; width: 16px; }
+.lesson-outline[open] summary::before { content: '−'; }
+.lesson-outline summary span { margin-left: auto; color: var(--pp-muted); font-size: .8rem; font-weight: 400; }
+.lesson-outline ol { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); list-style: none; padding: 0 0 16px; gap: 4px 20px; margin: 0; }
+.lesson-outline li { margin: 0; }
+.lesson-outline a { display: block; padding: 10px 4px; font-size: .85rem; color: var(--pp-line-ink); line-height: 1.5; }
+.lesson-outline a:hover { text-decoration: underline; }
+.lesson-outline summary:focus-visible, .lesson-outline a:focus-visible { outline: 2px solid var(--pp-line-ink); outline-offset: 3px; }
+@media (max-width: 640px) {
+ body.lesson-reading .practice-box, body.lesson-reading .exercise-section { padding: 16px; }
+ body.lesson-reading .process-steps .step { padding: 16px; }
+ body.lesson-reading .practice-header { align-items: flex-start; flex-wrap: wrap; gap: 10px; }
+ .lesson-outline ol { grid-template-columns: 1fr; }
+ body.lesson-reading .editor-toolbar-small button { min-height: 44px; }
+ body.lesson-reading .lesson-actions { display: grid; gap: 10px; }
+}
+body.lesson-reading .practice-header .practice-badge {
+  color: var(--pp-ink) !important; background: var(--pp-fog); box-shadow: none; text-transform: none; letter-spacing: normal;
+}
+body.lesson-reading .lesson-checkpoint { border-block: 1px solid var(--pp-border); }
+.worked-answer { margin: 16px 0; padding: 0 16px; background: var(--pp-fog); border-radius: 8px; }
+.worked-answer summary { cursor: pointer; padding: 14px 0; min-height: 44px; font-weight: 600; color: var(--pp-line-ink); }
+.worked-answer summary:focus-visible { outline: 2px solid var(--pp-line-ink); outline-offset: 3px; }
+.worked-answer p { padding-bottom: 16px; }
+.checkpoint-output { padding: 16px; white-space: pre-wrap; overflow-wrap: anywhere; background: var(--panel); color: var(--pp-ink); border: 1px solid var(--pp-border); border-radius: 8px; }
+/* Wrapped editors never scroll horizontally. Pin their gutter so a parent
+   scroll/anchor jump cannot leave CodeMirror's temporary offset over the code. */
+body.lesson-reading .CodeMirror-wrap .CodeMirror-gutters { left: 0 !important; transition: none; }
+/* Long examples wrap on phones while copying retains the original source. */
+body.lesson-reading pre.code, body.lesson-reading pre.code code {
+  white-space: pre-wrap; overflow-wrap: anywhere; word-break: normal; overflow-x: visible;
+}
+body.lesson-reading .exercise-actions .btn-save { background: var(--pp-line-ink); border-color: var(--pp-line-ink); color: var(--panel); }
+body.lesson-reading .exercise-actions .btn-save:hover { background: var(--pp-ink); border-color: var(--pp-ink); color: var(--panel); }

@@ -90,6 +90,81 @@
     });
   }
 
+  function enhanceLessonFlow() {
+    var content = document.querySelector('.course-main .lesson-content');
+    if (!content || document.querySelector('.lesson-outline')) return;
+    document.body.classList.add('lesson-reading');
+    var headings = Array.from(content.querySelectorAll('h2'));
+    if (headings.length > 1) {
+      var details = document.createElement('details');
+      details.className = 'lesson-outline';
+      var summary = document.createElement('summary');
+      summary.textContent = 'In this lesson';
+      var count = document.createElement('span');
+      count.textContent = headings.length + ' sections';
+      summary.appendChild(count);
+      details.appendChild(summary);
+      var nav = document.createElement('nav');
+      nav.setAttribute('aria-label', 'Sections in this lesson');
+      var list = document.createElement('ol');
+      var indexed = new Set();
+      function addHeading(heading) {
+        if (indexed.has(heading)) return;
+        var index = indexed.size;
+        indexed.add(heading);
+        if (!heading.id) {
+          var id = 'lesson-section-' + (index + 1);
+          while (document.getElementById(id)) id += '-section';
+          heading.id = id;
+        }
+        var item = document.createElement('li');
+        var link = document.createElement('a');
+        link.href = '#' + heading.id;
+        link.textContent = heading.textContent.trim();
+        link.addEventListener('click', function () {
+          // Native anchor navigation keeps history and deep links working.
+          // Focus follows the jump for keyboard and screen-reader visitors.
+          heading.setAttribute('tabindex', '-1');
+          heading.focus({ preventScroll: true });
+        });
+        item.appendChild(link);
+        list.appendChild(item);
+        count.textContent = indexed.size + ' sections';
+      }
+      headings.forEach(addHeading);
+      // Knowledge checks arrive after the page's initial lesson markup.
+      new MutationObserver(function (changes) {
+        changes.forEach(function (change) {
+          change.addedNodes.forEach(function (node) {
+            if (node.nodeType !== 1) return;
+            if (node.matches('h2')) addHeading(node);
+            node.querySelectorAll('h2').forEach(addHeading);
+          });
+        });
+      }).observe(content, { childList: true, subtree: true });
+      nav.appendChild(list);
+      details.appendChild(nav);
+      content.before(details);
+    }
+    content.querySelectorAll('.interactive-editor').forEach(function (editor) {
+      var toolbar = editor.querySelector('.editor-toolbar-small');
+      if (!toolbar) return;
+      var run = toolbar.querySelector('.btn-run');
+      var reset = toolbar.querySelector('.btn-reset');
+      var clear = toolbar.querySelector('.btn-clear');
+      if (run) run.textContent = 'Run code';
+      if (reset) reset.textContent = 'Reset code';
+      if (clear) {
+        clear.textContent = 'Clear saved code';
+        clear.title = 'Clear this editor and its saved code';
+      }
+      var hint = document.createElement('p');
+      hint.className = 'editor-keyboard-hint';
+      hint.textContent = 'Ctrl / ⌘ + Enter to run · Escape to leave the editor';
+      editor.appendChild(hint);
+    });
+  }
+
   function enhanceRunButtons() {
     document.querySelectorAll('.run-code-btn, [data-run-code]').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -158,6 +233,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     initReadingProgress();
     initCopySnippets();
+    enhanceLessonFlow();
     enhanceRunButtons();
   });
 })();
