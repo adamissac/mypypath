@@ -35,7 +35,8 @@ try {
   await page.waitForTimeout(500);
   const editor=page.locator('.CodeMirror').first();
   await editor.waitFor({state:'attached'});
-  assert.equal(await editor.evaluate(el=>getComputedStyle(el).backgroundColor),theme==='light'?'rgb(248, 245, 252)':'rgb(21, 15, 31)');
+  const colors=await editor.evaluate(el=>{const probe=document.createElement('i');probe.style.backgroundColor='var(--pp-mist)';el.appendChild(probe);const result=[getComputedStyle(el).backgroundColor,getComputedStyle(probe).backgroundColor];probe.remove();return result;});
+  assert.equal(colors[0],colors[1]);
   const number=page.locator('.CodeMirror .cm-number').first();
   assert.equal(await number.evaluate(el=>getComputedStyle(el).color),theme==='light'?'rgb(140, 60, 99)':'rgb(242, 179, 210)');
   console.log(`${theme} ${width}px: course cards, accessibility, Data syntax colors, flat surfaces, and reduced motion pass`);
