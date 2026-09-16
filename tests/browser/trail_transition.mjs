@@ -31,6 +31,9 @@ try {
     await page.locator('[data-trail-jump="2"]').click();
     await page.getByRole('button', { name: 'Yes, explore space' }).click();
     assert.equal(await page.locator('html').getAttribute('data-course'), 'data');
+    // The course brings its mode with it: Data is a night survey.
+    assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark');
+    assert.equal(await page.locator('body').getAttribute('data-theme'), 'dark');
     assert.equal(await page.locator('.path-stop-card.is-active').getAttribute('data-stop-index'), '10');
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
     await page.waitForTimeout(150);
@@ -41,11 +44,12 @@ try {
     assert.equal(await dialog.isVisible(), false, 'accepted journey must scroll normally');
     await page.locator('[data-trail-jump="1"]').click();
     assert.equal(await page.locator('html').getAttribute('data-course'), null);
+    assert.equal(await page.locator('html').getAttribute('data-theme'), 'light');
     assert.equal(await page.locator('.home-summit__moon').isVisible(), false);
     await page.waitForTimeout(150);
     assert.equal(await page.locator('.home-summit__mountain').count(), 1);
     assert.equal(await page.locator('.home-summit__canvas').count(), canvasCount);
-    console.log(`${width}px (${reducedMotion}): confirm, decline, Escape, retry, exclusive moon/mountain passed`);
+    console.log(`${width}px (${reducedMotion}): confirm, decline, Escape, retry, exclusive moon/mountain, course mode passed`);
     await context.close();
   }
 } finally { await browser.close(); }
