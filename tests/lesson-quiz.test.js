@@ -212,11 +212,11 @@ describe('the authored questions for Units 1 and 2', () => {
     }
   });
 
-  it('gives each lesson three to five questions', () => {
+  it('gives each lesson three to eight questions', () => {
     for (const [name, spec] of files) {
       expect(spec.questions, name).toBeTruthy();
       expect(spec.questions.length, name).toBeGreaterThanOrEqual(3);
-      expect(spec.questions.length, name).toBeLessThanOrEqual(5);
+      expect(spec.questions.length, name).toBeLessThanOrEqual(8);
     }
   });
 

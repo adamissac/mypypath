@@ -145,6 +145,60 @@
       ],
       "answer": 1,
       "explain": "Leaving the block, for any reason, closes the file. That is the whole job of with."
+    },
+    {
+      "id": "intro-data-reading-a-csv-file-match",
+      "kind": "match",
+      "prompt": "Match each idea to its meaning.",
+      "left": [
+        "CSV header",
+        "Quoted field",
+        "int(row[\"score\"])"
+      ],
+      "right": [
+        "Can contain a comma without creating another column",
+        "Converts a numeric field from text before arithmetic",
+        "Supplies field names for DictReader"
+      ],
+      "answer": [
+        2,
+        0,
+        1
+      ],
+      "explain": "CSV header: Supplies field names for DictReader. Quoted field: Can contain a comma without creating another column. int(row[\"score\"]): Converts a numeric field from text before arithmetic."
+    },
+    {
+      "id": "intro-data-reading-a-csv-file-order",
+      "kind": "order",
+      "prompt": "Arrange these steps in the intended order.",
+      "items": [
+        "Open the CSV file as text",
+        "Create a DictReader from the file",
+        "Read rows and convert the score values",
+        "Summarise the numeric scores"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "Read with a CSV parser before converting fields; conversion precedes arithmetic."
+    },
+    {
+      "id": "intro-data-reading-a-csv-file-predict",
+      "kind": "blank",
+      "label": "Predict the first line of output (without surrounding quotes).",
+      "prompt": "import csv\nfrom io import StringIO\n\ntext = 'name,score\\n\"Lee, Jo\",8\\nAda,10\\n'\nrows = list(csv.DictReader(StringIO(text)))\nprint(rows[0][\"name\"])\nprint(sum(int(row[\"score\"]) for row in rows))\n\nFirst output line: ___",
+      "blanks": [
+        {
+          "accept": [
+            "Lee, Jo"
+          ],
+          "caseSensitive": true
+        }
+      ],
+      "explain": "The comma inside the quoted name belongs to that one field. DictReader keeps Lee, Jo together. The score values start as \"8\" and \"10\", then int converts them before summing. StringIO lets this small example behave like a text file without requiring an upload."
     }
   ]
 }

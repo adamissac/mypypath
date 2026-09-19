@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="/assets/css/auth.css" />
     <link rel="stylesheet" href="/assets/css/gate.css" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=ddfe7d394a" />
-    <link rel="stylesheet" href="/assets/css/checks.css" />
+    <link rel="stylesheet" href="/assets/css/checks.css?v=001b0bc8ef" />
 
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
@@ -39,7 +39,7 @@
     <script defer src="/assets/js/curriculum.js"></script>
     <script defer src="/assets/js/classroom-policy.js"></script>
     <script defer src="/assets/js/question-types.js"></script>
-    <script defer src="/assets/js/question-render.js"></script>
+    <script defer src="/assets/js/question-render.js?v=3cf25ada4f"></script>
     <script defer src="/assets/js/reflection-check.js"></script>
     <script defer src="/assets/js/concept-check.js"></script>
     <script defer src="/assets/js/checker-gen.js"></script>
@@ -55,7 +55,7 @@
 <script defer src="/assets/js/lesson-ui.js?v=c9045f093f"></script>
 <script defer src="/assets/js/checker.js"></script>
 <script defer src="/assets/js/check-ui.js"></script>
-<script defer src="/assets/js/lesson-quiz.js"></script>
+<script defer src="/assets/js/lesson-quiz.js?v=b4f9f55bf0"></script>
     <script defer src="/assets/js/exercises.js"></script>
     <script defer src="/assets/js/lesson-runner.js"></script>
     <script defer src="/assets/js/lesson-progress.js"></script>
@@ -376,6 +376,31 @@ print([score for score in scores if score &gt;= 60])</code></pre>
 [60, 61]</pre>
 <p>The first condition excludes 60; the second includes it. Translate “60 or more” into &gt;= before choosing a function. A calculation can run perfectly and still answer the wrong question.</p></details>
 <p><strong>Try one change:</strong> Change the passing threshold to 61. Predict which list becomes empty before running again.</p>
+</section>
+<section class="content-section lesson-deep-dive">
+<h2>Go deeper: Define the denominator before calculating</h2>
+<p>A percentage is a count divided by a population. Define that population first: all enrolled students, students who submitted, and students with valid scores can give different answers. A correct calculation is useful only when the labels explain exactly what was counted.</p>
+<h3>Trace the example</h3>
+<p>Predict the output before opening the explanation.</p>
+<pre class="code"><code>scores = [40, 60, 80, 100]
+passed = sum(score &gt;= 60 for score in scores)
+print(passed)
+print(100 * passed / len(scores))</code></pre>
+<details class="worked-answer"><summary>Show the output and trace</summary>
+<pre class="checkpoint-output" aria-label="Expected output">3
+75.0</pre>
+<p>Three scores meet the inclusive boundary &gt;= 60. Dividing 3 by 4 gives 0.75, then multiplying by 100 gives 75%. Boolean conditions contribute 1 for True and 0 for False when summed.</p></details>
+<h3>A mistake to watch for</h3>
+<p>If missing scores were removed earlier, this denominator represents recorded scores, not necessarily all enrolled students. Do not describe a subset as the entire population, and do not divide by len(scores) when the list is empty.</p>
+<h3>Transfer challenge</h3>
+<p>Change the threshold to 80 and report both the passing count and percentage. Write a sentence naming the population and threshold.</p>
+<p>Try your solution in a lesson editor before opening the worked answer. This practice is ungraded.</p>
+<details class="worked-answer"><summary>Compare with a worked solution</summary>
+<pre class="code"><code>scores = [40, 60, 80, 100]
+passed = sum(score &gt;= 80 for score in scores)
+print(passed)
+print(100 * passed / len(scores))</code></pre>
+<p>Run both versions. Explain any difference in their output, then change one input and predict the new result.</p></details>
 </section>
 
 <div class="content-section">

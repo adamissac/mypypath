@@ -114,6 +114,60 @@
       ],
       "answer": 1,
       "explain": "Nothing raises, which is the danger. The summary is computed over the wrong column and looks perfectly plausible."
+    },
+    {
+      "id": "intro-data-rows-and-columns-with-lists-match",
+      "kind": "match",
+      "prompt": "Match each idea to its meaning.",
+      "left": [
+        "rows[0]",
+        "rows[0][1]",
+        "[row[1] for row in rows]"
+      ],
+      "right": [
+        "The second value in the first row",
+        "The second column collected from every row",
+        "The first complete row"
+      ],
+      "answer": [
+        2,
+        0,
+        1
+      ],
+      "explain": "rows[0]: The first complete row. rows[0][1]: The second value in the first row. [row[1] for row in rows]: The second column collected from every row."
+    },
+    {
+      "id": "intro-data-rows-and-columns-with-lists-order",
+      "kind": "order",
+      "prompt": "Arrange these steps in the intended order.",
+      "items": [
+        "rows = [[\"Ada\", 8], [\"Grace\", 10]]",
+        "scores = [row[1] for row in rows]",
+        "total = sum(scores)",
+        "print(total)"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "Extract the numeric column before summing; summing the rows themselves is a different operation."
+    },
+    {
+      "id": "intro-data-rows-and-columns-with-lists-predict",
+      "kind": "blank",
+      "label": "Predict the first line of output (without surrounding quotes).",
+      "prompt": "rows = [[\"Ada\", 8], [\"Grace\", 10], [\"Lin\", 6]]\nprint(rows[1][0])\nscores = [row[1] for row in rows]\nprint(sum(scores))\n\nFirst output line: ___",
+      "blanks": [
+        {
+          "accept": [
+            "Grace"
+          ],
+          "caseSensitive": true
+        }
+      ],
+      "explain": "rows[1] is [\"Grace\", 10], then [0] selects Grace from that row. The comprehension selects position 1 from every row, producing [8, 10, 6]. Summing this column gives 24."
     }
   ]
 }

@@ -138,6 +138,60 @@
         0
       ],
       "explain": "Split, apply, combine — the same three steps pandas groupby performs."
+    },
+    {
+      "id": "intro-data-counting-and-grouping-match",
+      "kind": "match",
+      "prompt": "Match each idea to its meaning.",
+      "left": [
+        "Count by key",
+        "Group by key",
+        "Mean within a group"
+      ],
+      "right": [
+        "Collect values separately for each category",
+        "Divide that group’s total by that group’s count",
+        "Track how often each category occurs"
+      ],
+      "answer": [
+        2,
+        0,
+        1
+      ],
+      "explain": "Count by key: Track how often each category occurs. Group by key: Collect values separately for each category. Mean within a group: Divide that group’s total by that group’s count."
+    },
+    {
+      "id": "intro-data-counting-and-grouping-order",
+      "kind": "order",
+      "prompt": "Arrange these steps in the intended order.",
+      "items": [
+        "groups = {}",
+        "for name, score in rows:",
+        "    groups.setdefault(name, []).append(score)",
+        "print(groups)"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "Create the dictionary once outside the loop, then append each value inside the loop so earlier values survive."
+    },
+    {
+      "id": "intro-data-counting-and-grouping-predict",
+      "kind": "blank",
+      "label": "Predict the first line of output (without surrounding quotes).",
+      "prompt": "rows = [(\"A\", 2), (\"B\", 9), (\"A\", 6)]\ngroups = {}\nfor name, score in rows:\n    groups.setdefault(name, []).append(score)\nprint(groups[\"A\"])\nprint(sum(groups[\"A\"]) / len(groups[\"A\"]))\n\nFirst output line: ___",
+      "blanks": [
+        {
+          "accept": [
+            "[2, 6]"
+          ],
+          "caseSensitive": true
+        }
+      ],
+      "explain": "The first A creates its list with 2. B gets a different list containing 9. The final A appends 6 to A’s existing list. A’s mean divides its sum of 8 by its own count of 2, producing 4."
     }
   ]
 }

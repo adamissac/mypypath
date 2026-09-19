@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="/assets/css/auth.css" />
     <link rel="stylesheet" href="/assets/css/gate.css" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=ddfe7d394a" />
-    <link rel="stylesheet" href="/assets/css/checks.css" />
+    <link rel="stylesheet" href="/assets/css/checks.css?v=001b0bc8ef" />
 
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
@@ -39,7 +39,7 @@
     <script defer src="/assets/js/curriculum.js"></script>
     <script defer src="/assets/js/classroom-policy.js"></script>
     <script defer src="/assets/js/question-types.js"></script>
-    <script defer src="/assets/js/question-render.js"></script>
+    <script defer src="/assets/js/question-render.js?v=3cf25ada4f"></script>
     <script defer src="/assets/js/reflection-check.js"></script>
     <script defer src="/assets/js/concept-check.js"></script>
     <script defer src="/assets/js/checker-gen.js"></script>
@@ -55,7 +55,7 @@
 <script defer src="/assets/js/lesson-ui.js?v=c9045f093f"></script>
 <script defer src="/assets/js/checker.js"></script>
 <script defer src="/assets/js/check-ui.js"></script>
-<script defer src="/assets/js/lesson-quiz.js"></script>
+<script defer src="/assets/js/lesson-quiz.js?v=b4f9f55bf0"></script>
     <script defer src="/assets/js/exercises.js"></script>
     <script defer src="/assets/js/lesson-runner.js"></script>
     <script defer src="/assets/js/lesson-progress.js"></script>
@@ -397,6 +397,36 @@ print(int(row["score"]) + 1)</code></pre>
 8</pre>
 <p>DictReader uses the header names, so changing the column order does not change the meaning. It handles the quoted comma as part of the name. The score is still text: int converts it before addition. Opening a real CSV with newline="" lets the csv module handle line endings itself.</p></details>
 <p><strong>Try one change:</strong> Change the score to 12 and reverse the header and values together. The name should still print correctly.</p>
+</section>
+<section class="content-section lesson-deep-dive">
+<h2>Go deeper: Parse the file before interpreting its values</h2>
+<p>CSV is a file format with quoting rules, not just text separated at every comma. DictReader uses the header row as field names and returns string values. Parsing establishes the rows; conversion then gives selected fields the numeric types needed for analysis.</p>
+<h3>Trace the example</h3>
+<p>Predict the output before opening the explanation.</p>
+<pre class="code"><code>import csv
+from io import StringIO
+
+text = &#39;name,score\n&quot;Lee, Jo&quot;,8\nAda,10\n&#39;
+rows = list(csv.DictReader(StringIO(text)))
+print(rows[0][&quot;name&quot;])
+print(sum(int(row[&quot;score&quot;]) for row in rows))</code></pre>
+<details class="worked-answer"><summary>Show the output and trace</summary>
+<pre class="checkpoint-output" aria-label="Expected output">Lee, Jo
+18</pre>
+<p>The comma inside the quoted name belongs to that one field. DictReader keeps Lee, Jo together. The score values start as &quot;8&quot; and &quot;10&quot;, then int converts them before summing. StringIO lets this small example behave like a text file without requiring an upload.</p></details>
+<h3>A mistake to watch for</h3>
+<p>line.split(&quot;,&quot;) would split the quoted name incorrectly. Also, a DictReader is consumed as you iterate; a second pass over the same reader will not start again. Save rows in a list for repeated access, or reopen the file for another pass.</p>
+<h3>Transfer challenge</h3>
+<p>Add a third CSV row for &quot;Pat, Sam&quot; with a score of 12. Print all three names and the new total. Keep the name quoted inside the CSV text.</p>
+<p>Try your solution in a lesson editor before opening the worked answer. This practice is ungraded.</p>
+<details class="worked-answer"><summary>Compare with a worked solution</summary>
+<pre class="code"><code>import csv
+from io import StringIO
+text = &#39;name,score\n&quot;Lee, Jo&quot;,8\nAda,10\n&quot;Pat, Sam&quot;,12\n&#39;
+rows = list(csv.DictReader(StringIO(text)))
+print([row[&quot;name&quot;] for row in rows])
+print(sum(int(row[&quot;score&quot;]) for row in rows))</code></pre>
+<p>Run both versions. Explain any difference in their output, then change one input and predict the new result.</p></details>
 </section>
 
 <div class="content-section">

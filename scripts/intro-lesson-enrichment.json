@@ -1,0 +1,462 @@
+[
+  {
+    "course": "foundations",
+    "slug": "what-is-python",
+    "title": "From an instruction to a result",
+    "model": "Python reads a program as instructions. A value is a piece of data; an expression calculates a value; a function call asks Python to perform a named operation. Separating these ideas makes unfamiliar code easier to read.",
+    "code": "print(3 + 4)\nprint(\"3 + 4\")",
+    "output": "7\n3 + 4",
+    "trace": "In the first line, Python calculates 3 + 4 before print receives the result. In the second, quotation marks make the characters text, so there is no arithmetic. Both lines are valid Python, but they ask different questions.",
+    "mistake": "A program running without an error does not prove it does what you meant. Check its output against a prediction, especially when numbers appear inside quotes.",
+    "challenge": "Write two lines: one that calculates 8 times 3, and one that displays the expression 8 * 3 as text.",
+    "solution": "print(8 * 3)\nprint(\"8 * 3\")",
+    "pairs": [
+      [
+        "Expression",
+        "Calculates a value"
+      ],
+      [
+        "String",
+        "Text enclosed in quotes"
+      ],
+      [
+        "Function call",
+        "Asks a named operation to run"
+      ]
+    ],
+    "order": [
+      "Write a Python instruction",
+      "Ask the interpreter to run it",
+      "Compare the output with your prediction"
+    ],
+    "orderwhy": "Writing creates the instructions; the interpreter executes them; checking the result tells you whether they answer your question."
+  },
+  {
+    "course": "foundations",
+    "slug": "installing-python-ide",
+    "title": "Know which window does what",
+    "model": "Your editor stores instructions in a .py file. Your terminal runs commands. The Python interpreter executes the instructions. An interactive Python prompt runs one instruction at a time, which is useful for quick experiments but does not automatically save a program.",
+    "code": "print(\"Setup check\")\nprint(6 * 7)",
+    "output": "Setup check\n42",
+    "trace": "Save these two lines as setup_check.py. Run the saved file with your configured Python command, such as python3 setup_check.py. Seeing both lines in this order confirms that Python executed this file.",
+    "mistake": "Do not copy the >>> prompt into a .py file. If your edits do not appear in the output, save the file and check that the terminal is running the file in the folder you edited.",
+    "challenge": "Change the message to Ready to learn, save, and run again. Then change the calculation to 9 * 5. Verify that both changes appear.",
+    "solution": "print(\"Ready to learn\")\nprint(9 * 5)",
+    "pairs": [
+      [
+        "Editor",
+        "Where you write and save a program"
+      ],
+      [
+        "Terminal",
+        "Where you enter a command to run a file"
+      ],
+      [
+        "Interpreter",
+        "What executes Python instructions"
+      ]
+    ],
+    "order": [
+      "Write code in setup_check.py",
+      "Save the file",
+      "Run the saved file",
+      "Read the output"
+    ],
+    "orderwhy": "Saving comes before running so the interpreter receives the latest version of the file."
+  },
+  {
+    "course": "foundations",
+    "slug": "first-program",
+    "title": "Read a print call from the inside out",
+    "model": "print can receive several values separated by commas. It converts each to displayable text, normally puts one space between them, and finishes with a newline. The commas separate arguments; they are not printed.",
+    "code": "print(\"Score:\", 4 + 5)\nprint(\"Next level\")",
+    "output": "Score: 9\nNext level",
+    "trace": "Python evaluates 4 + 5 to 9, then print receives the text Score: and the number 9. The second call starts on a new line because the first call ended its line.",
+    "mistake": "Quotes must surround the text, not the entire instruction. \"print(9)\" is just a string expression; it does not call print. A missing closing quote or parenthesis prevents the file from running.",
+    "challenge": "Print Total: 12 on one line using a calculation, then print Done on the next line.",
+    "solution": "print(\"Total:\", 3 * 4)\nprint(\"Done\")",
+    "pairs": [
+      [
+        "Quotes",
+        "Mark the start and end of text"
+      ],
+      [
+        "Comma in print",
+        "Separates values passed to print"
+      ],
+      [
+        "Parentheses",
+        "Enclose the arguments of a function call"
+      ]
+    ],
+    "order": [
+      "Evaluate the expression 4 + 5",
+      "Pass the result to print",
+      "Display the result in the output"
+    ],
+    "orderwhy": "An argument expression must have a value before the function can use it."
+  },
+  {
+    "course": "foundations",
+    "slug": "variables-types",
+    "title": "Trace how a value changes",
+    "model": "Assignment evaluates the right side first, then binds the name on the left to that result. A later assignment changes what that name refers to. Another variable does not become a live formula just because you used the first variable to calculate it.",
+    "code": "points = 10\nbonus = points + 2\npoints = 20\nprint(points)\nprint(bonus)",
+    "output": "20\n12",
+    "trace": "After line 1, points is 10. Line 2 calculates 12 and stores it as bonus. Line 3 reassigns points to 20 but does not recalculate bonus. Keep a small table of names and current values when tracing assignments.",
+    "mistake": "Reading a name before assigning it raises NameError. Changing a name later also does not update previously calculated numbers. Recalculate a derived value when you need a fresh result.",
+    "challenge": "Start with coins = 5. Store double = coins * 2, then add 3 to coins. Print both names and explain why the results differ.",
+    "solution": "coins = 5\ndouble = coins * 2\ncoins = coins + 3\nprint(coins)\nprint(double)",
+    "pairs": [
+      [
+        "12",
+        "An integer value"
+      ],
+      [
+        "12.5",
+        "A floating-point value"
+      ],
+      [
+        "\"12\"",
+        "A string value"
+      ]
+    ],
+    "order": [
+      "coins = 5",
+      "double = coins * 2",
+      "coins = coins + 3",
+      "print(coins, double)"
+    ],
+    "orderwhy": "The value of double must be calculated before coins changes if the final output should be 8 10."
+  },
+  {
+    "course": "foundations",
+    "slug": "type-io",
+    "title": "Convert at the boundary",
+    "model": "input returns a string, even when a user types digits. Convert that string when you need arithmetic. int accepts whole-number text; float accepts decimal text. Keep the original string when the value is an identifier, such as a postcode with leading zeros.",
+    "code": "raw = \"12\"\nquantity = int(raw)\nprint(raw * 2)\nprint(quantity * 2)",
+    "output": "1212\n24",
+    "trace": "The first multiplication repeats a string twice. After int converts the text, multiplication performs arithmetic. The same operator behaves differently because its operands have different types.",
+    "mistake": "int(\"3.5\") raises ValueError because the text is not a whole number. int(3.5) instead truncates a numeric value; those two operations are different. Choose a conversion that matches what your prompt allows.",
+    "challenge": "Convert the text \"2.5\" to a number, multiply it by 4, and print the result. Predict whether Python displays 10 or 10.0.",
+    "solution": "price = float(\"2.5\")\nprint(price * 4)",
+    "pairs": [
+      [
+        "input(\"Age: \")",
+        "Returns text supplied by the user"
+      ],
+      [
+        "int(\"12\")",
+        "Converts whole-number text to an integer"
+      ],
+      [
+        "float(\"2.5\")",
+        "Converts decimal text to a floating-point number"
+      ]
+    ],
+    "order": [
+      "raw = \"7\"",
+      "count = int(raw)",
+      "total = count + 3",
+      "print(total)"
+    ],
+    "orderwhy": "Conversion must happen before addition; otherwise Python is asked to add a string and an integer."
+  },
+  {
+    "course": "foundations",
+    "slug": "arithmetic-expressions",
+    "title": "Choose the operation that answers the question",
+    "model": "Division answers several different questions. / gives a quotient, // gives a floor quotient, and % gives the remainder. For positive item counts, // tells you how many complete groups fit, while % tells you how many items are left.",
+    "code": "items = 17\nbox_size = 5\nprint(items // box_size)\nprint(items % box_size)\nprint(items / box_size)",
+    "output": "3\n2\n3.4",
+    "trace": "Three complete boxes hold 15 items, with 2 left over. Check the relationship 17 == 3 * 5 + 2. The ordinary quotient 3.4 is useful as a ratio, but it is not a count of complete boxes.",
+    "mistake": "// floors rather than simply removing decimal digits: -7 // 3 is -3. Also, multiplying and dividing happen before addition and subtraction; use parentheses to make intended grouping explicit.",
+    "challenge": "For 23 students and teams of 4, print the number of complete teams and the number of students left. Check your answer by reconstructing 23.",
+    "solution": "students = 23\nprint(students // 4)\nprint(students % 4)",
+    "pairs": [
+      [
+        "/",
+        "Division that returns a quotient"
+      ],
+      [
+        "//",
+        "Division rounded down to the floor"
+      ],
+      [
+        "%",
+        "Remainder after floor division"
+      ]
+    ],
+    "order": [
+      "items = 17",
+      "boxes = items // 5",
+      "left = items - boxes * 5",
+      "print(left)"
+    ],
+    "orderwhy": "Each calculation depends on a value defined earlier; the final remainder is 2."
+  },
+  {
+    "course": "foundations",
+    "slug": "comments-docs",
+    "title": "Explain the decision behind the code",
+    "model": "A useful comment explains a reason, assumption, or constraint that the code cannot express clearly by itself. Comments beginning with # are ignored by Python. A # inside a quoted string is ordinary text.",
+    "code": "# Keep one seat available for the instructor.\nseats = 12\nprint(seats - 1)\nprint(\"Room #4\")",
+    "output": "11\nRoom #4",
+    "trace": "The comment explains why one seat is subtracted. The arithmetic produces 11. The hash in Room #4 is inside quotes, so it appears in the output rather than starting a comment.",
+    "mistake": "A stale comment can be more misleading than no comment. When changing a rule, update its explanation too. A docstring is a string at the start of a module, function or class; it is not the same thing as an arbitrary triple-quoted comment.",
+    "challenge": "Write a short program for 8 seats with 2 reserved for helpers. Add a comment that explains the reservation, then print the available seats.",
+    "solution": "# Reserve two seats for helpers.\nseats = 8\nprint(seats - 2)",
+    "pairs": [
+      [
+        "# reserve a seat",
+        "A comment ignored during execution"
+      ],
+      [
+        "\"Room #4\"",
+        "A string containing a hash character"
+      ],
+      [
+        "A function docstring",
+        "Documentation placed at the start of a function"
+      ]
+    ],
+    "order": [
+      "Read the calculation and its comment",
+      "Change the rule in the code",
+      "Update the comment to explain the new rule",
+      "Run and check the result"
+    ],
+    "orderwhy": "The final check should verify both the new behavior and that its explanation still matches."
+  },
+  {
+    "course": "foundations",
+    "slug": "syntax-indentation",
+    "title": "Indentation defines a block",
+    "model": "Indentation groups statements under a header such as if. A colon introduces the block. Lines at the same indentation belong together; moving back to the previous indentation ends that block. Use four spaces per level consistently.",
+    "code": "score = 4\nif score >= 5:\n    print(\"Pass\")\nprint(\"Checked\")",
+    "output": "Checked",
+    "trace": "The condition is false, so Python skips the indented print. The final print is outside the block and still runs. If score becomes 5, both messages appear because the boundary value meets >= 5.",
+    "mistake": "A line can be syntactically valid and indented in the wrong place. Moving Checked into the block would silently change behavior. Mixing tabs and spaces can also cause indentation errors.",
+    "challenge": "Change score to 5. Then move the final print into the block and set score back to 4. Predict the output in each version before running.",
+    "solution": "score = 5\nif score >= 5:\n    print(\"Pass\")\nprint(\"Checked\")",
+    "pairs": [
+      [
+        "Colon after if",
+        "Introduces the conditional block"
+      ],
+      [
+        "Four leading spaces",
+        "Place a statement inside a block"
+      ],
+      [
+        "Return to the outer indentation",
+        "End that block"
+      ]
+    ],
+    "order": [
+      "score = 5",
+      "if score >= 5:",
+      "    print(\"Pass\")",
+      "print(\"Checked\")"
+    ],
+    "orderwhy": "The assignment precedes the condition, the indented line belongs to if, and Checked runs after the block."
+  },
+  {
+    "course": "data",
+    "slug": "what-is-data-analysis",
+    "title": "Define the denominator before calculating",
+    "model": "A percentage is a count divided by a population. Define that population first: all enrolled students, students who submitted, and students with valid scores can give different answers. A correct calculation is useful only when the labels explain exactly what was counted.",
+    "code": "scores = [40, 60, 80, 100]\npassed = sum(score >= 60 for score in scores)\nprint(passed)\nprint(100 * passed / len(scores))",
+    "output": "3\n75.0",
+    "trace": "Three scores meet the inclusive boundary >= 60. Dividing 3 by 4 gives 0.75, then multiplying by 100 gives 75%. Boolean conditions contribute 1 for True and 0 for False when summed.",
+    "mistake": "If missing scores were removed earlier, this denominator represents recorded scores, not necessarily all enrolled students. Do not describe a subset as the entire population, and do not divide by len(scores) when the list is empty.",
+    "challenge": "Change the threshold to 80 and report both the passing count and percentage. Write a sentence naming the population and threshold.",
+    "solution": "scores = [40, 60, 80, 100]\npassed = sum(score >= 80 for score in scores)\nprint(passed)\nprint(100 * passed / len(scores))",
+    "pairs": [
+      [
+        "Population",
+        "The group the result describes"
+      ],
+      [
+        "Threshold",
+        "The boundary that decides which values count"
+      ],
+      [
+        "Percentage",
+        "A count divided by its population, times 100"
+      ]
+    ],
+    "order": [
+      "Define which students and scores count",
+      "Check for missing or invalid scores",
+      "Calculate the passing count and percentage",
+      "Explain the population and threshold with the result"
+    ],
+    "orderwhy": "An explicit definition and data check come before computation; the explanation preserves those definitions."
+  },
+  {
+    "course": "data",
+    "slug": "rows-and-columns-with-lists",
+    "title": "Trace both indexes separately",
+    "model": "A table stored as nested lists has two levels. The first index chooses a row; the second chooses a value within that row. Keep the column layout consistent across every row, because numeric positions carry no field names.",
+    "code": "rows = [[\"Ada\", 8], [\"Grace\", 10], [\"Lin\", 6]]\nprint(rows[1][0])\nscores = [row[1] for row in rows]\nprint(sum(scores))",
+    "output": "Grace\n24",
+    "trace": "rows[1] is [\"Grace\", 10], then [0] selects Grace from that row. The comprehension selects position 1 from every row, producing [8, 10, 6]. Summing this column gives 24.",
+    "mistake": "rows[1] selects a row, not the second column. A shorter row can raise IndexError; a row with swapped fields may instead produce misleading data. Check row lengths and field meaning before extracting a column.",
+    "challenge": "Add [\"Mo\", 12] as a new row. Extract the names into one list and calculate the average score from the score column.",
+    "solution": "rows = [[\"Ada\", 8], [\"Grace\", 10], [\"Lin\", 6], [\"Mo\", 12]]\nprint([row[0] for row in rows])\nscores = [row[1] for row in rows]\nprint(sum(scores) / len(scores))",
+    "pairs": [
+      [
+        "rows[0]",
+        "The first complete row"
+      ],
+      [
+        "rows[0][1]",
+        "The second value in the first row"
+      ],
+      [
+        "[row[1] for row in rows]",
+        "The second column collected from every row"
+      ]
+    ],
+    "order": [
+      "rows = [[\"Ada\", 8], [\"Grace\", 10]]",
+      "scores = [row[1] for row in rows]",
+      "total = sum(scores)",
+      "print(total)"
+    ],
+    "orderwhy": "Extract the numeric column before summing; summing the rows themselves is a different operation."
+  },
+  {
+    "course": "data",
+    "slug": "records-as-dictionaries",
+    "title": "Missing is different from zero",
+    "model": "A dictionary lets you refer to a field by name. Direct lookup with record[key] is useful when a required field must exist. get provides a fallback for optional fields, but choosing that fallback is a data decision: a missing measurement does not automatically mean zero.",
+    "code": "record = {\"name\": \"Ada\", \"score\": 0}\nprint(record[\"score\"])\nprint(record.get(\"age\"))\nprint(\"score\" in record)",
+    "output": "0\nNone\nTrue",
+    "trace": "The score key exists and contains a real zero. The age key is absent, so get returns None. Membership tests whether a key exists, independently of whether its value is truthy.",
+    "mistake": "if record.get(\"score\") rejects both a valid zero and a missing value. When zero is valid, use key membership or an explicit is not None check, depending on whether stored None should count as missing too.",
+    "challenge": "Create a list with one score of 0, one score of 8, and one record without a score. Collect the available scores without dropping the zero.",
+    "solution": "records = [{\"score\": 0}, {\"score\": 8}, {}]\nscores = [r[\"score\"] for r in records if \"score\" in r]\nprint(scores)",
+    "pairs": [
+      [
+        "record[\"score\"]",
+        "Reads a required key and raises if absent"
+      ],
+      [
+        "record.get(\"score\")",
+        "Returns the value or None when absent"
+      ],
+      [
+        "\"score\" in record",
+        "Checks whether the key exists"
+      ]
+    ],
+    "order": [
+      "records = [{\"score\": 0}, {\"score\": 8}, {}]",
+      "scores = [r[\"score\"] for r in records if \"score\" in r]",
+      "total = sum(scores)",
+      "print(total)"
+    ],
+    "orderwhy": "Filter by key presence before direct lookup, so the missing record is skipped while zero remains valid."
+  },
+  {
+    "course": "data",
+    "slug": "reading-a-csv-file",
+    "title": "Parse the file before interpreting its values",
+    "model": "CSV is a file format with quoting rules, not just text separated at every comma. DictReader uses the header row as field names and returns string values. Parsing establishes the rows; conversion then gives selected fields the numeric types needed for analysis.",
+    "code": "import csv\nfrom io import StringIO\n\ntext = 'name,score\\n\"Lee, Jo\",8\\nAda,10\\n'\nrows = list(csv.DictReader(StringIO(text)))\nprint(rows[0][\"name\"])\nprint(sum(int(row[\"score\"]) for row in rows))",
+    "output": "Lee, Jo\n18",
+    "trace": "The comma inside the quoted name belongs to that one field. DictReader keeps Lee, Jo together. The score values start as \"8\" and \"10\", then int converts them before summing. StringIO lets this small example behave like a text file without requiring an upload.",
+    "mistake": "line.split(\",\") would split the quoted name incorrectly. Also, a DictReader is consumed as you iterate; a second pass over the same reader will not start again. Save rows in a list for repeated access, or reopen the file for another pass.",
+    "challenge": "Add a third CSV row for \"Pat, Sam\" with a score of 12. Print all three names and the new total. Keep the name quoted inside the CSV text.",
+    "solution": "import csv\nfrom io import StringIO\ntext = 'name,score\\n\"Lee, Jo\",8\\nAda,10\\n\"Pat, Sam\",12\\n'\nrows = list(csv.DictReader(StringIO(text)))\nprint([row[\"name\"] for row in rows])\nprint(sum(int(row[\"score\"]) for row in rows))",
+    "pairs": [
+      [
+        "CSV header",
+        "Supplies field names for DictReader"
+      ],
+      [
+        "Quoted field",
+        "Can contain a comma without creating another column"
+      ],
+      [
+        "int(row[\"score\"])",
+        "Converts a numeric field from text before arithmetic"
+      ]
+    ],
+    "order": [
+      "Open the CSV file as text",
+      "Create a DictReader from the file",
+      "Read rows and convert the score values",
+      "Summarise the numeric scores"
+    ],
+    "orderwhy": "Read with a CSV parser before converting fields; conversion precedes arithmetic."
+  },
+  {
+    "course": "data",
+    "slug": "summarising-numbers",
+    "title": "Compare a typical value with an extreme",
+    "model": "The mean uses every value, so a single extreme can move it substantially. The median is the middle value after sorting, or the average of the two middle values for an even count. Compare both when you want to describe a typical observation.",
+    "code": "from statistics import median\n\nwaits = [2, 3, 3, 4, 28]\nprint(sum(waits) / len(waits))\nprint(median(waits))",
+    "output": "8.0\n3",
+    "trace": "The total waiting time is 40 across 5 observations, giving a mean of 8. The sorted middle value is 3. Four of the five waits are below the mean, so reporting only 8 hides the shape of this tiny dataset.",
+    "mistake": "An extreme value is not automatically an error: the 28-minute wait might be real. Investigate its meaning before removing it. Check for an empty list before computing a mean or median, and preserve precision until final display.",
+    "challenge": "Replace 28 with 8. Recalculate the mean and median, then explain which summary changed and why.",
+    "solution": "from statistics import median\nwaits = [2, 3, 3, 4, 8]\nprint(sum(waits) / len(waits))\nprint(median(waits))",
+    "pairs": [
+      [
+        "Mean",
+        "Sum divided by the number of values"
+      ],
+      [
+        "Median",
+        "Middle of the sorted values"
+      ],
+      [
+        "Range",
+        "Maximum minus minimum"
+      ]
+    ],
+    "order": [
+      "Check that the numeric values are valid and nonempty",
+      "Calculate both mean and median",
+      "Compare the two summaries",
+      "Explain the difference using the values"
+    ],
+    "orderwhy": "Validation prevents undefined calculations; comparing summaries helps avoid an incomplete description."
+  },
+  {
+    "course": "data",
+    "slug": "counting-and-grouping",
+    "title": "Keep each group’s state separate",
+    "model": "Counting tracks one number per key. Grouping stores the values belonging to each key so you can compute summaries within each group. A per-group mean needs that group’s total and count, not the total number of rows in the dataset.",
+    "code": "rows = [(\"A\", 2), (\"B\", 9), (\"A\", 6)]\ngroups = {}\nfor name, score in rows:\n    groups.setdefault(name, []).append(score)\nprint(groups[\"A\"])\nprint(sum(groups[\"A\"]) / len(groups[\"A\"]))",
+    "output": "[2, 6]\n4.0",
+    "trace": "The first A creates its list with 2. B gets a different list containing 9. The final A appends 6 to A’s existing list. A’s mean divides its sum of 8 by its own count of 2, producing 4.",
+    "mistake": "Dividing A’s total by len(rows) would mix a group total with a whole-dataset count. Replacing groups[name] with [score] on every iteration would lose earlier values instead of accumulating them.",
+    "challenge": "Add (\"B\", 3). Print each group and its mean. Check that changing B’s observations does not change A’s mean.",
+    "solution": "rows = [(\"A\", 2), (\"B\", 9), (\"A\", 6), (\"B\", 3)]\ngroups = {}\nfor name, score in rows:\n    groups.setdefault(name, []).append(score)\nfor name, scores in groups.items():\n    print(name, sum(scores) / len(scores))",
+    "pairs": [
+      [
+        "Count by key",
+        "Track how often each category occurs"
+      ],
+      [
+        "Group by key",
+        "Collect values separately for each category"
+      ],
+      [
+        "Mean within a group",
+        "Divide that group’s total by that group’s count"
+      ]
+    ],
+    "order": [
+      "groups = {}",
+      "for name, score in rows:",
+      "    groups.setdefault(name, []).append(score)",
+      "print(groups)"
+    ],
+    "orderwhy": "Create the dictionary once outside the loop, then append each value inside the loop so earlier values survive."
+  }
+]

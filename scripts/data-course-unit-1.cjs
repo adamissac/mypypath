@@ -891,3 +891,12 @@ module.exports = {
     ],
   },
 };
+
+// The shared introductory extension is authored alongside Foundations Unit 1.
+const intro = require('./intro-lesson-enrichment.cjs');
+for (const lesson of module.exports.unit1.lessons) {
+  const entry = intro.entries.find(e => e.course === 'data' && e.slug === lesson.slug);
+  if (!entry) throw new Error(`Missing introductory extension: ${lesson.slug}`);
+  lesson.deepDive = entry;
+  lesson.questions.push(...intro.questions(entry));
+}

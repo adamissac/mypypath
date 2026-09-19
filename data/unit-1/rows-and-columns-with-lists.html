@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="/assets/css/auth.css" />
     <link rel="stylesheet" href="/assets/css/gate.css" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=ddfe7d394a" />
-    <link rel="stylesheet" href="/assets/css/checks.css" />
+    <link rel="stylesheet" href="/assets/css/checks.css?v=001b0bc8ef" />
 
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
@@ -39,7 +39,7 @@
     <script defer src="/assets/js/curriculum.js"></script>
     <script defer src="/assets/js/classroom-policy.js"></script>
     <script defer src="/assets/js/question-types.js"></script>
-    <script defer src="/assets/js/question-render.js"></script>
+    <script defer src="/assets/js/question-render.js?v=3cf25ada4f"></script>
     <script defer src="/assets/js/reflection-check.js"></script>
     <script defer src="/assets/js/concept-check.js"></script>
     <script defer src="/assets/js/checker-gen.js"></script>
@@ -55,7 +55,7 @@
 <script defer src="/assets/js/lesson-ui.js?v=c9045f093f"></script>
 <script defer src="/assets/js/checker.js"></script>
 <script defer src="/assets/js/check-ui.js"></script>
-<script defer src="/assets/js/lesson-quiz.js"></script>
+<script defer src="/assets/js/lesson-quiz.js?v=b4f9f55bf0"></script>
     <script defer src="/assets/js/exercises.js"></script>
     <script defer src="/assets/js/lesson-runner.js"></script>
     <script defer src="/assets/js/lesson-progress.js"></script>
@@ -386,6 +386,31 @@ print(names)</code></pre>
 <pre class="checkpoint-output" aria-label="Expected output">['Zoe', 'Kai']</pre>
 <p>The condition uses column 2, while the result takes column 0. Zoe still belongs to art even though her score is zero. A filter keeps the original order unless you explicitly sort it.</p></details>
 <p><strong>Try one change:</strong> Change Zoe’s subject to maths, then add a new art row. Predict the new list.</p>
+</section>
+<section class="content-section lesson-deep-dive">
+<h2>Go deeper: Trace both indexes separately</h2>
+<p>A table stored as nested lists has two levels. The first index chooses a row; the second chooses a value within that row. Keep the column layout consistent across every row, because numeric positions carry no field names.</p>
+<h3>Trace the example</h3>
+<p>Predict the output before opening the explanation.</p>
+<pre class="code"><code>rows = [[&quot;Ada&quot;, 8], [&quot;Grace&quot;, 10], [&quot;Lin&quot;, 6]]
+print(rows[1][0])
+scores = [row[1] for row in rows]
+print(sum(scores))</code></pre>
+<details class="worked-answer"><summary>Show the output and trace</summary>
+<pre class="checkpoint-output" aria-label="Expected output">Grace
+24</pre>
+<p>rows[1] is [&quot;Grace&quot;, 10], then [0] selects Grace from that row. The comprehension selects position 1 from every row, producing [8, 10, 6]. Summing this column gives 24.</p></details>
+<h3>A mistake to watch for</h3>
+<p>rows[1] selects a row, not the second column. A shorter row can raise IndexError; a row with swapped fields may instead produce misleading data. Check row lengths and field meaning before extracting a column.</p>
+<h3>Transfer challenge</h3>
+<p>Add [&quot;Mo&quot;, 12] as a new row. Extract the names into one list and calculate the average score from the score column.</p>
+<p>Try your solution in a lesson editor before opening the worked answer. This practice is ungraded.</p>
+<details class="worked-answer"><summary>Compare with a worked solution</summary>
+<pre class="code"><code>rows = [[&quot;Ada&quot;, 8], [&quot;Grace&quot;, 10], [&quot;Lin&quot;, 6], [&quot;Mo&quot;, 12]]
+print([row[0] for row in rows])
+scores = [row[1] for row in rows]
+print(sum(scores) / len(scores))</code></pre>
+<p>Run both versions. Explain any difference in their output, then change one input and predict the new result.</p></details>
 </section>
 
 <div class="content-section">

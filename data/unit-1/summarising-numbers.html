@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="/assets/css/auth.css" />
     <link rel="stylesheet" href="/assets/css/gate.css" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=ddfe7d394a" />
-    <link rel="stylesheet" href="/assets/css/checks.css" />
+    <link rel="stylesheet" href="/assets/css/checks.css?v=001b0bc8ef" />
 
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
@@ -39,7 +39,7 @@
     <script defer src="/assets/js/curriculum.js"></script>
     <script defer src="/assets/js/classroom-policy.js"></script>
     <script defer src="/assets/js/question-types.js"></script>
-    <script defer src="/assets/js/question-render.js"></script>
+    <script defer src="/assets/js/question-render.js?v=3cf25ada4f"></script>
     <script defer src="/assets/js/reflection-check.js"></script>
     <script defer src="/assets/js/concept-check.js"></script>
     <script defer src="/assets/js/checker-gen.js"></script>
@@ -55,7 +55,7 @@
 <script defer src="/assets/js/lesson-ui.js?v=c9045f093f"></script>
 <script defer src="/assets/js/checker.js"></script>
 <script defer src="/assets/js/check-ui.js"></script>
-<script defer src="/assets/js/lesson-quiz.js"></script>
+<script defer src="/assets/js/lesson-quiz.js?v=b4f9f55bf0"></script>
     <script defer src="/assets/js/exercises.js"></script>
     <script defer src="/assets/js/lesson-runner.js"></script>
     <script defer src="/assets/js/lesson-progress.js"></script>
@@ -394,6 +394,32 @@ print(statistics.median(times))</code></pre>
 3.0</pre>
 <p>The mean uses every value, so the 100 affects it strongly. The median uses the middle two values after sorting: (3 + 3) / 2. Report what the numbers measure and the sample size; neither summary alone describes the whole distribution.</p></details>
 <p><strong>Try one change:</strong> Replace 100 with 1000, then compare both summaries. Explain which is more useful for a typical response time.</p>
+</section>
+<section class="content-section lesson-deep-dive">
+<h2>Go deeper: Compare a typical value with an extreme</h2>
+<p>The mean uses every value, so a single extreme can move it substantially. The median is the middle value after sorting, or the average of the two middle values for an even count. Compare both when you want to describe a typical observation.</p>
+<h3>Trace the example</h3>
+<p>Predict the output before opening the explanation.</p>
+<pre class="code"><code>from statistics import median
+
+waits = [2, 3, 3, 4, 28]
+print(sum(waits) / len(waits))
+print(median(waits))</code></pre>
+<details class="worked-answer"><summary>Show the output and trace</summary>
+<pre class="checkpoint-output" aria-label="Expected output">8.0
+3</pre>
+<p>The total waiting time is 40 across 5 observations, giving a mean of 8. The sorted middle value is 3. Four of the five waits are below the mean, so reporting only 8 hides the shape of this tiny dataset.</p></details>
+<h3>A mistake to watch for</h3>
+<p>An extreme value is not automatically an error: the 28-minute wait might be real. Investigate its meaning before removing it. Check for an empty list before computing a mean or median, and preserve precision until final display.</p>
+<h3>Transfer challenge</h3>
+<p>Replace 28 with 8. Recalculate the mean and median, then explain which summary changed and why.</p>
+<p>Try your solution in a lesson editor before opening the worked answer. This practice is ungraded.</p>
+<details class="worked-answer"><summary>Compare with a worked solution</summary>
+<pre class="code"><code>from statistics import median
+waits = [2, 3, 3, 4, 8]
+print(sum(waits) / len(waits))
+print(median(waits))</code></pre>
+<p>Run both versions. Explain any difference in their output, then change one input and predict the new result.</p></details>
 </section>
 
 <div class="content-section">

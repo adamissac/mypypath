@@ -83,6 +83,60 @@
       ],
       "answer": 2,
       "explain": "Four spaces is the PEP 8 convention. Any consistent amount works, but four is what everyone else uses."
+    },
+    {
+      "id": "intro-foundations-syntax-indentation-match",
+      "kind": "match",
+      "prompt": "Match each idea to its meaning.",
+      "left": [
+        "Colon after if",
+        "Four leading spaces",
+        "Return to the outer indentation"
+      ],
+      "right": [
+        "Place a statement inside a block",
+        "End that block",
+        "Introduces the conditional block"
+      ],
+      "answer": [
+        2,
+        0,
+        1
+      ],
+      "explain": "Colon after if: Introduces the conditional block. Four leading spaces: Place a statement inside a block. Return to the outer indentation: End that block."
+    },
+    {
+      "id": "intro-foundations-syntax-indentation-order",
+      "kind": "order",
+      "prompt": "Arrange these steps in the intended order.",
+      "items": [
+        "score = 5",
+        "if score >= 5:",
+        "    print(\"Pass\")",
+        "print(\"Checked\")"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "The assignment precedes the condition, the indented line belongs to if, and Checked runs after the block."
+    },
+    {
+      "id": "intro-foundations-syntax-indentation-predict",
+      "kind": "blank",
+      "label": "Predict the first line of output (without surrounding quotes).",
+      "prompt": "score = 4\nif score >= 5:\n    print(\"Pass\")\nprint(\"Checked\")\n\nFirst output line: ___",
+      "blanks": [
+        {
+          "accept": [
+            "Checked"
+          ],
+          "caseSensitive": true
+        }
+      ],
+      "explain": "The condition is false, so Python skips the indented print. The final print is outside the block and still runs. If score becomes 5, both messages appear because the boundary value meets >= 5."
     }
   ]
 }

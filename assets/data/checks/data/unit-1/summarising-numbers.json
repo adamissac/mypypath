@@ -142,6 +142,60 @@
       ],
       "answer": 2,
       "explain": "The median depends only on the middle of the sorted values, so a single extreme value at the end hardly moves it."
+    },
+    {
+      "id": "intro-data-summarising-numbers-match",
+      "kind": "match",
+      "prompt": "Match each idea to its meaning.",
+      "left": [
+        "Mean",
+        "Median",
+        "Range"
+      ],
+      "right": [
+        "Middle of the sorted values",
+        "Maximum minus minimum",
+        "Sum divided by the number of values"
+      ],
+      "answer": [
+        2,
+        0,
+        1
+      ],
+      "explain": "Mean: Sum divided by the number of values. Median: Middle of the sorted values. Range: Maximum minus minimum."
+    },
+    {
+      "id": "intro-data-summarising-numbers-order",
+      "kind": "order",
+      "prompt": "Arrange these steps in the intended order.",
+      "items": [
+        "Check that the numeric values are valid and nonempty",
+        "Calculate both mean and median",
+        "Compare the two summaries",
+        "Explain the difference using the values"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "Validation prevents undefined calculations; comparing summaries helps avoid an incomplete description."
+    },
+    {
+      "id": "intro-data-summarising-numbers-predict",
+      "kind": "blank",
+      "label": "Predict the first line of output (without surrounding quotes).",
+      "prompt": "from statistics import median\n\nwaits = [2, 3, 3, 4, 28]\nprint(sum(waits) / len(waits))\nprint(median(waits))\n\nFirst output line: ___",
+      "blanks": [
+        {
+          "accept": [
+            "8.0"
+          ],
+          "caseSensitive": true
+        }
+      ],
+      "explain": "The total waiting time is 40 across 5 observations, giving a mean of 8. The sorted middle value is 3. Four of the five waits are below the mean, so reporting only 8 hides the shape of this tiny dataset."
     }
   ]
 }

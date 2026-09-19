@@ -129,6 +129,60 @@
       ],
       "answer": 1,
       "explain": "A typed answer is a copy of the result that nothing keeps in step with the data."
+    },
+    {
+      "id": "intro-data-what-is-data-analysis-match",
+      "kind": "match",
+      "prompt": "Match each idea to its meaning.",
+      "left": [
+        "Population",
+        "Threshold",
+        "Percentage"
+      ],
+      "right": [
+        "The boundary that decides which values count",
+        "A count divided by its population, times 100",
+        "The group the result describes"
+      ],
+      "answer": [
+        2,
+        0,
+        1
+      ],
+      "explain": "Population: The group the result describes. Threshold: The boundary that decides which values count. Percentage: A count divided by its population, times 100."
+    },
+    {
+      "id": "intro-data-what-is-data-analysis-order",
+      "kind": "order",
+      "prompt": "Arrange these steps in the intended order.",
+      "items": [
+        "Define which students and scores count",
+        "Check for missing or invalid scores",
+        "Calculate the passing count and percentage",
+        "Explain the population and threshold with the result"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "An explicit definition and data check come before computation; the explanation preserves those definitions."
+    },
+    {
+      "id": "intro-data-what-is-data-analysis-predict",
+      "kind": "blank",
+      "label": "Predict the first line of output (without surrounding quotes).",
+      "prompt": "scores = [40, 60, 80, 100]\npassed = sum(score >= 60 for score in scores)\nprint(passed)\nprint(100 * passed / len(scores))\n\nFirst output line: ___",
+      "blanks": [
+        {
+          "accept": [
+            "3"
+          ],
+          "caseSensitive": true
+        }
+      ],
+      "explain": "Three scores meet the inclusive boundary >= 60. Dividing 3 by 4 gives 0.75, then multiplying by 100 gives 75%. Boolean conditions contribute 1 for True and 0 for False when summed."
     }
   ]
 }

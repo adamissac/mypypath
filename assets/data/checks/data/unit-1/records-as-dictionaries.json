@@ -122,6 +122,60 @@
       ],
       "answer": 1,
       "explain": "zip pairs each name with the value in the same position, and dict turns the pairs into a record."
+    },
+    {
+      "id": "intro-data-records-as-dictionaries-match",
+      "kind": "match",
+      "prompt": "Match each idea to its meaning.",
+      "left": [
+        "record[\"score\"]",
+        "record.get(\"score\")",
+        "\"score\" in record"
+      ],
+      "right": [
+        "Returns the value or None when absent",
+        "Checks whether the key exists",
+        "Reads a required key and raises if absent"
+      ],
+      "answer": [
+        2,
+        0,
+        1
+      ],
+      "explain": "record[\"score\"]: Reads a required key and raises if absent. record.get(\"score\"): Returns the value or None when absent. \"score\" in record: Checks whether the key exists."
+    },
+    {
+      "id": "intro-data-records-as-dictionaries-order",
+      "kind": "order",
+      "prompt": "Arrange these steps in the intended order.",
+      "items": [
+        "records = [{\"score\": 0}, {\"score\": 8}, {}]",
+        "scores = [r[\"score\"] for r in records if \"score\" in r]",
+        "total = sum(scores)",
+        "print(total)"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explain": "Filter by key presence before direct lookup, so the missing record is skipped while zero remains valid."
+    },
+    {
+      "id": "intro-data-records-as-dictionaries-predict",
+      "kind": "blank",
+      "label": "Predict the first line of output (without surrounding quotes).",
+      "prompt": "record = {\"name\": \"Ada\", \"score\": 0}\nprint(record[\"score\"])\nprint(record.get(\"age\"))\nprint(\"score\" in record)\n\nFirst output line: ___",
+      "blanks": [
+        {
+          "accept": [
+            "0"
+          ],
+          "caseSensitive": true
+        }
+      ],
+      "explain": "The score key exists and contains a real zero. The age key is absent, so get returns None. Membership tests whether a key exists, independently of whether its value is truthy."
     }
   ]
 }

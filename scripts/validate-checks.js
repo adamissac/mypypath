@@ -387,8 +387,8 @@ function validateCourse(course, manifest, courseRoot, errors, files) {
       // learns something untrue.
       if (spec.questions !== undefined) {
         const questions = spec.questions;
-        if (!Array.isArray(questions) || questions.length < 3 || questions.length > 5) {
-          errors.push(`${rel} / questions: expected 3 to 5 questions, found ` +
+        if (!Array.isArray(questions) || questions.length < 3 || questions.length > 8) {
+          errors.push(`${rel} / questions: expected 3 to 8 questions, found ` +
             `${Array.isArray(questions) ? questions.length : typeof questions}`);
         } else {
           const seen = new Set();

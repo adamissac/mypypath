@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="/assets/css/auth.css" />
     <link rel="stylesheet" href="/assets/css/gate.css" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=ddfe7d394a" />
-    <link rel="stylesheet" href="/assets/css/checks.css" />
+    <link rel="stylesheet" href="/assets/css/checks.css?v=001b0bc8ef" />
 
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
@@ -39,7 +39,7 @@
     <script defer src="/assets/js/curriculum.js"></script>
     <script defer src="/assets/js/classroom-policy.js"></script>
     <script defer src="/assets/js/question-types.js"></script>
-    <script defer src="/assets/js/question-render.js"></script>
+    <script defer src="/assets/js/question-render.js?v=3cf25ada4f"></script>
     <script defer src="/assets/js/reflection-check.js"></script>
     <script defer src="/assets/js/concept-check.js"></script>
     <script defer src="/assets/js/checker-gen.js"></script>
@@ -55,7 +55,7 @@
 <script defer src="/assets/js/lesson-ui.js?v=c9045f093f"></script>
 <script defer src="/assets/js/checker.js"></script>
 <script defer src="/assets/js/check-ui.js"></script>
-<script defer src="/assets/js/lesson-quiz.js"></script>
+<script defer src="/assets/js/lesson-quiz.js?v=b4f9f55bf0"></script>
     <script defer src="/assets/js/exercises.js"></script>
     <script defer src="/assets/js/lesson-runner.js"></script>
     <script defer src="/assets/js/lesson-progress.js"></script>
@@ -388,6 +388,31 @@ print(sum(values) / len(values))</code></pre>
 40.0</pre>
 <p>Membership checks whether a field exists. A truthiness check such as if r.get("score") would discard the real zero and report 80.0. Filling the missing field with zero would instead divide by three. Those are different assumptions, not interchangeable shortcuts.</p></details>
 <p><strong>Try one change:</strong> Add another record with score 40. Work out the new denominator before running.</p>
+</section>
+<section class="content-section lesson-deep-dive">
+<h2>Go deeper: Missing is different from zero</h2>
+<p>A dictionary lets you refer to a field by name. Direct lookup with record[key] is useful when a required field must exist. get provides a fallback for optional fields, but choosing that fallback is a data decision: a missing measurement does not automatically mean zero.</p>
+<h3>Trace the example</h3>
+<p>Predict the output before opening the explanation.</p>
+<pre class="code"><code>record = {&quot;name&quot;: &quot;Ada&quot;, &quot;score&quot;: 0}
+print(record[&quot;score&quot;])
+print(record.get(&quot;age&quot;))
+print(&quot;score&quot; in record)</code></pre>
+<details class="worked-answer"><summary>Show the output and trace</summary>
+<pre class="checkpoint-output" aria-label="Expected output">0
+None
+True</pre>
+<p>The score key exists and contains a real zero. The age key is absent, so get returns None. Membership tests whether a key exists, independently of whether its value is truthy.</p></details>
+<h3>A mistake to watch for</h3>
+<p>if record.get(&quot;score&quot;) rejects both a valid zero and a missing value. When zero is valid, use key membership or an explicit is not None check, depending on whether stored None should count as missing too.</p>
+<h3>Transfer challenge</h3>
+<p>Create a list with one score of 0, one score of 8, and one record without a score. Collect the available scores without dropping the zero.</p>
+<p>Try your solution in a lesson editor before opening the worked answer. This practice is ungraded.</p>
+<details class="worked-answer"><summary>Compare with a worked solution</summary>
+<pre class="code"><code>records = [{&quot;score&quot;: 0}, {&quot;score&quot;: 8}, {}]
+scores = [r[&quot;score&quot;] for r in records if &quot;score&quot; in r]
+print(scores)</code></pre>
+<p>Run both versions. Explain any difference in their output, then change one input and predict the new result.</p></details>
 </section>
 
 <div class="content-section">

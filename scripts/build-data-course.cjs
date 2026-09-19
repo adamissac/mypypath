@@ -279,6 +279,7 @@ function lessonMain(unitN, unit, i, raw, prev, next, nextTitle) {
 <p><strong>Try one change:</strong> ${esc(c.tryIt)}</p>
 </section>`);
   }
+  if (lesson.deepDive) body.push(require('./intro-lesson-enrichment.cjs').markup(lesson.deepDive));
   body.push(useSection(lesson.use, lesson.sections.length + 1));
 
   const exercises = lesson.exercises.map((ex, n) => exerciseBlock(ex, n)).join('\n');

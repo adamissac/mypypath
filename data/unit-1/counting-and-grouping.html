@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="/assets/css/auth.css" />
     <link rel="stylesheet" href="/assets/css/gate.css" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=ddfe7d394a" />
-    <link rel="stylesheet" href="/assets/css/checks.css" />
+    <link rel="stylesheet" href="/assets/css/checks.css?v=001b0bc8ef" />
 
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
@@ -39,7 +39,7 @@
     <script defer src="/assets/js/curriculum.js"></script>
     <script defer src="/assets/js/classroom-policy.js"></script>
     <script defer src="/assets/js/question-types.js"></script>
-    <script defer src="/assets/js/question-render.js"></script>
+    <script defer src="/assets/js/question-render.js?v=3cf25ada4f"></script>
     <script defer src="/assets/js/reflection-check.js"></script>
     <script defer src="/assets/js/concept-check.js"></script>
     <script defer src="/assets/js/checker-gen.js"></script>
@@ -55,7 +55,7 @@
 <script defer src="/assets/js/lesson-ui.js?v=c9045f093f"></script>
 <script defer src="/assets/js/checker.js"></script>
 <script defer src="/assets/js/check-ui.js"></script>
-<script defer src="/assets/js/lesson-quiz.js"></script>
+<script defer src="/assets/js/lesson-quiz.js?v=b4f9f55bf0"></script>
     <script defer src="/assets/js/exercises.js"></script>
     <script defer src="/assets/js/lesson-runner.js"></script>
     <script defer src="/assets/js/lesson-progress.js"></script>
@@ -378,6 +378,35 @@ for subject, scores in groups.items():
 maths 1 90.0</pre>
 <p>Each group has its own total and count. Dividing art’s total by all three rows would give 20.0, which is not its mean. Keeping the count beside the average also shows that maths has only one observation.</p></details>
 <p><strong>Try one change:</strong> Add ("maths", 30). Predict the new count and mean for maths; art should stay unchanged.</p>
+</section>
+<section class="content-section lesson-deep-dive">
+<h2>Go deeper: Keep each group’s state separate</h2>
+<p>Counting tracks one number per key. Grouping stores the values belonging to each key so you can compute summaries within each group. A per-group mean needs that group’s total and count, not the total number of rows in the dataset.</p>
+<h3>Trace the example</h3>
+<p>Predict the output before opening the explanation.</p>
+<pre class="code"><code>rows = [(&quot;A&quot;, 2), (&quot;B&quot;, 9), (&quot;A&quot;, 6)]
+groups = {}
+for name, score in rows:
+    groups.setdefault(name, []).append(score)
+print(groups[&quot;A&quot;])
+print(sum(groups[&quot;A&quot;]) / len(groups[&quot;A&quot;]))</code></pre>
+<details class="worked-answer"><summary>Show the output and trace</summary>
+<pre class="checkpoint-output" aria-label="Expected output">[2, 6]
+4.0</pre>
+<p>The first A creates its list with 2. B gets a different list containing 9. The final A appends 6 to A’s existing list. A’s mean divides its sum of 8 by its own count of 2, producing 4.</p></details>
+<h3>A mistake to watch for</h3>
+<p>Dividing A’s total by len(rows) would mix a group total with a whole-dataset count. Replacing groups[name] with [score] on every iteration would lose earlier values instead of accumulating them.</p>
+<h3>Transfer challenge</h3>
+<p>Add (&quot;B&quot;, 3). Print each group and its mean. Check that changing B’s observations does not change A’s mean.</p>
+<p>Try your solution in a lesson editor before opening the worked answer. This practice is ungraded.</p>
+<details class="worked-answer"><summary>Compare with a worked solution</summary>
+<pre class="code"><code>rows = [(&quot;A&quot;, 2), (&quot;B&quot;, 9), (&quot;A&quot;, 6), (&quot;B&quot;, 3)]
+groups = {}
+for name, score in rows:
+    groups.setdefault(name, []).append(score)
+for name, scores in groups.items():
+    print(name, sum(scores) / len(scores))</code></pre>
+<p>Run both versions. Explain any difference in their output, then change one input and predict the new result.</p></details>
 </section>
 
 <div class="content-section">
