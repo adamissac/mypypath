@@ -226,9 +226,7 @@
 
 .quiz-q__check { margin-top: .6rem; }
 
-/* Matching: a select per row, not drag and drop. A select works with a
-   keyboard, on a phone, and with a screen reader; drag and drop photographs
-   better and excludes all three. */
+/* Matching retains labelled selects alongside drag and tap controls. */
 .quiz-match { margin: 0; padding: 0; list-style: none; }
 
 .quiz-match__row {
@@ -316,3 +314,27 @@
 @media (prefers-reduced-motion: no-preference) {
   .quiz-order__row { transition: background-color .15s ease; }
 }
+
+/* Activity controls inherit the active course palette in both colour modes. */
+.quiz-match__bank { display:flex; flex-wrap:wrap; gap:.5rem; margin:.75rem 0; }
+.quiz-match__chip, .quiz-match__place {
+  min-height:44px; padding:.55rem .8rem; border:1px solid var(--border);
+  border-radius:.6rem; background:var(--bg-elevated); color:var(--text);
+  font:inherit; cursor:pointer; overflow-wrap:anywhere;
+}
+.quiz-match__chip { cursor:grab; }
+.quiz-match__chip[aria-pressed="true"] { outline:2px solid currentColor; outline-offset:2px; }
+.quiz-match__pick { min-height:44px; max-width:100%; }
+.quiz-match__row { padding:.75rem 0; }
+.quiz-match__place { flex:0 0 auto; }
+.quiz-order__row[draggable="true"] { cursor:grab; }
+.quiz-order__code { min-width:0; flex:1; }
+.quiz-order__move { min-width:44px; min-height:44px; }
+.quiz-activity-status { font-size:.9rem; min-height:1.5em; margin:.5rem 0; }
+.quiz-match__chip:focus-visible, .quiz-match__place:focus-visible { outline:3px solid currentColor; outline-offset:3px; }
+/* A fieldset's default min-content width must not widen its grid track. */
+.quiz__list { grid-template-columns:minmax(0, 1fr); }
+.quiz-q, .quiz-q__set { min-width:0; max-width:100%; }
+.quiz-q__prompt { max-width:100%; overflow-wrap:anywhere; }
+.quiz-match__chip { min-width:0; max-width:100%; }
+.quiz-blank { max-width:100%; overflow-x:auto; }

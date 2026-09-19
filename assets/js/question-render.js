@@ -3,11 +3,8 @@
  * DOM only. Every marking rule lives in question-types.js, so this file can be
  * wrong about a border and never about a score.
  *
- * One rule shaped all four: they are answered with a keyboard. Matching is a
- * select per row and ordering is a pair of move buttons, not drag and drop.
- * Drag and drop photographs better and excludes anyone on a phone, anyone using
- * a screen reader, and anyone whose hands do not do fine pointer work. A
- * Parsons problem that some learners cannot attempt is not a Parsons problem.
+ * Dragging progressively enhances matching and ordering. Native selects,
+ * tap-to-place buttons and move controls keep every answer keyboard accessible.
  *
  * Each renderer returns { node, read }. `read` collects the current answer in
  * the shape the matching scorer expects, so the caller never has to know how
@@ -92,6 +89,35 @@
     var set = fieldset(question, index);
     var list = el('ol', 'quiz-match');
     var selects = [];
+    var selected = null;
+    var dragging = null;
+    var bank = el('div', 'quiz-match__bank');
+    var status = el('p', 'quiz-activity-status');
+    status.setAttribute('role', 'status');
+    set.appendChild(el('p', 'quiz-q__hint', 'Drag an answer onto a row, or tap an answer then Place answer. You can also use each dropdown.'));
+    (question.right || []).forEach(function (answer, j) {
+      var chip = el('button', 'quiz-match__chip', answer);
+      chip.type = 'button';
+      chip.draggable = true;
+      chip.setAttribute('aria-pressed', 'false');
+      chip.addEventListener('click', function () {
+        selected = j;
+        Array.from(bank.children).forEach(function (button, n) {
+          button.setAttribute('aria-pressed', String(n === j));
+        });
+        status.textContent = 'Selected ' + answer + '. Choose a row to place it.';
+      });
+      chip.addEventListener('dragstart', function (event) {
+        dragging = j;
+        if (event.dataTransfer) {
+          event.dataTransfer.setData('text/plain', answer);
+          event.dataTransfer.effectAllowed = 'copy';
+        }
+      });
+      chip.addEventListener('dragend', function () { dragging = null; });
+      bank.appendChild(chip);
+    });
+    set.appendChild(bank);
 
     (question.left || []).forEach(function (item, i) {
       var row = el('li', 'quiz-match__row');
@@ -116,13 +142,37 @@
         select.appendChild(opt);
       });
 
+      function place(value) {
+        if (value === null) {
+          status.textContent = 'Choose an answer from the bank first.';
+          return;
+        }
+        select.value = String(value);
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        status.textContent = item + ': ' + question.right[value] + '.';
+      }
+      var target = el('button', 'quiz-match__place', 'Drop or place answer');
+      target.type = 'button';
+      target.setAttribute('aria-label', 'Place selected answer for ' + item);
+      target.addEventListener('click', function () { place(selected); });
+      row.addEventListener('dragover', function (event) {
+        if (dragging !== null) event.preventDefault();
+      }, true);
+      row.addEventListener('drop', function (event) {
+        if (dragging === null) return;
+        event.preventDefault();
+        place(dragging);
+        dragging = null;
+      }, true);
       row.appendChild(label);
       row.appendChild(select);
+      row.appendChild(target);
       list.appendChild(row);
       selects.push(select);
     });
 
     set.appendChild(list);
+    set.appendChild(status);
     return {
       node: set,
       read: function () {
@@ -159,16 +209,50 @@
   function renderOrder(question, index, rand) {
     var set = fieldset(question, index);
     set.appendChild(el('p', 'quiz-q__hint',
-      'Put the lines in order. Use the arrows, or Tab to a line and press them.'));
+      'Drag the lines into order, or use the Move up and Move down buttons.'));
 
     var items = question.items || [];
     var list = el('ol', 'quiz-order');
     var order = shuffled(items, rand);
+    if (question.answer && order.length > 1 && order.every(function (v, i) { return v === question.answer[i]; })) {
+      order.push(order.shift());
+    }
+    var dragging = null;
+    var status = el('p', 'quiz-activity-status');
+    status.setAttribute('role', 'status');
+    function move(from, to) {
+      var moved = order.splice(from, 1)[0];
+      order.splice(to, 0, moved);
+      draw();
+      status.textContent = 'Moved line to position ' + (to + 1) + ' of ' + order.length + '.';
+      set.dispatchEvent(new Event('change', { bubbles: true }));
+      var next = list.children[to].querySelector('.quiz-order__move:not([disabled])');
+      if (next) next.focus();
+    }
 
     function draw() {
       list.innerHTML = '';
       order.forEach(function (itemIndex, position) {
         var row = el('li', 'quiz-order__row');
+        row.draggable = true;
+        row.addEventListener('dragstart', function (event) {
+          dragging = position;
+          if (event.dataTransfer) {
+            event.dataTransfer.setData('text/plain', items[itemIndex]);
+            event.dataTransfer.effectAllowed = 'move';
+          }
+        });
+        row.addEventListener('dragend', function () { dragging = null; });
+        row.addEventListener('dragover', function (event) {
+          if (dragging !== null) event.preventDefault();
+        });
+        row.addEventListener('drop', function (event) {
+          if (dragging === null) return;
+          event.preventDefault();
+          var from = dragging;
+          dragging = null;
+          move(from, position);
+        });
         // pre, not a span: leading whitespace is the answer in Python and a
         // normal element would collapse it away.
         var code = el('pre', 'quiz-order__code', items[itemIndex]);
@@ -182,16 +266,7 @@
           button.disabled = (pair[1] < 0 && position === 0)
             || (pair[1] > 0 && position === order.length - 1);
           button.addEventListener('click', function () {
-            var to = position + pair[1];
-            var moved = order[position];
-            order[position] = order[to];
-            order[to] = moved;
-            draw();
-            // Focus follows the line that moved, or the keyboard user loses
-            // their place on every press.
-            var rows = list.querySelectorAll('.quiz-order__row');
-            var next = rows[to] && rows[to].querySelector('.quiz-order__move:not([disabled])');
-            if (next) next.focus();
+            move(position, position + pair[1]);
           });
           controls.appendChild(button);
         });
@@ -203,6 +278,7 @@
 
     draw();
     set.appendChild(list);
+    set.appendChild(status);
     return { node: set, read: function () { return order.slice(); } };
   }
 

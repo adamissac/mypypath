@@ -609,7 +609,7 @@ def normalize_scripts(html: str, path: Path) -> str:
     for name in ('question-types', 'question-render', 'reflection-check',
                  'concept-check', 'checker-gen', 'checker-ast'):
         tag = f'<script defer src="/assets/js/{name}.js"></script>'
-        if tag not in html and 'classroom-policy.js' in html:
+        if f'/assets/js/{name}.js' not in html and 'classroom-policy.js' in html:
             html = html.replace(
                 '<script defer src="/assets/js/classroom-policy.js"></script>',
                 '<script defer src="/assets/js/classroom-policy.js"></script>\n'
@@ -696,7 +696,8 @@ def version_course_assets(html: str) -> str:
     """Keep course colours and logo selection fresh despite shared-asset caching."""
     for rel in ('assets/css/pypath-theme.css', 'assets/js/theme-init.js', 'assets/js/lesson-ui.js',
                 'assets/css/pypath-fast.css', 'assets/css/lesson-progress.css',
-                'assets/css/courses.css', 'assets/img/data-moon.svg',
+                'assets/css/courses.css', 'assets/css/checks.css', 'assets/js/question-render.js',
+                'assets/js/lesson-quiz.js', 'assets/img/data-moon.svg',
                 'assets/img/placeholder-avatar.svg'):
         version = hashlib.sha256((ROOT / rel).read_bytes()).hexdigest()[:10]
         html = re.sub(

@@ -1,6 +1,6 @@
 /* PyPath — the checks for understanding at the foot of a lesson.
  *
- * Three to five multiple-choice questions, answered as many times as the
+ * Three to eight varied practice questions, answered as many times as the
  * learner likes, with the reason shown as soon as they pick. They are not a
  * test and are not scored: the attempt count is recorded so a teacher can see
  * which idea took several goes, and nothing else is.
@@ -66,6 +66,9 @@
     feedback.setAttribute('role', 'status');
     feedback.setAttribute('aria-live', 'polite');
     feedback.hidden = true;
+    ['input', 'change'].forEach(function (name) {
+      built.node.addEventListener(name, function () { feedback.hidden = true; });
+    });
 
     var check = el('button', 'btn btn-ghost btn-small quiz-q__check', 'Check');
     check.type = 'button';
