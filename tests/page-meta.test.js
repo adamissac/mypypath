@@ -14,7 +14,7 @@ import path from 'node:path';
  * description, so there is no second copy of the content to drift.
  */
 
-const SKIP_DIRS = new Set(['node_modules', '.git', 'lesson-format-kit', 'REVIEW', 'docs']);
+const SKIP_DIRS = new Set(['node_modules', '.git', 'lesson-format-kit', 'REVIEW', 'docs', 'scripts']);
 // Never advertised to a crawler or a card scraper.
 const SKIP_FILES = new Set([
   '404.html', 'admin.html', 'sandbox-export.html',
