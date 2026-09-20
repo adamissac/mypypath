@@ -116,6 +116,62 @@
   let transitionDismissed = false;
   let returningFromTransition = false;
 
+  /* ── Resuming on the course you were last on ──────────────────────────
+     A learner who has moved on to Python for Data and comes back to the
+     home page should not have to walk the ten Foundations stops again,
+     and should certainly not be asked "ready to explore Python for Data?"
+     a second time -- they already answered it, and dataAccepted above is
+     per page load, so the gate used to re-arm on every visit.
+
+     The course is already remembered: applyCourseTheme() writes
+     pypath-course as you scroll past each segment, and theme-init.js
+     reads it to pick the palette before first paint. So resuming is a
+     matter of honouring a fact the site already stores.
+
+     resumeOffset is that course's start in overall progress. The track's
+     scroll is then mapped onto [resumeOffset, 1] instead of [0, 1] and
+     the track is shortened by the same proportion, so scrolling into the
+     trail draws stop 11 at exactly the pace stop 1 used to arrive at.
+     Nothing jumps: the mapping changes, not the scroll position.
+
+     Foundations stays one click away in the switcher; clearResume() puts
+     the full two-course track back when anyone asks for a stop that lives
+     before the resumed segment. With no stored course -- a first visit,
+     or a cleared browser -- resumeOffset is 0 and every line below is a
+     no-op, which is what keeps the trail invariants honest. */
+  let resumeOffset = 0;
+  let resumeIndex = 0;
+  const trackLengthVars = ['--trail-length', '--trail-length-mobile'];
+  const trackLengthBase = track
+    ? trackLengthVars.map((name) => track.style.getPropertyValue(name).trim())
+    : [];
+
+  function storedCourse() {
+    try {
+      return localStorage.getItem('pypath-course');
+    } catch {
+      return null;
+    }
+  }
+
+  function scaleTrack(factor) {
+    if (!track) return;
+    trackLengthVars.forEach((name, i) => {
+      const base = trackLengthBase[i];
+      const n = parseFloat(base);
+      if (!base || !Number.isFinite(n)) return;
+      const unit = base.replace(/^[-\d.]+/, '') || 'vh';
+      track.style.setProperty(name, `${Math.round(n * factor * 10) / 10}${unit}`);
+    });
+  }
+
+  function clearResume() {
+    if (!resumeIndex) return;
+    resumeOffset = 0;
+    resumeIndex = 0;
+    scaleTrack(1);
+  }
+
   function requestDataTransition() {
     if (!transition || dataAccepted || transition.open || returningFromTransition) return;
     transitionDismissed = true;
@@ -553,8 +609,10 @@
     if (!track) return 0;
     const rect = track.getBoundingClientRect();
     const total = track.offsetHeight - window.innerHeight;
-    if (total <= 0) return 0;
-    return Math.min(Math.max(-rect.top, 0), total) / total;
+    if (total <= 0) return resumeOffset;
+    const raw = Math.min(Math.max(-rect.top, 0), total) / total;
+    // Resumed: the track's scroll covers [resumeOffset, 1], not [0, 1].
+    return resumeOffset + (1 - resumeOffset) * raw;
   }
 
   /* Overall progress at which stop `index` (counted across segments) is reached. */
@@ -572,9 +630,14 @@
 
   function scrollToProgress(p) {
     if (!track) return;
+    // Asked for somewhere before the resumed segment: put the whole track
+    // back first, or there is no scroll position that can express it.
+    if (resumeIndex && p < resumeOffset - 1e-6) clearResume();
     const total = track.offsetHeight - window.innerHeight;
     const top = track.getBoundingClientRect().top + window.scrollY;
-    window.scrollTo({ top: Math.round(top + clamp01(p) * Math.max(0, total)), behavior: "instant" });
+    // Invert measureScroll()'s mapping.
+    const raw = resumeOffset >= 1 ? 0 : clamp01((clamp01(p) - resumeOffset) / (1 - resumeOffset));
+    window.scrollTo({ top: Math.round(top + raw * Math.max(0, total)), behavior: "instant" });
     render();
   }
 
@@ -652,6 +715,28 @@
   }
 
   layout();
+
+  /* Resume on the course they were last on. After layout(), because the
+     offset is that segment's start in overall progress, which layout() is
+     what assigns. Segment 0 is never a resume: it is already the start. */
+  (function resumeOnStoredCourse() {
+    if (segments.length < 2) return;
+    const course = storedCourse();
+    if (!course) return;
+    const index = segments.findIndex((seg) => seg.svg.getAttribute("data-course") === course);
+    if (index < 1) return;
+
+    resumeIndex = index;
+    resumeOffset = segments[index].start;
+    // They have been there; the gate has nothing left to ask.
+    dataAccepted = true;
+    // Keep the scroll cost per stop what it was, now that the track is
+    // carrying one course instead of two.
+    scaleTrack(1 - resumeOffset);
+    const current = segments[index].svg.getAttribute("data-course");
+    if (current && current !== "foundations") root.setAttribute("data-course", current);
+  })();
+
   measure();
   measuredWidth = document.documentElement.clientWidth;
   if (reduced) section.classList.add("is-active");
