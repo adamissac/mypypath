@@ -2128,3 +2128,51 @@ body.lesson-reading pre.code, body.lesson-reading pre.code code {
 }
 body.lesson-reading .exercise-actions .btn-save { background: var(--pp-line-ink); border-color: var(--pp-line-ink); color: var(--panel); }
 body.lesson-reading .exercise-actions .btn-save:hover { background: var(--pp-ink); border-color: var(--pp-ink); color: var(--panel); }
+
+/* One stable lesson canvas. The menu overlays it instead of reserving a column. */
+html body.page-unit .layout-course,
+html body.page-unit.sidebar-closed .layout-course,
+html body.page-unit.sidebar-open .layout-course {
+  display:block !important; width:100% !important; max-width:none !important;
+  margin:0 !important; padding:0 clamp(16px, 2vw, 32px) 32px !important;
+}
+html body.page-unit .course-main { width:100%; max-width:none; padding:0; }
+html body.page-unit .sidebar-toggle {
+  display:flex !important; align-items:center; justify-content:space-between;
+  gap:16px; padding:0 !important; margin:8px 0 20px;
+}
+html body.page-unit .sidebar-toggle-btn, .lesson-back-link {
+  display:inline-flex !important; align-items:center; min-height:44px;
+  padding:10px 16px; border:1px solid var(--pp-border); border-radius:10px;
+  font:inherit; font-weight:600; color:var(--pp-ink); background:var(--panel);
+}
+html body.page-unit .course-sidebar {
+  position:fixed !important; inset:12px auto 12px 12px !important;
+  width:min(340px, calc(100vw - 24px)) !important; max-width:none !important;
+  height:auto; max-height:calc(100dvh - 24px) !important; margin:0 !important;
+  padding:20px !important; border:1px solid var(--pp-border) !important;
+  border-radius:16px; background:var(--panel); overflow:auto !important;
+  transform:none !important; opacity:1 !important; pointer-events:auto !important;
+  z-index:calc(var(--z-modal, 1000) + 1) !important; transition:none !important;
+}
+html body.page-unit .course-sidebar[hidden] { display:none !important; }
+html body.page-unit .sidebar-collapse-btn {
+  width:auto; min-height:44px; margin:0 0 20px; padding:8px 14px;
+}
+.lesson-menu-backdrop { position:fixed; inset:0; background:rgb(0 0 0 / .42); z-index:var(--z-modal, 1000); }
+.lesson-menu-backdrop[hidden] { display:none; }
+html body.page-unit .lesson-content > .content-section > p { max-width:90ch; }
+
+html body.page-unit main > .section > .container.narrow {
+  width:100%; max-width:none; padding-inline:clamp(16px, 2vw, 32px);
+}
+.lesson-menu-backdrop { touch-action:none; }
+html body.page-unit .course-sidebar { overscroll-behavior:contain; }
+
+html body.page-unit main > [data-lesson-navigation] {
+  padding:0 clamp(16px, 2vw, 32px) !important; margin:12px 0 20px;
+}
+/* Account prompts disable the lesson, while navigation remains available. */
+html[data-gate="locked"] body.page-unit main > [data-lesson-navigation] {
+  filter:none; opacity:1; pointer-events:auto; user-select:auto;
+}

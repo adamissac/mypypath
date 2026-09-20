@@ -128,7 +128,13 @@
           heading.focus({ preventScroll: true });
         });
         item.appendChild(link);
-        list.appendChild(item);
+        // A quiz can arrive between existing sections after fetch completes.
+        // Insert its outline link at its real document position, not the end.
+        var next = Array.from(list.children).find(function (existing) {
+          var existingHeading = document.getElementById(existing.querySelector('a').hash.slice(1));
+          return existingHeading && !!(heading.compareDocumentPosition(existingHeading) & Node.DOCUMENT_POSITION_FOLLOWING);
+        });
+        list.insertBefore(item, next || null);
         count.textContent = indexed.size + ' sections';
       }
       headings.forEach(addHeading);

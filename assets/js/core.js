@@ -429,132 +429,88 @@
     }
   }
 
-  var SIDEBAR_MQ = window.matchMedia('(max-width: 980px)');
-
-  function isSidebarOpen() {
-    if (SIDEBAR_MQ.matches) {
-      return document.body.classList.contains('sidebar-open');
-    }
-    return !document.body.classList.contains('sidebar-closed');
-  }
-
-  function setSidebarOpen(open) {
-    if (SIDEBAR_MQ.matches) {
-      document.body.classList.toggle('sidebar-open', open);
-      document.body.classList.remove('sidebar-closed');
-    } else {
-      document.body.classList.toggle('sidebar-closed', !open);
-      document.body.classList.remove('sidebar-open');
-      try { localStorage.setItem('pypath-sidebar-closed', open ? '0' : '1'); } catch {}
-    }
-    qsa('[data-sidebar-toggle]').forEach(function (btn) {
-      btn.setAttribute('aria-expanded', String(open));
-      var label = open ? 'Hide lesson menu' : 'Show lesson menu';
-      btn.setAttribute('aria-label', label);
-      if (btn.classList.contains('sidebar-toggle-btn')) {
-        btn.textContent = open ? 'Hide lesson menu' : 'Show lesson menu';
-      }
-    });
-    var reopenBtn = document.querySelector('.sidebar-reopen-btn');
-    if (reopenBtn) {
-      if (SIDEBAR_MQ.matches) {
-        reopenBtn.hidden = true;
-      } else {
-        reopenBtn.hidden = open;
-      }
-    }
-  }
-
-  function toggleSidebar() {
-    setSidebarOpen(!isSidebarOpen());
-  }
-
-  function enhanceLessonSidebar() {
-    var layout = document.querySelector('.layout-course');
-    if (!layout) return;
-
-    var sidebar = layout.querySelector('.course-sidebar');
-    if (!sidebar || sidebar.querySelector('.sidebar-collapse-btn')) return;
-
-    var collapseBtn = document.createElement('button');
-    collapseBtn.type = 'button';
-    collapseBtn.className = 'sidebar-collapse-btn';
-    collapseBtn.setAttribute('data-sidebar-toggle', '');
-    collapseBtn.setAttribute('aria-label', 'Hide lesson menu');
-    collapseBtn.setAttribute('aria-expanded', 'true');
-    collapseBtn.innerHTML =
-      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-      '<path d="M15 18 9 12l6-6"/><path d="M4 6v12"/></svg>';
-
-    var heading = sidebar.querySelector('.sidebar-unit-label') || sidebar.querySelector('h3');
-    if (heading) {
-      var head = document.createElement('div');
-      head.className = 'sidebar-head';
-      heading.parentNode.insertBefore(head, heading);
-      head.appendChild(heading);
-      head.appendChild(collapseBtn);
-    } else {
-      sidebar.insertBefore(collapseBtn, sidebar.firstChild);
-    }
-
-    if (!document.querySelector('.sidebar-reopen-btn')) {
-      var reopenBtn = document.createElement('button');
-      reopenBtn.type = 'button';
-      reopenBtn.className = 'sidebar-reopen-btn';
-      reopenBtn.setAttribute('data-sidebar-toggle', '');
-      reopenBtn.setAttribute('aria-label', 'Show lesson menu');
-      reopenBtn.setAttribute('aria-expanded', 'false');
-      reopenBtn.hidden = true;
-      reopenBtn.innerHTML =
-        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-        '<path d="M9 18l6-6-6-6"/><path d="M20 6v12"/></svg>' +
-        '<span>Lessons</span>';
-      document.body.appendChild(reopenBtn);
-    }
-
-    var inlineToggle = layout.querySelector('.sidebar-toggle-btn');
-    if (inlineToggle) {
-      inlineToggle.textContent = 'Show lesson menu';
-    }
-
-    sidebar.querySelectorAll('a').forEach(function (link) {
-      link.addEventListener('click', function () {
-        if (SIDEBAR_MQ.matches) setSidebarOpen(false);
-      });
-    });
-  }
-
   function initSidebarToggle() {
-    enhanceLessonSidebar();
+    var layout = document.querySelector('.layout-course');
+    var sidebar = layout && layout.querySelector('.course-sidebar');
+    if (!sidebar) return;
+    var trigger = layout.querySelector('[data-sidebar-toggle]');
+    var returnFocus = trigger;
+    sidebar.id = sidebar.id || 'lesson-sidebar';
+    sidebar.setAttribute('role', 'dialog');
+    sidebar.setAttribute('aria-modal', 'true');
+    sidebar.setAttribute('aria-label', 'Lesson menu');
+    sidebar.tabIndex = -1;
+    var close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'sidebar-collapse-btn';
+    close.textContent = 'Close menu';
+    close.setAttribute('aria-label', 'Close lesson menu');
+    sidebar.prepend(close);
+    // Keep the drawer outside transformed/overflow-clipped lesson containers.
+    document.body.appendChild(sidebar);
+    var backdrop = document.createElement('div');
+    backdrop.className = 'lesson-menu-backdrop';
+    backdrop.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(backdrop);
 
-    var storedClosed = false;
-    try { storedClosed = localStorage.getItem('pypath-sidebar-closed') === '1'; } catch {}
-
-    if (!SIDEBAR_MQ.matches && storedClosed) {
-      document.body.classList.add('sidebar-closed');
-    }
-
-    setSidebarOpen(isSidebarOpen());
-
-    if (!document.documentElement.dataset.sidebarToggleBound) {
-      document.documentElement.dataset.sidebarToggleBound = '1';
-      document.addEventListener('click', function (e) {
-        var btn = e.target.closest('[data-sidebar-toggle]');
-        if (!btn) return;
-        e.preventDefault();
-        toggleSidebar();
+    function setOpen(open, restoreFocus) {
+      document.body.classList.toggle('sidebar-open', open);
+      document.body.classList.toggle('sidebar-closed', !open);
+      sidebar.hidden = !open;
+      sidebar.inert = !open;
+      backdrop.hidden = !open;
+      qsa('[data-sidebar-toggle]').forEach(function (button) {
+        button.setAttribute('aria-expanded', String(open));
+        button.setAttribute('aria-controls', sidebar.id);
+        button.setAttribute('aria-label', open ? 'Hide lesson menu' : 'Show lesson menu');
+        button.textContent = 'Lesson menu';
       });
+      if (open) close.focus({ preventScroll: true });
+      else if (restoreFocus && returnFocus) returnFocus.focus({ preventScroll: true });
     }
-
-    SIDEBAR_MQ.addEventListener('change', function () {
-      document.body.classList.remove('sidebar-open', 'sidebar-closed');
-      var closed = false;
-      try { closed = localStorage.getItem('pypath-sidebar-closed') === '1'; } catch {}
-      if (!SIDEBAR_MQ.matches && closed) {
-        document.body.classList.add('sidebar-closed');
-      }
-      setSidebarOpen(isSidebarOpen());
+    setOpen(document.documentElement.dataset.sidebar === 'always', false);
+    close.addEventListener('click', function () { setOpen(false, true); });
+    backdrop.addEventListener('click', function () { setOpen(false, true); });
+    document.addEventListener('click', function (event) {
+      var button = event.target.closest('[data-sidebar-toggle]');
+      if (!button) return;
+      event.preventDefault();
+      returnFocus = button;
+      setOpen(sidebar.hidden, true);
     });
+    document.addEventListener('keydown', function (event) {
+      if (sidebar.hidden) return;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setOpen(false, true);
+      } else if (event.key === 'Tab') {
+        var controls = Array.from(sidebar.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"]'))
+          .filter(function (node) { return !node.hidden && node.getClientRects().length; });
+        var first = controls[0], last = controls[controls.length - 1];
+        if (event.shiftKey && (document.activeElement === first || !sidebar.contains(document.activeElement))) {
+          event.preventDefault(); last.focus();
+        } else if (!event.shiftKey && (document.activeElement === last || !sidebar.contains(document.activeElement))) {
+          event.preventDefault(); first.focus();
+        }
+      }
+    });
+    sidebar.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () { setOpen(false, false); });
+    });
+    // A visible route back is available without scrolling to the lesson footer.
+    var toolbar = layout.querySelector('.sidebar-toggle');
+    if (toolbar && !toolbar.querySelector('.lesson-back-link')) {
+      var back = document.createElement('a');
+      back.className = 'lesson-back-link route';
+      back.href = location.pathname.indexOf('/data/') === 0 ? '/data.html' : '/index.html';
+      back.textContent = 'Back to path';
+      toolbar.appendChild(back);
+    }
+    if (toolbar) {
+      toolbar.setAttribute('data-lesson-navigation', '');
+      document.querySelector('main').prepend(toolbar);
+    }
+    backdrop.addEventListener('wheel', function (event) { event.preventDefault(); }, { passive: false });
   }
 
   function initInspireBanner() {

@@ -1,4 +1,4 @@
-/* PyPath — the checks for understanding at the foot of a lesson.
+/* PyPath — checks for understanding alongside the ideas they reinforce.
  *
  * Three to eight varied practice questions, answered as many times as the
  * learner likes, with the reason shown as soon as they pick. They are not a
@@ -73,12 +73,22 @@
     var check = el('button', 'btn btn-ghost btn-small quiz-q__check', 'Check');
     check.type = 'button';
     check.addEventListener('click', function () {
+      var answer = built.read();
+      var kind = Q.kindOfQuestion(question);
+      if ((kind === 'match' || kind === 'blank') && answer.some(function (value) {
+        return value === null || value === undefined || String(value).trim() === '';
+      })) {
+        feedback.textContent = kind === 'match' ? 'Make a match in every row, then check your answer.' : 'Fill in every blank, then check your answer.';
+        feedback.className = 'quiz-feedback';
+        feedback.hidden = false;
+        return;
+      }
       attempts[question.id] = (attempts[question.id] || 0) + 1;
-      var result = Q.score(question, built.read());
+      var result = Q.score(question, answer);
 
       // The count as well as the verdict: "3 of 4" is a different thing to
       // learn from than "not quite", and both of them beat a red cross.
-      feedback.textContent = (result.right ? '\u2713 Correct. ' : '\u2715 ')
+      feedback.textContent = (result.right ? '\u2713 Correct. ' : '\u2715 Not quite. ')
         + result.correct + ' of ' + result.total + ' right. '
         + (question.explain || '');
       feedback.className = 'quiz-feedback is-' + (result.right ? 'right' : 'wrong');
@@ -124,6 +134,8 @@
     feedback.setAttribute('aria-live', 'polite');
     feedback.hidden = true;
 
+    var choices = el('div', 'quiz-options');
+    fieldset.appendChild(choices);
     var name = 'quiz-' + question.id;
     (question.choices || []).forEach(function (choice, choiceIndex) {
       var id = name + '-' + choiceIndex;
@@ -164,7 +176,7 @@
 
       row.appendChild(input);
       row.appendChild(label);
-      fieldset.appendChild(row);
+      choices.appendChild(row);
     });
 
     block.appendChild(fieldset);
@@ -172,41 +184,81 @@
     return block;
   }
 
-  function render(questions) {
-    var host = document.querySelector('.lesson-content')
-      || document.querySelector('main')
-      || document.body;
-    if (!host || document.querySelector('.quiz')) return;
-
-    var section = el('section', 'quiz');
-    section.setAttribute('aria-labelledby', 'quiz-heading');
-
-    // h2, matching the other section headings in a lesson, so the outline
-    // stays in order.
-    var heading = el('h2', 'quiz__heading', 'Check your understanding');
-    heading.id = 'quiz-heading';
-    section.appendChild(heading);
-
-    section.appendChild(el(
-      'p', 'quiz__note',
-      'Answer as many times as you like. These are not marked -- they are here '
-      + 'so you can catch anything that has not landed yet.'
-    ));
-
-    var list = el('ol', 'quiz__list');
-    questions.forEach(function (question, index) {
-      var block = renderQuestion(question, index);
-      if (block) list.appendChild(block);
+  function teachingSections(host) {
+    return Array.from(host.children).filter(function (section) {
+      if (!section.classList.contains('content-section')) return false;
+      var heading = section.querySelector('h2');
+      return heading && !/what you will learn|learning objectives|when to use|predict, then check/i.test(heading.textContent);
     });
-    section.appendChild(list);
+  }
 
-    // Before the footer if there is one, so it reads as part of the lesson.
-    var exercises = host.querySelector('.exercise-section');
-    if (exercises && exercises.parentNode) {
-      exercises.parentNode.insertBefore(section, exercises.nextSibling);
-    } else {
-      host.appendChild(section);
-    }
+  function render(questions) {
+    var host = document.querySelector('.lesson-content') || document.querySelector('main') || document.body;
+    if (!host || host.dataset.quizRendered) return;
+    host.dataset.quizRendered = 'true';
+    var anchors = teachingSections(host);
+    var inlineCount = anchors.length ? Math.max(0, questions.length - 2) : 0;
+    var groups = new Map();
+    questions.forEach(function (question, index) {
+      var anchor = null;
+      if (index < inlineCount) {
+        var sectionIndex = Number.isInteger(question.afterSection) ? question.afterSection
+          : Math.min(anchors.length - 1, Math.floor(index * anchors.length / inlineCount));
+        anchor = anchors[sectionIndex] || anchors[anchors.length - 1];
+      }
+      if (!groups.has(anchor)) groups.set(anchor, []);
+      groups.get(anchor).push({ question: question, index: index });
+    });
+    // Insert in reading order so question numbering follows the lesson, even
+    // where an author deliberately places a later question near an earlier idea.
+    var readingIndex = 0;
+    anchors.concat([null]).forEach(function (anchor, groupIndex) {
+      var group = groups.get(anchor);
+      if (!group) return;
+      var section = el('section', 'quiz ' + (anchor ? 'quiz-inline' : 'quiz-final'));
+      var id = anchor ? 'quiz-checkpoint-' + groupIndex : 'quiz-heading';
+      section.setAttribute('aria-labelledby', id);
+      var title = anchor ? anchor.querySelector('h2').textContent.replace(/^Step\s+\d+:\s*/i, '') : '';
+      var heading = el('h2', 'quiz__heading', anchor ? 'Quick check: ' + title : 'Check your understanding');
+      heading.id = id;
+      section.appendChild(heading);
+      section.appendChild(el('p', 'quiz__note', anchor
+        ? 'Try this before moving on. Use the explanation to check your reasoning.'
+        : 'Put the ideas together. Try as many times as you like; these questions are not marked.'));
+      var list = el('ol', 'quiz__list');
+      group.forEach(function (item) {
+        var block = renderQuestion(item.question, readingIndex++);
+        if (!block) return;
+        var kind = item.question.kind || 'mcq';
+        var labels = { mcq: 'Choose one', multi: 'Choose all that apply', match: 'Match the ideas', order: 'Build the sequence', blank: 'Complete the answer' };
+        block.prepend(el('p', 'quiz-q__type', labels[kind] || 'Practice'));
+        block.dataset.questionId = item.question.id;
+        if (item.question.hint) {
+          var hint = el('details', 'quiz-hint');
+          hint.appendChild(el('summary', '', 'Need a hint?'));
+          hint.appendChild(el('p', '', item.question.hint));
+          block.appendChild(hint);
+        }
+        if (anchor) {
+          var review = el('a', 'quiz-review-link', 'Revisit this explanation');
+          var target = anchor.querySelector('h2');
+          if (!target.id) target.id = 'teaching-section-' + groupIndex;
+          review.href = '#' + target.id;
+          review.addEventListener('click', function () {
+            target.setAttribute('tabindex', '-1');
+            target.focus({ preventScroll: true });
+          });
+          block.appendChild(review);
+        }
+        list.appendChild(block);
+      });
+      section.appendChild(list);
+      if (anchor) anchor.after(section);
+      else {
+        var exercises = host.querySelector('.exercise-section');
+        if (exercises) exercises.after(section); else host.appendChild(section);
+      }
+    });
   }
 
   function init() {
