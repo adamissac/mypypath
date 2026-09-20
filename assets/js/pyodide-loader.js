@@ -169,13 +169,110 @@
     return readyPromise;
   }
 
-  function scheduleWarmup() {
+  /* ── When to warm ────────────────────────────────────────────────
+     Four modules call scheduleWarmup() as they initialise -- the lesson
+     runner, the hero editor, the sandbox and the unit test page -- so the
+     decision of WHEN belongs here, in the module that owns the runtime,
+     rather than being made four times.
+
+     It used to mean "start now": 4.8MB over the wire and the main thread
+     blocked for the whole WASM instantiation, measured at 496ms on this
+     machine and 2.2s with the CPU throttled 4x, which is an ordinary
+     laptop. Every reader of a lesson paid that for a runtime they may
+     never use. requestIdleCallback does not make the work cheap; it only
+     chooses when the page freezes, and its 5s timeout fires whether the
+     browser was ever idle or not.
+
+     Now it means "start when someone is getting close to an editor". The
+     first editor on a lesson page sits 25-36% down an 11,000-14,000px
+     page, three to six screens below the fold, so approach is a real
+     signal. 150% of a viewport is several seconds of reading ahead at
+     normal scroll speed, so Run is warm by the time anyone arrives.
+     Where the editor IS the page -- the sandbox, the hero -- it is on
+     screen at once, intersects immediately, and this behaves exactly as
+     it did before. A caller with no editor on the page (the unit test)
+     still warms straight away.
+
+     Note the selectors. CodeMirror hides the textarea it takes over, so
+     #code-editor and .code-editor-small measure 0x0 once it has built its
+     own DOM, and an observer on a box with no area never fires. These name
+     the authored wrappers that are actually laid out -- and renderedish()
+     below walks up to a parent with a box anyway, so a target that turns
+     out to be hidden still gets watched rather than silently never
+     warming. That is not hypothetical: watching #code-editor directly
+     stopped the sandbox warming at all. */
+  var WARM_TARGETS = '.interactive-editor, .editor-container, #hero-editor-code, #code-editor';
+
+  /* The nearest ancestor with a box, so a hidden target still resolves to
+     something an IntersectionObserver can report on. */
+  function renderedish(el) {
+    for (var i = 0; i < 3 && el; i++) {
+      var rect = el.getBoundingClientRect();
+      if (rect.width || rect.height) return el;
+      el = el.parentElement;
+    }
+    return null;
+  }
+  var warmScheduled = false;
+
+  function startWarmup() {
     var run = function () { ensureReady().catch(function () {}); };
     if ('requestIdleCallback' in window) {
       requestIdleCallback(run, { timeout: 5000 });
     } else {
       setTimeout(run, 2000);
     }
+  }
+
+  function scheduleWarmup() {
+    if (warmScheduled) return ensureReady;
+    warmScheduled = true;
+
+    var targets = document.querySelectorAll(WARM_TARGETS);
+    if (!targets.length || !('IntersectionObserver' in window)) {
+      // Nothing to watch, or no way to tell approach: don't make the
+      // first Run cold to save a download nobody was going to avoid.
+      startWarmup();
+      return ensureReady;
+    }
+
+    var observer = null;
+    var warmed = false;
+
+    function warm() {
+      if (warmed) return;
+      warmed = true;
+      if (observer) observer.disconnect();
+      document.removeEventListener('pointerdown', onIntent, true);
+      document.removeEventListener('focusin', onIntent, true);
+      startWarmup();
+    }
+
+    // Covers a jump straight to an anchor, and anyone who reaches for an
+    // editor faster than the observer's margin allows for.
+    function onIntent(event) {
+      var el = event.target;
+      if (el && el.closest && el.closest(WARM_TARGETS)) warm();
+    }
+
+    document.addEventListener('pointerdown', onIntent, true);
+    document.addEventListener('focusin', onIntent, true);
+
+    observer = new IntersectionObserver(function (entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting) { warm(); return; }
+      }
+    }, { rootMargin: '150% 0px' });
+
+    var watched = 0;
+    Array.prototype.forEach.call(targets, function (target) {
+      var node = renderedish(target);
+      if (node) { observer.observe(node); watched++; }
+    });
+
+    // Every target was hidden: warm rather than wait for something that
+    // can never intersect.
+    if (!watched) warm();
     return ensureReady;
   }
 
@@ -309,9 +406,4 @@
     OUTPUT_HINT: 'Press Run to see output'
   };
 
-  document.addEventListener('DOMContentLoaded', function () {
-    if (document.querySelector('.code-editor-small, [data-run-code], .run-code-btn, #code-editor, #hero-editor-code')) {
-      scheduleWarmup();
-    }
-  });
 })();

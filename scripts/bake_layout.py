@@ -697,7 +697,8 @@ def version_course_assets(html: str) -> str:
     for rel in ('assets/css/pypath-theme.css', 'assets/js/theme-init.js', 'assets/js/lesson-ui.js',
                 'assets/css/pypath-fast.css', 'assets/css/lesson-progress.css',
                 'assets/css/courses.css', 'assets/css/checks.css', 'assets/js/question-render.js',
-                'assets/js/lesson-quiz.js', 'assets/js/core.js', 'assets/img/data-moon.svg',
+                'assets/js/lesson-quiz.js', 'assets/js/core.js', 'assets/js/pyodide-loader.js',
+                'assets/img/data-moon.svg',
                 'assets/img/placeholder-avatar.svg'):
         version = hashlib.sha256((ROOT / rel).read_bytes()).hexdigest()[:10]
         html = re.sub(
