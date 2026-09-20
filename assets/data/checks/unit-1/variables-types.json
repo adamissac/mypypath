@@ -49,15 +49,16 @@
   "questions": [
     {
       "id": "u1-var-1",
-      "prompt": "What is the type of the value 5.0?",
+      "prompt": "You write distance = 5.0. Which statement correctly describes the value stored in distance?",
       "choices": [
-        "int",
-        "float",
-        "str",
-        "bool"
+        "It is a float, even though it has no fractional part",
+        "It is an int because its mathematical value is a whole number",
+        "It is a string because distance is a name",
+        "Its type cannot be known until it is printed"
       ],
-      "answer": 1,
-      "explain": "The decimal point makes it a float, even though the value happens to be a whole number."
+      "answer": 0,
+      "explain": "The literal 5.0 creates a float; 5 creates an int. A value can represent a whole number and still have floating-point type. type(distance) would confirm the type.",
+      "afterSection": 2
     },
     {
       "id": "u1-var-2",
@@ -69,7 +70,8 @@
         "Prints 5"
       ],
       "answer": 1,
-      "explain": "A single = assigns. Testing for equality is ==, which is a different operator entirely."
+      "explain": "A single = assigns. Testing for equality is ==, which is a different operator entirely.",
+      "afterSection": 1
     },
     {
       "id": "u1-var-3",
@@ -81,7 +83,8 @@
         "class"
       ],
       "answer": 2,
-      "explain": "Names cannot start with a digit, cannot contain hyphens, and cannot be Python keywords like class."
+      "explain": "Names cannot start with a digit, cannot contain hyphens, and cannot be Python keywords like class.",
+      "afterSection": 3
     },
     {
       "id": "u1-var-4",
@@ -93,7 +96,8 @@
         "It depends on how it is used"
       ],
       "answer": 2,
-      "explain": "The quotes make it text. \"5\" + \"5\" gives \"55\", not 10."
+      "explain": "The quotes make it text. \"5\" + \"5\" gives \"55\", not 10.",
+      "afterSection": 2
     },
     {
       "id": "intro-foundations-variables-types-match",
@@ -114,6 +118,8 @@
         0,
         1
       ],
+      "hint": "Look at the actual value: a decimal point and quotation marks change its type.",
+      "afterSection": 5,
       "explain": "12: An integer value. 12.5: A floating-point value. \"12\": A string value."
     },
     {
@@ -132,6 +138,7 @@
         2,
         3
       ],
+      "hint": "Find the first step that does not depend on any earlier result. Then follow each dependency.",
       "explain": "The value of double must be calculated before coins changes if the final output should be 8 10."
     },
     {
@@ -147,6 +154,7 @@
           "caseSensitive": true
         }
       ],
+      "hint": "Trace each line in order and write down the current values. Stop at the first print call.",
       "explain": "After line 1, points is 10. Line 2 calculates 12 and stores it as bonus. Line 3 reassigns points to 20 but does not recalculate bonus. Keep a small table of names and current values when tracing assignments."
     }
   ]

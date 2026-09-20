@@ -45,15 +45,16 @@
   "questions": [
     {
       "id": "u1-tio-1",
-      "prompt": "What does input() always return?",
+      "prompt": "A user types 12 when asked input(\"Age: \"). Which value does input return?",
       "choices": [
-        "A number if the user typed digits",
-        "A string, always",
-        "Whatever type the user typed",
-        "None"
+        "The string \"12\"",
+        "The integer 12",
+        "The float 12.0",
+        "The name Age"
       ],
-      "answer": 1,
-      "explain": "input() hands back text without exception, which is why converting it with int() or float() is usually the next step."
+      "answer": 0,
+      "explain": "input always returns text. Convert it with int when a whole-number calculation is required. This distinction prevents accidentally repeating or joining digits as text.",
+      "afterSection": 2
     },
     {
       "id": "u1-tio-2",
@@ -65,7 +66,8 @@
         "'10 10 10'"
       ],
       "answer": 1,
-      "explain": "Multiplying a string by an integer repeats it. This is the classic bug from forgetting to convert input()."
+      "explain": "Multiplying a string by an integer repeats it. This is the classic bug from forgetting to convert input().",
+      "afterSection": 0
     },
     {
       "id": "u1-tio-3",
@@ -77,7 +79,8 @@
         "Returns 'abc'"
       ],
       "answer": 2,
-      "explain": "int() raises ValueError when the text does not describe a number, which is a good thing: it fails loudly."
+      "explain": "int() raises ValueError when the text does not describe a number, which is a good thing: it fails loudly.",
+      "afterSection": 1
     },
     {
       "id": "u1-tio-4",
@@ -89,7 +92,8 @@
         "Neither works"
       ],
       "answer": 1,
-      "explain": "The f-string works with any types. Concatenating with + fails if age is a number, because you cannot add an int to a str."
+      "explain": "The f-string works with any types. Concatenating with + fails if age is a number, because you cannot add an int to a str.",
+      "afterSection": 4
     },
     {
       "id": "intro-foundations-type-io-match",
@@ -110,6 +114,8 @@
         0,
         1
       ],
+      "hint": "Think about the type before and after conversion. input itself does not convert digits into numbers.",
+      "afterSection": 3,
       "explain": "input(\"Age: \"): Returns text supplied by the user. int(\"12\"): Converts whole-number text to an integer. float(\"2.5\"): Converts decimal text to a floating-point number."
     },
     {
@@ -128,6 +134,7 @@
         2,
         3
       ],
+      "hint": "Find the first step that does not depend on any earlier result. Then follow each dependency.",
       "explain": "Conversion must happen before addition; otherwise Python is asked to add a string and an integer."
     },
     {
@@ -143,6 +150,7 @@
           "caseSensitive": true
         }
       ],
+      "hint": "Trace each line in order and write down the current values. Stop at the first print call.",
       "explain": "The first multiplication repeats a string twice. After int converts the text, multiplication performs arithmetic. The same operator behaves differently because its operands have different types."
     }
   ]

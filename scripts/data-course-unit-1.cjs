@@ -898,5 +898,7 @@ for (const lesson of module.exports.unit1.lessons) {
   const entry = intro.entries.find(e => e.course === 'data' && e.slug === lesson.slug);
   if (!entry) throw new Error(`Missing introductory extension: ${lesson.slug}`);
   lesson.deepDive = entry;
+  Object.assign(lesson.questions[0], entry.openingQuestion);
   lesson.questions.push(...intro.questions(entry));
+  lesson.questions.forEach((q, i) => { if (i < entry.placements.length) q.afterSection = entry.placements[i]; });
 }

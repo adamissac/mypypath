@@ -58,15 +58,16 @@
   "questions": [
     {
       "id": "u1-what-1",
-      "prompt": "Python is called an interpreted language. What does that mean in practice?",
+      "prompt": "You save a file containing print(2 + 3), then run it with Python. What is the interpreter doing?",
       "choices": [
-        "You must compile it to a .exe before running it",
-        "It reads and runs your code line by line, with no separate compile step",
-        "It only runs inside a web browser",
-        "It converts your code to English first"
+        "Translating and executing the instructions so the calculation produces output",
+        "Saving the text without running it",
+        "Changing the file into a spreadsheet",
+        "Checking only the spelling of variable names"
       ],
-      "answer": 1,
-      "explain": "An interpreter executes each instruction as it reaches it, so you can run a file the moment you have saved it."
+      "answer": 0,
+      "explain": "The interpreter executes the program: it evaluates 2 + 3, then print displays 5. Saving a file alone does not execute its instructions.",
+      "afterSection": 3
     },
     {
       "id": "u1-what-2",
@@ -78,7 +79,8 @@
         "It hides your mistakes from you"
       ],
       "answer": 1,
-      "explain": "Readable syntax means less of your attention goes on the language itself and more on the problem."
+      "explain": "Readable syntax means less of your attention goes on the language itself and more on the problem.",
+      "afterSection": 1
     },
     {
       "id": "u1-what-3",
@@ -90,7 +92,8 @@
         "Rendering the pixels in a graphics card driver"
       ],
       "answer": 3,
-      "explain": "Low-level driver code is written in languages closer to the hardware. Everything else on this list is everyday Python."
+      "explain": "Low-level driver code is written in languages closer to the hardware. Everything else on this list is everyday Python.",
+      "afterSection": 4
     },
     {
       "id": "intro-foundations-what-is-python-match",
@@ -111,6 +114,8 @@
         0,
         1
       ],
+      "hint": "Separate the data from the instruction: quotes mark text, arithmetic calculates a value, and parentheses can call a function.",
+      "afterSection": 5,
       "explain": "Expression: Calculates a value. String: Text enclosed in quotes. Function call: Asks a named operation to run."
     },
     {
@@ -127,6 +132,7 @@
         1,
         2
       ],
+      "hint": "Find the first step that does not depend on any earlier result. Then follow each dependency.",
       "explain": "Writing creates the instructions; the interpreter executes them; checking the result tells you whether they answer your question."
     },
     {
@@ -142,6 +148,7 @@
           "caseSensitive": true
         }
       ],
+      "hint": "Trace each line in order and write down the current values. Stop at the first print call.",
       "explain": "In the first line, Python calculates 3 + 4 before print receives the result. In the second, quotation marks make the characters text, so there is no arithmetic. Both lines are valid Python, but they ask different questions."
     }
   ],

@@ -38,15 +38,16 @@
   "questions": [
     {
       "id": "u1-synt-1",
-      "prompt": "What does indentation do in Python?",
+      "prompt": "An if statement has two indented print calls followed by a print at the outer indentation. Which lines belong to the if block?",
       "choices": [
-        "Nothing, it is only for readability",
-        "It marks which lines belong inside a block",
-        "It makes the code run faster",
-        "It is required only inside functions"
+        "Only the two indented calls",
+        "All three calls because they follow the if",
+        "Only the first indented call",
+        "None until an end keyword appears"
       ],
-      "answer": 1,
-      "explain": "In most languages braces mark a block and indentation is cosmetic. In Python the indentation IS the block."
+      "answer": 0,
+      "explain": "Indentation defines the block. Returning to the outer indentation ends it, so the final print runs independently of the condition. Python does not need an end keyword.",
+      "afterSection": 1
     },
     {
       "id": "u1-synt-2",
@@ -58,7 +59,8 @@
         "SyntaxError about the colon"
       ],
       "answer": 1,
-      "explain": "A colon promises an indented block. Python raises IndentationError when the block does not arrive."
+      "explain": "A colon promises an indented block. Python raises IndentationError when the block does not arrive.",
+      "afterSection": 2
     },
     {
       "id": "u1-synt-3",
@@ -70,7 +72,8 @@
         "Only if you use exactly four spaces per tab"
       ],
       "answer": 1,
-      "explain": "Mixing them produces TabError, which is why editors are usually set to insert spaces."
+      "explain": "Mixing them produces TabError, which is why editors are usually set to insert spaces.",
+      "afterSection": 4
     },
     {
       "id": "u1-synt-4",
@@ -82,7 +85,8 @@
         "Eight"
       ],
       "answer": 2,
-      "explain": "Four spaces is the PEP 8 convention. Any consistent amount works, but four is what everyone else uses."
+      "explain": "Four spaces is the PEP 8 convention. Any consistent amount works, but four is what everyone else uses.",
+      "afterSection": 5
     },
     {
       "id": "intro-foundations-syntax-indentation-match",
@@ -103,6 +107,8 @@
         0,
         1
       ],
+      "hint": "Find the colon, then compare the indentation of the next line with the line after the block.",
+      "afterSection": 6,
       "explain": "Colon after if: Introduces the conditional block. Four leading spaces: Place a statement inside a block. Return to the outer indentation: End that block."
     },
     {
@@ -121,6 +127,7 @@
         2,
         3
       ],
+      "hint": "Find the first step that does not depend on any earlier result. Then follow each dependency.",
       "explain": "The assignment precedes the condition, the indented line belongs to if, and Checked runs after the block."
     },
     {
@@ -136,6 +143,7 @@
           "caseSensitive": true
         }
       ],
+      "hint": "Trace each line in order and write down the current values. Stop at the first print call.",
       "explain": "The condition is false, so Python skips the indented print. The final print is outside the block and still runs. If score becomes 5, both messages appear because the boundary value meets >= 5."
     }
   ]

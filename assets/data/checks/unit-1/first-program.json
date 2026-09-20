@@ -32,15 +32,16 @@
   "questions": [
     {
       "id": "u1-first-1",
-      "prompt": "What does print() actually do?",
+      "prompt": "A script contains print(\"Ready\"). After you run it, where should you look for Ready?",
       "choices": [
-        "Sends the text to a printer",
-        "Writes the value to the output, so you can see it",
-        "Saves the value to a file",
-        "Stores the value in a variable"
+        "In the terminal or output panel used to run the script",
+        "In a new file named Ready",
+        "Inside the source file, replacing the print call",
+        "In the clipboard"
       ],
-      "answer": 1,
-      "explain": "print() writes to standard output. The name is a leftover from when output really did go to a printer."
+      "answer": 0,
+      "explain": "print sends text to standard output, which this site shows in the editor output panel. It does not save a file or modify the source code.",
+      "afterSection": 1
     },
     {
       "id": "u1-first-2",
@@ -52,7 +53,8 @@
         "print(\"Hello\", \"there\")"
       ],
       "answer": 2,
-      "explain": "Without quotes, Python reads Hello as a variable name, and no variable by that name exists."
+      "explain": "Without quotes, Python reads Hello as a variable name, and no variable by that name exists.",
+      "afterSection": 3
     },
     {
       "id": "u1-first-3",
@@ -64,7 +66,8 @@
         "None, it is an error"
       ],
       "answer": 1,
-      "explain": "Each print() ends with a newline, so each call starts its output on a fresh line."
+      "explain": "Each print() ends with a newline, so each call starts its output on a fresh line.",
+      "afterSection": 3
     },
     {
       "id": "u1-first-4",
@@ -76,7 +79,8 @@
         "Double quotes are for numbers"
       ],
       "answer": 1,
-      "explain": "Having both means you can write \"it's fine\" or 'she said \"hi\"' without escaping anything."
+      "explain": "Having both means you can write \"it's fine\" or 'she said \"hi\"' without escaping anything.",
+      "afterSection": 1
     },
     {
       "id": "intro-foundations-first-program-match",
@@ -97,6 +101,8 @@
         0,
         1
       ],
+      "hint": "Identify the text, the values passed to print, and the punctuation that separates those values.",
+      "afterSection": 5,
       "explain": "Quotes: Mark the start and end of text. Comma in print: Separates values passed to print. Parentheses: Enclose the arguments of a function call."
     },
     {
@@ -113,6 +119,7 @@
         1,
         2
       ],
+      "hint": "Find the first step that does not depend on any earlier result. Then follow each dependency.",
       "explain": "An argument expression must have a value before the function can use it."
     },
     {
@@ -128,6 +135,7 @@
           "caseSensitive": true
         }
       ],
+      "hint": "Trace each line in order and write down the current values. Stop at the first print call.",
       "explain": "Python evaluates 4 + 5 to 9, then print receives the text Score: and the number 9. The second call starts on a new line because the first call ended its line."
     }
   ],

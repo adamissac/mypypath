@@ -73,15 +73,16 @@
   "questions": [
     {
       "id": "d1-rad-1",
-      "prompt": "What does a dictionary row give you that a list row does not?",
+      "prompt": "A table gains a new column before score. Why does row[\"score\"] make this change safer than row[1]?",
       "choices": [
-        "Speed",
-        "Names for the columns, so order stops mattering",
-        "The ability to store text",
-        "Automatic sorting"
+        "The field name identifies the score independently of its position",
+        "A dictionary guarantees that every record contains a score",
+        "A dictionary automatically converts the score to a number",
+        "The lookup always returns zero if score is absent"
       ],
-      "answer": 1,
-      "explain": "row[\"score\"] keeps working when a column is inserted before it. row[1] silently starts meaning something else."
+      "answer": 0,
+      "explain": "Names preserve meaning when column order changes. They do not guarantee that a key exists or that its value has the right type; those checks are still your responsibility.",
+      "afterSection": 0
     },
     {
       "id": "d1-rad-2",
@@ -93,7 +94,8 @@
         "Creates the key"
       ],
       "answer": 1,
-      "explain": "It hands back None, or whatever default you pass as a second argument. The bracket form raises instead."
+      "explain": "It hands back None, or whatever default you pass as a second argument. The bracket form raises instead.",
+      "afterSection": 2
     },
     {
       "id": "d1-rad-3",
@@ -109,7 +111,8 @@
         0,
         1
       ],
-      "explain": "Crashing is sometimes exactly right — a missing column you did not expect should be loud. .get is for gaps you know about."
+      "explain": "Crashing is sometimes exactly right — a missing column you did not expect should be loud. .get is for gaps you know about.",
+      "afterSection": 2
     },
     {
       "id": "d1-rad-4",
@@ -121,7 +124,8 @@
         "An error"
       ],
       "answer": 1,
-      "explain": "zip pairs each name with the value in the same position, and dict turns the pairs into a record."
+      "explain": "zip pairs each name with the value in the same position, and dict turns the pairs into a record.",
+      "afterSection": 0
     },
     {
       "id": "intro-data-records-as-dictionaries-match",
@@ -142,6 +146,8 @@
         0,
         1
       ],
+      "hint": "Treat an absent key and a key holding zero as two different situations.",
+      "afterSection": 3,
       "explain": "record[\"score\"]: Reads a required key and raises if absent. record.get(\"score\"): Returns the value or None when absent. \"score\" in record: Checks whether the key exists."
     },
     {
@@ -160,6 +166,7 @@
         2,
         3
       ],
+      "hint": "Find the first step that does not depend on any earlier result. Then follow each dependency.",
       "explain": "Filter by key presence before direct lookup, so the missing record is skipped while zero remains valid."
     },
     {
@@ -175,6 +182,7 @@
           "caseSensitive": true
         }
       ],
+      "hint": "Trace each line in order and write down the current values. Stop at the first print call.",
       "explain": "The score key exists and contains a real zero. The age key is absent, so get returns None. Membership tests whether a key exists, independently of whether its value is truthy."
     }
   ]

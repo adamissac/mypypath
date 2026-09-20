@@ -65,15 +65,16 @@
   "questions": [
     {
       "id": "d1-rcl-1",
-      "prompt": "In a list of lists, what does table[2][0] give you?",
+      "prompt": "A table has rows [[\"Ada\", 8], [\"Grace\", 10], [\"Lin\", 6]]. What does table[2][0] select?",
       "choices": [
-        "The third row",
-        "The first cell of the third row",
-        "The third column",
-        "The first row"
+        "\"Lin\": the first field in the third row",
+        "\"Ada\": the first field in the first row",
+        "6: the second field in the third row",
+        "The whole list [\"Lin\", 6]"
       ],
-      "answer": 1,
-      "explain": "The first index picks the row, the second picks the position within it. Row first, then column."
+      "answer": 0,
+      "explain": "Indexes start at zero. table[2] first selects [\"Lin\", 6]; [0] then selects its first field. Trace one bracket pair at a time instead of treating the two indexes as a column lookup.",
+      "afterSection": 0
     },
     {
       "id": "d1-rcl-2",
@@ -85,7 +86,8 @@
         "They cannot be sorted"
       ],
       "answer": 1,
-      "explain": "row[1] tells you nothing about what it holds. Six months later, neither does the code."
+      "explain": "row[1] tells you nothing about what it holds. Six months later, neither does the code.",
+      "afterSection": 2
     },
     {
       "id": "d1-rcl-blank",
@@ -101,7 +103,8 @@
           ]
         }
       ],
-      "explain": "A comprehension states the shape of the result, which is what makes a column extraction read as one idea."
+      "explain": "A comprehension states the shape of the result, which is what makes a column extraction read as one idea.",
+      "afterSection": 1
     },
     {
       "id": "d1-rcl-4",
@@ -113,7 +116,8 @@
         "It still reads the score"
       ],
       "answer": 1,
-      "explain": "Nothing raises, which is the danger. The summary is computed over the wrong column and looks perfectly plausible."
+      "explain": "Nothing raises, which is the danger. The summary is computed over the wrong column and looks perfectly plausible.",
+      "afterSection": 2
     },
     {
       "id": "intro-data-rows-and-columns-with-lists-match",
@@ -134,6 +138,8 @@
         0,
         1
       ],
+      "hint": "Read nested indexing one bracket at a time. A comprehension repeats a selection across rows.",
+      "afterSection": 3,
       "explain": "rows[0]: The first complete row. rows[0][1]: The second value in the first row. [row[1] for row in rows]: The second column collected from every row."
     },
     {
@@ -152,6 +158,7 @@
         2,
         3
       ],
+      "hint": "Find the first step that does not depend on any earlier result. Then follow each dependency.",
       "explain": "Extract the numeric column before summing; summing the rows themselves is a different operation."
     },
     {
@@ -167,6 +174,7 @@
           "caseSensitive": true
         }
       ],
+      "hint": "Trace each line in order and write down the current values. Stop at the first print call.",
       "explain": "rows[1] is [\"Grace\", 10], then [0] selects Grace from that row. The comprehension selects position 1 from every row, producing [8, 10, 6]. Summing this column gives 24."
     }
   ]

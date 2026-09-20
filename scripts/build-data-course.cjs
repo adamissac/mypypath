@@ -507,7 +507,7 @@ for (const unit of COURSE.units) {
       path: `/data/unit-${unit.n}/${lesson.slug}.html`,
       title: lesson.title,
       order: i + 1,
-      editors: practiceIds.concat(exerciseIds),
+      editors: practiceIds.concat(lesson.deepDive ? ['practice-transfer'] : [], exerciseIds),
       exercises: exerciseIds,
     });
   });

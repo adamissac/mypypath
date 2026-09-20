@@ -10,12 +10,13 @@ function questions(entry) {
     {id: `${prefix}-match`, kind: 'match', prompt: 'Match each idea to its meaning.',
       left: entry.pairs.map(pair => pair[0]), right,
       answer: entry.pairs.map((_, i) => (i + right.length - 1) % right.length),
+      hint: entry.hint, afterSection: entry.placements[entry.placements.length - 1],
       explain: entry.pairs.map(pair => `${pair[0]}: ${pair[1]}.`).join(' ')},
     {id: `${prefix}-order`, kind: 'order', prompt: 'Arrange these steps in the intended order.',
-      items: entry.order, answer: entry.order.map((_, i) => i), explain: entry.orderwhy},
+      items: entry.order, answer: entry.order.map((_, i) => i), hint: 'Find the first step that does not depend on any earlier result. Then follow each dependency.', explain: entry.orderwhy},
     {id: `${prefix}-predict`, kind: 'blank', label: 'Predict the first line of output (without surrounding quotes).',
       prompt: `${entry.code}\n\nFirst output line: ___`,
-      blanks: [{accept: [entry.output.split('\n')[0]], caseSensitive: true}], explain: entry.trace}
+      blanks: [{accept: [entry.output.split('\n')[0]], caseSensitive: true}], hint: 'Trace each line in order and write down the current values. Stop at the first print call.', explain: entry.trace}
   ];
 }
 function markup(entry) {
@@ -32,7 +33,16 @@ function markup(entry) {
 <p>${esc(entry.mistake)}</p>
 <h3>Transfer challenge</h3>
 <p>${esc(entry.challenge)}</p>
-<p>Try your solution in a lesson editor before opening the worked answer. This practice is ungraded.</p>
+<p>Change the example below to solve the challenge. Predict the result, run your code, and compare. This practice is ungraded.</p>
+<div class="interactive-editor" data-editor-id="practice-transfer">
+<div class="editor-toolbar-small">
+<button class="btn-run" onclick="runEditorCode('practice-transfer')">Run code</button>
+<button class="btn-reset" onclick="resetEditor('practice-transfer', ${esc(JSON.stringify(entry.code))})">Reset code</button>
+<button class="btn-clear" onclick="clearSaved('practice-transfer')">Clear saved code</button>
+</div>
+<textarea class="code-editor-small" id="editor-practice-transfer">${esc(entry.code)}</textarea>
+<div class="editor-output" id="output-practice-transfer"><div class="output-placeholder">Press Run to see output</div></div>
+</div>
 <details class="worked-answer"><summary>Compare with a worked solution</summary>
 <pre class="code"><code>${esc(entry.solution)}</code></pre>
 <p>Run both versions. Explain any difference in their output, then change one input and predict the new result.</p></details>

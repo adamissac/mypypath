@@ -78,15 +78,16 @@
   "questions": [
     {
       "id": "d1-wda-1",
-      "prompt": "Which step of an analysis usually takes the longest?",
+      "prompt": "A score file mixes numbers, blank cells, and repeated rows. Which task is likely to take more work than computing its final average?",
       "choices": [
-        "Getting the data",
-        "Cleaning it",
-        "Summarising it",
-        "Presenting it"
+        "Deciding what the blanks and repeats mean and cleaning consistently",
+        "Calling sum once the scores are valid",
+        "Dividing a total by its count",
+        "Printing a number that has already been calculated"
       ],
-      "answer": 1,
-      "explain": "Real data arrives with missing values, wrong types and duplicates. The summarising is often three lines; getting the data fit to summarise is the job."
+      "answer": 0,
+      "explain": "Cleaning requires decisions about meaning, not just arithmetic. A blank may be missing rather than zero, and a repeated row may be an error or a real repeated observation. A correct average of wrongly cleaned data still answers the wrong question.",
+      "afterSection": 0
     },
     {
       "id": "d1-wda-2",
@@ -98,7 +99,8 @@
         "It makes the code faster"
       ],
       "answer": 1,
-      "explain": "A table will always yield some pattern if you look long enough. Deciding the question first is what makes the answer mean anything."
+      "explain": "A table will always yield some pattern if you look long enough. Deciding the question first is what makes the answer mean anything.",
+      "afterSection": 1
     },
     {
       "id": "d1-wda-3",
@@ -116,7 +118,8 @@
         3,
         2
       ],
-      "explain": "Summarising dirty data produces a confident wrong answer, which is the worst of the four outcomes."
+      "explain": "Summarising dirty data produces a confident wrong answer, which is the worst of the four outcomes.",
+      "afterSection": 0
     },
     {
       "id": "d1-wda-4",
@@ -128,7 +131,8 @@
         "len is faster than a literal"
       ],
       "answer": 1,
-      "explain": "A typed answer is a copy of the result that nothing keeps in step with the data."
+      "explain": "A typed answer is a copy of the result that nothing keeps in step with the data.",
+      "afterSection": 2
     },
     {
       "id": "intro-data-what-is-data-analysis-match",
@@ -149,6 +153,8 @@
         0,
         1
       ],
+      "hint": "Name who or what is counted before choosing a boundary or calculating a percentage.",
+      "afterSection": 3,
       "explain": "Population: The group the result describes. Threshold: The boundary that decides which values count. Percentage: A count divided by its population, times 100."
     },
     {
@@ -167,6 +173,7 @@
         2,
         3
       ],
+      "hint": "Find the first step that does not depend on any earlier result. Then follow each dependency.",
       "explain": "An explicit definition and data check come before computation; the explanation preserves those definitions."
     },
     {
@@ -182,6 +189,7 @@
           "caseSensitive": true
         }
       ],
+      "hint": "Trace each line in order and write down the current values. Stop at the first print call.",
       "explain": "Three scores meet the inclusive boundary >= 60. Dividing 3 by 4 gives 0.75, then multiplying by 100 gives 75%. Boolean conditions contribute 1 for True and 0 for False when summed."
     }
   ]

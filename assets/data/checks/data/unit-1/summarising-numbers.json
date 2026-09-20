@@ -92,15 +92,16 @@
   "questions": [
     {
       "id": "d1-sum-1",
-      "prompt": "What does sum(scores) / len(scores) do when scores is empty?",
+      "prompt": "After filtering a dataset, scores is []. What should you do before calculating sum(scores) / len(scores)?",
       "choices": [
-        "Returns 0",
-        "Returns None",
-        "Raises ZeroDivisionError",
-        "Returns an empty list"
+        "Handle the empty case explicitly because the denominator would be zero",
+        "Report zero as the average because sum([]) is zero",
+        "Divide by one so the result always exists",
+        "Sort the list to make the division valid"
       ],
-      "answer": 2,
-      "explain": "len([]) is 0, and dividing by it raises. An empty column is common in real data, so this case has to be decided rather than discovered."
+      "answer": 0,
+      "explain": "An empty dataset has no observations, so its mean is undefined. Dividing by zero raises ZeroDivisionError. Decide how to represent no data rather than inventing an average.",
+      "afterSection": 1
     },
     {
       "id": "d1-sum-2",
@@ -112,7 +113,8 @@
         "Both had a top score of 50"
       ],
       "answer": 1,
-      "explain": "Everyone scoring 50 and half scoring 0 with half scoring 100 give the same average. The spread is the part the average threw away."
+      "explain": "Everyone scoring 50 and half scoring 0 with half scoring 100 give the same average. The spread is the part the average threw away.",
+      "afterSection": 2
     },
     {
       "id": "d1-sum-blank",
@@ -129,7 +131,8 @@
           ]
         }
       ],
-      "explain": "Two extra numbers turn a figure that can mislead into one that can be read."
+      "explain": "Two extra numbers turn a figure that can mislead into one that can be read.",
+      "afterSection": 0
     },
     {
       "id": "d1-sum-4",
@@ -141,7 +144,8 @@
         "The maximum"
       ],
       "answer": 2,
-      "explain": "The median depends only on the middle of the sorted values, so a single extreme value at the end hardly moves it."
+      "explain": "The median depends only on the middle of the sorted values, so a single extreme value at the end hardly moves it.",
+      "afterSection": 2
     },
     {
       "id": "intro-data-summarising-numbers-match",
@@ -162,6 +166,8 @@
         0,
         1
       ],
+      "hint": "Imagine replacing one value with a very large value. Which summaries use its size?",
+      "afterSection": 3,
       "explain": "Mean: Sum divided by the number of values. Median: Middle of the sorted values. Range: Maximum minus minimum."
     },
     {
@@ -180,6 +186,7 @@
         2,
         3
       ],
+      "hint": "Find the first step that does not depend on any earlier result. Then follow each dependency.",
       "explain": "Validation prevents undefined calculations; comparing summaries helps avoid an incomplete description."
     },
     {
@@ -195,6 +202,7 @@
           "caseSensitive": true
         }
       ],
+      "hint": "Trace each line in order and write down the current values. Stop at the first print call.",
       "explain": "The total waiting time is 40 across 5 observations, giving a mean of 8. The sorted middle value is 3. Four of the five waits are below the mean, so reporting only 8 hides the shape of this tiny dataset."
     }
   ]

@@ -16,5 +16,7 @@ for (const entry of entries.filter(e => e.course === 'foundations')) {
   const checkPath = `assets/data/checks/unit-1/${entry.slug}.json`;
   const checks = JSON.parse(fs.readFileSync(checkPath, 'utf8'));
   checks.questions = (checks.questions || []).filter(q => !q.id.startsWith('intro-')).concat(questions(entry));
+  Object.assign(checks.questions[0], entry.openingQuestion);
+  checks.questions.forEach((q, i) => { if (i < entry.placements.length) q.afterSection = entry.placements[i]; });
   fs.writeFileSync(checkPath, JSON.stringify(checks, null, 2) + '\n');
 }

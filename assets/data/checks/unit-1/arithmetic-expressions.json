@@ -56,15 +56,16 @@
   "questions": [
     {
       "id": "u1-ari-1",
-      "prompt": "What is 10 / 3 in Python 3?",
+      "prompt": "Ten metres of ribbon are divided equally among three people using 10 / 3. Which result should Python 3 produce?",
       "choices": [
-        "3",
-        "3.3333333333333335",
-        "3.0",
-        "An error"
+        "A floating-point result of about 3.3333333333333335",
+        "The integer 3 with the remainder discarded",
+        "The integer 1, because that much ribbon is left",
+        "An error because 10 is not divisible by 3"
       ],
-      "answer": 1,
-      "explain": "A single slash always gives a float, even when the numbers divide evenly."
+      "answer": 0,
+      "explain": "The / operator performs true division and returns a float. Use // for a floor quotient and % for the remainder when those are the questions you need to answer.",
+      "afterSection": 0
     },
     {
       "id": "u1-ari-2",
@@ -76,7 +77,8 @@
         "4"
       ],
       "answer": 0,
-      "explain": "Double slash is floor division: it divides and discards the remainder."
+      "explain": "Double slash is floor division: it divides and discards the remainder.",
+      "afterSection": 1
     },
     {
       "id": "u1-ari-3",
@@ -88,7 +90,8 @@
         "3.33"
       ],
       "answer": 1,
-      "explain": "The modulo operator gives the remainder. It is how you test whether a number divides evenly."
+      "explain": "The modulo operator gives the remainder. It is how you test whether a number divides evenly.",
+      "afterSection": 1
     },
     {
       "id": "u1-ari-4",
@@ -100,7 +103,8 @@
         "9"
       ],
       "answer": 1,
-      "explain": "Multiplication binds tighter than addition, so this is 2 + 12. Parentheses are how you override that."
+      "explain": "Multiplication binds tighter than addition, so this is 2 + 12. Parentheses are how you override that.",
+      "afterSection": 2
     },
     {
       "id": "u1-ari-5",
@@ -112,7 +116,8 @@
         "You cannot"
       ],
       "answer": 1,
-      "explain": "Parentheses are evaluated first, which is the P in PEMDAS."
+      "explain": "Parentheses are evaluated first, which is the P in PEMDAS.",
+      "afterSection": 2
     },
     {
       "id": "intro-foundations-arithmetic-expressions-match",
@@ -133,6 +138,8 @@
         0,
         1
       ],
+      "hint": "Try dividing 17 items into boxes of 5: distinguish the ratio, complete boxes, and leftover items.",
+      "afterSection": 5,
       "explain": "/: Division that returns a quotient. //: Division rounded down to the floor. %: Remainder after floor division."
     },
     {
@@ -151,6 +158,7 @@
         2,
         3
       ],
+      "hint": "Find the first step that does not depend on any earlier result. Then follow each dependency.",
       "explain": "Each calculation depends on a value defined earlier; the final remainder is 2."
     },
     {
@@ -166,6 +174,7 @@
           "caseSensitive": true
         }
       ],
+      "hint": "Trace each line in order and write down the current values. Stop at the first print call.",
       "explain": "Three complete boxes hold 15 items, with 2 left over. Check the relationship 17 == 3 * 5 + 2. The ordinary quotient 3.4 is useful as a ratio, but it is not a count of complete boxes."
     }
   ]

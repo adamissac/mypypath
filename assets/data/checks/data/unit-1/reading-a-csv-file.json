@@ -100,15 +100,16 @@
   "questions": [
     {
       "id": "d1-csv-1",
-      "prompt": "Why use the csv module instead of splitting each line on commas?",
+      "prompt": "A CSV row contains \"Lee, Jo\",8. Why should you use csv.reader or DictReader instead of splitting at every comma?",
       "choices": [
-        "It is faster",
-        "A quoted field can contain a comma, and split would break the row there",
-        "split does not work on files",
-        "csv sorts the rows"
+        "A CSV parser keeps the comma inside the quoted name within one field",
+        "A CSV parser automatically converts 8 to an integer",
+        "Splitting cannot return more than two fields",
+        "The header makes commas inside data rows disappear"
       ],
-      "answer": 1,
-      "explain": "\"Lovelace, Ada\" is one field with a comma in it. csv knows about the quotes; split sees three fields where there are two."
+      "answer": 0,
+      "explain": "CSV quoting distinguishes a separator from a comma that belongs to a value. A plain split would break the name into extra pieces. The parser preserves the field, but numeric values still need explicit conversion.",
+      "afterSection": 0
     },
     {
       "id": "d1-csv-2",
@@ -120,7 +121,8 @@
         "To count the rows"
       ],
       "answer": 1,
-      "explain": "The header becomes the keys, which is why row[\"score\"] works without you saying which position that is."
+      "explain": "The header becomes the keys, which is why row[\"score\"] works without you saying which position that is.",
+      "afterSection": 2
     },
     {
       "id": "d1-csv-3",
@@ -132,7 +134,8 @@
         "It depends on the value"
       ],
       "answer": 2,
-      "explain": "A file is text, so everything read out of one is text until you convert it. That is the source of more early bugs than anything else in this course."
+      "explain": "A file is text, so everything read out of one is text until you convert it. That is the source of more early bugs than anything else in this course.",
+      "afterSection": 2
     },
     {
       "id": "d1-csv-4",
@@ -144,7 +147,8 @@
         "The header is skipped"
       ],
       "answer": 1,
-      "explain": "Leaving the block, for any reason, closes the file. That is the whole job of with."
+      "explain": "Leaving the block, for any reason, closes the file. That is the whole job of with.",
+      "afterSection": 1
     },
     {
       "id": "intro-data-reading-a-csv-file-match",
@@ -165,6 +169,8 @@
         0,
         1
       ],
+      "hint": "Separate the file format, the field names, and the conversion needed for arithmetic.",
+      "afterSection": 3,
       "explain": "CSV header: Supplies field names for DictReader. Quoted field: Can contain a comma without creating another column. int(row[\"score\"]): Converts a numeric field from text before arithmetic."
     },
     {
@@ -183,6 +189,7 @@
         2,
         3
       ],
+      "hint": "Find the first step that does not depend on any earlier result. Then follow each dependency.",
       "explain": "Read with a CSV parser before converting fields; conversion precedes arithmetic."
     },
     {
@@ -198,6 +205,7 @@
           "caseSensitive": true
         }
       ],
+      "hint": "Trace each line in order and write down the current values. Stop at the first print call.",
       "explain": "The comma inside the quoted name belongs to that one field. DictReader keeps Lee, Jo together. The score values start as \"8\" and \"10\", then int converts them before summing. StringIO lets this small example behave like a text file without requiring an upload."
     }
   ]
