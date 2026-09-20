@@ -1,4 +1,5 @@
-/* Flat-color lunar hero. Rebuild with node scripts/build-moon.mjs.
+/* Flat-color lunar hero, in the course's violet. Rebuild with
+   node scripts/build-moon.mjs.
    Craters, route stops and satellite remain editable vector geometry. */
 import fs from 'node:fs';
 
@@ -16,10 +17,10 @@ function crater([x,y,r,sy,angle]) {
 function stop([x,y],i) {
   const final = i===9;
   return `<g transform="translate(${x} ${y})">
-      ${final?'<circle r="23" fill="#f9a620" fill-opacity=".14"/><circle r="22" stroke="#f9a620" stroke-width="1"/>':''}
+      ${final?'<circle r="23" fill="#a78bfa" fill-opacity=".14"/><circle r="22" stroke="#a78bfa" stroke-width="1"/>':''}
       <circle cy="3" r="12" fill="#24182f"/>
-      <circle r="12" fill="${final?'#f9a620':'#3a2853'}" stroke="${final?'#fff0cb':'#f9a620'}" stroke-width="2"/>
-      <text y="4" text-anchor="middle" fill="${final?'#24182f':'#fff4dc'}" font-family="system-ui, sans-serif" font-size="10.5" font-weight="700">${i+11}</text>
+      <circle r="12" fill="${final?'#a78bfa':'#3a2853'}" stroke="${final?'#ede9fe':'#a78bfa'}" stroke-width="2"/>
+      <text y="4" text-anchor="middle" fill="${final?'#24182f':'#f1ecf8'}" font-family="system-ui, sans-serif" font-size="10.5" font-weight="700">${i+11}</text>
     </g>`;
 }
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="none">
@@ -43,7 +44,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill=
   <g stroke="#a490c2" stroke-width="1.5" stroke-linecap="round">
     <path d="M94 191 h12 m-6 -6 v12 M455 80 h10 m-5 -5 v10 M500 445 h14 m-7 -7 v14"/>
   </g>
-  <path d="M89 443 l3 -8 3 8 8 3 -8 3 -3 8 -3 -8 -8 -3Z" fill="#f9a620"/>
+  <path d="M89 443 l3 -8 3 8 8 3 -8 3 -3 8 -3 -8 -8 -3Z" fill="#a78bfa"/>
   <!-- Solid facets and a distinct night side give depth without gradients. -->
   <circle cx="310" cy="306" r="209" fill="#30213f"/>
   <circle cx="310" cy="300" r="207" fill="#75608f"/>
@@ -61,20 +62,20 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill=
       <circle cx="374" cy="256" r="2"/><circle cx="378" cy="270" r="3"/><circle cx="437" cy="216" r="2"/>
     </g>
   </g>
-  <!-- Expedition route is a flat gold ribbon with a solid offset shadow. -->
+  <!-- Expedition route is a flat violet ribbon with a solid offset shadow. -->
   <path d="${route}" transform="translate(0 3)" stroke="#4d365f" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="${route}" stroke="#f9a620" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="${route}" stroke="#fff0cb" stroke-width="1.4" stroke-dasharray="1 10" stroke-linecap="round"/>
+  <path d="${route}" stroke="#a78bfa" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="${route}" stroke="#ede9fe" stroke-width="1.4" stroke-dasharray="1 10" stroke-linecap="round"/>
   ${stops.map(stop).join('\n  ')}
   <!-- Mission flag and a small satellite, separate from the lesson marks. -->
-  <g stroke-linejoin="round"><path d="M370 330 V301 L396 309 L370 318" fill="#f9a620" stroke="#3a2853" stroke-width="2"/><path d="M373 304 L387 309 L373 313Z" fill="#ffe5ac"/></g>
+  <g stroke-linejoin="round"><path d="M370 330 V301 L396 309 L370 318" fill="#a78bfa" stroke="#3a2853" stroke-width="2"/><path d="M373 304 L387 309 L373 313Z" fill="#ddd6fe"/></g>
   <g class="lunar-satellite"><g transform="translate(504 138) rotate(28)">
     <path d="M-36 -11 h23 v24 h-23Z M13 -11 h23 v24 h-23Z" fill="#5b3f8f" stroke="#a490c2" stroke-width="1.5"/>
     <path d="M-28 -11 v24 M-20 -11 v24 M21 -11 v24 M29 -11 v24 M-36 1 h23 M13 1 h23" stroke="#a490c2" stroke-width="1"/>
-    <path d="M-13 1 H13 M0 -13 V-23" stroke="#f9a620" stroke-width="3"/>
+    <path d="M-13 1 H13 M0 -13 V-23" stroke="#a78bfa" stroke-width="3"/>
     <rect x="-9" y="-13" width="18" height="28" rx="4" fill="#e6def0" stroke="#4d365f" stroke-width="2"/>
-    <path d="M-4 -8 h8 v9 h-8Z" fill="#f9a620"/><circle cy="8" r="2" fill="#5b3f8f"/>
-    <path d="M-10 -25 Q0 -14 10 -25" stroke="#f9a620" stroke-width="2" stroke-linecap="round"/>
+    <path d="M-4 -8 h8 v9 h-8Z" fill="#a78bfa"/><circle cy="8" r="2" fill="#5b3f8f"/>
+    <path d="M-10 -25 Q0 -14 10 -25" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"/>
   </g>
   </g>
   <g stroke="#a490c2" stroke-width="1" opacity=".55"><path d="M257 555 h30 m66 0 h30"/><circle cx="320" cy="555" r="3"/></g>

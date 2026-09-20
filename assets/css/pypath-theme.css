@@ -1825,16 +1825,19 @@ main .container,
    Python for Data course theme
 
    Every page of the second course, and the home page while the trail is
-   on that course, trades the site's sky blue for the course's own night
-   survey colours: deep purple ink, lavender surfaces and a marigold lamp
-   for fills and highlights. html[data-course="data"] is set by
-   theme-init.js from the URL (before first paint) and by path-trail.js on
-   the home page.
+   on that course, trades the site's sky blue for the same theme in violet:
+   deep purple ink, lavender surfaces, white where Foundations uses white.
+   html[data-course="data"] is set by theme-init.js from the URL (before
+   first paint) and by path-trail.js on the home page.
 
-   Flat by request: no gradients anywhere in this theme. Marigold is only
-   ever a fill or a line on light surfaces, never text there (it is under
-   2:1 on white); text accents are purple. In dark mode marigold is text
-   as well, on deep purple, where it is over 8:1.
+   One hue, the way Foundations is one hue. The ramp answers the blue one
+   step for step -- #7c3aed stands where #0ea5e9 does, #6d28d9 where
+   #0369a1 does, #a78bfa where #38bdf8 does -- so a rule written against
+   --pp-line or --primary needs no course override to come out right.
+   That is why this section is mostly tokens: almost every rule below it
+   was a second colour painted over a rule that already worked.
+
+   Flat by request: no gradients anywhere in this theme.
    ═══════════════════════════════════════════════════════════════ */
 
 html[data-course="data"] {
@@ -1843,10 +1846,10 @@ html[data-course="data"] {
   --pp-fog: #ebe0fd;
   --pp-mist: #f4ecff;
   --pp-paper: #f9f5ff;
-  --pp-line: #f9a620;
-  --pp-line-deep: #7c3aed;
+  --pp-line: #7c3aed;
+  --pp-line-deep: #6d28d9;
   --pp-line-ink: #6d28d9;
-  --pp-mark: #f9a620;
+  --pp-mark: #7c3aed;
   --pp-muted: #654b91;
   --pp-border: #ded0f7;
 
@@ -1862,11 +1865,11 @@ html[data-course="data"] {
   --primary-ink: #6d28d9;
   --accent: #7c3aed;
   --accent-alt: #a78bfa;
-  --ring: 0 0 0 4px rgba(249, 166, 32, 0.3);
+  --ring: 0 0 0 4px rgba(124, 58, 237, 0.3);
   --shadow: 0 4px 20px rgba(43, 30, 62, 0.08);
   --shadow-strong: 0 12px 36px rgba(43, 30, 62, 0.14);
-  --warm: #fbd38d;
-  --warm-soft: #fdebc8;
+  --warm: #c4b5fd;
+  --warm-soft: #ddd6fe;
 }
 
 /* theme.js stamps data-theme on <body> as well as <html>, and the site's
@@ -1879,19 +1882,19 @@ html[data-course="data"] body[data-theme="dark"] {
   --pp-fog: #1d1529;
   --pp-mist: #150f1f;
   --pp-paper: #120d1b;
-  --pp-line: #f9a620;
-  --pp-line-deep: #fbc15e;
-  --pp-line-ink: #fbc15e;
-  --pp-mark: #f9a620;
+  --pp-line: #a78bfa;
+  --pp-line-deep: #c4b5fd;
+  --pp-line-ink: #c4b5fd;
+  --pp-mark: #a78bfa;
   --pp-muted: #b3a5c9;
   --pp-border: #3a2d4f;
 
   --bg-elevated: #1d1529;
   --panel: #1d1529;
-  --primary: #f9a620;
-  --primary-strong: #fbc15e;
-  --primary-ink: #fbc15e;
-  --accent: #fbc15e;
+  --primary: #a78bfa;
+  --primary-strong: #c4b5fd;
+  --primary-ink: #c4b5fd;
+  --accent: #c4b5fd;
   --accent-alt: #a490c2;
   --shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
   --shadow-strong: 0 12px 36px rgba(0, 0, 0, 0.45);
@@ -1905,7 +1908,7 @@ html[data-course="data"] .inspire-banner {
 
 html[data-course="data"] .inspire-banner a,
 html[data-course="data"] .inspire-banner__link {
-  color: #fbc15e;
+  color: #c4b5fd;
 }
 
 html[data-course="data"][data-theme="dark"] .btn-primary,
@@ -1919,7 +1922,7 @@ html[data-course="data"] .lesson-finish--test {
 }
 
 html[data-course="data"] .lesson-finish--test .lesson-finish__eyebrow {
-  color: #fbc15e;
+  color: #c4b5fd;
 }
 
 html[data-course="data"] .lesson-finish--test .btn-primary {
@@ -1928,12 +1931,7 @@ html[data-course="data"] .lesson-finish--test .btn-primary {
 
 html[data-course="data"] .lesson-finish__badge {
   color: #2e0c64;
-  background: #f9a620;
   box-shadow: none;
-}
-
-html[data-course="data"] .ut-score__fill:not(.is-pass) {
-  background: #f9a620;
 }
 
 html[data-course="data"] .unit-lock-screen.is-stage {
@@ -1941,46 +1939,23 @@ html[data-course="data"] .unit-lock-screen.is-stage {
 }
 
 html[data-course="data"] .teacher-view-note__badge {
-  background: #7c3aed;
+  background: var(--pp-line-ink);
   box-shadow: none;
 }
 
 html[data-course="data"] .skip-link:focus {
-  outline-color: #f9a620;
+  outline-color: #7c3aed;
 }
 
-/* Marigold where the site uses its accent: the header call to action, the
-   current page in the nav, and the unit number ribbons. Purple text on
-   marigold is 8.4:1. */
-html[data-course="data"] .header-cta,
-html[data-course="data"] .btn.btn-primary.header-cta,
-html[data-course="data"][data-theme="dark"] .btn.btn-primary.header-cta {
-  background: #f9a620 !important;
-  color: #2e0c64 !important;
-}
+/* The header call to action, the current item in the nav and the unit
+   ribbons each had a rule here that did nothing but paint marigold over a
+   rule already written against --pp-ink, --pp-line and --pp-line-ink. They
+   are gone: the base rules now produce deep purple on near-white, a white
+   pill with purple ink, and a 16% violet ribbon, which is the Foundations
+   treatment in this course's hue. */
 
-html[data-course="data"] .header-cta:hover,
-html[data-course="data"] .btn.btn-primary.header-cta:hover {
-  background: #fbc15e !important;
-  color: #2e0c64 !important;
-}
-
-html[data-course="data"] .nav-pill .menu a.active {
-  background: #fdebc8;
-  color: #2e0c64;
-}
-
-html[data-course="data"][data-theme="dark"] .nav-pill .menu a.active {
-  background: #3a2d4f;
-  color: #fbc15e;
-}
-
-html[data-course="data"] .unit-ribbon {
-  background: #f9a620;
-  color: #2e0c64;
-}
-
-/* In dark mode the course's primary is marigold, so text on it is purple. */
+/* Dark mode puts a pale violet behind these, so their text is the course's
+   deepest ink rather than white. */
 html[data-course="data"][data-theme="dark"] .practice-badge,
 html[data-course="data"][data-theme="dark"] .btn-run {
   color: #24182f;
