@@ -86,12 +86,12 @@
       "id": "d1-cag-1",
       "prompt": "counts is initially {}. On the first occurrence of \"math\", why does counts.get(\"math\", 0) + 1 work while counts[\"math\"] + 1 fails?",
       "choices": [
-        "get supplies a zero starting count when the key is absent",
         "get counts all later math rows automatically",
         "Bracket lookup converts the key into a number",
-        "The + 1 creates the key before either lookup runs"
+        "The + 1 creates the key before either lookup runs",
+        "get supplies a zero starting count when the key is absent"
       ],
-      "answer": 0,
+      "answer": 3,
       "explain": "Python must evaluate the lookup before adding one. Direct lookup raises KeyError for a missing key; get provides the chosen default. Assign the calculated result back to counts[\"math\"] to store the new count.",
       "afterSection": 0
     },

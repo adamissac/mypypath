@@ -40,12 +40,12 @@
     "openingQuestion": {
       "prompt": "You save a file containing print(2 + 3), then run it with Python. What is the interpreter doing?",
       "choices": [
-        "Translating and executing the instructions so the calculation produces output",
         "Saving the text without running it",
+        "Translating and executing the instructions so the calculation produces output",
         "Changing the file into a spreadsheet",
         "Checking only the spelling of variable names"
       ],
-      "answer": 0,
+      "answer": 1,
       "explain": "The interpreter executes the program: it evaluates 2 + 3, then print displays 5. Saving a file alone does not execute its instructions."
     }
   },
@@ -91,12 +91,12 @@
     "openingQuestion": {
       "prompt": "You save your program as hello.py. What does the .py extension tell an editor or tool?",
       "choices": [
-        "The file contains Python source code",
         "The program has already run successfully",
         "The file can only run inside this editor",
-        "The file includes a copy of the Python interpreter"
+        "The file includes a copy of the Python interpreter",
+        "The file contains Python source code"
       ],
-      "answer": 0,
+      "answer": 3,
       "explain": "The extension identifies the intended language. You still need an interpreter to execute the code, and the extension does not guarantee that the code is correct."
     }
   },
@@ -194,12 +194,12 @@
     "openingQuestion": {
       "prompt": "You write distance = 5.0. Which statement correctly describes the value stored in distance?",
       "choices": [
-        "It is a float, even though it has no fractional part",
         "It is an int because its mathematical value is a whole number",
         "It is a string because distance is a name",
+        "It is a float, even though it has no fractional part",
         "Its type cannot be known until it is printed"
       ],
-      "answer": 0,
+      "answer": 2,
       "explain": "The literal 5.0 creates a float; 5 creates an int. A value can represent a whole number and still have floating-point type. type(distance) would confirm the type."
     }
   },
@@ -246,12 +246,12 @@
     "openingQuestion": {
       "prompt": "A user types 12 when asked input(\"Age: \"). Which value does input return?",
       "choices": [
-        "The string \"12\"",
         "The integer 12",
+        "The string \"12\"",
         "The float 12.0",
         "The name Age"
       ],
-      "answer": 0,
+      "answer": 1,
       "explain": "input always returns text. Convert it with int when a whole-number calculation is required. This distinction prevents accidentally repeating or joining digits as text."
     }
   },
@@ -299,12 +299,12 @@
     "openingQuestion": {
       "prompt": "Ten metres of ribbon are divided equally among three people using 10 / 3. Which result should Python 3 produce?",
       "choices": [
-        "A floating-point result of about 3.3333333333333335",
         "The integer 3 with the remainder discarded",
         "The integer 1, because that much ribbon is left",
-        "An error because 10 is not divisible by 3"
+        "An error because 10 is not divisible by 3",
+        "A floating-point result of about 3.3333333333333335"
       ],
-      "answer": 0,
+      "answer": 3,
       "explain": "The / operator performs true division and returns a float. Use // for a floor quotient and % for the remainder when those are the questions you need to answer."
     }
   },
@@ -402,12 +402,12 @@
     "openingQuestion": {
       "prompt": "An if statement has two indented print calls followed by a print at the outer indentation. Which lines belong to the if block?",
       "choices": [
-        "Only the two indented calls",
         "All three calls because they follow the if",
         "Only the first indented call",
+        "Only the two indented calls",
         "None until an end keyword appears"
       ],
-      "answer": 0,
+      "answer": 2,
       "explain": "Indentation defines the block. Returning to the outer indentation ends it, so the final print runs independently of the condition. Python does not need an end keyword."
     }
   },
@@ -454,12 +454,12 @@
     "openingQuestion": {
       "prompt": "A score file mixes numbers, blank cells, and repeated rows. Which task is likely to take more work than computing its final average?",
       "choices": [
-        "Deciding what the blanks and repeats mean and cleaning consistently",
         "Calling sum once the scores are valid",
+        "Deciding what the blanks and repeats mean and cleaning consistently",
         "Dividing a total by its count",
         "Printing a number that has already been calculated"
       ],
-      "answer": 0,
+      "answer": 1,
       "explain": "Cleaning requires decisions about meaning, not just arithmetic. A blank may be missing rather than zero, and a repeated row may be an error or a real repeated observation. A correct average of wrongly cleaned data still answers the wrong question."
     }
   },
@@ -506,12 +506,12 @@
     "openingQuestion": {
       "prompt": "A table has rows [[\"Ada\", 8], [\"Grace\", 10], [\"Lin\", 6]]. What does table[2][0] select?",
       "choices": [
-        "\"Lin\": the first field in the third row",
         "\"Ada\": the first field in the first row",
         "6: the second field in the third row",
-        "The whole list [\"Lin\", 6]"
+        "The whole list [\"Lin\", 6]",
+        "\"Lin\": the first field in the third row"
       ],
-      "answer": 0,
+      "answer": 3,
       "explain": "Indexes start at zero. table[2] first selects [\"Lin\", 6]; [0] then selects its first field. Trace one bracket pair at a time instead of treating the two indexes as a column lookup."
     }
   },
@@ -610,12 +610,12 @@
     "openingQuestion": {
       "prompt": "A CSV row contains \"Lee, Jo\",8. Why should you use csv.reader or DictReader instead of splitting at every comma?",
       "choices": [
-        "A CSV parser keeps the comma inside the quoted name within one field",
         "A CSV parser automatically converts 8 to an integer",
         "Splitting cannot return more than two fields",
+        "A CSV parser keeps the comma inside the quoted name within one field",
         "The header makes commas inside data rows disappear"
       ],
-      "answer": 0,
+      "answer": 2,
       "explain": "CSV quoting distinguishes a separator from a comma that belongs to a value. A plain split would break the name into extra pieces. The parser preserves the field, but numeric values still need explicit conversion."
     }
   },
@@ -662,12 +662,12 @@
     "openingQuestion": {
       "prompt": "After filtering a dataset, scores is []. What should you do before calculating sum(scores) / len(scores)?",
       "choices": [
-        "Handle the empty case explicitly because the denominator would be zero",
         "Report zero as the average because sum([]) is zero",
+        "Handle the empty case explicitly because the denominator would be zero",
         "Divide by one so the result always exists",
         "Sort the list to make the division valid"
       ],
-      "answer": 0,
+      "answer": 1,
       "explain": "An empty dataset has no observations, so its mean is undefined. Dividing by zero raises ZeroDivisionError. Decide how to represent no data rather than inventing an average."
     }
   },
@@ -714,12 +714,12 @@
     "openingQuestion": {
       "prompt": "counts is initially {}. On the first occurrence of \"math\", why does counts.get(\"math\", 0) + 1 work while counts[\"math\"] + 1 fails?",
       "choices": [
-        "get supplies a zero starting count when the key is absent",
         "get counts all later math rows automatically",
         "Bracket lookup converts the key into a number",
-        "The + 1 creates the key before either lookup runs"
+        "The + 1 creates the key before either lookup runs",
+        "get supplies a zero starting count when the key is absent"
       ],
-      "answer": 0,
+      "answer": 3,
       "explain": "Python must evaluate the lookup before adding one. Direct lookup raises KeyError for a missing key; get provides the chosen default. Assign the calculated result back to counts[\"math\"] to store the new count."
     }
   }
