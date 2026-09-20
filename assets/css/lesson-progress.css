@@ -408,13 +408,26 @@
   align-items: center;
   gap: 0.75rem 1.4rem;
   margin: 20px 0 26px;
-  padding: 1.15rem 1.4rem;
+  padding: 1rem 1.35rem;
   border: 1px solid var(--border, #cfe3f2);
-  border-left: 4px solid var(--accent, #2f7ea8);
   border-radius: 14px;
-  background:
-    var(--panel);
-  box-shadow: var(--shadow, 0 4px 20px rgba(12, 69, 102, 0.07));
+  /* A tint of the page's own accent, because the note was var(--panel) on
+     var(--bg) with the same radius and the same shadow as the unit cards
+     below it -- the only thing separating a notice from a card was a 4px
+     stripe. Mixed from --accent and --panel rather than written out, so dark
+     mode and the purple data course each get their own tint from the tokens
+     they already set, instead of an override apiece. */
+  --tvn-tint: 7%;
+  background: color-mix(in srgb, var(--accent, #2f7ea8) var(--tvn-tint), var(--panel, #fff));
+  border-color: color-mix(in srgb, var(--accent, #2f7ea8) 24%, var(--border, #cfe3f2));
+  /* The stripe is an inset shadow rather than border-left. A left border
+     keeps its full 4px right up to the point where the 14px radius turns
+     away from it, so it ended in a square cut against a rounded corner and
+     read as a rendering fault in both top and bottom corners. An inset
+     shadow is clipped by border-radius, so the stripe curves with it. */
+  box-shadow:
+    inset 4px 0 0 var(--accent, #2f7ea8),
+    var(--shadow, 0 4px 20px rgba(12, 69, 102, 0.07));
 }
 
 /* The badge carries the meaning of the whole bar -- "you are looking at this
@@ -422,10 +435,13 @@
 .teacher-view-note__badge {
   display: grid;
   place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 2.6rem;
+  height: 2.6rem;
   border-radius: 50%;
-  color: #fff;
+  /* The panel colour, not #fff: in dark mode --pp-line-ink is #7dd3fc, and a
+     white eye on it is 1.6:1. Against --panel it is the same glyph read as
+     ink on a light disc, which is what it already is in light mode. */
+  color: var(--panel, #fff);
   background: var(--pp-line-ink);
   box-shadow: 0 3px 10px rgba(2, 132, 199, 0.28);
 }
@@ -437,10 +453,11 @@
 .teacher-view-note__text { max-width: 62ch; }
 
 .teacher-view-note__title {
-  margin: 0 0 3px;
+  margin: 0 0 2px;
   font-family: var(--pp-display, inherit);
   font-weight: 700;
   font-size: 1.08rem;
+  line-height: 1.25;
   letter-spacing: 0.01em;
   color: var(--text-strong, #0c4566);
 }
@@ -449,7 +466,38 @@
 .teacher-view-note__body { color: var(--muted, #4a7390); line-height: 1.55; }
 
 .teacher-view-note__actions { justify-self: end; }
-.teacher-view-note__actions .btn { white-space: nowrap; }
+/* .btn-ghost is transparent, which on the tint above leaves the one thing
+   there is to do here as an outline drawn on the same wash as everything
+   around it. On the panel colour it reads as a control sitting on the bar. */
+.teacher-view-note__actions .btn {
+  white-space: nowrap;
+  background: var(--panel, #fff);
+  border-color: color-mix(in srgb, var(--accent, #2f7ea8) 32%, var(--border, #cfe3f2));
+}
+.teacher-view-note__actions .btn:hover {
+  border-color: var(--accent, #2f7ea8);
+}
+
+/* The same 7% of a light accent on white is a visible wash; on #152028 it is
+   almost nothing, so dark mode turns the one knob rather than restating the
+   rule. */
+[data-theme="dark"] .teacher-view-note { --tvn-tint: 13%; }
+
+/* progress.html is a 44rem column at every viewport width, so its copy of the
+   note never has room for three columns and the query below -- which reads
+   the VIEWPORT -- only fires there on a phone. On a desktop the sentence was
+   wrapping to four lines beside a badge centred against all of them, a 155px
+   box where the other two pages get an 88px bar. Same stacked layout, reached
+   by the other route into it. */
+.progress-page .teacher-view-note {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+}
+.progress-page .teacher-view-note__actions {
+  grid-column: 1 / -1;
+  justify-self: start;
+  margin-top: 0.35rem;
+}
 
 /* Narrow: the action stops being a third column and becomes a row of its own,
    under the text rather than squeezed beside it. */
@@ -457,17 +505,21 @@
   .teacher-view-note {
     grid-template-columns: auto minmax(0, 1fr);
     padding: 1rem 1.1rem;
+    /* The body runs to three or four lines at this width, and a badge centred
+       against all of them sits beside the middle of the paragraph rather than
+       beside the title it labels. */
+    align-items: start;
   }
+  .teacher-view-note__badge {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+  .teacher-view-note__badge svg { width: 1.15rem; height: 1.15rem; }
   .teacher-view-note__actions {
     grid-column: 1 / -1;
     justify-self: start;
-    margin-top: 0.15rem;
+    margin-top: 0.35rem;
   }
-}
-
-[data-theme="dark"] .teacher-view-note {
-  background:
-    var(--panel);
 }
 
 /* ---------- your progress in this unit ---------- */
