@@ -639,12 +639,18 @@ def normalize_scripts(html: str, path: Path) -> str:
     return html
 
 
+# style.css is versioned, so every rule that inserts around its <link> has to
+# match the `?v=` form as well as the bare one -- otherwise these run once, on a
+# page that has not been baked yet, and silently stop firing afterwards.
+STYLE_LINK = re.compile(r'<link rel="stylesheet" href="/assets/css/style\.css(?:\?v=[0-9a-f]+)?"\s*/>')
+
+
 def normalize_head(html: str) -> str:
-    html = re.sub(r'<link rel="stylesheet" href="/assets/css/style\.css"\s*/>', '<link rel="stylesheet" href="/assets/css/style.css" />', html)
+    html = STYLE_LINK.sub(lambda m: m[0].replace('"  /', '" /').replace('"/>', '" />'), html)
     if 'pypath-fast.css' not in html:
-        html = html.replace(
-            '<link rel="stylesheet" href="/assets/css/style.css" />',
-            '<link rel="stylesheet" href="/assets/css/style.css" />\n    <link rel="stylesheet" href="/assets/css/pypath-fast.css" />',
+        html = STYLE_LINK.sub(
+            lambda m: m[0] + '\n    <link rel="stylesheet" href="/assets/css/pypath-fast.css" />',
+            html,
             1,
         )
     if 'Plus+Jakarta+Sans' not in html and 'style.css' in html:
@@ -653,11 +659,7 @@ def normalize_head(html: str) -> str:
             '    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />\n'
             '    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />\n'
         )
-        html = html.replace(
-            '<link rel="stylesheet" href="/assets/css/style.css" />',
-            fonts + '    <link rel="stylesheet" href="/assets/css/style.css" />',
-            1,
-        )
+        html = STYLE_LINK.sub(lambda m: fonts + '    ' + m[0], html, 1)
     # auth.css styles the header account menu, so every page needs it.
     if 'assets/css/auth.css' not in html and 'pypath-theme.css' in html:
         html = html.replace(
@@ -694,10 +696,16 @@ def normalize_head(html: str) -> str:
 
 def version_course_assets(html: str) -> str:
     """Keep course colours and logo selection fresh despite shared-asset caching."""
-    for rel in ('assets/css/pypath-theme.css', 'assets/js/theme-init.js', 'assets/js/lesson-ui.js',
+    for rel in ('assets/css/style.css',
+                'assets/css/pypath-theme.css', 'assets/js/theme-init.js', 'assets/js/lesson-ui.js',
                 'assets/css/pypath-fast.css', 'assets/css/lesson-progress.css',
                 'assets/css/courses.css', 'assets/css/checks.css', 'assets/js/question-render.js',
                 'assets/js/lesson-quiz.js', 'assets/js/core.js', 'assets/js/pyodide-loader.js',
+                # Both carry lesson behaviour and both were changed by a deploy
+                # while a browser could still serve the previous copy from cache:
+                # motion.js owns in-page anchor behaviour, lesson-progress.js
+                # owns what a shut unit hides.
+                'assets/js/motion.js', 'assets/js/lesson-progress.js',
                 'assets/img/data-moon.svg',
                 'assets/img/placeholder-avatar.svg'):
         version = hashlib.sha256((ROOT / rel).read_bytes()).hexdigest()[:10]
