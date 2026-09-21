@@ -10,10 +10,16 @@ try {
    await context.addInitScript(t=>localStorage.setItem('pypath-theme',t),theme);
    const page=await context.newPage();await page.goto(base+path);
    await page.locator('.CodeMirror').first().waitFor();
-   await page.getByText('In this lesson',{exact:false}).first().click();
-   const link=page.locator('.lesson-outline a').filter({hasText:'Predict, then check'}).first();
+   // Docked beside the lesson above 1024px, a disclosure below it.
+   if(width<1024) await page.locator('.lesson-toc__summary').click();
+   const link=page.locator('.lesson-toc__link').filter({hasText:'Predict, then check'}).first();
    await link.click();
-   assert.equal(await page.evaluate(()=>document.activeElement.tagName),'H2');
+   /* Where focus ENDS UP, not where it is mid-transition. Navigating to a
+      fragment has the browser doing its own focus handling alongside ours, and
+      under load it lands on <body> for a frame before the heading. Sampling
+      activeElement the instant after the click caught that window about one
+      run in four. */
+   await page.waitForFunction(()=>document.activeElement.tagName==='H2',null,{timeout:5000});
    await page.locator('.worked-answer summary').first().click();
    assert.equal(await page.locator('.checkpoint-output').first().isVisible(),true);
    await page.locator('.practice-box').first().scrollIntoViewIfNeeded();
@@ -39,7 +45,11 @@ try {
  await page.waitForFunction(()=>window.editors?.practice1);
  await page.evaluate(()=>window.editors.practice1.setValue('print(2 + 3)'));
  await page.locator('[data-editor-id="practice1"] .btn-run').click();
- await page.waitForFunction(()=>/^5\s*$/.test(document.getElementById('output-practice1').textContent.trim()),null,{timeout:120000});
+ // Pyodide's runtime is fetched from a CDN on first use. A warm cache runs
+ // this in about a second; a cold one has to pull the whole interpreter
+ // first, which has taken longer than two minutes here. The wait is sized
+ // for the cold case so a CI run does not fail on a download.
+ await page.waitForFunction(()=>/^5\s*$/.test(document.getElementById('output-practice1').textContent.trim()),null,{timeout:240000});
  await page.locator('[data-editor-id="practice1"] .btn-reset').click();
  assert.match(await page.evaluate(()=>window.editors.practice1.getValue()),/import csv/);
  console.log('Real Python run returned 5; reset restored the CSV starter.');
