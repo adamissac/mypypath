@@ -42,7 +42,13 @@ const LEGACY = new Set([520, 560, 700, 720, 820, 960, 1024]);
 function breakpoints() {
   const found = [];
   for (const f of fs.readdirSync('assets/css').filter((n) => n.endsWith('.css'))) {
-    const src = fs.readFileSync(`assets/css/${f}`, 'utf8');
+    /* Comments out first. A comment that explains a breakpoint -- or names one
+       it replaced -- contains the characters `@media` and a px value, and the
+       prelude match runs from there to the next `{` anywhere below, which
+       reports the documentation as a breakpoint the file does not have. */
+    const src = fs
+      .readFileSync(`assets/css/${f}`, 'utf8')
+      .replace(/\/\*[\s\S]*?\*\//g, ' ');
     for (const q of src.matchAll(/@media([^{]+)\{/g)) {
       for (const w of q[1].matchAll(/(max|min)-width:\s*(\d+)px/g)) {
         found.push({ file: f, kind: w[1], px: Number(w[2]) });
