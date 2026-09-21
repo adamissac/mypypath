@@ -2075,6 +2075,7 @@ body.lesson-reading .exercise-section { border: 1px solid var(--pp-border); bord
    accessibility tree twice. */
 
 .lesson-toc { margin: 24px 0 8px; }
+.lesson-toc__head { display: none; }
 .lesson-toc__disclosure { border-block: 1px solid var(--pp-border); }
 .lesson-toc__summary {
   display: flex; align-items: center; gap: 12px; min-height: 52px;
@@ -2113,12 +2114,33 @@ body.lesson-reading .exercise-section { border: 1px solid var(--pp-border); bord
   /* An always-open panel has nothing to toggle, so the control goes away
      rather than sitting there inert and collecting a tab stop. */
   .lesson-toc--docked .lesson-toc__summary { display: none; }
-  .lesson-toc--docked .lesson-toc__nav::before {
-    content: 'In this lesson';
+  .lesson-toc--docked .lesson-toc__head {
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 4px 10px 8px;
+  }
+  .lesson-toc__heading {
     font-family: var(--pp-body); font-weight: 700; font-size: 0.78rem;
     letter-spacing: 0.04em; text-transform: uppercase; color: var(--pp-muted);
-    padding: 0 8px 10px;
   }
+  .lesson-toc__toggle {
+    margin-left: auto; border: 1px solid transparent; background: none;
+    font: inherit; font-size: 0.78rem; font-weight: 600; color: var(--pp-line-ink);
+    padding: 6px 10px; border-radius: 8px; cursor: pointer; min-height: 32px;
+  }
+  .lesson-toc__toggle:hover { background: var(--pp-fog); border-color: var(--pp-border); }
+  .lesson-toc__toggle:focus-visible { outline: 2px solid var(--pp-line-ink); outline-offset: 2px; }
+  [data-theme="dark"] .lesson-toc__toggle:hover { background: var(--pp-mist); }
+
+  /* Shut: the panel shrinks to its header and the rail it sat in stays exactly
+     as wide as it was, so nothing in the lesson moves. */
+  /* The PANEL shrinks to its button; the grid TRACK does not, which is what
+     keeps the lesson still. A full-width empty card would just look broken. */
+  .lesson-toc--docked.is-collapsed .lesson-toc__disclosure {
+    width: fit-content; padding: 6px; border-radius: 12px;
+  }
+  .lesson-toc--docked.is-collapsed .lesson-toc__head { padding-bottom: 0; }
+  .lesson-toc--docked.is-collapsed .lesson-toc__heading { display: none; }
+  .lesson-toc--docked.is-collapsed .lesson-toc__toggle { margin-left: 0; }
   .lesson-toc--docked .lesson-toc__list {
     grid-template-columns: minmax(0, 1fr);
     gap: 2px; padding: 0 0 4px;
@@ -2227,11 +2249,21 @@ body.lesson-reading .exercise-actions .btn-save:hover { background: var(--pp-ink
    ═══════════════════════════════════════════════════════════════ */
 
 html body.page-unit {
-  /* ~76 characters at the lesson body size. */
-  --lesson-measure: 45rem;
-  --lesson-toc-width: 15.5rem;
-  --lesson-gap: clamp(2rem, 3.5vw, 3.5rem);
-  --lesson-gutter: clamp(1.25rem, 4vw, 3rem);
+  /* The reading column, and the three things beside it that decide how much
+     of the window the lesson fills.
+
+     The first version of this capped the column at 45rem/16px. That is a good
+     line, and on a laptop it left roughly 200px of empty page down each side,
+     which reads as a narrow strip of text marooned in the middle rather than
+     as a deliberate margin. The column is wider now and the type is a step
+     larger with it, so the line stays around 80 characters while the lesson
+     occupies most of the screen: at 1440 the gutters come out near 60px
+     instead of 160. Type size is what buys this -- a wider column at the same
+     size would just be a longer line. */
+  --lesson-measure: 60rem;
+  --lesson-toc-width: clamp(16.5rem, 17vw, 19rem);
+  --lesson-gap: clamp(1.75rem, 3vw, 4rem);
+  --lesson-gutter: clamp(1.25rem, 2.5vw, 2.5rem);
 }
 
 html body.page-unit .layout-course,
@@ -2284,13 +2316,14 @@ html body.page-unit .sidebar-collapse-btn {
    place on a page and ran full width in the next. */
 html body.page-unit .lesson-content p { max-width:none; }
 
-/* 17px rather than 16. With the column fixed at 45rem this is what puts the
-   line at ~75 characters instead of 80, and it is the size the rest of the
-   reading UI already uses for sustained text. */
+/* Scales with the column so the measure does not. At the narrow end this is
+   the 17px the reading UI already used; by the time the column is at its full
+   56rem it is 18px, which is what keeps the line near 80 characters instead of
+   letting it run to 95. */
 html body.page-unit .lesson-content p,
 html body.page-unit .lesson-content li,
 html body.page-unit .lesson-overview p {
-  font-size: 1.0625rem;
+  font-size: clamp(1.0625rem, 0.99rem + 0.3vw, 1.2rem);
 }
 
 html body.page-unit main > .section > .container.narrow {
