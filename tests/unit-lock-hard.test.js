@@ -49,6 +49,11 @@ const MARKUP = `
         <aside class="course-sidebar">
           <nav><ul><li><a href="/units/unit-2/understanding-control-flow.html">1. Control flow</a></li></ul></nav>
         </aside>
+        <aside class="lesson-toc lesson-toc--docked">
+          <details class="lesson-toc__disclosure" open><nav aria-label="Sections in this lesson">
+            <ol class="lesson-toc__list"><li><a class="lesson-toc__link" href="#while-loops">While loops</a></li></ol>
+          </nav></details>
+        </aside>
         <section class="course-main">
           <nav aria-label="Breadcrumb"><span class="current">Control flow</span></nav>
           <div class="eyebrow">Unit 2 &bull; Lesson 1</div>
@@ -257,6 +262,23 @@ describe('a classroom student whose teacher has opened the unit', () => {
     expect(document.querySelector('.exercise-prompt').textContent).toBe('Why?');
     expect(document.querySelector('.btn-run').disabled).toBe(false);
     expect(document.querySelector('.btn-run').hasAttribute('title')).toBe(false);
+  });
+
+  it('takes the contents column away with the lesson, and brings it back beside it', () => {
+    /* Above 1024px lesson-ui.js docks the contents column as a SIBLING of
+       .course-main, outside everything stowLessonBody() used to walk. A shut
+       unit kept a full table of contents whose links all pointed at headings
+       that had just been detached from the document. */
+    boot();
+    policyArrives(LOCKED);
+    expect(document.querySelector('.lesson-content')).toBe(null);
+    expect(document.querySelector('.lesson-toc')).toBe(null);
+
+    policyArrives(OPEN_BY_MODE);
+    const toc = document.querySelector('.lesson-toc');
+    expect(toc).not.toBe(null);
+    expect(toc.parentElement.classList.contains('layout-course')).toBe(true);
+    expect(toc.nextElementSibling.classList.contains('course-main')).toBe(true);
   });
 
   it('puts it back in its own place, not in a heap at the bottom', () => {
