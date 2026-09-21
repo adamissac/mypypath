@@ -160,14 +160,55 @@
     summary.appendChild(count);
     details.appendChild(summary);
 
+    /* The docked panel's own header. Below 1024px the <summary> above is the
+       header and this is hidden; above it, the summary is hidden and this
+       carries the label and the collapse control. */
+    var head = document.createElement('div');
+    head.className = 'lesson-toc__head';
+    var heading = document.createElement('span');
+    heading.className = 'lesson-toc__heading';
+    heading.textContent = 'In this lesson';
+    var toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'lesson-toc__toggle';
+    head.appendChild(heading);
+    head.appendChild(toggle);
+
     var nav = document.createElement('nav');
     nav.className = 'lesson-toc__nav';
+    nav.id = 'lesson-toc-nav';
     nav.setAttribute('aria-label', 'Sections in this lesson');
     var list = document.createElement('ol');
     list.className = 'lesson-toc__list';
     nav.appendChild(list);
+    details.appendChild(head);
     details.appendChild(nav);
     aside.appendChild(details);
+
+    /* Collapsing must not move the lesson.
+       The grid track keeps its width whether the panel is open or shut, so the
+       reading column's left edge and its width are identical in both states --
+       the freed space becomes gutter rather than being handed to the text.
+       This is the whole point: the previous version of a collapsible menu here
+       was a column in the lesson's own grid, and opening it moved the left
+       edge and re-wrapped the paragraph someone was in the middle of. */
+    var STORE = 'pypath-lesson-contents';
+    function setCollapsed(collapsed, moveFocus) {
+      aside.classList.toggle('is-collapsed', collapsed);
+      nav.hidden = collapsed;
+      toggle.setAttribute('aria-expanded', String(!collapsed));
+      toggle.setAttribute('aria-controls', nav.id);
+      toggle.setAttribute('aria-label', collapsed ? 'Show lesson contents' : 'Hide lesson contents');
+      toggle.textContent = collapsed ? 'Contents' : 'Hide';
+      if (moveFocus) toggle.focus();
+      try { localStorage.setItem(STORE, collapsed ? 'hidden' : 'shown'); } catch (err) {}
+    }
+    var stored = null;
+    try { stored = localStorage.getItem(STORE); } catch (err) {}
+    setCollapsed(stored === 'hidden', false);
+    toggle.addEventListener('click', function () {
+      setCollapsed(!aside.classList.contains('is-collapsed'), true);
+    });
 
     var indexed = new Set();
     var links = [];
