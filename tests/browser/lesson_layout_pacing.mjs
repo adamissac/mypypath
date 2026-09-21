@@ -25,7 +25,16 @@ try {
     const cv=document.createElement('canvas').getContext('2d');cv.font=`${cs.fontSize} ${cs.fontFamily}`;
     return Math.round(p.getBoundingClientRect().width/(cv.measureText('abcdefghijklmnopqrstuvwxyz ').width/27));
    });
-   if(chars) assert.ok(chars<=88,`${prefix}/${unit}/${width}: ${chars} characters a line`);
+   // 45-90 is the usual comfortable range. The column deliberately sits at the
+   // wide end of it: capped tighter, a laptop showed ~200px of empty page down
+   // each side and the lesson read as a strip marooned in the middle.
+   if(chars) assert.ok(chars<=92,`${prefix}/${unit}/${width}: ${chars} characters a line`);
+   // ...and the gutters it buys. Above 1440 the canvas is capped, so this only
+   // holds where the lesson should be filling the window.
+   if(width>=1280&&width<=1512){
+    const toc=await page.locator('.lesson-toc--docked').boundingBox();
+    if(toc) assert.ok(toc.x<=170,`${prefix}/${unit}/${width}: ${Math.round(toc.x)}px of empty page at the left edge`);
+   }
    assert.ok(before.x>=16,`${prefix}/${unit}/${width}: left gutter ${before.x}`);
    assert.ok(width-before.x-before.width>=16,`${prefix}/${unit}/${width}: right gutter`);
    if(width>=1024){
@@ -154,6 +163,46 @@ try {
   assert.ok(tracked.scrollTop>0,'the list never scrolled to follow the reader');
   assert.equal(tracked.overflow,0);
   console.log('PASS 1440x560: contents list scrolls inside itself and follows the reader');
+  await context.close();
+ }
+
+ /* Shutting the contents column must not move the lesson.
+    The version of a collapsible menu this replaced was a column in the
+    lesson's own grid: opening it moved the left edge and re-wrapped the
+    paragraph the reader was in the middle of. The grid track keeps its width
+    in both states, so the freed space becomes gutter rather than being handed
+    to the text. */
+ {
+  const context=await browser.newContext({viewport:{width:1440,height:1000},reducedMotion:'reduce'});
+  const page=await context.newPage();
+  await page.goto(base+'/units/unit-1/variables-types.html');
+  await page.locator('.lesson-toc--docked').waitFor();
+  await page.waitForTimeout(600);
+  const toggle=page.locator('.lesson-toc__toggle');
+  const open=await page.locator('.course-main').boundingBox();
+  await toggle.click();
+  await page.waitForTimeout(300);
+  const shut=await page.locator('.course-main').boundingBox();
+  assert.ok(Math.abs(shut.x-open.x)<1&&Math.abs(shut.width-open.width)<1,
+   `shutting the contents column moved the lesson: ${JSON.stringify({open,shut})}`);
+  assert.equal(await page.locator('.lesson-toc__nav').evaluate(n=>n.hidden),true);
+  assert.equal(await toggle.getAttribute('aria-expanded'),'false');
+  assert.equal(await toggle.evaluate(el=>el===document.activeElement),true);
+
+  // It is remembered on the next lesson, and reopening puts everything back.
+  await page.goto(base+'/units/unit-1/type-io.html');
+  await page.locator('.lesson-toc--docked').waitFor();
+  await page.waitForTimeout(600);
+  assert.equal(await page.locator('.lesson-toc').evaluate(el=>el.classList.contains('is-collapsed')),true);
+  const stillShut=await page.locator('.course-main').boundingBox();
+  await page.locator('.lesson-toc__toggle').click();
+  await page.waitForTimeout(300);
+  const reopened=await page.locator('.course-main').boundingBox();
+  assert.ok(Math.abs(reopened.x-stillShut.x)<1&&Math.abs(reopened.width-stillShut.width)<1,
+   'reopening the contents column moved the lesson');
+  assert.ok(await page.locator('.lesson-toc__link').count()>1);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  console.log('PASS contents column shuts, reopens, is remembered, and never moves the lesson');
   await context.close();
  }
 } finally {await browser.close();}
