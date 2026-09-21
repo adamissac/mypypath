@@ -927,8 +927,12 @@ main .container,
 
 /* Keep breadcrumbs clear of the floating Lessons chip */
 @media (min-width: 981px) {
-  body.sidebar-closed .page-unit .course-main > nav[aria-label="Breadcrumb"],
-  body.sidebar-closed .page-unit .course-main > .sidebar-toggle {
+  /* `.page-unit` is on <body> itself, so `body.sidebar-closed .page-unit`
+     asked for a .page-unit DESCENDANT of the body and never matched -- which
+     is why the floating Lessons chip sat on top of the Home breadcrumb the
+     whole time the sidebar was shut. Same element, no space. */
+  body.sidebar-closed.page-unit .course-main > nav[aria-label="Breadcrumb"],
+  body.sidebar-closed.page-unit .course-main > .sidebar-toggle {
     padding-left: 7.25rem;
   }
 }
@@ -2034,16 +2038,11 @@ html[data-course="data"] .hero-live-editor {
 html[data-course="data"] .pp-boot-term .pp-boot-prompt { color: #bfaed0; }
 
 /* Reading-first lessons: one calm surface, clear sections and distinct practice. */
-body.lesson-reading .layout-course {
-  max-width: 1280px !important;
-  margin-inline: auto !important;
-  gap: 28px !important;
-}
-body.lesson-reading .lesson-title { font-size: clamp(1.75rem, 3vw, 2.5rem); line-height: 1.2; margin: 12px 0 24px; }
+body.lesson-reading .lesson-title { margin: 12px 0 24px; }
 body.lesson-reading .lesson-content > .content-section {
   background: transparent; border: 0; border-radius: 0; padding: 24px 0; margin: 0 0 12px;
 }
-body.lesson-reading .lesson-content h2 { font-size: clamp(1.2rem, 2vw, 1.45rem); line-height: 1.4; }
+body.lesson-reading .lesson-content h2 { line-height: 1.4; }
 body.lesson-reading .lesson-content p, body.lesson-reading .lesson-content li { line-height: 1.8; }
 body.lesson-reading .lesson-overview { border: 1px solid var(--pp-border); border-top: 3px solid var(--pp-line-ink); background: var(--panel); }
 body.lesson-reading .process-steps { padding: 0; background: transparent; border: 0; box-shadow: none; }
@@ -2064,18 +2063,11 @@ body.lesson-reading .CodeMirror { border-radius: 0; font-size: 14px; line-height
 body.lesson-reading pre.code { background: var(--pp-mist); color: var(--pp-ink); border-color: var(--pp-border); }
 body.lesson-reading .exercise-section { border: 1px solid var(--pp-border); border-top: 3px solid var(--pp-line-ink); background: var(--panel); padding: 24px; }
 /* ── Lesson contents ────────────────────────────────────────────────
-   One component in two shapes. Above 1024px lesson-ui.js moves it into
-   the lesson grid's first track and opens it, and the summary is hidden
-   -- a permanently open <details> with no control is just a panel. Below
-   that it sits above the lesson as a real disclosure, closed, because a
-   phone should open on the lesson and not on its index.
-
-   It is the same element either way. Rendering a desktop panel and a
-   mobile drawer separately would put every section link in the
-   accessibility tree twice. */
+   A disclosure above the lesson text, at every width. It is the section
+   list, not the lesson list: the unit's lessons live in the left sidebar,
+   which is a column of the lesson grid and not this. */
 
 .lesson-toc { margin: 24px 0 8px; }
-.lesson-toc__head { display: none; }
 .lesson-toc__disclosure { border-block: 1px solid var(--pp-border); }
 .lesson-toc__summary {
   display: flex; align-items: center; gap: 12px; min-height: 52px;
@@ -2095,88 +2087,10 @@ body.lesson-reading .exercise-section { border: 1px solid var(--pp-border); bord
   color: var(--pp-line-ink); line-height: 1.5;
 }
 .lesson-toc__link:hover { text-decoration: underline; }
+.lesson-toc__link.is-active { font-weight: 650; }
 .lesson-toc__summary:focus-visible,
 .lesson-toc__link:focus-visible { outline: 2px solid var(--pp-line-ink); outline-offset: 3px; }
-
-/* Docked beside the lesson. */
-@media (min-width: 1024px) {
-  .lesson-toc--docked {
-    position: sticky;
-    top: calc(var(--header-height, 76px) + 16px);
-    margin: 0;
-  }
-  .lesson-toc--docked .lesson-toc__disclosure {
-    border: 1px solid var(--pp-border); border-radius: 14px;
-    background: color-mix(in srgb, var(--panel) 94%, var(--pp-fog));
-    padding: 14px 10px 10px;
-  }
-  [data-theme="dark"] .lesson-toc--docked .lesson-toc__disclosure { background: var(--panel); }
-  /* An always-open panel has nothing to toggle, so the control goes away
-     rather than sitting there inert and collecting a tab stop. */
-  .lesson-toc--docked .lesson-toc__summary { display: none; }
-  .lesson-toc--docked .lesson-toc__head {
-    display: flex; align-items: center; gap: 8px;
-    padding: 0 4px 10px 8px;
-  }
-  .lesson-toc__heading {
-    font-family: var(--pp-body); font-weight: 700; font-size: 0.78rem;
-    letter-spacing: 0.04em; text-transform: uppercase; color: var(--pp-muted);
-  }
-  .lesson-toc__toggle {
-    margin-left: auto; border: 1px solid transparent; background: none;
-    font: inherit; font-size: 0.78rem; font-weight: 600; color: var(--pp-line-ink);
-    padding: 6px 10px; border-radius: 8px; cursor: pointer; min-height: 32px;
-  }
-  .lesson-toc__toggle:hover { background: var(--pp-fog); border-color: var(--pp-border); }
-  .lesson-toc__toggle:focus-visible { outline: 2px solid var(--pp-line-ink); outline-offset: 2px; }
-  [data-theme="dark"] .lesson-toc__toggle:hover { background: var(--pp-mist); }
-
-  /* Shut: the panel shrinks to its header and the rail it sat in stays exactly
-     as wide as it was, so nothing in the lesson moves. */
-  /* The PANEL shrinks to its button; the grid TRACK does not, which is what
-     keeps the lesson still. A full-width empty card would just look broken. */
-  .lesson-toc--docked.is-collapsed .lesson-toc__disclosure {
-    width: fit-content; padding: 6px; border-radius: 12px;
-  }
-  .lesson-toc--docked.is-collapsed .lesson-toc__head { padding-bottom: 0; }
-  .lesson-toc--docked.is-collapsed .lesson-toc__heading { display: none; }
-  .lesson-toc--docked.is-collapsed .lesson-toc__toggle { margin-left: 0; }
-  .lesson-toc--docked .lesson-toc__list {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 2px; padding: 0 0 4px;
-    /* The bound goes on the list, not on the panel.
-       <details> renders everything after its <summary> into an anonymous
-       content box, so a flex chain from the panel does not reach the list:
-       the panel obeyed its max-height and the list simply overflowed it. On a
-       560px-tall window a 16-topic lesson ended 833px below the fold, sticky,
-       with no way to reach the last topics. Subtracting the header, the
-       panel's padding and its label from the viewport is what actually makes
-       the list scroll inside itself. */
-    max-height: calc(100vh - var(--header-height, 76px) - 96px);
-    overflow-y: auto; overscroll-behavior: contain;
-  }
-  .lesson-toc--docked .lesson-toc__link {
-    padding: 8px 10px; border-radius: 9px;
-    color: var(--pp-ink-soft); font-weight: 500;
-    /* Underlines are right for the inline disclosure, where the links sit in
-       running copy. In the docked column they are a list, and the hover and
-       active surfaces carry the affordance. */
-    text-decoration: none;
-    /* A long section title wraps instead of being clipped or forcing the
-       column wider. */
-    overflow-wrap: anywhere;
-    border-left: 2px solid transparent;
-  }
-  .lesson-toc--docked .lesson-toc__link:hover {
-    text-decoration: none; background: var(--pp-fog); color: var(--pp-ink);
-  }
-  .lesson-toc--docked .lesson-toc__link.is-active {
-    background: color-mix(in srgb, var(--pp-line) 14%, transparent);
-    border-left-color: var(--pp-line-ink);
-    color: var(--pp-line-ink); font-weight: 650;
-  }
-  [data-theme="dark"] .lesson-toc--docked .lesson-toc__link:hover { background: var(--pp-mist); }
-}
+@media (max-width: 640px) { .lesson-toc__list { grid-template-columns: 1fr; } }
 
 /* Anchored headings clear the fixed header through the scrollport's
    scroll-padding-top alone, which applies to anchor navigation AND to
@@ -2215,99 +2129,91 @@ body.lesson-reading .exercise-actions .btn-save { background: var(--pp-line-ink)
 body.lesson-reading .exercise-actions .btn-save:hover { background: var(--pp-ink); border-color: var(--pp-ink); color: var(--panel); }
 
 /* ═══════════════════════════════════════════════════════════════
-   The lesson canvas, and the column beside it
+   The lesson canvas
 
-   This block is where the lesson's width is actually decided. Three
-   earlier rules in this file also set it -- `max-width: 2000px` under
-   `@media (min-width: 981px)`, `max-width: 1280px` on
-   `body.lesson-reading`, and a grid on `.page-unit .layout-course` --
-   and all three were inert, because this one is later in the last
-   sheet the page loads and carries `html body.page-unit` plus
-   `!important`. The lesson was `display: block` at `width: 100%`.
+   This block is where the lesson's width is decided: it is last in the
+   last sheet the page loads and carries `html body.page-unit` plus
+   `!important`, so it beats every earlier rule in this file. Anything
+   that wants to change the lesson's width changes THIS, rather than
+   stacking another override behind it.
 
-   What that measured, on /units/unit-1/variables-types.html:
+   The lesson is near full width with small gutters, and the unit's
+   lesson list is a real column of this grid. Closing that column hands
+   its space to the lesson, which reflows wider. That reflow is the
+   intended behaviour, not a bug to design around.
 
-     1280px viewport -> 140 characters per line
-     1440px          -> 158
-     1920px          -> 215
+   There is deliberately NO reading-width cap and no enlarged body type.
+   A capped, centred column has been reintroduced here repeatedly on
+   line-length grounds and removed again each time: on a wide screen it
+   leaves a narrow strip of text with hundreds of pixels of empty page
+   down each side. Long lines on a wide window are the accepted
+   trade-off. See CLAUDE.md, "The lesson layout is a product decision".
 
-   Sixty to eighty characters is where the eye reliably finds the start
-   of the next line. Past that the return sweep starts failing and the
-   page reads as an undifferentiated wall pressed against both edges,
-   which is what it was doing at every width above a phone.
-
-   The cap goes on the column, not on the paragraphs. Capping the text
-   alone was tried here before and left cards mostly empty with their
-   copy crumpled into the top-left, and headings -- which had no cap --
-   visibly out of line with the paragraphs beneath them. One width for
-   the card, the heading and the copy keeps them aligned.
-
-   The table of contents is a track beside that column rather than
-   inside it, so the reading width is identical whether a lesson has one
-   or not. `justify-content: center` centres the pair, so the canvas
-   grows its gutters on a wide monitor instead of growing the line.
+   Gutters, measured on /units/unit-1/variables-types.html:
+   ~45px at 1280, ~50px at 1440, ~64px at 1920.
    ═══════════════════════════════════════════════════════════════ */
-
-html body.page-unit {
-  /* The reading column, and the three things beside it that decide how much
-     of the window the lesson fills.
-
-     The first version of this capped the column at 45rem/16px. That is a good
-     line, and on a laptop it left roughly 200px of empty page down each side,
-     which reads as a narrow strip of text marooned in the middle rather than
-     as a deliberate margin. The column is wider now and the type is a step
-     larger with it, so the line stays around 80 characters while the lesson
-     occupies most of the screen: at 1440 the gutters come out near 60px
-     instead of 160. Type size is what buys this -- a wider column at the same
-     size would just be a longer line. */
-  --lesson-measure: 60rem;
-  --lesson-toc-width: clamp(16.5rem, 17vw, 19rem);
-  --lesson-gap: clamp(1.75rem, 3vw, 4rem);
-  --lesson-gutter: clamp(1.25rem, 2.5vw, 2.5rem);
-}
 
 html body.page-unit .layout-course,
 html body.page-unit.sidebar-closed .layout-course,
 html body.page-unit.sidebar-open .layout-course {
   display:grid !important;
-  grid-template-columns:minmax(0, var(--lesson-measure)) !important;
-  justify-content:center !important;
+  grid-template-columns:248px minmax(0, 1fr) !important;
+  gap:1.1rem !important;
   align-items:start !important;
-  gap:0 var(--lesson-gap) !important;
-  width:100% !important; max-width:none !important;
-  margin:0 !important;
-  padding:0 var(--lesson-gutter) 32px !important;
+  width:100% !important;
+  max-width:2000px !important;
+  margin:0 auto !important;
+  padding:0 clamp(1.5rem, 3.5vw, 4rem) 2rem !important;
 }
 
-@media (min-width: 1024px) {
-  html body.page-unit .layout-course--with-toc,
-  html body.page-unit.sidebar-closed .layout-course--with-toc,
-  html body.page-unit.sidebar-open .layout-course--with-toc {
-    grid-template-columns:var(--lesson-toc-width) minmax(0, var(--lesson-measure)) !important;
+/* Shut, the column is zero-width and the lesson takes the space. */
+@media (min-width: 981px) {
+  html body.page-unit.sidebar-closed .layout-course {
+    grid-template-columns:0 minmax(0, 1fr) !important;
+    gap:0 !important;
   }
 }
+
+/* Below 981px there is no column at all: the lesson list is a drawer over
+   the page, and the lesson is the only thing in the grid. */
+@media (max-width: 980px) {
+  html body.page-unit .layout-course,
+  html body.page-unit.sidebar-closed .layout-course,
+  html body.page-unit.sidebar-open .layout-course {
+    grid-template-columns:minmax(0, 1fr) !important;
+    gap:1rem !important;
+    padding:0 1rem 1.5rem !important;
+  }
+}
+
 html body.page-unit .course-main { width:100%; max-width:none; padding:0; }
-html body.page-unit .sidebar-toggle {
-  display:flex !important; align-items:center; justify-content:space-between;
-  gap:16px; padding:0 !important; margin:8px 0 20px;
+@media (max-width: 980px) {
+  html body.page-unit .sidebar-toggle {
+    display:flex !important; align-items:center; justify-content:space-between;
+    gap:16px; padding:0 !important; margin:8px 0 20px;
+  }
 }
 html body.page-unit .sidebar-toggle-btn, .lesson-back-link {
   display:inline-flex !important; align-items:center; min-height:44px;
   padding:10px 16px; border:1px solid var(--pp-border); border-radius:10px;
   font:inherit; font-weight:600; color:var(--pp-ink); background:var(--panel);
 }
-html body.page-unit .course-sidebar {
-  position:fixed !important; inset:12px auto 12px 12px !important;
-  width:min(340px, calc(100vw - 24px)) !important; max-width:none !important;
-  height:auto; max-height:calc(100dvh - 24px) !important; margin:0 !important;
-  padding:20px !important; border:1px solid var(--pp-border) !important;
-  border-radius:16px; background:var(--panel); overflow:auto !important;
-  transform:none !important; opacity:1 !important; pointer-events:auto !important;
-  z-index:calc(var(--z-modal, 1000) + 1) !important; transition:none !important;
+@media (max-width: 980px) {
+  html body.page-unit .course-sidebar {
+    position:fixed !important; inset:12px auto 12px 12px !important;
+    width:min(340px, calc(100vw - 24px)) !important; max-width:none !important;
+    height:auto; max-height:calc(100dvh - 24px) !important; margin:0 !important;
+    padding:20px !important; border:1px solid var(--pp-border) !important;
+    border-radius:16px; background:var(--panel); overflow:auto !important;
+    transform:none !important; opacity:1 !important; pointer-events:auto !important;
+    z-index:calc(var(--z-modal, 1000) + 1) !important; transition:none !important;
+  }
 }
 html body.page-unit .course-sidebar[hidden] { display:none !important; }
-html body.page-unit .sidebar-collapse-btn {
-  width:auto; min-height:44px; margin:0 0 20px; padding:8px 14px;
+@media (max-width: 980px) {
+  html body.page-unit .sidebar-collapse-btn {
+    width:auto; min-height:44px; margin:0 0 20px; padding:8px 14px;
+  }
 }
 .lesson-menu-backdrop { position:fixed; inset:0; background:rgb(0 0 0 / .42); z-index:var(--z-modal, 1000); }
 .lesson-menu-backdrop[hidden] { display:none; }
@@ -2316,35 +2222,23 @@ html body.page-unit .sidebar-collapse-btn {
    place on a page and ran full width in the next. */
 html body.page-unit .lesson-content p { max-width:none; }
 
-/* Scales with the column so the measure does not. At the narrow end this is
-   the 17px the reading UI already used; by the time the column is at its full
-   56rem it is 18px, which is what keeps the line near 80 characters instead of
-   letting it run to 95. */
-html body.page-unit .lesson-content p,
-html body.page-unit .lesson-content li,
-html body.page-unit .lesson-overview p {
-  font-size: clamp(1.0625rem, 0.99rem + 0.3vw, 1.2rem);
-}
-
 html body.page-unit main > .section > .container.narrow {
   width:100%; max-width:none; padding-inline:clamp(16px, 2vw, 32px);
 }
 .lesson-menu-backdrop { touch-action:none; }
 html body.page-unit .course-sidebar { overscroll-behavior:contain; }
 
-html body.page-unit main > [data-lesson-navigation] {
-  width:100%;
-  max-width:calc(var(--lesson-measure) + var(--lesson-gutter) * 2);
-  margin:12px auto 20px;
-  padding:0 var(--lesson-gutter) !important;
-}
-/* .has-lesson-toc is set only while the contents column is actually docked,
-   so a one-section lesson (which gets no column) keeps its toolbar over its
-   own narrower canvas rather than hanging to the left of it. */
-html body.page-unit.has-lesson-toc main > [data-lesson-navigation] {
-  max-width:calc(var(--lesson-toc-width) + var(--lesson-gap) + var(--lesson-measure) + var(--lesson-gutter) * 2);
+/* The drawer's trigger row. It belongs to the drawer, so it exists only
+   where the drawer does -- on a desktop the lesson list is a column with its
+   own collapse control in its header, and a second row of chrome above the
+   lesson is chrome the layout does not need. */
+html body.page-unit [data-lesson-navigation] { display:none !important; }
+@media (max-width: 980px) {
+  html body.page-unit [data-lesson-navigation] {
+    display:flex !important; width:100%; margin:8px 0 20px; padding:0 !important;
+  }
 }
 /* Account prompts disable the lesson, while navigation remains available. */
-html[data-gate="locked"] body.page-unit main > [data-lesson-navigation] {
+html[data-gate="locked"] body.page-unit [data-lesson-navigation] {
   filter:none; opacity:1; pointer-events:auto; user-select:auto;
 }

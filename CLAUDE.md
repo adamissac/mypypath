@@ -152,6 +152,33 @@ that changed what needed doing, and the pattern is worth knowing:
 The scripts above exist so the next question of this kind is answered with a
 number rather than a grep.
 
+## The lesson layout is a product decision
+
+Near full width, with the unit's lesson list as a left column that hands its
+space to the lesson when it is closed. Gutters ~45px at 1280, ~50px at 1440,
+~64px at 1920. Paragraphs 16px, lesson title 28px, section headings 19.5px.
+
+**Do not reintroduce a reading-width cap, a centred column, or larger body
+type.** This has now been done three times on line-length grounds -- 1280px in
+f238ee3, then 45rem, then 60rem with 19px body text -- and reverted each time.
+The owner knows what measure is. On a wide window a capped column leaves a
+narrow strip of text with hundreds of pixels of empty page down each side, and
+that is worse for this product than a long line. This overrides the
+line-length guidance in `.claude/skills/frontend-design`.
+
+Two things that look like bugs and are not:
+
+- **Closing the sidebar moves the lesson.** That reflow is the point of the
+  control: a reader closes the list to get a wider lesson. A collapse that
+  leaves the lesson where it is has nothing to offer.
+- **Lines are long on a 1920 monitor.** See above.
+
+The width is decided in one place: the canvas block at the end of
+`assets/css/pypath-theme.css` (`html body.page-unit` + `!important`). That
+sheet loads last, so a correct-looking rule in `style.css` or `pypath-fast.css`
+is inert against it. Change that block; do not stack another override behind
+it. `REVIEW/lesson-spacing-and-pacing.md` describes the whole layout.
+
 ## Two cascade traps this codebase has already sprung twice
 
 `pypath-theme.css` and `home-path.css` load **after** `style.css`, so a

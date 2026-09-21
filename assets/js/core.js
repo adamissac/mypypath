@@ -429,76 +429,90 @@
     }
   }
 
+  /* ── Lesson navigation ────────────────────────────────────────────────
+     The unit's lesson list, in two shapes, on one element.
+
+     Above 980px it is a column of the lesson grid: sticky, collapsible from
+     a control in its own header, and when it closes the lesson takes the
+     space and reflows wider. That reflow is the point of the control -- a
+     reader who wants the lesson wider closes the list to get it. The choice
+     is remembered in pypath-sidebar-closed.
+
+     At 980px and below there is no room for a column, so the same element
+     becomes a modal drawer over the page: labelled dialog, backdrop, Escape,
+     a focus trap and focus returned to whatever opened it.
+
+     The element moves between the grid and <body> rather than being rendered
+     twice, and everything that is true of one shape only -- the dialog
+     attributes, the backdrop, the trap -- is put on and taken off with it. */
+
+  var SIDEBAR_MQ = window.matchMedia('(max-width: 980px)');
+
+  function isSidebarOpen() {
+    if (SIDEBAR_MQ.matches) return document.body.classList.contains('sidebar-open');
+    return !document.body.classList.contains('sidebar-closed');
+  }
+
   function initSidebarToggle() {
     var layout = document.querySelector('.layout-course');
     var sidebar = layout && layout.querySelector('.course-sidebar');
     if (!sidebar) return;
-    var trigger = layout.querySelector('[data-sidebar-toggle]');
-    var returnFocus = trigger;
+
     sidebar.id = sidebar.id || 'lesson-sidebar';
-    sidebar.setAttribute('role', 'dialog');
-    sidebar.setAttribute('aria-modal', 'true');
-    sidebar.setAttribute('aria-label', 'Lesson menu');
-    sidebar.tabIndex = -1;
-    var close = document.createElement('button');
-    close.type = 'button';
-    close.className = 'sidebar-collapse-btn';
-    close.textContent = 'Close menu';
-    close.setAttribute('aria-label', 'Close lesson menu');
-    sidebar.prepend(close);
-    // Keep the drawer outside transformed/overflow-clipped lesson containers.
-    document.body.appendChild(sidebar);
+    // Where it belongs when it is a column, so it can be put back there.
+    var homeParent = sidebar.parentNode;
+    var homeNext = sidebar.nextSibling;
+    var returnFocus = null;
+
     var backdrop = document.createElement('div');
     backdrop.className = 'lesson-menu-backdrop';
     backdrop.setAttribute('aria-hidden', 'true');
+    backdrop.hidden = true;
     document.body.appendChild(backdrop);
 
-    function setOpen(open, restoreFocus) {
-      document.body.classList.toggle('sidebar-open', open);
-      document.body.classList.toggle('sidebar-closed', !open);
-      sidebar.hidden = !open;
-      sidebar.inert = !open;
-      backdrop.hidden = !open;
-      qsa('[data-sidebar-toggle]').forEach(function (button) {
-        button.setAttribute('aria-expanded', String(open));
-        button.setAttribute('aria-controls', sidebar.id);
-        button.setAttribute('aria-label', open ? 'Hide lesson menu' : 'Show lesson menu');
-        button.textContent = 'Lesson menu';
-      });
-      if (open) close.focus({ preventScroll: true });
-      else if (restoreFocus && returnFocus) returnFocus.focus({ preventScroll: true });
+    /* The collapse control lives in the sidebar's own header, beside the unit
+       label, in both shapes. */
+    var collapseBtn = document.createElement('button');
+    collapseBtn.type = 'button';
+    collapseBtn.className = 'sidebar-collapse-btn';
+    collapseBtn.setAttribute('data-sidebar-toggle', '');
+    collapseBtn.setAttribute('aria-expanded', 'true');
+    collapseBtn.setAttribute('aria-controls', sidebar.id);
+    collapseBtn.innerHTML =
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+      'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M15 18 9 12l6-6"/><path d="M4 6v12"/></svg>';
+    var heading = sidebar.querySelector('.sidebar-unit-label') || sidebar.querySelector('h3');
+    if (heading) {
+      var head = document.createElement('div');
+      head.className = 'sidebar-head';
+      heading.parentNode.insertBefore(head, heading);
+      head.appendChild(heading);
+      head.appendChild(collapseBtn);
+    } else {
+      sidebar.insertBefore(collapseBtn, sidebar.firstChild);
     }
-    setOpen(document.documentElement.dataset.sidebar === 'always', false);
-    close.addEventListener('click', function () { setOpen(false, true); });
-    backdrop.addEventListener('click', function () { setOpen(false, true); });
-    document.addEventListener('click', function (event) {
-      var button = event.target.closest('[data-sidebar-toggle]');
-      if (!button) return;
-      event.preventDefault();
-      returnFocus = button;
-      setOpen(sidebar.hidden, true);
-    });
-    document.addEventListener('keydown', function (event) {
-      if (sidebar.hidden) return;
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        setOpen(false, true);
-      } else if (event.key === 'Tab') {
-        var controls = Array.from(sidebar.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"]'))
-          .filter(function (node) { return !node.hidden && node.getClientRects().length; });
-        var first = controls[0], last = controls[controls.length - 1];
-        if (event.shiftKey && (document.activeElement === first || !sidebar.contains(document.activeElement))) {
-          event.preventDefault(); last.focus();
-        } else if (!event.shiftKey && (document.activeElement === last || !sidebar.contains(document.activeElement))) {
-          event.preventDefault(); first.focus();
-        }
-      }
-    });
-    sidebar.querySelectorAll('a').forEach(function (link) {
-      link.addEventListener('click', function () { setOpen(false, false); });
-    });
-    // A visible route back is available without scrolling to the lesson footer.
-    var toolbar = layout.querySelector('.sidebar-toggle');
+
+    /* Shut, the column is gone from the page, so the way back has to be
+       somewhere else: a chip pinned under the header. */
+    var reopenBtn = document.createElement('button');
+    reopenBtn.type = 'button';
+    reopenBtn.className = 'sidebar-reopen-btn';
+    reopenBtn.setAttribute('data-sidebar-toggle', '');
+    reopenBtn.setAttribute('aria-expanded', 'false');
+    reopenBtn.setAttribute('aria-controls', sidebar.id);
+    reopenBtn.setAttribute('aria-label', 'Show lesson menu');
+    reopenBtn.hidden = true;
+    reopenBtn.innerHTML =
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+      'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M9 18l6-6-6-6"/><path d="M20 6v12"/></svg><span>Lessons</span>';
+    document.body.appendChild(reopenBtn);
+
+    /* The drawer's row also carries a way off the page. It is hidden with the
+       row on a desktop, where the lesson list is a column and the breadcrumb
+       is right there. */
+    var toolbar = document.querySelector('.sidebar-toggle');
     if (toolbar && !toolbar.querySelector('.lesson-back-link')) {
       var back = document.createElement('a');
       back.className = 'lesson-back-link route';
@@ -506,11 +520,109 @@
       back.textContent = 'Back to path';
       toolbar.appendChild(back);
     }
-    if (toolbar) {
-      toolbar.setAttribute('data-lesson-navigation', '');
-      document.querySelector('main').prepend(toolbar);
+    if (toolbar) toolbar.setAttribute('data-lesson-navigation', '');
+
+    function asDrawer() {
+      sidebar.setAttribute('role', 'dialog');
+      sidebar.setAttribute('aria-modal', 'true');
+      sidebar.setAttribute('aria-label', 'Lesson menu');
+      sidebar.tabIndex = -1;
+      collapseBtn.setAttribute('aria-label', 'Close lesson menu');
+      // Out of any transformed or overflow-clipped lesson container.
+      if (sidebar.parentNode !== document.body) document.body.appendChild(sidebar);
     }
+
+    function asColumn() {
+      sidebar.removeAttribute('role');
+      sidebar.removeAttribute('aria-modal');
+      sidebar.removeAttribute('aria-label');
+      sidebar.removeAttribute('tabindex');
+      sidebar.hidden = false;
+      sidebar.inert = false;
+      backdrop.hidden = true;
+      collapseBtn.setAttribute('aria-label', 'Hide lesson menu');
+      if (sidebar.parentNode !== homeParent) homeParent.insertBefore(sidebar, homeNext);
+    }
+
+    function setSidebarOpen(open, restoreFocus) {
+      if (SIDEBAR_MQ.matches) {
+        document.body.classList.toggle('sidebar-open', open);
+        document.body.classList.remove('sidebar-closed');
+        sidebar.hidden = !open;
+        sidebar.inert = !open;
+        backdrop.hidden = !open;
+        reopenBtn.hidden = true;
+        if (open) collapseBtn.focus({ preventScroll: true });
+        else if (restoreFocus && returnFocus) returnFocus.focus({ preventScroll: true });
+      } else {
+        document.body.classList.toggle('sidebar-closed', !open);
+        document.body.classList.remove('sidebar-open');
+        reopenBtn.hidden = open;
+        try { localStorage.setItem('pypath-sidebar-closed', open ? '0' : '1'); } catch (err) {}
+        // Focus must not be left on a control that just left the page.
+        if (restoreFocus) (open ? collapseBtn : reopenBtn).focus({ preventScroll: true });
+      }
+      qsa('[data-sidebar-toggle]').forEach(function (button) {
+        button.setAttribute('aria-expanded', String(open));
+      });
+    }
+
+    function applyMode(restoreFocus) {
+      if (SIDEBAR_MQ.matches) {
+        asDrawer();
+        document.body.classList.remove('sidebar-closed');
+        setSidebarOpen(document.body.classList.contains('sidebar-open'), restoreFocus);
+      } else {
+        asColumn();
+        var closed = false;
+        try { closed = localStorage.getItem('pypath-sidebar-closed') === '1'; } catch (err) {}
+        if (document.documentElement.dataset.sidebar === 'always') closed = false;
+        if (document.documentElement.dataset.sidebar === 'hidden') closed = true;
+        setSidebarOpen(!closed, restoreFocus);
+      }
+    }
+
+    applyMode(false);
+
+    document.addEventListener('click', function (event) {
+      var button = event.target.closest('[data-sidebar-toggle]');
+      if (!button) return;
+      event.preventDefault();
+      returnFocus = button;
+      setSidebarOpen(!isSidebarOpen(), true);
+    });
+
+    backdrop.addEventListener('click', function () { setSidebarOpen(false, true); });
     backdrop.addEventListener('wheel', function (event) { event.preventDefault(); }, { passive: false });
+
+    document.addEventListener('keydown', function (event) {
+      // Escape and the focus trap are the drawer's, not the column's: a
+      // column is part of the page and tabbing out of it is correct.
+      if (!SIDEBAR_MQ.matches || sidebar.hidden) return;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setSidebarOpen(false, true);
+      } else if (event.key === 'Tab') {
+        var controls = Array.from(sidebar.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"]'))
+          .filter(function (node) { return !node.hidden && node.getClientRects().length; });
+        var first = controls[0], last = controls[controls.length - 1];
+        if (!first) return;
+        if (event.shiftKey && (document.activeElement === first || !sidebar.contains(document.activeElement))) {
+          event.preventDefault(); last.focus();
+        } else if (!event.shiftKey && (document.activeElement === last || !sidebar.contains(document.activeElement))) {
+          event.preventDefault(); first.focus();
+        }
+      }
+    });
+
+    sidebar.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        if (SIDEBAR_MQ.matches) setSidebarOpen(false, false);
+      });
+    });
+
+    if (SIDEBAR_MQ.addEventListener) SIDEBAR_MQ.addEventListener('change', function () { applyMode(false); });
+    else if (SIDEBAR_MQ.addListener) SIDEBAR_MQ.addListener(function () { applyMode(false); });
   }
 
   function initInspireBanner() {

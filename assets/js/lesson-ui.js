@@ -92,15 +92,12 @@
 
   /* ── Lesson table of contents ─────────────────────────────────────────
      One navigation built from the lesson's own <h2> section headings. It is
-     a sticky column beside the lesson on desktop and a disclosure above the
-     lesson below 1024px -- the same <nav>, moved, rather than two copies
-     that would duplicate every link for a screen reader.
+     a disclosure above the lesson text, closed, at every width. It is the
+     lesson's own sections.
 
-     The unit menu (.course-sidebar, an overlay dialog owned by core.js) is a
-     different thing: that one moves between lessons, this one moves within
-     the lesson. Both are needed and neither replaces the other. */
-
-  var DESKTOP_TOC = '(min-width: 1024px)';
+     The unit's lesson list is a different navigation and a different
+     component: .course-sidebar, the left column owned by core.js. That one
+     moves between lessons, this one moves within the lesson. */
 
   /* The section a reader has just asked for.
      A jump lands the heading at the scrollport's padding edge, but the page
@@ -123,12 +120,6 @@
   ['wheel', 'touchstart', 'keydown'].forEach(function (type) {
     document.addEventListener(type, clearPending, { passive: true });
   });
-
-  function media(query) {
-    return typeof matchMedia === 'function'
-      ? matchMedia(query)
-      : { matches: false, addEventListener: null, addListener: null };
-  }
 
   function slugify(text) {
     return text
@@ -160,20 +151,6 @@
     summary.appendChild(count);
     details.appendChild(summary);
 
-    /* The docked panel's own header. Below 1024px the <summary> above is the
-       header and this is hidden; above it, the summary is hidden and this
-       carries the label and the collapse control. */
-    var head = document.createElement('div');
-    head.className = 'lesson-toc__head';
-    var heading = document.createElement('span');
-    heading.className = 'lesson-toc__heading';
-    heading.textContent = 'In this lesson';
-    var toggle = document.createElement('button');
-    toggle.type = 'button';
-    toggle.className = 'lesson-toc__toggle';
-    head.appendChild(heading);
-    head.appendChild(toggle);
-
     var nav = document.createElement('nav');
     nav.className = 'lesson-toc__nav';
     nav.id = 'lesson-toc-nav';
@@ -181,34 +158,8 @@
     var list = document.createElement('ol');
     list.className = 'lesson-toc__list';
     nav.appendChild(list);
-    details.appendChild(head);
     details.appendChild(nav);
     aside.appendChild(details);
-
-    /* Collapsing must not move the lesson.
-       The grid track keeps its width whether the panel is open or shut, so the
-       reading column's left edge and its width are identical in both states --
-       the freed space becomes gutter rather than being handed to the text.
-       This is the whole point: the previous version of a collapsible menu here
-       was a column in the lesson's own grid, and opening it moved the left
-       edge and re-wrapped the paragraph someone was in the middle of. */
-    var STORE = 'pypath-lesson-contents';
-    function setCollapsed(collapsed, moveFocus) {
-      aside.classList.toggle('is-collapsed', collapsed);
-      nav.hidden = collapsed;
-      toggle.setAttribute('aria-expanded', String(!collapsed));
-      toggle.setAttribute('aria-controls', nav.id);
-      toggle.setAttribute('aria-label', collapsed ? 'Show lesson contents' : 'Hide lesson contents');
-      toggle.textContent = collapsed ? 'Contents' : 'Hide';
-      if (moveFocus) toggle.focus();
-      try { localStorage.setItem(STORE, collapsed ? 'hidden' : 'shown'); } catch (err) {}
-    }
-    var stored = null;
-    try { stored = localStorage.getItem(STORE); } catch (err) {}
-    setCollapsed(stored === 'hidden', false);
-    toggle.addEventListener('click', function () {
-      setCollapsed(!aside.classList.contains('is-collapsed'), true);
-    });
 
     var indexed = new Set();
     var links = [];
@@ -248,7 +199,7 @@
         // clear of the fixed header. Focus follows the jump for keyboard and
         // screen-reader visitors.
         heading.focus({ preventScroll: true });
-        if (!media(DESKTOP_TOC).matches) details.open = false;
+        details.open = false;
       });
       item.appendChild(link);
       // A quiz can arrive between existing sections after fetch completes.
@@ -284,33 +235,13 @@
     };
   }
 
-  /* The TOC lives beside the lesson on a wide screen and above it on a narrow
-     one. Those are different parents, so the node moves rather than being
-     duplicated -- a second copy would put every section link in the
-     accessibility tree twice. */
+  /* The section list sits above the lesson text, at every width.
+     It was briefly a docked column beside the lesson as well. That put two
+     navigations on screen at once -- the unit's lessons on the left and the
+     lesson's sections beside them -- and the left column is the one that
+     belongs there. */
   function placeLessonToc(toc, layout, content) {
-    var query = media(DESKTOP_TOC);
-
-    function place() {
-      var desktop = query.matches;
-      if (desktop && layout) {
-        if (toc.aside.parentElement !== layout) layout.insertBefore(toc.aside, layout.firstChild);
-        layout.classList.add('layout-course--with-toc');
-      } else {
-        if (toc.aside.parentElement !== content.parentElement) content.before(toc.aside);
-        if (layout) layout.classList.remove('layout-course--with-toc');
-      }
-      // Open and summary-less beside the lesson; a collapsed disclosure above it.
-      toc.details.open = desktop;
-      toc.aside.classList.toggle('lesson-toc--docked', desktop);
-      // The lesson toolbar above the canvas widens to match only when the
-      // column is really there.
-      document.body.classList.toggle('has-lesson-toc', desktop);
-    }
-
-    place();
-    if (query.addEventListener) query.addEventListener('change', place);
-    else if (query.addListener) query.addListener(place);
+    content.before(toc.aside);
   }
 
   /* Active section. IntersectionObserver fires only when a heading crosses the

@@ -10,8 +10,8 @@ try {
    await context.addInitScript(t=>localStorage.setItem('pypath-theme',t),theme);
    const page=await context.newPage();await page.goto(base+path);
    await page.locator('.CodeMirror').first().waitFor();
-   // Docked beside the lesson above 1024px, a disclosure below it.
-   if(width<1024) await page.locator('.lesson-toc__summary').click();
+   // A disclosure above the lesson text at every width.
+   await page.locator('.lesson-toc__summary').click();
    const link=page.locator('.lesson-toc__link').filter({hasText:'Predict, then check'}).first();
    await link.click();
    /* Where focus ENDS UP, not where it is mid-transition. Navigating to a

@@ -5,57 +5,135 @@ import AxeBuilder from '@axe-core/playwright';
 const base=process.argv[2]||'http://localhost:8096';
 const browser=await chromium.launch();
 try {
- for(const width of (process.argv.includes('--lessons-only')?[]:[390,1440,1920])) {
+ /* The lesson layout is a product decision, not a typographic one: near full
+    width, with the unit's lesson list as a real column that hands its space to
+    the lesson when it closes. See CLAUDE.md.
+
+    Deliberately NOT asserted here: a character-per-line ceiling, and that the
+    lesson does not move when the menu opens. Both were held by this file
+    before and both encode the opposite layout -- a capped, centred column, and
+    a menu that overlays rather than reflows. Long lines on a wide window are
+    the accepted trade-off, and the reflow is the point of the control. */
+ async function headerSettled(page){
+  // The header fades in. Measuring during that is measuring a transition.
+  await page.waitForFunction(()=>{const h=document.querySelector('.site-header');
+   return h&&getComputedStyle(h).opacity==='1';});
+  await page.waitForTimeout(250);
+ }
+
+ for(const width of (process.argv.includes('--lessons-only')?[]:[390,1280,1440,1920])) {
   const context=await browser.newContext({viewport:{width,height:1000},reducedMotion:'reduce'});
   const page=await context.newPage();
   for(const prefix of ['units','data']) for(let unit=1;unit<=10;unit++) {
    const manifest=JSON.parse(fs.readFileSync(prefix==='data'?'assets/data/curriculum-data.json':'assets/data/curriculum.json'));
    const lesson=manifest.lessons.find(l=>l.unit===unit);
+   const where=`${prefix}/${unit}/${width}`;
    await page.goto(base+lesson.path);
-   const toggle=page.locator('.sidebar-toggle-btn');
-   await toggle.waitFor();
-   await page.locator('.course-sidebar[role="dialog"]').waitFor({state:'attached'});
-   const before=await page.locator('.course-main').boundingBox();
-   // The reading column is capped rather than fluid: a lesson that filled the
-   // window ran to 215 characters a line at 1920. What is held here is the
-   // measure and a floor on the gutters, not a full-width canvas.
-   const chars=await page.evaluate(()=>{
-    const p=[...document.querySelectorAll('.lesson-content p')].find(e=>e.textContent.trim().length>120);
-    if(!p)return null;const cs=getComputedStyle(p);
-    const cv=document.createElement('canvas').getContext('2d');cv.font=`${cs.fontSize} ${cs.fontFamily}`;
-    return Math.round(p.getBoundingClientRect().width/(cv.measureText('abcdefghijklmnopqrstuvwxyz ').width/27));
-   });
-   // 45-90 is the usual comfortable range. The column deliberately sits at the
-   // wide end of it: capped tighter, a laptop showed ~200px of empty page down
-   // each side and the lesson read as a strip marooned in the middle.
-   if(chars) assert.ok(chars<=92,`${prefix}/${unit}/${width}: ${chars} characters a line`);
-   // ...and the gutters it buys. Above 1440 the canvas is capped, so this only
-   // holds where the lesson should be filling the window.
-   if(width>=1280&&width<=1512){
-    const toc=await page.locator('.lesson-toc--docked').boundingBox();
-    if(toc) assert.ok(toc.x<=170,`${prefix}/${unit}/${width}: ${Math.round(toc.x)}px of empty page at the left edge`);
-   }
-   assert.ok(before.x>=16,`${prefix}/${unit}/${width}: left gutter ${before.x}`);
-   assert.ok(width-before.x-before.width>=16,`${prefix}/${unit}/${width}: right gutter`);
-   if(width>=1024){
-    const toc=await page.locator('.lesson-toc--docked').boundingBox();
-    assert.ok(toc&&toc.x>=16,`${prefix}/${unit}/${width}: contents column missing or flush left`);
-    assert.ok(toc.x+toc.width<before.x,`${prefix}/${unit}/${width}: contents column overlaps the lesson`);
-   }
-   await toggle.click();
-   await page.getByRole('button',{name:'Close lesson menu'}).waitFor();
+   await page.locator('.course-sidebar').waitFor({state:'attached'});
+   await headerSettled(page);
+
    const open=await page.locator('.course-main').boundingBox();
-   assert.ok(Math.abs(before.x-open.x)<1&&Math.abs(before.width-open.width)<1,'opening menu moved content');
-   await page.keyboard.press('Escape');
-   assert.equal(await page.locator('.course-sidebar').isVisible(),false);
-   assert.equal(await toggle.evaluate(el=>el===document.activeElement),true);
-   const after=await page.locator('.course-main').boundingBox();
-   assert.ok(Math.abs(before.x-after.x)<1&&Math.abs(before.width-after.width)<1,'closing menu moved content');
-   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+   assert.ok(open.x>=16,`${where}: left gutter ${Math.round(open.x)}`);
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`${where}: horizontal overflow`);
+   assert.equal(await page.evaluate(()=>{
+    const p=[...document.querySelectorAll('.lesson-content p')].find(e=>e.textContent.trim().length>120);
+    return p?getComputedStyle(p).fontSize:'16px';
+   }),'16px',`${where}: body text is not 16px`);
+
+   if(width>=981){
+    // The lesson list is a column, showing THIS unit's lessons, with the
+    // current one marked.
+    const sidebar=await page.locator('.course-sidebar').boundingBox();
+    assert.ok(sidebar&&sidebar.width>200,`${where}: no lesson sidebar`);
+    assert.ok(sidebar.x>=16&&sidebar.x<=72,`${where}: sidebar at ${Math.round(sidebar.x)}px`);
+    assert.ok(sidebar.x+sidebar.width<=open.x,`${where}: sidebar overlaps the lesson`);
+    const list=await page.evaluate(()=>{
+     const s=document.querySelector('.course-sidebar');
+     return {links:s.querySelectorAll('a').length,
+             current:s.querySelectorAll('a.active,a[aria-current="page"]').length,
+             dialog:!!s.getAttribute('role')};
+    });
+    assert.ok(list.links>=4,`${where}: sidebar lists ${list.links} lessons`);
+    assert.equal(list.current,1,`${where}: ${list.current} lessons marked current`);
+    assert.equal(list.dialog,false,`${where}: the column is still a dialog`);
+    // Gutters stay small: this layout fills the window rather than centring a
+    // capped column.
+    const right=width-open.x-open.width;
+    assert.ok(sidebar.x<=72&&right<=72,`${where}: gutters ${Math.round(sidebar.x)}/${Math.round(right)} exceed 72px`);
+
+    // Closing hands the space to the lesson: it moves left and gets wider.
+    await page.locator('.sidebar-collapse-btn').click();
+    await page.waitForTimeout(450);
+    const shut=await page.locator('.course-main').boundingBox();
+    assert.ok(shut.x<open.x-100,`${where}: closing did not move the lesson left`);
+    assert.ok(shut.width>open.width+100,`${where}: closing did not widen the lesson`);
+    assert.ok(shut.x>=16&&width-shut.x-shut.width>=16,`${where}: gutters lost when shut`);
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`${where}: overflow when shut`);
+    // The floating chip is the way back, and it must not sit on the breadcrumb.
+    const clash=await page.evaluate(()=>{
+     const r=document.querySelector('.sidebar-reopen-btn');
+     const home=document.querySelector('.course-main > nav[aria-label="Breadcrumb"] a');
+     if(!r||r.hidden||!home)return 'missing';
+     const a=r.getBoundingClientRect(),b=home.getBoundingClientRect();
+     return !(a.right<b.left||a.left>b.right||a.bottom<b.top||a.top>b.bottom);
+    });
+    assert.equal(clash,false,`${where}: the Lessons chip covers the breadcrumb`);
+
+    // Reopening restores the original box exactly.
+    await page.locator('.sidebar-reopen-btn').click();
+    await page.waitForTimeout(450);
+    const again=await page.locator('.course-main').boundingBox();
+    assert.ok(Math.abs(again.x-open.x)<1&&Math.abs(again.width-open.width)<1,
+     `${where}: reopening did not restore the lesson box`);
+   } else {
+    // Below 981 the list is a drawer over the page, not a column.
+    assert.ok(await page.locator('.sidebar-toggle').isVisible(),`${where}: no way to open the lesson list`);
+    await page.locator('.sidebar-toggle-btn').click();
+    await page.waitForTimeout(400);
+    const drawer=await page.evaluate(()=>{
+     const s=document.querySelector('.course-sidebar');
+     return {role:s.getAttribute('role'),modal:s.getAttribute('aria-modal'),
+             links:s.querySelectorAll('a').length,
+             backdrop:!document.querySelector('.lesson-menu-backdrop').hidden};
+    });
+    assert.equal(drawer.role,'dialog',`${where}: drawer is not a dialog`);
+    assert.equal(drawer.modal,'true');
+    assert.equal(drawer.backdrop,true,`${where}: no backdrop`);
+    assert.ok(drawer.links>=4,`${where}: drawer lists ${drawer.links} lessons`);
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+    assert.equal(await page.locator('.course-sidebar').isVisible(),false,`${where}: Escape did not close the drawer`);
+    assert.equal(await page.locator('.sidebar-toggle-btn').evaluate(el=>el===document.activeElement),true,
+     `${where}: focus did not return to the trigger`);
+   }
   }
-  console.log(`PASS all 20 unit layouts at ${width}px: gutters, open/close, Escape, focus, overflow`);
+  console.log(`PASS all 20 unit layouts at ${width}px: sidebar, gutters, reflow, overflow, 16px body`);
   await context.close();
  }
+
+ /* The choice is remembered on the next lesson. */
+ if(!process.argv.includes('--lessons-only')) {
+  const context=await browser.newContext({viewport:{width:1440,height:1000},reducedMotion:'reduce'});
+  const page=await context.newPage();
+  await page.goto(base+'/units/unit-1/variables-types.html');
+  await page.locator('.sidebar-collapse-btn').waitFor();
+  await headerSettled(page);
+  await page.locator('.sidebar-collapse-btn').click();
+  await page.waitForTimeout(400);
+  assert.equal(await page.evaluate(()=>localStorage.getItem('pypath-sidebar-closed')),'1');
+  await page.goto(base+'/units/unit-1/type-io.html');
+  await headerSettled(page);
+  assert.equal(await page.evaluate(()=>document.body.classList.contains('sidebar-closed')),true,
+   'the closed sidebar was not remembered on the next lesson');
+  await page.locator('.sidebar-reopen-btn').click();
+  await page.waitForTimeout(400);
+  assert.equal(await page.evaluate(()=>localStorage.getItem('pypath-sidebar-closed')),'0');
+  assert.equal(await page.evaluate(()=>document.querySelector('.course-sidebar').parentElement.classList.contains('layout-course')),true,
+   'the sidebar is not a column of the lesson grid');
+  console.log('PASS the open/closed choice persists across lessons');
+  await context.close();
+ }
+
  for(const path of ['/units/unit-1/variables-types.html','/data/unit-1/reading-a-csv-file.html']) for(const width of [390,1440]) {
   const context=await browser.newContext({viewport:{width,height:1000},reducedMotion:'reduce'});
   const page=await context.newPage();await page.goto(base+path);
@@ -71,7 +149,7 @@ try {
   });
   assert.ok(result.inline>=3);assert.equal(result.final,2);assert.ok(result.teaching);
   assert.equal(new Set(result.ids).size,result.ids.length);
-  if(width<1024) await page.locator('.lesson-toc__summary').click();
+  await page.locator('.lesson-toc__summary').click();
   assert.ok(await page.locator('.lesson-toc__link').filter({hasText:'Quick check'}).count()>=3);
   // Every link resolves, and the list is in reading order.
   const positions=await page.locator('.lesson-toc__link').evaluateAll(links=>links.map(a=>{
@@ -126,83 +204,31 @@ try {
   await context.close();
  }
 
- /* A short window is where the contents column has to scroll inside itself.
-    At 1000px tall nothing overflows, which is why this was silently broken:
-    <details> puts its children in an anonymous content box, the flex chain
-    from the panel never reached the list, and on a 560px-tall window the list
-    ran hundreds of pixels below the fold with no way to reach its last
-    topics. */
- {
-  const context=await browser.newContext({viewport:{width:1440,height:560},reducedMotion:'reduce'});
-  const page=await context.newPage();
-  await page.goto(base+'/units/unit-1/variables-types.html');
-  await page.locator('.lesson-toc--docked').waitFor();
-  await page.waitForTimeout(500);
-  const fits=await page.evaluate(()=>{
-   const list=document.querySelector('.lesson-toc__list');
-   const panel=document.querySelector('.lesson-toc--docked');
-   return {scrolls:list.scrollHeight>list.clientHeight+1,
-    panelHeight:Math.round(panel.getBoundingClientRect().height),vh:innerHeight};
-  });
-  assert.ok(fits.scrolls,'a 13-topic list does not scroll inside itself at 560px tall');
-  assert.ok(fits.panelHeight<fits.vh,`contents panel ${fits.panelHeight}px in a ${fits.vh}px window`);
-  // Reaching the last section moves the list, not the page, and keeps the
-  // current topic visible.
-  await page.evaluate(()=>{const ls=document.querySelectorAll('.lesson-toc__link');
-   document.getElementById(decodeURIComponent(ls[ls.length-1].hash.slice(1))).scrollIntoView();});
-  await page.waitForTimeout(600);
-  const tracked=await page.evaluate(()=>{
-   const list=document.querySelector('.lesson-toc__list');
-   const active=list.querySelector('a.is-active');
-   if(!active) return {ok:false,why:'no active topic'};
-   const l=list.getBoundingClientRect(),a=active.getBoundingClientRect();
-   return {ok:a.top>=l.top-1&&a.bottom<=l.bottom+1,scrollTop:Math.round(list.scrollTop),
-    overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth};
-  });
-  assert.ok(tracked.ok,`current topic not visible in the list: ${JSON.stringify(tracked)}`);
-  assert.ok(tracked.scrollTop>0,'the list never scrolled to follow the reader');
-  assert.equal(tracked.overflow,0);
-  console.log('PASS 1440x560: contents list scrolls inside itself and follows the reader');
-  await context.close();
- }
-
- /* Shutting the contents column must not move the lesson.
-    The version of a collapsible menu this replaced was a column in the
-    lesson's own grid: opening it moved the left edge and re-wrapped the
-    paragraph the reader was in the middle of. The grid track keeps its width
-    in both states, so the freed space becomes gutter rather than being handed
-    to the text. */
+ /* The section list is a disclosure above the lesson text, at every width --
+    not a second column. One left column only. */
  {
   const context=await browser.newContext({viewport:{width:1440,height:1000},reducedMotion:'reduce'});
   const page=await context.newPage();
   await page.goto(base+'/units/unit-1/variables-types.html');
-  await page.locator('.lesson-toc--docked').waitFor();
-  await page.waitForTimeout(600);
-  const toggle=page.locator('.lesson-toc__toggle');
-  const open=await page.locator('.course-main').boundingBox();
-  await toggle.click();
-  await page.waitForTimeout(300);
-  const shut=await page.locator('.course-main').boundingBox();
-  assert.ok(Math.abs(shut.x-open.x)<1&&Math.abs(shut.width-open.width)<1,
-   `shutting the contents column moved the lesson: ${JSON.stringify({open,shut})}`);
-  assert.equal(await page.locator('.lesson-toc__nav').evaluate(n=>n.hidden),true);
-  assert.equal(await toggle.getAttribute('aria-expanded'),'false');
-  assert.equal(await toggle.evaluate(el=>el===document.activeElement),true);
-
-  // It is remembered on the next lesson, and reopening puts everything back.
-  await page.goto(base+'/units/unit-1/type-io.html');
-  await page.locator('.lesson-toc--docked').waitFor();
-  await page.waitForTimeout(600);
-  assert.equal(await page.locator('.lesson-toc').evaluate(el=>el.classList.contains('is-collapsed')),true);
-  const stillShut=await page.locator('.course-main').boundingBox();
-  await page.locator('.lesson-toc__toggle').click();
-  await page.waitForTimeout(300);
-  const reopened=await page.locator('.course-main').boundingBox();
-  assert.ok(Math.abs(reopened.x-stillShut.x)<1&&Math.abs(reopened.width-stillShut.width)<1,
-   'reopening the contents column moved the lesson');
-  assert.ok(await page.locator('.lesson-toc__link').count()>1);
-  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
-  console.log('PASS contents column shuts, reopens, is remembered, and never moves the lesson');
+  await page.locator('.lesson-toc').waitFor();
+  await headerSettled(page);
+  const shape=await page.evaluate(()=>{
+   const toc=document.querySelector('.lesson-toc');
+   const content=document.querySelector('.lesson-content');
+   return {docked:toc.classList.contains('lesson-toc--docked'),
+           aboveText:toc.compareDocumentPosition(content)&Node.DOCUMENT_POSITION_FOLLOWING?true:false,
+           insideMain:!!toc.closest('.course-main'),
+           closed:!toc.querySelector('details').open,
+           hideToggle:!!toc.querySelector('.lesson-toc__toggle'),
+           links:toc.querySelectorAll('a').length};
+  });
+  assert.equal(shape.docked,false,'the section list is docked as a column again');
+  assert.equal(shape.aboveText,true,'the section list is not above the lesson text');
+  assert.equal(shape.insideMain,true,'the section list escaped the lesson column');
+  assert.equal(shape.closed,true,'the section list does not start collapsed');
+  assert.equal(shape.hideToggle,false,'the section list has a Hide toggle again');
+  assert.ok(shape.links>1);
+  console.log('PASS the section list is a collapsed disclosure above the lesson, not a column');
   await context.close();
  }
 } finally {await browser.close();}
