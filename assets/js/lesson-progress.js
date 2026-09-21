@@ -671,12 +671,27 @@
     var host = lessonHost();
     if (!host) return;
     var items = [];
+
+    function stow(node, parent) {
+      var mark = document.createComment(' unit locked ');
+      parent.replaceChild(mark, node);
+      items.push({ mark: mark, node: node });
+    }
+
     Array.prototype.slice.call(host.childNodes).forEach(function (node) {
       if (isFurniture(node)) return;
-      var mark = document.createComment(' unit locked ');
-      host.replaceChild(mark, node);
-      items.push({ mark: mark, node: node });
+      stow(node, host);
     });
+
+    /* The contents column is part of the lesson body even though it is not
+       inside it. Above 1024px lesson-ui.js docks it beside .course-main as a
+       sibling in the lesson grid, which put it outside everything this
+       function walks: a shut unit kept a full table of contents whose links
+       all pointed at headings that had just been detached from the document.
+       It is stowed with the rest and comes back with the rest. */
+    var toc = document.querySelector('.lesson-toc');
+    if (toc && toc.parentNode && !host.contains(toc)) stow(toc, toc.parentNode);
+
     stowed = { host: host, items: items };
   }
 
