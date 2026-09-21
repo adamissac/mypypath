@@ -539,6 +539,10 @@
 
     function show() {
       document.body.classList.add('has-inspire-banner');
+      // html too: the scrollport's scroll-padding-top is declared on <html>,
+      // and --header-height was only redefined on <body>. Without this an
+      // anchor cleared a 76px header while a 118px one was on screen.
+      document.documentElement.classList.add('has-inspire-banner');
       requestAnimationFrame(function () {
         banner.classList.add('is-visible');
       });
@@ -549,6 +553,7 @@
       banner.classList.remove('is-visible');
       banner.classList.add('is-hiding');
       document.body.classList.remove('has-inspire-banner');
+      document.documentElement.classList.remove('has-inspire-banner');
       var reduce = prefersReducedMotion();
       window.setTimeout(function () {
         if (banner.parentNode) banner.parentNode.removeChild(banner);
