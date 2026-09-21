@@ -9,13 +9,11 @@ html[data-gate="locked"] main > *:not([data-gate-paywall]) {
   user-select: none;
 }
 
-/* A lesson page's navigation is not the lesson.
-   The unit's lesson list is a column of the lesson grid, which is inside
-   <main>, so the blanket rule above blurred it and took its clicks away --
-   leaving the browser's Back button as the only way off a gated page. Gate
-   the lesson column instead, and let the list stay readable and clickable.
-   (It used to escape this by being moved to <body>; it is a real column
-   again, so the exemption has to be stated rather than incidental.) */
+/* A lesson page's navigation is not the lesson. The unit's lesson list is a
+   column of the lesson grid, inside <main>, so the rule above blurred it and
+   took its clicks away -- leaving Back as the only way off a gated page. Gate
+   the lesson column instead. It used to escape this by living in <body>; it is
+   a real column again, so the exemption is stated rather than incidental. */
 html[data-gate="locked"] main > .section:has(.layout-course) {
   filter: none;
   pointer-events: auto;

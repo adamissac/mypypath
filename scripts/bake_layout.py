@@ -706,6 +706,11 @@ def version_course_assets(html: str) -> str:
                 # motion.js owns in-page anchor behaviour, lesson-progress.js
                 # owns what a shut unit hides.
                 'assets/js/motion.js', 'assets/js/lesson-progress.js',
+                # gate.css decides what a locked lesson hides, including
+                # whether its navigation stays usable. Served with
+                # max-age=3600, so without a version a returning reader keeps
+                # the previous rules for an hour after a deploy changes them.
+                'assets/css/gate.css',
                 'assets/img/data-moon.svg',
                 'assets/img/placeholder-avatar.svg'):
         version = hashlib.sha256((ROOT / rel).read_bytes()).hexdigest()[:10]

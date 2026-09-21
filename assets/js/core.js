@@ -429,22 +429,12 @@
     }
   }
 
-  /* ── Lesson navigation ────────────────────────────────────────────────
-     The unit's lesson list, in two shapes, on one element.
-
-     Above 980px it is a column of the lesson grid: sticky, collapsible from
-     a control in its own header, and when it closes the lesson takes the
-     space and reflows wider. That reflow is the point of the control -- a
-     reader who wants the lesson wider closes the list to get it. The choice
-     is remembered in pypath-sidebar-closed.
-
-     At 980px and below there is no room for a column, so the same element
-     becomes a modal drawer over the page: labelled dialog, backdrop, Escape,
-     a focus trap and focus returned to whatever opened it.
-
-     The element moves between the grid and <body> rather than being rendered
-     twice, and everything that is true of one shape only -- the dialog
-     attributes, the backdrop, the trap -- is put on and taken off with it. */
+  /* The unit's lesson list, two shapes, one element. Above 980px a column of
+     the lesson grid -- closing it lets the lesson take the space and reflow
+     wider, which is the point of the control, and the choice is kept in
+     pypath-sidebar-closed. Below, a modal drawer. It MOVES between the grid
+     and <body> rather than rendering twice, so the dialog attributes,
+     backdrop and trap go on and come off with it. */
 
   var SIDEBAR_MQ = window.matchMedia('(max-width: 980px)');
 
@@ -459,7 +449,7 @@
     if (!sidebar) return;
 
     sidebar.id = sidebar.id || 'lesson-sidebar';
-    // Where it belongs when it is a column, so it can be put back there.
+    // Where it lives as a column, so it can go back.
     var homeParent = sidebar.parentNode;
     var homeNext = sidebar.nextSibling;
     var returnFocus = null;
@@ -470,8 +460,6 @@
     backdrop.hidden = true;
     document.body.appendChild(backdrop);
 
-    /* The collapse control lives in the sidebar's own header, beside the unit
-       label, in both shapes. */
     var collapseBtn = document.createElement('button');
     collapseBtn.type = 'button';
     collapseBtn.className = 'sidebar-collapse-btn';
@@ -493,8 +481,7 @@
       sidebar.insertBefore(collapseBtn, sidebar.firstChild);
     }
 
-    /* Shut, the column is gone from the page, so the way back has to be
-       somewhere else: a chip pinned under the header. */
+    // Shut, the way back is a pinned chip.
     var reopenBtn = document.createElement('button');
     reopenBtn.type = 'button';
     reopenBtn.className = 'sidebar-reopen-btn';
@@ -509,9 +496,7 @@
       '<path d="M9 18l6-6-6-6"/><path d="M20 6v12"/></svg><span>Lessons</span>';
     document.body.appendChild(reopenBtn);
 
-    /* The drawer's row also carries a way off the page. It is hidden with the
-       row on a desktop, where the lesson list is a column and the breadcrumb
-       is right there. */
+    // The drawer's row carries a way off the page; hidden with it on desktop.
     var toolbar = document.querySelector('.sidebar-toggle');
     if (toolbar && !toolbar.querySelector('.lesson-back-link')) {
       var back = document.createElement('a');
@@ -528,7 +513,6 @@
       sidebar.setAttribute('aria-label', 'Lesson menu');
       sidebar.tabIndex = -1;
       collapseBtn.setAttribute('aria-label', 'Close lesson menu');
-      // Out of any transformed or overflow-clipped lesson container.
       if (sidebar.parentNode !== document.body) document.body.appendChild(sidebar);
     }
 
@@ -559,7 +543,7 @@
         document.body.classList.remove('sidebar-open');
         reopenBtn.hidden = open;
         try { localStorage.setItem('pypath-sidebar-closed', open ? '0' : '1'); } catch (err) {}
-        // Focus must not be left on a control that just left the page.
+        // Focus must not stay on a control that just left the page.
         if (restoreFocus) (open ? collapseBtn : reopenBtn).focus({ preventScroll: true });
       }
       qsa('[data-sidebar-toggle]').forEach(function (button) {
@@ -596,8 +580,7 @@
     backdrop.addEventListener('wheel', function (event) { event.preventDefault(); }, { passive: false });
 
     document.addEventListener('keydown', function (event) {
-      // Escape and the focus trap are the drawer's, not the column's: a
-      // column is part of the page and tabbing out of it is correct.
+      // Escape and the trap are the drawer's: tabbing out of a column is right.
       if (!SIDEBAR_MQ.matches || sidebar.hidden) return;
       if (event.key === 'Escape') {
         event.preventDefault();
