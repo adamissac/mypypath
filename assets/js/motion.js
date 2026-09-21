@@ -139,23 +139,28 @@
     });
   }
 
-  function initSmoothAnchors() {
-    document.addEventListener('click', function (e) {
-      var a = e.target.closest('a[href^="#"]');
-      if (!a || a.getAttribute('href') === '#') return;
-      var id = a.getAttribute('href');
-      var target = document.querySelector(id);
-      if (!target) return;
-      e.preventDefault();
-      var header = document.querySelector('.site-header');
-      var offset = header ? header.offsetHeight + 12 : 0;
-      var top = target.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({
-        top: top,
-        behavior: prefersReduced() ? 'auto' : 'smooth'
-      });
-    });
-  }
+  /* In-page anchors are the browser's job, and were taken off it here.
+   *
+   * This used to intercept every `a[href^="#"]`, preventDefault it, and
+   * scroll by hand. Three things followed, all of them worse than doing
+   * nothing:
+   *
+   *   - preventDefault stops the URL updating. A learner could not copy the
+   *     address of a section, a shared #anchor link was not what the page
+   *     showed, and Back did not step through the sections they had jumped to.
+   *   - the offset was `.site-header` offsetHeight + 12, which does not
+   *     include the attribution banner. With the banner up the real occluded
+   *     height is 118px and this used 76, so a heading landed 42px too high,
+   *     under the bar -- and the contents column marked the PREVIOUS section
+   *     as current, because the heading never reached the reading line.
+   *   - smooth/auto was decided in JS from prefers-reduced-motion, a second
+   *     copy of a decision the stylesheet already makes.
+   *
+   * All three are already handled natively: `html { scroll-behavior: smooth }`
+   * with `scroll-behavior: auto !important` under reduced motion, and
+   * `scroll-padding-top: calc(var(--header-height) + 12px)` -- where
+   * --header-height DOES include the banner. Native navigation is smooth,
+   * correctly offset, reduced-motion aware, and keeps the URL and history. */
 
   /* Auto-tag common blocks so scroll reveals work sitewide without per-page markup */
   function autoEnhanceReveals() {
@@ -425,7 +430,6 @@
     initPathPresence();
     initReveal();
     initCountUp();
-    initSmoothAnchors();
     initLogoMotion();
     initHomeParallax();
   });
