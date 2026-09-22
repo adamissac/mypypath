@@ -2,8 +2,8 @@
 
 ## The layout
 
-- The lesson is near full width. Gutters are about 45px at 1280, 50px at 1440
-  and 64px at 1920, and the lesson uses everything between them. There is no
+- The lesson is near full width. Gutters are about 51px at 1280, 58px at 1440
+  and 68px at 1920, and the lesson uses everything between them. There is no
   reading-width cap and no enlarged body type: paragraphs are 16px, the lesson
   title 28px, section headings 19.5px.
 - The unit's lesson list is a real column of the lesson grid — 248px, sticky

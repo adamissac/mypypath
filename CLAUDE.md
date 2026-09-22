@@ -155,8 +155,8 @@ number rather than a grep.
 ## The lesson layout is a product decision
 
 Near full width, with the unit's lesson list as a left column that hands its
-space to the lesson when it is closed. Gutters ~45px at 1280, ~50px at 1440,
-~64px at 1920. Paragraphs 16px, lesson title 28px, section headings 19.5px.
+space to the lesson when it is closed. Gutters ~51px at 1280, ~58px at 1440,
+~68px at 1920. Paragraphs 16px, lesson title 28px, section headings 19.5px.
 
 **Do not reintroduce a reading-width cap, a centred column, or larger body
 type.** This has now been done three times on line-length grounds -- 1280px in
