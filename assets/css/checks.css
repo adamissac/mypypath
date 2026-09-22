@@ -381,3 +381,7 @@ body.lesson-reading .quiz-options .quiz-choice { margin:0; }
 @media (min-width:981px) {
   .quiz-options { grid-template-columns:repeat(2, minmax(0, 1fr)); }
 }
+/* Make the entire answer card clickable, including space around short labels. */
+body.lesson-reading .quiz-choice { position:relative; }
+body.lesson-reading .quiz-choice label::after { content:""; position:absolute; inset:0; cursor:pointer; }
+body.lesson-reading .quiz-choice input { position:relative; z-index:1; }

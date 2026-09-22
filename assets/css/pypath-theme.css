@@ -1966,11 +1966,11 @@ html[data-course="data"][data-theme="dark"] .btn-run {
   color: #24182f;
 }
 
-/* The course logo follows the same selection as the site palette, including
-   shared pages and live trail changes. Keep the existing image's alt text,
-   dimensions, and motion wrapper. */
-html[data-course="data"] img.logo {
-  content: url("/assets/img/pyPathLogo-data.png?v=dea2f71afa");
+/* Keep the original two-tone mark and recolour its blue artwork to violet.
+   Apply the brand colour in both journeys, on hover and under reduced motion. */
+html img.logo {
+  content: url("/assets/img/pyPathLogo.png");
+  filter: hue-rotate(65deg) saturate(1.6) !important;
 }
 
 /* Shared code colors follow the active journey, including the live home editor. */
@@ -2127,6 +2127,16 @@ body.lesson-reading pre.code, body.lesson-reading pre.code code {
 }
 body.lesson-reading .exercise-actions .btn-save { background: var(--pp-line-ink); border-color: var(--pp-line-ink); color: var(--panel); }
 body.lesson-reading .exercise-actions .btn-save:hover { background: var(--pp-ink); border-color: var(--pp-ink); color: var(--panel); }
+
+/* Shared lesson polish: consistent focus and headings that can wrap on phones. */
+body.lesson-reading .practice-header > :first-child { min-width:0; overflow-wrap:anywhere; }
+body.lesson-reading .lesson-toc__summary { flex-wrap:wrap; row-gap:4px; padding-block:10px; }
+body.lesson-reading .editor-toolbar-small button:focus-visible,
+body.lesson-reading .lesson-actions a:focus-visible,
+body.lesson-reading .lesson-nav a:focus-visible {
+  outline:2px solid var(--pp-line-ink); outline-offset:3px;
+}
+body.lesson-reading .lesson-nav { display:flex; flex-wrap:wrap; gap:12px; justify-content:space-between; }
 
 /* ═══════════════════════════════════════════════════════════════
    The lesson canvas
