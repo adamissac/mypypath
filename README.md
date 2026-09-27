@@ -90,6 +90,12 @@ Linux, depending on the machine you build on (Tauri doesn't cross-compile
 installers by default; build each platform's installer on that platform, or
 in that platform's CI runner).
 
+Verified on macOS: `npm run desktop:build` produced `PyPath.app` (23 MiB)
+and `PyPath_0.1.0_aarch64.dmg` (16 MiB); the `.dmg` mounted and verified
+cleanly (`hdiutil attach`), and launching `PyPath.app` directly — the actual
+packaged release binary, not `tauri dev`'s debug build — came up correctly
+and created its app-data directory on first run.
+
 ### Save locations
 
 Progress is written to a single JSON file, separate from the website's
