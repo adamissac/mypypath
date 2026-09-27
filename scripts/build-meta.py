@@ -38,7 +38,7 @@ APPLY = "--apply" in sys.argv
 # .claude holds skills, not site pages. Both of these scripts walked into
 # it and stamped site metadata onto a skill's own HTML.
 SKIP_DIRS = {".git", ".claude", "node_modules", "lesson-format-kit", "REVIEW",
-             "docs"}
+             "docs", "src-tauri", "desktop-dist"}
 # Pages that must never advertise themselves to a crawler or a card scraper.
 SKIP_FILES = {"404.html", "admin.html", "sandbox-export.html"}
 
