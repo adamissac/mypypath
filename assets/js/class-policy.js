@@ -16,8 +16,7 @@
  * degraded one: a broken network must never turn into a student locked out of
  * something they earned.
  */
-import { db } from '/assets/js/firebase-config.js';
-import { importFirebaseModule } from '/assets/js/firebase-sdk.js';
+import { db, importFirebaseModule } from '/assets/js/firebase-config.js';
 
 const { doc, getDoc, getDocs, collection } = (await importFirebaseModule('firebase-firestore.js')) || {};
 

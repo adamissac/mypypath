@@ -16,8 +16,7 @@
  * classes are therefore found through an index of ids on their own user
  * document and fetched one get at a time, never by querying the collection.
  */
-import { db } from '/assets/js/firebase-config.js';
-import { importFirebaseModule } from '/assets/js/firebase-sdk.js';
+import { db, importFirebaseModule } from '/assets/js/firebase-config.js';
 import { loadProfile, invalidateProfile } from '/assets/js/profile.js';
 /* Dev-only, off unless ?readcount=1. Every call below is a no-op returning its
    argument until it is switched on -- see the header of read-counter.js for why

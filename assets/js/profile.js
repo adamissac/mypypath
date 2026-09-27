@@ -127,8 +127,7 @@
  * with nothing to fall back on this rejects, and callers render "we could not
  * reach the database", which is honest, where "you are not a teacher" is not.
  */
-import { db } from '/assets/js/firebase-config.js';
-import { importFirebaseModule } from '/assets/js/firebase-sdk.js';
+import { db, importFirebaseModule } from '/assets/js/firebase-config.js';
 
 const { doc, onSnapshot } = (await importFirebaseModule('firebase-firestore.js')) || {};
 

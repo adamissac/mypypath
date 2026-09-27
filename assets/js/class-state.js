@@ -4,8 +4,7 @@
    the roster, and neither should pay a document read to find out on every
    save. The answer is loaded once per sign-in and updated in place when the
    learner joins or leaves a class. */
-import { db } from '/assets/js/firebase-config.js';
-import { importFirebaseModule } from '/assets/js/firebase-sdk.js';
+import { db, importFirebaseModule } from '/assets/js/firebase-config.js';
 
 const { doc, getDoc } = (await importFirebaseModule('firebase-firestore.js')) || {};
 

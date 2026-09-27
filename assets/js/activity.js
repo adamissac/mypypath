@@ -6,8 +6,7 @@
 
    Only signed-in time is counted. A guest has no uid to attribute it to, and
    inventing one would mean guessing who was at the keyboard. */
-import { db } from '/assets/js/firebase-config.js';
-import { importFirebaseModule } from '/assets/js/firebase-sdk.js';
+import { db, importFirebaseModule } from '/assets/js/firebase-config.js';
 import { currentUser } from '/assets/js/auth.js';
 import { currentTeacher } from '/assets/js/class-state.js';
 

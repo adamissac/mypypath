@@ -12,8 +12,7 @@
 
    The uid check below only picks which panel to render. A non-admin who edits
    it in devtools still gets nothing: firestore.rules refuses the query. */
-import { db } from '/assets/js/firebase-config.js';
-import { importFirebaseModule } from '/assets/js/firebase-sdk.js';
+import { db, importFirebaseModule } from '/assets/js/firebase-config.js';
 import { currentUser } from '/assets/js/auth.js';
 import { normalizeScores, passedUnits } from '/assets/js/unit-test-summary.js';
 

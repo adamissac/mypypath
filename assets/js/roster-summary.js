@@ -39,8 +39,7 @@
  * tests/roster-summary.test.js pins them against each other over the same
  * event fixtures, which is the only way that agreement stays true.
  */
-import { db } from '/assets/js/firebase-config.js';
-import { importFirebaseModule } from '/assets/js/firebase-sdk.js';
+import { db, importFirebaseModule } from '/assets/js/firebase-config.js';
 
 const { doc, getDoc, setDoc, serverTimestamp } =
   (await importFirebaseModule('firebase-firestore.js')) || {};

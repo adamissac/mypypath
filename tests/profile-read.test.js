@@ -28,7 +28,6 @@ function compileProfile(onSnapshot) {
   const src = fs.readFileSync('assets/js/profile.js', 'utf8');
   const body = src
     .replace(/^import \{[^}]*\} from '\/assets\/js\/firebase-config\.js';$/m, '')
-    .replace(/^import \{[^}]*\} from '\/assets\/js\/firebase-sdk\.js';$/m, '')
     .replace(/^const BASE = [\s\S]*?firebase-firestore\.js`\);$/m, '')
     .replace(/^const \{ doc, onSnapshot \}[\s\S]*?;$/m, '')
     .replace(/\bexport (async function|function)/g, '$1');

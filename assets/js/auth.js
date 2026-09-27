@@ -1,7 +1,6 @@
 /* PyPath — Firebase Auth wrapper. Dispatches `pypath:auth` on document so no
    UI file has to import Firebase. */
-import { auth } from '/assets/js/firebase-config.js';
-import { importFirebaseModule } from '/assets/js/firebase-sdk.js';
+import { auth, importFirebaseModule } from '/assets/js/firebase-config.js';
 import { shouldRejectNewUser } from '/assets/js/auth-rules.js';
 
 const authMod = await importFirebaseModule('firebase-auth.js') || {};
@@ -115,15 +114,10 @@ function handleAuth(next) {
   }
 }
 
-// auth and onAuthStateChanged are both null/undefined together: firebase-config.js
-// only reaches getAuth() if the SDK import it needs succeeded, and this file's
-// own import of firebase-auth.js is the same fetch, so one failing without the
-// other would mean the CDN answered inconsistently within the same page load.
-// Either way, no listener means no account this session — which is already the
-// state everything else on the page renders by default (see the baked header:
-// "Sign in" visible, avatar hidden) — so callers get an explicit, immediate
-// signal rather than silence while the site waits for an event that would
-// otherwise never come.
+// No listener means no account this session — already the page's default
+// render (baked header: "Sign in" visible, avatar hidden) — so announce it
+// explicitly rather than leave the rest of the page waiting on an event
+// that would otherwise never come.
 if (auth && onAuthStateChanged) {
   onAuthStateChanged(auth, (next) => {
     user = next;

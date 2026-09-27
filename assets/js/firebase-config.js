@@ -1,20 +1,34 @@
 /* PyPath — Firebase initialization. ES module; the SDK requires it.
    This config is public by design. Access control lives in firestore.rules
-   and in the Firebase console's Authorized Domains list. */
+   and in the Firebase console's Authorized Domains list.
 
-import { SDK_VERSION, importFirebaseModule } from '/assets/js/firebase-sdk.js';
-export { SDK_VERSION };
+   importFirebaseModule lives here, not its own file, so every other
+   Firebase-dependent file gets it from the same import as `db`/`auth` —
+   no extra request (a separate file cost classroom.html 3KB critical-path
+   against a budget it was already over; see verify-perf-budget.mjs). */
+export const SDK_VERSION = '11.1.0';
+
+const FIREBASE_BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
+
+// Null instead of throwing (offline/blocked CDN): an unguarded top-level
+// `await import()` used to crash this module's evaluation, and every file
+// that imports from it, on any flaky connection. Destructuring from a null
+// result just yields undefined bindings, which throw inside whatever
+// try/catch a caller already wraps its Firestore calls in.
+export async function importFirebaseModule(name) {
+  try {
+    return await import(`${FIREBASE_BASE}/${name}`);
+  } catch (err) {
+    return null;
+  }
+}
 
 const appMod = await importFirebaseModule('firebase-app.js');
 const authMod = await importFirebaseModule('firebase-auth.js');
 const firestoreMod = await importFirebaseModule('firebase-firestore.js');
 
-// Both start null — meaning "no Firebase this page load" — and stay null if
-// the SDK could not be fetched at all (offline, CDN blocked). Every file that
-// imports these already treats a Firestore/Auth call failing as "stay on the
-// local copy", so a caller doing `if (db) ...` or letting `doc(db, ...)` throw
-// into its own existing catch behaves the same as a call that reached the
-// server and got a network error.
+// null means "no Firebase this page load" (SDK unreachable). Every importer
+// already treats a Firestore/Auth call failing as "stay on the local copy".
 export let auth = null;
 export let db = null;
 
