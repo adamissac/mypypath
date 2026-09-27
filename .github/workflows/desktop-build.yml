@@ -1,0 +1,48 @@
+name: Desktop build check
+
+# Manual only (workflow_dispatch), deliberately not on push/pull_request.
+# This compiles Rust from scratch on three OSes, which is real CI-minutes
+# cost on every run — the existing CI (ci.yml) runs on every push because
+# it's cheap; this runs when someone actually wants to verify the desktop
+# app still builds on all three platforms, not automatically on every
+# website-only commit.
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - uses: dtolnay/rust-toolchain@stable
+      # Package list per Tauri's own Linux prerequisites doc
+      # (https://v2.tauri.app/start/prerequisites/) — Tauri's webview and
+      # tray/dialog integration depend on these system libraries; nothing
+      # here is PyPath-specific.
+      - name: Install Linux Tauri dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            build-essential \
+            curl \
+            wget \
+            file \
+            libxdo-dev \
+            libssl-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev
+      - run: npm ci
+      - name: Rust unit tests
+        run: cargo test --manifest-path src-tauri/Cargo.toml --lib
+      - name: Build desktop app
+        run: npm run desktop:build
