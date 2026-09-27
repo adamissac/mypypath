@@ -54,31 +54,46 @@ fn config_path(app: &AppHandle) -> Result<PathBuf, String> {
     Ok(dir.join(CONFIG_FILENAME))
 }
 
-fn read_config(app: &AppHandle) -> DesktopConfig {
-    let path = match config_path(app) {
-        Ok(p) => p,
-        Err(_) => return DesktopConfig::default(),
-    };
-    fs::read_to_string(&path)
+// Split from the AppHandle-based read_config/write_config/remember_path below
+// so the actual logic (parse-or-default, serialize-and-write, dedupe-and-
+// truncate) is plain functions over a path — testable directly, with no
+// Tauri app context needed to construct one. The AppHandle wrappers below are
+// just "resolve the real config path, then call these."
+fn read_config_at(path: &Path) -> DesktopConfig {
+    fs::read_to_string(path)
         .ok()
         .and_then(|s| serde_json::from_str(&s).ok())
         .unwrap_or_default()
 }
 
-fn write_config(app: &AppHandle, cfg: &DesktopConfig) -> Result<(), String> {
-    let path = config_path(app)?;
+fn write_config_at(path: &Path, cfg: &DesktopConfig) -> Result<(), String> {
     let json = serde_json::to_string_pretty(cfg).map_err(|e| e.to_string())?;
-    atomic_write(&path, json.as_bytes())
+    atomic_write(path, json.as_bytes())
 }
 
-fn remember_path(app: &AppHandle, path: &str) {
-    let mut cfg = read_config(app);
+fn remember_path_at(config_path: &Path, path: &str) {
+    let mut cfg = read_config_at(config_path);
     cfg.last_save_path = Some(path.to_string());
     cfg.recent_save_paths.retain(|p| p != path);
     cfg.recent_save_paths.insert(0, path.to_string());
     cfg.recent_save_paths.truncate(MAX_RECENTS);
     // Best-effort: a failure here loses recent-file convenience, not progress.
-    let _ = write_config(app, &cfg);
+    let _ = write_config_at(config_path, &cfg);
+}
+
+fn read_config(app: &AppHandle) -> DesktopConfig {
+    match config_path(app) {
+        Ok(p) => read_config_at(&p),
+        Err(_) => DesktopConfig::default(),
+    }
+}
+
+fn remember_path(app: &AppHandle, path: &str) {
+    if let Ok(p) = config_path(app) {
+        remember_path_at(&p, path);
+    }
+    // No config directory at all is the same "lose the convenience, not the
+    // progress" tradeoff remember_path_at's own failures already make.
 }
 
 /// The default save location under this OS's app-data directory, created if
@@ -159,4 +174,138 @@ pub async fn choose_open_location(app: AppHandle) -> Result<Option<String>, Stri
 #[tauri::command]
 pub fn remember_save_path(app: AppHandle, path: String) {
     remember_path(&app, &path);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::atomic::{AtomicU64, Ordering};
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    // A fresh, unique scratch directory per test rather than a shared fixture
+    // dir: these tests run concurrently (cargo test's default), and sharing
+    // one directory would make them interfere with each other's files.
+    static COUNTER: AtomicU64 = AtomicU64::new(0);
+
+    fn scratch_dir() -> PathBuf {
+        let nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let n = COUNTER.fetch_add(1, Ordering::SeqCst);
+        let dir = std::env::temp_dir().join(format!("pypath-desktop-test-{nanos}-{n}"));
+        fs::create_dir_all(&dir).unwrap();
+        dir
+    }
+
+    #[test]
+    fn atomic_write_creates_the_file_with_no_tmp_left_behind() {
+        let dir = scratch_dir();
+        let path = dir.join("progress.json");
+
+        atomic_write(&path, b"hello").unwrap();
+
+        assert_eq!(fs::read_to_string(&path).unwrap(), "hello");
+        assert!(!path.with_extension("tmp").exists());
+    }
+
+    #[test]
+    fn atomic_write_overwrites_existing_content_cleanly() {
+        let dir = scratch_dir();
+        let path = dir.join("progress.json");
+        fs::write(&path, "old content").unwrap();
+
+        atomic_write(&path, b"new content").unwrap();
+
+        assert_eq!(fs::read_to_string(&path).unwrap(), "new content");
+    }
+
+    #[test]
+    fn atomic_write_creates_missing_parent_directories() {
+        // save_progress does its own create_dir_all before calling this, but
+        // atomic_write itself only needs the tmp file's parent (the same
+        // directory as the target) to exist — worth pinning as its own
+        // behavior rather than only ever exercised alongside the command's.
+        let dir = scratch_dir();
+        fs::create_dir_all(&dir).unwrap();
+        let path = dir.join("progress.json");
+
+        atomic_write(&path, b"x").unwrap();
+        assert!(path.exists());
+    }
+
+    #[test]
+    fn read_config_at_a_missing_file_returns_default_not_an_error() {
+        let dir = scratch_dir();
+        let cfg = read_config_at(&dir.join("does-not-exist.json"));
+        assert_eq!(cfg.last_save_path, None);
+        assert!(cfg.recent_save_paths.is_empty());
+    }
+
+    #[test]
+    fn read_config_at_a_corrupted_file_returns_default_rather_than_panicking() {
+        let dir = scratch_dir();
+        let path = dir.join("desktop-config.json");
+        fs::write(&path, "{not valid json").unwrap();
+
+        let cfg = read_config_at(&path);
+        assert_eq!(cfg.last_save_path, None);
+    }
+
+    #[test]
+    fn config_round_trips_through_write_and_read() {
+        let dir = scratch_dir();
+        let path = dir.join("desktop-config.json");
+        let cfg = DesktopConfig {
+            last_save_path: Some("/data/mine.json".to_string()),
+            recent_save_paths: vec!["/data/mine.json".to_string()],
+        };
+
+        write_config_at(&path, &cfg).unwrap();
+        let read_back = read_config_at(&path);
+
+        assert_eq!(read_back.last_save_path, cfg.last_save_path);
+        assert_eq!(read_back.recent_save_paths, cfg.recent_save_paths);
+    }
+
+    #[test]
+    fn remember_path_at_sets_last_used_and_prepends_to_recents() {
+        let dir = scratch_dir();
+        let cfg_path = dir.join("desktop-config.json");
+
+        remember_path_at(&cfg_path, "/data/a.json");
+        remember_path_at(&cfg_path, "/data/b.json");
+
+        let cfg = read_config_at(&cfg_path);
+        assert_eq!(cfg.last_save_path, Some("/data/b.json".to_string()));
+        assert_eq!(cfg.recent_save_paths, vec!["/data/b.json", "/data/a.json"]);
+    }
+
+    #[test]
+    fn remember_path_at_moves_a_repeated_path_to_front_instead_of_duplicating() {
+        let dir = scratch_dir();
+        let cfg_path = dir.join("desktop-config.json");
+
+        remember_path_at(&cfg_path, "/data/a.json");
+        remember_path_at(&cfg_path, "/data/b.json");
+        remember_path_at(&cfg_path, "/data/a.json");
+
+        let cfg = read_config_at(&cfg_path);
+        assert_eq!(cfg.recent_save_paths, vec!["/data/a.json", "/data/b.json"]);
+    }
+
+    #[test]
+    fn remember_path_at_truncates_to_max_recents() {
+        let dir = scratch_dir();
+        let cfg_path = dir.join("desktop-config.json");
+
+        for i in 0..(MAX_RECENTS + 3) {
+            remember_path_at(&cfg_path, &format!("/data/{i}.json"));
+        }
+
+        let cfg = read_config_at(&cfg_path);
+        assert_eq!(cfg.recent_save_paths.len(), MAX_RECENTS);
+        // Most recent first: the last one written is still at the front.
+        assert_eq!(cfg.recent_save_paths[0], format!("/data/{}.json", MAX_RECENTS + 2));
+    }
 }
