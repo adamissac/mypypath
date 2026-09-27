@@ -20,6 +20,10 @@
     "validate:skills": "node scripts/validate-skills.mjs",
     "build:skills": "node scripts/build-skills.mjs",
     "build:trail": "node scripts/build-trail.mjs",
+    "build:desktop-dist": "node scripts/build-desktop-dist.mjs",
+    "dev:desktop-dist": "node scripts/build-desktop-dist.mjs && python3 -m http.server 1420 --directory desktop-dist",
+    "desktop:dev": "tauri dev",
+    "desktop:build": "tauri build",
     "test:trail": "python3 .claude/skills/webapp-testing/scripts/with_server.py --server 'python3 -m http.server 8093' --port 8093 -- python3 tests/browser/trail_invariants.py --base http://localhost:8093",
     "test:trail:selftest": "python3 .claude/skills/webapp-testing/scripts/with_server.py --server 'python3 -m http.server 8093' --port 8093 -- python3 tests/browser/trail_invariants.py --base http://localhost:8093 --self-test"
   },
