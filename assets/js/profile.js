@@ -127,10 +127,10 @@
  * with nothing to fall back on this rejects, and callers render "we could not
  * reach the database", which is honest, where "you are not a teacher" is not.
  */
-import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
+import { db } from '/assets/js/firebase-config.js';
+import { importFirebaseModule } from '/assets/js/firebase-sdk.js';
 
-const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
-const { doc, onSnapshot } = await import(`${BASE}/firebase-firestore.js`);
+const { doc, onSnapshot } = (await importFirebaseModule('firebase-firestore.js')) || {};
 
 /* How long to wait for an answer before giving up on the network.
  *

@@ -16,10 +16,10 @@
  * degraded one: a broken network must never turn into a student locked out of
  * something they earned.
  */
-import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
+import { db } from '/assets/js/firebase-config.js';
+import { importFirebaseModule } from '/assets/js/firebase-sdk.js';
 
-const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
-const { doc, getDoc, getDocs, collection } = await import(`${BASE}/firebase-firestore.js`);
+const { doc, getDoc, getDocs, collection } = (await importFirebaseModule('firebase-firestore.js')) || {};
 
 const POLICY = window.PyPathPolicy;
 // Not window.PyPathClassroom: that module is the teacher dashboard's and is

@@ -3,14 +3,14 @@
    A code is a document id in `joinCodes`, so resolving one is a single get
    with no query. The rules deny `list` on that collection, so codes cannot be
    harvested by walking it. */
-import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
+import { db } from '/assets/js/firebase-config.js';
+import { importFirebaseModule } from '/assets/js/firebase-sdk.js';
 import { setTeacher } from '/assets/js/class-state.js';
 import { currentUser } from '/assets/js/auth.js';
 import { loadProfile, invalidateProfile } from '/assets/js/profile.js';
 
-const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const { doc, getDoc, setDoc, deleteDoc, updateDoc, deleteField } =
-  await import(`${BASE}/firebase-firestore.js`);
+  (await importFirebaseModule('firebase-firestore.js')) || {};
 
 const ROLES = window.PyPathRoles;
 

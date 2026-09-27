@@ -12,13 +12,13 @@
 
    The uid check below only picks which panel to render. A non-admin who edits
    it in devtools still gets nothing: firestore.rules refuses the query. */
-import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
+import { db } from '/assets/js/firebase-config.js';
+import { importFirebaseModule } from '/assets/js/firebase-sdk.js';
 import { currentUser } from '/assets/js/auth.js';
 import { normalizeScores, passedUnits } from '/assets/js/unit-test-summary.js';
 
-const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const { collection, getDocs, query, orderBy, limit, startAfter, documentId } =
-  await import(`${BASE}/firebase-firestore.js`);
+  (await importFirebaseModule('firebase-firestore.js')) || {};
 
 const ADMIN = window.PyPathAdmin;
 const ACT = window.PyPathActivity;

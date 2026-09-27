@@ -39,11 +39,11 @@
  * tests/roster-summary.test.js pins them against each other over the same
  * event fixtures, which is the only way that agreement stays true.
  */
-import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
+import { db } from '/assets/js/firebase-config.js';
+import { importFirebaseModule } from '/assets/js/firebase-sdk.js';
 
-const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const { doc, getDoc, setDoc, serverTimestamp } =
-  await import(`${BASE}/firebase-firestore.js`);
+  (await importFirebaseModule('firebase-firestore.js')) || {};
 /* Dev-only, off unless ?readcount=1. The summary read has to appear in the
    count or the measurement it exists to improve would be flattering rather
    than true -- a dashboard that reports 65 reads while making 30 uncounted

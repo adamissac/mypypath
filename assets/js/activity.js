@@ -6,12 +6,12 @@
 
    Only signed-in time is counted. A guest has no uid to attribute it to, and
    inventing one would mean guessing who was at the keyboard. */
-import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
+import { db } from '/assets/js/firebase-config.js';
+import { importFirebaseModule } from '/assets/js/firebase-sdk.js';
 import { currentUser } from '/assets/js/auth.js';
 import { currentTeacher } from '/assets/js/class-state.js';
 
-const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
-const { doc, setDoc, increment } = await import(`${BASE}/firebase-firestore.js`);
+const { doc, setDoc, increment } = (await importFirebaseModule('firebase-firestore.js')) || {};
 
 const CORE = window.PyPathActivity;
 if (!CORE) {

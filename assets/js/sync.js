@@ -1,13 +1,13 @@
 /* PyPath — installs a Firestore remote adapter into ProgressStore whenever a
    user is signed in, and merges local state into remote on sign-in. */
-import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
+import { db } from '/assets/js/firebase-config.js';
+import { importFirebaseModule } from '/assets/js/firebase-sdk.js';
 import { currentTeacher, loadFor } from '/assets/js/class-state.js';
 import { loadProfile } from '/assets/js/profile.js';
 import { summarizeUnitTests, UNIT_TESTS_KEY } from '/assets/js/unit-test-summary.js';
 
-const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const { doc, getDoc, setDoc, collection, getDocs, deleteDoc, query, where } =
-  await import(`${BASE}/firebase-firestore.js`);
+  (await importFirebaseModule('firebase-firestore.js')) || {};
 
 const KEYS = window.PyPathKeys;
 const MERGE = window.PyPathMerge;

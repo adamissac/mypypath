@@ -16,19 +16,19 @@
  * classes are therefore found through an index of ids on their own user
  * document and fetched one get at a time, never by querying the collection.
  */
-import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
+import { db } from '/assets/js/firebase-config.js';
+import { importFirebaseModule } from '/assets/js/firebase-sdk.js';
 import { loadProfile, invalidateProfile } from '/assets/js/profile.js';
 /* Dev-only, off unless ?readcount=1. Every call below is a no-op returning its
    argument until it is switched on -- see the header of read-counter.js for why
    this file is instrumented at all. */
 import { counted, delivery } from '/assets/js/read-counter.js';
 
-const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 const {
   doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, collection, query, where,
   orderBy, limit, writeBatch, serverTimestamp, arrayUnion, arrayRemove,
   onSnapshot,
-} = await import(`${BASE}/firebase-firestore.js`);
+} = (await importFirebaseModule('firebase-firestore.js')) || {};
 
 const ROLES = window.PyPathRoles;
 const KEYS = window.PyPathKeys;
