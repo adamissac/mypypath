@@ -155,6 +155,40 @@ describe('startup', () => {
     expect(window.ProgressStore.applyRemote).not.toHaveBeenCalled();
   });
 
+  it('a save version with no registered migration path is refused, not misread as current', async () => {
+    // MIGRATIONS is empty today (schemaVersion 1 is the only shape this
+    // format has had), so any version below current has nowhere to go yet.
+    // This is the fail-safe this seam exists for: a lower version must
+    // never be silently treated as if it were already current-shaped.
+    const old = envelope({ x: { content: 'y', updatedAt: 1 } }, { schemaVersion: 0 });
+    installMocks({
+      invokeImpl: (cmd) => {
+        if (cmd === 'get_last_save_path') return Promise.resolve('/data/old.json');
+        if (cmd === 'load_progress') return Promise.resolve(old);
+        return Promise.resolve(null);
+      },
+    });
+    await load();
+
+    expect(window.PyPathDesktop.currentSaveInfo().error).toMatch(/too old/i);
+    expect(window.ProgressStore.applyRemote).not.toHaveBeenCalled();
+  });
+
+  it('the current schema version loads straight through with no migration error', async () => {
+    const current = envelope({ x: { content: 'y', updatedAt: 1 } });
+    installMocks({
+      invokeImpl: (cmd) => {
+        if (cmd === 'get_last_save_path') return Promise.resolve('/data/current.json');
+        if (cmd === 'load_progress') return Promise.resolve(current);
+        return Promise.resolve(null);
+      },
+    });
+    await load();
+
+    expect(window.PyPathDesktop.currentSaveInfo().error).toBeNull();
+    expect(window.ProgressStore.applyRemote).toHaveBeenCalledWith('x', 'y', 1);
+  });
+
   it('a file with no entries object at all is rejected as invalid, not treated as empty', async () => {
     installMocks({
       invokeImpl: (cmd) => {

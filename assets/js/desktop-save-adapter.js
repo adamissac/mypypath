@@ -92,6 +92,33 @@
     }, delay);
   }
 
+  // Each entry upgrades a parsed envelope from its key's version to key+1,
+  // returning the upgraded envelope with schemaVersion bumped to match.
+  // Empty today: schemaVersion 1 is the only shape this save format has ever
+  // had, so there is nothing yet to upgrade from. This is the seam a future
+  // format change hangs a migration off of — not present-day dead code, but
+  // also not exercised by anything currently on disk. Applied in a loop
+  // rather than a single step, so a save several versions behind (once that
+  // is possible) runs every intermediate step in order instead of needing a
+  // combinatorial function per (from, to) pair.
+  var MIGRATIONS = {};
+
+  function migrateEnvelope(data) {
+    var version = data.schemaVersion;
+    while (version < SCHEMA_VERSION) {
+      var step = MIGRATIONS[version];
+      if (!step) {
+        throw new Error(
+          'This save (version ' + version + ') is too old for this version of ' +
+          'PyPath to open — there is no upgrade path to version ' + SCHEMA_VERSION + '.'
+        );
+      }
+      data = step(data);
+      version = data.schemaVersion;
+    }
+    return data;
+  }
+
   function parseEnvelope(raw) {
     var data;
     try {
@@ -105,7 +132,7 @@
     if (typeof data.schemaVersion !== 'number' || data.schemaVersion > SCHEMA_VERSION) {
       throw new Error('That save was made by a newer version of PyPath. Update the app to open it.');
     }
-    return data;
+    return migrateEnvelope(data);
   }
 
   // Unconditional per key, not merged against what's already local: opening a
