@@ -145,16 +145,27 @@ progress.
   `assets/img/apple-touch-icon.png`; a higher-resolution source (ideally
   1024×1024) would produce a sharper icon, particularly on macOS's larger
   Dock sizes and Windows' jumbo tile.
-- **Offline behavior was verified via**: a static audit confirming
-  `desktop-dist/` contains no remaining external CDN references for
-  Pyodide/CodeMirror/fonts, an automated test asserting Pyodide's `<script>`
-  source resolves to the local vendored copy inside Tauri
-  (`tests/desktop-pyodide-url.test.js`), and a live `tauri dev` run whose
-  network log showed zero external requests. It was **not** verified by
-  physically disconnecting the network during a full click-through — do that
-  once (e.g. turn off Wi-Fi, then open a few lessons and run some code)
-  before relying on this for a real offline scenario like a flight or a
-  school with a restrictive content filter.
+- **Offline behavior, what was actually verified**: a static audit
+  confirming `desktop-dist/` contains no remaining external CDN references
+  for Pyodide/CodeMirror/fonts; an automated test asserting Pyodide's
+  `<script>` source resolves to the local vendored copy inside Tauri
+  (`tests/desktop-pyodide-url.test.js`); a live `tauri dev` run whose
+  network log showed zero external requests; and — the strongest check —
+  loading the staged `desktop-dist/` build in a real browser with the
+  Tauri flag forced on and running actual Python: `sum(range(1, 11))`
+  (→ `55`), then `import numpy as np; import pandas as pd` and building a
+  DataFrame from a numpy array (→ correct results, console confirming
+  "Loaded six, python-dateutil, pytz, pandas"). Every one of the 58 asset
+  requests that page made went to `localhost`; none went to jsdelivr,
+  cdnjs, or Google Fonts. That covers the interpreter, the WASM runtime,
+  and the full numpy/pandas dependency chain actually booting and running
+  from the vendored files — not just the URL being set correctly. What
+  wasn't done: running the actual packaged native app with the machine's
+  Wi-Fi physically off. Worth doing once before relying on this for a real
+  offline scenario like a flight or a school with a restrictive content
+  filter, but the remaining gap between what was tested and that is thin —
+  the native shell only changes how the page is hosted, not what it
+  requests.
 
 ## Layout
 
