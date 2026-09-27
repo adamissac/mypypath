@@ -1,7 +1,16 @@
 (function () {
   'use strict';
 
-  var PYODIDE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js';
+  // The desktop build vendors this distribution locally (see
+  // scripts/build-desktop-dist.mjs) so Run/Check work with no network. Inside
+  // Tauri's webview `window.__TAURI_INTERNALS__` exists; in a normal browser
+  // it never does, so the website's own behavior — load from the CDN — is
+  // unchanged. Pyodide's bootstrap derives indexURL (and therefore where
+  // loadPackage() fetches numpy/pandas from) from this script's own src, so
+  // pointing it at the vendored copy is the only change needed here.
+  var PYODIDE_URL = (typeof window !== 'undefined' && window.__TAURI_INTERNALS__)
+    ? '/assets/vendor/pyodide/pyodide.js'
+    : 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js';
   var STDOUT_SETUP = [
     'from io import StringIO',
     'import sys',
