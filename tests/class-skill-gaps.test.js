@@ -59,7 +59,9 @@ describe('classSkillGaps', () => {
     // SDK); compiled with its imports stripped, as tests/roster-summary.test.js does.
     const body = fs.readFileSync('assets/js/roster-summary.js', 'utf8')
       .replace(/^import \{[^}]*\} from '\/assets\/js\/firebase-config\.js';$/m, '')
+      .replace(/^import \{[^}]*\} from '\/assets\/js\/firebase-sdk\.js';$/m, '')
       .replace(/^const BASE = [\s\S]*?firebase-firestore\.js`\);$/m, '')
+      .replace(/^const \{[\s\S]*?\|\| \{\};$/m, '')
       .replace(/^import \{ counted \} from '\/assets\/js\/read-counter\.js';$/m, '')
       .replace(/\bexport (async function|function|const)/g, '$1');
     const RS = new Function('db', 'doc', 'getDoc', 'setDoc', 'serverTimestamp', 'setTimeout', 'clearTimeout',

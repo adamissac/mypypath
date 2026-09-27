@@ -26,7 +26,9 @@ beforeAll(() => {
   const src = fs.readFileSync('assets/js/roster-summary.js', 'utf8');
   const body = src
     .replace(/^import \{[^}]*\} from '\/assets\/js\/firebase-config\.js';$/m, '')
+    .replace(/^import \{[^}]*\} from '\/assets\/js\/firebase-sdk\.js';$/m, '')
     .replace(/^const BASE = [\s\S]*?firebase-firestore\.js`\);$/m, '')
+    .replace(/^const \{[\s\S]*?\|\| \{\};$/m, '')
     .replace(/^import \{ counted \} from '\/assets\/js\/read-counter\.js';$/m, '')
     .replace(/\bexport (async function|function|const)/g, '$1');
   RS = new Function(
