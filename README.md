@@ -159,7 +159,14 @@ progress.
   requests that page made went to `localhost`; none went to jsdelivr,
   cdnjs, or Google Fonts. That covers the interpreter, the WASM runtime,
   and the full numpy/pandas dependency chain actually booting and running
-  from the vendored files — not just the URL being set correctly. What
+  from the vendored files — not just the URL being set correctly.
+  Separately, opening `sandbox.html` itself (CodeMirror, fonts, every
+  first-party script) produced 114 requests: every local asset — including
+  CodeMirror's JS/CSS/Python mode and both font families — went to
+  `localhost`, and the *only* external requests in the entire page load
+  were the three Firebase SDK modules (`firebase-app.js`,
+  `firebase-auth.js`, `firebase-firestore.js`) — exactly the
+  intentionally-optional pieces per the approved plan, nothing else. What
   wasn't done: running the actual packaged native app with the machine's
   Wi-Fi physically off. Worth doing once before relying on this for a real
   offline scenario like a flight or a school with a restrictive content
