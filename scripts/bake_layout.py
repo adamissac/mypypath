@@ -72,6 +72,7 @@ FOOTER = """    <footer class="site-footer">
             <ul class="footer-links">
               <li><a href="/curriculum.html" class="route">Curriculum</a></li>
               <li><a href="/sandbox.html" class="route">Sandbox</a></li>
+              <li><a href="/download.html" class="route">Desktop app</a></li>
               <li><a href="/settings.html" class="route">Settings</a></li>
             </ul>
           </div>
@@ -223,9 +224,14 @@ def header_html(path: Path, show_progress: bool) -> str:
 
 # Directories that are not part of the site. node_modules matters most: baking
 # into it rewrites dependency files -- it injected the site header into
-# firebase-tools' login templates before this guard existed.
+# firebase-tools' login templates before this guard existed. src-tauri is the
+# desktop app's Rust project; its gitignored target/ build output embeds
+# binary asset blobs under names ending in .html (Tauri's codegen), which
+# aren't real markup at all and aren't even valid UTF-8 -- rglob walked
+# straight into one and crashed the whole bake the first time a local Rust
+# build existed on disk.
 SKIP_DIRS = {'.git', '.claude', 'node_modules', 'lesson-format-kit', 'REVIEW',
-             'docs', 'tests'}
+             'docs', 'tests', 'src-tauri', 'desktop-dist'}
 
 
 def skipped(path: Path) -> bool:
