@@ -6,8 +6,20 @@ name: Desktop build check
 # it's cheap; this runs when someone actually wants to verify the desktop
 # app still builds on all three platforms, not automatically on every
 # website-only commit.
+#
+# publish_release defaults to false so a routine "does it still build" run
+# never accidentally publishes anything — it's an explicit opt-in for the
+# run that's actually meant to cut a release.
 on:
   workflow_dispatch:
+    inputs:
+      publish_release:
+        description: "Attach the built installers to a GitHub Release"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -46,3 +58,53 @@ jobs:
         run: cargo test --manifest-path src-tauri/Cargo.toml --lib
       - name: Build desktop app
         run: npm run desktop:build
+      # Only the actual installers, not the unpacked .app/.exe next to them —
+      # those are what a user downloads, this doesn't need to double-ship
+      # the macOS .app that's already inside the .dmg.
+      - name: Collect installers
+        shell: bash
+        run: |
+          mkdir -p dist-artifacts
+          find src-tauri/target/release/bundle -maxdepth 2 -type f \
+            \( -name '*.dmg' -o -name '*.msi' -o -name '*.exe' \
+               -o -name '*.deb' -o -name '*.rpm' -o -name '*.AppImage' \) \
+            -exec cp {} dist-artifacts/ \;
+          ls -la dist-artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: installers-${{ matrix.os }}
+          path: dist-artifacts/*
+          if-no-files-found: error
+
+  release:
+    needs: build
+    if: ${{ inputs.publish_release }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: installers-*
+          merge-multiple: true
+      - name: Read version from tauri.conf.json
+        id: version
+        run: echo "tag=v$(jq -r .version src-tauri/tauri.conf.json)" >> "$GITHUB_OUTPUT"
+      # prerelease: this is the first build and it's unsigned (no Apple/
+      # Microsoft developer certificate — those cost money). Marking it
+      # prerelease is the honest signal for that, not a comment on stability.
+      #
+      # Notes live in their own committed file (.github/desktop-release-notes.md)
+      # rather than inline in --notes: a multi-line value embedded directly in
+      # a YAML block scalar has to stay indented to the block's own level on
+      # every line, or YAML stops treating it as part of the block. A real
+      # file has no such rule, and is easier to review/edit on its own too.
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.version.outputs.tag }}" artifacts/* \
+            --repo "${{ github.repository }}" \
+            --title "PyPath Desktop ${{ steps.version.outputs.tag }}" \
+            --prerelease \
+            --notes-file .github/desktop-release-notes.md
