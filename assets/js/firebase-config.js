@@ -2,29 +2,42 @@
    This config is public by design. Access control lives in firestore.rules
    and in the Firebase console's Authorized Domains list. */
 
-export const SDK_VERSION = '11.1.0';
+import { SDK_VERSION, importFirebaseModule } from '/assets/js/firebase-sdk.js';
+export { SDK_VERSION };
 
-const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
+const appMod = await importFirebaseModule('firebase-app.js');
+const authMod = await importFirebaseModule('firebase-auth.js');
+const firestoreMod = await importFirebaseModule('firebase-firestore.js');
 
-const { initializeApp } = await import(`${BASE}/firebase-app.js`);
-const { getAuth, connectAuthEmulator } = await import(`${BASE}/firebase-auth.js`);
-const {
-  initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
-  connectFirestoreEmulator,
-} = await import(`${BASE}/firebase-firestore.js`);
+// Both start null — meaning "no Firebase this page load" — and stay null if
+// the SDK could not be fetched at all (offline, CDN blocked). Every file that
+// imports these already treats a Firestore/Auth call failing as "stay on the
+// local copy", so a caller doing `if (db) ...` or letting `doc(db, ...)` throw
+// into its own existing catch behaves the same as a call that reached the
+// server and got a network error.
+export let auth = null;
+export let db = null;
 
-const firebaseConfig = {
-  apiKey: 'AIzaSyD4amHpNmUicOLngTlbW9gu0oU4FeO4dxc',
-  authDomain: 'mypypath.firebaseapp.com',
-  projectId: 'mypypath',
-  storageBucket: 'mypypath.firebasestorage.app',
-  messagingSenderId: '600070287432',
-  appId: '1:600070287432:web:02568d63a8253ccb1ea87d',
-};
+if (appMod && authMod && firestoreMod) {
+  const { initializeApp } = appMod;
+  const { getAuth, connectAuthEmulator } = authMod;
+  const {
+    initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+    connectFirestoreEmulator,
+  } = firestoreMod;
 
-const app = initializeApp(firebaseConfig);
+  const firebaseConfig = {
+    apiKey: 'AIzaSyD4amHpNmUicOLngTlbW9gu0oU4FeO4dxc',
+    authDomain: 'mypypath.firebaseapp.com',
+    projectId: 'mypypath',
+    storageBucket: 'mypypath.firebasestorage.app',
+    messagingSenderId: '600070287432',
+    appId: '1:600070287432:web:02568d63a8253ccb1ea87d',
+  };
 
-export const auth = getAuth(app);
+  const app = initializeApp(firebaseConfig);
+
+  auth = getAuth(app);
 
 /* Offline persistence: a signed-in learner who loses connectivity keeps
    working and syncs on reconnect.
@@ -54,16 +67,17 @@ export const auth = getAuth(app);
    persistentMultipleTabManager() shares one IndexedDB-backed cache across
    every tab of the origin, so opening a second tab no longer costs the first
    one its persistence. It takes no arguments in this SDK version. */
-export const db = initializeFirestore(app, {
-  localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
-});
+  db = initializeFirestore(app, {
+    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+  });
 
-// Local development talks to the emulators, never to the live project, so a
-// test sign-up never creates a real user or writes real documents. Ports match
-// firebase.json.
-const LOCAL_HOSTS = ['localhost', '127.0.0.1', '[::1]'];
-if (LOCAL_HOSTS.includes(location.hostname)) {
-  connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
-  connectFirestoreEmulator(db, '127.0.0.1', 8081);
-  console.info('[pypath] Firebase emulators connected (auth 9099, firestore 8081)');
+  // Local development talks to the emulators, never to the live project, so a
+  // test sign-up never creates a real user or writes real documents. Ports match
+  // firebase.json.
+  const LOCAL_HOSTS = ['localhost', '127.0.0.1', '[::1]'];
+  if (LOCAL_HOSTS.includes(location.hostname)) {
+    connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
+    connectFirestoreEmulator(db, '127.0.0.1', 8081);
+    console.info('[pypath] Firebase emulators connected (auth 9099, firestore 8081)');
+  }
 }

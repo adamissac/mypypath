@@ -1,9 +1,10 @@
 /* PyPath — Firebase Auth wrapper. Dispatches `pypath:auth` on document so no
    UI file has to import Firebase. */
-import { auth, SDK_VERSION } from '/assets/js/firebase-config.js';
+import { auth } from '/assets/js/firebase-config.js';
+import { importFirebaseModule } from '/assets/js/firebase-sdk.js';
 import { shouldRejectNewUser } from '/assets/js/auth-rules.js';
 
-const BASE = `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
+const authMod = await importFirebaseModule('firebase-auth.js') || {};
 const {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -16,7 +17,7 @@ const {
   sendEmailVerification,
   signOut,
   onAuthStateChanged,
-} = await import(`${BASE}/firebase-auth.js`);
+} = authMod;
 
 let user = null;
 // Set while a provider popup is being checked for the create-account case.
@@ -114,14 +115,27 @@ function handleAuth(next) {
   }
 }
 
-onAuthStateChanged(auth, (next) => {
-  user = next;
-  // A provider popup is still being validated. Announcing now would let sync.js
-  // write a profile -- email, display name, photo -- for an account that is
-  // about to be deleted, leaving that person's details behind under a dead uid.
-  if (validatingProvider) return;
-  handleAuth(next);
-});
+// auth and onAuthStateChanged are both null/undefined together: firebase-config.js
+// only reaches getAuth() if the SDK import it needs succeeded, and this file's
+// own import of firebase-auth.js is the same fetch, so one failing without the
+// other would mean the CDN answered inconsistently within the same page load.
+// Either way, no listener means no account this session — which is already the
+// state everything else on the page renders by default (see the baked header:
+// "Sign in" visible, avatar hidden) — so callers get an explicit, immediate
+// signal rather than silence while the site waits for an event that would
+// otherwise never come.
+if (auth && onAuthStateChanged) {
+  onAuthStateChanged(auth, (next) => {
+    user = next;
+    // A provider popup is still being validated. Announcing now would let sync.js
+    // write a profile -- email, display name, photo -- for an account that is
+    // about to be deleted, leaving that person's details behind under a dead uid.
+    if (validatingProvider) return;
+    handleAuth(next);
+  });
+} else {
+  handleAuth(null);
+}
 
 // A failed auth bootstrap must never take a lesson page down.
 window.addEventListener('unhandledrejection', (e) => {
