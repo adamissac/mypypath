@@ -37,11 +37,11 @@ beforeEach(async () => {
     const db = ctx.firestore();
     await setDoc(doc(db, `classes/${CLASS_A}`), {
       name: 'Period 1', joinCode: CODE_A, teacherUids: ['teacherA'],
-      createdAt: new Date(), archived: false, schemaVersion: 1,
+      timezone: 'America/New_York', createdAt: new Date(), archived: false, schemaVersion: 1,
     });
     await setDoc(doc(db, `classes/${CLASS_B}`), {
       name: 'Period 2', joinCode: CODE_B, teacherUids: ['teacherB'],
-      createdAt: new Date(), archived: false, schemaVersion: 1,
+      timezone: 'America/New_York', createdAt: new Date(), archived: false, schemaVersion: 1,
     });
     await setDoc(doc(db, `joinCodes/${CODE_A}`), {
       teacherUid: 'teacherA', classId: CLASS_A, active: true, createdAt: new Date(),
@@ -536,6 +536,15 @@ describe('assignments', () => {
   it('lets the class teacher create one', async () => {
     await assertSucceeds(
       setDoc(doc(as('teacherA'), `classes/${CLASS_A}/assignments/a2`), assignmentDoc())
+    );
+  });
+
+  /* createAssignment() opens selected units first. The class fixture has the
+     timezone that createClass() writes, so this pins the preceding write as
+     well as the assignment document itself. */
+  it('lets the class teacher open assigned units before creating work', async () => {
+    await assertSucceeds(
+      updateDoc(doc(as('teacherA'), `classes/${CLASS_A}`), { assignmentUnlocks: [3] })
     );
   });
 
