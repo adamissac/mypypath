@@ -81,6 +81,17 @@ service cloud.firestore {
           && request.resource.data.content.size() <= 102400;
       }
     }
+    // Discoverable invitations without access to a colleague's profile.
+    // getAfter also validates an atomic invitation + teacher-list update.
+    match /users/{uid}/teaching/{classId} {
+      allow read: if isOwner(uid);
+      allow create, update: if isTeacherOf(classId)
+        && uid in getAfter(/databases/$(database)/documents/classes/$(classId)).data.teacherUids
+        && request.resource.data.keys().hasOnly(['classId'])
+        && request.resource.data.classId == classId;
+      allow delete: if isOwner(uid) || isTeacherOf(classId);
+    }
+
     // What a teacher is allowed to see about their students, and nothing else.
     //
     // This collection exists so that "a teacher can see their class" does not
@@ -288,6 +299,11 @@ service cloud.firestore {
       allow update: if isTeacherOf(classId)
         && request.auth.uid in request.resource.data.teacherUids
         && request.resource.data.createdAt == resource.data.createdAt
+        // Updates validate the entire resulting document, including the
+        // timezone stored at creation, even when only another field changes.
+        && (!('timezone' in request.resource.data)
+            || (request.resource.data.timezone is string
+                && request.resource.data.timezone.size() <= 64))
         && (!('lockMode' in request.resource.data)
             || request.resource.data.lockMode in ['sequential', 'manual', 'free'])
         && (!('showSolutions' in request.resource.data)

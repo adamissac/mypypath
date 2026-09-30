@@ -13,7 +13,7 @@ import { execFileSync } from 'node:child_process';
    NUL check below is the one that actually catches it. */
 
 const ROOT = path.resolve('.');
-const BINARY = /\.(png|jpe?g|gif|webp|ico|woff2?|ttf|otf|pdf|zip|mp4|DS_Store)$/i;
+const BINARY = /\.(png|jpe?g|gif|webp|ico|icns|woff2?|ttf|otf|pdf|zip|mp4|DS_Store)$/i;
 
 function textFilesInRoot() {
   return fs

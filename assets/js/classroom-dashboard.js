@@ -8,7 +8,7 @@ import { currentUser } from '/assets/js/auth.js';
 import { readProfile } from '/assets/js/class-join.js';
 import { readSummary, eventsFromSummary } from '/assets/js/roster-summary.js';
 import {
-  classesFor, createClass, readRoster, readEvents, readOverrides, addCoTeacher,
+  classesFor, createClass, readRoster, readEvents, readOverrides, addCoTeacher, removeCoTeacher,
   setArchived, purgeArchivedClass, createAssignment, readAssignments,
   deleteAssignment, setLockPolicy, watchRoster, readCertificates,
   setCertificateDecision, setShowSolutions, setMaxTestAttempts,
@@ -459,10 +459,21 @@ async function removeAssignment(assignment) {
   const ok = window.confirm('Remove "' + assignment.title + '"? Students lose the '
     + 'due date, and any unit it was keeping open goes back to the access setting.');
   if (!ok) return;
-  await deleteAssignment(activeClassId, assignment.id).catch(() => {});
-  assignments = await readAssignments(activeClassId).catch(() => []);
-  paintAssignments();
-  paintGrid();
+  const error = $('[data-cr-assign-list-error]');
+  show(error, false);
+  const classId = activeClassId;
+  try {
+    await deleteAssignment(classId, assignment.id);
+    if (classId !== activeClassId) return;
+    assignments = await readAssignments(classId);
+    paintAssignments();
+    paintGrid();
+  } catch (err) {
+    if (error && classId === activeClassId) {
+      error.textContent = 'Could not remove that assignment. Check your connection and try again.';
+      show(error, true);
+    }
+  }
 }
 
 function paintAssignmentPicker() {
@@ -573,7 +584,7 @@ function paintAccess() {
   show(host, mode === 'manual');
   if (host.children.length) {
     $$('[data-cr-access-unit]', host).forEach((box) => {
-      box.checked = open.map(Number).indexOf(Number(box.value)) !== -1;
+      box.checked = Number(box.value) === 1 || open.map(Number).indexOf(Number(box.value)) !== -1;
     });
     return;
   }
@@ -1518,6 +1529,28 @@ function paintTeachers() {
   for (const uid of klass.teacherUids || []) {
     const item = el('li', 'cr-teacher');
     item.textContent = uid === (user && user.uid) ? uid + ' (you)' : uid;
+    if (uid !== (user && user.uid)) {
+      const remove = el('button', 'btn btn-ghost btn-small', 'Remove co-teacher');
+      remove.type = 'button';
+      remove.setAttribute('aria-label', 'Remove co-teacher ' + uid);
+      remove.addEventListener('click', async () => {
+        const error = $('[data-cr-share-error]');
+        show(error, false);
+        remove.disabled = true;
+        try {
+          await removeCoTeacher(klass.id, uid);
+          klass.teacherUids = klass.teacherUids.filter((id) => id !== uid);
+          paintTeachers();
+        } catch (err) {
+          remove.disabled = false;
+          if (error) {
+            error.textContent = 'Could not remove that co-teacher. Please try again.';
+            show(error, true);
+          }
+        }
+      });
+      item.appendChild(remove);
+    }
     list.appendChild(item);
   }
 
@@ -1842,6 +1875,8 @@ function wire() {
   if (assignForm) {
     assignForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const button = assignForm.querySelector('button[type="submit"]');
+      if (button && button.disabled) return;
       const error = $('[data-cr-assign-error]');
       show(error, false);
 
@@ -1860,6 +1895,7 @@ function wire() {
       const lessonPaths = $$('[data-cr-assign-lesson]:checked').map((b) => b.value);
       const quiz = readQuizDraft();
 
+      if (button) button.disabled = true;
       try {
         await createAssignment(activeClassId, { title, dueAt: due, units, lessonPaths, quiz });
         assignments = await readAssignments(activeClassId).catch(() => []);
@@ -1875,6 +1911,8 @@ function wire() {
           error.textContent = err && err.message ? err.message : 'Could not set that work.';
           show(error, true);
         }
+      } finally {
+        if (button) button.disabled = false;
       }
     });
   }
@@ -2018,10 +2056,22 @@ function wire() {
     archive.addEventListener('click', async () => {
       const klass = classes.filter((c) => c.id === activeClassId)[0];
       if (!klass) return;
-      await setArchived(activeClassId, !klass.archived).catch(() => {});
-      const user = currentUser();
-      if (user) classes = await classesFor(user.uid);
-      paintAll();
+      const note = $('[data-cr-purge-note]');
+      show(note, false);
+      archive.disabled = true;
+      try {
+        await setArchived(klass.id, !klass.archived);
+        const user = currentUser();
+        if (user) classes = await classesFor(user.uid);
+        paintAll();
+      } catch (err) {
+        if (note) {
+          note.textContent = 'Could not change the archive setting. Please try again.';
+          show(note, true);
+        }
+      } finally {
+        archive.disabled = false;
+      }
     });
   }
 
@@ -2102,11 +2152,15 @@ function wire() {
       try {
         const made = await createClass(user.uid, name);
         classes = await classesFor(user.uid);
+        stopWatchingRoster();
         activeClassId = made.classId;
         students = await loadClassData(activeClassId);
+        assignments = await readAssignments(activeClassId);
+        scopeAssignment = null;
         show($('[data-cr-view="empty"]'), false);
         show($('[data-cr-view="class"]'), true);
         paintAll();
+        watchActiveRoster(activeClassId);
       } catch (err) {
         if (error) {
           error.textContent = 'Could not create the class. Please try again.';

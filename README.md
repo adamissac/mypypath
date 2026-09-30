@@ -23,6 +23,7 @@ The site is static, but accounts, progress sync, and the test suite need Node:
 npm install                 # test tooling + firebase-tools
 npm test                    # unit tests (vitest, jsdom)
 npm run test:rules          # Firestore rules tests (starts the emulator; needs Java)
+npm run test:teacher        # real teacher/student browser workflows (needs Java, Python 3 and Playwright Chromium)
 
 # Auth + Firestore emulators for working on account features locally
 npx firebase emulators:start --only auth,firestore

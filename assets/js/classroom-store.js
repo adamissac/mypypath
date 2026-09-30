@@ -158,9 +158,13 @@ export async function readClass(classId) {
    classes, shown as a teacher with none. profile.js has the long version. */
 export async function classesFor(uid) {
   const profile = await loadProfile(uid).catch(() => ({}));
-  const ids = profile.classIds || [];
+  // Shared classes have a separate index: a teacher must never write into
+  // their colleague's private profile merely to make an invitation visible.
+  const shared = counted(await getDocs(collection(db, `users/${uid}/teaching`)), 'sharedClasses');
+  const ids = Array.from(new Set([...(profile.classIds || []), ...shared.docs.map((d) => d.id)]));
   const found = await Promise.all(ids.map((id) => readClass(id).catch(() => null)));
-  return found.filter(Boolean).sort((a, b) => String(a.name).localeCompare(String(b.name)));
+  return found.filter((c) => c && (c.teacherUids || []).includes(uid))
+    .sort((a, b) => String(a.name).localeCompare(String(b.name)));
 }
 
 export async function renameClass(classId, name) {
@@ -177,20 +181,21 @@ export async function setArchived(classId, archived) {
    public URL. An unguessable link is a credential that cannot be revoked and
    travels wherever it is forwarded; a uid can be removed again. */
 export async function addCoTeacher(classId, uid) {
-  await updateDoc(doc(db, `classes/${classId}`), { teacherUids: arrayUnion(uid) });
-  await setDoc(
-    doc(db, `users/${uid}`),
-    { classIds: arrayUnion(classId), updatedAt: Date.now() },
-    { merge: true }
-  ).catch(() => {
-    // Their own user document is theirs to write, not ours. If this is denied
-    // the class is still shared; they reach it through the code on the card.
-  });
+  if (!uid || uid.includes('/') || uid.length > 128) {
+    throw new ClassroomError('invalid-account', 'Enter a valid co-teacher account id.');
+  }
+  const batch = writeBatch(db);
+  batch.update(doc(db, `classes/${classId}`), { teacherUids: arrayUnion(uid) });
+  batch.set(doc(db, `users/${uid}/teaching/${classId}`), { classId });
+  await batch.commit();
   invalidateProfile(uid);
 }
 
 export async function removeCoTeacher(classId, uid) {
-  await updateDoc(doc(db, `classes/${classId}`), { teacherUids: arrayRemove(uid) });
+  const batch = writeBatch(db);
+  batch.update(doc(db, `classes/${classId}`), { teacherUids: arrayRemove(uid) });
+  batch.delete(doc(db, `users/${uid}/teaching/${classId}`));
+  await batch.commit();
 }
 
 /* ----------------------------------------------------------- assignments */
@@ -1094,11 +1099,26 @@ export async function purgeArchivedClass(classId) {
     throw new ClassroomError('not-archived', 'Archive the class before purging it.');
   }
 
-  const counts = { students: 0, events: 0, progress: 0 };
+  const counts = { students: 0, events: 0, progress: 0, summary: 0, overrides: 0 };
   const roster = await readRoster(classId);
 
+  // Refuse before deleting anything if any student's activity is still in
+  // the retention window. Swallowing a denied batch used to count it as
+  // deleted and remove its roster row, stranding the surviving records.
+  const cutoff = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000);
   for (const row of roster) {
-    for (const sub of ['events', 'progress']) {
+    const recent = counted(await getDocs(query(
+      collection(db, `classes/${classId}/roster/${row.uid}/events`),
+      where('at', '>=', cutoff), limit(1)
+    )), 'purgeEligibility');
+    if (!recent.empty) {
+      throw new ClassroomError('retention-window',
+        'This class still has activity from the past year. Keep it archived until that activity is a year old.');
+    }
+  }
+
+  for (const row of roster) {
+    for (const sub of ['events', 'progress', 'summary', 'overrides']) {
       for (;;) {
         const snap = await getDocs(
           query(collection(db, `classes/${classId}/roster/${row.uid}/${sub}`), limit(400))
@@ -1106,16 +1126,15 @@ export async function purgeArchivedClass(classId) {
         if (snap.empty) break;
         const batch = writeBatch(db);
         snap.docs.forEach((d) => batch.delete(d.ref));
-        // A partial failure leaves the rest to the next run rather than
-        // aborting the whole purge.
-        await batch.commit().catch(() => {});
+        // Stop on failure and keep the roster row available for a retry.
+        await batch.commit();
         counts[sub] += snap.size;
         if (snap.size < 400) break;
       }
     }
     // The roster row goes last, so a failure above leaves the student still
     // reachable to try again rather than orphaning their records.
-    await deleteDoc(doc(db, `classes/${classId}/roster/${row.uid}`)).catch(() => {});
+    await deleteDoc(doc(db, `classes/${classId}/roster/${row.uid}`));
     counts.students += 1;
   }
 
