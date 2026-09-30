@@ -74,7 +74,7 @@ let parts = {};
    which one ran does not change what is being asserted. */
 const UNZIP = ['unzip', 'tar'].find((exe) => {
   try {
-    execFileSync(exe, ['--version'], { stdio: 'ignore' });
+    execFileSync(exe, [exe === 'unzip' ? '-v' : '--version'], { stdio: 'ignore' });
     return true;
   } catch {
     return false;
