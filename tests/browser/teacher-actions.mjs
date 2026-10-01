@@ -222,6 +222,49 @@ try {
     await t.locator('[data-cr-explain]').waitFor({ state: 'visible' });
     await t.locator('[data-cr-explain-close]').click();
   });
+  await check('teacher forms, roster, grid and student panel fit phone through wide desktop', async () => {
+    const opened = await t.locator('details').evaluateAll(nodes => nodes.map(n => n.open));
+    await t.locator('details').evaluateAll(nodes => nodes.forEach(n => { n.open = true; }));
+    async function fits(label) {
+      const dimensions = await t.evaluate(() => ({
+        viewport: document.documentElement.clientWidth,
+        page: document.documentElement.scrollWidth,
+        controls: [...document.querySelectorAll('input:not([type="hidden"]), select, textarea, button')]
+          .filter(el => {
+            const r = el.getBoundingClientRect();
+            if (!r.width || !r.height || el.closest('[hidden], [aria-hidden="true"]')) return false;
+            // Grid cells deliberately scroll inside their table container.
+            if (el.closest('.cr-tablewrap')) return false;
+            return r.left < -1 || r.right > document.documentElement.clientWidth + 1;
+          }).map(el => el.id || el.textContent.trim().slice(0, 40)),
+      }));
+      assert(dimensions.page <= dimensions.viewport + 1, `${label}: page ${dimensions.page}px exceeds ${dimensions.viewport}px`);
+      assert.deepEqual(dimensions.controls, [], `${label}: controls outside screen`);
+    }
+    try {
+      for (const [width, height] of [[320,568], [390,844], [768,1024], [844,390], [1024,768], [1440,900], [1920,1080]]) {
+        await t.setViewportSize({ width, height });
+        await fits(`roster at ${width}`);
+        await t.locator('[data-account-avatar]').click();
+        await t.locator('[data-account-panel]').waitFor({ state: 'visible' });
+        await fits(`account menu at ${width}`);
+        for (const item of await t.locator('[data-account-panel] [role="menuitem"]').all()) {
+          if (await item.isVisible()) await item.click({ trial: true });
+        }
+        await t.locator('[data-account-avatar]').click();
+        await t.locator('input[name="cr-view"][value="grid"]').locator('..').click();
+        await fits(`grid at ${width}`);
+        await t.locator('input[name="cr-view"][value="roster"]').locator('..').click();
+        await t.locator('[data-cr-student-pick]').selectOption(student.uid);
+        await t.locator('[data-sd-root][aria-busy="false"]').waitFor();
+        await fits(`student panel at ${width}`);
+        await t.locator('[data-sd-close]').click();
+      }
+    } finally {
+      await t.setViewportSize({ width: 1280, height: 720 });
+      await t.locator('details').evaluateAll((nodes, states) => nodes.forEach((n, i) => { n.open = states[i]; }), opened);
+    }
+  });
   await check('copy code, CSV, Excel, weekly summary and print controls work', async () => {
     await t.locator('[data-cr-copy]').click();
     assert.equal(await t.evaluate(() => navigator.clipboard.readText()), room.joinCode);

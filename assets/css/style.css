@@ -1251,14 +1251,19 @@ pre code { display: block; overflow-x: auto; }
   .container,
   .section,
   main,
-  header,
   footer,
-  .site-header,
   .site-footer {
     max-width: 100vw !important;
     overflow-x: hidden !important;
   }
   
+  /* Header popovers must extend beyond the bar. Generic container clipping
+     otherwise hides the mobile menu and the signed-in account panel. */
+  .site-header,
+  .site-header .container {
+    overflow: visible !important;
+  }
+
   /* Prevent fixed/absolute elements from creating invisible clickable areas */
   body::before,
   body::after {

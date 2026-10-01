@@ -66,13 +66,16 @@ the site. The two cascade traps recorded in `CLAUDE.md` are what that looks like
 when it goes wrong: a rule that is correct and silently inert because another
 file loads after it, invisible until something is measured.
 
-The measured state is good — `npm run test:mobile` reports **0 of 28**
-page/viewport combinations with a problem. So the valuable move is to stop the
+The responsive browser audit covers 17 page shapes at seven sizes from
+320px to 1920px, including a short landscape viewport. It measures overflow,
+clipped home/header content, tap targets, text sizes, sticky positioning, and
+mobile navigation. The emulator teacher suite also opens forms, roster grids,
+and student details at the same seven sizes. So the valuable move is to stop the
 drift, not to risk what already works.
 
 ## Checking
 
 ```bash
-npm run test:mobile     # 390x844 and 768x1024, real device emulation
+npm run test:mobile     # 119 page/viewport combinations, 320px through 1920px
 npm test                # includes the breakpoint guard
 ```

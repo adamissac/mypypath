@@ -342,6 +342,15 @@ body.page {
   border-radius: 10px;
 }
 
+/* Keep all three header controls on one row even at 320 CSS pixels. */
+@media (max-width: 480px) {
+  :root { --header-gutter: 12px; }
+  .header-inner { gap: 8px; }
+  .site-header .brand { font-size: 1rem; gap: .35rem; }
+  .site-header .brand .logo { width: 28px; height: 28px; }
+  .site-header .account-signin { padding: .55rem .65rem !important; white-space: nowrap; }
+}
+
 /* 3D logo — tilt + click spin (driven by motion.js) */
 .site-header .brand.brand--motion {
   perspective: 480px;

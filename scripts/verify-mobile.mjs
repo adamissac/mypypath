@@ -1,7 +1,4 @@
-/* Walk every page shape at phone and tablet size and report what breaks.
- *
- * The audit could not do this -- its window resize was blocked -- and said so
- * rather than claiming otherwise. This is the check it wanted.
+/* Walk representative page shapes from small phones to wide desktop screens.
  *
  * WHAT COUNTS AS BROKEN, and each of these is a thing a person notices:
  *
@@ -14,8 +11,7 @@
  *
  *   Text under 12px, which is not a WCAG failure but is a phone failure.
  *
- *   A control overlapping another control, which is how a mobile layout
- *   usually fails first.
+ *   Clipped home-page content and mobile navigation links that cannot be clicked.
  *
  *   A sticky scroll scene that does not stick. The home trail pins its map
  *   while the track scrolls past; if an ancestor becomes a scroll container
@@ -25,7 +21,7 @@
  *     node scripts/verify-mobile.mjs
  *     node scripts/verify-mobile.mjs --json
  */
-import { chromium, devices } from 'playwright';
+import { chromium } from 'playwright';
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
@@ -33,6 +29,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const PORT = Number(process.env.MOBILE_PORT || 8089);
+const BASE = process.env.BASE || `http://127.0.0.1:${PORT}`;
 const JSON_OUT = process.argv.includes('--json');
 
 const PAGES = [
@@ -44,8 +41,13 @@ const PAGES = [
 ];
 
 const VIEWPORTS = [
+  { name: 'small phone 320x568', width: 320, height: 568, dpr: 2, mobile: true },
   { name: 'phone  390x844', width: 390, height: 844, dpr: 3, mobile: true },
   { name: 'tablet 768x1024', width: 768, height: 1024, dpr: 2, mobile: true },
+  { name: 'landscape phone 844x390', width: 844, height: 390, dpr: 3, mobile: true },
+  { name: 'laptop 1024x768', width: 1024, height: 768, dpr: 1, mobile: false },
+  { name: 'desktop 1440x900', width: 1440, height: 900, dpr: 1, mobile: false },
+  { name: 'wide 1920x1080', width: 1920, height: 1080, dpr: 1, mobile: false },
 ];
 
 const TYPES = {
@@ -72,7 +74,14 @@ function serve() {
 
 const PROBE = `(() => {
   const vw = document.documentElement.clientWidth;
-  const out = { vw, overflow: [], small: [], tiny: [], overlap: [] };
+  const out = { vw, overflow: [], small: [], tiny: [], clipped: [] };
+  // A clipped ancestor can hide overflow from scrollWidth entirely.
+  for (const el of document.querySelectorAll('.home-hero h1, .home-hero p, .home-hero a, .site-header .brand, .account-signin')) {
+    const r = el.getBoundingClientRect();
+    if (r.width && r.height && (r.left < -1 || r.right > vw + 1)) {
+      out.clipped.push({ text: el.textContent.trim().slice(0, 40), right: Math.round(r.right) });
+    }
+  }
 
   // Horizontal overflow, named by the widest offender rather than reported as
   // a fact about "the page".
@@ -162,40 +171,71 @@ const STICKY_PROBE = `(async () => {
 })()`;
 
 async function run() {
-  const server = await serve();
+  const server = process.env.BASE ? null : await serve();
   const browser = await chromium.launch();
   const report = [];
 
-  for (const vp of VIEWPORTS) {
-    for (const page of PAGES) {
-      const ctx = await browser.newContext({
-        viewport: { width: vp.width, height: vp.height },
-        deviceScaleFactor: vp.dpr,
-        isMobile: vp.mobile,
-        hasTouch: vp.mobile,
-      });
-      const p = await ctx.newPage();
-      try {
-        await p.goto(`http://127.0.0.1:${PORT}${page}`, { waitUntil: 'domcontentloaded', timeout: 45000 });
-        await p.waitForTimeout(2500);
-        const r = await p.evaluate(PROBE);
-        r.unstuck = await p.evaluate(STICKY_PROBE);
-        report.push({ viewport: vp.name, page, ...r });
-      } catch (e) {
-        report.push({ viewport: vp.name, page, error: String(e).slice(0, 160) });
+  // Each viewport owns its contexts; run three at a time to bound memory.
+  for (let start = 0; start < VIEWPORTS.length; start += 3) {
+    await Promise.all(VIEWPORTS.slice(start, start + 3).map(async (vp) => {
+      for (const page of PAGES) {
+        const ctx = await browser.newContext({
+          viewport: { width: vp.width, height: vp.height },
+          deviceScaleFactor: vp.dpr,
+          isMobile: vp.mobile,
+          hasTouch: vp.mobile,
+        });
+        const p = await ctx.newPage();
+        try {
+          await p.goto(`${BASE}${page}`, { waitUntil: 'domcontentloaded', timeout: 45000 });
+          await p.waitForTimeout(2500);
+          const r = await p.evaluate(PROBE);
+          r.unstuck = await p.evaluate(STICKY_PROBE);
+          const toggle = p.locator('.mobile-toggle');
+          if (await toggle.isVisible()) {
+            await toggle.click();
+            await p.waitForTimeout(300);
+            const menu = p.locator('#primary-menu');
+            if (!(await menu.isVisible())) throw new Error('Mobile menu did not open');
+            let visibleLinks = 0;
+            // A click must reach an actual link, not a menu clipped by its header.
+            for (const link of await menu.locator(':scope > li > a').all()) {
+              if (!(await link.isVisible())) continue;
+              visibleLinks++;
+              const covered = await link.evaluate(el => {
+                const r = el.getBoundingClientRect();
+                const x = r.left + r.width / 2, y = r.top + r.height / 2;
+                // Off-screen items may scroll within the menu. On-screen items
+                // must already be visible, not clipped by the header container.
+                return y > 0 && y < innerHeight && !el.contains(document.elementFromPoint(x, y));
+              });
+              if (covered) throw new Error(`Mobile menu link is covered: ${await link.textContent()}`);
+              await link.click({ trial: true, timeout: 2000 });
+            }
+            if (!visibleLinks) throw new Error('Mobile menu has no visible links');
+            await toggle.click();
+          }
+          report.push({ viewport: vp.name, page, ...r });
+        } catch (e) {
+          report.push({ viewport: vp.name, page, error: String(e).slice(0, 160) });
+        }
+        await ctx.close();
       }
-      await ctx.close();
-    }
+    }));
   }
 
   await browser.close();
-  server.close();
+  server?.close();
 
-  if (JSON_OUT) { console.log(JSON.stringify(report, null, 2)); return; }
+  if (JSON_OUT) {
+    console.log(JSON.stringify(report, null, 2));
+    if (report.some(r => r.error || r.clipped?.length || r.overflow?.length || r.small?.length || r.tiny?.length || r.unstuck)) process.exitCode = 1;
+    return;
+  }
 
   let bad = 0;
   for (const r of report) {
-    const issues = (r.overflow?.length ? 1 : 0) + (r.small?.length || 0) + (r.tiny?.length || 0) + (r.unstuck ? 1 : 0);
+    const issues = (r.clipped?.length || 0) + (r.overflow?.length ? 1 : 0) + (r.small?.length || 0) + (r.tiny?.length || 0) + (r.unstuck ? 1 : 0);
     if (!issues && !r.error) continue;
     bad += 1;
     console.log(`\n${r.viewport}  ${r.page}`);
@@ -206,6 +246,7 @@ async function run() {
         console.log(`      ${o.tag}.${o.cls || '(none)'}  ${o.w}px wide, right edge ${o.right}`);
       }
     }
+    for (const c of r.clipped || []) console.log(`    CLIPPED ${c.text} at ${c.right}px`);
     for (const s of (r.small || []).slice(0, 5)) {
       console.log(`    TARGET    ${s.tag}.${s.cls || '(none)'} ${s.w}x${s.h}  "${s.text}"`);
     }

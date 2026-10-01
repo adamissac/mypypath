@@ -109,7 +109,7 @@ browser and exits non-zero on a regression:
 
 ```bash
 npm run test:a11y      # axe-core over 12 page shapes. Budget is ZERO.
-npm run test:mobile    # 390x844 and 768x1024. Overflow, tap size, tiny text.
+npm run test:mobile    # 17 pages at 7 sizes (320–1920px), clipping and mobile menus.
 npm run test:keyboard  # tab order, focus rings, keyboard traps.
 npm run test:motion    # nothing may animate under prefers-reduced-motion.
 npm run test:perf      # page weight and request count, critical vs deferred.
