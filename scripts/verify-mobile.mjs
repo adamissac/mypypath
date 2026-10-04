@@ -189,6 +189,12 @@ async function run() {
           isMobile: vp.mobile,
           hasTouch: vp.mobile,
         });
+        await ctx.addInitScript(() => {
+          try {
+            sessionStorage.setItem('pypath-boot-seen', '1');
+            sessionStorage.setItem('pypath-nav', '1');
+          } catch (e) {}
+        });
         const p = await ctx.newPage();
         try {
           await p.goto(`${BASE}${page}`, { waitUntil: 'domcontentloaded', timeout: 45000 });
