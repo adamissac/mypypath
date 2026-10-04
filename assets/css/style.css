@@ -4883,8 +4883,16 @@ body.page > footer {
 .pp-ready,
 .path-panel__kicker,
 .copy-snippet-btn,
-.copy-snippet-btn__label {
+.copy-snippet-btn__label,
+.page-unit .eyebrow {
   font-size: max(12px, 0.72rem);
+}
+
+/* Theme sets .page-unit .eyebrow to 0.72rem after this sheet. Without
+   !important the floor above is inert, which is how "Python for Data •
+   Unit 1" measured 11.52px on every viewport. */
+html body.page-unit .eyebrow {
+  font-size: max(12px, 0.72rem) !important;
 }
 
 /* ------------------------------------------- the reduced-motion backstop */
