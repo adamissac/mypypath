@@ -33,11 +33,13 @@ const BASE = process.env.BASE || `http://127.0.0.1:${PORT}`;
 const JSON_OUT = process.argv.includes('--json');
 
 const PAGES = [
-  '/index.html', '/curriculum.html', '/courses.html',
-  '/units/unit-1/what-is-python.html', '/classroom.html', '/quiz.html',
-  '/unit-test.html', '/settings.html', '/certificate.html', '/account.html',
-  '/login.html', '/progress.html', '/sandbox.html', '/404.html',
-  '/data.html', '/data/unit-1/reading-a-csv-file.html', '/data/unit-5/csv-options-that-matter.html',
+  '/index.html', '/curriculum.html', '/courses.html', '/learn.html',
+  '/units/unit-1.html', '/units/unit-1/what-is-python.html',
+  '/classroom.html', '/quiz.html', '/unit-test.html', '/settings.html',
+  '/certificate.html', '/account.html', '/login.html', '/signup.html',
+  '/progress.html', '/sandbox.html', '/download.html', '/privacy.html',
+  '/terms.html', '/404.html', '/data.html', '/data/unit-1.html',
+  '/data/unit-1/reading-a-csv-file.html', '/data/unit-5/csv-options-that-matter.html',
 ];
 
 const VIEWPORTS = [
@@ -214,6 +216,13 @@ async function run() {
               await link.click({ trial: true, timeout: 2000 });
             }
             if (!visibleLinks) throw new Error('Mobile menu has no visible links');
+            const short = await menu.locator(':scope > li > a').evaluateAll((links) => {
+              return links.filter((el) => {
+                const r = el.getBoundingClientRect();
+                return r.width > 0 && r.height > 0 && r.height < 24;
+              }).map((el) => (el.textContent || '').trim());
+            });
+            if (short.length) throw new Error(`Mobile menu tap target under 24px: ${short.join(', ')}`);
             await toggle.click();
           }
           /* Last: jumping to mid-trail can cross the course seam and open its
