@@ -518,6 +518,156 @@ body.page-home .site-header {
 }
 
 /* ═══════════════════════════════════════════════════════════
+   TOUR — the one-minute film, between the hero and the trail
+   Markup: index.html. Behaviour: assets/js/home-tour.js.
+   ═══════════════════════════════════════════════════════════ */
+
+.home-tour {
+  padding-bottom: clamp(1rem, 3vh, 2.5rem);
+  /* The same sky the trail opens on, so the film hands straight over to it. */
+  background: var(--home-paper);
+}
+
+.home-tour .home-section__head {
+  width: min(46rem, calc(100% - 2.5rem));
+  max-width: none;
+  margin-bottom: clamp(1.5rem, 3.5vh, 2.25rem);
+}
+
+.home-tour .home-section__head h2 {
+  text-wrap: balance;
+}
+
+.home-tour__frame,
+.home-tour__transcript {
+  width: min(1100px, calc(100% - clamp(2rem, 6vw, 5rem)));
+  margin-inline: auto;
+}
+
+/* The cover sits on a frame of the film, which is always the light palette,
+   so it keeps the film's colours in every site theme. */
+.home-tour__frame {
+  --tour-ink: #0c4566;
+  --tour-paper: #f7fbfe;
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: clamp(14px, 2vw, 22px);
+  overflow: hidden;
+  background: var(--home-mist);
+  box-shadow: 0 30px 80px color-mix(in srgb, var(--home-ink) 16%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--home-ink) 10%, transparent);
+}
+
+.home-tour__video,
+.home-tour__play,
+.home-tour__poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.home-tour__video {
+  display: block;
+  background: #0b3a56;
+}
+
+/* The cover is the play control until playback starts; home-tour.js swaps it
+   for the native controls. Without the script it stays hidden. */
+.home-tour__play {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.6rem, 2vw, 1.1rem);
+  padding: 0;
+  border: 0;
+  background: #e8f4fb;
+  color: var(--tour-ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.home-tour__play[hidden] {
+  display: none;
+}
+
+
+.home-tour__play:focus-visible {
+  outline: 3px solid #0284c7;
+  outline-offset: -6px;
+}
+
+.home-tour__poster {
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.home-tour__poster.is-loaded {
+  opacity: 1;
+}
+
+.home-tour__icon,
+.home-tour__label {
+  position: relative;
+  z-index: 1;
+}
+
+.home-tour__icon {
+  display: grid;
+  place-items: center;
+  width: clamp(3.75rem, 9vw, 6rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--tour-ink);
+  color: var(--tour-paper);
+  box-shadow: 0 0 0 clamp(6px, 1vw, 10px) color-mix(in srgb, var(--tour-ink) 14%, transparent),
+    0 18px 40px color-mix(in srgb, var(--tour-ink) 30%, transparent);
+  transition: transform 180ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+.home-tour__icon svg {
+  width: 38%;
+  height: 38%;
+  margin-left: 8%;
+}
+
+.home-tour__play:hover .home-tour__icon {
+  transform: scale(1.06);
+}
+
+.home-tour__label {
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--tour-paper) 92%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--tour-ink) 12%, transparent);
+  font-size: clamp(0.82rem, 1.6vw, 0.95rem);
+  font-weight: 700;
+  color: var(--tour-ink);
+}
+
+.home-tour__transcript {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: var(--home-muted);
+}
+
+.home-tour__transcript summary {
+  width: fit-content;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--home-ink-soft);
+}
+
+.home-tour__transcript ol {
+  max-width: 70ch;
+  margin: 0.75rem 0 0;
+  padding-left: 1.25rem;
+  line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════════════════════
    PATH JOURNEY: the sticky trail map, drawn on scroll
    Markup: scripts/build-trail.mjs. Behaviour: assets/js/path-trail.js.
    ═══════════════════════════════════════════════════════════ */

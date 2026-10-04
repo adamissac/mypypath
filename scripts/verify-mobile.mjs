@@ -162,11 +162,13 @@ const STICKY_PROBE = `(async () => {
   const sticky = track && track.querySelector('.path-journey__sticky');
   if (!sticky) return null;
   const top = track.getBoundingClientRect().top + scrollY;
-  scrollTo(0, top + (track.offsetHeight - innerHeight) / 2);
+  /* instant, not the page's smooth scroll: a smooth scroll is still on its way
+     after 300ms, and the probe would measure the map before it reached it. */
+  scrollTo({ top: top + (track.offsetHeight - innerHeight) / 2, behavior: 'instant' });
   await new Promise((r) => setTimeout(r, 300));
   const want = parseFloat(getComputedStyle(sticky).top) || 0;
   const got = sticky.getBoundingClientRect().top;
-  scrollTo(0, 0);
+  scrollTo({ top: 0, behavior: 'instant' });
   return Math.abs(got - want) > 2 ? { want: Math.round(want), got: Math.round(got) } : null;
 })()`;
 
@@ -190,7 +192,6 @@ async function run() {
           await p.goto(`${BASE}${page}`, { waitUntil: 'domcontentloaded', timeout: 45000 });
           await p.waitForTimeout(2500);
           const r = await p.evaluate(PROBE);
-          r.unstuck = await p.evaluate(STICKY_PROBE);
           const toggle = p.locator('.mobile-toggle');
           if (await toggle.isVisible()) {
             await toggle.click();
@@ -215,6 +216,9 @@ async function run() {
             if (!visibleLinks) throw new Error('Mobile menu has no visible links');
             await toggle.click();
           }
+          /* Last: jumping to mid-trail can cross the course seam and open its
+             prompt, which would sit over the menu the checks above click. */
+          r.unstuck = await p.evaluate(STICKY_PROBE);
           report.push({ viewport: vp.name, page, ...r });
         } catch (e) {
           report.push({ viewport: vp.name, page, error: String(e).slice(0, 160) });

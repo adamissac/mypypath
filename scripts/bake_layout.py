@@ -718,7 +718,14 @@ def version_course_assets(html: str) -> str:
                 # the previous rules for an hour after a deploy changes them.
                 'assets/css/gate.css',
                 'assets/img/data-moon.svg',
-                'assets/img/placeholder-avatar.svg'):
+                'assets/img/placeholder-avatar.svg',
+                # The homepage tour. The video and its captions are served with
+                # a year-long immutable cache (vercel.json), so a re-cut film
+                # only reaches anyone if its URL changes with it.
+                'assets/js/home-tour.js',
+                'assets/video/pypath-tour.mp4',
+                'assets/video/pypath-tour.en.vtt',
+                'assets/img/pypath-tour-poster.webp'):
         version = hashlib.sha256((ROOT / rel).read_bytes()).hexdigest()[:10]
         html = re.sub(
             r'(["\'])/' + re.escape(rel) + r'(?:\?v=[0-9a-f]+)?\1',
