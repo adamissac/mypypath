@@ -1,12 +1,14 @@
 .auth-page { max-width: 28rem; padding-block: 3rem; }
 .auth-form { display: grid; gap: .5rem; margin-block: 1.5rem; }
 .auth-form label { font-weight: 600; }
-.auth-form input {
+.auth-form input:not([type='checkbox']):not([type='radio']) {
+  min-height: 44px;
   padding: .6rem .75rem;
   border: 1px solid var(--border, #d0d0d8);
   border-radius: .5rem;
   background: var(--bg-elev, #fff);
   color: inherit;
+  font-size: 16px;
 }
 .auth-hint { font-size: .875rem; opacity: .75; margin: 0; }
 .auth-error { color: var(--danger, #c0392b); font-size: .9rem; }
@@ -101,8 +103,8 @@
 }
 
 .auth-consent input[type='checkbox'] {
-  width: 1.05rem;
-  height: 1.05rem;
+  width: 1.5rem;
+  height: 1.5rem;
   margin: 0.15rem 0 0;
   flex: none;
   accent-color: var(--accent);
@@ -113,6 +115,61 @@
   font-weight: 400;
   line-height: 1.45;
   cursor: pointer;
+}
+
+/* Role picker lives on signup, which does not load admin.css. The
+   same rules used to sit only there, so the student/teacher cards
+   rendered as bare radios. */
+.role-picker {
+  margin: 1.25rem 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.role-picker legend {
+  padding: 0;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.role-option {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+  min-height: 44px;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 0.7rem;
+  cursor: pointer;
+  font-weight: 400;
+}
+
+.role-option:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--bg-elevated);
+}
+
+.role-option input {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+  flex: none;
+  accent-color: var(--accent);
+}
+
+.role-option__body { display: block; }
+
+.role-option__title {
+  display: block;
+  font-weight: 600;
+}
+
+.role-option__hint {
+  display: block;
+  font-size: 0.87rem;
+  opacity: 0.75;
+  line-height: 1.4;
 }
 
 /* ═══════════════════════════════════════════════════════════
