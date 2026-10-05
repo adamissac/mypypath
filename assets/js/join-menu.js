@@ -1,3 +1,4 @@
+import { loadClassroomAlias } from '/assets/js/classroom-alias.js';
 /* PyPath — "Join a class" in the account menu, for everyone, at any time.
 
    Joining used to happen only in the signup form, which meant anyone who
@@ -151,7 +152,7 @@ function buildDialog() {
   return wrap;
 }
 
-function open() {
+async function open() {
   if (!dialog) dialog = buildDialog();
   const body = dialog.querySelector('[data-join-body]');
   const leaveRow = dialog.querySelector('.join-modal__leave');
@@ -159,6 +160,8 @@ function open() {
   const err = dialog.querySelector('[data-join-error]');
 
   err.hidden = true;
+  const submit = dialog.querySelector('[data-join-submit]');
+  submit.disabled = true;
   if (inClass()) {
     body.textContent = 'You are in the class with join code ' + (roster.joinCode || '') +
       '. Entering a different code moves you to that class.';
@@ -170,6 +173,14 @@ function open() {
   }
 
   dialog.hidden = false;
+  try {
+    const alias = await loadClassroomAlias(uid);
+    body.textContent += ' Your teacher will see the classroom alias “' + alias + '”. Change it in Account before joining.';
+    submit.disabled = false;
+  } catch (error) {
+    err.hidden = false;
+    err.textContent = 'Could not load your classroom alias. Close this dialog and try again.';
+  }
   document.body.classList.add('join-modal-open');
   const input = form.querySelector('#join-modal-code');
   if (input) {

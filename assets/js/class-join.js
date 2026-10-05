@@ -5,10 +5,11 @@
    harvested by walking it. */
 import { db, importFirebaseModule } from '/assets/js/firebase-config.js';
 import { setTeacher } from '/assets/js/class-state.js';
+import { loadClassroomAlias } from '/assets/js/classroom-alias.js';
 import { currentUser } from '/assets/js/auth.js';
 import { loadProfile, invalidateProfile } from '/assets/js/profile.js';
 
-const { doc, getDoc, setDoc, deleteDoc, updateDoc, deleteField } =
+const { doc, getDoc, setDoc, deleteDoc, updateDoc, deleteField, runTransaction } =
   (await importFirebaseModule('firebase-firestore.js')) || {};
 
 const ROLES = window.PyPathRoles;
@@ -42,6 +43,41 @@ export async function readRoster(uid) {
   return snap.exists() ? snap.data() : {};
 }
 
+// This record survives leaving a class. The original teacher remains responsible
+// for the decision; changing classes never transfers or erases that obligation.
+export async function preserveCertificateApproval(uid, joining) {
+  const alias = joining ? joining.displayName : null;
+  await runTransaction(db, async (tx) => {
+    const approvalRef = doc(db, `certificateApprovals/${uid}`);
+    const rosterRef = doc(db, `roster/${uid}`);
+    const approval = await tx.get(approvalRef);
+    const old = await tx.get(rosterRef);
+    const previous = old.exists() ? old.data() : {};
+    const source = previous.teacherUid ? previous : joining;
+    if (!approval.exists() && source && source.teacherUid) {
+      tx.set(approvalRef, {
+        teacherUid: source.teacherUid,
+        displayName: alias || 'Learner',
+        approved: source.certificateApproved === true,
+        requestedAt: Number(source.certificateRequestedAt) || 0,
+        decidedAt: Number(source.certificateDecidedAt) || 0,
+        updatedAt: Date.now(),
+      });
+    }
+    if (joining) tx.set(rosterRef, joining, { merge: true });
+  });
+}
+
+export async function readCertificateApproval(uid) {
+  const approval = await getDoc(doc(db, `certificateApprovals/${uid}`));
+  if (approval.exists()) {
+    const data = approval.data();
+    return { teacherUid: data.teacherUid, certificateApproved: data.approved,
+      certificateRequestedAt: data.requestedAt, certificateDecidedAt: data.decidedAt };
+  }
+  return readRoster(uid);
+}
+
 // Returns the teacher's uid, or throws so the caller can tell "no such class"
 // apart from "we could not reach the database".
 export async function resolveCode(rawCode) {
@@ -73,19 +109,15 @@ export async function joinClass(uid, rawCode) {
   // fills itself in whenever they next finish a unit.
   const user = currentUser();
   const units = window.ProgressStore ? window.ProgressStore.getCompletedUnits() : [];
-  await setDoc(
-    doc(db, `roster/${uid}`),
-    {
-      teacherUid: resolved.teacherUid,
-      joinCode: resolved.code,
-      joinedClassAt: Date.now(),
-      displayName: (user && user.displayName) || '',
-      completedUnits: units,
-      unitsCompleted: units.length,
-      updatedAt: Date.now(),
-    },
-    { merge: true }
-  );
+  await preserveCertificateApproval(uid, {
+    teacherUid: resolved.teacherUid,
+    joinCode: resolved.code,
+    joinedClassAt: Date.now(),
+    displayName: await loadClassroomAlias(uid),
+    completedUnits: units,
+    unitsCompleted: units.length,
+    updatedAt: Date.now(),
+  });
   // The role itself is part of the account record, not the roster.
   await setDoc(doc(db, `users/${uid}`), { role: 'student', updatedAt: Date.now() },
     { merge: true });
@@ -100,28 +132,27 @@ export async function joinClass(uid, rawCode) {
 // the teacher's to write and the rules refuse them from this side, so there is
 // no way to shortcut past the queue by asking louder.
 export async function requestCertificate(uid) {
+  await preserveCertificateApproval(uid);
   const now = Date.now();
-  await setDoc(
-    doc(db, `roster/${uid}`),
-    { certificateRequestedAt: now, updatedAt: now },
-    { merge: true }
-  );
+  await updateDoc(doc(db, `certificateApprovals/${uid}`), {
+    requestedAt: now, updatedAt: now,
+  });
   return now;
 }
 
 export async function leaveClass(uid) {
-  setTeacher(null);
+  await preserveCertificateApproval(uid);
   await updateDoc(doc(db, `roster/${uid}`), {
-    teacherUid: deleteField(),
-    joinCode: deleteField(),
-    updatedAt: Date.now(),
+    teacherUid: deleteField(), joinCode: deleteField(), updatedAt: Date.now(),
   });
+  setTeacher(null);
 }
 
 // Used by a teacher to drop someone from their roster. The rules allow this
 // one cross-account write and nothing else, and only when the fields cleared
 // are exactly these.
 export async function removeStudent(studentUid) {
+  await preserveCertificateApproval(studentUid);
   await updateDoc(doc(db, `roster/${studentUid}`), {
     teacherUid: deleteField(),
     joinCode: deleteField(),

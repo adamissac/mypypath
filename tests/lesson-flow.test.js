@@ -1,14 +1,21 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import { JSDOM } from 'jsdom';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
+const windows = [];
+afterEach(() => { for (const window of windows.splice(0)) window.close(); });
+function createDOM(html, options = {}) {
+ const dom = new JSDOM(html, { pretendToBeVisual: true, ...options });
+ windows.push(dom.window);
+ return dom;
+}
 const require=createRequire(import.meta.url);
 const lessons=require('../scripts/data-course-unit-1.cjs').unit1.lessons;
 const source=fs.readFileSync('assets/js/lesson-ui.js','utf8');
 describe('lesson navigation',()=>{
  it('links to real headings without duplicate IDs and preserves editor actions',async()=>{
-  const dom=new JSDOM('<main class="course-main"><div class="lesson-content"><h2 id="existing">Read</h2><h2>Practice</h2><div class="interactive-editor"><div class="editor-toolbar-small"><button class="btn-run" onclick="runEditorCode(1)">Run</button></div></div></div></main>',{runScripts:'outside-only',url:'https://mypypath.com/data/unit-1/example.html'});
+  const dom=createDOM('<main class="course-main"><div class="lesson-content"><h2 id="existing">Read</h2><h2>Practice</h2><div class="interactive-editor"><div class="editor-toolbar-small"><button class="btn-run" onclick="runEditorCode(1)">Run</button></div></div></div></main>',{runScripts:'outside-only',url:'https://mypypath.com/data/unit-1/example.html'});
   dom.window.eval(source);dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
   dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
   const doc=dom.window.document;
@@ -26,7 +33,7 @@ describe('lesson navigation',()=>{
 });
 describe('section ids',()=>{
  const build=html=>{
-  const dom=new JSDOM(`<main class="course-main"><div class="lesson-content">${html}</div></main>`,
+  const dom=createDOM(`<main class="course-main"><div class="lesson-content">${html}</div></main>`,
    {runScripts:'outside-only',url:'https://mypypath.com/units/unit-1/example.html'});
   dom.window.eval(source);
   dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
@@ -71,7 +78,7 @@ describe('worked examples explain the actual Python result',()=>{
 
 describe('Foundations prediction examples',()=>{
  for(const slug of ['first-program','variables-types']) it(slug,()=>{
-  const doc=new JSDOM(fs.readFileSync(`units/unit-1/${slug}.html`,'utf8')).window.document;
+  const doc=createDOM(fs.readFileSync(`units/unit-1/${slug}.html`,'utf8')).window.document;
   const example=doc.querySelector('.lesson-checkpoint');
   expect(execFileSync('python3',['-c',example.querySelector('pre.code code').textContent],{encoding:'utf8'}).trim()).toBe(example.querySelector('.checkpoint-output').textContent.trim());
  });

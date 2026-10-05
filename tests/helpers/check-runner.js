@@ -15,6 +15,8 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
+import { afterAll } from 'vitest';
 import { execFileSync, spawnSync } from 'node:child_process';
 
 const ROOT = process.cwd();
@@ -25,6 +27,14 @@ export const havePython =
   spawnSync('python3', ['-c', 'print(1)'], { encoding: 'utf8' }).status === 0;
 
 let state = null;
+
+export function teardown() {
+  if (!state) return;
+  fs.rmSync(state.directory, { recursive: true, force: true });
+  state = null;
+}
+
+afterAll(teardown);
 
 /* Loads the browser globals into jsdom and writes the Python halves to disk.
    Call once from beforeAll. Idempotent, so two suites in one process share it. */
@@ -39,7 +49,8 @@ export function setup() {
   const AST = window.PyPathAst;
   const GEN = window.PyPathGen;
 
-  const analyzerPath = path.join('node_modules', '.pypath-analyzer-shared.py');
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'pypath-check-runner-'));
+  const analyzerPath = path.join(directory, 'analyzer.py');
   fs.writeFileSync(analyzerPath, AST.ANALYZER, 'utf8');
 
   /* The harness, read out of checker.js rather than copied. The array is a list
@@ -50,10 +61,10 @@ export function setup() {
   const body = src.match(/var HARNESS = \[([\s\S]*?)\]\.join\('\\n'\);/)[1];
   // eslint-disable-next-line no-eval
   const lines = eval(`(function(){var TIMEOUT_MARKER=${JSON.stringify(marker)};return [${body}];})()`);
-  const harnessPath = path.join('node_modules', '.pypath-harness-shared.py');
+  const harnessPath = path.join(directory, 'harness.py');
   fs.writeFileSync(harnessPath, lines.join('\n'), 'utf8');
 
-  state = { C, AST, GEN, analyzerPath, harnessPath };
+  state = { C, AST, GEN, directory, analyzerPath, harnessPath };
   return state;
 }
 

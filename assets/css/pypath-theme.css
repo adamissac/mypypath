@@ -979,7 +979,7 @@ main .container,
 
 .page-unit .eyebrow {
   font-family: var(--pp-body);
-  font-size: 0.72rem;
+  font-size: max(12px, 0.72rem);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -2171,31 +2171,89 @@ body.lesson-reading .lesson-nav { display:flex; flex-wrap:wrap; gap:12px; justif
    down each side. Long lines on a wide window are the accepted
    trade-off. See CLAUDE.md, "The lesson layout is a product decision".
 
-   Gutters, measured on /units/unit-1/variables-types.html:
-   ~51px at 1280, ~58px at 1440, ~68px at 1920. Nudged up from 45/50/64,
-   which read as slightly too close to the edges. The gap between the lesson
-   list and the lesson is 2rem, up from the 1.1rem that ran them together.
+   The lesson rail meets the left edge and fills the height below the
+   header. The lesson keeps a 2rem gap from the rail and a responsive right
+   gutter. Closing the rail restores equal outer gutters.
    ═══════════════════════════════════════════════════════════════ */
 
 html body.page-unit .layout-course,
 html body.page-unit.sidebar-closed .layout-course,
 html body.page-unit.sidebar-open .layout-course {
   display:grid !important;
-  grid-template-columns:248px minmax(0, 1fr) !important;
+  grid-template-columns:280px minmax(0, 1fr) !important;
   gap:2rem !important;
   align-items:start !important;
   width:100% !important;
-  max-width:2000px !important;
-  margin:0 auto !important;
-  padding:0 clamp(1.75rem, 4vw, 4.25rem) 2rem !important;
+  max-width:none !important;
+  margin:0 !important;
+  padding:0 clamp(1.75rem, 4vw, 4.25rem) 2rem 0 !important;
 }
 
-/* Shut, the column is zero-width and the lesson takes the space. */
+/* An edge-to-edge navigation rail fills the viewport below the topbar.
+   Its own scrollport keeps long lesson lists reachable on short screens. */
 @media (min-width: 981px) {
+  html body.page-unit main > .section { padding-top:0 !important; }
+  html body.page-unit .course-sidebar {
+    position:sticky !important;
+    top:var(--header-height) !important;
+    height:calc(100vh - var(--header-height));
+    height:calc(100dvh - var(--header-height));
+    max-height:none !important;
+    padding:20px 16px 28px;
+    border:0;
+    border-right:1px solid var(--pp-border);
+    border-radius:0;
+    background:var(--panel);
+    scrollbar-gutter:stable;
+  }
+  html body.page-unit .course-main { padding-top:24px; }
   html body.page-unit.sidebar-closed .layout-course {
     grid-template-columns:0 minmax(0, 1fr) !important;
     gap:0 !important;
+    padding-left:clamp(1.75rem, 4vw, 4.25rem) !important;
   }
+}
+
+html body.page-unit .course-sidebar .sidebar-head {
+  position:sticky;
+  top:-20px;
+  z-index:2;
+  margin:-20px -16px 18px;
+  padding:22px 16px 18px;
+  background:var(--panel);
+  border-bottom:1px solid var(--pp-border);
+}
+html body.page-unit .course-sidebar .sidebar-unit-label {
+  font-size:0.75rem;
+  letter-spacing:0.09em;
+  line-height:1.6;
+}
+html body.page-unit .course-sidebar nav ul { gap:6px; }
+html body.page-unit .course-sidebar nav a {
+  min-height:46px;
+  padding:12px 12px;
+  border:1px solid transparent;
+  border-radius:9px;
+  font-size:0.85rem;
+  line-height:1.5;
+  color:var(--pp-muted);
+}
+html body.page-unit .course-sidebar nav a:hover {
+  color:var(--pp-ink);
+  background:var(--bg-elevated);
+}
+html body.page-unit .course-sidebar nav a.active,
+html body.page-unit .course-sidebar nav a[aria-current="page"] {
+  color:var(--pp-line-ink);
+  background:color-mix(in srgb, var(--pp-line) 10%, var(--panel));
+  border-color:color-mix(in srgb, var(--pp-line) 18%, transparent);
+  box-shadow:inset 3px 0 0 var(--pp-line);
+  font-weight:650;
+}
+html body.page-unit .course-sidebar nav a.active::before,
+html body.page-unit .course-sidebar nav a[aria-current="page"]::before {
+  background:var(--pp-line);
+  border-color:var(--pp-line);
 }
 
 /* Below 981px there is no column at all: the lesson list is a drawer over
@@ -2210,7 +2268,7 @@ html body.page-unit.sidebar-open .layout-course {
   }
 }
 
-html body.page-unit .course-main { width:100%; max-width:none; padding:0; }
+html body.page-unit .course-main { width:100%; max-width:none; padding-inline:0; padding-bottom:0; }
 @media (max-width: 980px) {
   html body.page-unit .sidebar-toggle {
     display:flex !important; align-items:center; justify-content:space-between;
@@ -2224,11 +2282,11 @@ html body.page-unit .sidebar-toggle-btn, .lesson-back-link {
 }
 @media (max-width: 980px) {
   html body.page-unit .course-sidebar {
-    position:fixed !important; inset:12px auto 12px 12px !important;
-    width:min(340px, calc(100vw - 24px)) !important; max-width:none !important;
-    height:auto; max-height:calc(100dvh - 24px) !important; margin:0 !important;
-    padding:20px !important; border:1px solid var(--pp-border) !important;
-    border-radius:16px; background:var(--panel); overflow:auto !important;
+    position:fixed !important; inset:0 auto 0 0 !important;
+    width:min(360px, calc(100vw - 28px)) !important; max-width:none !important;
+    height:100dvh; max-height:100dvh !important; margin:0 !important;
+    padding:20px 16px !important; border:0 !important; border-right:1px solid var(--pp-border) !important;
+    border-radius:0; background:var(--panel); overflow:auto !important;
     transform:none !important; opacity:1 !important; pointer-events:auto !important;
     z-index:calc(var(--z-modal, 1000) + 1) !important; transition:none !important;
   }
@@ -2236,7 +2294,7 @@ html body.page-unit .sidebar-toggle-btn, .lesson-back-link {
 html body.page-unit .course-sidebar[hidden] { display:none !important; }
 @media (max-width: 980px) {
   html body.page-unit .sidebar-collapse-btn {
-    width:auto; min-height:44px; margin:0 0 20px; padding:8px 14px;
+    width:auto; min-height:44px; margin:0; padding:8px 14px;
   }
 }
 .lesson-menu-backdrop { position:fixed; inset:0; background:rgb(0 0 0 / .42); z-index:var(--z-modal, 1000); }

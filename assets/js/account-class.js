@@ -1,3 +1,4 @@
+import { loadClassroomAlias } from '/assets/js/classroom-alias.js';
 /* PyPath — the class controls on the account page: join, leave, become a teacher.
 
    A student cannot read their teacher's account document — the rules only let
@@ -153,8 +154,16 @@ if (section) {
         classes = [];
       }
     }
+    const alias = await loadClassroomAlias(uid);
+    section.querySelectorAll('[data-join-disclosure]').forEach(host => {
+      let label = host.querySelector('[data-alias-disclosure]');
+      if (!label) { label = document.createElement('p'); label.dataset.aliasDisclosure = ''; host.prepend(label); }
+      label.textContent = 'When you join, your teacher will see the classroom alias “' + alias + '”. Change it in Account before joining.';
+    });
     render();
   }
+
+  document.addEventListener('pypath:alias', () => { if (uid) refresh().catch(() => {}); });
 
   section.querySelectorAll('[data-class-join-form]').forEach((form) => {
     form.addEventListener('submit', async (ev) => {

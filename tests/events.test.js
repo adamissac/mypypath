@@ -45,6 +45,18 @@ describe('the event vocabulary', () => {
 });
 
 describe('payload construction', () => {
+  it('retains quiz assignment identity and numeric correct answers', () => {
+    const event = E.makeEvent('quiz.submitted', {
+      assignmentId: 'quiz_123', unit: 2, score: 75, correct: 3, total: 4, attempt: 1,
+    });
+    expect(event.payload).toEqual({
+      assignmentId: 'quiz_123', unit: 2, score: 75, correct: 3, total: 4, attempt: 1,
+    });
+    expect(E.makeEvent('quiz.submitted', { assignmentId: 'bad/id', unit: 2 })).toBe(null);
+    expect(E.makeEvent('check.answered', {
+      lessonPath: LESSON, questionId: 'q1', correct: true, attempt: 1,
+    }).payload.correct).toBe(true);
+  });
   it('keeps only the fields the type declares', () => {
     const ev = E.makeEvent('lesson.opened', {
       lessonPath: LESSON,
@@ -141,7 +153,8 @@ describe('payload construction', () => {
     for (const type of E.TYPES) {
       const ev = E.makeEvent(type, {
         lessonPath: LESSON, unit: 1, editorId: 'practice1', exerciseId: 'exercise1',
-        questionId: 'q1', errorType: 'ValueError', ok: true, correct: true, verified: true,
+        questionId: 'q1', assignmentId: 'quiz_1', errorType: 'ValueError', ok: true,
+        correct: true, verified: true,
         attempt: 1, passed: 1, total: 1, score: 1, durationSec: 10
       });
       expect(ev, type).not.toBe(null);

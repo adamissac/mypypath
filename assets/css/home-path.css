@@ -2089,3 +2089,49 @@ html[data-course="data"] .page-home .home-practice .hero-live-run { color: #2e0c
 }
 
 html[data-course="data"] { --endcta-bg: #21162f; }
+
+
+/* A quiet atmospheric halo frames the floating summit without extra assets. */
+.home-summit__mountain {
+  position: relative;
+  isolation: isolate;
+}
+.home-summit__mountain::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 16% 10% 12%;
+  border-radius: 50%;
+  background: color-mix(in srgb, #9bdde7 12%, transparent);
+  box-shadow: 0 0 45px 20px color-mix(in srgb, #9baee4 8%, transparent);
+  filter: blur(30px);
+  pointer-events: none;
+}
+.home-summit__mountain::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 52%;
+  height: 5%;
+  bottom: 8%;
+  left: 24%;
+  border-radius: 50%;
+  background: color-mix(in srgb, #375f83 10%, transparent);
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+
+/* Let the Foundations landscape read at the same visual weight as the moon. */
+html:not([data-course="data"]) .home-summit { max-width:620px; }
+@media (min-width:1024px) {
+  html:not([data-course="data"]) .home-hero__content {
+    grid-template-columns:minmax(0, 1fr) minmax(0, min(48%, 620px));
+  }
+}
+@media (min-width:768px) and (max-width:1023px) {
+  html:not([data-course="data"]) .home-summit { width:min(75%, 480px); max-width:480px; }
+}
+@media (max-width:767px) {
+  html:not([data-course="data"]) .home-summit { width:min(100%, 380px); max-width:380px; margin-inline:auto; }
+}

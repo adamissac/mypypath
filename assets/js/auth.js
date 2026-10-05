@@ -1,3 +1,4 @@
+import { transitionLocalOwner } from '/assets/js/account-boundary.js';
 /* PyPath — Firebase Auth wrapper. Dispatches `pypath:auth` on document so no
    UI file has to import Firebase. */
 import { auth, importFirebaseModule } from '/assets/js/firebase-config.js';
@@ -94,6 +95,15 @@ export async function signOutUser() {
 let reloadedOnce = false;
 
 function handleAuth(next) {
+  if (transitionLocalOwner(next && next.uid)) {
+    // Invalidate asynchronous reads and queues before discarding mounted editors.
+    document.dispatchEvent(new CustomEvent('pypath:identity-reset'));
+    window.ProgressStore?._setRemoteAdapter(null);
+    window.ProgressStore?._setClassAdapter(null);
+    window.PyPathEvents?.setEnabled(false);
+    window.location.reload();
+    return;
+  }
   document.dispatchEvent(
     new CustomEvent('pypath:auth', { detail: { user: next } })
   );

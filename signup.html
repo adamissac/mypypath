@@ -142,7 +142,11 @@
         <label for="signup-last-name">Last name</label>
         <input id="signup-last-name" type="text" autocomplete="family-name"
                maxlength="40" required aria-describedby="signup-name-hint">
-        <p class="auth-hint" id="signup-name-hint">Your first and last name. This is the name other learners see.</p>
+        <p class="auth-hint" id="signup-name-hint">Your account name. Your classroom alias is shared when you join a class.</p>
+
+        <label for="signup-alias">Classroom alias</label>
+        <input id="signup-alias" type="text" minlength="3" maxlength="32" autocomplete="off" required>
+        <p class="auth-hint">Choose a nickname, not your full name or email. Teachers see this alias when you join. Google and GitHub signups receive a safe alias you can change in Account.</p>
 
         <label for="signup-email">Email</label>
         <input id="signup-email" type="email" autocomplete="email" required>
@@ -212,6 +216,7 @@
     <script type="module">
       import { signUpWithEmail, signInWithGoogle, signInWithGitHub }
         from '/assets/js/auth.js';
+      import { normalizeClassroomAlias, saveClassroomAlias } from '/assets/js/classroom-alias.js';
       import { db, SDK_VERSION } from '/assets/js/firebase-config.js';
       import { ensureJoinCode, setRole } from '/assets/js/class-join.js';
       const { doc, setDoc } =
@@ -304,6 +309,8 @@
         ev.preventDefault();
         err.hidden = true;
         if (!agreed()) return;
+        const alias = normalizeClassroomAlias(document.getElementById('signup-alias').value);
+        if (!alias) { err.hidden = false; err.textContent = 'Choose an alias of 3–32 letters, numbers, spaces, hyphens or underscores.'; return; }
         const rawFirst = document.getElementById('signup-first-name').value;
         const rawLast = document.getElementById('signup-last-name').value;
         const check = window.PyPathUsername.validate(rawFirst, rawLast);
@@ -322,6 +329,7 @@
             document.getElementById('signup-password').value
           );
           try {
+            await saveClassroomAlias(user.uid, alias);
             await saveName(user.uid, first, last, name);
             await updateProfile(user, { displayName: name });
             await applyRole(user, chosenRole());

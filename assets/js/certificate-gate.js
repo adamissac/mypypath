@@ -91,7 +91,7 @@
       // The read is still in flight, or it failed. A learner we last saw
       // waiting on their teacher keeps waiting, rather than being shown a
       // certificate that is about to be pulled back off the screen.
-      return isComplete() && cached(user.uid) === 'pending' ? 'pending' : null;
+      return isComplete() ? 'pending' : null;
     }
     return window.PyPathCertGate.certificateState(isComplete(), roster, true);
   }
@@ -134,7 +134,7 @@
 
   async function readRoster(uid) {
     try {
-      return await (await classJoin()).readRoster(uid);
+      return await (await classJoin()).readCertificateApproval(uid);
     } catch (e) {
       // Offline, or the document is not readable. Leaving this null keeps the
       // gate silent instead of erroring the page out from under a learner who

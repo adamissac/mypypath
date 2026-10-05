@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import fs from 'node:fs';
+import { describe, it, expect, beforeAll, vi } from 'vitest';
 import { setup, havePython, score, specFor, editorsFor, errorsForUnit } from './helpers/check-runner.js';
 
 /* The shared runner, checked against the one unit whose answers are already
@@ -9,6 +10,20 @@ import { setup, havePython, score, specFor, editorsFor, errorsForUnit } from './
 beforeAll(() => setup());
 
 describe('the shared check runner', () => {
+  it('isolates concurrent suite files and removes only its own files', async () => {
+    const first = setup();
+    vi.resetModules();
+    const other = await import('./helpers/check-runner.js');
+    const second = other.setup();
+    expect(second.harnessPath).not.toBe(first.harnessPath);
+    expect(second.analyzerPath).not.toBe(first.analyzerPath);
+    other.teardown();
+    expect(fs.existsSync(second.harnessPath)).toBe(false);
+    expect(fs.existsSync(second.analyzerPath)).toBe(false);
+    expect(fs.readFileSync(first.harnessPath, 'utf8')).toContain('def _pypath_run_case');
+    expect(fs.existsSync(first.analyzerPath)).toBe(true);
+  });
+
   it('reads the editor ids a lesson really has', () => {
     expect(editorsFor(1, 'arithmetic-expressions')).toContain('exercise1');
     expect(editorsFor(1, 'arithmetic-expressions')).not.toContain('exercise9');

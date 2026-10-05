@@ -17,6 +17,7 @@
  * document and fetched one get at a time, never by querying the collection.
  */
 import { db, importFirebaseModule } from '/assets/js/firebase-config.js';
+import { preserveCertificateApproval } from '/assets/js/class-join.js';
 import { loadProfile, invalidateProfile } from '/assets/js/profile.js';
 /* Dev-only, off unless ?readcount=1. Every call below is a no-op returning its
    argument until it is switched on -- see the header of read-counter.js for why
@@ -828,6 +829,7 @@ export async function joinClass(uid, rawCode, displayName) {
 }
 
 export async function leaveClass(uid, classId) {
+  await preserveCertificateApproval(uid);
   await deleteDoc(doc(db, `classes/${classId}/roster/${uid}`));
   await setDoc(
     doc(db, `users/${uid}`),
@@ -941,6 +943,15 @@ export async function readCertificates(teacherUid) {
       earned: !!v.hasCertificate,
     };
   });
+  const durable = counted(await getDocs(query(
+    collection(db, 'certificateApprovals'), where('teacherUid', '==', teacherUid)
+  )), 'readCertificateApprovals');
+  durable.forEach((d) => {
+    const v = d.data();
+    out[d.id] = { requestedAt: Number(v.requestedAt) || 0,
+      approved: v.decidedAt > 0 ? v.approved : null,
+      decidedAt: Number(v.decidedAt) || 0, displayName: v.displayName || 'Learner' };
+  });
   return out;
 }
 
@@ -948,11 +959,10 @@ export async function readCertificates(teacherUid) {
  * object -- even a field read straight back off the row unchanged -- makes the
  * whole write fail. */
 export async function setCertificateDecision(uid, approved) {
+  await preserveCertificateApproval(uid);
   const now = Date.now();
-  await updateDoc(doc(db, `roster/${uid}`), {
-    certificateApproved: approved,
-    certificateDecidedAt: now,
-    updatedAt: now,
+  await updateDoc(doc(db, `certificateApprovals/${uid}`), {
+    approved, decidedAt: now, updatedAt: now,
   });
   return now;
 }

@@ -23,7 +23,7 @@
  * half-finished join still finds it unwritten. Reversing these two makes the
  * retry path deny itself.
  */
-import { currentUser } from '/assets/js/auth.js';
+import { loadClassroomAlias } from '/assets/js/classroom-alias.js';
 import {
   joinClass as legacyJoin,
   leaveClass as legacyLeave,
@@ -90,12 +90,12 @@ export async function joinAnyClass(uid, rawCode) {
   // Written first, and never skipped: classroom-page.js's approval queue reads
   // the flat roster directly, so a join that misses it drops the student out of
   // certificate approval entirely with nothing to show that it happened.
+  const alias = await loadClassroomAlias(uid);
   await legacyJoin(uid, rawCode);
 
-  const user = currentUser();
   let classId = null;
   try {
-    const joined = await classJoin(uid, rawCode, (user && user.displayName) || '');
+    const joined = await classJoin(uid, rawCode, alias);
     classId = joined.classId;
   } catch (e) {
     // An old code is the one failure that is not a failure. Anything else --

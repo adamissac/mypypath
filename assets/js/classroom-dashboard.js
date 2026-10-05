@@ -1348,7 +1348,11 @@ function paintCertificates() {
   const empty = $('[data-cr-certs-empty]');
   if (!list) return;
 
-  const rows = students
+  const queue = students.concat(Object.entries(certificates)
+    .filter(([uid]) => !students.some((s) => s.uid === uid))
+    .map(([uid, certificate]) => ({ uid,
+      displayName: certificate.displayName || 'Former learner', certificate })));
+  const rows = queue
     .map((s) => ({ student: s, state: CORE.certificateState(s.certificate) }))
     .filter((r) => r.state !== 'none')
     .sort((a, b) => CORE.CERT_ORDER[b.state] - CORE.CERT_ORDER[a.state]

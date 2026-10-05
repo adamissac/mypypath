@@ -130,6 +130,7 @@
         case 'editorId':
         case 'exerciseId':
         case 'questionId':
+        case 'assignmentId':
           out[field] = cleanId(src[field]);
           if (!out[field]) return null;
           break;
@@ -139,9 +140,13 @@
             : 'UnknownError';
           break;
         case 'ok':
-        case 'correct':
         case 'verified':
           out[field] = src[field] === true;
+          break;
+        case 'correct':
+          // Quizzes record how many answers were right; checks record yes/no.
+          if (type === 'quiz.submitted') out.correct = cleanCount(src.correct, 9999);
+          else out.correct = src.correct === true;
           break;
         case 'attempt':
           out.attempt = Math.max(1, cleanCount(src.attempt, 9999));

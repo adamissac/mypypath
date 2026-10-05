@@ -151,9 +151,16 @@
           <label for="account-last-name">Last name</label>
           <input id="account-last-name" type="text" autocomplete="family-name"
                  maxlength="40" aria-describedby="account-name-hint">
-          <p class="auth-hint" id="account-name-hint">Your first and last name. This is the name other learners see.</p>
+          <p class="auth-hint" id="account-name-hint">Your account name. Your classroom alias is shared when you join a class.</p>
           <button type="submit" class="btn btn-primary">Save</button>
           <p class="auth-error" id="account-error" role="alert" hidden></p>
+        </form>
+        <form id="account-alias-form" class="auth-form">
+          <label for="account-alias">Classroom alias</label>
+          <input id="account-alias" type="text" minlength="3" maxlength="32" autocomplete="off" required>
+          <p class="auth-hint">Use a nickname, not your full name or email. This alias is shared on your next class join. Existing class records keep the alias you joined with.</p>
+          <button type="submit" class="btn btn-primary">Save classroom alias</button>
+          <p id="account-alias-status" role="status"></p>
         </form>
         <p>Signed in as <span id="account-email"></span></p>
 
@@ -268,9 +275,11 @@
       </div>
     </footer>
     <script type="module">
+      import { loadClassroomAlias, saveClassroomAlias } from '/assets/js/classroom-alias.js';
+      import { loadProfile, invalidateProfile } from '/assets/js/profile.js';
       import { signOutUser } from '/assets/js/auth.js';
       import { auth, db, SDK_VERSION } from '/assets/js/firebase-config.js';
-      const { doc, getDoc, setDoc } =
+      const { doc, setDoc } =
         await import(`https://www.gstatic.com/firebasejs/${SDK_VERSION}/firebase-firestore.js`);
       const { updateProfile } =
         await import(`https://www.gstatic.com/firebasejs/${SDK_VERSION}/firebase-auth.js`);
@@ -296,8 +305,7 @@
         let first = fallback.first;
         let last = fallback.last;
         try {
-          const snap = await getDoc(doc(db, 'users/' + user.uid));
-          const data = snap.exists() ? snap.data() : null;
+          const data = await loadProfile(user.uid);
           if (data && (data.firstName || data.lastName)) {
             first = data.firstName || '';
             last = data.lastName || '';
@@ -316,6 +324,9 @@
           document.getElementById('account-email').textContent = user.email || '';
           currentName = user.displayName || '';
           fillNameFields(user);
+          loadClassroomAlias(user.uid).then(alias => {
+            if (uid === user.uid) document.getElementById('account-alias').value = alias;
+          }).catch(() => { document.getElementById('account-alias-status').textContent = 'Could not load your alias. Please reload.'; });
         }
       });
 
@@ -343,6 +354,7 @@
             { merge: true }
           );
           if (auth.currentUser) await updateProfile(auth.currentUser, { displayName: name });
+          invalidateProfile(uid);
           currentName = name;
           document.dispatchEvent(new CustomEvent('pypath:auth', { detail: { user: auth.currentUser } }));
           window.PyUI && window.PyUI.showToast('Saved');
@@ -350,6 +362,15 @@
           accountErr.hidden = false;
           accountErr.textContent = 'Could not save your name. Please try again.';
         }
+      });
+
+      document.getElementById('account-alias-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const status = document.getElementById('account-alias-status');
+        try {
+          await saveClassroomAlias(uid, document.getElementById('account-alias').value);
+          status.textContent = 'Classroom alias saved.';
+        } catch (error) { status.textContent = error.message || 'Could not save your alias.'; }
       });
 
       document.getElementById('account-signout').addEventListener('click', async () => {

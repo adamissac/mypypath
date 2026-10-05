@@ -92,6 +92,65 @@ service cloud.firestore {
       allow delete: if isOwner(uid) || isTeacherOf(classId);
     }
 
+    // Approval is an enduring obligation, separate from enrollment and progress.
+    // Its minimal record remains readable by the deciding teacher after leaving.
+    function approvalPreserved(uid) {
+      return existsAfter(/databases/$(database)/documents/certificateApprovals/$(uid));
+    }
+
+    match /certificateApprovals/{uid} {
+      function legacy() {
+        return get(/databases/$(database)/documents/roster/$(uid)).data;
+      }
+      function hasLegacy() {
+        return exists(/databases/$(database)/documents/roster/$(uid))
+          && legacy().get('teacherUid', '') != '';
+      }
+      function theirDecider() {
+        return signedIn() && resource != null
+          && resource.data.teacherUid == request.auth.uid;
+      }
+      function shape() {
+        return request.resource.data.keys().hasOnly(
+          ['teacherUid', 'displayName', 'approved', 'requestedAt', 'decidedAt', 'updatedAt'])
+          && request.resource.data.teacherUid is string
+          && request.resource.data.teacherUid.size() > 0
+          && request.resource.data.teacherUid.size() <= 128
+          && request.resource.data.displayName is string
+          && request.resource.data.displayName.size() <= 64
+          && request.resource.data.approved is bool
+          && request.resource.data.requestedAt is number
+          && request.resource.data.requestedAt >= 0
+          && request.resource.data.decidedAt is number
+          && request.resource.data.decidedAt >= 0
+          && request.resource.data.updatedAt is number;
+      }
+      // Reading a missing record is needed to migrate legacy enrollments.
+      allow get: if isOwner(uid) || theirDecider()
+        || (signedIn() && resource == null && hasLegacy()
+            && legacy().teacherUid == request.auth.uid);
+      allow list: if theirDecider();
+      allow create: if shape() && (
+        (hasLegacy() && (isOwner(uid) || legacy().teacherUid == request.auth.uid)
+          && request.resource.data.teacherUid == legacy().teacherUid
+          && request.resource.data.approved == (legacy().get('certificateApproved', false) == true)
+          && request.resource.data.requestedAt == legacy().get('certificateRequestedAt', 0)
+          && request.resource.data.decidedAt == legacy().get('certificateDecidedAt', 0))
+        || (!hasLegacy() && isOwner(uid)
+          && request.resource.data.teacherUid ==
+            getAfter(/databases/$(database)/documents/roster/$(uid)).data.teacherUid
+          && request.resource.data.approved == false
+          && request.resource.data.requestedAt == 0
+          && request.resource.data.decidedAt == 0));
+      allow update: if shape() && (
+        (isOwner(uid) && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['requestedAt', 'updatedAt'])
+          && request.resource.data.requestedAt >= resource.data.requestedAt)
+        || (theirDecider() && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['approved', 'decidedAt', 'updatedAt'])));
+      allow delete: if false;
+    }
+
     // What a teacher is allowed to see about their students, and nothing else.
     //
     // This collection exists so that "a teacher can see their class" does not
@@ -187,12 +246,14 @@ service cloud.firestore {
       allow read: if isOwner(uid) || isAdmin() || theirTeacher();
 
       allow create: if isOwner(uid) && joinIsProven() && noContactDetails()
-        && verdictAbsent();
-      allow update: if (isOwner(uid) && (classUnchanged() || joinIsProven())
+        && verdictAbsent()
+        && (!('teacherUid' in request.resource.data) || approvalPreserved(uid));
+      allow update: if (isOwner(uid) && (classUnchanged() || (joinIsProven() && approvalPreserved(uid)))
                         && noContactDetails() && verdictUnchanged())
-        || removingOwnStudent()
+        || (removingOwnStudent() && approvalPreserved(uid))
         || gradingOwnStudent();
-      allow delete: if isOwner(uid);
+      allow delete: if isOwner(uid)
+        && (resource.data.get('teacherUid', '') == '' || approvalPreserved(uid));
     }
 
     // ---------------------------------------------------------------------

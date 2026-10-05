@@ -2,7 +2,7 @@
    user is signed in, and merges local state into remote on sign-in. */
 import { db, importFirebaseModule } from '/assets/js/firebase-config.js';
 import { currentTeacher, loadFor } from '/assets/js/class-state.js';
-import { loadProfile } from '/assets/js/profile.js';
+import { loadProfile, invalidateProfile } from '/assets/js/profile.js';
 import { summarizeUnitTests, UNIT_TESTS_KEY } from '/assets/js/unit-test-summary.js';
 
 const { doc, getDoc, setDoc, collection, getDocs, deleteDoc, query, where } =
@@ -118,6 +118,9 @@ function identity(user) {
 }
 
 function makeAdapter(uid) {
+  const epoch = generation;
+  let cancelled = false;
+  const active = () => !cancelled && epoch === generation && signedIn?.uid === uid;
   const pending = new Map();
   let timer = null;
   let firstQueuedAt = 0;
@@ -125,6 +128,7 @@ function makeAdapter(uid) {
   let flushAgain = false;
 
   function schedule() {
+    if (!active()) return;
     if (!firstQueuedAt) firstQueuedAt = Date.now();
     const waited = Date.now() - firstQueuedAt;
     const delay = Math.max(0, Math.min(DEBOUNCE_MS, MAX_WAIT_MS - waited));
@@ -133,6 +137,7 @@ function makeAdapter(uid) {
   }
 
   async function flush() {
+    if (!active()) return;
     timer = null;
     if (flushing) { flushAgain = true; return; }
     flushing = true;
@@ -145,6 +150,7 @@ function makeAdapter(uid) {
 
     try {
       for (const [key, entry] of batch) {
+        if (!active()) return;
         try {
           if (entry.deleted) {
             await deleteDoc(doc(db, `users/${uid}/code/${KEYS.toDocId(key)}`));
@@ -155,8 +161,10 @@ function makeAdapter(uid) {
               { completedUnits: units, updatedAt: now },
               { merge: true }
             );
+            if (!active()) return;
             const fields = summary(units, now, readTests());
             await setDoc(doc(db, `users/${uid}`), fields, { merge: true });
+            if (!active()) return;
             await mirrorToRoster(uid, fields);
           } else {
             await setDoc(doc(db, `users/${uid}/code/${KEYS.toDocId(key)}`), {
@@ -168,12 +176,14 @@ function makeAdapter(uid) {
             // a unit can be sat many times before it is finished. Refresh the
             // summary from the value being written, so a teacher does not wait
             // for the next completed unit to see a mark.
+            if (!active()) return;
             if (key === UNIT_TESTS_KEY) {
               const fields = summary(
                 STORE.getCompletedUnits(), now, summarizeUnitTests(entry.value)
               );
               await setDoc(doc(db, `users/${uid}`), fields, { merge: true });
-              await mirrorToRoster(uid, fields);
+              if (!active()) return;
+            await mirrorToRoster(uid, fields);
             }
           }
         } catch (e) {
@@ -189,11 +199,13 @@ function makeAdapter(uid) {
   }
 
   function queue(key, entry) {
+    if (!active()) return;
     pending.set(key, entry);
     schedule();
   }
 
   return {
+    cancel() { cancelled = true; clearTimeout(timer); pending.clear(); flushAgain = false; },
     push(key, value) { queue(key, { value: value, deleted: false }); },
     remove(key) { queue(key, { value: null, deleted: true }); },
     // pypath-completed-units is written once per unit, ever — there is no next
@@ -207,7 +219,7 @@ function makeAdapter(uid) {
   };
 }
 
-async function reconcileWithRemote(uid) {
+async function reconcileWithRemote(uid, active) {
   const localSnapshot = STORE.snapshot();
 
   // 1. Completed units — set union, never destructive.
@@ -217,6 +229,7 @@ async function reconcileWithRemote(uid) {
     if (snap.exists()) remoteUnits = snap.data().completedUnits || [];
   } catch (e) { /* offline: keep local, sync later */ }
 
+  if (!active()) return;
   const localUnits = STORE.getCompletedUnits();
   const mergedUnits = MERGE.mergeCompletedUnits(localUnits, remoteUnits);
   STORE.setCompletedUnits(mergedUnits);
@@ -255,6 +268,7 @@ async function reconcileWithRemote(uid) {
     read = true;
   } catch (e) { /* offline */ }
 
+  if (!active()) return;
   // Only a read that landed moves the floor. Otherwise an offline attempt would
   // mark work as seen that was never looked at.
   if (read) {
@@ -281,6 +295,7 @@ async function reconcileWithRemote(uid) {
   }
 }
 
+let generation = 0;
 let adapter = null;
 let signedIn = null;
 let syncing = false;
@@ -311,6 +326,8 @@ function dueForSync(uid) {
 async function fullSync(user) {
   if (syncing) return;
   syncing = true;
+  const epoch = generation;
+  const active = () => epoch === generation && signedIn?.uid === user.uid;
   try {
     /* Read before write, and this ordering is load-bearing rather than tidy.
      *
@@ -333,28 +350,31 @@ async function fullSync(user) {
      * belong here. */
     await loadProfile(user.uid).catch(() => null);
 
+    if (!active()) return;
     await setDoc(doc(db, `users/${user.uid}`), identity(user), { merge: true });
     // Who their teacher is, if anyone, before anything is mirrored. Forced past
     // the session cache: this is the run that is allowed to cost a read, and a
     // learner their teacher has since removed should find out here.
+    if (!active()) return;
     await loadFor(user.uid, true);
-    await reconcileWithRemote(user.uid);
+    if (!active()) return;
+    await reconcileWithRemote(user.uid, active);
+    if (!active()) return;
     // reconcileWithRemote may have unioned in units this device did not know about.
     // reconcileWithRemote may also have pulled down test results from another device.
     const merged = summary(STORE.getCompletedUnits(), Date.now(), readTests());
     await setDoc(doc(db, `users/${user.uid}`), merged, { merge: true });
-    // displayName is on the account record, which a teacher cannot read, so
-    // the roster carries its own copy of the name to show.
-    await mirrorToRoster(user.uid, Object.assign(
-      { displayName: user.displayName || '' }, merged
-    ));
+    if (!active()) return;
+    // Joining chooses the classroom alias; progress sync never replaces it.
+    await mirrorToRoster(user.uid, merged);
+    if (!active()) return;
     // Only a run that finished counts. A failed one leaves the stamp alone, so
     // the next page load retries rather than waiting out the whole window.
     markSynced(user.uid);
   } catch (err) {
     toast('Working offline; progress is saved on this device');
   } finally {
-    syncing = false;
+    if (active()) syncing = false;
   }
 }
 
@@ -375,16 +395,24 @@ document.addEventListener('visibilitychange', function () {
   if (document.visibilityState === 'visible') wake();
 });
 
+function resetIdentity() {
+  generation += 1;
+  adapter?.cancel();
+  adapter = null;
+  signedIn = null;
+  syncing = false;
+  STORE._setRemoteAdapter(null);
+  STORE._setClassAdapter(null);
+  invalidateProfile();
+}
+document.addEventListener('pypath:identity-reset', resetIdentity);
+
 document.addEventListener('pypath:auth', async (e) => {
   const user = e.detail.user;
 
-  if (!user) {
-    // Signed out: stop syncing, keep the local cache so the guest session works.
-    signedIn = null;
-    adapter = null;
-    STORE._setRemoteAdapter(null);
-    return;
-  }
+  if ((signedIn?.uid || null) !== (user?.uid || null)) resetIdentity();
+  if (!user) return;
+  if (signedIn?.uid === user.uid) return;
 
   signedIn = user;
   adapter = makeAdapter(user.uid);
