@@ -39,7 +39,7 @@ async function account(label, role) {
     if (req.failure()?.errorText !== 'net::ERR_ABORTED') console.error('REQUEST FAILED', req.url(), req.failure()?.errorText);
   });
   await page.goto(base + '/account.html');
-  const uid = await page.evaluate(async ({ email, role }) => {
+  const uid = await page.evaluate(async ({ email, role, alias }) => {
     const { auth, db, SDK_VERSION } = await import('/assets/js/firebase-config.js');
     const a = await import(`https://www.gstatic.com/firebasejs/${SDK_VERSION}/firebase-auth.js`);
     const f = await import(`https://www.gstatic.com/firebasejs/${SDK_VERSION}/firebase-firestore.js`);
@@ -47,8 +47,9 @@ async function account(label, role) {
     await a.updateProfile(user, { displayName: email.split('@')[0] });
     await f.setDoc(f.doc(db, `users/${user.uid}`), { role }, { merge: true });
     (await import('/assets/js/profile.js')).invalidateProfile(user.uid);
+    if (role === 'student') await (await import('/assets/js/classroom-alias.js')).saveClassroomAlias(user.uid, alias);
     return user.uid;
-  }, { email: `${label}-${run}@pypath.test`, role });
+  }, { email: `${label}-${run}@pypath.test`, role, alias: `Alias ${label}` });
   await page.waitForFunction(() => !!window.PyPathRoles);
   return { page, uid, context };
 }
@@ -230,7 +231,9 @@ try {
     await t.locator('[data-cr-student-pick]').selectOption(student.uid);
     await t.locator('[data-sd-root]').waitFor({ state: 'visible' });
     await t.locator('[data-sd-root][aria-busy="false"]').waitFor();
-    assert((await t.locator('[data-sd-name]').innerText()).includes('learner'));
+    const shown = await t.locator('[data-sd-name]').innerText();
+    assert(shown.includes('Alias learner'), `Drill-down shows ${shown}, not the classroom alias`);
+    assert(!shown.includes(`learner-${run}`), 'Drill-down leaks the account name');
     await t.locator('[data-sd-close]').click();
     await t.locator('[data-sd-root]').waitFor({ state: 'hidden' });
     await t.locator('input[name="cr-view"][value="roster"]').locator('..').click();
@@ -292,7 +295,10 @@ try {
       assert(file.suggestedFilename().endsWith(suffix));
       const bytes = await readFile(await file.path());
       assert(bytes.length > 100);
-      if (suffix === '.csv') assert(bytes.toString().includes('learner'));
+      if (suffix === '.csv') {
+        assert(bytes.toString().includes('Alias learner'), 'CSV is missing the classroom alias');
+        assert(!bytes.toString().includes(`learner-${run}`), 'CSV leaks the account name');
+      }
       else assert.equal(bytes.subarray(0, 2).toString(), 'PK');
     }
     await t.locator('[data-cr-digest]').click();
