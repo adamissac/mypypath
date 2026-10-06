@@ -735,6 +735,7 @@ def version_course_assets(html: str) -> str:
                 'assets/css/unit-test.css',
                 'assets/css/admin.css',
                 'assets/img/data-moon.svg',
+                'assets/img/summit.png',
                 'assets/img/placeholder-avatar.svg',
                 # The homepage tour. The video and its captions are served with
                 # a year-long immutable cache (vercel.json), so a re-cut film
@@ -746,12 +747,35 @@ def version_course_assets(html: str) -> str:
                 'assets/video/pypath-tour.en.vtt',
                 'assets/img/pypath-tour-poster.webp'):
         version = hashlib.sha256((ROOT / rel).read_bytes()).hexdigest()[:10]
-        html = re.sub(
-            r'(["\'])/' + re.escape(rel) + r'(?:\?v=[0-9a-f]+)?\1',
-            lambda match: f'{match[1]}/{rel}?v={version}{match[1]}',
-            html,
-        )
+        html = apply_asset_version(html, rel, version)
     return html
+
+
+# Hand-rolled tokens such as ?v=theme1 are not hex. They still have to
+# be replaced, or a year-long immutable image cache keeps the old file.
+def apply_asset_version(text: str, rel: str, version: str) -> str:
+    return re.sub(
+        r'(["\'])/' + re.escape(rel) + r'(?:\?v=[^"\']+)?\1',
+        lambda match: f'{match[1]}/{rel}?v={version}{match[1]}',
+        text,
+    )
+
+
+STYLESHEETS_WITH_VERSIONED_URLS = (
+    ROOT / 'assets' / 'css' / 'dropdowns.css',
+)
+
+
+def version_stylesheet_assets() -> bool:
+    """Rewrite url() references inside sheets the HTML baker does not see."""
+    changed = False
+    for path in STYLESHEETS_WITH_VERSIONED_URLS:
+        text = path.read_text(encoding='utf-8')
+        updated = version_course_assets(text)
+        if updated != text:
+            path.write_text(updated, encoding='utf-8')
+            changed = True
+    return changed
 
 
 def version_course_file(path: Path) -> bool:
@@ -837,7 +861,9 @@ def process(path: Path) -> bool:
 def main():
     transform = version_course_file if '--version-course-assets' in sys.argv else process
     count = sum(1 for p in ROOT.rglob('*.html') if not skipped(p) and transform(p))
-    print(f'Baked layout into {count} HTML files.')
+    css = version_stylesheet_assets()
+    print(f'Baked layout into {count} HTML files'
+          + (' and versioned stylesheet urls.' if css else '.'))
 
 
 if __name__ == '__main__':
