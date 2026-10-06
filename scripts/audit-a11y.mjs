@@ -48,6 +48,7 @@ export const PAGES = [
   '/certificate.html',
   '/account.html',
   '/login.html',
+  '/signup.html',
   '/progress.html',
   '/sandbox.html',
   '/download.html',

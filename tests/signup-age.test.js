@@ -41,6 +41,13 @@ describe('signup age eligibility', () => {
     expect(document.getElementById('signup-email').value).toBe('');
     expect(document.getElementById('signup-age-hint').textContent).toContain('cannot create an account');
   });
+  it('hides the account-details legend with the class the sheets actually define', () => {
+    // .sr-only is not in any stylesheet. Without .visually-hidden the legend
+    // paints "Account details" into the signup form.
+    expect(signup).toContain('<legend class="visually-hidden">Account details</legend>');
+    expect(signup).not.toContain('sr-only');
+  });
+
   it('also checks age in the shared submit guard used by email and OAuth', () => {
     expect(signup).toContain("if (!window.PyPathConsent.checkAge(document.getElementById('signup-age').value).ok) return false;");
     expect(signup.match(/if \(!agreed\(\)\) return;/g)).toHaveLength(2);
