@@ -474,6 +474,12 @@ def misc_fixes(html: str, path: Path) -> str:
             html,
             count=1,
         )
+        html = re.sub(
+            r'(<aside class="course-sidebar" id="lesson-sidebar">\s*<p class="sidebar-unit-label">[^<]*</p>\s*)<nav(?![^>]*aria-label)',
+            r'\1<nav aria-label="Lessons in this unit"',
+            html,
+            count=1,
+        )
         html = html.replace(
             '<div class="icon-circle" aria-hidden="true"><span>▶</span></div>',
             '<div class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg></div>',

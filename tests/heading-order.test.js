@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -142,6 +143,24 @@ describe('the promoted headings kept their size', () => {
   it('the layout baker emits the fixed footer, so regeneration keeps it', () => {
     expect(fs.readFileSync('scripts/bake_layout.py', 'utf8'))
       .toContain('<h2 class="footer-heading">Learn</h2>');
+  });
+});
+
+describe('lesson sidebars name the lesson list', () => {
+  it('every course-sidebar nav has an accessible name', () => {
+    const tracked = execFileSync('git', ['ls-files', '*.html'], { encoding: 'utf8' })
+      .trim().split('\n').filter((rel) => rel.startsWith('units/') || rel.startsWith('data/'));
+    const missing = [];
+    for (const rel of tracked) {
+      const src = fs.readFileSync(rel, 'utf8');
+      if (!src.includes('id="lesson-sidebar"')) continue;
+      if (!/id="lesson-sidebar"[\s\S]*?<nav[^>]*aria-label="Lessons in this unit"/.test(src)) {
+        missing.push(rel);
+      }
+    }
+    expect(missing).toEqual([]);
+    expect(fs.readFileSync('scripts/bake_layout.py', 'utf8'))
+      .toContain('aria-label="Lessons in this unit"');
   });
 });
 
