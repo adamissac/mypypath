@@ -918,12 +918,10 @@ export async function touchLastActive(classId, uid) {
 
 /* ---------------------------------------------------------- certificates */
 
-/* The certificate handshake still lives on the flat roster/{uid} document, and
- * deliberately stays there. The rules' gradingOwnStudent() predicate targets
- * that document, the learner's own request half writes it, and join-flow.js
- * guarantees every class-enrolled student has one alongside their class seat.
- * Moving the storage would mean moving all three; moving only the controls
- * that read it costs nothing.
+/* Completion (`hasCertificate`) lives on the flat roster/{uid} document; the
+ * request/decision handshake lives in certificateApprovals/{uid}, which
+ * survives the learner leaving the class (see class-join.js). Both are read
+ * here and merged per learner.
  *
  * One query for the whole class rather than a read per student: the flat
  * roster is queryable by teacherUid, which is the same query the page this
@@ -948,9 +946,12 @@ export async function readCertificates(teacherUid) {
   )), 'readCertificateApprovals');
   durable.forEach((d) => {
     const v = d.data();
+    // Completion still lives on the flat roster; the durable record only
+    // carries the handshake, so keep `earned` from the roster read above.
     out[d.id] = { requestedAt: Number(v.requestedAt) || 0,
       approved: v.decidedAt > 0 ? v.approved : null,
-      decidedAt: Number(v.decidedAt) || 0, displayName: v.displayName || 'Learner' };
+      decidedAt: Number(v.decidedAt) || 0, displayName: v.displayName || 'Learner',
+      earned: !!(out[d.id] && out[d.id].earned) };
   });
   return out;
 }

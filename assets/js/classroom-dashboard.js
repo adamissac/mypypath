@@ -84,9 +84,8 @@ function lessonsByUnit() {
 
 async function loadClassData(classId) {
   const roster = await readRoster(classId);
-  // One query for the whole class. The certificate handshake lives on the flat
-  // roster document, which is queryable by teacherUid; the class seat is not
-  // where it is stored and does not need to be.
+  // One query for the whole class. Certificates are keyed by teacherUid (the
+  // flat roster plus certificateApprovals), not by class seat.
   const user = currentUser();
   certificates = user ? await readCertificates(user.uid).catch(() => ({})) : {};
   /* One student at a time rather than one query: the rules scope reads to a
