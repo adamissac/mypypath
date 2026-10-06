@@ -347,12 +347,40 @@ try {
     await waitFor(t, () => document.querySelector('[data-cr-assign-list]').textContent.includes('Submit once'));
     assert.equal((await call(t, 'readAssignments', id)).filter(a => a.title === 'Submit once').length, 1);
   });
+  let newcomer;
   await check('archiving blocks joining and reopening restores it', async () => {
     await call(t, 'setArchived', room2.classId, true);
-    const newcomer = await account('archive-join', 'student');
+    newcomer = await account('archive-join', 'student');
     await assert.rejects(join(newcomer, room2.joinCode), /archived|closed/i);
     await call(t, 'setArchived', room2.classId, false);
     await join(newcomer, room2.joinCode);
+  });
+  await check('class switcher, archive, purge and reopen work from the dashboard', async () => {
+    await call(newcomer.page, 'writeEvents', room2.classId, newcomer.uid, [{
+      type: 'lesson.opened', unit: 1, lessonPath: lesson, payload: {},
+    }]);
+    await dashboard(t);
+    await t.locator('[data-cr-switcher]').selectOption(room2.classId);
+    await waitFor(t, () => {
+      const text = document.querySelector('[data-cr-assign-list]').textContent;
+      return text.includes('Both classes') && !text.includes('Introduction to Python');
+    });
+    const archive = t.locator('[data-cr-archive]');
+    await t.locator('[data-cr-fold="danger"] > summary, details:has([data-cr-archive]) > summary').first().click();
+    await archive.click();
+    await waitFor(t, () => document.querySelector('[data-cr-archive]').textContent === 'Reopen class');
+    assert.equal((await call(t, 'readClass', room2.classId)).archived, true);
+    assert.equal(await t.locator('[data-cr-switcher]').inputValue(), room2.classId, 'Archiving switched classes');
+    const purge = t.locator('[data-cr-purge]');
+    await purge.click();
+    assert.equal(await purge.innerText(), 'Confirm: delete all records');
+    await purge.click();
+    await t.locator('[data-cr-purge-note]').waitFor({ state: 'visible' });
+    assert.match(await t.locator('[data-cr-purge-note]').innerText(), /older than a year/);
+    assert((await call(t, 'readRoster', room2.classId)).length > 0, 'Refused purge still removed the roster');
+    await archive.click();
+    await waitFor(t, () => document.querySelector('[data-cr-archive]').textContent === 'Archive class');
+    assert.equal((await call(t, 'readClass', room2.classId)).archived, false);
   });
   await check('purging recent records fails honestly and keeps roster reachable', async () => {
     await call(t, 'setArchived', room.classId, true);
