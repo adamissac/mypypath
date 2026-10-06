@@ -144,3 +144,15 @@ describe('the promoted headings kept their size', () => {
       .toContain('<h2 class="footer-heading">Learn</h2>');
   });
 });
+
+describe('unit cards on a phone', () => {
+  it('stack to one column before the ribbon collides with the title', () => {
+    /* At 375px the 2-column grid from max-width 980 left ~160px per card.
+       The 60px rotated ribbon then sat on "Foundations" and "Functions".
+       Theme loads last, so one column under 480px wins without !important. */
+    const theme = fs.readFileSync('assets/css/pypath-theme.css', 'utf8');
+    expect(theme).toMatch(
+      /@media \(max-width:\s*480px\)[\s\S]{0,400}\.units-grid\s*\{[\s\S]{0,200}grid-template-columns:\s*1fr/,
+    );
+  });
+});

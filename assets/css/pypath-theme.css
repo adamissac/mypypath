@@ -1835,6 +1835,17 @@ main .container,
   padding-right: 2.75rem;
 }
 
+/* Phone widths. style.css still asks for two columns below 980px, which at
+   375px leaves ~160px per card. The 60px rotated ribbon then sits on the
+   title. Theme loads last, so one column here wins without !important.
+   Nothing in the JS ever adds .mobile-device, so that older 1-col rule is
+   inert. */
+@media (max-width: 480px) {
+  .units-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════════
    Python for Data course theme
 
