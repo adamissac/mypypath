@@ -7,7 +7,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SKIP_DIRS = {".git", "node_modules", "src-tauri", "desktop-dist", ".venv", ".claude", "templates"}
+SKIP_DIRS = {".git", "node_modules", "src-tauri", "desktop-dist", ".venv", ".claude",
+             ".agents", ".audit", "templates", "engine", "docs", "REVIEW", "tests",
+             "scripts", "html", "lesson-format-kit"}
 SKIP_PREFIXES = ("http://", "https://", "//", "mailto:", "tel:", "#", "javascript:")
 ATTR_RE = re.compile(r"""(?:href|src)=["']([^"']+)["']""", re.IGNORECASE)
 
