@@ -8,7 +8,8 @@ OUT = ROOT / "sitemap.xml"
 # important one: it is gitignored, never deploys, and rglob happily walked it
 # into the sitemap once dev dependencies were installed.
 SKIP_DIRS = {".git", "node_modules", "lesson-format-kit", "REVIEW", "docs", "tests",
-             "src-tauri", "desktop-dist"}
+             "src-tauri", "desktop-dist", ".claude", ".agents", "scripts",
+             ".audit", "engine", "html"}
 # A 404 page must never be advertised for indexing, and the staff dashboard
 # is not public content.
 SKIP_FILES = {"404.html", "admin.html", "classroom.html"}
