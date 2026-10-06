@@ -46,12 +46,10 @@
    * complete picture of the same mountain, which is why the <img> stays in the
    * markup: nothing is missing while this loads, or if it never does.
    *
-   * So it is fetched OFF THE CRITICAL PATH rather than at DOMContentLoaded.
-   * Measured: /index.html pulls 908KB of JavaScript and 618 of those are this
-   * file, competing for bandwidth with the stylesheets and scripts that decide
-   * when the page is usable. requestIdleCallback hands it the connection once
-   * the browser has nothing more urgent, with a timeout so it still arrives
-   * promptly on a fast machine that never goes idle.
+   * It used to fetch on requestIdleCallback with a 2.5s timeout, which still
+   * charged every homepage visitor 618KB -- including people who never scroll
+   * to the mountain -- and landed inside the 4s perf window. Approach is the
+   * real signal, same as the Pyodide warmup: load when the summit is near.
    *
    * It is also skipped outright in two cases the old code did not consider,
    * both of which are someone telling us not to:
@@ -84,15 +82,24 @@
       document.head.appendChild(s);
     }
 
-    if (window.requestIdleCallback) {
-      // The timeout is the point of the second argument: a page that never
-      // reaches idle would otherwise never get its mountain.
-      window.requestIdleCallback(fetchIt, { timeout: 2500 });
-    } else {
-      // Safari has no requestIdleCallback. A timeout past first paint is the
-      // closest equivalent and is still far better than blocking on it.
-      window.setTimeout(fetchIt, 600);
+    /* Idle-with-2.5s-timeout still fetched 618KB on every homepage open,
+     * including visitors who never scroll to the mountain, and it landed
+     * inside the 4s perf window. Approach is the real signal: the static
+     * <img> is already the picture. */
+    if (host && 'IntersectionObserver' in window) {
+      var obs = new IntersectionObserver(function (entries) {
+        for (var i = 0; i < entries.length; i++) {
+          if (entries[i].isIntersecting) {
+            obs.disconnect();
+            fetchIt();
+            return;
+          }
+        }
+      }, { rootMargin: '40% 0px' });
+      obs.observe(host);
+      return;
     }
+    fetchIt();
   }
 
   /* Canvas-drawn numbered stop marker, used as an always-facing sprite */

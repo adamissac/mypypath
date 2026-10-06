@@ -42,6 +42,27 @@ const deciding = new Set();
 const $ = (sel, root) => (root || document).querySelector(sel);
 const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
 
+/* CSV / xlsx / digest are click-only. Loading the writers on every dashboard
+ * open put 30KB on the critical path of a page already over budget. */
+let exportReady = null;
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = () => reject(new Error('Failed to load ' + src));
+    document.head.appendChild(s);
+  });
+}
+function ensureExport() {
+  if (window.PyPathExport) return Promise.resolve();
+  if (!exportReady) {
+    exportReady = loadScript('/assets/js/xlsx-writer.js')
+      .then(() => loadScript('/assets/js/classroom-export.js'));
+  }
+  return exportReady;
+}
+
 function show(node, visible) {
   if (node) node.hidden = !visible;
 }
@@ -1982,7 +2003,8 @@ function wire() {
 
   const exportBtn = $('[data-cr-export]');
   if (exportBtn) {
-    exportBtn.addEventListener('click', () => {
+    exportBtn.addEventListener('click', async () => {
+      await ensureExport();
       const klass = classes.filter((c) => c.id === activeClassId)[0];
       const csv = window.PyPathExport.masteryCsv(sortedStudents(), {
         lessonsByUnit: lessonsByUnit(),
@@ -2005,7 +2027,8 @@ function wire() {
      it is the format another program can definitely read. */
   const xlsxBtn = $('[data-cr-export-xlsx]');
   if (xlsxBtn) {
-    xlsxBtn.addEventListener('click', () => {
+    xlsxBtn.addEventListener('click', async () => {
+      await ensureExport();
       const klass = classes.filter((c) => c.id === activeClassId)[0];
       const bytes = window.PyPathExport.masteryWorkbook(sortedStudents(), {
         lessonsByUnit: lessonsByUnit(),
@@ -2026,7 +2049,8 @@ function wire() {
 
   const digestBtn = $('[data-cr-digest]');
   if (digestBtn) {
-    digestBtn.addEventListener('click', () => {
+    digestBtn.addEventListener('click', async () => {
+      await ensureExport();
       const klass = classes.filter((c) => c.id === activeClassId)[0];
       const text = window.PyPathExport.digest(students, {
         now: Date.now(),

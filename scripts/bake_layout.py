@@ -230,8 +230,8 @@ def header_html(path: Path, show_progress: bool) -> str:
 # aren't real markup at all and aren't even valid UTF-8 -- rglob walked
 # straight into one and crashed the whole bake the first time a local Rust
 # build existed on disk.
-SKIP_DIRS = {'.git', '.claude', '.agents', 'node_modules', 'lesson-format-kit', 'REVIEW',
-             'docs', 'tests', 'src-tauri', 'desktop-dist'}
+SKIP_DIRS = {'.git', '.claude', '.agents', '.audit', 'node_modules', 'lesson-format-kit', 'REVIEW',
+             'docs', 'tests', 'src-tauri', 'desktop-dist', 'engine'}
 
 
 def skipped(path: Path) -> bool:
@@ -730,6 +730,8 @@ def version_course_assets(html: str) -> str:
                 # a year-long immutable cache (vercel.json), so a re-cut film
                 # only reaches anyone if its URL changes with it.
                 'assets/js/home-tour.js',
+                'assets/js/summit-3d.js',
+                'assets/js/classroom-dashboard.js',
                 'assets/video/pypath-tour.mp4',
                 'assets/video/pypath-tour.en.vtt',
                 'assets/img/pypath-tour-poster.webp'):
