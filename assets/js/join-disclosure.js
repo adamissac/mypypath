@@ -23,14 +23,15 @@
     return ul;
   }
 
-  function render(host) {
+  function render(host, index) {
     if (!CORE || !host || host.querySelector('.disclosure')) return;
 
+    var headingId = 'disclosure-heading-' + String((index == null ? 0 : index) + 1);
     var panel = el('section', 'disclosure');
-    panel.setAttribute('aria-labelledby', 'disclosure-heading');
+    panel.setAttribute('aria-labelledby', headingId);
 
     var heading = el('h3', 'disclosure__title', 'What your teacher will be able to see');
-    heading.id = 'disclosure-heading';
+    heading.id = headingId;
     panel.appendChild(heading);
 
     panel.appendChild(list(CORE.TEACHER_CAN_SEE, 'disclosure__list disclosure__list--yes'));
