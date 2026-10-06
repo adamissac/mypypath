@@ -45,6 +45,11 @@ describe('automatic affiliation verification', () => {
   it('recognizes common university teaching titles', () => {
     expect(teacherEvidence('<article><h2>Ada Lovelace</h2><p>Senior Lecturer</p><a href="mailto:ada@university.edu">Email</a></article>', 'Ada Lovelace', 'ada@university.edu')).toBe(true);
   });
+  it('reads a school staff profile with a single directory name', () => {
+    const html = '<div class="staff-profile"><h3>Li</h3><div class="role">Math Teacher</div><a href="mailto:li@district.k12.ga.us">Email</a></div>';
+    expect(teacherEvidence(html, 'Li', 'li@district.k12.ga.us')).toBe(true);
+    expect(teacherEvidence(html, 'Lin', 'li@district.k12.ga.us')).toBe(false);
+  });
   it('accepts a mailto link in a simple paragraph and deduplicates its visible email', () => {
     for (const label of ['Email', 'ada@district.k12.ga.us']) {
       const html = `<p>Ada Lovelace — Teacher — <a href="mailto:ada@district.k12.ga.us">${label}</a></p>`;

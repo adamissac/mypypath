@@ -29,14 +29,16 @@ export function nameMatches(listed, supplied) {
       .filter((token, index, all) => index !== all.length - 1 || !/^(jr|sr|ii|iii|iv)$/.test(token));
   };
   const a = tokens(listed), b = tokens(supplied);
+  if (a.length === 1 || b.length === 1) return a.length === 1 && b.length === 1 && a[0] === b[0];
   const firstMatches = a[0] === b[0] || (a[0]?.length === 1 || b[0]?.length === 1) && a[0]?.[0] === b[0]?.[0];
   return a.length >= 2 && b.length >= 2 && firstMatches && a.at(-1) === b.at(-1)
     && (a.length === 2 || b.length === 2 || a.slice(1, -1).map(t => t[0]).join('') === b.slice(1, -1).map(t => t[0]).join(''));
 }
 const ENTRY_SELECTOR = [
   'tr', 'li', 'article', '[itemtype$="/Person"]', '[data-staff-member]',
-  '.staff-card', '.staff-member', '.staff-item', '.faculty-card', '.faculty-member',
-  '.directory-card', '.directory-item', '.person-card', '.fsConstituentItem',
+  '.staff-card', '.staff-member', '.staff-item', '.staff-profile', '.teacher-profile',
+  '.faculty-card', '.faculty-member', '.faculty-profile', '.directory-card',
+  '.directory-item', '.person-card', '.profile-card', '.employee-card', '.fsConstituentItem',
 ].join(',');
 const NAME_SELECTOR = '[itemprop~="name"],.name,.staff-name,.faculty-name,.directory-name,.fsFullName,h1,h2,h3,h4,h5,h6';
 const EMAIL_PATTERN = /[a-z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-z0-9.-]+\.[a-z]{2,}/gi;
@@ -139,7 +141,7 @@ export function directoryLinks(html, homepage, hosts) {
   return links.slice(0, 8);
 }
 export async function automaticTeacherCheck({ db, uid, email, fullName, directoryUrl = '', registryUrl = '', fetchPage = fetchDirectory, resolveSchool = resolveInstitution, now = Date.now() }) {
-  if (typeof fullName !== 'string' || fullName.trim().length < 3 || fullName.length > 100) {
+  if (typeof fullName !== 'string' || fullName.trim().length < 2 || fullName.length > 100) {
     throw Object.assign(new Error('Enter your name as listed by your school.'), { status: 400 });
   }
   if (typeof directoryUrl !== 'string' || directoryUrl.length > 1500 || typeof registryUrl !== 'string' || registryUrl.length > 1500) {

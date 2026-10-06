@@ -114,7 +114,7 @@ function render(data, user, version) {
     const unavailable = data.status === 'source-unavailable' || (row?.evidence?.length && row.evidence.every(entry => entry.result === 'source-unavailable'));
     setState('unverified', 'Not verified yet', unavailable ? 'We couldn’t reach your school directory.' : 'We couldn’t confirm a complete match.', unavailable
       ? 'The school directory or institution registry is temporarily unavailable. Try again in five minutes, or add a direct staff-page link below. This is not a rejection of your teacher account.'
-      : 'Add your direct staff-page link below. We check the institution independently, then look for your account email and teaching role together. Titles, middle initials, and accents in names are okay. For a school outside our registry, add its NCES record. An incomplete match does not mean you aren’t a teacher.');
+      : 'Add your direct staff-page link below. We check the institution independently, then look for your account email and name on an official teacher listing or in a staff entry with a teaching role. For a US school outside our registry, you can also add its NCES record. An incomplete match does not mean you aren’t a teacher.');
   }
 }
 function renderError(error, user) {
