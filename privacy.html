@@ -130,9 +130,13 @@
         <div class="container narrow">
           <p class="eyebrow">Legal</p>
           <h1 class="page-title">Privacy policy</h1>
-          <p class="muted">Last updated 19 August 2026.</p>
+          <p class="muted">Last updated 5 October 2026.</p>
 
-          <p>PyPath is a free Python course you can use without an account. Creating an account is optional; it exists so your progress follows you between devices. This page explains exactly what an account stores.</p>
+          <p>PyPath is a free Python learning site. You can browse introductory material without an account; some lessons and classroom features require one. Accounts let you save progress across devices. This notice describes account data, classroom sharing, and information processed when you visit the site.</p>
+
+          <h2>Who operates PyPath</h2>
+          <p>PyPath is operated by Adam Issac, Saicharan Chowdarapu, and Vihaan Krishna as individuals based in Atlanta, Georgia, United States.</p>
+          <p>For privacy questions and requests concerning your data, contact Adam Issac at <a href="mailto:adamissac08@gmail.com">adamissac08@gmail.com</a>. The other operators can be reached at <a href="mailto:sai.chowdarapu09@gmail.com">sai.chowdarapu09@gmail.com</a> (Saicharan Chowdarapu) and <a href="mailto:vvihaankrishna@gmail.com">vvihaankrishna@gmail.com</a> (Vihaan Krishna).</p>
 
           <h2>What we store</h2>
           <p>When you sign up, the following is stored in our database:</p>
@@ -148,7 +152,7 @@
             <li><strong>Avatar URL</strong> — only if your sign-in provider supplies one.</li>
             <li><strong>Course progress</strong> — which lessons and units you have completed, and when.</li>
             <li><strong>Saved lesson code</strong> — the Python you write in lesson exercises, so it is still there when you come back.</li>
-            <li><strong>Time spent learning</strong> — how long you are actively on the site while signed in, and when you were last here. Time counts only while a page is open in front of you and you have interacted with it in the last five minutes, so a tab left open overnight is not recorded as study. We store a running total and a per-day total, never a log of which pages you visited or when.</li>
+            <li><strong>Time spent learning</strong> — how long you are actively on the site while signed in, and when you were last here. Time counts only while a page is open in front of you and you have interacted with it in the last five minutes, so a tab left open overnight is not recorded as study. We store a running total and a per-day total. Classroom accounts also record lesson activity as described below.</li>
           </ul>
           <p>We store no payment details, no analytics profile, and no advertising identifiers. Your code runs in your browser through Pyodide; it is saved as text, never executed on a server.</p>
 
@@ -157,7 +161,12 @@
 
           <h2>Who processes it</h2>
           <p>Accounts and stored progress are handled by <strong>Google Firebase</strong> (Firebase Authentication and Cloud Firestore), acting as our data processor. Data is subject to Google's infrastructure and security practices; see the <a href="https://firebase.google.com/support/privacy" rel="noopener">Firebase privacy documentation</a>. The site itself is served as static files by Vercel, which records standard request logs.</p>
-          <p>We do not sell your data and we do not share it with third parties beyond the processors named above.</p>
+          <p>PyPath does not sell personal information or use it for targeted advertising. Classroom data is shared with the teachers of classes you join, as described below. Teachers can download classroom reports; those downloaded copies are outside PyPath’s deletion controls.</p>
+
+          <h2>Browser storage and external services</h2>
+          <p>PyPath uses local storage and IndexedDB for preferences, saved work, progress, and Firebase session and offline-cache functions. Clearing site data can remove unsynced work; signing out does not necessarily clear every browser cache. On shared devices, sign out and clear site data when finished.</p>
+          <p>Your browser also contacts Google Fonts, Google's Firebase script servers, and public CDNs such as jsDelivr to load fonts and learning tools. Those services receive network information such as your IP address and request metadata even when you do not create an account. Google or GitHub receives sign-in information when you choose that provider. These providers may process information outside your country.</p>
+          <p>Do not place passwords, access keys, or sensitive personal information in lesson code, reflections, or classroom names. Python runs locally, but saving work and joining a class can upload that work as described above.</p>
 
           <h2>Security rules</h2>
           <p>Database rules restrict every progress and code document to the
@@ -169,7 +178,7 @@
 
           <h2>What PyPath staff can see</h2>
           <p>A small, named group of PyPath staff can see a dashboard listing every account: name, email address, when the account was created, when it was last active, total time spent, how many units are complete, and whether the certificate has been earned. It exists so we can tell how the course is actually being used.</p>
-          <p><strong>Your saved lesson code is not included, deliberately.</strong> The database rules keep code documents readable by their owner alone, with no staff exception, so nobody at PyPath can read the Python you write. Staff access is read-only: the dashboard cannot change your account or your progress. The list of staff accounts is enforced in the database rules themselves, not just in the page.</p>
+          <p><strong>Your saved lesson code is not included, deliberately.</strong> The database rules keep code documents readable by their owner alone, with no staff exception, so the staff dashboard does not provide access to your private saved code. These client-access rules do not prevent access by administrators with privileged Firebase infrastructure credentials. Staff access is read-only: the dashboard cannot change your account or your progress. The list of staff accounts is enforced in the database rules themselves, not just in the page.</p>
 
           <h2>Classroom accounts</h2>
         <p>When you sign up you choose whether you are learning on your own,
@@ -240,35 +249,28 @@
            than you meant.</p>
 
         <h3>How long classroom data is kept</h3>
-        <p>Not indefinitely. Under the amended COPPA rule that reached full
-           compliance on 22 April 2026, children&rsquo;s data may not be kept for
-           longer than it is needed, and a retention period has to be stated
-           rather than left open.</p>
+        <p>Classroom event cleanup targets records older than <strong>180 days</strong>. It runs from a signed-in student's browser. It is not a scheduled server deletion: records can remain longer if the student does not return or cleanup fails.</p>
         <ul>
-          <li>Activity records and code history are deleted after
-              <strong>180 days</strong>.</li>
-          <li>Code history is also capped as it is written: 20 states per editor
-              and 64KB per lesson, oldest discarded first.</li>
-          <li>An archived class and everything in it is purged after
-              <strong>one year</strong>. A teacher can carry that out from their
-              classroom page; the database rules allow it only for a class that
-              has been archived and only for records already older than the
-              year, and never for a class that is still running.</li>
-          <li>Leaving a class deletes your class records straight away, without
-              waiting for any of the above.</li>
+          <li>Code history is capped at 20 states per editor and 64KB per lesson, with the oldest states discarded first. These size caps are not a time-based deletion guarantee.</li>
+          <li>Teachers can purge eligible records from an archived class after <strong>one year</strong>. This requires a teacher action; archiving alone does not delete the records.</li>
+          <li>Leaving a class requests deletion of its class copies. Contact us if leaving fails or you need help removing records.</li>
         </ul>
+        <p>Account profiles, private progress, and saved code remain until removed; there is currently no automatic inactive-account deletion. Device storage remains until you clear it. Hosting and authentication providers apply their own log and backup retention. We have not verified a fixed deletion period for those provider records.</p>
 
         <h2>Deleting your account</h2>
-          <p>You can clear device-local data at any time from <a href="/settings.html" class="route">Settings</a>. To delete your account and everything stored against it, contact us using the address below and we will remove the account, its progress, and its saved code. Deletion is permanent.</p>
+          <p>You can clear device-local data at any time from <a href="/settings.html" class="route">Settings</a>. To delete your account and everything stored against it, send a private deletion request to the contact address below. Account deletion is currently handled manually, not through a self-service button. We may need to verify ownership before acting. Ask us to include classroom copies as well as your profile, progress, and saved code; copies already downloaded by a teacher must be addressed with that teacher or school. Deletion is permanent.</p>
+
+          <h2>Teacher verification requests</h2>
+          <p>If you request teacher verification, we store your submitted name, account email, institutional domain, check timestamps, source links, and match results. The service automatically searches supported official school websites for a name, email, and teaching-role match. It does not send your name or email to a search engine. Checks currently support US public-school k12 state domains. A successful result is an automated affiliation check, not proof of school authorization for children’s data. Results expire after 30 days and do not enable under-13 enrollment by themselves. Requests remain stored until removed; there is not yet an automatic deletion schedule. Contact us for access, correction, or deletion. Do not include student information.</p>
 
           <h2>Children</h2>
-          <p>PyPath is not directed at children under 13, and accounts should not be created for them without a parent or guardian.</p>
+          <p>Self-service accounts are for people aged 13 and older. We are preparing a school-authorized route for younger learners, but under-13 account creation is not yet open. Children under 13 must not create a regular account or use an adult’s account. The school-code check sends only the code to our server, alongside ordinary network request information. A successful check does not create an account or establish parental consent; it indicates that a school authorization review is on file. Our signup form asks for an age range before enabling account details or provider signup; we do not ask for a date of birth. This is self-reported eligibility, not verified identity or parental consent. If you believe we hold personal information about a child under 13, contact <a href="mailto:adamissac08@gmail.com">adamissac08@gmail.com</a> privately so we can investigate and arrange removal. Do not post the child's information in a public issue.</p>
 
           <h2>Changes</h2>
           <p>If this policy changes in a way that affects what we store, we will update the date at the top of this page.</p>
 
           <h2>Contact</h2>
-          <p>For privacy questions or a deletion request, open an issue on the <a href="https://github.com/SaiC123/mypypath" rel="noopener">project repository</a> or contact the maintainer through their GitHub profile.</p>
+          <p>For privacy questions, access, correction, or deletion requests, email <a href="mailto:adamissac08@gmail.com">adamissac08@gmail.com</a>, the contact also listed in our Terms. Do not post account information in public GitHub issues. Never send your password. Depending on where you live, you may have additional rights, including objection, restriction, portability, and the right to complain to your local privacy regulator.</p>
         </div>
       </section>
     </main>

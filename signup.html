@@ -29,7 +29,7 @@
     <script defer src="/assets/js/progress-store.js"></script>
     <script defer src="/assets/js/merge.js"></script>
     <script defer src="/assets/js/username.js"></script>
-    <script defer src="/assets/js/consent.js"></script>
+    <script defer src="/assets/js/consent.js?v=785f0d5c0c"></script>
     <script defer src="/assets/js/roles.js"></script>
     <script defer src="/assets/js/gate.js"></script>
     <script defer src="/assets/js/curriculum.js"></script>
@@ -135,6 +135,24 @@
       <h1>Create your account</h1>
       <p class="auth-note">Your progress on this device carries over automatically.</p>
       <form id="signup-form" class="auth-form" novalidate>
+        <label for="signup-age">Your age range</label>
+        <select id="signup-age" required aria-describedby="signup-age-hint">
+          <option value="">Select an age range</option>
+          <option value="under-13">Under 13</option>
+          <option value="13-plus">13 or older</option>
+        </select>
+        <p class="auth-hint" id="signup-age-hint" role="status">Select your age range to continue. Under-13 access requires a verified school. No date of birth is requested.</p>
+        <section id="school-access" hidden aria-labelledby="school-access-title">
+          <h2 id="school-access-title">Your school's join code</h2>
+          <p>Enter the code your teacher gave you. Only a verified school authorization can qualify; an ordinary class code is not enough. School enrollment is still being prepared, so checking a code will not create an account.</p>
+          <label for="school-code">Teacher join code</label>
+          <input id="school-code" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="school-code-result">
+          <button type="button" class="btn btn-primary" id="school-code-check">Check school code</button>
+          <p id="school-code-result" role="status">Do not enter your name, email, or password here.</p>
+          <p>Teachers: contact <a href="mailto:adamissac08@gmail.com?subject=School%20authorization">Adam Issac</a> to arrange school verification. Do not email student details.</p>
+        </section>
+        <fieldset id="signup-details" disabled style="border:0;padding:0;margin:0;min-width:0;display:contents">
+        <legend class="sr-only">Account details</legend>
         <label for="signup-first-name">First name</label>
         <input id="signup-first-name" type="text" autocomplete="given-name"
                maxlength="40" required aria-describedby="signup-name-hint">
@@ -176,16 +194,17 @@
 
         <div class="auth-consent">
           <input id="signup-terms" type="checkbox" required aria-describedby="signup-consent-hint">
-          <label for="signup-terms">I agree to the <a href="/terms.html" class="route">Terms of use</a> and the <a href="/privacy.html" class="route">Privacy policy</a>.</label>
+          <label for="signup-terms">I agree to the <a href="/terms.html" class="route">Terms of use</a> and acknowledge the <a href="/privacy.html" class="route">Privacy policy</a>.</label>
         </div>
         <p class="auth-hint" id="signup-consent-hint">Required. This also covers signing up with Google or GitHub.</p>
 
         <button type="submit" class="btn btn-primary">Create account</button>        <p class="auth-error" id="signup-error" role="alert" hidden></p>
+        </fieldset>
       </form>
 
       <div class="auth-providers">
-        <button type="button" class="btn btn-ghost" id="signup-google">Continue with Google</button>
-        <button type="button" class="btn btn-ghost" id="signup-github">Continue with GitHub</button>
+        <button type="button" class="btn btn-ghost" id="signup-google" disabled>Continue with Google</button>
+        <button type="button" class="btn btn-ghost" id="signup-github" disabled>Continue with GitHub</button>
       </div>
 
       <p>Already have an account? <a href="/login.html" class="route">Sign in</a></p>
@@ -251,6 +270,7 @@
 
       // One gate for all three sign-up buttons.
       function agreed() {
+        if (!window.PyPathConsent.checkAge(document.getElementById('signup-age').value).ok) return false;
         var box = document.getElementById('signup-terms');
         var check = window.PyPathConsent.check(!!(box && box.checked));
         if (!check.ok) {

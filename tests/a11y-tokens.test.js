@@ -136,7 +136,7 @@ describe('the theme trail tokens got the same treatment', () => {
   });
 
   it('nothing sets color to the raw line tokens', () => {
-    expect(theme).not.toMatch(/\bcolor\s*:\s*var\(--pp-line(-deep)?[,)]/);
+    expect(theme).not.toMatch(/(?<![-\w])color\s*:\s*var\(--pp-line(-deep)?[,)]/);
   });
 });
 

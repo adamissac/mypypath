@@ -253,9 +253,9 @@ describe('the retention policy is one number in one place', () => {
       .toBe(K.RETENTION.SNAPSHOT_BYTES_PER_LESSON);
   });
 
-  it('cites the rule that makes indefinite retention unavailable', () => {
-    expect(privacy).toContain('22 April 2026');
-    expect(privacy).toContain('COPPA');
+  it('discloses that retention cleanup requires browser or teacher activity', () => {
+    expect(privacy).toContain('not a scheduled server deletion');
+    expect(privacy).toContain('requires a teacher action');
   });
 });
 
