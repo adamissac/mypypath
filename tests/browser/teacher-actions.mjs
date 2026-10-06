@@ -180,7 +180,11 @@ try {
     assert.equal((await call(t, 'readOverrides', room.classId, student.uid)).length, 0);
   });
   await check('certificate approval and decline reach the student record', async () => {
-    await sdk(student.page, `roster/${student.uid}`, { hasCertificate: true, certificateRequestedAt: Date.now() });
+    await sdk(student.page, `roster/${student.uid}`, { hasCertificate: true });
+    assert.equal((await call(t, 'readCertificates', teacher.uid))[student.uid].earned, true,
+      'Finished learner is not shown as earned before requesting');
+    await student.page.evaluate(async uid =>
+      (await import('/assets/js/class-join.js')).requestCertificate(uid), student.uid);
     await dashboard(t);
     await t.locator('[data-cr-fold="certs"] > summary').click();
     for (const [action, expected] of [['Approve', true], ['Decline', false]]) {
@@ -189,9 +193,11 @@ try {
         const { db, SDK_VERSION } = await import('/assets/js/firebase-config.js');
         const f = await import(`https://www.gstatic.com/firebasejs/${SDK_VERSION}/firebase-firestore.js`);
         await f.waitForPendingWrites(db);
-        return (await f.getDocFromServer(f.doc(db, `roster/${uid}`))).data().certificateApproved === expected;
+        return (await f.getDocFromServer(f.doc(db, `certificateApprovals/${uid}`))).data().approved === expected;
       }, { uid: student.uid, expected });
-      assert.equal((await sdk(student.page, `roster/${student.uid}`)).certificateApproved, expected);
+      const seen = await student.page.evaluate(async uid =>
+        (await import('/assets/js/class-join.js')).readCertificateApproval(uid), student.uid);
+      assert.equal(seen.certificateApproved, expected);
     }
   });
   await check('co-teacher can discover shared class without access to private profile', async () => {
