@@ -59,6 +59,16 @@ async function dashboard(page) {
 async function waitFor(page, fn, arg) {
   await page.waitForFunction(fn, arg);
 }
+// waitForFunction treats an async callback's Promise as truthy and returns at
+// once, so anything that reads Firestore polls the resolved value from here.
+async function until(page, fn, arg, timeout = 12000) {
+  const end = Date.now() + timeout;
+  for (;;) {
+    if (await page.evaluate(fn, arg)) return;
+    if (Date.now() > end) throw new Error(`Timed out waiting for ${fn.toString().slice(0, 80)}`);
+    await new Promise(r => setTimeout(r, 200));
+  }
+}
 async function join(student, code) {
   return student.page.evaluate(async ({ uid, code }) =>
     (await import('/assets/js/join-flow.js')).joinAnyClass(uid, code), { uid: student.uid, code });
@@ -115,7 +125,7 @@ try {
     await t.locator('[data-cr-access-unit][value="3"]').check();
     await t.locator('[data-cr-show-solutions]').uncheck();
     await t.locator('[data-cr-max-attempts]').selectOption('2');
-    await t.waitForFunction(async classId => {
+    await until(t, async classId => {
       const c = await (await import('/assets/js/classroom-store.js')).readClass(classId);
       return c.lockMode === 'manual' && c.manualUnlocks.includes(3) && c.showSolutions === false && c.maxTestAttempts === 2;
     }, room.classId);
@@ -175,7 +185,7 @@ try {
     await t.locator('[data-cr-fold="certs"] > summary').click();
     for (const [action, expected] of [['Approve', true], ['Decline', false]]) {
       await t.getByRole('button', { name: new RegExp(`^${action} the certificate`) }).click();
-      await t.waitForFunction(async ({ uid, expected }) => {
+      await until(t, async ({ uid, expected }) => {
         const { db, SDK_VERSION } = await import('/assets/js/firebase-config.js');
         const f = await import(`https://www.gstatic.com/firebasejs/${SDK_VERSION}/firebase-firestore.js`);
         await f.waitForPendingWrites(db);
