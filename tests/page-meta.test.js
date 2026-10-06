@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -28,17 +29,17 @@ const SKIP_FILES = new Set([
 ]);
 
 function pages() {
-  const out = [];
-  const walk = (dir) => {
-    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-      if (e.name.startsWith('.') || SKIP_DIRS.has(e.name)) continue;
-      const full = path.join(dir, e.name);
-      if (e.isDirectory()) walk(full);
-      else if (e.name.endsWith('.html') && !SKIP_FILES.has(e.name)) out.push(full);
-    }
-  };
-  walk('.');
-  return out;
+  /* Only tracked files. Untracked copies (Finder "organise by kind" leftover
+     folders, local drafts) are not public pages and must not fail this suite. */
+  return execFileSync('git', ['ls-files', '*.html'], { encoding: 'utf8' })
+    .trim()
+    .split('\n')
+    .filter(Boolean)
+    .filter((rel) => {
+      const parts = rel.split(/[\\/]/);
+      if (parts.some((p) => p.startsWith('.') || SKIP_DIRS.has(p))) return false;
+      return !SKIP_FILES.has(path.basename(rel));
+    });
 }
 
 const ALL = pages();
@@ -135,6 +136,24 @@ describe('the card title does not stutter', () => {
     // The <title> is unchanged; only the card is trimmed.
     const lesson = fs.readFileSync('units/unit-1/what-is-python.html', 'utf8');
     expect(lesson).toMatch(/<title>[^<]*PyPath[^<]*<\/title>/);
+  });
+});
+
+describe('a description that itself contains quotes', () => {
+  it('reaches the card in full, including the quoted Python idiom', () => {
+    /* content="... == "__main__" ..." closes the attribute at the inner
+       quote, so scrapers got "Unit 5 • The __name__ ==" and nothing else.
+       The generator must use the matching wrapper quote, and the page must
+       escape inner quotes, or the card a teacher pastes into Classroom is
+       truncated. */
+    const src = fs.readFileSync('units/unit-5/name-main-pattern.html', 'utf8');
+    const m = src.match(/<meta property="og:description" content="([^"]*)"/);
+    expect(m, 'og:description missing').toBeTruthy();
+    const desc = m[1].replace(/&quot;/g, '"');
+    expect(desc).toContain('__main__');
+    expect(desc.length).toBeGreaterThan(40);
+    const gen = fs.readFileSync('scripts/build-meta.py', 'utf8');
+    expect(gen).toContain('(?P=q)');
   });
 });
 
