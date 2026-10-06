@@ -1842,7 +1842,9 @@ function wire() {
       // the previous class's roster into the one being switched to.
       stopWatchingRoster();
       activeClassId = switcher.value;
-      students = await loadClassData(activeClassId);
+      // Same fallback as the first load: a failed read must not leave the
+      // previous class's roster painted under the new class's name.
+      students = await loadClassData(activeClassId).catch(() => []);
       assignments = await readAssignments(activeClassId).catch(() => []);
       scopeAssignment = assignments.length ? assignments[0].id : null;
       paintAll();
