@@ -1,11 +1,10 @@
 import { randomUUID } from 'node:crypto';
 import { load } from 'cheerio';
 import { fetchDirectory } from './public-school-web.js';
+import { resolveInstitution, schoolNamespace, httpsSource, hostWithin } from './institution-registry.js';
 
-// Initial automatic trust anchor: US public-school domains in the k12 state
-// namespaces. Arbitrary .org/.com domains and personal email providers cannot
-// establish institutional identity. Broader coverage requires an authoritative
-// school-domain dataset, not a teacher-supplied allowlist.
+// Legacy candidate helper, not an approval boundary. resolveInstitution below
+// independently establishes the institution before any staff match can count.
 export function institutionalHost(email) {
   if (typeof email !== 'string') return null;
   const domain = email.split('@')[1]?.toLowerCase();
@@ -17,7 +16,20 @@ export function institutionalHost(email) {
   const states = new Set('al ak az ar ca co ct de fl ga hi id il in ia ks ky la me md ma mi mn ms mo mt ne nv nh nj nm ny nc nd oh ok or pa ri sc sd tn tx ut vt va wa wv wi wy dc'.split(' '));
   const k12 = labels.length >= 4 && labels.at(-3) === 'k12' && labels.at(-1) === 'us' && states.has(labels.at(-2));
   const supported = suffix === 'edu' || suffix === 'org' || suffix === 'school' || suffix === 'academy' || k12;
-  return supported ? domain.replace(/^www\./, '') : null;
+  return supported ? schoolNamespace(domain) || domain.replace(/^www\./, '') : null;
+}
+// Email remains exact. Names tolerate titles, accents, punctuation, middle
+// names/initials, and surname-first directories, but never fuzzy surnames.
+export function nameMatches(listed, supplied) {
+  const tokens = value => {
+    let text = value.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().trim();
+    if (text.includes(',')) { const [last, ...first] = text.split(','); text = first.join(' ') + ' ' + last; }
+    return text.replace(/\b(mr|mrs|ms|miss|dr|prof|professor|phd|edd)\b\.?/g, ' ')
+      .replace(/[^\p{L}\p{N}]+/gu, ' ').trim().split(/\s+/);
+  };
+  const a = tokens(listed), b = tokens(supplied);
+  return a.length >= 2 && b.length >= 2 && a[0] === b[0] && a.at(-1) === b.at(-1)
+    && (a.length === 2 || b.length === 2 || a.slice(1, -1).map(t => t[0]).join('') === b.slice(1, -1).map(t => t[0]).join(''));
 }
 const ENTRY_SELECTOR = [
   'tr', 'li', 'article', '[itemtype$="/Person"]', '[data-staff-member]',
@@ -43,7 +55,8 @@ function teachingRole(value) {
   const role = normalize(value).replace(/^[\s—–|,:;-]+|[\s—–|,:;-]+$/g, '');
   // An explicit position, not prose such as "contact a teacher", a directory
   // heading, or an adjacent non-teaching role containing the word teacher.
-  if (role.length > 100 || /\b(student|pupil|parent|guardian|volunteer|assistant|aide|retired|former|principal|counselor|nurse|administrator|secretary|coordinator|director|superintendent|contact|ask|meet|email|not|no|non|directory|association)\b/.test(role)) return false;
+  if (role.length > 100 || /\b(student|pupil|parent|guardian|volunteer|aide|retired|former|principal|counselor|nurse|administrator|secretary|coordinator|director|superintendent|contact|ask|meet|email|not|no|non|directory|association)\b/.test(role)
+      || (/\bassistant\b/.test(role) && !/\bassistant professor\b/.test(role))) return false;
   return /^(?:[\p{L}\p{N}&/'().-]+\s+){0,5}(?:teacher|instructor|educator|professor)(?:\s*(?:[—–,:/|()-]|of\b|for\b)\s*[\p{L}\p{N}\s&/'().-]+)?$/u.test(role)
     || /^(?:faculty|faculty member)$/.test(role);
 }
@@ -88,8 +101,8 @@ export function teacherEvidence(html, name, email) {
     const names = [...new Set($(entry).find(NAME_SELECTOR).toArray().map(el => normalize(nodeText(el))).filter(Boolean))];
     const leaves = $(entry).find('*').toArray().filter(el => !$(el).children().length);
     if (!names.length && ['article', 'li'].includes(entry.name)) continue;
-    if (names.length ? names.length !== 1 || names[0] !== normalizedName
-      : !leaves.some(el => normalize(nodeText(el)) === normalizedName)) continue;
+    if (names.length ? names.length !== 1 || !nameMatches(names[0], normalizedName)
+      : !leaves.some(el => nameMatches(nodeText(el), normalizedName))) continue;
     if (leaves.some(el => normalize(nodeText(el)) !== normalizedName && teachingRole(nodeText(el)))) return true;
   }
   return false;
@@ -111,12 +124,13 @@ export function directoryLinks(html, homepage, hosts) {
   }
   return links.slice(0, 3);
 }
-export async function automaticTeacherCheck({ db, uid, email, fullName, fetchPage = fetchDirectory, now = Date.now() }) {
+export async function automaticTeacherCheck({ db, uid, email, fullName, directoryUrl = '', registryUrl = '', fetchPage = fetchDirectory, resolveSchool = resolveInstitution, now = Date.now() }) {
   if (typeof fullName !== 'string' || fullName.trim().length < 3 || fullName.length > 100) {
     throw Object.assign(new Error('Enter your name as listed by your school.'), { status: 400 });
   }
-  const host = institutionalHost(email);
-  if (!host) throw Object.assign(new Error('Automatic verification currently supports verified email addresses on US k12 state school domains. This account cannot be automatically verified yet.'), { status: 422 });
+  if (typeof directoryUrl !== 'string' || directoryUrl.length > 1500 || typeof registryUrl !== 'string' || registryUrl.length > 1500) {
+    throw Object.assign(new Error('Use a valid school directory link.'), { status: 400 });
+  }
   const ref = db.doc(`teacherVerificationRequests/${uid}`);
   const checkId = randomUUID();
   await db.runTransaction(async tx => {
@@ -127,21 +141,41 @@ export async function automaticTeacherCheck({ db, uid, email, fullName, fetchPag
     const recent = sameIdentity && now - windowStart < 86400000;
     const inProgress = prior?.status === 'checking' && now - prior.requestedAt < 120000;
     const recovering = prior?.status === 'checking' && !inProgress;
-    const changedName = prior?.fullName?.trim().toLowerCase() !== fullName.trim().toLowerCase();
+    const changedName = prior?.fullName?.trim().toLowerCase() !== fullName.trim().toLowerCase()
+      || (prior?.directoryUrl || '') !== directoryUrl || (prior?.registryUrl || '') !== registryUrl;
     const attempts = recent ? (prior.attemptsInWindow || 1) : 0;
-    const correction = changedName && prior?.status === 'not-verified' && attempts < 2;
-    if (recent && !recovering && !correction) {
+    const correction = changedName && ['not-verified', 'needs-information', 'source-unavailable'].includes(prior?.status) && attempts < 3;
+    const retryOutage = prior?.status === 'source-unavailable' && now - prior.requestedAt >= 300000 && attempts < 3;
+    const legacy = prior && prior.method !== 'official-directory-v2';
+    if (recent && !legacy && !recovering && !correction && !retryOutage) {
       throw Object.assign(new Error(inProgress ? 'An automatic check is already running.'
         : 'Another automatic check is available after 24 hours.'), { status: 429 });
     }
-    tx.set(ref, { uid, email, fullName: fullName.trim(), schoolId: host, requestedAt: now, checkId,
+    tx.set(ref, { uid, email, fullName: fullName.trim(), directoryUrl, registryUrl, requestedAt: now, checkId,
       windowStartedAt: recent ? windowStart : now,
       attemptsInWindow: recovering && recent ? attempts : attempts + 1,
-      status: 'checking', method: 'official-directory-v1', schoolAuthorization: false, evidence: [] });
+      status: 'checking', method: 'official-directory-v2', schoolAuthorization: false, evidence: [] });
   });
-  const homepage = `https://${host}/`;
+  async function save(result) {
+    await db.runTransaction(async tx => {
+      const latest = await tx.get(ref);
+      if (latest.exists && latest.data().checkId === checkId) tx.set(ref, result, { merge: true });
+    });
+    return result;
+  }
+  let institution;
+  try { institution = await resolveSchool({ email, directoryUrl, registryUrl, fetchPage }); }
+  catch (error) {
+    await save({ status: error.status === 400 ? 'needs-information' : 'source-unavailable', checkedAt: now, retryAt: now + 300000 });
+    if (error.status === 400) throw error;
+    return { status: 'source-unavailable' };
+  }
+  if (!institution) return save({ status: 'needs-information', reason: 'institution-not-found', checkedAt: now, retryAt: now + 86400000 });
+  const homepage = institution.homepage;
   const evidence = [];
-  const hosts = [host, 'www.' + host];
+  const hosts = [...new Set(institution.roots.flatMap(root => [root, 'www.' + root]))];
+  const suggested = httpsSource(directoryUrl);
+  if (suggested && institution.roots.some(root => hostWithin(suggested.hostname, root))) hosts.push(suggested.hostname);
   let matched = false;
   async function inspect(source) {
     try {
@@ -152,16 +186,14 @@ export async function automaticTeacherCheck({ db, uid, email, fullName, fetchPag
       return html;
     } catch { evidence.push({ source, checkedAt: now, result: 'source-unavailable' }); return null; }
   }
-  const home = await inspect(homepage);
+  if (suggested && hosts.includes(suggested.hostname)) await inspect(suggested.href);
+  const home = !matched ? await inspect(homepage) : null;
   if (home && !matched) {
-    await Promise.all(directoryLinks(home, homepage, hosts).map(inspect));
+    const links = directoryLinks(home, homepage, hosts).filter(url => url !== suggested?.href);
+    await Promise.all(links.map(inspect));
   }
-  const result = { status: matched ? 'affiliation-verified-automatically' : 'not-verified',
-    method: 'official-directory-v1', evidence, emailDomainMatches: true,
-    checkedAt: now, expiresAt: matched ? now + 30 * 86400000 : now, schoolAuthorization: false };
-  await db.runTransaction(async tx => {
-    const latest = await tx.get(ref);
-    if (latest.exists && latest.data().checkId === checkId) tx.set(ref, result, { merge: true });
-  });
-  return result;
+  const unavailable = evidence.every(entry => entry.result === 'source-unavailable');
+  return save({ status: matched ? 'affiliation-verified-automatically' : unavailable ? 'source-unavailable' : 'needs-information',
+    method: 'official-directory-v2', evidence, institution,
+    checkedAt: now, expiresAt: matched ? now + 30 * 86400000 : now, retryAt: now + (unavailable ? 300000 : 86400000), schoolAuthorization: false });
 }

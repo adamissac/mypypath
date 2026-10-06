@@ -11,7 +11,7 @@ describe('directory request safety', () => {
 const time=100000000;
 const user={uid:'teacher1',email:'ada@district.k12.ga.us',email_verified:true};
 const profile={role:'teacher',firstName:'Ada',lastName:'Teacher'};
-const verified={uid:user.uid,email:user.email,method:'official-directory-v1',status:'affiliation-verified-automatically',requestedAt:time-1000,expiresAt:time+1000};
+const verified={uid:user.uid,email:user.email,method:'official-directory-v2',status:'affiliation-verified-automatically',requestedAt:time-1000,expiresAt:time+1000};
 function response(){return {setHeader:vi.fn(),status:vi.fn(function(code){this.code=code;return this}),json:vi.fn(function(body){this.body=body;return this})};}
 function setup({identity=user,account=profile,record=null,tokenError=false}={}) {
   const paths=[];const store={['users/'+user.uid]:account,['teacherVerificationRequests/'+user.uid]:record};

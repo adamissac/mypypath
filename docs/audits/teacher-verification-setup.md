@@ -1,5 +1,7 @@
 # Automatic teacher affiliation checks
 
+> Historical implementation notes. The current behavior, deployment verification and limits are documented in [teacher-verification-v2.md](teacher-verification-v2.md).
+
 This replaces the earlier operator review queue. The active API runs automaticTeacherCheck and exposes no approval/review action. It never asks PyPath to approve an individual teacher.
 
 Checks start automatically for eligible teachers on Account, Classroom and /teacher-verification.html. Teachers use a confirmed institutional email and their school directory name; the details page allows name corrections. The backend authenticates their Firebase token (including revocation checking) and confirms their account role. It derives the official website from a supported school email domain, loads the homepage, discovers up to three same-origin staff/faculty/directory links, and searches those pages for the exact email, supplied name and a teaching role in the same individual staff entry. A match records affiliation-verified-automatically; otherwise the result is not-verified. There is no manual approval fallback. Results expire after 30 days and each account can request a check once per 24 hours, with one corrected-name retry after a failed match. Interrupted checks can recover after two minutes.

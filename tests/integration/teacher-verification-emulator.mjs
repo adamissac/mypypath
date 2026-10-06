@@ -176,10 +176,10 @@ test('missing directory evidence fails closed and gets a reusable automatic resu
   const result = await request(unmatched, { action: 'ensure' });
   assert.equal(result.status, 200);
   assert.equal(result.body.verified, false);
-  assert.equal(result.body.status, 'not-verified');
+  assert.equal(result.body.status, 'needs-information');
   assert.equal(result.body.request.schoolAuthorization, false);
   const count = fetches;
-  assert.equal((await request(unmatched, { action: 'ensure' })).body.status, 'not-verified');
+  assert.equal((await request(unmatched, { action: 'ensure' })).body.status, 'needs-information');
   assert.equal(fetches, count);
 });
 

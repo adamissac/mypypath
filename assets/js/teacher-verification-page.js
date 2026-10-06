@@ -7,6 +7,8 @@ const status = document.getElementById('verification-status');
 const form = document.getElementById('teacher-verification-form');
 const details = document.getElementById('verification-details');
 const nameInput = document.getElementById('teacher-review-name');
+const directoryInput = document.getElementById('teacher-directory-url');
+const registryInput = document.getElementById('teacher-registry-url');
 const accountAction = document.getElementById('verification-account-action');
 const classroomAction = document.getElementById('verification-classroom-action');
 const identity = document.getElementById('verification-identity');
@@ -88,6 +90,8 @@ function render(data, user, version) {
   document.getElementById('verification-expiry-row').hidden = !expiry;
   document.getElementById('verification-expiry').textContent = expiry || '';
   if (row?.fullName && document.activeElement !== nameInput) nameInput.value = row.fullName;
+  if (directoryInput && document.activeElement !== directoryInput) directoryInput.value = row?.directoryUrl || '';
+  if (registryInput && document.activeElement !== registryInput) registryInput.value = row?.registryUrl || '';
   details.hidden = false;
   renderEvidence(row);
   if (data.verified) {
@@ -103,10 +107,10 @@ function render(data, user, version) {
     accountLink('Go to account');
   } else {
     details.open = true;
-    const unavailable = row?.evidence?.length && row.evidence.every(entry => entry.result === 'source-unavailable');
+    const unavailable = data.status === 'source-unavailable' || (row?.evidence?.length && row.evidence.every(entry => entry.result === 'source-unavailable'));
     setState('unverified', 'Not verified yet', unavailable ? 'We couldn’t reach your school directory.' : 'We couldn’t confirm a complete match.', unavailable
-      ? 'Your account is still unverified. Your school’s site may be temporarily unavailable or may block automated checks. You can try again after 24 hours.'
-      : 'We need your full name, exact school email, and teaching role in the same public staff listing. Check your directory name below. Missing listings do not mean you aren’t a teacher.');
+      ? 'The school directory or institution registry is temporarily unavailable. Try again in five minutes, or add a direct staff-page link below. This is not a rejection of your teacher account.'
+      : 'Add your direct staff-page link below. We check the institution independently, then look for your account email and teaching role together. Titles, middle initials, and accents in names are okay. For a school outside our registry, add its NCES record. An incomplete match does not mean you aren’t a teacher.');
   }
 }
 function renderError(error, user) {
@@ -123,14 +127,15 @@ function renderError(error, user) {
     accountLink('Go to account');
   } else if (error.status === 422) {
     details.hidden = true;
-    setState('unsupported', 'School not supported yet', 'Your school’s domain isn’t covered yet.', 'Automatic checks support institutional .k12.[state].us, .edu, .org, .school, and .academy domains. This account stays unverified; using a personal email or a different domain cannot confirm your school affiliation.');
+    details.hidden = false; details.open = true;
+    setState('unsupported', 'More information needed', 'Help us find your school.', 'Add a direct staff-page link and, if available, your school’s NCES record below. A domain ending alone does not establish a real school.');
     accountLink('Check account email');
   } else if (error.status === 400) {
     details.open = true;
     setState('needs-name', 'Directory name needed', 'Add your school directory name.', 'Enter your full name exactly as it appears in your school’s staff listing so the automatic check can find a match.');
   } else if (error.status === 429) {
     details.open = true;
-    setState('cooldown', 'Check already requested', 'Give your last check a little time.', 'Automatic checks are limited to once every 24 hours. If a check is already running, return in a few minutes to see its result.');
+    setState('cooldown', 'Check already requested', 'Give your last check a little time.', 'A check is already running or today’s retry limit has been reached. You can correct your name or school links twice after an incomplete match; otherwise try again after 24 hours.');
   } else {
     setState('unavailable', 'Temporarily unavailable', 'We couldn’t complete the check.', 'The verification service is unavailable right now. Please try again later. Your account has not been marked as verified.');
   }
@@ -156,6 +161,8 @@ function refresh() {
   identity.hidden = true; evidenceSection.hidden = true; details.hidden = true;
   document.getElementById('verification-expiry-row').hidden = true;
   nameInput.value = user?.displayName || '';
+  if (directoryInput) directoryInput.value = '';
+  if (registryInput) registryInput.value = '';
   accountAction.hidden = true;
   if (!user) {
     setState('signed-out', 'Automatic verification', 'Let’s connect your school.', 'Sign in with your teacher account to see your verification status.');
@@ -174,7 +181,8 @@ form.addEventListener('submit', event => {
   if (!user || submit.disabled) return;
   clearTimeout(pollTimer); pollCount = 0;
   setState('checking', 'Automatic verification', 'Checking your school connection…', 'We’re checking your directory name against your official school website. Your result will appear here automatically.');
-  run(user, generation, { action: 'check', fullName: nameInput.value.trim() });
+  run(user, generation, { action: 'check', fullName: nameInput.value.trim(),
+    directoryUrl: directoryInput?.value.trim() || '', registryUrl: registryInput?.value.trim() || '' });
 });
 document.addEventListener('pypath:auth', refresh);
 refresh();

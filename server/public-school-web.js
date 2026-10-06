@@ -12,14 +12,15 @@ export function directoryUrl(raw, hosts) {
       || !hosts.includes(url.hostname) || ipaddr.isValid(url.hostname)) throw new Error('Invalid source');
   return url;
 }
-export async function fetchDirectory(raw, hosts, redirects = 0) {
+export async function fetchDirectory(raw, hosts, redirects = 0, deadline = Date.now() + 8000) {
+  if (Date.now() >= deadline) throw new Error('Source timeout');
   const url = directoryUrl(raw, hosts);
   let dnsTimer;
   const addresses = await Promise.race([resolve4(url.hostname), new Promise((_, reject) => {
-    dnsTimer = setTimeout(() => reject(new Error('DNS timeout')), 5000);
+    dnsTimer = setTimeout(() => reject(new Error('DNS timeout')), Math.min(3000, deadline - Date.now()));
   })]).finally(() => clearTimeout(dnsTimer));
   if (!addresses.length || !addresses.every(publicAddress)) throw new Error('Unsafe address');
-  // Pin the DNS result for this connection; no redirects or second DNS lookup.
+  // Pin DNS for each connection, including separately validated redirects.
   return new Promise((resolve, reject) => {
     const req = https.get(url, { agent: false,
       lookup: (_host, options, callback) => options.all
@@ -33,7 +34,7 @@ export async function fetchDirectory(raw, hosts, redirects = 0) {
         if (redirects >= 2 || !location) { reject(new Error('Redirect limit')); return; }
         try {
           const next = directoryUrl(new URL(location, url).href, hosts);
-          fetchDirectory(next.href, hosts, redirects + 1).then(resolve, reject);
+          fetchDirectory(next.href, hosts, redirects + 1, deadline).then(resolve, reject);
         } catch { reject(new Error('Unsafe redirect')); }
         return;
       }
@@ -43,13 +44,13 @@ export async function fetchDirectory(raw, hosts, redirects = 0) {
       let size = 0; const chunks = [];
       res.on('data', chunk => {
         size += chunk.length;
-        if (size > 256 * 1024) { req.destroy(new Error('Source too large')); return; }
+        if (size > 1024 * 1024) { req.destroy(new Error('Source too large')); return; }
         chunks.push(chunk);
       });
       res.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
       res.on('error', reject);
     });
-    const timer = setTimeout(() => req.destroy(new Error('Source timeout')), 10000);
+    const timer = setTimeout(() => req.destroy(new Error('Source timeout')), Math.max(1, deadline - Date.now()));
     req.on('close', () => clearTimeout(timer));
     req.on('error', reject);
   });

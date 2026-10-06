@@ -82,7 +82,7 @@ describe('teacher verification page', () => {
     document.getElementById('teacher-verification-form').dispatchEvent(new Event('submit', { cancelable: true }));
     await settle();
     expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toEqual({ action: 'check', fullName: 'Ada Lovelace' });
+    expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toEqual({ action: 'check', fullName: 'Ada Lovelace', directoryUrl: '', registryUrl: '' });
     expect(state()).toBe('verified');
   });
   it('polls an existing check using GET without triggering a second scrape', async () => {

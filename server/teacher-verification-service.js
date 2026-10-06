@@ -4,7 +4,7 @@ export function verificationView(record, user, profile, now = Date.now()) {
   const eligible = profile?.role === 'teacher' && user.email_verified === true;
   const identityMatches = record?.email === user.email && record?.uid === user.uid;
   const current = identityMatches && record?.status === 'affiliation-verified-automatically'
-    && record?.method === 'official-directory-v1' && Number.isFinite(record.expiresAt) && record.expiresAt > now;
+    && record?.method === 'official-directory-v2' && Number.isFinite(record.expiresAt) && record.expiresAt > now;
   const verified = !!(eligible && current);
   let status = record?.status || 'not-checked';
   if (!eligible) status = 'account-ineligible';
@@ -35,7 +35,7 @@ export function createTeacherHandler({ getServices, checkTeacher, now = () => Da
       if (req.method === 'GET') return res.status(200).json(view);
       const body = req.body;
       if (!body || typeof body !== 'object' || Array.isArray(body) || JSON.stringify(body).length > 4096
-          || Object.keys(body).some(key => !['action', 'fullName'].includes(key))
+          || Object.keys(body).some(key => !['action', 'fullName', 'directoryUrl', 'registryUrl'].includes(key))
           || !['check','ensure'].includes(body.action)) {
         return res.status(400).json({ error: 'Invalid verification request.' });
       }
@@ -46,13 +46,14 @@ export function createTeacherHandler({ getServices, checkTeacher, now = () => Da
       // jobs recover after 2 minutes; failed checks retry after 24 hours.
       const record = view.request;
       const age = record ? now() - record.requestedAt : Infinity;
-      const retryDelay = record?.status === 'checking' ? 120000 : 86400000;
-      if (body.action === 'ensure' && (view.verified || (age >= 0 && age < retryDelay))) {
+      const retryDelay = record?.status === 'checking' ? 120000 : record?.status === 'source-unavailable' ? 300000 : 86400000;
+      if (body.action === 'ensure' && record?.method === 'official-directory-v2' && (view.verified || (age >= 0 && age < retryDelay))) {
         return res.status(200).json(view);
       }
       const fullName = body.fullName || record?.fullName || [profile.firstName, profile.lastName].filter(Boolean).join(' ') || profile.displayName;
       try {
-        await checkTeacher({ db, uid: user.uid, email: user.email, fullName, now: now() });
+        await checkTeacher({ db, uid: user.uid, email: user.email, fullName,
+          directoryUrl: body.directoryUrl ?? record?.directoryUrl ?? '', registryUrl: body.registryUrl ?? record?.registryUrl ?? '', now: now() });
       } catch (error) {
         if (error.status === 429 && body.action === 'ensure') {
           const latest = await ref.get();

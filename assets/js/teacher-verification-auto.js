@@ -27,7 +27,8 @@ async function ensureVerification() {
     if (!response.ok) { show(result.error || 'Automatic verification is unavailable.'); return; }
     show(result.verified ? 'Teacher affiliation verified automatically.'
       : result.status === 'checking' ? 'Teacher verification is in progress. See verification details for the result.'
-      : 'Teacher affiliation could not be verified automatically. See verification details.');
+      : result.status === 'source-unavailable' ? 'The school check is temporarily unavailable. You can retry in five minutes from verification details.'
+      : 'Add your staff-page link in verification details to help us confirm your school affiliation. Your regular classroom remains available.');
   } catch { if (currentUser()?.uid === user.uid) show('Automatic verification is temporarily unavailable.'); }
   finally { if (runningFor === user.uid) runningFor = null; }
 }

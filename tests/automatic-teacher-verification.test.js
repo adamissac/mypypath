@@ -79,7 +79,7 @@ describe('automatic affiliation verification', () => {
   it('fails closed on source errors and does not queue a human approval', async () => {
     const {db}=dbMock();
     const result=await automaticTeacherCheck({db,uid:'t1',email:'ada@district.k12.ga.us',fullName:'Ada Lovelace',fetchPage:async()=>{throw Error('unreachable')}});
-    expect(result.status).toBe('not-verified');
+    expect(result.status).toBe('source-unavailable');
     expect(result.schoolAuthorization).toBe(false);
   });
 });
