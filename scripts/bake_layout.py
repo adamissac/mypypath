@@ -743,6 +743,19 @@ def version_course_assets(html: str) -> str:
                 'assets/js/home-tour.js',
                 'assets/js/summit-3d.js',
                 'assets/js/classroom-dashboard.js',
+                # Page-specific scripts. Same one-hour JS cache as the
+                # sheets above: without a version, a returning visitor
+                # keeps the previous certificate / quiz / download /
+                # progress / unit-test / admin behaviour for an hour.
+                'assets/js/download-page.js',
+                'assets/js/certificate.js',
+                'assets/js/certificate-gate.js',
+                'assets/js/quiz-page.js',
+                'assets/js/progress-page.js',
+                'assets/js/unit-test.js',
+                'assets/js/unit-test-page.js',
+                'assets/js/admin-page.js',
+                'assets/js/admin-access.js',
                 'assets/video/pypath-tour.mp4',
                 'assets/video/pypath-tour.en.vtt',
                 'assets/img/pypath-tour-poster.webp'):
