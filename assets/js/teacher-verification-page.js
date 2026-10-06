@@ -59,6 +59,7 @@ function renderEvidence(row) {
   const entries = Array.isArray(row?.evidence) ? row.evidence : [];
   const labels = {
     'name-email-teaching-role-matched': 'Name, email, and teaching role matched',
+    'name-email-teacher-directory-matched': 'Name and email matched on an official teacher directory',
     'no-match': 'No complete match on this page',
     'source-unavailable': 'Page could not be reached',
   };
@@ -69,7 +70,7 @@ function renderEvidence(row) {
     const item = document.createElement('li'); item.className = 'verification-source';
     const marker = document.createElement('span'); marker.className = 'verification-source-marker';
     marker.setAttribute('aria-hidden', 'true');
-    marker.textContent = entry.result === 'name-email-teaching-role-matched' ? '✓' : '·';
+    marker.textContent = entry.result === 'name-email-teaching-role-matched' || entry.result === 'name-email-teacher-directory-matched' ? '✓' : '·';
     const content = document.createElement('div');
     const result = document.createElement('p'); result.textContent = labels[entry.result] || 'School page checked';
     const link = document.createElement('a');
@@ -95,7 +96,10 @@ function render(data, user, version) {
   details.hidden = false;
   renderEvidence(row);
   if (data.verified) {
-    setState('verified', 'Verified teacher', 'Your school connection is verified.', 'Your verified school email, directory name, and teaching role matched an official staff listing. Your affiliation will be checked again automatically when this result expires.');
+    const teacherDirectory = row?.evidence?.some(entry => entry.result === 'name-email-teacher-directory-matched');
+    setState('verified', 'Verified teacher', 'Your school connection is verified.', teacherDirectory
+      ? 'Your confirmed email and name matched on your school’s official teacher directory. Your affiliation will be checked again automatically when this result expires.'
+      : 'Your confirmed email, directory name, and teaching role matched an official staff listing. Your affiliation will be checked again automatically when this result expires.');
     details.open = false;
   } else if (data.status === 'checking') {
     setState('checking', 'Check in progress', 'Checking your school connection…', 'We’re checking your official school website for a matching staff listing. Your result will appear here automatically.');
@@ -103,7 +107,7 @@ function render(data, user, version) {
     else setState('unavailable', 'Check taking longer', 'Your check is still in progress.', 'The directory is taking longer than expected. Return to this page in a few minutes to see the result.');
   } else if (data.status === 'account-ineligible') {
     details.hidden = true;
-    setState('ineligible', 'Teacher account required', 'Use your teacher account.', 'Teacher verification requires a teacher account with a confirmed school sign-in email.');
+    setState('ineligible', 'Teacher account required', 'Use your teacher account.', 'Teacher verification requires a teacher account with a confirmed sign-in email.');
     accountLink('Go to account');
   } else {
     details.open = true;
@@ -123,7 +127,7 @@ function renderError(error, user) {
     accountLink('Sign in again', '/login.html');
   } else if (error.status === 403) {
     details.hidden = true;
-    setState('ineligible', 'Account action needed', 'Check your school account.', 'Use a teacher account and confirm your school sign-in email before starting an automatic check.');
+    setState('ineligible', 'Account action needed', 'Check your account.', 'Use a teacher account and confirm your sign-in email before starting an automatic check.');
     accountLink('Go to account');
   } else if (error.status === 422) {
     details.hidden = true;
@@ -132,10 +136,10 @@ function renderError(error, user) {
     accountLink('Check account email');
   } else if (error.status === 400) {
     details.open = true;
-    setState('needs-name', 'Directory name needed', 'Add your school directory name.', 'Enter your full name exactly as it appears in your school’s staff listing so the automatic check can find a match.');
+    setState('needs-name', 'Directory name needed', 'Add your school directory name.', 'Enter the name shown in your school’s staff listing. Initials, titles, and accents can differ from your account name.');
   } else if (error.status === 429) {
     details.open = true;
-    setState('cooldown', 'Check already requested', 'Give your last check a little time.', 'A check is already running or today’s retry limit has been reached. You can correct your name or school links twice after an incomplete match; otherwise try again after 24 hours.');
+    setState('cooldown', 'Check already requested', 'Give your last check a little time.', 'A check is already running or today’s retry limit has been reached. You can correct your name or school links five times after an incomplete match; otherwise try again after 24 hours.');
   } else {
     setState('unavailable', 'Temporarily unavailable', 'We couldn’t complete the check.', 'The verification service is unavailable right now. Please try again later. Your account has not been marked as verified.');
   }
@@ -169,10 +173,10 @@ function refresh() {
     accountLink('Sign in to continue', '/login.html'); return;
   }
   if (!user.emailVerified) {
-    setState('email-required', 'Confirm your email', 'Start with your school email.', 'Open the verification email sent when you signed up, then sign in again. We can check your school directory once your email is confirmed.');
+    setState('email-required', 'Confirm your email', 'Confirm your sign-in email.', 'Open the verification email sent when you signed up, then sign in again. We can check your school directory once your email is confirmed.');
     accountLink('Go to account'); return;
   }
-  setState('checking', 'Automatic verification', 'Checking your school connection…', 'We’re looking for your name, school email, and teaching role in an official staff listing. This may take a moment.');
+  setState('checking', 'Automatic verification', 'Checking your school connection…', 'We’re looking for your name and confirmed email in an official teacher or staff listing. This may take a moment.');
   run(user, version, { action: 'ensure' });
 }
 form.addEventListener('submit', event => {

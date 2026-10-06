@@ -57,6 +57,15 @@ describe('teacher verification page', () => {
     expect(document.getElementById('verification-sources').textContent).toContain('Name, email, and teaching role matched');
     expect(document.getElementById('verification-details').open).toBe(false);
   });
+  it('explains a match on an official teacher directory without claiming a role field was present', async () => {
+    fetchMock.mockResolvedValue(reply({ ...verified, request: { ...verified.request, evidence: [
+      { source: 'https://district.k12.ga.us/teachers', result: 'name-email-teacher-directory-matched' },
+    ] } }));
+    boot(); await settle();
+    expect(state()).toBe('verified');
+    expect(document.getElementById('verification-status').textContent).toContain('official teacher directory');
+    expect(document.getElementById('verification-sources').textContent).toContain('Name and email matched');
+  });
   it('does not call the backend when signed out or email is unconfirmed', async () => {
     user = null; boot(); await settle();
     expect(state()).toBe('signed-out');

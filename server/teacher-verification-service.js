@@ -40,7 +40,7 @@ export function createTeacherHandler({ getServices, checkTeacher, now = () => Da
         return res.status(400).json({ error: 'Invalid verification request.' });
       }
       if (profile?.role !== 'teacher' || user.email_verified !== true || typeof user.email !== 'string') {
-        return res.status(403).json({ error: 'Use a teacher account with a verified school sign-in email.' });
+        return res.status(403).json({ error: 'Use a teacher account with a confirmed sign-in email.' });
       }
       // Passive page loads reuse a result instead of scraping again. Incomplete
       // jobs recover after 2 minutes; failed checks retry after 24 hours.

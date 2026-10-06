@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { institutionalHost, teacherEvidence, directoryLinks, automaticTeacherCheck } from '../server/automatic-teacher-verification.js';
+import { institutionalHost, teacherEvidence, teacherEvidenceKind, directoryLinks, automaticTeacherCheck } from '../server/automatic-teacher-verification.js';
 
 describe('automatic affiliation verification', () => {
   it('accepts supported institutional domains, not personal or lookalike domains', () => {
@@ -31,6 +31,20 @@ describe('automatic affiliation verification', () => {
     const html = '<div class="staff-directory"><div class="staff-card"><div class="name">Ada &amp; Lovelace</div><div class="role">Computer Science Teacher</div><div class="email"><a href="mailto:ada&#64;district.k12.ga.us?subject=Hello">Email</a></div></div></div>';
     expect(teacherEvidence(html, 'Ada & Lovelace', 'ada@district.k12.ga.us')).toBe(true);
   });
+  it('accepts a teacher directory card that publishes the exact email and name without repeating the role', () => {
+    const card = '<main><h1>Our Teachers</h1><div class="staff-card"><h2>Ada Lovelace</h2><a href="mailto:ada@district.k12.ga.us">Email</a></div></main>';
+    expect(teacherEvidenceKind(card, 'Ada Lovelace', 'ada@district.k12.ga.us', 'https://district.k12.ga.us/our-team')).toBe('name-email-teacher-directory-matched');
+    expect(teacherEvidence(card, 'Ada Lovelace', 'ada@district.k12.ga.us', 'https://district.k12.ga.us/staff')).toBe(true);
+    expect(teacherEvidence(card.replace('Our Teachers', 'Our School'), 'Ada Lovelace', 'ada@district.k12.ga.us', 'https://district.k12.ga.us/staff')).toBe(false);
+  });
+  it('does not use a page heading or URL to combine separate people or accept a different email', () => {
+    const html = '<main><h1>Faculty</h1><div class="staff-card"><h2>Ada Lovelace</h2><a href="mailto:ada@district.k12.ga.us">Email</a></div><div class="staff-card"><h2>Sam Student</h2><a href="mailto:sam@district.k12.ga.us">Email</a></div></main>';
+    expect(teacherEvidence(html, 'Ada Lovelace', 'sam@district.k12.ga.us', 'https://district.k12.ga.us/faculty')).toBe(false);
+    expect(teacherEvidence(html, 'Ada Lovelace', 'ada@gmail.com', 'https://district.k12.ga.us/faculty')).toBe(false);
+  });
+  it('recognizes common university teaching titles', () => {
+    expect(teacherEvidence('<article><h2>Ada Lovelace</h2><p>Senior Lecturer</p><a href="mailto:ada@university.edu">Email</a></article>', 'Ada Lovelace', 'ada@university.edu')).toBe(true);
+  });
   it('accepts a mailto link in a simple paragraph and deduplicates its visible email', () => {
     for (const label of ['Email', 'ada@district.k12.ga.us']) {
       const html = `<p>Ada Lovelace — Teacher — <a href="mailto:ada@district.k12.ga.us">${label}</a></p>`;
@@ -61,6 +75,10 @@ describe('automatic affiliation verification', () => {
   it('discovers directory links only on the official email-domain website', () => {
     expect(directoryLinks('<a href="/staff">Staff</a><a href="https://evil.test/staff">Directory</a><a href="javascript:alert(1)">Faculty</a>', 'https://district.k12.ga.us/')).toEqual(['https://district.k12.ga.us/staff']);
   });
+  it('discovers more official teacher-listing paths without accepting another host', () => {
+    const html = '<a href="/people">Our people</a><a href="/our-team">Meet the team</a><a href="https://evil.test/teachers">Teachers</a>';
+    expect(directoryLinks(html, 'https://district.k12.ga.us/')).toEqual(['https://district.k12.ga.us/people', 'https://district.k12.ga.us/our-team']);
+  });
   function dbMock() {
     const writes=[]; let record=null;
     const ref={get:async()=>({exists:!!record,data:()=>record})};
@@ -75,6 +93,15 @@ describe('automatic affiliation verification', () => {
     expect(result.schoolAuthorization).toBe(false);
     expect(fetchPage.mock.calls.map(c=>c[0])).toEqual(['https://district.k12.ga.us/','https://district.k12.ga.us/staff']);
     expect(writes).toHaveLength(2);
+  });
+  it('can verify a personal account email when an independently identified school publishes it on a teacher page', async () => {
+    const {db}=dbMock();
+    const result=await automaticTeacherCheck({db,uid:'t2',email:'ada@gmail.com',fullName:'Ada Lovelace',
+      directoryUrl:'https://district.org/teachers/ada',
+      resolveSchool:async()=>({id:'https://nces.ed.gov/ccd/districtsearch/district_detail.asp?ID2=1234567',source:'nces-directory',roots:['district.org'],homepage:'https://district.org/'}),
+      fetchPage:async()=>'<main><h1>Teachers</h1><article><h2>Ada Lovelace</h2><a href="mailto:ada@gmail.com">Email</a></article></main>'});
+    expect(result.status).toBe('affiliation-verified-automatically');
+    expect(result.evidence[0].result).toBe('name-email-teacher-directory-matched');
   });
   it('fails closed on source errors and does not queue a human approval', async () => {
     const {db}=dbMock();

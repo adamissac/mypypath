@@ -25,10 +25,12 @@ export function nameMatches(listed, supplied) {
     let text = value.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().trim();
     if (text.includes(',')) { const [last, ...first] = text.split(','); text = first.join(' ') + ' ' + last; }
     return text.replace(/\b(mr|mrs|ms|miss|dr|prof|professor|phd|edd)\b\.?/g, ' ')
-      .replace(/[^\p{L}\p{N}]+/gu, ' ').trim().split(/\s+/);
+      .replace(/[^\p{L}\p{N}]+/gu, ' ').trim().split(/\s+/).filter(Boolean)
+      .filter((token, index, all) => index !== all.length - 1 || !/^(jr|sr|ii|iii|iv)$/.test(token));
   };
   const a = tokens(listed), b = tokens(supplied);
-  return a.length >= 2 && b.length >= 2 && a[0] === b[0] && a.at(-1) === b.at(-1)
+  const firstMatches = a[0] === b[0] || (a[0]?.length === 1 || b[0]?.length === 1) && a[0]?.[0] === b[0]?.[0];
+  return a.length >= 2 && b.length >= 2 && firstMatches && a.at(-1) === b.at(-1)
     && (a.length === 2 || b.length === 2 || a.slice(1, -1).map(t => t[0]).join('') === b.slice(1, -1).map(t => t[0]).join(''));
 }
 const ENTRY_SELECTOR = [
@@ -57,8 +59,8 @@ function teachingRole(value) {
   // heading, or an adjacent non-teaching role containing the word teacher.
   if (role.length > 100 || /\b(student|pupil|parent|guardian|volunteer|aide|retired|former|principal|counselor|nurse|administrator|secretary|coordinator|director|superintendent|contact|ask|meet|email|not|no|non|directory|association)\b/.test(role)
       || (/\bassistant\b/.test(role) && !/\bassistant professor\b/.test(role))) return false;
-  return /^(?:[\p{L}\p{N}&/'().-]+\s+){0,5}(?:teacher|instructor|educator|professor)(?:\s*(?:[—–,:/|()-]|of\b|for\b)\s*[\p{L}\p{N}\s&/'().-]+)?$/u.test(role)
-    || /^(?:faculty|faculty member)$/.test(role);
+  return /^(?:[\p{L}\p{N}&/'().-]+\s+){0,5}(?:teacher|instructor|educator|professor|lecturer)(?:\s*(?:[—–,:/|()-]|of\b|for\b)\s*[\p{L}\p{N}\s&/'().-]+)?$/u.test(role)
+    || /^(?:faculty|faculty member|teaching staff|teaching faculty)$/.test(role);
 }
 function entryIdentity($, entry) {
   const copy = $(entry).clone();
@@ -75,10 +77,18 @@ function entryIdentity($, entry) {
   });
   return { addresses: [...addresses], text: normalize(nodeText(copy[0])) };
 }
-export function teacherEvidence(html, name, email) {
+function teacherPage($, source) {
+  let pathname = '';
+  try { pathname = new URL(source).pathname; } catch { /* No page context supplied. */ }
+  if (/(?:^|\/)(?:teachers?|faculty|educators?)(?:\/|$)/i.test(pathname)) return true;
+  return $('main h1, main h2, article h1, article h2').toArray()
+    .some(el => /^(?:our\s+)?(?:teachers?|faculty|educators?)$/i.test(normalize(nodeText(el))));
+}
+export function teacherEvidenceKind(html, name, email, source = '') {
   const $ = publicDocument(html);
   const normalizedName = normalize(name);
   const normalizedEmail = email.toLowerCase();
+  const explicitTeacherPage = teacherPage($, source);
   // Simple published rows can put all three fields in a single paragraph.
   // Require name first and email last, with only an explicit role between them.
   // This prevents an adjacent person's name/role from supplying the evidence.
@@ -90,7 +100,9 @@ export function teacherEvidence(html, name, email) {
     if (!/^[\s—–|,:;-]/.test(rest)) continue;
     const emailAt = rest.indexOf(normalizedEmail);
     if (emailAt < 0 || rest.slice(emailAt + normalizedEmail.length).replace(/[\s—–|,;:.()-]/g, '')) continue;
-    if (teachingRole(rest.slice(0, emailAt))) return true;
+    const role = rest.slice(0, emailAt);
+    if (teachingRole(role)) return 'name-email-teaching-role-matched';
+    if (explicitTeacherPage && !role.replace(/[\s—–|,:;.-]/g, '')) return 'name-email-teacher-directory-matched';
   }
   // Structured cards/rows must carry their own name and role fields. Never
   // combine an outer directory wrapper or two nested person entries.
@@ -103,10 +115,12 @@ export function teacherEvidence(html, name, email) {
     if (!names.length && ['article', 'li'].includes(entry.name)) continue;
     if (names.length ? names.length !== 1 || !nameMatches(names[0], normalizedName)
       : !leaves.some(el => nameMatches(nodeText(el), normalizedName))) continue;
-    if (leaves.some(el => normalize(nodeText(el)) !== normalizedName && teachingRole(nodeText(el)))) return true;
+    if (leaves.some(el => normalize(nodeText(el)) !== normalizedName && teachingRole(nodeText(el)))) return 'name-email-teaching-role-matched';
+    if (explicitTeacherPage) return 'name-email-teacher-directory-matched';
   }
-  return false;
+  return null;
 }
+export function teacherEvidence(html, name, email, source = '') { return !!teacherEvidenceKind(html, name, email, source); }
 export function directoryLinks(html, homepage, hosts) {
   const base = new URL(homepage);
   const root = base.hostname.replace(/^www\./, '');
@@ -117,12 +131,12 @@ export function directoryLinks(html, homepage, hosts) {
     try {
       const url = new URL($(anchor).attr('href'), base);
       if (url.protocol !== 'https:' || !allowedHosts.has(url.hostname) || url.username || url.password || url.port) continue;
-      if (!/staff|faculty|directory|teachers/i.test(url.pathname + ' ' + nodeText(anchor))) continue;
+      if (!/staff|faculty|directory|teachers?|educators?|our[ -]?team|meet[ -]?the[ -]?team|people/i.test(url.pathname + ' ' + nodeText(anchor))) continue;
       url.hash = '';
       if (!links.includes(url.href)) links.push(url.href);
     } catch { /* Ignore malformed links. */ }
   }
-  return links.slice(0, 3);
+  return links.slice(0, 8);
 }
 export async function automaticTeacherCheck({ db, uid, email, fullName, directoryUrl = '', registryUrl = '', fetchPage = fetchDirectory, resolveSchool = resolveInstitution, now = Date.now() }) {
   if (typeof fullName !== 'string' || fullName.trim().length < 3 || fullName.length > 100) {
@@ -144,8 +158,8 @@ export async function automaticTeacherCheck({ db, uid, email, fullName, director
     const changedName = prior?.fullName?.trim().toLowerCase() !== fullName.trim().toLowerCase()
       || (prior?.directoryUrl || '') !== directoryUrl || (prior?.registryUrl || '') !== registryUrl;
     const attempts = recent ? (prior.attemptsInWindow || 1) : 0;
-    const correction = changedName && ['not-verified', 'needs-information', 'source-unavailable'].includes(prior?.status) && attempts < 3;
-    const retryOutage = prior?.status === 'source-unavailable' && now - prior.requestedAt >= 300000 && attempts < 3;
+    const correction = changedName && ['not-verified', 'needs-information', 'source-unavailable'].includes(prior?.status) && attempts < 6;
+    const retryOutage = prior?.status === 'source-unavailable' && now - prior.requestedAt >= 300000 && attempts < 6;
     const legacy = prior && prior.method !== 'official-directory-v2';
     if (recent && !legacy && !recovering && !correction && !retryOutage) {
       throw Object.assign(new Error(inProgress ? 'An automatic check is already running.'
@@ -180,9 +194,9 @@ export async function automaticTeacherCheck({ db, uid, email, fullName, director
   async function inspect(source) {
     try {
       const html = await fetchPage(source, hosts);
-      const supports = teacherEvidence(html, fullName, email);
-      evidence.push({ source, checkedAt: now, result: supports ? 'name-email-teaching-role-matched' : 'no-match' });
-      if (supports) matched = true;
+      const kind = teacherEvidenceKind(html, fullName, email, source);
+      evidence.push({ source, checkedAt: now, result: kind || 'no-match' });
+      if (kind) matched = true;
       return html;
     } catch { evidence.push({ source, checkedAt: now, result: 'source-unavailable' }); return null; }
   }

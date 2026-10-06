@@ -13,7 +13,7 @@ async function ensureVerification() {
   try {
     const profile = await loadProfile(user.uid);
     if (currentUser()?.uid !== user.uid || profile.role !== 'teacher') return;
-    if (!user.emailVerified) { show('Verify your school sign-in email to start automatic teacher verification.'); return; }
+    if (!user.emailVerified) { show('Confirm your sign-in email to start automatic teacher verification.'); return; }
     show('Checking teacher affiliation automatically…');
     const token = await user.getIdToken();
     const response = await fetch('/api/teacher-verification', {

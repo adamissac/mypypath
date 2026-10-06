@@ -41,6 +41,6 @@ describe('independent institution evidence', () => {
   });
 });
 describe('teacher name tolerance with exact email evidence', () => {
-  it.each([['Dr. José M. García', 'Jose Garcia'], ['Lovelace, Ada', 'Ada Lovelace'], ['Ms. Ada Lovelace', 'Ada Lovelace']])('accepts formatting differences: %s', (a, b) => expect(nameMatches(a, b)).toBe(true));
+  it.each([['Dr. José M. García', 'Jose Garcia'], ['Lovelace, Ada', 'Ada Lovelace'], ['Ms. Ada Lovelace', 'Ada Lovelace'], ['A. Lovelace', 'Ada Lovelace'], ['Ada Lovelace Jr.', 'Ada Lovelace']])('accepts formatting differences: %s', (a, b) => expect(nameMatches(a, b)).toBe(true));
   it.each([['Ada Lovelace', 'Sam Lovelace'], ['Ada Lovelace', 'Ada Love'], ['Ada Marie Lovelace', 'Ada Jane Lovelace']])('does not combine different names: %s', (a, b) => expect(nameMatches(a, b)).toBe(false));
 });
