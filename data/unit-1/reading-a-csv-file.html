@@ -393,7 +393,7 @@ row = next(csv.DictReader(io.StringIO(text)))
 print(row["name"])
 print(int(row["score"]) + 1)</code></pre>
 <details class="worked-answer"><summary>Show the output and explanation</summary>
-<pre class="checkpoint-output" aria-label="Expected output">Hopper, Grace
+<pre class="checkpoint-output" role="region" aria-label="Expected output">Hopper, Grace
 8</pre>
 <p>DictReader uses the header names, so changing the column order does not change the meaning. It handles the quoted comma as part of the name. The score is still text: int converts it before addition. Opening a real CSV with newline="" lets the csv module handle line endings itself.</p></details>
 <p><strong>Try one change:</strong> Change the score to 12 and reverse the header and values together. The name should still print correctly.</p>
@@ -411,7 +411,7 @@ rows = list(csv.DictReader(StringIO(text)))
 print(rows[0][&quot;name&quot;])
 print(sum(int(row[&quot;score&quot;]) for row in rows))</code></pre>
 <details class="worked-answer"><summary>Show the output and trace</summary>
-<pre class="checkpoint-output" aria-label="Expected output">Lee, Jo
+<pre class="checkpoint-output" role="region" aria-label="Expected output">Lee, Jo
 18</pre>
 <p>The comma inside the quoted name belongs to that one field. DictReader keeps Lee, Jo together. The score values start as &quot;8&quot; and &quot;10&quot;, then int converts them before summing. StringIO lets this small example behave like a text file without requiring an upload.</p></details>
 <h3>A mistake to watch for</h3>

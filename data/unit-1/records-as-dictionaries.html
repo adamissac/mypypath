@@ -384,7 +384,7 @@ values = [r["score"] for r in records if "score" in r]
 print(values)
 print(sum(values) / len(values))</code></pre>
 <details class="worked-answer"><summary>Show the output and explanation</summary>
-<pre class="checkpoint-output" aria-label="Expected output">[0, 80]
+<pre class="checkpoint-output" role="region" aria-label="Expected output">[0, 80]
 40.0</pre>
 <p>Membership checks whether a field exists. A truthiness check such as if r.get("score") would discard the real zero and report 80.0. Filling the missing field with zero would instead divide by three. Those are different assumptions, not interchangeable shortcuts.</p></details>
 <p><strong>Try one change:</strong> Add another record with score 40. Work out the new denominator before running.</p>
@@ -399,7 +399,7 @@ print(record[&quot;score&quot;])
 print(record.get(&quot;age&quot;))
 print(&quot;score&quot; in record)</code></pre>
 <details class="worked-answer"><summary>Show the output and trace</summary>
-<pre class="checkpoint-output" aria-label="Expected output">0
+<pre class="checkpoint-output" role="region" aria-label="Expected output">0
 None
 True</pre>
 <p>The score key exists and contains a real zero. The age key is absent, so get returns None. Membership tests whether a key exists, independently of whether its value is truthy.</p></details>
