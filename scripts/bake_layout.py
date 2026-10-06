@@ -230,7 +230,7 @@ def header_html(path: Path, show_progress: bool) -> str:
 # aren't real markup at all and aren't even valid UTF-8 -- rglob walked
 # straight into one and crashed the whole bake the first time a local Rust
 # build existed on disk.
-SKIP_DIRS = {'.git', '.claude', 'node_modules', 'lesson-format-kit', 'REVIEW',
+SKIP_DIRS = {'.git', '.claude', '.agents', 'node_modules', 'lesson-format-kit', 'REVIEW',
              'docs', 'tests', 'src-tauri', 'desktop-dist'}
 
 
@@ -750,6 +750,57 @@ def version_course_file(path: Path) -> bool:
     return True
 
 
+EDITOR_MARK = re.compile(
+    r'interactive-editor|editor-container|hero-editor-code|'
+    r'id="code-editor"|code-editor-small'
+)
+
+def has_editor(html: str, path: Path) -> bool:
+    # Homepage hero, sandbox, and the unit test are the non-lesson
+    # surfaces that actually run Python. Everything else that picked up
+    # pyodide-loader.js did so because it shares motion.js with lessons.
+    if path.name in ('index.html', 'sandbox.html', 'unit-test.html'):
+        return True
+    return bool(EDITOR_MARK.search(html))
+
+
+def is_lesson_page(path: Path) -> bool:
+    rel = path.relative_to(ROOT)
+    if rel.parts[0] in ('units', 'data') and len(rel.parts) >= 3:
+        return True
+    return False
+
+
+# Runtime: 4.8MB Pyodide plus the editor it serves. Landings and writing
+# lessons must not fetch these. Lesson-quiz and checker stay on lesson
+# pages even when there is no editor, because reflections and checks
+# still run there (Unit 10 capstone).
+RUNTIME_TAGS = [
+    re.compile(r'\s*<link[^>]*codemirror[^>]*>\s*', re.I),
+    re.compile(r'\s*<script[^>]*pyodide-loader[^>]*></script>\s*', re.I),
+    re.compile(r'\s*<script[^>]*codemirror[^>]*></script>\s*', re.I),
+    re.compile(r'\s*<script[^>]*lesson-runner\.js[^>]*></script>\s*'),
+]
+
+LANDING_TAGS = [
+    re.compile(r'\s*<script[^>]*assets/js/exercises\.js[^>]*></script>\s*'),
+    re.compile(r'\s*<script[^>]*assets/js/checker\.js[^>]*></script>\s*'),
+    re.compile(r'\s*<script[^>]*assets/js/check-ui\.js[^>]*></script>\s*'),
+    re.compile(r'\s*<script[^>]*lesson-quiz\.js[^>]*></script>\s*'),
+    re.compile(r'\s*<script[^>]*lesson-ui\.js[^>]*></script>\s*'),
+    re.compile(r'\s*<link[^>]*checks\.css[^>]*>\s*'),
+]
+
+
+def strip_editor_stack(html: str, path: Path) -> str:
+    tags = list(RUNTIME_TAGS)
+    if not is_lesson_page(path):
+        tags.extend(LANDING_TAGS)
+    for pat in tags:
+        html = pat.sub('\n', html)
+    return html
+
+
 def process(path: Path) -> bool:
     html = path.read_text(encoding='utf-8')
     orig = html
@@ -757,6 +808,8 @@ def process(path: Path) -> bool:
     html = inject_theme_init(html)
     html = inject_page_transition(html)
     html = normalize_scripts(html, path)
+    if not has_editor(html, path):
+        html = strip_editor_stack(html, path)
     html = replace_header(html, path)
     html = replace_footer(html)
     html = fix_unit_redirect(html, path)

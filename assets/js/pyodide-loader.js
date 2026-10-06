@@ -199,8 +199,9 @@
      normal scroll speed, so Run is warm by the time anyone arrives.
      Where the editor IS the page -- the sandbox, the hero -- it is on
      screen at once, intersects immediately, and this behaves exactly as
-     it did before. A caller with no editor on the page (the unit test)
-     still warms straight away.
+     it did before. The unit test builds its editor after this runs, so
+     it still warms on load. Any other caller with no editor is a stray
+     include and must not fetch 4.8MB.
 
      Note the selectors. CodeMirror hides the textarea it takes over, so
      #code-editor and .code-editor-small measure 0x0 once it has built its
@@ -238,9 +239,13 @@
     warmScheduled = true;
 
     var targets = document.querySelectorAll(WARM_TARGETS);
-    if (!targets.length || !('IntersectionObserver' in window)) {
-      // Nothing to watch, or no way to tell approach: don't make the
-      // first Run cold to save a download nobody was going to avoid.
+    if (!targets.length) {
+      if (document.body && document.body.classList.contains('page-unit-test')) {
+        startWarmup();
+      }
+      return ensureReady;
+    }
+    if (!('IntersectionObserver' in window)) {
       startWarmup();
       return ensureReady;
     }
