@@ -9,9 +9,15 @@ import { fetchDirectory } from './public-school-web.js';
 export function institutionalHost(email) {
   if (typeof email !== 'string') return null;
   const domain = email.split('@')[1]?.toLowerCase();
-  const states = 'al ak az ar ca co ct de fl ga hi id il in ia ks ky la me md ma mi mn ms mo mt ne nv nh nj nm ny nc nd oh ok or pa ri sc sd tn tx ut vt va wa wv wi wy dc'.split(' ');
-  const match = domain?.match(/^([a-z0-9-]+\.)+k12\.([a-z]{2})\.us$/);
-  return match && states.includes(match[2]) ? domain.split('.').slice(-4).join('.') : null;
+  if (!domain || !/^(?:[a-z0-9-]+\.)+[a-z]{2,63}$/.test(domain)) return null;
+  const consumer = new Set(['gmail.com', 'googlemail.com', 'outlook.com', 'hotmail.com', 'live.com', 'yahoo.com', 'icloud.com', 'aol.com', 'proton.me', 'protonmail.com']);
+  if (consumer.has(domain)) return null;
+  const labels = domain.split('.');
+  const suffix = labels.at(-1);
+  const states = new Set('al ak az ar ca co ct de fl ga hi id il in ia ks ky la me md ma mi mn ms mo mt ne nv nh nj nm ny nc nd oh ok or pa ri sc sd tn tx ut vt va wa wv wi wy dc'.split(' '));
+  const k12 = labels.length >= 4 && labels.at(-3) === 'k12' && labels.at(-1) === 'us' && states.has(labels.at(-2));
+  const supported = suffix === 'edu' || suffix === 'org' || suffix === 'school' || suffix === 'academy' || k12;
+  return supported ? domain.replace(/^www\./, '') : null;
 }
 const ENTRY_SELECTOR = [
   'tr', 'li', 'article', '[itemtype$="/Person"]', '[data-staff-member]',

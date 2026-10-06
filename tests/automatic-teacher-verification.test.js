@@ -4,7 +4,10 @@ import { institutionalHost, teacherEvidence, directoryLinks, automaticTeacherChe
 describe('automatic affiliation verification', () => {
   it('accepts supported institutional domains, not personal or lookalike domains', () => {
     expect(institutionalHost('ada@district.k12.ga.us')).toBe('district.k12.ga.us');
-    for (const email of ['ada@gmail.com','ada@school.org','ada@district.k12.ga.us.evil.com','ada@district.k12.zz.us']) expect(institutionalHost(email)).toBe(null);
+    for (const email of ['ada@gmail.com','ada@district.com','ada@district.k12.ga.us.evil.com','ada@district.k12.zz.us']) expect(institutionalHost(email)).toBe(null);
+    expect(institutionalHost('ada@university.edu')).toBe('university.edu');
+    expect(institutionalHost('ada@district.org')).toBe('district.org');
+    expect(institutionalHost('ada@academy.school')).toBe('academy.school');
   });
   it('requires matching name, exact email and teaching role in nearby visible text', () => {
     expect(teacherEvidence('<p>Ada Lovelace — Teacher — ada@district.k12.ga.us</p>','Ada Lovelace','ada@district.k12.ga.us')).toBe(true);

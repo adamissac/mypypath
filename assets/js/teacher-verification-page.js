@@ -123,7 +123,7 @@ function renderError(error, user) {
     accountLink('Go to account');
   } else if (error.status === 422) {
     details.hidden = true;
-    setState('unsupported', 'School not supported yet', 'Your school’s domain isn’t covered yet.', 'Automatic checks currently support US public-school email domains ending in .k12.[state].us. This account stays unverified; using a personal email or a different domain cannot confirm your school affiliation.');
+    setState('unsupported', 'School not supported yet', 'Your school’s domain isn’t covered yet.', 'Automatic checks support institutional .k12.[state].us, .edu, .org, .school, and .academy domains. This account stays unverified; using a personal email or a different domain cannot confirm your school affiliation.');
     accountLink('Check account email');
   } else if (error.status === 400) {
     details.open = true;
