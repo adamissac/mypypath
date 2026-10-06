@@ -37,5 +37,10 @@ describe('robots.txt keeps crawlers off the same trees', () => {
     expect(ROBOTS).toMatch(/^Disallow: \/\.claude\//m);
     expect(ROBOTS).toMatch(/^Disallow: \/\.agents\//m);
     expect(ROBOTS).toMatch(/^Disallow: \/scripts\//m);
+    expect(ROBOTS).toMatch(/^Disallow: \/engine\//m);
+    expect(ROBOTS).toMatch(/^Disallow: \/docs\//m);
+    expect(ROBOTS).toMatch(/^Disallow: \/REVIEW\//m);
+    expect(ROBOTS).toMatch(/^Disallow: \/tests\//m);
+    expect(ROBOTS).toMatch(/^Disallow: \/lesson-format-kit\//m);
   });
 });
