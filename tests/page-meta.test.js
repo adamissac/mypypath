@@ -181,6 +181,12 @@ describe('a page that deliberately points elsewhere is left alone', () => {
     expect(fs.readFileSync('learn.html', 'utf8')).not.toContain('meta:begin');
   });
 
+  it('gives the skip link a target so it is not a dead jump', () => {
+    const src = fs.readFileSync('learn.html', 'utf8');
+    expect(src).toContain('href="#main-content"');
+    expect(src).toContain('id="main-content"');
+  });
+
   it('the generator skips any page with a hand-written canonical', () => {
     const gen = fs.readFileSync('scripts/build-meta.py', 'utf8');
     expect(gen).toContain('if \'rel="canonical"\' in without_block:');
