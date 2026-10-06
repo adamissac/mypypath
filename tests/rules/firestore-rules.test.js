@@ -5,7 +5,7 @@ import {
   assertSucceeds,
 } from '@firebase/rules-unit-testing';
 import { doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, deleteField,
-  collection, query, where } from 'firebase/firestore';
+  collection, query, where, writeBatch } from 'firebase/firestore';
 import fs from 'node:fs';
 
 let env;
@@ -217,12 +217,35 @@ describe('classroom join codes', () => {
   });
 });
 
+// What class-join.js's preserveCertificateApproval() writes. Every write that
+// sets or clears a roster teacherUid must leave this record behind, so the
+// certificate decision outlives enrollment.
+function approvalFor(teacherUid, roster = {}) {
+  return {
+    teacherUid, displayName: roster.displayName || 'Learner',
+    approved: roster.certificateApproved === true,
+    requestedAt: roster.certificateRequestedAt || 0,
+    decidedAt: roster.certificateDecidedAt || 0, updatedAt: Date.now(),
+  };
+}
+// A first join writes the roster seat and its approval record together.
+function joinWithApproval(db, uid, roster) {
+  const batch = writeBatch(db);
+  batch.set(doc(db, `roster/${uid}`), roster, { merge: true });
+  batch.set(doc(db, `certificateApprovals/${uid}`), approvalFor(roster.teacherUid));
+  return batch.commit();
+}
+// Before a leave or a drop: copy the legacy roster handshake across first.
+async function preserveApproval(db, uid) {
+  const roster = (await getDoc(doc(db, `roster/${uid}`))).data();
+  await setDoc(doc(db, `certificateApprovals/${uid}`), approvalFor(roster.teacherUid, roster));
+}
+
 describe('joining a class', () => {
   it('lets a learner join with a code that matches the teacher claimed', async () => {
     const db = env.authenticatedContext('joiner').firestore();
     await assertSucceeds(
-      setDoc(doc(db, 'roster/joiner'),
-        { teacherUid: TEACHER, joinCode: CODE, displayName: 'Jo' }, { merge: true })
+      joinWithApproval(db, 'joiner', { teacherUid: TEACHER, joinCode: CODE, displayName: 'Jo' })
     );
   });
 
@@ -333,6 +356,7 @@ describe('teacher roster', () => {
         { teacherUid: TEACHER, joinCode: CODE, displayName: 'Dee' });
     });
     const db = env.authenticatedContext(TEACHER).firestore();
+    await assertSucceeds(preserveApproval(db, 'dropme'));
     await assertSucceeds(
       updateDoc(doc(db, 'roster/dropme'),
         { teacherUid: deleteField(), joinCode: deleteField(), updatedAt: Date.now() })
@@ -431,7 +455,7 @@ describe('certificate approval', () => {
         { teacherUid: TEACHER, joinCode: CODE, certificateApproved: true })
     );
     await assertSucceeds(
-      setDoc(doc(db, 'roster/fresh'), { teacherUid: TEACHER, joinCode: CODE })
+      joinWithApproval(db, 'fresh', { teacherUid: TEACHER, joinCode: CODE })
     );
   });
 
@@ -536,6 +560,7 @@ describe('certificate approval', () => {
 
   it('lets an approved student still leave their class', async () => {
     const db = env.authenticatedContext('grad').firestore();
+    await assertSucceeds(preserveApproval(db, 'grad'));
     await assertSucceeds(
       updateDoc(doc(db, 'roster/grad'),
         { teacherUid: deleteField(), joinCode: deleteField(), updatedAt: Date.now() })
@@ -550,9 +575,80 @@ describe('certificate approval', () => {
         { teacherUid: TEACHER, joinCode: CODE, displayName: 'Del', certificateApproved: true });
     });
     const db = env.authenticatedContext(TEACHER).firestore();
+    await assertSucceeds(preserveApproval(db, 'dropme2'));
+    expect((await getDoc(doc(db, 'certificateApprovals/dropme2'))).data().approved).toBe(true);
     await assertSucceeds(
       updateDoc(doc(db, 'roster/dropme2'),
         { teacherUid: deleteField(), joinCode: deleteField(), updatedAt: Date.now() })
     );
+  });
+});
+
+// The handshake itself, since it moved off the roster: the student writes only
+// the request, the deciding teacher writes only the verdict, and the record
+// stays readable to that teacher after the student has left.
+describe('durable certificate approvals', () => {
+  beforeAll(async () => {
+    const db = env.authenticatedContext('finisher').firestore();
+    await joinWithApproval(db, 'finisher', { teacherUid: TEACHER, joinCode: CODE, displayName: 'Fin' });
+  });
+
+  it('lets a student request their certificate', async () => {
+    const db = env.authenticatedContext('finisher').firestore();
+    await assertSucceeds(updateDoc(doc(db, 'certificateApprovals/finisher'),
+      { requestedAt: Date.now(), updatedAt: Date.now() }));
+  });
+
+  it('denies a student approving their own record', async () => {
+    const db = env.authenticatedContext('finisher').firestore();
+    await assertFails(updateDoc(doc(db, 'certificateApprovals/finisher'),
+      { approved: true, decidedAt: Date.now(), updatedAt: Date.now() }));
+  });
+
+  it('denies a student withdrawing a request by rewinding it', async () => {
+    const db = env.authenticatedContext('finisher').firestore();
+    await assertFails(updateDoc(doc(db, 'certificateApprovals/finisher'),
+      { requestedAt: 0, updatedAt: Date.now() }));
+  });
+
+  it('lets the deciding teacher approve, decline and list their queue', async () => {
+    const db = env.authenticatedContext(TEACHER).firestore();
+    for (const approved of [true, false]) {
+      await assertSucceeds(updateDoc(doc(db, 'certificateApprovals/finisher'),
+        { approved, decidedAt: Date.now(), updatedAt: Date.now() }));
+    }
+    await assertSucceeds(getDocs(query(collection(db, 'certificateApprovals'),
+      where('teacherUid', '==', TEACHER))));
+  });
+
+  it('denies the teacher forging the request or reassigning the record', async () => {
+    const db = env.authenticatedContext(TEACHER).firestore();
+    await assertFails(updateDoc(doc(db, 'certificateApprovals/finisher'),
+      { requestedAt: Date.now() + 1000, updatedAt: Date.now() }));
+    await assertFails(updateDoc(doc(db, 'certificateApprovals/finisher'),
+      { teacherUid: OTHER_TEACHER, updatedAt: Date.now() }));
+  });
+
+  it('denies another teacher reading or deciding it', async () => {
+    const db = env.authenticatedContext(OTHER_TEACHER).firestore();
+    await assertFails(getDoc(doc(db, 'certificateApprovals/finisher')));
+    await assertFails(updateDoc(doc(db, 'certificateApprovals/finisher'),
+      { approved: true, decidedAt: Date.now(), updatedAt: Date.now() }));
+  });
+
+  it('never lets anyone delete it', async () => {
+    for (const who of ['finisher', TEACHER]) {
+      const db = env.authenticatedContext(who).firestore();
+      await assertFails(deleteDoc(doc(db, 'certificateApprovals/finisher')));
+    }
+  });
+
+  it('stays readable to the deciding teacher after the student leaves', async () => {
+    const student = env.authenticatedContext('finisher').firestore();
+    await assertSucceeds(updateDoc(doc(student, 'roster/finisher'),
+      { teacherUid: deleteField(), joinCode: deleteField(), updatedAt: Date.now() }));
+    const db = env.authenticatedContext(TEACHER).firestore();
+    const kept = await assertSucceeds(getDoc(doc(db, 'certificateApprovals/finisher')));
+    expect(kept.data().approved).toBe(false);
   });
 });
