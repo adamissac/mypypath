@@ -710,6 +710,7 @@ def version_course_assets(html: str) -> str:
     """Keep course colours and logo selection fresh despite shared-asset caching."""
     for rel in ('assets/css/style.css',
                 'assets/css/pypath-theme.css', 'assets/css/home-path.css', 'assets/js/theme-init.js', 'assets/js/lesson-ui.js',
+                'assets/css/auth.css',
                 'assets/css/pypath-fast.css', 'assets/css/lesson-progress.css',
                 'assets/css/courses.css', 'assets/css/checks.css', 'assets/js/question-render.js',
                 'assets/js/lesson-quiz.js', 'assets/js/core.js', 'assets/js/pyodide-loader.js',
