@@ -452,7 +452,7 @@ def calculate_age(birth_date):
     today = datetime.now()
     age = today.year - birth_date.year
     # Adjust if birthday hasn't occurred this year
-    if (today.month, today.day) < (birth_date.month, birth_date.day):
+    if (today.month, today.day) &lt; (birth_date.month, birth_date.day):
         age -= 1
     return age
 
@@ -481,7 +481,7 @@ print(f"Days between: {days}")</code></pre>
 def get_next_weekday(date, weekday):
     """Get next occurrence of weekday (0=Monday, 6=Sunday)"""
     days_ahead = weekday - date.weekday()
-    if days_ahead <= 0:
+    if days_ahead &lt;= 0:
         days_ahead += 7
     return date + timedelta(days=days_ahead)
 

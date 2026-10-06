@@ -274,7 +274,7 @@
                     <button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
                   </div>
                   <textarea class="code-editor-small" id="editor-practice1">count = 1
-while count <= 5:
+while count &lt;= 5:
     print(f"Count: {count}")
     count = count + 1
 print("Done!")</textarea>
@@ -283,7 +283,7 @@ print("Done!")</textarea>
                   </div>
                 </div>
 
-                <p style="margin-top: 16px;"><strong>What happened?</strong> Python first checked the condition: <code>count <= 5</code>. Since count is 1, and 1 is less than or equal to 5, the condition was True, so Python entered the loop and printed "Count: 1". Then it increased count by 1 (using <code>count = count + 1</code>), making count equal to 2. Python then checked the condition again. Since 2 <= 5 is still True, it printed "Count: 2" and increased count again. This process repeated until count became 6. When Python checked <code>6 <= 5</code>, it was False, so the loop stopped and Python printed "Done!". Notice how the counter (<code>count</code>) changes each time through the loop, eventually making the condition False.</p>
+                <p style="margin-top: 16px;"><strong>What happened?</strong> Python first checked the condition: <code>count &lt;= 5</code>. Since count is 1, and 1 is less than or equal to 5, the condition was True, so Python entered the loop and printed "Count: 1". Then it increased count by 1 (using <code>count = count + 1</code>), making count equal to 2. Python then checked the condition again. Since 2 &lt;= 5 is still True, it printed "Count: 2" and increased count again. This process repeated until count became 6. When Python checked <code>6 &lt;= 5</code>, it was False, so the loop stopped and Python printed "Done!". Notice how the counter (<code>count</code>) changes each time through the loop, eventually making the condition False.</p>
               </div>
 
               <div class="content-section">
@@ -295,7 +295,7 @@ print("Done!")</textarea>
                     <h3 class="h4">When Condition Is True</h3>
                     <p>Python runs all indented code, then checks the condition again.</p>
                     <pre class="code" style="margin-top: 12px;"><code>count = 1
-while count <= 3:
+while count &lt;= 3:
     print(count)
     count = count + 1</code></pre>
                     <p style="margin-top: 8px; font-size: 14px;">Output: 1<br>2<br>3</p>
@@ -305,7 +305,7 @@ while count <= 3:
                     <h3 class="h4">When Condition Is False</h3>
                     <p>Python skips the entire while block and continues with the next line.</p>
                     <pre class="code" style="margin-top: 12px;"><code>count = 10
-while count <= 3:
+while count &lt;= 3:
     print(count)
     count = count + 1
 print("Skipped")</code></pre>
@@ -337,7 +337,7 @@ print("Skipped")</code></pre>
 count = 0
 
 # 2. Check counter in the while condition
-while count < 5:
+while count &lt; 5:
     # 3. Do something
     print(f"Loop iteration: {count}")
     # 4. Update counter inside the loop
@@ -358,7 +358,7 @@ while count < 5:
                     <div class="step-content">
                       <h3 class="h4">Use Counter in Condition</h3>
                       <p>Write a condition that checks the counter value. When the counter reaches a certain value, the condition becomes False.</p>
-                      <pre class="code" style="margin-top: 8px;"><code>while count < 5:</code></pre>
+                      <pre class="code" style="margin-top: 8px;"><code>while count &lt; 5:</code></pre>
                     </div>
                   </div>
                   <div class="step">
@@ -391,7 +391,7 @@ while count < 5:
                   </div>
                   <textarea class="code-editor-small" id="editor-practice2">total = 0
 count = 1
-while count <= 5:
+while count &lt;= 5:
     total = total + count
     print(f"Adding {count}, total is now {total}")
     count = count + 1
@@ -401,7 +401,7 @@ print(f"Final total: {total}")</textarea>
                   </div>
                 </div>
 
-                <p style="margin-top: 16px;"><strong>What happened?</strong> This code adds up the numbers from 1 to 5. The variable <code>total</code> starts at 0 and accumulates the sum. The variable <code>count</code> starts at 1 and goes up by 1 each time through the loop. Each iteration, the code adds the current value of count to total, then increases count by 1. When count becomes 6, the condition <code>count <= 5</code> becomes False, so the loop stops. The final total is 15 (1+2+3+4+5). This pattern of accumulating values is very common in programming!</p>
+                <p style="margin-top: 16px;"><strong>What happened?</strong> This code adds up the numbers from 1 to 5. The variable <code>total</code> starts at 0 and accumulates the sum. The variable <code>count</code> starts at 1 and goes up by 1 each time through the loop. Each iteration, the code adds the current value of count to total, then increases count by 1. When count becomes 6, the condition <code>count &lt;= 5</code> becomes False, so the loop stops. The final total is 15 (1+2+3+4+5). This pattern of accumulating values is very common in programming!</p>
               </div>
 
               <div class="content-section">
@@ -413,7 +413,7 @@ print(f"Final total: {total}")</textarea>
                     <h3 class="h4">✅ Safe Loop (Stops)</h3>
                     <p>The counter is updated, so the loop eventually stops:</p>
                     <pre class="code" style="margin-top: 12px;"><code>count = 1
-while count <= 5:
+while count &lt;= 5:
     print(count)
     count = count + 1  # Counter changes!</code></pre>
                     <p style="margin-top: 8px; font-size: 14px;">This will stop after 5 iterations</p>
@@ -422,7 +422,7 @@ while count <= 5:
                     <h3 class="h4">❌ Infinite Loop (Danger!)</h3>
                     <p>The counter is never updated, so the condition stays True forever:</p>
                     <pre class="code" style="margin-top: 12px;"><code>count = 1
-while count <= 5:
+while count &lt;= 5:
     print(count)
     # Missing: count = count + 1</code></pre>
                     <p style="margin-top: 8px; font-size: 14px;">This runs forever!</p>
@@ -468,8 +468,8 @@ print("Time's up!")</code></pre>
                 
                 <div class="exercise-item" data-exercise-id="exercise1">
                   <h3 class="h4">Exercise 1: Write a while Loop</h3>
-                  <p>Create a variable <code>count</code> = 1. Write a while loop that prints count as long as count <= 3, then increases count by 1 each time.</p>
-                  <p class="hint-text">Use while count <= 3: followed by a print statement and count = count + 1.</p>
+                  <p>Create a variable <code>count</code> = 1. Write a while loop that prints count as long as count &lt;= 3, then increases count by 1 each time.</p>
+                  <p class="hint-text">Use while count &lt;= 3: followed by a print statement and count = count + 1.</p>
                   
                   <div class="interactive-editor" data-editor-id="exercise1">
                     <div class="editor-toolbar-small">
@@ -488,7 +488,7 @@ print("Time's up!")</code></pre>
                 <div class="exercise-item" data-exercise-id="exercise2">
                   <h3 class="h4">Exercise 2: Sum with while Loop</h3>
                   <p>Create variables: <code>total</code> = 0 and <code>count</code> = 1. Use a while loop to add numbers from 1 to 5 to total. Print the final total.</p>
-                  <p class="hint-text">Use while count <= 5:, add count to total, then increase count by 1.</p>
+                  <p class="hint-text">Use while count &lt;= 5:, add count to total, then increase count by 1.</p>
                   
                   <div class="interactive-editor" data-editor-id="exercise2">
                     <div class="editor-toolbar-small">

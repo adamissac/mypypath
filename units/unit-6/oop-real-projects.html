@@ -227,7 +227,7 @@
         return "Invalid deposit amount"
     
     def withdraw(self, amount):
-        if amount > 0 and amount <= self.__balance:
+        if amount > 0 and amount &lt;= self.__balance:
             self.__balance -= amount
             return f"Withdrew ${amount}. New balance: ${self.__balance}"
         return "Insufficient funds or invalid amount"
@@ -260,7 +260,7 @@ class CheckingAccount(BankAccount):
     
     def withdraw(self, amount):
         available = self.get_balance() + self.__overdraft_limit
-        if amount <= available:
+        if amount &lt;= available:
             self._BankAccount__balance -= amount  # Accessing private attribute
             return f"Withdrew ${amount}. Balance: ${self.get_balance()}"
         return "Exceeds overdraft limit"
@@ -300,7 +300,7 @@ print(f"Savings balance: ${savings.get_balance()}")</code></pre>
         return "Invalid deposit amount"
     
     def withdraw(self, amount):
-        if amount > 0 and amount <= self.__balance:
+        if amount > 0 and amount &lt;= self.__balance:
             self.__balance -= amount
             return f"Withdrew ${amount}. New balance: ${self.__balance}"
         return "Insufficient funds or invalid amount"
@@ -314,7 +314,7 @@ print(savings.withdraw(300))
 print(f"Final balance: ${savings.get_balance()}")</textarea>
                   <div class="editor-controls">
                     <button onclick="runEditorCode('banking')" class="btn btn-primary">Run</button>
-                    <button onclick="resetEditor('banking', 'class BankAccount:\n    def __init__(self, account_number, balance=0):\n        self.__account_number = account_number\n        self.__balance = balance\n    \n    def deposit(self, amount):\n        if amount > 0:\n            self.__balance += amount\n            return f&quot;Deposited ${amount}. New balance: ${self.__balance}&quot;\n        return &quot;Invalid deposit amount&quot;\n    \n    def withdraw(self, amount):\n        if amount > 0 and amount <= self.__balance:\n            self.__balance -= amount\n            return f&quot;Withdrew ${amount}. New balance: ${self.__balance}&quot;\n        return &quot;Insufficient funds or invalid amount&quot;\n    \n    def get_balance(self):\n        return self.__balance\n\nsavings = BankAccount(&quot;SAV001&quot;, 1000)\nprint(savings.deposit(200))\nprint(savings.withdraw(300))\nprint(f&quot;Final balance: ${savings.get_balance()}&quot;)')" class="btn btn-ghost">Reset</button>
+                    <button onclick="resetEditor('banking', 'class BankAccount:\n    def __init__(self, account_number, balance=0):\n        self.__account_number = account_number\n        self.__balance = balance\n    \n    def deposit(self, amount):\n        if amount > 0:\n            self.__balance += amount\n            return f&quot;Deposited ${amount}. New balance: ${self.__balance}&quot;\n        return &quot;Invalid deposit amount&quot;\n    \n    def withdraw(self, amount):\n        if amount > 0 and amount &lt;= self.__balance:\n            self.__balance -= amount\n            return f&quot;Withdrew ${amount}. New balance: ${self.__balance}&quot;\n        return &quot;Insufficient funds or invalid amount&quot;\n    \n    def get_balance(self):\n        return self.__balance\n\nsavings = BankAccount(&quot;SAV001&quot;, 1000)\nprint(savings.deposit(200))\nprint(savings.withdraw(300))\nprint(f&quot;Final balance: ${savings.get_balance()}&quot;)')" class="btn btn-ghost">Reset</button>
                   </div>
                   <div id="output-banking" class="code-output">Press Run to see output</div>
                 </div>
@@ -337,7 +337,7 @@ print(f"Final balance: ${savings.get_balance()}")</textarea>
     
     def take_damage(self, damage):
         self.health -= damage
-        if self.health < 0:
+        if self.health &lt; 0:
             self.health = 0
         return f"{self.name} took {damage} damage. Health: {self.health}/{self.max_health}"
     
@@ -434,7 +434,7 @@ for char in characters:
     
     def take_damage(self, damage):
         self.health -= damage
-        if self.health < 0:
+        if self.health &lt; 0:
             self.health = 0
     
     def is_alive(self):
@@ -485,7 +485,7 @@ print(f"{winner.name} wins!")</textarea>
     
     def update_quantity(self, change):
         self.quantity += change
-        if self.quantity < 0:
+        if self.quantity &lt; 0:
             self.quantity = 0
     
     def get_value(self):
@@ -528,7 +528,7 @@ class Inventory:
         return result
     
     def low_stock_items(self, threshold=5):
-        low_stock = [p for p in self.products.values() if p.quantity <= threshold]
+        low_stock = [p for p in self.products.values() if p.quantity &lt;= threshold]
         return low_stock
 
 # Usage
