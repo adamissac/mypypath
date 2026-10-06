@@ -724,6 +724,16 @@ def version_course_assets(html: str) -> str:
                 # max-age=3600, so without a version a returning reader keeps
                 # the previous rules for an hour after a deploy changes them.
                 'assets/css/gate.css',
+                # Page-specific sheets. Same cache as gate.css (max-age=3600):
+                # without a version, a returning visitor keeps the previous
+                # certificate / classroom / quiz / progress / unit-test /
+                # admin rules for an hour after a deploy changes them.
+                'assets/css/certificate.css',
+                'assets/css/quiz.css',
+                'assets/css/classroom.css',
+                'assets/css/progress.css',
+                'assets/css/unit-test.css',
+                'assets/css/admin.css',
                 'assets/img/data-moon.svg',
                 'assets/img/placeholder-avatar.svg',
                 # The homepage tour. The video and its captions are served with
