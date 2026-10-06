@@ -74,5 +74,5 @@ describe('automatic teacher API',()=>{
 it('reports missing runtime configuration without exposing credentials',async()=>{
   vi.stubEnv('PYPATH_FIREBASE_SERVICE_ACCOUNT','');
   const res=response();await handler({method:'GET',headers:{authorization:'Bearer test'}},res);
-  expect(res.code).toBe(503);expect(res.body.error).toContain('not configured');vi.unstubAllEnvs();
+  expect(res.code).toBe(503);expect(res.body.code).toBe('verification/config-missing');vi.unstubAllEnvs();
 });

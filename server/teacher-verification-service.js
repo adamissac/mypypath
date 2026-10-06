@@ -64,7 +64,8 @@ export function createTeacherHandler({ getServices, checkTeacher, now = () => Da
       return res.status(200).json(verificationView(updated.exists ? updated.data() : null, user, profile, now()));
     } catch (error) {
       const expected = [400,403,409,422,429,503].includes(error.status);
-      return res.status(expected ? error.status : 503).json({ error: expected ? error.message : 'Automatic verification is temporarily unavailable.' });
+      return res.status(expected ? error.status : 503).json({ error: expected ? error.message : 'Automatic verification is temporarily unavailable.',
+        ...(error.publicCode?.startsWith('verification/config-') ? { code: error.publicCode } : {}) });
     }
   };
 }
