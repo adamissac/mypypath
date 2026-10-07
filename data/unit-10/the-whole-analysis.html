@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/css/style.css?v=4f1b5a9b32" />
     <link rel="stylesheet" href="/assets/css/pypath-fast.css?v=a764a48c37" />
     <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=de2aeca0e9" />
-    <link rel="stylesheet" href="/assets/css/auth.css?v=3475928266" />
+    <link rel="stylesheet" href="/assets/css/auth.css?v=dc366212ed" />
     <link rel="stylesheet" href="/assets/css/gate.css?v=cce9b151ad" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=7144c97895" />
     <link rel="stylesheet" href="/assets/css/checks.css?v=f6e6e6218e" />
@@ -69,10 +69,10 @@
     <meta property="og:title" content="Python for Data • The Whole Analysis" />
     <meta property="og:description" content="Load, clean, join, summarise, report — in one function, from files." />
     <meta property="og:url" content="https://mypypath.com/data/unit-10/the-whole-analysis.html" />
-    <meta property="og:image" content="https://mypypath.com/assets/img/og-card.png" />
-    <meta property="og:image:width" content="512" />
-    <meta property="og:image:height" content="512" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content="https://mypypath.com/assets/img/og-card-wide.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Python for Data • The Whole Analysis" />
     <meta name="twitter:description" content="Load, clean, join, summarise, report — in one function, from files." />
     <link rel="canonical" href="https://mypypath.com/data/unit-10/the-whole-analysis.html" />
@@ -269,9 +269,9 @@ print(out.groupby("team")["score"].mean().round(1))</code></pre>
 
 <div class="interactive-editor" data-editor-id="practice1">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice1', 'import io\nimport pandas as pd\n\ntext = &quot;id,score\\n1,90\\n2,n/a\\n3,70\\n&quot;\nscores = pd.read_csv(io.StringIO(text))\nprint(scores.dtypes)\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('practice1', 'import io\nimport pandas as pd\n\ntext = &quot;id,score\\n1,90\\n2,n/a\\n3,70\\n&quot;\nscores = pd.read_csv(io.StringIO(text))\nprint(scores.dtypes)\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice1">import io
 import pandas as pd
@@ -331,9 +331,9 @@ print("people:", len(people), "joined:", len(out))</code></pre>
 
 <div class="interactive-editor" data-editor-id="practice2">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\npeople = pd.DataFrame({&quot;id&quot;: [1, 2, 3], &quot;team&quot;: [&quot;red&quot;, &quot;red&quot;, &quot;blue&quot;]})\nscores = pd.DataFrame({&quot;id&quot;: [1, 3], &quot;score&quot;: [90.0, 70.0]})\n\nout = pd.merge(people, scores, on=&quot;id&quot;)\nprint(len(people), &quot;->&quot;, len(out))\n# Which ids in people are not in scores?\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\npeople = pd.DataFrame({&quot;id&quot;: [1, 2, 3], &quot;team&quot;: [&quot;red&quot;, &quot;red&quot;, &quot;blue&quot;]})\nscores = pd.DataFrame({&quot;id&quot;: [1, 3], &quot;score&quot;: [90.0, 70.0]})\n\nout = pd.merge(people, scores, on=&quot;id&quot;)\nprint(len(people), &quot;->&quot;, len(out))\n# Which ids in people are not in scores?\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice2">import pandas as pd
 
@@ -428,9 +428,9 @@ print(best_team("people.csv", "scores.csv"))</code></pre>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('exercise1', 'import pandas as pd\n\ndef report(people_path, scores_path):\n    # (best team, its mean score)\n    return None\n\nprint(report(&quot;people.csv&quot;, &quot;scores.csv&quot;))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('exercise1', 'import pandas as pd\n\ndef report(people_path, scores_path):\n    # (best team, its mean score)\n    return None\n\nprint(report(&quot;people.csv&quot;, &quot;scores.csv&quot;))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-exercise1">import pandas as pd
 
@@ -454,9 +454,9 @@ print(report("people.csv", "scores.csv"))
 
 <div class="interactive-editor" data-editor-id="exercise2">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
-<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef audit(people_path, scores_path):\n    # {&quot;missing&quot;: ..., &quot;unmatched&quot;: ..., &quot;used&quot;: ...}\n    return {}\n\nprint(audit(&quot;people.csv&quot;, &quot;scores.csv&quot;))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef audit(people_path, scores_path):\n    # {&quot;missing&quot;: ..., &quot;unmatched&quot;: ..., &quot;used&quot;: ...}\n    return {}\n\nprint(audit(&quot;people.csv&quot;, &quot;scores.csv&quot;))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
 

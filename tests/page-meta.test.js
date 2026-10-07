@@ -53,7 +53,7 @@ describe('every public page can be shared', () => {
     ['og:title', /<meta property="og:title" content="[^"]+"/],
     ['og:url', /<meta property="og:url" content="https:\/\/mypypath\.com[^"]*"/],
     ['og:image', /<meta property="og:image" content="https:\/\/[^"]+"/],
-    ['twitter:card', /<meta name="twitter:card" content="summary"/],
+    ['twitter:card', /<meta name="twitter:card" content="summary_large_image"/],
     ['canonical', /<link rel="canonical" href="https:\/\/mypypath\.com[^"]*"/],
   ]) {
     it(`has ${tag[0]}`, () => {
@@ -113,8 +113,15 @@ describe('the generated block is safe to regenerate', () => {
 
   it('the card image is a real file, at the size the tags claim', () => {
     // A card pointing at a 404 previews worse than no card at all.
-    expect(fs.existsSync('assets/img/og-card.png')).toBe(true);
-    expect(fs.statSync('assets/img/og-card.png').size).toBeGreaterThan(1000);
+    // 1200x630 is what Classroom and Slack actually render as a large card.
+    expect(fs.existsSync('assets/img/og-card-wide.png')).toBe(true);
+    const buf = fs.readFileSync('assets/img/og-card-wide.png');
+    expect(buf.readUInt32BE(16)).toBe(1200);
+    expect(buf.readUInt32BE(20)).toBe(630);
+    const home = fs.readFileSync('index.html', 'utf8');
+    expect(home).toContain('og-card-wide.png');
+    expect(home).toContain('content="1200"');
+    expect(home).toContain('content="630"');
   });
 });
 

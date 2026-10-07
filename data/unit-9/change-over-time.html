@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/css/style.css?v=4f1b5a9b32" />
     <link rel="stylesheet" href="/assets/css/pypath-fast.css?v=a764a48c37" />
     <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=de2aeca0e9" />
-    <link rel="stylesheet" href="/assets/css/auth.css?v=3475928266" />
+    <link rel="stylesheet" href="/assets/css/auth.css?v=dc366212ed" />
     <link rel="stylesheet" href="/assets/css/gate.css?v=cce9b151ad" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=7144c97895" />
     <link rel="stylesheet" href="/assets/css/checks.css?v=f6e6e6218e" />
@@ -69,10 +69,10 @@
     <meta property="og:title" content="Python for Data • Change Over Time" />
     <meta property="og:description" content="Differences and growth rates, and the row that has neither." />
     <meta property="og:url" content="https://mypypath.com/data/unit-9/change-over-time.html" />
-    <meta property="og:image" content="https://mypypath.com/assets/img/og-card.png" />
-    <meta property="og:image:width" content="512" />
-    <meta property="og:image:height" content="512" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content="https://mypypath.com/assets/img/og-card-wide.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Python for Data • Change Over Time" />
     <meta name="twitter:description" content="Differences and growth rates, and the row that has neither." />
     <link rel="canonical" href="https://mypypath.com/data/unit-9/change-over-time.html" />
@@ -253,9 +253,9 @@ print([f"{x:.1%}" for x in change.dropna()])</code></pre>
 
 <div class="interactive-editor" data-editor-id="practice1">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ns = pd.Series([100.0, 120.0, 90.0])\n\nprint(s.shift().tolist())\nprint(s.diff().tolist())\nprint(None)   # pct_change\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ns = pd.Series([100.0, 120.0, 90.0])\n\nprint(s.shift().tolist())\nprint(s.diff().tolist())\nprint(None)   # pct_change\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice1">import pandas as pd
 
@@ -328,9 +328,9 @@ print("rises:", int((s.diff() &gt; 0).sum()))</code></pre>
 
 <div class="interactive-editor" data-editor-id="practice2">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ns = pd.Series([0.0, 5.0, 10.0])\n\nprint(s.pct_change().tolist())\nprint(s.pct_change().dropna().tolist())\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ns = pd.Series([0.0, 5.0, 10.0])\n\nprint(s.pct_change().tolist())\nprint(s.pct_change().dropna().tolist())\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice2">import pandas as pd
 
@@ -376,9 +376,9 @@ print(s.pct_change().dropna().tolist())
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('exercise1', 'import pandas as pd\n\ndef rises(s):\n    # How many steps were increases?\n    return 0\n\nprint(rises(pd.Series([1, 2, 1, 3])))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('exercise1', 'import pandas as pd\n\ndef rises(s):\n    # How many steps were increases?\n    return 0\n\nprint(rises(pd.Series([1, 2, 1, 3])))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-exercise1">import pandas as pd
 
@@ -402,9 +402,9 @@ print(rises(pd.Series([1, 2, 1, 3])))
 
 <div class="interactive-editor" data-editor-id="exercise2">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
-<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef growth(s):\n    # Percentage change per step, first step omitted.\n    return []\n\nprint(growth(pd.Series([100.0, 120.0])))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef growth(s):\n    # Percentage change per step, first step omitted.\n    return []\n\nprint(growth(pd.Series([100.0, 120.0])))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
 

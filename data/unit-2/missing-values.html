@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/css/style.css?v=4f1b5a9b32" />
     <link rel="stylesheet" href="/assets/css/pypath-fast.css?v=a764a48c37" />
     <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=de2aeca0e9" />
-    <link rel="stylesheet" href="/assets/css/auth.css?v=3475928266" />
+    <link rel="stylesheet" href="/assets/css/auth.css?v=dc366212ed" />
     <link rel="stylesheet" href="/assets/css/gate.css?v=cce9b151ad" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=7144c97895" />
     <link rel="stylesheet" href="/assets/css/checks.css?v=f6e6e6218e" />
@@ -69,10 +69,10 @@
     <meta property="og:title" content="Python for Data • Missing Values" />
     <meta property="og:description" content="Find them, then decide between dropping and filling on purpose." />
     <meta property="og:url" content="https://mypypath.com/data/unit-2/missing-values.html" />
-    <meta property="og:image" content="https://mypypath.com/assets/img/og-card.png" />
-    <meta property="og:image:width" content="512" />
-    <meta property="og:image:height" content="512" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content="https://mypypath.com/assets/img/og-card-wide.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Python for Data • Missing Values" />
     <meta name="twitter:description" content="Find them, then decide between dropping and filling on purpose." />
     <link rel="canonical" href="https://mypypath.com/data/unit-2/missing-values.html" />
@@ -249,9 +249,9 @@ print(f"{share:.0%} of scores are missing")</code></pre>
 
 <div class="interactive-editor" data-editor-id="practice1">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice1', 'readings = [&quot;12.1&quot;, &quot;N/A&quot;, &quot;&quot;, &quot;11.8&quot;, &quot;-&quot;, &quot;n/a&quot;, &quot; &quot;]\n\nMISSING = {&quot;&quot;, &quot;n/a&quot;, &quot;-&quot;}\n# how many are missing?\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('practice1', 'readings = [&quot;12.1&quot;, &quot;N/A&quot;, &quot;&quot;, &quot;11.8&quot;, &quot;-&quot;, &quot;n/a&quot;, &quot; &quot;]\n\nMISSING = {&quot;&quot;, &quot;n/a&quot;, &quot;-&quot;}\n# how many are missing?\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice1">readings = ["12.1", "N/A", "", "11.8", "-", "n/a", " "]
 
@@ -339,9 +339,9 @@ print(sum(filled) / len(filled))</code></pre>
 
 <div class="interactive-editor" data-editor-id="practice2">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice2', 'scores = [80, None, 90, None, 70]\n\n# filled with 0:\n\n# filled with the mean of the known scores:\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('practice2', 'scores = [80, None, 90, None, 70]\n\n# filled with 0:\n\n# filled with the mean of the known scores:\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice2">scores = [80, None, 90, None, 70]
 
@@ -386,9 +386,9 @@ print(sum(filled) / len(filled))</code></pre>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('exercise1', 'def drop_missing(rows):\n    # Return the rows that have a score.\n    return []\n\nprint(drop_missing([{&quot;score&quot;: &quot;92&quot;}, {&quot;score&quot;: &quot;&quot;}]))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('exercise1', 'def drop_missing(rows):\n    # Return the rows that have a score.\n    return []\n\nprint(drop_missing([{&quot;score&quot;: &quot;92&quot;}, {&quot;score&quot;: &quot;&quot;}]))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-exercise1">def drop_missing(rows):
     # Return the rows that have a score.
@@ -410,9 +410,9 @@ print(drop_missing([{"score": "92"}, {"score": ""}]))
 
 <div class="interactive-editor" data-editor-id="exercise2">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
-<button class="btn-reset" onclick="resetEditor('exercise2', 'def fill_with_mean(scores):\n    # Replace each None with the mean of the known scores, rounded to 1 place.\n    return scores\n\nprint(fill_with_mean([92, None, 88]))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('exercise2', 'def fill_with_mean(scores):\n    # Replace each None with the mean of the known scores, rounded to 1 place.\n    return scores\n\nprint(fill_with_mean([92, None, 88]))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-exercise2">def fill_with_mean(scores):
     # Replace each None with the mean of the known scores, rounded to 1 place.

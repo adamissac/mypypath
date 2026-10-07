@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/css/style.css?v=4f1b5a9b32" />
     <link rel="stylesheet" href="/assets/css/pypath-fast.css?v=a764a48c37" />
     <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=de2aeca0e9" />
-    <link rel="stylesheet" href="/assets/css/auth.css?v=3475928266" />
+    <link rel="stylesheet" href="/assets/css/auth.css?v=dc366212ed" />
     <link rel="stylesheet" href="/assets/css/gate.css?v=cce9b151ad" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=7144c97895" />
     <link rel="stylesheet" href="/assets/css/checks.css?v=f6e6e6218e" />
@@ -69,10 +69,10 @@
     <meta property="og:title" content="Python for Data • Date Parts" />
     <meta property="og:description" content="Year, month and weekday are columns you can group by." />
     <meta property="og:url" content="https://mypypath.com/data/unit-9/date-parts.html" />
-    <meta property="og:image" content="https://mypypath.com/assets/img/og-card.png" />
-    <meta property="og:image:width" content="512" />
-    <meta property="og:image:height" content="512" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content="https://mypypath.com/assets/img/og-card-wide.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Python for Data • Date Parts" />
     <meta name="twitter:description" content="Year, month and weekday are columns you can group by." />
     <link rel="canonical" href="https://mypypath.com/data/unit-9/date-parts.html" />
@@ -253,9 +253,9 @@ print(days.dt.to_period("M").astype(str).tolist())</code></pre>
 
 <div class="interactive-editor" data-editor-id="practice1">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndays = pd.to_datetime(pd.Series([&quot;2024-01-05&quot;, &quot;2024-06-18&quot;]))\n\nprint(days.dt.year.tolist())\nprint(days.dt.month.tolist())\nprint(None)   # weekday names\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndays = pd.to_datetime(pd.Series([&quot;2024-01-05&quot;, &quot;2024-06-18&quot;]))\n\nprint(days.dt.year.tolist())\nprint(days.dt.month.tolist())\nprint(None)   # weekday names\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice1">import pandas as pd
 
@@ -319,9 +319,9 @@ print(df.groupby(df["day"].dt.to_period("M"))["n"].sum())</code></pre>
 
 <div class="interactive-editor" data-editor-id="practice2">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({\n    &quot;day&quot;: pd.to_datetime([&quot;2023-01-05&quot;, &quot;2024-01-20&quot;, &quot;2024-02-01&quot;]),\n    &quot;n&quot;: [1, 9, 4],\n})\n\nprint(df.groupby(df[&quot;day&quot;].dt.month)[&quot;n&quot;].sum())\nprint(df.groupby(df[&quot;day&quot;].dt.to_period(&quot;M&quot;))[&quot;n&quot;].sum())\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({\n    &quot;day&quot;: pd.to_datetime([&quot;2023-01-05&quot;, &quot;2024-01-20&quot;, &quot;2024-02-01&quot;]),\n    &quot;n&quot;: [1, 9, 4],\n})\n\nprint(df.groupby(df[&quot;day&quot;].dt.month)[&quot;n&quot;].sum())\nprint(df.groupby(df[&quot;day&quot;].dt.to_period(&quot;M&quot;))[&quot;n&quot;].sum())\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice2">import pandas as pd
 
@@ -370,9 +370,9 @@ print(df.groupby(df["day"].dt.to_period("M"))["n"].sum())
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('exercise1', 'import pandas as pd\n\ndef by_month(df):\n    # {month number: total n}\n    return {}\n\nprint(by_month(pd.DataFrame({&quot;day&quot;: pd.to_datetime([&quot;2024-01-05&quot;]), &quot;n&quot;: [1]})))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('exercise1', 'import pandas as pd\n\ndef by_month(df):\n    # {month number: total n}\n    return {}\n\nprint(by_month(pd.DataFrame({&quot;day&quot;: pd.to_datetime([&quot;2024-01-05&quot;]), &quot;n&quot;: [1]})))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-exercise1">import pandas as pd
 
@@ -396,9 +396,9 @@ print(by_month(pd.DataFrame({"day": pd.to_datetime(["2024-01-05"]), "n": [1]})))
 
 <div class="interactive-editor" data-editor-id="exercise2">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
-<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef by_period(df):\n    # {&quot;YYYY-MM&quot;: total n}\n    return {}\n\nprint(by_period(pd.DataFrame({&quot;day&quot;: pd.to_datetime([&quot;2024-01-05&quot;]), &quot;n&quot;: [1]})))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef by_period(df):\n    # {&quot;YYYY-MM&quot;: total n}\n    return {}\n\nprint(by_period(pd.DataFrame({&quot;day&quot;: pd.to_datetime([&quot;2024-01-05&quot;]), &quot;n&quot;: [1]})))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
 

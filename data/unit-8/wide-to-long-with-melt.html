@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/css/style.css?v=4f1b5a9b32" />
     <link rel="stylesheet" href="/assets/css/pypath-fast.css?v=a764a48c37" />
     <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=de2aeca0e9" />
-    <link rel="stylesheet" href="/assets/css/auth.css?v=3475928266" />
+    <link rel="stylesheet" href="/assets/css/auth.css?v=dc366212ed" />
     <link rel="stylesheet" href="/assets/css/gate.css?v=cce9b151ad" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=7144c97895" />
     <link rel="stylesheet" href="/assets/css/checks.css?v=f6e6e6218e" />
@@ -69,10 +69,10 @@
     <meta property="og:title" content="Python for Data • Wide to Long with melt" />
     <meta property="og:description" content="Turning a column per month into a column that says which month." />
     <meta property="og:url" content="https://mypypath.com/data/unit-8/wide-to-long-with-melt.html" />
-    <meta property="og:image" content="https://mypypath.com/assets/img/og-card.png" />
-    <meta property="og:image:width" content="512" />
-    <meta property="og:image:height" content="512" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content="https://mypypath.com/assets/img/og-card-wide.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Python for Data • Wide to Long with melt" />
     <meta name="twitter:description" content="Turning a column per month into a column that says which month." />
     <link rel="canonical" href="https://mypypath.com/data/unit-8/wide-to-long-with-melt.html" />
@@ -252,9 +252,9 @@ print(long.groupby("month")["score"].mean())</code></pre>
 
 <div class="interactive-editor" data-editor-id="practice1">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\nwide = pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;, &quot;Bo&quot;], &quot;jan&quot;: [90, 70], &quot;feb&quot;: [80, 60]})\n\nlong = wide.melt(id_vars=[&quot;name&quot;], var_name=&quot;month&quot;, value_name=&quot;score&quot;)\nprint(long)\nprint(None)   # mean per month\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\nwide = pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;, &quot;Bo&quot;], &quot;jan&quot;: [90, 70], &quot;feb&quot;: [80, 60]})\n\nlong = wide.melt(id_vars=[&quot;name&quot;], var_name=&quot;month&quot;, value_name=&quot;score&quot;)\nprint(long)\nprint(None)   # mean per month\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice1">import pandas as pd
 
@@ -314,9 +314,9 @@ print(len(wide), "rows x 2 months =", len(long))</code></pre>
 
 <div class="interactive-editor" data-editor-id="practice2">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\nwide = pd.DataFrame({\n    &quot;name&quot;: [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;],\n    &quot;q1&quot;: [1, 2, 3], &quot;q2&quot;: [4, 5, 6], &quot;q3&quot;: [7, 8, 9], &quot;q4&quot;: [10, 11, 12],\n})\n\nprint(len(wide.melt(id_vars=[&quot;name&quot;])))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\nwide = pd.DataFrame({\n    &quot;name&quot;: [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;],\n    &quot;q1&quot;: [1, 2, 3], &quot;q2&quot;: [4, 5, 6], &quot;q3&quot;: [7, 8, 9], &quot;q4&quot;: [10, 11, 12],\n})\n\nprint(len(wide.melt(id_vars=[&quot;name&quot;])))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice2">import pandas as pd
 
@@ -364,9 +364,9 @@ print(len(wide.melt(id_vars=["name"])))
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('exercise1', 'import pandas as pd\n\ndef to_long(df):\n    # Melt the month columns down. Return the row count.\n    return 0\n\nprint(to_long(pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;], &quot;jan&quot;: [90], &quot;feb&quot;: [80]})))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('exercise1', 'import pandas as pd\n\ndef to_long(df):\n    # Melt the month columns down. Return the row count.\n    return 0\n\nprint(to_long(pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;], &quot;jan&quot;: [90], &quot;feb&quot;: [80]})))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-exercise1">import pandas as pd
 
@@ -390,9 +390,9 @@ print(to_long(pd.DataFrame({"name": ["Ada"], "jan": [90], "feb": [80]})))
 
 <div class="interactive-editor" data-editor-id="exercise2">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
-<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef best_month(df):\n    # Melt, then find the month with the highest average.\n    return None\n\nprint(best_month(pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;, &quot;Bo&quot;], &quot;jan&quot;: [90, 70], &quot;feb&quot;: [50, 40]})))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef best_month(df):\n    # Melt, then find the month with the highest average.\n    return None\n\nprint(best_month(pd.DataFrame({&quot;name&quot;: [&quot;Ada&quot;, &quot;Bo&quot;], &quot;jan&quot;: [90, 70], &quot;feb&quot;: [50, 40]})))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
 

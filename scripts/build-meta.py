@@ -37,8 +37,8 @@ APPLY = "--apply" in sys.argv
 
 # .claude holds skills, not site pages. Both of these scripts walked into
 # it and stamped site metadata onto a skill's own HTML.
-SKIP_DIRS = {".git", ".claude", ".agents", "node_modules", "lesson-format-kit", "REVIEW",
-             "docs", "src-tauri", "desktop-dist"}
+SKIP_DIRS = {".git", ".claude", ".agents", ".audit", "node_modules", "lesson-format-kit",
+             "REVIEW", "docs", "src-tauri", "desktop-dist", "engine", "scripts", "html"}
 # Pages that must never advertise themselves to a crawler or a card scraper.
 SKIP_FILES = {"404.html", "admin.html", "sandbox-export.html"}
 
@@ -101,10 +101,10 @@ def block_for(path: Path, source: str) -> str | None:
         lines.append(f'<meta property="og:description" content="{attr(desc)}" />')
     lines += [
         f'<meta property="og:url" content="{attr(url)}" />',
-        f'<meta property="og:image" content="{SITE}/assets/img/og-card.png" />',
-        '<meta property="og:image:width" content="512" />',
-        '<meta property="og:image:height" content="512" />',
-        '<meta name="twitter:card" content="summary" />',
+        f'<meta property="og:image" content="{SITE}/assets/img/og-card-wide.png" />',
+        '<meta property="og:image:width" content="1200" />',
+        '<meta property="og:image:height" content="630" />',
+        '<meta name="twitter:card" content="summary_large_image" />',
         f'<meta name="twitter:title" content="{attr(card_title)}" />',
     ]
     if desc:

@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/css/style.css?v=4f1b5a9b32" />
     <link rel="stylesheet" href="/assets/css/pypath-fast.css?v=a764a48c37" />
     <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=de2aeca0e9" />
-    <link rel="stylesheet" href="/assets/css/auth.css?v=3475928266" />
+    <link rel="stylesheet" href="/assets/css/auth.css?v=dc366212ed" />
     <link rel="stylesheet" href="/assets/css/gate.css?v=cce9b151ad" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=7144c97895" />
     <link rel="stylesheet" href="/assets/css/checks.css?v=f6e6e6218e" />
@@ -69,10 +69,10 @@
     <meta property="og:title" content="Python for Data • Split, Apply, Combine" />
     <meta property="og:description" content="The shape of every group-by, named once so the rest makes sense." />
     <meta property="og:url" content="https://mypypath.com/data/unit-7/split-apply-combine.html" />
-    <meta property="og:image" content="https://mypypath.com/assets/img/og-card.png" />
-    <meta property="og:image:width" content="512" />
-    <meta property="og:image:height" content="512" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content="https://mypypath.com/assets/img/og-card-wide.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Python for Data • Split, Apply, Combine" />
     <meta name="twitter:description" content="The shape of every group-by, named once so the rest makes sense." />
     <link rel="canonical" href="https://mypypath.com/data/unit-7/split-apply-combine.html" />
@@ -253,9 +253,9 @@ for key, piece in df.groupby("subject"):
 
 <div class="interactive-editor" data-editor-id="practice1">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;city&quot;: [&quot;L&quot;, &quot;Y&quot;, &quot;L&quot;], &quot;score&quot;: [90, 70, 80]})\n\nfor key, piece in df.groupby(&quot;city&quot;):\n    print(key, piece[&quot;score&quot;].tolist())\n\nprint(None)   # the means, in one expression\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;city&quot;: [&quot;L&quot;, &quot;Y&quot;, &quot;L&quot;], &quot;score&quot;: [90, 70, 80]})\n\nfor key, piece in df.groupby(&quot;city&quot;):\n    print(key, piece[&quot;score&quot;].tolist())\n\nprint(None)   # the means, in one expression\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice1">import pandas as pd
 
@@ -329,9 +329,9 @@ print(df.groupby("subject", dropna=False)["score"].size().sum(), "of", len(df))<
 
 <div class="interactive-editor" data-editor-id="practice2">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;city&quot;: [&quot;L&quot;, &quot;L&quot;, &quot;L&quot;, &quot;Y&quot;], &quot;score&quot;: [80, 82, 78, 100]})\n\nprint(df.groupby(&quot;city&quot;)[&quot;score&quot;].agg([&quot;mean&quot;, &quot;size&quot;]))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;city&quot;: [&quot;L&quot;, &quot;L&quot;, &quot;L&quot;, &quot;Y&quot;], &quot;score&quot;: [80, 82, 78, 100]})\n\nprint(df.groupby(&quot;city&quot;)[&quot;score&quot;].agg([&quot;mean&quot;, &quot;size&quot;]))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice2">import pandas as pd
 
@@ -376,9 +376,9 @@ print(df.groupby("city")["score"].agg(["mean", "size"]))
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('exercise1', 'import pandas as pd\n\ndef mean_by_subject(df):\n    # {subject: mean score}\n    return {}\n\nprint(mean_by_subject(pd.DataFrame({&quot;subject&quot;: [&quot;maths&quot;], &quot;score&quot;: [90]})))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('exercise1', 'import pandas as pd\n\ndef mean_by_subject(df):\n    # {subject: mean score}\n    return {}\n\nprint(mean_by_subject(pd.DataFrame({&quot;subject&quot;: [&quot;maths&quot;], &quot;score&quot;: [90]})))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-exercise1">import pandas as pd
 
@@ -402,9 +402,9 @@ print(mean_by_subject(pd.DataFrame({"subject": ["maths"], "score": [90]})))
 
 <div class="interactive-editor" data-editor-id="exercise2">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
-<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef summary_by(df):\n    # {subject: [mean, rows]}\n    return {}\n\nprint(summary_by(pd.DataFrame({&quot;subject&quot;: [&quot;m&quot;, &quot;m&quot;, &quot;a&quot;], &quot;score&quot;: [90, 80, 70]})))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef summary_by(df):\n    # {subject: [mean, rows]}\n    return {}\n\nprint(summary_by(pd.DataFrame({&quot;subject&quot;: [&quot;m&quot;, &quot;m&quot;, &quot;a&quot;], &quot;score&quot;: [90, 80, 70]})))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
 

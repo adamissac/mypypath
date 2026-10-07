@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/css/style.css?v=4f1b5a9b32" />
     <link rel="stylesheet" href="/assets/css/pypath-fast.css?v=a764a48c37" />
     <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=de2aeca0e9" />
-    <link rel="stylesheet" href="/assets/css/auth.css?v=3475928266" />
+    <link rel="stylesheet" href="/assets/css/auth.css?v=dc366212ed" />
     <link rel="stylesheet" href="/assets/css/gate.css?v=cce9b151ad" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=7144c97895" />
     <link rel="stylesheet" href="/assets/css/checks.css?v=f6e6e6218e" />
@@ -69,10 +69,10 @@
     <meta property="og:title" content="Python for Data • Reading a CSV File" />
     <meta property="og:description" content="The csv module turns a file of text into rows you can work with." />
     <meta property="og:url" content="https://mypypath.com/data/unit-1/reading-a-csv-file.html" />
-    <meta property="og:image" content="https://mypypath.com/assets/img/og-card.png" />
-    <meta property="og:image:width" content="512" />
-    <meta property="og:image:height" content="512" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content="https://mypypath.com/assets/img/og-card-wide.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Python for Data • Reading a CSV File" />
     <meta name="twitter:description" content="The csv module turns a file of text into rows you can work with." />
     <link rel="canonical" href="https://mypypath.com/data/unit-1/reading-a-csv-file.html" />
@@ -250,9 +250,9 @@ for row in csv.reader(io.StringIO(text)):
 
 <div class="interactive-editor" data-editor-id="practice1">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice1', 'import csv\nimport io\n\ntext = \'&quot;Hopper, Grace&quot;,88\\n&quot;Turing, Alan&quot;,79\\n\'\n\nfor line in text.splitlines():\n    print(line.split(&quot;,&quot;))\n\n# Now read the same text with csv.reader(io.StringIO(text)):\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('practice1', 'import csv\nimport io\n\ntext = \'&quot;Hopper, Grace&quot;,88\\n&quot;Turing, Alan&quot;,79\\n\'\n\nfor line in text.splitlines():\n    print(line.split(&quot;,&quot;))\n\n# Now read the same text with csv.reader(io.StringIO(text)):\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice1">import csv
 import io
@@ -322,9 +322,9 @@ with open("scores.csv") as f:
 
 <div class="interactive-editor" data-editor-id="practice2">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice2', 'import csv\n\nwith open(&quot;people.csv&quot;, &quot;w&quot;) as f:\n    f.write(&quot;name,subject\\nAda,maths\\nGrace,computing\\n&quot;)\n\nwith open(&quot;people.csv&quot;) as f:\n    reader = csv.reader(f)\n    # take the header off, then print each name\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('practice2', 'import csv\n\nwith open(&quot;people.csv&quot;, &quot;w&quot;) as f:\n    f.write(&quot;name,subject\\nAda,maths\\nGrace,computing\\n&quot;)\n\nwith open(&quot;people.csv&quot;) as f:\n    reader = csv.reader(f)\n    # take the header off, then print each name\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice2">import csv
 
@@ -421,9 +421,9 @@ print(sum(int(row[&quot;score&quot;]) for row in rows))</code></pre>
 <p>Change the example below to solve the challenge. Predict the result, run your code, and compare. This practice is ungraded.</p>
 <div class="interactive-editor" data-editor-id="practice-transfer">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('practice-transfer')">Run code</button>
-<button class="btn-reset" onclick="resetEditor('practice-transfer', &quot;import csv\nfrom io import StringIO\n\ntext = &#39;name,score\\n\&quot;Lee, Jo\&quot;,8\\nAda,10\\n&#39;\nrows = list(csv.DictReader(StringIO(text)))\nprint(rows[0][\&quot;name\&quot;])\nprint(sum(int(row[\&quot;score\&quot;]) for row in rows))&quot;)">Reset code</button>
-<button class="btn-clear" onclick="clearSaved('practice-transfer')">Clear saved code</button>
+<button type="button" class="btn-run" onclick="runEditorCode('practice-transfer')">Run code</button>
+<button type="button" class="btn-reset" onclick="resetEditor('practice-transfer', &quot;import csv\nfrom io import StringIO\n\ntext = &#39;name,score\\n\&quot;Lee, Jo\&quot;,8\\nAda,10\\n&#39;\nrows = list(csv.DictReader(StringIO(text)))\nprint(rows[0][\&quot;name\&quot;])\nprint(sum(int(row[\&quot;score\&quot;]) for row in rows))&quot;)">Reset code</button>
+<button type="button" class="btn-clear" onclick="clearSaved('practice-transfer')">Clear saved code</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice-transfer">import csv
 from io import StringIO
@@ -476,9 +476,9 @@ print(sum(int(row[&quot;score&quot;]) for row in rows))</code></pre>
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('exercise1', 'import csv\n\n# scores.csv has columns: name, score\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('exercise1', 'import csv\n\n# scores.csv has columns: name, score\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-exercise1">import csv
 
@@ -498,9 +498,9 @@ print(sum(int(row[&quot;score&quot;]) for row in rows))</code></pre>
 
 <div class="interactive-editor" data-editor-id="exercise2">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
-<button class="btn-reset" onclick="resetEditor('exercise2', 'import csv\n\ndef total_score(path):\n    # Read the file and add up the score column.\n    return 0\n\nprint(total_score(&quot;scores.csv&quot;))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('exercise2', 'import csv\n\ndef total_score(path):\n    # Read the file and add up the score column.\n    return 0\n\nprint(total_score(&quot;scores.csv&quot;))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-exercise2">import csv
 

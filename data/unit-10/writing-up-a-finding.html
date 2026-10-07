@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/css/style.css?v=4f1b5a9b32" />
     <link rel="stylesheet" href="/assets/css/pypath-fast.css?v=a764a48c37" />
     <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=de2aeca0e9" />
-    <link rel="stylesheet" href="/assets/css/auth.css?v=3475928266" />
+    <link rel="stylesheet" href="/assets/css/auth.css?v=dc366212ed" />
     <link rel="stylesheet" href="/assets/css/gate.css?v=cce9b151ad" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=7144c97895" />
     <link rel="stylesheet" href="/assets/css/checks.css?v=f6e6e6218e" />
@@ -69,10 +69,10 @@
     <meta property="og:title" content="Python for Data • Writing Up a Finding" />
     <meta property="og:description" content="A number, what it is compared with, and what it does not prove." />
     <meta property="og:url" content="https://mypypath.com/data/unit-10/writing-up-a-finding.html" />
-    <meta property="og:image" content="https://mypypath.com/assets/img/og-card.png" />
-    <meta property="og:image:width" content="512" />
-    <meta property="og:image:height" content="512" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content="https://mypypath.com/assets/img/og-card-wide.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Python for Data • Writing Up a Finding" />
     <meta name="twitter:description" content="A number, what it is compared with, and what it does not prove." />
     <link rel="canonical" href="https://mypypath.com/data/unit-10/writing-up-a-finding.html" />
@@ -265,9 +265,9 @@ print(f"based on {len(df)} scores: a has {sizes['a']}, b has {sizes['b']}")</cod
 
 <div class="interactive-editor" data-editor-id="practice1">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;team&quot;: [&quot;red&quot;, &quot;red&quot;, &quot;blue&quot;], &quot;score&quot;: [88.0, 92.0, 81.0]})\nmeans = df.groupby(&quot;team&quot;)[&quot;score&quot;].mean()\n\nprint(f&quot;{means.idxmax()} averages {means.max():.1f}&quot;)\n# Now say who it beats, and by how much.\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;team&quot;: [&quot;red&quot;, &quot;red&quot;, &quot;blue&quot;], &quot;score&quot;: [88.0, 92.0, 81.0]})\nmeans = df.groupby(&quot;team&quot;)[&quot;score&quot;].mean()\n\nprint(f&quot;{means.idxmax()} averages {means.max():.1f}&quot;)\n# Now say who it beats, and by how much.\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice1">import pandas as pd
 
@@ -330,9 +330,9 @@ print("rows:", len(df))</code></pre>
 
 <div class="interactive-editor" data-editor-id="practice2">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;team&quot;: [&quot;a&quot;, &quot;b&quot;, &quot;b&quot;, &quot;b&quot;, &quot;b&quot;], &quot;score&quot;: [9.0, 5.0, 6.0, 5.0, 6.0]})\nmeans = df.groupby(&quot;team&quot;)[&quot;score&quot;].mean()\ngap = float(means.max() - means.min())\n\nprint(f&quot;a scores {gap:.1f} above b (n={len(means)})&quot;)\n# Print it again with the row count as n.\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\ndf = pd.DataFrame({&quot;team&quot;: [&quot;a&quot;, &quot;b&quot;, &quot;b&quot;, &quot;b&quot;, &quot;b&quot;], &quot;score&quot;: [9.0, 5.0, 6.0, 5.0, 6.0]})\nmeans = df.groupby(&quot;team&quot;)[&quot;score&quot;].mean()\ngap = float(means.max() - means.min())\n\nprint(f&quot;a scores {gap:.1f} above b (n={len(means)})&quot;)\n# Print it again with the row count as n.\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice2">import pandas as pd
 
@@ -415,9 +415,9 @@ print(f"hours and score move together (r={r:.2f}); this data cannot say whether 
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('exercise1', 'import pandas as pd\n\ndef finding(df):\n    # &quot;<top> scores &lt;gap> above &lt;bottom> (n=&lt;rows>)&quot;\n    return &quot;&quot;\n\nprint(finding(pd.DataFrame({&quot;team&quot;: [&quot;a&quot;, &quot;b&quot;], &quot;score&quot;: [85.0, 70.0]})))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('exercise1', 'import pandas as pd\n\ndef finding(df):\n    # &quot;<top> scores &lt;gap> above &lt;bottom> (n=&lt;rows>)&quot;\n    return &quot;&quot;\n\nprint(finding(pd.DataFrame({&quot;team&quot;: [&quot;a&quot;, &quot;b&quot;], &quot;score&quot;: [85.0, 70.0]})))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-exercise1">import pandas as pd
 
@@ -441,9 +441,9 @@ print(finding(pd.DataFrame({"team": ["a", "b"], "score": [85.0, 70.0]})))
 
 <div class="interactive-editor" data-editor-id="exercise2">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
-<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef association(df, x, y):\n    # Describe the correlation between columns x and y without claiming a cause.\n    return &quot;&quot;\n\nprint(association(pd.DataFrame({&quot;hours&quot;: [1, 2, 3], &quot;score&quot;: [60, 70, 80]}), &quot;hours&quot;, &quot;score&quot;))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef association(df, x, y):\n    # Describe the correlation between columns x and y without claiming a cause.\n    return &quot;&quot;\n\nprint(association(pd.DataFrame({&quot;hours&quot;: [1, 2, 3], &quot;score&quot;: [60, 70, 80]}), &quot;hours&quot;, &quot;score&quot;))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
 

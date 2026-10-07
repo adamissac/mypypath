@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/css/style.css?v=4f1b5a9b32" />
     <link rel="stylesheet" href="/assets/css/pypath-fast.css?v=a764a48c37" />
     <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=de2aeca0e9" />
-    <link rel="stylesheet" href="/assets/css/auth.css?v=3475928266" />
+    <link rel="stylesheet" href="/assets/css/auth.css?v=dc366212ed" />
     <link rel="stylesheet" href="/assets/css/gate.css?v=cce9b151ad" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=7144c97895" />
     <link rel="stylesheet" href="/assets/css/checks.css?v=f6e6e6218e" />
@@ -69,10 +69,10 @@
     <meta property="og:title" content="Python for Data • Resampling" />
     <meta property="og:description" content="Group by time period without building the key yourself." />
     <meta property="og:url" content="https://mypypath.com/data/unit-9/resampling.html" />
-    <meta property="og:image" content="https://mypypath.com/assets/img/og-card.png" />
-    <meta property="og:image:width" content="512" />
-    <meta property="og:image:height" content="512" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content="https://mypypath.com/assets/img/og-card-wide.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Python for Data • Resampling" />
     <meta name="twitter:description" content="Group by time period without building the key yourself." />
     <link rel="canonical" href="https://mypypath.com/data/unit-9/resampling.html" />
@@ -251,9 +251,9 @@ print(s.resample("MS").agg(["sum", "mean", "size"]))</code></pre>
 
 <div class="interactive-editor" data-editor-id="practice1">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('practice1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\nidx = pd.to_datetime([&quot;2024-01-01&quot;, &quot;2024-01-15&quot;, &quot;2024-02-01&quot;])\ns = pd.Series([1, 2, 5], index=idx)\n\nprint(s.resample(&quot;MS&quot;).sum())\nprint(None)   # weekly\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('practice1')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('practice1', 'import pandas as pd\n\nidx = pd.to_datetime([&quot;2024-01-01&quot;, &quot;2024-01-15&quot;, &quot;2024-02-01&quot;])\ns = pd.Series([1, 2, 5], index=idx)\n\nprint(s.resample(&quot;MS&quot;).sum())\nprint(None)   # weekly\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('practice1')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice1">import pandas as pd
 
@@ -315,9 +315,9 @@ print(s.resample("MS").mean())   # February reads NaN, which is true</code></pre
 
 <div class="interactive-editor" data-editor-id="practice2">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('practice2')">Run</button>
-<button class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\nidx = pd.to_datetime([&quot;2024-01-01&quot;, &quot;2024-03-01&quot;])\ns = pd.Series([1, 1], index=idx)\n\nprint(len(s.resample(&quot;MS&quot;).sum()))\nprint(len(s.groupby(s.index.month).sum()))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('practice2')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('practice2', 'import pandas as pd\n\nidx = pd.to_datetime([&quot;2024-01-01&quot;, &quot;2024-03-01&quot;])\ns = pd.Series([1, 1], index=idx)\n\nprint(len(s.resample(&quot;MS&quot;).sum()))\nprint(len(s.groupby(s.index.month).sum()))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('practice2')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-practice2">import pandas as pd
 
@@ -364,9 +364,9 @@ print(len(s.groupby(s.index.month).sum()))
 
 <div class="interactive-editor" data-editor-id="exercise1">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
-<button class="btn-reset" onclick="resetEditor('exercise1', 'import pandas as pd\n\ndef monthly_totals(s):\n    # One total per month across the range.\n    return []\n\nidx = pd.to_datetime([&quot;2024-01-01&quot;, &quot;2024-03-01&quot;])\nprint(monthly_totals(pd.Series([1, 1], index=idx)))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('exercise1')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('exercise1', 'import pandas as pd\n\ndef monthly_totals(s):\n    # One total per month across the range.\n    return []\n\nidx = pd.to_datetime([&quot;2024-01-01&quot;, &quot;2024-03-01&quot;])\nprint(monthly_totals(pd.Series([1, 1], index=idx)))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('exercise1')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-exercise1">import pandas as pd
 
@@ -391,9 +391,9 @@ print(monthly_totals(pd.Series([1, 1], index=idx)))
 
 <div class="interactive-editor" data-editor-id="exercise2">
 <div class="editor-toolbar-small">
-<button class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
-<button class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef quiet_months(s):\n    # Months in the range with nothing recorded.\n    return 0\n\nidx = pd.to_datetime([&quot;2024-01-01&quot;, &quot;2024-03-01&quot;])\nprint(quiet_months(pd.Series([1, 1], index=idx)))\n')">Reset</button>
-<button class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
+<button type="button" class="btn-run" onclick="runEditorCode('exercise2')">Run</button>
+<button type="button" class="btn-reset" onclick="resetEditor('exercise2', 'import pandas as pd\n\ndef quiet_months(s):\n    # Months in the range with nothing recorded.\n    return 0\n\nidx = pd.to_datetime([&quot;2024-01-01&quot;, &quot;2024-03-01&quot;])\nprint(quiet_months(pd.Series([1, 1], index=idx)))\n')">Reset</button>
+<button type="button" class="btn-clear" onclick="clearSaved('exercise2')" title="Clear saved code">Clear Saved</button>
 </div>
 <textarea class="code-editor-small" id="editor-exercise2">import pandas as pd
 

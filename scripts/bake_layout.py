@@ -400,6 +400,12 @@ def misc_fixes(html: str, path: Path) -> str:
     html = re.sub(r'<main(\s|>)', r'<main id="main-content"\1', html, count=1)
     html = html.replace('<main id="main-content" id="main-content"', '<main id="main-content"')
 
+    html = re.sub(
+        r'<button(?![^>]*\btype=)(?=[^>]*\b(?:btn-run|btn-reset|btn-clear|btn-check)\b)',
+        '<button type="button"',
+        html,
+    )
+
     html = html.replace('csawesome/index.html#"', 'csawesome/index.html"')
     html = html.replace('href="/index.html#curriculum"', 'href="/curriculum.html"')
     html = html.replace('href="/#curriculum"', 'href="/curriculum.html"')
