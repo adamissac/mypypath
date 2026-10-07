@@ -154,7 +154,7 @@ describe('the classroom modules that do touch Firebase are modules', () => {
     const html = fs.readFileSync('classroom.html', 'utf8');
     for (const file of ['classroom-dashboard', 'student-detail']) {
       expect(html).toMatch(
-        new RegExp(`<script type="module" src="/assets/js/${file}\\.js">`)
+        new RegExp(`<script type="module" src="/assets/js/${file}\\.js(?:\\?v=[0-9a-f]+)?">`)
       );
     }
   });
