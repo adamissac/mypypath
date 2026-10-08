@@ -2,7 +2,7 @@
 <html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
-    <script src="/assets/js/theme-init.js?v=ce648b50d9"></script>
+    <script src="/assets/js/theme-init.js?v=b1ff5707e7"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Python for Data • Records as Dictionaries</title>
@@ -77,7 +77,8 @@
     <meta name="twitter:description" content="Name the columns, and the code stops depending on their order." />
     <link rel="canonical" href="https://mypypath.com/data/unit-1/records-as-dictionaries.html" />
     <!-- meta:end -->
-  </head>
+      <script defer src="/assets/js/i18n.js?v=b9f1830b59"></script>
+</head>
   <body class="page page-unit">
     <a class="skip-link" href="#main-content">Skip to main content</a>
     <div id="page-transition" aria-hidden="true"></div>
@@ -150,7 +151,7 @@
 <div class="container layout-course">
 <aside class="course-sidebar" id="lesson-sidebar">
 <p class="sidebar-unit-label">Unit 1 &bull; Data in Plain Python</p>
-<nav aria-label="Lessons in this unit">
+<nav>
 <ul>
 <li><a href="/data/unit-1/what-is-data-analysis.html">1. What Data Analysis Actually Is</a></li>
 <li><a href="/data/unit-1/rows-and-columns-with-lists.html">2. Rows and Columns with Lists</a></li>
@@ -384,7 +385,7 @@ values = [r["score"] for r in records if "score" in r]
 print(values)
 print(sum(values) / len(values))</code></pre>
 <details class="worked-answer"><summary>Show the output and explanation</summary>
-<pre class="checkpoint-output" role="region" aria-label="Expected output">[0, 80]
+<pre class="checkpoint-output" aria-label="Expected output">[0, 80]
 40.0</pre>
 <p>Membership checks whether a field exists. A truthiness check such as if r.get("score") would discard the real zero and report 80.0. Filling the missing field with zero would instead divide by three. Those are different assumptions, not interchangeable shortcuts.</p></details>
 <p><strong>Try one change:</strong> Add another record with score 40. Work out the new denominator before running.</p>
@@ -399,7 +400,7 @@ print(record[&quot;score&quot;])
 print(record.get(&quot;age&quot;))
 print(&quot;score&quot; in record)</code></pre>
 <details class="worked-answer"><summary>Show the output and trace</summary>
-<pre class="checkpoint-output" role="region" aria-label="Expected output">0
+<pre class="checkpoint-output" aria-label="Expected output">0
 None
 True</pre>
 <p>The score key exists and contains a real zero. The age key is absent, so get returns None. Membership tests whether a key exists, independently of whether its value is truthy.</p></details>

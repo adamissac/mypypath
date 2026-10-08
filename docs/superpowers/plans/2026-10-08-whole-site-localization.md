@@ -69,12 +69,12 @@
 - `window.PyPathI18n.t(key, params?)` returns a translated string or English fallback.
 - The storage key is `pypath.locale`; invalid stored values are ignored.
 
-- [ ] Test preference precedence (saved preference, supported browser preference, English), invalid stored values, RTL direction, code block direction, placeholder interpolation, and failed fetch fallback.
-- [ ] Run the focused runtime tests and verify they fail before the runtime exists.
-- [ ] Implement the runtime with same-origin catalog fetches, request caching, `lang`/`dir` application, English fallback, safe text insertion, and no modification to code/pre content.
-- [ ] Load the runtime early on every baked page, add cache versioning using the repository's asset-versioning pattern, and add it to the Python for Data, trail, and curriculum generators so rebuilding cannot remove it.
-- [ ] Re-run focused tests and generator checks; assert all HTML page families load the runtime exactly once.
-- [ ] Commit as `feat(i18n): load and persist locale preferences`.
+- [x] Test preference precedence (saved preference, supported browser preference, English), invalid stored values, RTL direction, code block direction, placeholder interpolation, and failed fetch fallback.
+- [x] Run the focused runtime tests and verify they fail before the runtime exists.
+- [x] Implement the runtime with same-origin catalog fetches, request caching, `lang`/`dir` application, English fallback, safe text insertion, and no modification to code/pre content.
+- [x] Load the runtime on every baked page; the canonical bake step reinserts it after generated pages, the trail generator preserves the head, and curriculum generation emits data only. The runtime JS is hash-versioned; JSON requests use same-origin no-cache revalidation.
+- [x] Re-run focused tests and generator checks; all 200 public HTML pages contain exactly one runtime script; the Data course builder, curriculum builder, trail check, and repeat bake passed.
+- [x] Commit as `feat(i18n): load and persist locale preferences`.
 
 ### Task 3: Accessible language picker and shared navigation
 

@@ -495,6 +495,13 @@ def misc_fixes(html: str, path: Path) -> str:
 
 
 def normalize_scripts(html: str, path: Path) -> str:
+    if 'assets/js/i18n.js' not in html:
+        html = re.sub(
+            r'(?m)^([ \t]*)</head>',
+            lambda match: match.group(1) + '    <script defer src="/assets/js/i18n.js"></script>\n' + match.group(1) + '</head>',
+            html,
+            count=1,
+        )
     if path.name == 'index.html' and path.parent == ROOT:
         return html
 
@@ -746,6 +753,9 @@ def version_course_assets(html: str) -> str:
                 # The homepage tour. The video and its captions are served with
                 # a year-long immutable cache (vercel.json), so a re-cut film
                 # only reaches anyone if its URL changes with it.
+                'assets/js/i18n.js',
+                'assets/i18n/languages.json',
+                'assets/i18n/en.json',
                 'assets/js/home-tour.js',
                 'assets/js/summit-3d.js',
                 'assets/js/classroom-dashboard.js',

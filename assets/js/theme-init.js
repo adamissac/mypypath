@@ -1,6 +1,17 @@
 /* Blocking theme init — include inline in <head> before CSS to prevent FOUC */
 (function () {
   try {
+    var locale = localStorage.getItem('pypath.locale') || 'en';
+    var directions = {
+      en: 'ltr', es: 'ltr', fr: 'ltr', pt: 'ltr', hi: 'ltr', bn: 'ltr',
+      fil: 'ltr', sw: 'ltr', ne: 'ltr', ur: 'rtl', ar: 'rtl', 'fa-AF': 'rtl',
+      ps: 'rtl', id: 'ltr', ms: 'ltr', vi: 'ltr', km: 'ltr', my: 'ltr',
+      ru: 'ltr', 'zh-CN': 'ltr'
+    };
+    if (!Object.prototype.hasOwnProperty.call(directions, locale)) locale = 'en';
+    document.documentElement.setAttribute('lang', locale);
+    document.documentElement.setAttribute('dir', directions[locale]);
+
     var stored = localStorage.getItem('pypath-theme');
     if (stored === 'dark' || stored === 'light') {
       document.documentElement.setAttribute('data-theme', stored);
