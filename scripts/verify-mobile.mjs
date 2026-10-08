@@ -193,6 +193,7 @@ async function run() {
           try {
             sessionStorage.setItem('pypath-boot-seen', '1');
             sessionStorage.setItem('pypath-nav', '1');
+            localStorage.setItem('pypath.locale', 'en');
           } catch (e) {}
         });
         const p = await ctx.newPage();

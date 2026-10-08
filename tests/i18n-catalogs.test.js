@@ -37,6 +37,15 @@ describe('locale catalogs', () => {
     }
   });
 
+  it('indexes every outreach country and region label to at least one listed language', () => {
+    expect(registry.countryAliases).toHaveLength(91);
+    expect(registry.countryAliases.every((item) => item.name && item.locales.length > 0)).toBe(true);
+    expect(registry.countryAliases.find((item) => item.name === 'India').locales).toContain('hi');
+    expect(registry.countryAliases.find((item) => item.name === 'Afghanistan').locales).toContain('fa-AF');
+    const tags = new Set(registry.locales.map((locale) => locale.tag));
+    expect(registry.countryAliases.every((item) => item.locales.every((tag) => tags.has(tag)))).toBe(true);
+  });
+
   it('has reviewed English source strings with no placeholders to interpolate', () => {
     expect(english['picker.title']).toBe('Choose your language');
     expect(english['picker.search']).toBe('Search languages or countries');

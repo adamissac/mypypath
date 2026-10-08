@@ -99,6 +99,7 @@ async function run() {
       reducedMotion: 'reduce',
       viewport: { width: 1280, height: 900 },
     });
+    await ctx.addInitScript(() => localStorage.setItem('pypath.locale', 'en'));
     const p = await ctx.newPage();
     await p.goto(`http://127.0.0.1:${PORT}${page}`, { waitUntil: 'domcontentloaded' });
     await p.waitForTimeout(3500);

@@ -101,7 +101,7 @@ async function run() {
       const SEL = 'a[href], button, input:not([type=hidden]), select, textarea, summary,'
         + ' [role=button], [role=link], [tabindex]:not([tabindex="-1"])';
       return [...document.querySelectorAll(SEL)].filter((el) => {
-        if (el.disabled) return false;
+        if (el.disabled || el.closest('[inert]')) return false;
         const cs = getComputedStyle(el);
         if (cs.display === 'none' || cs.visibility === 'hidden') return false;
         const r = el.getBoundingClientRect();

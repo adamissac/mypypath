@@ -16,8 +16,8 @@ async function createRuntime({ saved = null, browser = [], registry = baseRegist
   const { window } = dom;
   if (saved) window.localStorage.setItem('pypath.locale', saved);
   Object.defineProperty(window.navigator, 'languages', { configurable: true, value: browser });
+  window.PyPathI18nConfig = { registry, english };
   window.fetch = vi.fn(async (url) => {
-    if (String(url).includes('languages.json')) return response(registry);
     const tag = String(url).split('/').pop().split('?')[0].replace('.json', '');
     return Object.hasOwn(catalogs, tag) ? response(catalogs[tag]) : response({}, false);
   });
@@ -43,6 +43,7 @@ describe('PyPathI18n runtime', () => {
       registry, browser: ['es-MX', 'en-US'], catalogs: { en: english, es: { ...english, 'nav.home': 'Inicio' } }
     });
     expect(i18n.getLocale()).toBe('es');
+    expect(i18n.getSuggestedLocale()).toBe('es');
     expect(window.document.documentElement.lang).toBe('es');
     expect(window.document.querySelector('[data-i18n="nav.home"]').textContent).toBe('Inicio');
   });
