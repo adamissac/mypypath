@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const readJson = async (path) => JSON.parse(await readFile(resolve(root, path), 'utf8'));
@@ -57,6 +58,13 @@ if (JSON.stringify(rtlTags) !== JSON.stringify(['ur', 'ar', 'fa-AF', 'ps'])) {
 if (!tags.has(registry.defaultLocale)) errors.push('defaultLocale is not in the locale registry');
 if (Object.values(english).some((value) => typeof value !== 'string' || !value.trim())) {
   errors.push('English catalog values must be non-empty strings');
+}
+if (!errors.length && registry.locales.some(locale => locale.tag !== 'en' && locale.status === 'ready')) {
+  try {
+    execFileSync(process.execPath, [resolve(root, 'scripts/audit-i18n-coverage.mjs')], { cwd: root, stdio: 'pipe' });
+  } catch {
+    errors.push('A ready locale lacks whole-site coverage. Run npm run audit:i18n for details.');
+  }
 }
 if (errors.length) {
   console.error(`i18n validation failed:\n- ${errors.join('\n- ')}`);
