@@ -9,10 +9,10 @@ const fast = fs.readFileSync('assets/css/pypath-fast.css', 'utf8');
 
 describe('the header fits a signed-in teacher on a small laptop', () => {
   it('hides the username before 1024px of nav runs out of room', () => {
-    expect(auth).toMatch(/@media \(max-width: 1200px\) \{\s*\.account-username \{ display: none; \}/);
+    expect(auth).toMatch(/@media \(max-width: 1024px\) \{\s*\.account-username \{ display: none; \}/);
   });
 
   it('hides Start learning on the same width so the CTA is not the overflow', () => {
-    expect(fast).toMatch(/@media \(max-width: 1200px\) \{\s*\.header-cta \{/);
+    expect(fast).toMatch(/@media \(max-width: 1024px\) \{\s*\.header-cta \{/);
   });
 });

@@ -182,8 +182,13 @@ try {
   });
   await check('certificate approval and decline reach the student record', async () => {
     await sdk(student.page, `roster/${student.uid}`, { hasCertificate: true });
-    assert.equal((await call(t, 'readCertificates', teacher.uid))[student.uid].earned, true,
-      'Finished learner is not shown as earned before requesting');
+    /* The teacher page's persistent cache can still hold the roster from
+       before this write. Poll until the query sees hasCertificate rather
+       than asserting the first snapshot. */
+    await until(t, async ({ teacherUid, studentUid }) => {
+      const certs = await (await import('/assets/js/classroom-store.js')).readCertificates(teacherUid);
+      return certs[studentUid]?.earned === true;
+    }, { teacherUid: teacher.uid, studentUid: student.uid });
     await student.page.evaluate(async uid =>
       (await import('/assets/js/class-join.js')).requestCertificate(uid), student.uid);
     await dashboard(t);
