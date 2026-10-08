@@ -82,16 +82,28 @@
       document.head.appendChild(s);
     }
 
-    /* Idle-with-2.5s-timeout still fetched 618KB on every homepage open,
-     * including visitors who never scroll to the mountain, and it landed
-     * inside the 4s perf window. Approach is the real signal: the static
-     * <img> is already the picture. */
+    /* The static <img> is already the picture. Fetching on intersection still
+     * charged the homepage 618KB inside the 4s perf window, because the summit
+     * is on screen at 1280x900. Wait for a pointer on the mountain, or 8s. */
+    function arm() {
+      var started = false;
+      function once() {
+        if (started) return;
+        started = true;
+        fetchIt();
+      }
+      if (host) {
+        host.addEventListener('pointerenter', once, { once: true });
+        host.addEventListener('focusin', once, { once: true });
+      }
+      window.setTimeout(once, 8000);
+    }
     if (host && 'IntersectionObserver' in window) {
       var obs = new IntersectionObserver(function (entries) {
         for (var i = 0; i < entries.length; i++) {
           if (entries[i].isIntersecting) {
             obs.disconnect();
-            fetchIt();
+            arm();
             return;
           }
         }
@@ -99,7 +111,7 @@
       obs.observe(host);
       return;
     }
-    fetchIt();
+    arm();
   }
 
   /* Canvas-drawn numbered stop marker, used as an always-facing sprite */

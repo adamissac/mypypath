@@ -25,4 +25,9 @@ describe('the homepage mountain waits for approach before fetching three.js', ()
     expect(src).toContain('obs.observe(host)');
     expect(src).not.toMatch(/requestIdleCallback\(fetchIt/);
   });
+
+  it('does not fetch three.js the moment the hero is on screen', () => {
+    expect(src).toContain("addEventListener('pointerenter', once");
+    expect(src).toMatch(/setTimeout\(once,\s*8000\)/);
+  });
 });

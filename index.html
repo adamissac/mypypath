@@ -40,7 +40,6 @@
           var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
           if (reduce) return;
           var root = document.documentElement;
-          root.classList.add('pp-wait');
 
           var entry = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || null;
           var navType = entry ? entry.type : 'navigate';
@@ -52,6 +51,10 @@
           } catch (e) {}
 
           if (seen || fromLink || (navType !== 'reload' && navType !== 'navigate')) return;
+          /* pp-wait hides the header until the choreography starts. Adding it
+             before this return left returning visitors -- and the mobile gate --
+             with an invisible header until motion.js arrived. */
+          root.classList.add('pp-wait');
           root.classList.add('pp-boot');
           try { sessionStorage.setItem('pypath-boot-seen', '1'); } catch (e) {}
 
@@ -102,9 +105,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/style.css?v=4f1b5a9b32" />
-    <link rel="stylesheet" href="/assets/css/pypath-fast.css?v=a764a48c37" />
+    <link rel="stylesheet" href="/assets/css/pypath-fast.css?v=d084c79bcb" />
     <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=de2aeca0e9" />
-    <link rel="stylesheet" href="/assets/css/auth.css?v=dc366212ed" />
+    <link rel="stylesheet" href="/assets/css/auth.css?v=43e95f36d4" />
     <link rel="stylesheet" href="/assets/css/gate.css?v=cce9b151ad" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=7144c97895" />
     <link rel="stylesheet" href="/assets/css/home-path.css?v=f3511c9ed0" />
@@ -115,7 +118,7 @@
     <script defer src="/assets/js/hero-editor.js"></script>
     <script defer src="/assets/js/path-trail.js?v=585f87bd5e"></script>
     <script defer src="/assets/js/home-tour.js?v=aa098ba99c"></script>
-    <script defer src="/assets/js/summit-3d.js?v=f195f67d79"></script>
+    <script defer src="/assets/js/summit-3d.js?v=a959147a8f"></script>
     <script defer src="/assets/js/storage-keys.js"></script>
     <script defer src="/assets/js/unit-progress.js"></script>
     <script defer src="/assets/js/schema-version.js"></script>
