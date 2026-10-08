@@ -243,7 +243,7 @@ def page_kind(path: Path) -> str:
     if path.name == 'index.html' and path.parent == ROOT:
         return 'home'
     rel = path.relative_to(ROOT)
-    if rel.parts[0] == 'units':
+    if rel.parts[0] in ('units', 'data'):
         if len(rel.parts) == 2 and re.match(r'unit-\d+\.html$', rel.parts[1]):
             return 'unit_redirect'
         if len(rel.parts) >= 3 and rel.parts[1].startswith('unit-'):
@@ -385,8 +385,8 @@ def fix_unit_redirect(html: str, path: Path) -> str:
 
 def misc_fixes(html: str, path: Path) -> str:
     html = re.sub(
-        r'<nav class="primary-nav" aria-label="Primary"(?: aria-expanded="[^"]*")?>',
-        '<nav class="primary-nav" aria-label="Primary">',
+        r'<nav class="primary-nav" aria-label="Primary"(?: aria-expanded="[^"]*")?(?: data-i18n-aria-label="a11y.primaryNav")?>',
+        '<nav class="primary-nav" aria-label="Primary" data-i18n-aria-label="a11y.primaryNav">',
         html,
     )
 
@@ -410,6 +410,13 @@ def misc_fixes(html: str, path: Path) -> str:
     html = html.replace('csawesome/index.html#"', 'csawesome/index.html"')
     html = html.replace('href="/index.html#curriculum"', 'href="/curriculum.html"')
     html = html.replace('href="/#curriculum"', 'href="/curriculum.html"')
+
+    # Keep generated checkpoint labels valid for their named region.
+    html = re.sub(
+        r'<pre class="checkpoint-output"(?![^>]*\brole=)',
+        '<pre class="checkpoint-output" role="region"',
+        html,
+    )
 
     # Lesson pages: ensure a useful meta description exists
     if page_kind(path) == 'lesson' and 'meta name="description"' not in html:
@@ -483,7 +490,7 @@ def misc_fixes(html: str, path: Path) -> str:
         )
         html = re.sub(
             r'(<aside class="course-sidebar" id="lesson-sidebar">\s*<p class="sidebar-unit-label">[^<]*</p>\s*)<nav(?![^>]*aria-label)',
-            r'\1<nav aria-label="Lessons in this unit"',
+            r'\1<nav aria-label="Lessons in this unit" data-i18n-aria-label="a11y.lessonsInUnit"',
             html,
             count=1,
         )
@@ -497,10 +504,25 @@ def misc_fixes(html: str, path: Path) -> str:
 
 def normalize_scripts(html: str, path: Path) -> str:
     html = re.sub(r'\s*<script[^>]*assets/js/language-picker\.js[^>]*></script>\s*', '\n', html)
-    if 'assets/js/i18n.js' not in html:
+    html = re.sub(r'\s*<script[^>]*assets/js/i18n\.js[^>]*></script>\s*', '\n', html)
+    if 'data-i18n-bootstrap' not in html:
         html = re.sub(
             r'(?m)^([ \t]*)</head>',
-            lambda match: match.group(1) + '    <script defer src="/assets/js/i18n.js"></script>\n' + match.group(1) + '</head>',
+            lambda match: match.group(1) + '''    <script data-i18n-bootstrap>
+      (function () {
+        function loadLocaleRuntime() {
+          var script = document.createElement('script');
+          script.src = '/assets/js/i18n.js';
+          script.async = true;
+          document.head.appendChild(script);
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', loadLocaleRuntime, { once: true });
+        } else {
+          loadLocaleRuntime();
+        }
+      }());
+    </script>\n''' + match.group(1) + '</head>',
             html,
             count=1,
         )

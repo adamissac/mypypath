@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/style.css?v=4f1b5a9b32" />
     <link rel="stylesheet" href="/assets/css/pypath-fast.css?v=4ca90ee715" />
-    <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=de2aeca0e9" />
+    <link rel="stylesheet" href="/assets/css/pypath-theme.css?v=c4e1d9a300" />
     <link rel="stylesheet" href="/assets/css/auth.css?v=cd2c2a41ff" />
     <link rel="stylesheet" href="/assets/css/gate.css?v=cce9b151ad" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=7144c97895" />
@@ -63,7 +63,21 @@
     <meta name="twitter:description" content="Unit 3: Functions — PyPath curriculum" />
     <link rel="canonical" href="https://mypypath.com/units/unit-3.html" />
     <!-- meta:end -->
-      <script defer src="/assets/js/i18n.js?v=b9f1830b59"></script>
+    <script data-i18n-bootstrap>
+      (function () {
+        function loadLocaleRuntime() {
+          var script = document.createElement('script');
+          script.src = '/assets/js/i18n.js?v=67a03ebdd3';
+          script.async = true;
+          document.head.appendChild(script);
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', loadLocaleRuntime, { once: true });
+        } else {
+          loadLocaleRuntime();
+        }
+      }());
+    </script>
 </head>
   <body class="page page-unit">
     <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -77,23 +91,23 @@
           <span class="brand-text">PyPath</span>
         </a>
         <div class="header-actions">
-          <nav class="primary-nav" aria-label="Primary">
-            <button type="button" class="mobile-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-menu">
+          <nav class="primary-nav" aria-label="Primary" data-i18n-aria-label="a11y.primaryNav">
+            <button type="button" class="mobile-toggle" aria-label="Open menu" data-i18n-aria-label="a11y.openMenu" aria-expanded="false" aria-controls="primary-menu">
               <span class="mobile-toggle-bar" aria-hidden="true"></span>
               <span class="mobile-toggle-bar" aria-hidden="true"></span>
               <span class="mobile-toggle-bar" aria-hidden="true"></span>
             </button>
             <div class="nav-pill">
               <ul class="menu" id="primary-menu">
-              <li><a href="/" class="route">Home</a></li>
+              <li><a href="/" class="route" data-i18n="nav.home">Home</a></li>
               <li class="dd dd--nav" data-dd>
                 <button type="button" class="dd-trigger" id="nav-courses-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="nav-courses-panel" aria-current="page">
-                  <span>Courses</span> <svg class="dd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                  <span data-i18n="nav.courses">Courses</span> <svg class="dd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                 </button>
                 <div class="dd-panel" id="nav-courses-panel" role="menu" aria-labelledby="nav-courses-btn" hidden>
                   <div class="dd-panel__head">
                     <span class="dd-panel__label">Courses</span>
-                    <a class="dd-panel__hint route" href="/courses.html">See both</a>
+                    <a class="dd-panel__hint route" href="/courses.html" data-i18n="nav.seeBoth">See both</a>
                   </div>
                   <ul class="dd-panel__list dd-panel__list--grid">
             <li role="none"><a role="menuitem" href="/curriculum.html" class="dd-item route is-current"><span class="dd-item__num">1</span><span class="dd-item__body"><span class="dd-item__title">Python Foundations</span><span class="dd-item__meta">10 units</span></span></a></li>
@@ -101,26 +115,27 @@
                   </ul>
                 </div>
               </li>
-              <li><a href="/sandbox.html" class="route">Sandbox</a></li>
-              <li data-account-classroom hidden><a href="/classroom.html" class="route">Classroom</a></li>
-              <li data-student-class hidden><a href="/progress.html" class="route">My class</a></li>
-              <li><a href="/settings.html" class="route">Settings</a></li>
+              <li><a href="/sandbox.html" class="route" data-i18n="nav.sandbox">Sandbox</a></li>
+              <li data-account-classroom hidden><a href="/classroom.html" class="route" data-i18n="nav.classroom">Classroom</a></li>
+              <li data-student-class hidden><a href="/progress.html" class="route" data-i18n="nav.myClass">My class</a></li>
+              <li><a href="/settings.html" class="route" data-i18n="nav.settings">Settings</a></li>
               </ul>
             </div>
           </nav>
           <div class="header-end">
-          <a href="/courses.html" class="btn btn-primary header-cta route">Start learning</a>
+          <button type="button" class="language-trigger" data-language-open aria-haspopup="dialog" aria-expanded="false" aria-label="Choose language" title="Choose language"><span class="language-trigger__icon" aria-hidden="true">文A</span><span class="language-trigger__label" data-i18n="picker.open">Language</span></button>
+          <a href="/courses.html" class="btn btn-primary header-cta route" data-i18n="nav.startLearning">Start learning</a>
           <div class="account-menu" data-account-menu>
-            <a href="/login.html" class="btn btn-ghost account-signin route" data-account-signin>Sign in</a>
+            <a href="/login.html" class="btn btn-ghost account-signin route" data-account-signin data-i18n="nav.signIn">Sign in</a>
             <button type="button" class="account-avatar" data-account-avatar hidden aria-haspopup="menu" aria-expanded="false">
               <img src="/assets/img/placeholder-avatar.svg?v=8dc95a7a1f" alt="" width="28" height="28" data-account-photo>
               <span class="account-username" data-account-username></span>
             </button>
             <div class="account-panel" data-account-panel role="menu" hidden>
-              <a href="/progress.html" class="route" role="menuitem">My progress</a>
-              <a href="/classroom.html" class="route" role="menuitem" data-account-classroom hidden>My classroom</a>
-              <a href="/account.html" class="route" role="menuitem">Account</a>
-              <button type="button" data-account-signout role="menuitem">Sign out</button>
+              <a href="/progress.html" class="route" role="menuitem" data-i18n="nav.myProgress">My progress</a>
+              <a href="/classroom.html" class="route" role="menuitem" data-account-classroom hidden data-i18n="nav.myClassroom">My classroom</a>
+              <a href="/account.html" class="route" role="menuitem" data-i18n="nav.account">Account</a>
+              <button type="button" data-account-signout role="menuitem" data-i18n="nav.signOut">Sign out</button>
             </div>
           </div>
           </div>
@@ -196,16 +211,16 @@
               <img src="/assets/img/pyPathLogo.png" alt="" class="logo small" width="28" height="28">
               <span class="brand-text">PyPath</span>
             </a>
-            <p class="footer-tagline">Learn Python with clarity — free, structured lessons from foundations to real projects.</p>
-            <p class="footer-copy muted">&copy; <span id="year"></span> PyPath &middot; <a href="/privacy.html" class="route">Privacy</a> &middot; <a href="/terms.html" class="route">Terms</a></p>
+            <p class="footer-tagline" data-i18n="footer.tagline">Learn Python with clarity — free, structured lessons from foundations to real projects.</p>
+            <p class="footer-copy muted">&copy; <span id="year"></span> PyPath &middot; <a href="/privacy.html" class="route" data-i18n="footer.privacy">Privacy</a> &middot; <a href="/terms.html" class="route" data-i18n="footer.terms">Terms</a></p>
           </div>
           <div class="footer-col">
-            <h2 class="footer-heading">Learn</h2>
+            <h2 class="footer-heading" data-i18n="footer.learn">Learn</h2>
             <ul class="footer-links">
-              <li><a href="/curriculum.html" class="route">Curriculum</a></li>
-              <li><a href="/sandbox.html" class="route">Sandbox</a></li>
-              <li><a href="/download.html" class="route">Desktop app</a></li>
-              <li><a href="/settings.html" class="route">Settings</a></li>
+              <li><a href="/curriculum.html" class="route" data-i18n="footer.curriculum">Curriculum</a></li>
+              <li><a href="/sandbox.html" class="route" data-i18n="footer.sandbox">Sandbox</a></li>
+              <li><a href="/download.html" class="route" data-i18n="footer.desktopApp">Desktop app</a></li>
+              <li><a href="/settings.html" class="route" data-i18n="footer.settings">Settings</a></li>
             </ul>
           </div>
         </div>

@@ -22,7 +22,7 @@ beforeAll(() => {
 describe('bake_layout.py nav', () => {
   it('emits the Classroom item hidden and tagged for role-nav.js', () => {
     expect(py).toContain(
-      '<li data-account-classroom hidden><a href="/classroom.html" class="route{classroom_a}">Classroom</a></li>'
+      '<li data-account-classroom hidden><a href="/classroom.html" class="route{classroom_a}" data-i18n="nav.classroom">Classroom</a></li>'
     );
   });
 
@@ -33,9 +33,9 @@ describe('bake_layout.py nav', () => {
   });
 
   it('orders Classroom between Sandbox and Settings', () => {
-    const sandbox = py.indexOf('class="route{sandbox_a}">Sandbox');
-    const classroom = py.indexOf('class="route{classroom_a}">Classroom');
-    const settings = py.indexOf('class="route{settings_a}">Settings');
+    const sandbox = py.indexOf('class="route{sandbox_a}" data-i18n="nav.sandbox">Sandbox');
+    const classroom = py.indexOf('class="route{classroom_a}" data-i18n="nav.classroom">Classroom');
+    const settings = py.indexOf('class="route{settings_a}" data-i18n="nav.settings">Settings');
     expect(sandbox).toBeGreaterThan(-1);
     expect(classroom).toBeGreaterThan(sandbox);
     expect(settings).toBeGreaterThan(classroom);
@@ -45,7 +45,7 @@ describe('bake_layout.py nav', () => {
   // would have stripped "My classroom" from the account dropdown site-wide.
   it('keeps the account dropdown classroom link', () => {
     expect(py).toContain(
-      '<a href="/classroom.html" class="route" role="menuitem" data-account-classroom hidden>My classroom</a>'
+      '<a href="/classroom.html" class="route" role="menuitem" data-account-classroom hidden data-i18n="nav.myClassroom">My classroom</a>'
     );
   });
 });

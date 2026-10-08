@@ -135,14 +135,14 @@ describe('the promoted headings kept their size', () => {
 
   it('the footer heading is an h2 with its size pinned', () => {
     expect(fs.readFileSync('index.html', 'utf8'))
-      .toContain('<h2 class="footer-heading">Learn</h2>');
+      .toContain('<h2 class="footer-heading" data-i18n="footer.learn">Learn</h2>');
     // An h2 with no explicit size would render at an h2's default.
     expect(theme).toMatch(/\.footer-heading \{[^}]*font-size: 20px/);
   });
 
   it('the layout baker emits the fixed footer, so regeneration keeps it', () => {
     expect(fs.readFileSync('scripts/bake_layout.py', 'utf8'))
-      .toContain('<h2 class="footer-heading">Learn</h2>');
+      .toContain('<h2 class="footer-heading" data-i18n="footer.learn">Learn</h2>');
   });
 });
 
