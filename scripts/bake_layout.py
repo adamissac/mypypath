@@ -917,6 +917,7 @@ def main():
     transform = version_course_file if '--version-course-assets' in sys.argv else process
     count = sum(1 for p in ROOT.rglob('*.html') if not skipped(p) and transform(p))
     css = version_stylesheet_assets()
+    subprocess.run(['node', str(ROOT / 'scripts' / 'extract-i18n-pages.mjs')], cwd=ROOT, check=True)
     print(f'Baked layout into {count} HTML files'
           + (' and versioned stylesheet urls.' if css else '.'))
 

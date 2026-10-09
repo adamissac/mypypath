@@ -49,10 +49,10 @@ describe('PyPathI18n runtime', () => {
   });
 
   it('ignores invalid or not-ready saved locale values', async () => {
-    const { i18n, window } = await createRuntime({ saved: 'ru' });
+    const { i18n, window } = await createRuntime({ saved: 'not-a-locale' });
     expect(i18n.getLocale()).toBe('en');
     expect(window.localStorage.getItem('pypath.locale')).toBeNull();
-    expect(await i18n.setLocale('ru')).toBe(false);
+    expect(await i18n.setLocale('not-a-locale')).toBe(false);
   });
 
   it('sets locale direction and translates marked text without changing code or user input', async () => {

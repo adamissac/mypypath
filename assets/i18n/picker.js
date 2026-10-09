@@ -73,13 +73,13 @@ export function startLanguagePicker() {
       button.dataset.locale = locale.tag;
       button.setAttribute('role', 'option');
       button.setAttribute('aria-selected', locale.tag === active ? 'true' : 'false');
-      button.disabled = locale.status !== 'ready';
+      button.disabled = !['ready','partial'].includes(locale.status);
       var names = document.createElement('span');
       names.className = 'language-option__names';
       names.textContent = locale.nativeName + (locale.nativeName === locale.englishName ? '' : ' · ' + locale.englishName);
       var availability = document.createElement('span');
       availability.className = 'language-option__availability';
-      availability.textContent = locale.status !== 'ready'
+      availability.textContent = locale.status === 'partial' ? localized('picker.partial') : locale.status !== 'ready'
         ? localized('picker.comingSoon')
         : locale.tag === api.getSuggestedLocale() ? localized('picker.recommended')
           : locale.tag === active ? '✓' : '';
@@ -180,6 +180,8 @@ export function startLanguagePicker() {
     opener.setAttribute('aria-haspopup', 'dialog');
     opener.setAttribute('aria-expanded', 'false');
     opener.setAttribute('aria-label', localized('picker.openLabel'));
+    opener.setAttribute('data-i18n-aria-label', 'picker.openLabel');
+    opener.setAttribute('data-i18n-title', 'picker.openLabel');
     opener.setAttribute('title', localized('picker.openLabel'));
     if (!opener.querySelector('.language-trigger__icon')) {
       opener.textContent = '';
@@ -199,6 +201,9 @@ export function startLanguagePicker() {
     list = dialog.querySelector('#language-list');
     status = dialog.querySelector('[data-language-status]');
     closeButton = dialog.querySelector('[data-language-close]');
+    closeButton.setAttribute('data-i18n', 'picker.close');
+    closeButton.setAttribute('data-i18n-aria-label', 'picker.close');
+    dialog.querySelector('[data-language-continue]').setAttribute('data-i18n', 'picker.continueEnglish');
     closeButton.textContent = localized('picker.close');
     closeButton.setAttribute('aria-label', localized('picker.close'));
     dialog.querySelector('[data-language-continue]').textContent = localized('picker.continueEnglish');

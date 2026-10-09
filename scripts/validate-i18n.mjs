@@ -22,7 +22,7 @@ for (const locale of registry.locales || []) {
   if (tags.has(locale.tag)) errors.push(`duplicate locale tag: ${locale.tag}`);
   tags.add(locale.tag);
   if (!['ltr', 'rtl'].includes(locale.direction)) errors.push(`${locale.tag}: invalid direction`);
-  if (!['ready', 'coming-soon'].includes(locale.status)) errors.push(`${locale.tag}: invalid status`);
+  if (!['ready', 'partial', 'coming-soon'].includes(locale.status)) errors.push(`${locale.tag}: invalid status`);
   if (!Array.isArray(locale.aliases) || locale.aliases.some((alias) => typeof alias !== 'string' || !alias.trim())) {
     errors.push(`${locale.tag}: aliases must be non-empty strings`);
   } else {
@@ -30,7 +30,7 @@ for (const locale of registry.locales || []) {
     if (new Set(normalized).size !== normalized.length) errors.push(`${locale.tag}: duplicate normalized aliases`);
   }
   if (locale.direction === 'rtl') rtlTags.push(locale.tag);
-  if (locale.status === 'ready' && locale.tag !== 'en') {
+  if (['ready', 'partial'].includes(locale.status) && locale.tag !== 'en') {
     try {
       const catalog = await readJson(`assets/i18n/${locale.tag}.json`);
       const enKeys = Object.keys(english).sort();

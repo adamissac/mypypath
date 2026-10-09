@@ -27,11 +27,14 @@
     "desktop:build": "tauri build",
     "test:trail": "python3 .claude/skills/webapp-testing/scripts/with_server.py --server 'python3 -m http.server 8093' --port 8093 -- python3 tests/browser/trail_invariants.py --base http://localhost:8093",
     "test:trail:selftest": "python3 .claude/skills/webapp-testing/scripts/with_server.py --server 'python3 -m http.server 8093' --port 8093 -- python3 tests/browser/trail_invariants.py --base http://localhost:8093 --self-test",
-    "validate:i18n": "node scripts/validate-i18n.mjs",
+    "validate:i18n": "node scripts/validate-i18n.mjs && node scripts/validate-i18n-pages.mjs",
     "audit:i18n": "node scripts/audit-i18n-coverage.mjs",
     "verify:i18n:release": "node scripts/audit-i18n-coverage.mjs --release",
     "test:i18n:browser": "node scripts/verify-i18n-browser.mjs",
-    "build:i18n": "node scripts/build-i18n.mjs"
+    "build:i18n": "node scripts/build-i18n.mjs",
+    "extract:i18n": "node scripts/extract-i18n-pages.mjs",
+    "translate:i18n": "node scripts/translate-i18n.mjs",
+    "test:i18n:content": "node scripts/verify-i18n-content.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

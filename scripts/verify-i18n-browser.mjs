@@ -28,7 +28,7 @@ try {
   await page.goto(`http://127.0.0.1:${port}/`, { waitUntil: 'domcontentloaded' });
   await page.locator('#language-dialog:not([hidden])').waitFor({ timeout: 10000 });
   if (!(await page.locator('#language-search').evaluate((node) => node === document.activeElement))) throw new Error('first-visit dialog did not focus search');
-  if (!(await page.locator('[data-locale="ru"]').isDisabled())) throw new Error('unreviewed Russian was enabled');
+  if (await page.locator('[data-locale="ru"]').isDisabled()) throw new Error('Russian partial translation was disabled');
   await page.locator('#language-search').fill('India');
   for (const tag of ['hi', 'bn', 'ur']) {
     if (!(await page.locator(`[data-language-option][data-locale="${tag}"]`).count())) throw new Error(`country alias India did not show ${tag}`);
@@ -50,7 +50,7 @@ try {
   const signInRight = await page.locator('[data-account-signin]').evaluate((el) => el.getBoundingClientRect().right);
   if (signInRight > 320) throw new Error(`sign-in control clips at 320px (${signInRight}px)`);
   if (localizationErrors.length) throw new Error(localizationErrors.join('\n'));
-  console.log('i18n browser flow passed: first visit, country search, unavailable locale, saved English, reopen, and mobile dialog');
+  console.log('i18n browser flow passed: first visit, country search, partial locale availability, saved English, reopen, and mobile dialog');
 } finally {
   if (browser) await browser.close();
   await new Promise((resolve) => server.close(resolve));

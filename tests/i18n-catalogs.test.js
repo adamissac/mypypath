@@ -24,7 +24,7 @@ describe('locale catalogs', () => {
   });
 
   it('requires complete catalogs only for locales marked ready', () => {
-    for (const locale of registry.locales.filter((item) => item.status === 'ready')) {
+    for (const locale of registry.locales.filter((item) => ['ready', 'partial'].includes(item.status))) {
       const file = resolve('assets/i18n', `${locale.tag}.json`);
       expect(existsSync(file)).toBe(true);
       const catalog = JSON.parse(readFileSync(file, 'utf8'));

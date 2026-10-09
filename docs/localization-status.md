@@ -1,52 +1,68 @@
 # Localization delivery status
 
-The chooser is implemented. Whole-site translation is not complete. English is
-the only ready language; the other 19 must remain `coming-soon` until their
-content and runtime behavior are verified.
+English plus 19 selectable languages are implemented. The additional languages
+are explicitly labeled **partial, automatic translations**. This is not a
+claim of complete lesson coverage or fluent-human review.
 
-## Reproduce the content inventory
+The owner chose to stay within Azure Translator's free allowance. The October
+batch reserved 1,827,705 characters, including interface strings and the test
+lesson, below the tool's conservative 1.9M ceiling and Azure F0's 2M/month cap.
+No paid tier was enabled. The current source corpus would take roughly 19M
+characters to translate into all 19 languages; further lesson coverage requires
+future quota or a separately authorized budget.
+
+## Shipped scope
+
+- Searchable first-visit chooser, native names, country aliases, persisted
+  selection, RTL direction, and change-language control on every page.
+- Shared interface catalogs in all 19 languages, with corrections for ambiguous
+  interface phrases such as Settings and Close language chooser.
+- Page catalogs for 200 routes per language. For each target, 9,815 of 21,332
+  static text/attribute occurrences have translations (many share a phrase).
+  Twenty-five pages have all inventoried static units translated. Runtime
+  messages and user content are separate; these figures do not imply those
+  pages are completely translated in every interactive state.
+- Main static pages and selected introductory lessons receive priority.
+  Untranslated advanced lessons and dynamic messages retain English. A notice
+  explains the fallback, and source-language tags accompany remaining content.
+- Visitors never send text to Azure. The API is used only offline on public
+  repository content; static JSON catalogs are deployed with the website.
+- Python code, inline interactive nodes, field values, URLs, and runtime-updated
+  text are preserved. Switching back to English restores the original prose.
+
+## Reproduce and extend
 
 ```sh
-npm run audit:i18n -- --output /tmp/mypypath-i18n-coverage.json
-npm run verify:i18n:release
+npm run extract:i18n
+npm run translate:i18n -- --shell-only               # estimate only
+npm run translate:i18n -- --priority-characters=95000 # estimate only
+npm run validate:i18n
+npm run test:i18n:browser
+npm run test:i18n:content
 ```
 
-The second command currently fails intentionally because required content is
-unwired and untranslated. The first command exports source locations, text,
-existing keys, deterministic content IDs, and ambiguous quiz choices. It reads
-tracked public HTML and curriculum/assessment JSON without changing either.
-It never reads student records, credentials, or outreach contacts.
+Adding `--run` makes Azure requests. The local configuration is outside the
+repository at `~/.config/mypypath/translator.json`, with owner-only permissions.
+Never copy it into site assets or commit it. The same directory contains a
+monthly usage reservation ledger and an exclusive lock. The script saves
+resumable progress under ignored `.audit/i18n/`, honors rate-limit backoff,
+and stops before exceeding the configured character ceiling. Do not increase
+the ceiling or change the service tier without budget authorization.
 
-Current inventory: 200 public HTML pages, 223 data JSON files, 36,894 text
-occurrences, 18,667 distinct strings, 32,058 occurrences without localization
-keys, and 4,694 quiz strings requiring prose-versus-code classification.
-This is an inventory, not proof of complete extraction: inline scripts,
-90 application JS files, and unknown data fields still need inspection.
+`scripts/bake_layout.py` refreshes source manifests after generating pages.
+Run extraction, then resume translations to cover changed English sources.
+`ui-overrides.json` preserves reviewed-by-agent interface corrections on rerun;
+those corrections are not certified native-speaker review.
 
-## Remaining implementation
+`audit:i18n` remains a broad source inventory. `verify:i18n:release` is the
+stricter whole-site completion gate and still fails, intentionally, because
+this free-budget release is partial. `validate:i18n` validates the actual
+partial-release contract, including all route catalog files and inline tokens.
 
-1. Wire static lesson prose (including mixed inline code) through generators.
-   Preserve full sentence context while leaving executable examples untouched.
-2. Add dynamic message keys to application modules and explicitly classify
-   assessment options. Never translate answer IDs, Python syntax, or grading data.
-3. Generate the 19 catalogs with resumable offline batches, retaining context
-   and protected tokens. A provider is not currently configured. A translation
-   service is an option for bulk generation, not a runtime dependency.
-4. Review technical terminology, protect placeholders, and validate language
-   quality. Machine output alone is not evidence of fluent review.
-5. Replace the conservative dynamic-file review blocker with evidence tied to
-   source revisions once dynamic extraction and browser checks are implemented.
-6. Verify all route families, RTL, language changes, and fallback; only then
-   enable each locale. Run the required browser regression suites before release.
+## Remaining work
 
-`validate:i18n` now invokes the wider coverage gate when any additional locale
-is marked ready. Merely copying English keys into a catalog cannot bypass the
-remaining lesson and dynamic-content work.
-
-## Access needed for deployment
-
-The Vercel connector previously returned 403 for the `adams-projects-6cf40771`
-team. Reconnect it using the Vercel account that owns the `mypypath` project,
-granting access to that team and project. Signing in to a browser tab alone
-does not update the connector authorization. Do not put access tokens or
-translation API keys in this repository, browser JavaScript, or chat.
+Translate remaining lesson prose and assessment content using future allowance;
+add explicit dynamic-message localization; review technical terminology with
+fluent speakers. Keep code and grading identifiers separate when translating
+quiz options. Never relabel partial locales as fully ready just to bypass the
+whole-site completeness gate.

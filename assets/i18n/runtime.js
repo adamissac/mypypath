@@ -1,3 +1,5 @@
+import { createPageLoader } from './page-loader.js';
+
 export function startI18n(bootstrap) {
   'use strict';
 
@@ -10,6 +12,9 @@ export function startI18n(bootstrap) {
   var suggestedLocale = ENGLISH;
   var activeCatalog = Object.create(null);
   var observer = null;
+  var activation = 0;
+  var pageLoader = bootstrap.pageContent ? createPageLoader(document, fetchJson, window.location.pathname) : null;
+  function available(locale) { return locale && (locale.status === 'ready' || locale.status === 'partial'); }
 
   function storageGet(key) {
     try { return window.localStorage.getItem(key); } catch (_) { return null; }
@@ -49,12 +54,12 @@ export function startI18n(bootstrap) {
     for (var i = 0; i < candidates.length; i++) {
       var candidate = String(candidates[i]).toLowerCase();
       var exact = registry.locales.find(function (locale) {
-        return locale.status === 'ready' && locale.tag.toLowerCase() === candidate;
+        return available(locale) && locale.tag.toLowerCase() === candidate;
       });
       if (exact) return exact.tag;
       var base = candidate.split('-')[0];
       var matching = registry.locales.find(function (locale) {
-        return locale.status === 'ready' && locale.tag.toLowerCase().split('-')[0] === base;
+        return available(locale) && locale.tag.toLowerCase().split('-')[0] === base;
       });
       if (matching) return matching.tag;
     }
@@ -75,6 +80,7 @@ export function startI18n(bootstrap) {
   function applyValue(element, attribute, key, params) {
     if (!element.hasAttribute(attribute)) return;
     var value = t(element.getAttribute(attribute), params);
+    element.lang = activeLocale;
     if (attribute === 'data-i18n') {
       if (element.closest('pre, code, script, style, [contenteditable="true"], [data-no-translate]')) return;
       if (element.children.length === 0 && element.textContent !== value) element.textContent = value;
@@ -111,6 +117,22 @@ export function startI18n(bootstrap) {
       element.dir = 'ltr';
     });
     translateElement(document.body);
+    var main = document.querySelector('main');
+    if (main) {
+      main.lang = 'en'; // Dynamic user and lesson state retains its source language.
+      var notice = document.getElementById('pypath-translation-notice');
+      if (item && item.status === 'partial') {
+        if (!notice) {
+          notice = document.createElement('p');
+          notice.id = 'pypath-translation-notice';
+          notice.className = 'translation-notice container';
+          notice.setAttribute('role', 'status');
+          main.prepend(notice);
+        }
+        notice.lang = tag;
+        notice.textContent = t('status.translationFallback');
+      } else if (notice) notice.remove();
+    }
     window.dispatchEvent(new CustomEvent('pypath:localechange', { detail: { locale: tag, direction: direction } }));
   }
 
@@ -125,14 +147,20 @@ export function startI18n(bootstrap) {
 
   function activate(tag, persist) {
     var item = localeByTag(tag);
-    if (!item || item.status !== 'ready') return Promise.resolve(false);
-    return loadCatalog(item.tag).then(function (catalog) {
+    if (!available(item)) return Promise.resolve(false);
+    var request = ++activation;
+    return Promise.all([loadCatalog(item.tag), pageLoader ? pageLoader.prepare(item.tag, item.status === 'partial') : Promise.resolve(function () {})]).then(function (loaded) {
+      if (request !== activation) return false;
+      var catalog = loaded[0];
+      loaded[1]();
       if (item.tag !== ENGLISH && !catalogs[ENGLISH]) throw new Error('English fallback catalog unavailable');
       applyLocale(item.tag, catalog);
       if (persist) storageSet(STORAGE_KEY, item.tag);
       return true;
     }).catch(function () {
+      if (request !== activation) return false;
       if (item.tag !== ENGLISH && catalogs[ENGLISH]) {
+        if (pageLoader) pageLoader.prepare(ENGLISH).then(function (restore) { if (request === activation) restore(); });
         applyLocale(ENGLISH, catalogs[ENGLISH]);
         storageRemove(STORAGE_KEY);
       }
@@ -144,8 +172,8 @@ export function startI18n(bootstrap) {
     suggestedLocale = supportedBrowserLocale();
     var saved = storageGet(STORAGE_KEY);
     var savedItem = localeByTag(saved);
-    var target = savedItem && savedItem.status === 'ready' ? savedItem.tag : suggestedLocale;
-    if (saved && (!savedItem || savedItem.status !== 'ready')) storageRemove(STORAGE_KEY);
+    var target = available(savedItem) ? savedItem.tag : suggestedLocale;
+    if (saved && !available(savedItem)) storageRemove(STORAGE_KEY);
     return activate(target, false).then(function (activated) {
       if (!activated) applyLocale(ENGLISH, catalogs[ENGLISH]);
     }).then(function () {

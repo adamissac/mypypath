@@ -21,6 +21,14 @@ async function boot({ saved = null } = {}) {
 afterEach(() => vi.restoreAllMocks());
 
 describe('language picker', () => {
+  it('updates picker controls and accessibility labels when changing language', async () => {
+    const { window } = await boot({ saved: 'en' });
+    window.fetch = async () => ({ ok: true, json: async () => ({ ...english, 'picker.close': 'Fermer', 'picker.openLabel': 'Choisir la langue', 'picker.continueEnglish': 'Continuer en anglais' }) });
+    await window.PyPathI18n.setLocale('fr');
+    expect(window.document.querySelector('[data-language-close]').textContent).toBe('Fermer');
+    expect(window.document.querySelector('[data-language-open]').getAttribute('aria-label')).toBe('Choisir la langue');
+    expect(window.document.querySelector('[data-language-continue]').textContent).toBe('Continuer en anglais');
+  });
   it('shows the searchable welcome dialog once on first visit and leaves it closed for saved visitors', async () => {
     const first = await boot();
     expect(first.window.document.querySelector('#language-dialog').hidden).toBe(false);
@@ -51,11 +59,11 @@ describe('language picker', () => {
       .toEqual(['ru']);
   });
 
-  it('keeps unreviewed locales visibly unavailable and stores English continuation', async () => {
+  it('labels partial translations and stores English continuation', async () => {
     const { window, setLocale } = await boot();
     const russian = window.document.querySelector('[data-locale="ru"]');
-    expect(russian.disabled).toBe(true);
-    expect(russian.textContent).toContain('Coming soon');
+    expect(russian.disabled).toBe(false);
+    expect(russian.textContent).toContain('Partial');
     window.document.querySelector('[data-language-continue]').click();
     await new Promise((resolve) => window.setTimeout(resolve, 0));
     expect(window.PyPathI18n.getLocale()).toBe('en');

@@ -106,7 +106,7 @@ const TARGET_SIZE_PROBE = `(() => {
               ' summary, [role=button], [role=link], [role=checkbox],' +
               ' [role=radio], [role=tab], [role=switch], [tabindex]:not([tabindex="-1"])';
   const nodes = [...document.querySelectorAll(sel)].filter((el) => {
-    if (el.disabled) return false;
+    if (el.disabled || el.closest('[inert], [aria-hidden="true"]')) return false;
     const cs = getComputedStyle(el);
     if (cs.display === 'none' || cs.visibility === 'hidden' || Number(cs.opacity) === 0) return false;
     const r = el.getBoundingClientRect();
@@ -167,6 +167,8 @@ async function run() {
   const report = [];
   for (const page of PAGES) {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    // Audit the actual route rather than only the first-visit modal masking it.
+    await ctx.addInitScript(() => localStorage.setItem('pypath.locale', 'en'));
     const p = await ctx.newPage();
     try {
       await p.goto(BASE + page, { waitUntil: 'domcontentloaded', timeout: 45000 });
