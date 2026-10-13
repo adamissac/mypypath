@@ -30,9 +30,10 @@
   if (!section) return;
 
   const track = section.querySelector(".path-journey__track");
-  const reduced =
+  const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let reduced =
     document.documentElement.classList.contains("reduced-motion") ||
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    motionQuery.matches;
 
   const cards = Array.from(section.querySelectorAll("[data-stop-card]"));
   const countEl = section.querySelector("[data-trail-count]");
@@ -198,8 +199,12 @@
     transition.querySelector('[data-trail-continue]').addEventListener('click', () => {
       dataAccepted = true;
       transition.close();
-      scrollToProgress(progressForStop(segments[1].offset));
-      cards[segments[1].offset]?.querySelector('a')?.focus({ preventScroll: true });
+      // Hold focus on the course switcher while scrolling through launch.
+      // Focusing the Data card here would jump over the entire cockpit seam.
+      returningFromTransition = true;
+      jumps[1]?.focus({ preventScroll: true });
+      scrollToProgress(reduced ? progressForStop(segments[1].offset) : segments[0].end + 0.0005);
+      returningFromTransition = false;
     });
   }
 
@@ -497,6 +502,130 @@
 
   /* ── Progress ─────────────────────────────────────────────────────────── */
 
+  /* Expedition scenes share setProgress and its requestAnimationFrame.
+     All geometry stays cached; these writes use only transform and opacity. */
+  const expedition = section.querySelector(".expedition");
+  const mission = {};
+  if (expedition) {
+    expedition.querySelectorAll('[class*="expedition__"]').forEach((el) => {
+      Array.from(el.classList).forEach((name) => {
+        if (name.startsWith("expedition__")) mission[name.slice(12)] = el;
+      });
+    });
+  }
+  const missionUnits = section.querySelector("[data-mission-units]");
+  const missionFuel = section.querySelector("[data-mission-fuel]");
+  const missionMeter = section.querySelector("[data-mission-meter]");
+  const launchCount = section.querySelector("[data-launch-count]");
+  const launchLabel = section.querySelector("[data-launch-label]");
+  const fade = (name, value) => {
+    if (mission[name]) mission[name].style.opacity = String(clamp01(value));
+  };
+  const move = (name, value) => {
+    if (mission[name]) mission[name].style.transform = value;
+  };
+  const windowAt = (k, a, b) => smooth(a - 0.45, a, k) * (1 - smooth(b, b + 0.45, k));
+
+  function updateMissionProgress() {
+    if (!missionUnits) return;
+    const units = window.ProgressStore?.getCompletedUnits?.() || [];
+    const unique = new Set(units);
+    missionUnits.textContent = `${Math.min(10, unique.size)} / 10`;
+  }
+  document.addEventListener("pypath:progress", updateMissionProgress);
+  window.addEventListener("storage", updateMissionProgress);
+  updateMissionProgress();
+  document.addEventListener("DOMContentLoaded", updateMissionProgress, { once: true });
+
+  function renderExpedition(progress, where) {
+    if (!expedition) return;
+    const foundation = segments[0];
+    const data = segments[1];
+    const f = clamp01((progress - foundation.start) / (foundation.end - foundation.start));
+    const d = data ? clamp01((progress - data.start) / (data.end - data.start)) : 0;
+    const fk = reduced ? Math.floor(stopPosition(foundation, f) + 0.02) : stopPosition(foundation, f);
+    const dk = data ? (reduced ? Math.floor(stopPosition(data, d) + 0.02) : stopPosition(data, d)) : 0;
+    const launching = where.seamIndex === 0;
+    const t = reduced ? 1 : where.seamT;
+    const space = where.sceneIndex > 0 && !launching;
+    expedition.classList.toggle("is-launching", launching);
+    expedition.classList.toggle("is-space", space);
+    expedition.classList.toggle("is-static", reduced);
+    section.classList.toggle("is-night-altitude", f > 0.78 && where.sceneIndex === 0);
+    const cockpit = launching ? smooth(0.32, 0.55, t) : space ? 1 : 0;
+    fade("sunset", where.sceneIndex === 0 ? smooth(0.15, 0.55, f) * (1 - smooth(0.65, 0.9, f)) * 0.8 : 0);
+    fade("night", where.sceneIndex === 0 ? smooth(0.6, 0.93, f) : 0);
+    fade("stars", space ? 0.6 : smooth(0.65, 0.9, f));
+    fade("launch", launching ? 1 - smooth(0.48, 0.65, t) : 0);
+    move("launch", reduced ? "none" : `perspective(700px) rotateX(${smooth(0, 0.3, t) * 14}deg) scale(${1 + smooth(0.2, 0.6, t) * 1.2})`);
+    move("rocket", reduced ? "none" : `translateY(${110 - smooth(0.1, 0.42, t) * 250}px)`);
+    move("mountain", reduced ? "none" : `translateY(${smooth(0.05, 0.45, t) * 230}px)`);
+    fade("flame", smooth(0.8, 0.9, t));
+    fade("streaks", launching && !reduced ? smooth(0.85, 0.9, t) * (1 - smooth(0.98, 1, t)) : 0);
+    move("streaks", `scale(${1 + smooth(0.85, 1, t)})`);
+    section.style.setProperty("--capstone-open", String(reduced ? 1 : smooth(8.7, 9, fk)));
+    fade("seat", launching ? smooth(0.24, 0.36, t) * (1 - smooth(0.47, 0.6, t)) : 0);
+    move("seat", reduced ? "none" : `scale(${1 + smooth(0.35, 0.6, t) * 2})`);
+    fade("cockpit", space ? 0.7 : cockpit);
+    move("cockpit", reduced ? "none" : `scale(${1.7 - smooth(0.3, 0.57, t) * 0.7})`);
+    move("belt-left", reduced || space ? "none" : `translateX(${-200 * (1 - smooth(0.54, 0.65, t))}px)`);
+    move("belt-right", reduced || space ? "none" : `translateX(${200 * (1 - smooth(0.54, 0.65, t))}px)`);
+    fade("buckle", space ? 1 : smooth(0.63, 0.67, t));
+    fade("lights", space ? 1 : smooth(0.65, 0.7, t));
+    fade("moon", space ? 0.32 : launching ? smooth(0.88, 1, t) : 0);
+    move("moon", reduced ? "none" : `translate(${-110 * d}px, ${50 * d}px) scale(${0.35 + 1.2 * d})`);
+    fade("hud", cockpit);
+    fade("countdown", launching && !reduced ? smooth(0.58, 0.64, t) * (1 - smooth(0.94, 1, t)) : 0);
+    if (launchCount) launchCount.textContent = t < 0.73 ? "3" : t < 0.8 ? "2" : t < 0.87 ? "1" : "↑";
+    if (launchLabel) launchLabel.textContent = t < 0.67 ? "Seat belt locked" : t < 0.87 ? "All systems ready" : "Liftoff";
+    const flight = data ? dk / Math.max(1, data.stops.length - 1) : 0;
+    if (missionFuel) missionFuel.textContent = `${Math.round(flight * 100)}%`;
+    if (missionMeter) missionMeter.style.transform = `scaleX(${flight})`;
+
+    fade("fork", !launching && where.sceneIndex === 0 ? windowAt(fk, 0.6, 1.9) : 0);
+    move("sign", reduced ? "none" : `rotateY(${smooth(0.6, 1.3, fk) * 360}deg)`);
+    fade("chosen", reduced ? 1 : smooth(0.8, 1.2, fk));
+    const loop = reduced ? 1 : smooth(1.05, 1.9, fk);
+    move("loop-hiker", `translate(${110 + Math.cos(loop * Math.PI * 2) * 34}px, ${25 + Math.sin(loop * Math.PI * 2) * 28}px)`);
+
+    const clean = reduced ? 1 : smooth(0.7, 1.7, dk);
+    fade("cleanup", space ? windowAt(dk, 0.6, 1.9) : 0);
+    fade("debris", 1 - smooth(0.4, 0.85, clean));
+    move("debris", reduced ? "none" : `translate(${clean * 40}px, ${-clean * 20}px) rotate(${clean * 15}deg) scale(${1 - clean * 0.3})`);
+    fade("laser", reduced ? 0 : smooth(0.2, 0.4, clean) * (1 - smooth(0.7, 0.9, clean)));
+    fade("grid", smooth(0.65, 1, clean));
+    move("grid", reduced ? "none" : `scale(${0.7 + clean * 0.3})`);
+    const dock = reduced ? 1 : smooth(6.6, 7.7, dk);
+    fade("docking", space ? windowAt(dk, 6.5, 8) : 0);
+    move("ship-left", `translateX(${-100 * (1 - dock)}px)`);
+    move("ship-right", `translateX(${100 * (1 - dock)}px)`);
+    fade("dock-lock", smooth(0.85, 1, dock));
+    fade("summit", !launching && where.sceneIndex === 0 ? smooth(8.2, 8.8, fk) : 0);
+    move("flag", reduced ? "none" : `translateY(${45 * (1 - smooth(8.4, 8.9, fk))}px)`);
+    move("flag-cloth", `scaleX(${reduced ? 1 : smooth(8.6, 9, fk)})`);
+    fade("flag-copy", reduced ? 1 : smooth(8.8, 9, fk));
+    fade("snow", !reduced && where.sceneIndex === 0 && !launching ? smooth(8.2, 8.9, fk) * 0.8 : 0);
+    move("snow", `translateY(${f * 120}px)`);
+    const land = reduced ? 1 : smooth(8.25, 9, dk);
+    fade("landing", space ? smooth(8, 8.4, dk) : 0);
+    move("lander", `translateY(${-120 * (1 - land)}px)`);
+    fade("dust", reduced ? 0 : smooth(0.6, 0.85, land) * (1 - smooth(0.9, 1, land)));
+    move("dust", `scaleX(${1 + land})`);
+    fade("footprint", smooth(0.85, 1, land));
+    fade("certificate", smooth(0.85, 1, land));
+  }
+
+  /* Visors reveal on entry, with no extra scroll handler or hidden content. */
+  const people = Array.from(document.querySelectorAll(".home-person"));
+  if (!reduced && "IntersectionObserver" in window) {
+    const visors = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => entry.target.classList.toggle("is-in-view", entry.isIntersecting));
+    }, { threshold: 0.35 });
+    people.forEach((person) => visors.observe(person));
+  } else {
+    people.forEach((person) => person.classList.add("is-in-view"));
+  }
+
   let lastProgress = 0;
 
   function setProgress(p, { stepped = reduced } = {}) {
@@ -506,6 +635,7 @@
 
     const where = locate(progress);
     const scene = segments[where.sceneIndex];
+    renderExpedition(progress, where);
     const fading = where.seamIndex !== -1 && !stepped;
     section.setAttribute("data-scene", scene.scene);
     section.style.setProperty("--seam", String(fading ? where.seamT : where.sceneIndex > 0 ? 1 : 0));
@@ -793,6 +923,10 @@
   document.body.addEventListener("scroll", onScroll, { passive: true });
   document.documentElement.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", onResize, { passive: true });
+  motionQuery.addEventListener("change", (event) => {
+    reduced = event.matches || document.documentElement.classList.contains("reduced-motion");
+    onResize(true);
+  });
   // Web fonts change label widths; measure again once they are in.
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => onResize(true));
   onScroll();

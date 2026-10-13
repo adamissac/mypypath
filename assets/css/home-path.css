@@ -2135,3 +2135,99 @@ html:not([data-course="data"]) .home-summit { max-width:620px; }
 @media (max-width:767px) {
   html:not([data-course="data"]) .home-summit { width:min(100%, 380px); max-width:380px; margin-inline:auto; }
 }
+
+/* Expedition 1–8: one composited scene inside the existing sticky map.
+   SVG scenery is below the route; only the launch crosses in front of it. */
+.expedition { position: absolute; inset: 0; pointer-events: none; overflow: visible; border-radius: inherit; }
+.expedition__art { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; }
+.expedition__sunset, .expedition__night { position: absolute; inset: 0; opacity: 0; }
+.expedition__sunset { background: #e8afab; }
+.expedition__night { background: #21162f; }
+.expedition__art > g { opacity: 0; }
+.expedition__art text { font-family: var(--home-body); font-size: 16px; font-weight: 700; text-anchor: middle; }
+.expedition__launch, .expedition__cockpit, .expedition__grid, .expedition__dust { transform-origin: 350px 240px; }
+.expedition__grid { transform-box: fill-box; transform-origin: center; }
+.expedition__flag-cloth { transform-box: fill-box; transform-origin: left; }
+.expedition__sign { transform-box: fill-box; transform-origin: center; }
+.expedition__debris { fill: #4d365f; stroke: #a490c2; stroke-width: 2; }
+.expedition__debris text { fill: #f1ecf8; stroke: none; font-size: 14px; }
+.expedition__grid { fill: #30213f; stroke: #a78bfa; stroke-width: 2; }
+.expedition__grid text { fill: #f1ecf8; stroke: none; }
+.expedition__ship-left, .expedition__ship-right { fill: #30213f; stroke: #a78bfa; stroke-width: 3; }
+.expedition__docking text { fill: #f1ecf8; stroke: none; }
+.expedition__dock-lock { fill: #21162f; stroke: #a78bfa; }
+.expedition__countdown { position: absolute; inset: 25% 0 auto; text-align: center; opacity: 0; color: #f1ecf8; font-family: var(--home-display); }
+.expedition__countdown > span { display: block; font-size: clamp(3rem, 9vw, 6rem); font-weight: 800; line-height: 1; text-shadow: 0 2px 20px #21162f; }
+.expedition__countdown small { display: block; font: 600 clamp(.8rem, 1.4vw, 1rem)/1.4 var(--home-body); margin-top: .6rem; }
+.expedition__hud { position: absolute; inset: auto 0 -4rem; display: flex; flex-wrap: wrap; gap: .35rem 1.5rem; justify-content: space-between; color: #f1ecf8; background: #21162f; padding: .5rem .75rem; border: 1px solid #88729f; border-radius: 10px; opacity: 0; font: 500 clamp(.7rem, 1vw, .85rem)/1.4 var(--home-body); }
+.expedition__hud b { color: #d4c8e1; font-variant-numeric: tabular-nums; margin-left: .4rem; }
+.expedition__hud > i { flex: 0 0 100%; height: 3px; background: #4d365f; border-radius: 2px; overflow: hidden; }
+.expedition__hud > i > i { display: block; height: 100%; background: #38bdf8; transform-origin: left; }
+.path-journey__map:has(.expedition.is-launching) .path-map :is(.path-map__casing, .path-map__base, .path-map__draw, .path-map__markers, .trail-landscape, .trail-callout, .trail-stop:not(.is-active)) { opacity: 0; }
+.path-journey__map:has(.expedition.is-launching) .path-journey__gate { opacity: 0; }
+.expedition.is-space { z-index: 1; }
+.expedition.is-launching { z-index: 0; background: #21162f; }
+/* Cockpit rim stays outside the route and does not intercept stop taps. */
+.path-map { z-index: 1; }
+
+.path-journey__map:has(.expedition.is-space) .path-map { z-index: 2; }
+.expedition__hud { z-index: 3; }
+@media (max-width: 560px) {
+  .expedition__hud { padding: .35rem .5rem; gap: .15rem .3rem; font-size: .75rem; }
+  .expedition__countdown { inset-block-start: 22%; }
+  .expedition__art text { font-size: 18px; }
+}
+
+/* 9: the original portraits and alt text remain inside a helmet silhouette. */
+.home-person__helmet { position: relative; width: 148px; height: 158px; margin: 0 auto .85rem; display: grid; place-items: center; }
+.home-person__helmet::before { content: ""; position: absolute; inset: 8px 10px 18px; border-radius: 48% 48% 38% 38%; border: 9px solid #d4c8e1; background: #21162f; box-shadow: 0 0 0 2px #88729f, inset 0 0 0 3px #a78bfa; transform: translateY(14px) scale(.88); opacity: .5; }
+.home-person__helmet::after { content: ""; position: absolute; width: 82px; height: 18px; bottom: 6px; border-radius: 6px; background: #b6a5cb; border: 2px solid #88729f; }
+.home-person .home-person__helmet img { position: relative; width: 100px; height: 98px; margin: 0; border-radius: 45% 45% 38% 38%; border: 2px solid #a490c2; transform: scale(.88); }
+.home-person.is-in-view .home-person__helmet::before { opacity: 1; transform: none; }
+.home-person.is-in-view .home-person__helmet img { transform: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .home-person__helmet::before, .home-person__helmet img { transition: transform 600ms cubic-bezier(.16,1,.3,1), opacity 600ms ease; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .expedition * { transition: none !important; animation: none !important; }
+  .home-person__helmet::before, .home-person .home-person__helmet img { transform: none !important; opacity: 1; transition: none !important; }
+}
+
+.expedition__moon { transform-origin: 530px 110px; }
+
+/* The HUD lives below the windshield, so it never covers the route's stops. */
+.path-journey__map:has(.expedition) { overflow: visible; }
+.path-journey__map:has(.expedition) .path-map { border-radius: inherit; overflow: hidden; }
+.expedition__art, .expedition__sunset, .expedition__night { border-radius: inherit; }
+.path-journey__map:has(.expedition) { margin-bottom: 4rem; }
+.path-journey.is-night-altitude .path-map[data-segment="1"] {
+  --trail-base: var(--night-base);
+  --trail-num: var(--night-num);
+  --trail-dot: var(--night-dot);
+  --trail-dot-stroke: var(--night-dot-stroke);
+  --trail-lit: var(--night-lit);
+  --trail-lit-num: var(--night-lit-num);
+  --trail-lit-stroke: var(--night-lit-stroke);
+  --trail-marker: var(--night-marker);
+  --trail-terrain: #4d365f;
+  --trail-detail: #b6a5cb;
+}
+@media (max-width: 560px) {
+  .expedition__hud b { margin-left: .15rem; }
+}
+
+.expedition__seat { transform-origin: 350px 380px; }
+.path-stop-card[data-stop-index="9"].is-active { transform-origin: left center; animation: none; }
+
+.expedition__streaks { transform-origin: 350px 200px; }
+.path-stop-card[data-stop-index="9"].is-active {
+  transform: scaleX(calc(.88 + var(--capstone-open, 1) * .12));
+}
+@media (prefers-reduced-motion: reduce) {
+  .path-stop-card[data-stop-index="9"].is-active { transform: none; }
+}
+
+.expedition__hud .expedition__certificate {
+  flex: 0 0 100%; text-align: center; color: #f1ecf8;
+  font: 600 .75rem/1.3 var(--home-body); opacity: 0;
+}
