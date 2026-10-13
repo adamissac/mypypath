@@ -20,7 +20,6 @@
  * a stop's number is never used to build a path.
  */
 import fs from 'node:fs';
-import { expeditionScenes } from './trail-expedition-scenes.mjs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
@@ -438,7 +437,7 @@ export function buildTrail(segments = SEGMENTS, courses = coursesBySlug()) {
         <div class="path-journey__track" data-stops="${offset}" style="--trail-length: ${desktop}vh; --trail-length-mobile: ${mobile}vh">${markers.join('')}
           <div class="path-journey__sticky">
             <div class="path-journey__map" aria-hidden="true" style="--map-ratio: ${ratio}">
-${expeditionScenes()}${svgs.join('')}${segments.length > 1 ? `
+${svgs.join('')}${segments.length > 1 ? `
               <p class="path-journey__gate"><span>Next adventure</span> ${esc(courses[segments[1].course].title)}</p>` : ''}
             </div>
 

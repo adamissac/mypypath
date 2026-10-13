@@ -16,6 +16,11 @@ describe('the trail flows from Foundations into Python for Data', () => {
     expect(document.querySelector('[data-trail-continue], [data-launch-skip]')).toBeNull();
   });
 
+  it('has no altitude layer that could darken the Foundations map', () => {
+    expect(document.querySelector('.expedition')).toBeNull();
+    expect(document.querySelector('.expedition__sunset, .expedition__night, .expedition__stars')).toBeNull();
+  });
+
   it('has unique SVG definitions so scenery does not steal the route masks', () => {
     const ids = [...document.querySelectorAll('[id]')].map((el) => el.id);
     expect(new Set(ids).size).toBe(ids.length);

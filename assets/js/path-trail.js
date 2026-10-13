@@ -459,36 +459,6 @@
 
   /* ── Progress ─────────────────────────────────────────────────────────── */
 
-  /* Expedition scenes share setProgress and its requestAnimationFrame.
-     All geometry stays cached; these writes use only transform and opacity. */
-  const expedition = section.querySelector(".expedition");
-  const mission = {};
-  if (expedition) {
-    expedition.querySelectorAll('[class*="expedition__"]').forEach((el) => {
-      Array.from(el.classList).forEach((name) => {
-        if (name.startsWith("expedition__")) mission[name.slice(12)] = el;
-      });
-    });
-  }
-  const fade = (name, value) => {
-    if (mission[name]) mission[name].style.opacity = String(clamp01(value));
-  };
-
-  function renderExpedition(progress, where) {
-    if (!expedition) return;
-    const foundation = segments[0];
-    const f = clamp01((progress - foundation.start) / (foundation.end - foundation.start));
-    const launching = where.seamIndex === 0;
-    const space = where.sceneIndex > 0 && !launching;
-    expedition.classList.toggle("is-launching", launching);
-    expedition.classList.toggle("is-space", space);
-    expedition.classList.toggle("is-static", reduced);
-    section.classList.toggle("is-night-altitude", f > 0.78 && where.sceneIndex === 0);
-    fade("sunset", where.sceneIndex === 0 ? smooth(0.15, 0.55, f) * (1 - smooth(0.65, 0.9, f)) * 0.8 : 0);
-    fade("night", where.sceneIndex === 0 ? smooth(0.6, 0.93, f) : 0);
-    fade("stars", space ? 0.35 : smooth(0.65, 0.9, f));
-  }
-
   /* Visors reveal on entry, with no extra scroll handler or hidden content. */
   const people = Array.from(document.querySelectorAll(".home-person"));
   if (!reduced && "IntersectionObserver" in window) {
@@ -509,7 +479,6 @@
 
     const where = locate(progress);
     const scene = segments[where.sceneIndex];
-    renderExpedition(progress, where);
     const fading = where.seamIndex !== -1 && !stepped;
     section.setAttribute("data-scene", scene.scene);
     section.style.setProperty("--seam", String(fading ? where.seamT : where.sceneIndex > 0 ? 1 : 0));
