@@ -112,23 +112,9 @@
   if (!segments.length) return;
   const totalStops = offset;
 
-  const transition = section.querySelector('.trail-transition');
-  const launchDialog = section.querySelector('.trail-launch');
-  const launchRocket = section.querySelector('.trail-launch__rocket');
-  const launchFlame = section.querySelector('.trail-launch__flame');
-  const launchStatus = section.querySelector('.trail-launch__status');
-  let launchStarted = null;
-  let launchStage = -1;
-  let dataAccepted = false;
-  let transitionDismissed = false;
-  let returningFromTransition = false;
-
   /* ── Resuming on the course you were last on ──────────────────────────
      A learner who has moved on to Python for Data and comes back to the
-     home page should not have to walk the ten Foundations stops again,
-     and should certainly not be asked "ready to explore Python for Data?"
-     a second time -- they already answered it, and dataAccepted above is
-     per page load, so the gate used to re-arm on every visit.
+     home page should not have to walk the ten Foundations stops again.
 
      The course is already remembered: applyCourseTheme() writes
      pypath-course as you scroll past each segment, and theme-init.js
@@ -177,78 +163,6 @@
     resumeOffset = 0;
     resumeIndex = 0;
     scaleTrack(1);
-  }
-
-  function requestDataTransition() {
-    if (!transition || dataAccepted || transition.open || returningFromTransition) return;
-    transitionDismissed = true;
-    scrollToProgress(progressForStop(segments[0].stops.length - 1));
-    transition.showModal();
-  }
-
-  function stayOnFoundations() {
-    // close() restores the previously focused link synchronously. If that
-    // link belongs to Data, its focusin must not reopen the dialog.
-    returningFromTransition = true;
-    transition.close();
-    scrollToProgress(progressForStop(segments[0].stops.length - 1));
-    jumps[0]?.focus({ preventScroll: true });
-    returningFromTransition = false;
-  }
-
-  if (transition) {
-    transition.querySelector('[data-trail-stay]').addEventListener('click', stayOnFoundations);
-    transition.addEventListener('cancel', (event) => {
-      event.preventDefault();
-      stayOnFoundations();
-    });
-    transition.querySelector('[data-trail-continue]').addEventListener('click', () => {
-      dataAccepted = true;
-      transition.close();
-      if (reduced || !launchDialog) {
-        finishLaunch();
-        return;
-      }
-      launchStarted = performance.now();
-      launchStage = -1;
-      launchDialog.showModal();
-      document.documentElement.classList.add('is-trail-launching');
-      onScroll();
-    });
-  }
-
-  function finishLaunch() {
-    launchStarted = null;
-    returningFromTransition = true;
-    launchDialog?.close();
-    document.documentElement.classList.remove('is-trail-launching');
-    scrollToProgress(progressForStop(segments[1].offset));
-    cards[segments[1].offset]?.querySelector('a')?.focus({ preventScroll: true });
-    returningFromTransition = false;
-  }
-
-  launchDialog?.querySelector('[data-launch-skip]').addEventListener('click', finishLaunch);
-  launchDialog?.addEventListener('cancel', (event) => {
-    event.preventDefault();
-    finishLaunch();
-  });
-
-  function renderLaunch(now) {
-    if (launchStarted === null) return;
-    const elapsed = now - launchStarted;
-    if (reduced || elapsed >= 4700) {
-      finishLaunch();
-      return;
-    }
-    const stage = Math.min(3, Math.floor(elapsed / 1000));
-    if (stage !== launchStage) {
-      launchStage = stage;
-      launchStatus.textContent = stage < 3 ? `Launching in ${3 - stage}` : 'Liftoff!';
-    }
-    const lift = clamp01((elapsed - 3000) / 1500);
-    launchRocket.style.transform = `translateY(${-440 * lift * lift}px)`;
-    launchRocket.style.opacity = String(1 - smooth(0.75, 1, lift));
-    launchFlame.style.opacity = elapsed >= 3000 ? '1' : '0';
   }
 
   /* Divide overall progress 0..1 between segments and seams by their budgets. */
@@ -752,17 +666,9 @@
   }
 
   function render() {
-    if (launchStarted !== null) return;
     const p = measureScroll();
-    // Keep normal page scrolling available after declining, but never reveal
-    // the next course or change its palette without an explicit choice.
-    const blocked = transition && !dataAccepted && p > segments[0].end;
-    setProgress(blocked ? progressForStop(segments[0].stops.length - 1) : p);
+    setProgress(p);
     applyCourseTheme();
-    if (!blocked && p < progressForStop(segments[0].stops.length - 2)) transitionDismissed = false;
-    const rect = track.getBoundingClientRect();
-    const onTrail = rect.top < innerHeight / 2 && rect.bottom > innerHeight / 2;
-    if (blocked && onTrail && !transitionDismissed) requestDataTransition();
     section.classList.toggle("is-active", reduced || (p > 0.002 && p < 0.998));
   }
 
@@ -770,14 +676,9 @@
   function onScroll() {
     if (ticking) return;
     ticking = true;
-    requestAnimationFrame((now) => {
+    requestAnimationFrame(() => {
       ticking = false;
-      if (launchStarted !== null) {
-        renderLaunch(now);
-        if (launchStarted !== null) onScroll();
-      } else {
-        render();
-      }
+      render();
     });
   }
 
@@ -822,8 +723,6 @@
 
     resumeIndex = index;
     resumeOffset = segments[index].start;
-    // They have been there; the gate has nothing left to ask.
-    dataAccepted = true;
     // Keep the scroll cost per stop what it was, now that the track is
     // carrying one course instead of two.
     scaleTrack(1 - resumeOffset);
@@ -859,10 +758,6 @@
       const card = e.target.closest("[data-stop-card]");
       if (!card || card.classList.contains("is-active")) return;
       const index = Number(card.getAttribute("data-stop-index"));
-      if (transition && !dataAccepted && index >= segments[1].offset) {
-        requestDataTransition();
-        return;
-      }
       scrollToProgress(progressForStop(index));
     });
   }
@@ -872,10 +767,6 @@
       const card = cards[index];
       if (!card) return;
       e.preventDefault();
-      if (transition && !dataAccepted && index >= segments[1].offset) {
-        requestDataTransition();
-        return;
-      }
       scrollToProgress(progressForStop(index));
       const target = card.querySelector("a");
       if (target) target.focus({ preventScroll: true });

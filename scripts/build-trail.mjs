@@ -20,7 +20,7 @@
  * a stop's number is never used to build a path.
  */
 import fs from 'node:fs';
-import { expeditionScenes, launchScene } from './trail-expedition-scenes.mjs';
+import { expeditionScenes } from './trail-expedition-scenes.mjs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
@@ -451,15 +451,6 @@ ${expeditionScenes()}${svgs.join('')}${segments.length > 1 ? `
               </div>
             </aside>
           </div>
-          <dialog class="trail-transition" aria-labelledby="trail-transition-title" aria-describedby="trail-transition-description">
-            <p class="trail-transition__eyebrow">Next adventure · Stops 11–20</p>
-            <h2 id="trail-transition-title">Ready to explore Python for Data?</h2>
-            <p id="trail-transition-description">Leave the mountain for a journey through space. Explore data, discover patterns, and build on your Python skills.</p>
-            <div class="trail-transition__actions">
-              <button type="button" class="btn-path btn-path--primary" data-trail-continue>Yes, explore space</button>
-              <button type="button" class="btn-path btn-path--ghost" data-trail-stay autofocus>Stay on Foundations</button>
-            </div>
-          </dialog>${launchScene()}
         </div>
         ${END}`;
 }
