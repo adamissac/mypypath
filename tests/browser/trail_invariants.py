@@ -205,6 +205,7 @@ def accept_course_transition(page):
     if page.locator(".trail-transition").count():
         page.evaluate("window.PyPathTrail.scrollToProgress(0.6)")
         page.get_by_role("button", name="Yes, explore space").click()
+        page.locator(".trail-launch").wait_for(state="hidden", timeout=8000)
         page.evaluate("window.PyPathTrail.scrollToProgress(0)")
 
 

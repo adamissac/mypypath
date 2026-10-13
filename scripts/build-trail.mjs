@@ -20,7 +20,7 @@
  * a stop's number is never used to build a path.
  */
 import fs from 'node:fs';
-import { expeditionScenes } from './trail-expedition-scenes.mjs';
+import { expeditionScenes, launchScene } from './trail-expedition-scenes.mjs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
@@ -193,7 +193,7 @@ export function serpentine({ rows, seed = 1, climb = false, startRight = false, 
    pinned to Foundations' last), with its rows the other way round, so the two
    maps are different shapes and the gateway sits where the finish was. */
 export const SEGMENTS = [
-  { course: 'foundations', scene: 1, line: 'marked', rows: [3, 4, 3], seed: 11, climb: false, startRight: false, span: 360, seam: 200 },
+  { course: 'foundations', scene: 1, line: 'marked', rows: [3, 4, 3], seed: 11, climb: false, startRight: false, span: 360, seam: 60 },
   { course: 'data', scene: 2, line: 'flat', rows: [3, 3, 4], seed: 29, climb: true, startRight: true, pinToPrevious: true, span: 360, seam: 0 },
 ];
 
@@ -463,7 +463,7 @@ ${expeditionScenes()}${svgs.join('')}${segments.length > 1 ? `
               <button type="button" class="btn-path btn-path--primary" data-trail-continue>Yes, explore space</button>
               <button type="button" class="btn-path btn-path--ghost" data-trail-stay autofocus>Stay on Foundations</button>
             </div>
-          </dialog>
+          </dialog>${launchScene()}
         </div>
         ${END}`;
 }

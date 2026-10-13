@@ -980,6 +980,8 @@ body.page-home .site-header {
   height: 100%;
   display: block;
   opacity: var(--segment-opacity, 1);
+  /* The scroll renderer owns opacity; CSS transitions would lag its active stop. */
+  transition: none !important;
 }
 
 /* Before the script runs, only the first course's map shows. */
@@ -990,6 +992,9 @@ body.page-home .site-header {
 .path-map:not(.is-scene) {
   pointer-events: none;
 }
+
+/* Keep number contrast stable when a stop changes between lit and active. */
+.path-map .trail-stop__dot, .path-map .trail-stop__num { transition: none !important; }
 
 /* Quiet, flat terraces and landmarks; the route remains the strongest line. */
 .trail-landscape { pointer-events: none; }
@@ -1387,9 +1392,8 @@ body.page-home .site-header {
   visibility: hidden;
   transform: translateY(10px);
   pointer-events: none;
-  transition: opacity 240ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
-    transform 240ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
-    visibility 0s linear 240ms;
+  /* Switch copy immediately so outgoing and incoming titles never overlap. */
+  transition: transform 240ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
 }
 
 .path-stop-card.is-active {
@@ -2136,46 +2140,39 @@ html:not([data-course="data"]) .home-summit { max-width:620px; }
   html:not([data-course="data"]) .home-summit { width:min(100%, 380px); max-width:380px; margin-inline:auto; }
 }
 
-/* Expedition 1–8: one composited scene inside the existing sticky map.
-   SVG scenery is below the route; only the launch crosses in front of it. */
+/* Quiet altitude layers sit behind the route. Mission progress stays below it. */
 .expedition { position: absolute; inset: 0; pointer-events: none; overflow: visible; border-radius: inherit; }
 .expedition__art { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; }
 .expedition__sunset, .expedition__night { position: absolute; inset: 0; opacity: 0; }
 .expedition__sunset { background: #e8afab; }
 .expedition__night { background: #21162f; }
 .expedition__art > g { opacity: 0; }
-.expedition__art text { font-family: var(--home-body); font-size: 16px; font-weight: 700; text-anchor: middle; }
-.expedition__launch, .expedition__cockpit, .expedition__grid, .expedition__dust { transform-origin: 350px 240px; }
-.expedition__grid { transform-box: fill-box; transform-origin: center; }
-.expedition__flag-cloth { transform-box: fill-box; transform-origin: left; }
-.expedition__sign { transform-box: fill-box; transform-origin: center; }
-.expedition__debris { fill: #4d365f; stroke: #a490c2; stroke-width: 2; }
-.expedition__debris text { fill: #f1ecf8; stroke: none; font-size: 14px; }
-.expedition__grid { fill: #30213f; stroke: #a78bfa; stroke-width: 2; }
-.expedition__grid text { fill: #f1ecf8; stroke: none; }
-.expedition__ship-left, .expedition__ship-right { fill: #30213f; stroke: #a78bfa; stroke-width: 3; }
-.expedition__docking text { fill: #f1ecf8; stroke: none; }
-.expedition__dock-lock { fill: #21162f; stroke: #a78bfa; }
-.expedition__countdown { position: absolute; inset: 25% 0 auto; text-align: center; opacity: 0; color: #f1ecf8; font-family: var(--home-display); }
-.expedition__countdown > span { display: block; font-size: clamp(3rem, 9vw, 6rem); font-weight: 800; line-height: 1; text-shadow: 0 2px 20px #21162f; }
-.expedition__countdown small { display: block; font: 600 clamp(.8rem, 1.4vw, 1rem)/1.4 var(--home-body); margin-top: .6rem; }
+.path-map { z-index: 1; }
 .expedition__hud { position: absolute; inset: auto 0 -4rem; display: flex; flex-wrap: wrap; gap: .35rem 1.5rem; justify-content: space-between; color: #f1ecf8; background: #21162f; padding: .5rem .75rem; border: 1px solid #88729f; border-radius: 10px; opacity: 0; font: 500 clamp(.7rem, 1vw, .85rem)/1.4 var(--home-body); }
 .expedition__hud b { color: #d4c8e1; font-variant-numeric: tabular-nums; margin-left: .4rem; }
 .expedition__hud > i { flex: 0 0 100%; height: 3px; background: #4d365f; border-radius: 2px; overflow: hidden; }
 .expedition__hud > i > i { display: block; height: 100%; background: #38bdf8; transform-origin: left; }
-.path-journey__map:has(.expedition.is-launching) .path-map :is(.path-map__casing, .path-map__base, .path-map__draw, .path-map__markers, .trail-landscape, .trail-callout, .trail-stop:not(.is-active)) { opacity: 0; }
-.path-journey__map:has(.expedition.is-launching) .path-journey__gate { opacity: 0; }
-.expedition.is-space { z-index: 1; }
-.expedition.is-launching { z-index: 0; background: #21162f; }
-/* Cockpit rim stays outside the route and does not intercept stop taps. */
-.path-map { z-index: 1; }
-
-.path-journey__map:has(.expedition.is-space) .path-map { z-index: 2; }
-.expedition__hud { z-index: 3; }
 @media (max-width: 560px) {
   .expedition__hud { padding: .35rem .5rem; gap: .15rem .3rem; font-size: .75rem; }
-  .expedition__countdown { inset-block-start: 22%; }
-  .expedition__art text { font-size: 18px; }
+}
+
+/* A short automatic launch has its own frame, separate from every trail label. */
+html.is-trail-launching { overflow: hidden !important; }
+.trail-launch { box-sizing: border-box; width: min(520px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 24px; border: 1px solid #88729f; border-radius: 24px; background: #21162f; color: #f1ecf8; text-align: center; overflow: auto; }
+.trail-launch::backdrop { background: rgb(15 10 24 / .92); }
+.trail-launch__eyebrow { margin: 0 0 8px; color: #d4c8e1; font: 600 .8rem/1.4 var(--home-body); }
+.trail-launch h2 { margin: 0; color: #f1ecf8; font: 700 clamp(1.4rem, 5vw, 2rem)/1.2 var(--home-display); }
+.trail-launch__scene { margin: 16px 0; height: min(32dvh, 280px); overflow: hidden; border-radius: 16px; }
+.trail-launch__scene svg { display: block; width: 100%; height: 100%; }
+.trail-launch__rocket { will-change: transform, opacity; }
+.trail-launch__flame { opacity: 0; }
+.trail-launch__status { margin: 0 0 16px; color: #f1ecf8; font: 700 1.5rem/1.3 var(--home-display); }
+.trail-launch .btn-path { color: #f1ecf8; border-color: #88729f; min-height: 44px; }
+.trail-launch .btn-path:focus-visible { outline: 3px solid #38bdf8; outline-offset: 4px; }
+@media (max-height: 480px) {
+  .trail-launch { padding: 14px; }
+  .trail-launch__scene { margin: 8px 0; height: 24dvh; }
+  .trail-launch__status { margin-bottom: 8px; font-size: 1.2rem; }
 }
 
 /* 9: the original portraits and alt text remain inside a helmet silhouette. */
@@ -2193,7 +2190,6 @@ html:not([data-course="data"]) .home-summit { max-width:620px; }
   .home-person__helmet::before, .home-person .home-person__helmet img { transform: none !important; opacity: 1; transition: none !important; }
 }
 
-.expedition__moon { transform-origin: 530px 110px; }
 
 /* The HUD lives below the windshield, so it never covers the route's stops. */
 .path-journey__map:has(.expedition) { overflow: visible; }
@@ -2214,17 +2210,6 @@ html:not([data-course="data"]) .home-summit { max-width:620px; }
 }
 @media (max-width: 560px) {
   .expedition__hud b { margin-left: .15rem; }
-}
-
-.expedition__seat { transform-origin: 350px 380px; }
-.path-stop-card[data-stop-index="9"].is-active { transform-origin: left center; animation: none; }
-
-.expedition__streaks { transform-origin: 350px 200px; }
-.path-stop-card[data-stop-index="9"].is-active {
-  transform: scaleX(calc(.88 + var(--capstone-open, 1) * .12));
-}
-@media (prefers-reduced-motion: reduce) {
-  .path-stop-card[data-stop-index="9"].is-active { transform: none; }
 }
 
 .expedition__hud .expedition__certificate {

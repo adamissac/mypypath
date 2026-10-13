@@ -30,6 +30,7 @@ try {
     assert.equal(await dialog.isVisible(), false);
     await page.locator('[data-trail-jump="2"]').click();
     await page.getByRole('button', { name: 'Yes, explore space' }).click();
+    await page.locator('.trail-launch').waitFor({ state: 'hidden', timeout: 8000 });
     assert.equal(await page.locator('html').getAttribute('data-course'), 'data');
     assert.equal(await page.locator('.path-stop-card.is-active').getAttribute('data-stop-index'), '10');
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));

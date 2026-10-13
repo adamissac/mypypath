@@ -21,6 +21,16 @@ describe('expedition decoration preserves curriculum navigation', () => {
     expect(dialog.querySelector('[data-trail-stay]').getAttribute('type')).toBe('button');
   });
 
+  it('keeps the automatic launch accessible and outside the decorative map', () => {
+    const launch = document.querySelector('.trail-launch');
+    expect(launch.closest('[aria-hidden="true"]')).toBeNull();
+    expect(document.getElementById(launch.getAttribute('aria-labelledby')).textContent)
+      .toBe('Ready for liftoff');
+    expect(launch.querySelector('[data-launch-skip]').getAttribute('type')).toBe('button');
+    expect(launch.querySelector('.trail-launch__status').getAttribute('aria-live')).toBe('polite');
+    expect(launch.querySelector('svg').closest('[aria-hidden="true"]')).not.toBeNull();
+  });
+
   it('has unique SVG definitions so scenery does not steal the route masks', () => {
     const ids = [...document.querySelectorAll('[id]')].map((el) => el.id);
     expect(new Set(ids).size).toBe(ids.length);

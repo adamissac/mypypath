@@ -113,6 +113,12 @@
   const totalStops = offset;
 
   const transition = section.querySelector('.trail-transition');
+  const launchDialog = section.querySelector('.trail-launch');
+  const launchRocket = section.querySelector('.trail-launch__rocket');
+  const launchFlame = section.querySelector('.trail-launch__flame');
+  const launchStatus = section.querySelector('.trail-launch__status');
+  let launchStarted = null;
+  let launchStage = -1;
   let dataAccepted = false;
   let transitionDismissed = false;
   let returningFromTransition = false;
@@ -199,13 +205,50 @@
     transition.querySelector('[data-trail-continue]').addEventListener('click', () => {
       dataAccepted = true;
       transition.close();
-      // Hold focus on the course switcher while scrolling through launch.
-      // Focusing the Data card here would jump over the entire cockpit seam.
-      returningFromTransition = true;
-      jumps[1]?.focus({ preventScroll: true });
-      scrollToProgress(reduced ? progressForStop(segments[1].offset) : segments[0].end + 0.0005);
-      returningFromTransition = false;
+      if (reduced || !launchDialog) {
+        finishLaunch();
+        return;
+      }
+      launchStarted = performance.now();
+      launchStage = -1;
+      launchDialog.showModal();
+      document.documentElement.classList.add('is-trail-launching');
+      onScroll();
     });
+  }
+
+  function finishLaunch() {
+    launchStarted = null;
+    returningFromTransition = true;
+    launchDialog?.close();
+    document.documentElement.classList.remove('is-trail-launching');
+    scrollToProgress(progressForStop(segments[1].offset));
+    cards[segments[1].offset]?.querySelector('a')?.focus({ preventScroll: true });
+    returningFromTransition = false;
+  }
+
+  launchDialog?.querySelector('[data-launch-skip]').addEventListener('click', finishLaunch);
+  launchDialog?.addEventListener('cancel', (event) => {
+    event.preventDefault();
+    finishLaunch();
+  });
+
+  function renderLaunch(now) {
+    if (launchStarted === null) return;
+    const elapsed = now - launchStarted;
+    if (reduced || elapsed >= 4700) {
+      finishLaunch();
+      return;
+    }
+    const stage = Math.min(3, Math.floor(elapsed / 1000));
+    if (stage !== launchStage) {
+      launchStage = stage;
+      launchStatus.textContent = stage < 3 ? `Launching in ${3 - stage}` : 'Liftoff!';
+    }
+    const lift = clamp01((elapsed - 3000) / 1500);
+    launchRocket.style.transform = `translateY(${-440 * lift * lift}px)`;
+    launchRocket.style.opacity = String(1 - smooth(0.75, 1, lift));
+    launchFlame.style.opacity = elapsed >= 3000 ? '1' : '0';
   }
 
   /* Divide overall progress 0..1 between segments and seams by their budgets. */
@@ -516,15 +559,9 @@
   const missionUnits = section.querySelector("[data-mission-units]");
   const missionFuel = section.querySelector("[data-mission-fuel]");
   const missionMeter = section.querySelector("[data-mission-meter]");
-  const launchCount = section.querySelector("[data-launch-count]");
-  const launchLabel = section.querySelector("[data-launch-label]");
   const fade = (name, value) => {
     if (mission[name]) mission[name].style.opacity = String(clamp01(value));
   };
-  const move = (name, value) => {
-    if (mission[name]) mission[name].style.transform = value;
-  };
-  const windowAt = (k, a, b) => smooth(a - 0.45, a, k) * (1 - smooth(b, b + 0.45, k));
 
   function updateMissionProgress() {
     if (!missionUnits) return;
@@ -543,76 +580,22 @@
     const data = segments[1];
     const f = clamp01((progress - foundation.start) / (foundation.end - foundation.start));
     const d = data ? clamp01((progress - data.start) / (data.end - data.start)) : 0;
-    const fk = reduced ? Math.floor(stopPosition(foundation, f) + 0.02) : stopPosition(foundation, f);
     const dk = data ? (reduced ? Math.floor(stopPosition(data, d) + 0.02) : stopPosition(data, d)) : 0;
     const launching = where.seamIndex === 0;
-    const t = reduced ? 1 : where.seamT;
     const space = where.sceneIndex > 0 && !launching;
     expedition.classList.toggle("is-launching", launching);
     expedition.classList.toggle("is-space", space);
     expedition.classList.toggle("is-static", reduced);
     section.classList.toggle("is-night-altitude", f > 0.78 && where.sceneIndex === 0);
-    const cockpit = launching ? smooth(0.32, 0.55, t) : space ? 1 : 0;
     fade("sunset", where.sceneIndex === 0 ? smooth(0.15, 0.55, f) * (1 - smooth(0.65, 0.9, f)) * 0.8 : 0);
     fade("night", where.sceneIndex === 0 ? smooth(0.6, 0.93, f) : 0);
-    fade("stars", space ? 0.6 : smooth(0.65, 0.9, f));
-    fade("launch", launching ? 1 - smooth(0.48, 0.65, t) : 0);
-    move("launch", reduced ? "none" : `perspective(700px) rotateX(${smooth(0, 0.3, t) * 14}deg) scale(${1 + smooth(0.2, 0.6, t) * 1.2})`);
-    move("rocket", reduced ? "none" : `translateY(${110 - smooth(0.1, 0.42, t) * 250}px)`);
-    move("mountain", reduced ? "none" : `translateY(${smooth(0.05, 0.45, t) * 230}px)`);
-    fade("flame", smooth(0.8, 0.9, t));
-    fade("streaks", launching && !reduced ? smooth(0.85, 0.9, t) * (1 - smooth(0.98, 1, t)) : 0);
-    move("streaks", `scale(${1 + smooth(0.85, 1, t)})`);
-    section.style.setProperty("--capstone-open", String(reduced ? 1 : smooth(8.7, 9, fk)));
-    fade("seat", launching ? smooth(0.24, 0.36, t) * (1 - smooth(0.47, 0.6, t)) : 0);
-    move("seat", reduced ? "none" : `scale(${1 + smooth(0.35, 0.6, t) * 2})`);
-    fade("cockpit", space ? 0.7 : cockpit);
-    move("cockpit", reduced ? "none" : `scale(${1.7 - smooth(0.3, 0.57, t) * 0.7})`);
-    move("belt-left", reduced || space ? "none" : `translateX(${-200 * (1 - smooth(0.54, 0.65, t))}px)`);
-    move("belt-right", reduced || space ? "none" : `translateX(${200 * (1 - smooth(0.54, 0.65, t))}px)`);
-    fade("buckle", space ? 1 : smooth(0.63, 0.67, t));
-    fade("lights", space ? 1 : smooth(0.65, 0.7, t));
-    fade("moon", space ? 0.32 : launching ? smooth(0.88, 1, t) : 0);
-    move("moon", reduced ? "none" : `translate(${-110 * d}px, ${50 * d}px) scale(${0.35 + 1.2 * d})`);
-    fade("hud", cockpit);
-    fade("countdown", launching && !reduced ? smooth(0.58, 0.64, t) * (1 - smooth(0.94, 1, t)) : 0);
-    if (launchCount) launchCount.textContent = t < 0.73 ? "3" : t < 0.8 ? "2" : t < 0.87 ? "1" : "↑";
-    if (launchLabel) launchLabel.textContent = t < 0.67 ? "Seat belt locked" : t < 0.87 ? "All systems ready" : "Liftoff";
+    fade("stars", space ? 0.35 : smooth(0.65, 0.9, f));
+    fade("hud", space ? 1 : 0);
     const flight = data ? dk / Math.max(1, data.stops.length - 1) : 0;
     if (missionFuel) missionFuel.textContent = `${Math.round(flight * 100)}%`;
     if (missionMeter) missionMeter.style.transform = `scaleX(${flight})`;
 
-    fade("fork", !launching && where.sceneIndex === 0 ? windowAt(fk, 0.6, 1.9) : 0);
-    move("sign", reduced ? "none" : `rotateY(${smooth(0.6, 1.3, fk) * 360}deg)`);
-    fade("chosen", reduced ? 1 : smooth(0.8, 1.2, fk));
-    const loop = reduced ? 1 : smooth(1.05, 1.9, fk);
-    move("loop-hiker", `translate(${110 + Math.cos(loop * Math.PI * 2) * 34}px, ${25 + Math.sin(loop * Math.PI * 2) * 28}px)`);
-
-    const clean = reduced ? 1 : smooth(0.7, 1.7, dk);
-    fade("cleanup", space ? windowAt(dk, 0.6, 1.9) : 0);
-    fade("debris", 1 - smooth(0.4, 0.85, clean));
-    move("debris", reduced ? "none" : `translate(${clean * 40}px, ${-clean * 20}px) rotate(${clean * 15}deg) scale(${1 - clean * 0.3})`);
-    fade("laser", reduced ? 0 : smooth(0.2, 0.4, clean) * (1 - smooth(0.7, 0.9, clean)));
-    fade("grid", smooth(0.65, 1, clean));
-    move("grid", reduced ? "none" : `scale(${0.7 + clean * 0.3})`);
-    const dock = reduced ? 1 : smooth(6.6, 7.7, dk);
-    fade("docking", space ? windowAt(dk, 6.5, 8) : 0);
-    move("ship-left", `translateX(${-100 * (1 - dock)}px)`);
-    move("ship-right", `translateX(${100 * (1 - dock)}px)`);
-    fade("dock-lock", smooth(0.85, 1, dock));
-    fade("summit", !launching && where.sceneIndex === 0 ? smooth(8.2, 8.8, fk) : 0);
-    move("flag", reduced ? "none" : `translateY(${45 * (1 - smooth(8.4, 8.9, fk))}px)`);
-    move("flag-cloth", `scaleX(${reduced ? 1 : smooth(8.6, 9, fk)})`);
-    fade("flag-copy", reduced ? 1 : smooth(8.8, 9, fk));
-    fade("snow", !reduced && where.sceneIndex === 0 && !launching ? smooth(8.2, 8.9, fk) * 0.8 : 0);
-    move("snow", `translateY(${f * 120}px)`);
-    const land = reduced ? 1 : smooth(8.25, 9, dk);
-    fade("landing", space ? smooth(8, 8.4, dk) : 0);
-    move("lander", `translateY(${-120 * (1 - land)}px)`);
-    fade("dust", reduced ? 0 : smooth(0.6, 0.85, land) * (1 - smooth(0.9, 1, land)));
-    move("dust", `scaleX(${1 + land})`);
-    fade("footprint", smooth(0.85, 1, land));
-    fade("certificate", smooth(0.85, 1, land));
+    fade("certificate", space ? smooth(8.85, 9, dk) : 0);
   }
 
   /* Visors reveal on entry, with no extra scroll handler or hidden content. */
@@ -794,6 +777,7 @@
   }
 
   function render() {
+    if (launchStarted !== null) return;
     const p = measureScroll();
     // Keep normal page scrolling available after declining, but never reveal
     // the next course or change its palette without an explicit choice.
@@ -811,9 +795,14 @@
   function onScroll() {
     if (ticking) return;
     ticking = true;
-    requestAnimationFrame(() => {
+    requestAnimationFrame((now) => {
       ticking = false;
-      render();
+      if (launchStarted !== null) {
+        renderLaunch(now);
+        if (launchStarted !== null) onScroll();
+      } else {
+        render();
+      }
     });
   }
 

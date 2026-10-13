@@ -93,6 +93,7 @@ async function run() {
       }
       await p.keyboard.press('Enter');
       await p.locator('.trail-transition').waitFor({ state: 'hidden' });
+      await p.locator('.trail-launch').waitFor({ state: 'hidden', timeout: 8000 });
       await p.evaluate(() => window.PyPathTrail.scrollToProgress(0));
     }
 
