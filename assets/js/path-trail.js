@@ -556,31 +556,14 @@
       });
     });
   }
-  const missionUnits = section.querySelector("[data-mission-units]");
-  const missionFuel = section.querySelector("[data-mission-fuel]");
-  const missionMeter = section.querySelector("[data-mission-meter]");
   const fade = (name, value) => {
     if (mission[name]) mission[name].style.opacity = String(clamp01(value));
   };
 
-  function updateMissionProgress() {
-    if (!missionUnits) return;
-    const units = window.ProgressStore?.getCompletedUnits?.() || [];
-    const unique = new Set(units);
-    missionUnits.textContent = `${Math.min(10, unique.size)} / 10`;
-  }
-  document.addEventListener("pypath:progress", updateMissionProgress);
-  window.addEventListener("storage", updateMissionProgress);
-  updateMissionProgress();
-  document.addEventListener("DOMContentLoaded", updateMissionProgress, { once: true });
-
   function renderExpedition(progress, where) {
     if (!expedition) return;
     const foundation = segments[0];
-    const data = segments[1];
     const f = clamp01((progress - foundation.start) / (foundation.end - foundation.start));
-    const d = data ? clamp01((progress - data.start) / (data.end - data.start)) : 0;
-    const dk = data ? (reduced ? Math.floor(stopPosition(data, d) + 0.02) : stopPosition(data, d)) : 0;
     const launching = where.seamIndex === 0;
     const space = where.sceneIndex > 0 && !launching;
     expedition.classList.toggle("is-launching", launching);
@@ -590,12 +573,6 @@
     fade("sunset", where.sceneIndex === 0 ? smooth(0.15, 0.55, f) * (1 - smooth(0.65, 0.9, f)) * 0.8 : 0);
     fade("night", where.sceneIndex === 0 ? smooth(0.6, 0.93, f) : 0);
     fade("stars", space ? 0.35 : smooth(0.65, 0.9, f));
-    fade("hud", space ? 1 : 0);
-    const flight = data ? dk / Math.max(1, data.stops.length - 1) : 0;
-    if (missionFuel) missionFuel.textContent = `${Math.round(flight * 100)}%`;
-    if (missionMeter) missionMeter.style.transform = `scaleX(${flight})`;
-
-    fade("certificate", space ? smooth(8.85, 9, dk) : 0);
   }
 
   /* Visors reveal on entry, with no extra scroll handler or hidden content. */
@@ -705,14 +682,12 @@
     });
   }
 
-  /* The camera window for stop-space position k. It centres half a stop behind
-     the traveller, so the stop you are on and the traveller are each at most
-     half a stop from the middle of the frame, including across a row turn
-     where the next stop is a whole row away. */
+  /* Keep the current stop centred as the map gives room to the unit card.
+     The frame dimensions are cached by measureSegment and ResizeObserver. */
   function cameraFor(seg, k) {
     const w = Math.min(CAMERA_W, seg.box.w);
     const h = Math.min(seg.box.h, (w * seg.frame.h) / seg.frame.w);
-    const pt = seg.drawPath.getPointAtLength(pathFraction(seg, Math.max(0, k - 0.5)) * seg.len);
+    const pt = seg.drawPath.getPointAtLength(pathFraction(seg, k) * seg.len);
     const x = Math.min(seg.box.w - w, Math.max(0, pt.x - w / 2));
     const y = Math.min(seg.box.h - h, Math.max(0, pt.y - h / 2));
     return { x, y, w, h };
@@ -916,6 +891,19 @@
     reduced = event.matches || document.documentElement.classList.contains("reduced-motion");
     onResize(true);
   });
+  // Card wrapping and the mobile header can change the available map height.
+  // Re-measure only when that frame changes, never on every scroll frame.
+  if ("ResizeObserver" in window) {
+    const mapFrame = section.querySelector(".path-journey__map");
+    let frameSize = "";
+    const frameObserver = new ResizeObserver(([entry]) => {
+      const size = `${entry.contentRect.width.toFixed(1)}:${entry.contentRect.height.toFixed(1)}`;
+      if (size === frameSize) return;
+      frameSize = size;
+      onResize(true);
+    });
+    if (mapFrame) frameObserver.observe(mapFrame);
+  }
   // Web fonts change label widths; measure again once they are in.
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => onResize(true));
   onScroll();

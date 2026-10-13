@@ -355,14 +355,10 @@ function segmentSvg(seg, geo, units, offset, si) {
   }).join('');
   const first = geo.stops[0];
   return `
-              <svg class="path-map" data-segment="${seg.scene}" data-course="${seg.course}" data-span="${seg.span}" data-seam="${seg.seam}" data-stops="${units.length}" viewBox="0 0 ${geo.width} ${geo.height}" preserveAspectRatio="xMidYMid meet">${scenery(seg, geo)}
+              <svg class="path-map" data-segment="${seg.scene}" data-course="${seg.course}" data-span="${seg.span}" data-seam="${seg.seam}" data-stops="${units.length}" viewBox="0 0 ${geo.width} ${geo.height}" preserveAspectRatio="xMidYMid meet">
 
 ${route(seg, geo)}
 
-                <g class="path-head" transform="translate(${first.x} ${first.y})">
-                  <circle class="path-head__ring" r="12" />
-                  <circle class="path-head__core" r="5" />
-                </g>
 ${stops}
 ${callout('', units[0].label, first.x, first.y)}
 ${callout(' trail-callout--peek', '', first.x, first.y)}

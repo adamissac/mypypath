@@ -7,7 +7,6 @@ export function expeditionScenes() {
                 <svg class="expedition__art" viewBox="0 0 700 480" focusable="false">
                   <g class="expedition__stars" fill="#d4c8e1">${stars}</g>
                 </svg>
-                <div class="expedition__hud"><span>Foundations complete <b data-mission-units>0 / 10</b></span><span>Fuel · progress <b data-mission-fuel>0%</b></span><i><i data-mission-meter></i></i><small class="expedition__certificate">One small step. Your certificate awaits.</small></div>
               </div>`;
 }
 
