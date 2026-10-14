@@ -33,6 +33,26 @@ try {
       assert.equal(await page.locator('[data-unit-progress]').isVisible(), true);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true, `${path} @${width}: no sideways scroll`);
       assert.equal(await page.locator('body').textContent().then((t) => /\b(\d+)\. \1\./.test(t)), false, 'no doubled numbers');
+      // Layout: the page uses its width. Header on the left and sticky on a
+      // wide screen, lessons filling the rest; stacked on a phone; the gutters
+      // stay modest at every size.
+      const box = await page.evaluate(() => {
+        const r = (s) => { const b = document.querySelector(s).getBoundingClientRect(); return { l: b.left, r: b.right, t: b.top, w: b.width }; };
+        return { hero: r('.unit-hero'), list: r('.unit-trail'), vw: innerWidth };
+      });
+      assert.ok(box.hero.l <= Math.max(24, box.vw * 0.06), `${path} @${width}: left gutter ${box.hero.l}`);
+      assert.ok(box.vw - box.list.r <= Math.max(24, box.vw * 0.06), `${path} @${width}: right gutter ${box.vw - box.list.r}`);
+      if (width >= 1024) {
+        assert.ok(box.hero.r <= box.list.l, `${path} @${width}: header sits left of the lessons`);
+        assert.ok(box.list.w >= box.vw * 0.6, `${path} @${width}: lessons are ${box.list.w} wide`);
+        await page.evaluate(() => window.scrollTo(0, 400));
+        await page.waitForTimeout(150);
+        const top = await page.evaluate(() => document.querySelector('.unit-hero').getBoundingClientRect().top);
+        assert.ok(top >= 0 && top < 200, `${path} @${width}: header stays in view (top ${top})`);
+      } else {
+        assert.ok(box.list.t > box.hero.t, `${path} @${width}: stacked, header above the lessons`);
+        assert.ok(box.list.w >= box.vw - 2 * Math.max(24, box.vw * 0.06), `${path} @${width}: lessons use the width`);
+      }
       assert.deepEqual(errors, []);
       await ctx.close();
     }

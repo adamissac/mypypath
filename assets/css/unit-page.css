@@ -10,22 +10,26 @@
  * gradients (tests/course-theme.test.js); breakpoints on the scale
  * (docs/css-breakpoints.md). */
 
-.unit-hero,
-.unit-lessons {
-  --unit-width: 980px;
+.unit-layout {
   --rail: 23px;          /* centre of the rail, from the list's left edge */
   --dot: 40px;
-}
-
-.unit-hero > .container,
-.unit-lessons > .container {
-  max-width: var(--unit-width);
-  margin-inline: auto;
+  /* Same gutters as the lesson pages: the page uses its width, on purpose. */
+  --gutter: clamp(1.25rem, 4vw, 4.25rem);
+  display: grid;
+  grid-template-columns: minmax(300px, 380px) minmax(0, 1fr);
+  column-gap: clamp(2rem, 4vw, 4rem);
+  align-items: start;
+  box-sizing: border-box;
+  width: 100%;
+  padding: clamp(1.25rem, 3vw, 2.5rem) var(--gutter) clamp(2.5rem, 6vw, 4.5rem);
 }
 
 /* ── header ───────────────────────────────────────────────── */
 .unit-hero {
-  padding: clamp(1.25rem, 4vw, 3rem) 0 0.5rem;
+  /* The header stays beside the lessons while you read down the trail. */
+  position: sticky;
+  top: calc(var(--header-height, 72px) + 1.25rem);
+  min-width: 0;
 }
 
 .unit-hero .breadcrumb a {
@@ -79,17 +83,18 @@
 
 .unit-hero__row {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1rem 1.75rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1rem;
   margin-top: 1.5rem;
 }
 
 .unit-hero__actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 0.6rem;
 }
+.unit-hero__actions .btn { justify-content: center; text-align: center; }
 
 /* The ring replaces lesson-progress.css's box and bar. */
 .unit-hero .unit-progress.unit-ring {
@@ -151,10 +156,11 @@
 
 /* ── the trail ────────────────────────────────────────────── */
 .unit-lessons {
-  padding: 1.5rem 0 clamp(2.5rem, 6vw, 4.5rem);
+  min-width: 0;
+  padding-top: 0.25rem;
 }
 
-.unit-lessons h2 { margin: 0 0 0.25rem; }
+.unit-lessons h2 { margin: 0 0 0.25rem; padding-top: 1.1rem; }
 .unit-lessons .unit-lesson-summary { margin: 0 0 0.75rem; }
 
 .unit-trail {
@@ -299,6 +305,15 @@ a.unit-trail__card:focus-visible {
 }
 .unit-trail__card--test .unit-test-status { margin: 0.35rem 0 0; }
 .unit-trail .unit-trail__test-link { white-space: nowrap; }
+
+/* ── narrower screens: header on top, lessons below ──────── */
+@media (max-width: 900px) {
+  .unit-layout { grid-template-columns: minmax(0, 1fr); row-gap: 0.5rem; }
+  .unit-hero { position: static; }
+  .unit-hero__row { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 1rem 1.75rem; }
+  .unit-hero__actions { flex-direction: row; flex-wrap: wrap; }
+  .unit-hero__actions .btn { justify-content: center; }
+}
 
 /* ── phones ───────────────────────────────────────────────── */
 @media (max-width: 640px) {

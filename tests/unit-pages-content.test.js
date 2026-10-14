@@ -90,6 +90,14 @@ describe('renderUnitRegion', () => {
     expect(html.trim().endsWith('<!-- unit-page:end -->')).toBe(true);
   });
 
+  it('puts the header and the trail in one layout, header first', () => {
+    const layout = doc.querySelector('.unit-layout');
+    expect(layout).not.toBeNull();
+    const kids = [...layout.children].map((el) => el.className);
+    expect(kids).toEqual(['unit-hero', 'unit-lessons']);
+    expect(doc.querySelectorAll('.unit-layout .container')).toHaveLength(0);
+  });
+
   it('names the unit and keeps the progress panel hooks', () => {
     expect(doc.querySelector('h1').textContent).toBe('Unit 1: Foundations');
     expect(doc.querySelector('[data-unit-progress="1"]')).not.toBeNull();
