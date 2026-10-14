@@ -322,6 +322,19 @@ describe('lesson check-off on a unit page', () => {
     expect(li.querySelector('[data-lesson-check]').textContent).toBe('✓');
   });
 
+  it('ticks lessons on the generated unit trail too', async () => {
+    document.body.innerHTML = `<main><h2>Lessons</h2><ol class="unit-trail">
+      <li class="unit-trail__stop" data-lesson-path="${A}"><a class="unit-trail__card route" href="${A}">What is Python</a></li>
+      <li class="unit-trail__stop" data-lesson-path="${B}"><a class="unit-trail__card route" href="${B}">Installing</a></li>
+    </ol></main>`;
+    seedLessons({ [A]: { done: ['x'], passed: true } });
+    await progressArrived();
+    const lis = document.querySelectorAll('.unit-trail li');
+    expect(lis[0].classList.contains('is-lesson-done')).toBe(true);
+    expect(lis[1].classList.contains('is-lesson-done')).toBe(false);
+    expect(document.querySelector('[data-unit-lesson-summary]').textContent).toBe('1 of 2 lessons complete.');
+  });
+
   it('ticks a passed lesson, dots a started one, leaves an untouched one bare', async () => {
     seedLessons({
       [A]: { done: ['x'], passed: true },
@@ -521,3 +534,4 @@ describe('isUnitUnlocked with a class policy', () => {
     expect(P().isUnitUnlocked(8, [], true, manual)).toBe(true);
   });
 });
+

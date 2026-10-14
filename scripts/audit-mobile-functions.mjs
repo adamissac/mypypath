@@ -131,12 +131,12 @@ async function run() {
   await check('unit landing lesson links are 44px', async () => {
     await page.goto(`${BASE}/units/unit-1.html`, { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(800);
-    const short = await page.locator('.unit-lesson-list a').evaluateAll((links) =>
+    const short = await page.locator('.unit-trail a').evaluateAll((links) =>
       links.filter((el) => el.getBoundingClientRect().height < 44)
         .map((el) => (el.textContent || '').trim().slice(0, 40))
     );
     if (short.length) throw new Error(short.slice(0, 4).join(', '));
-    await page.locator('.unit-lesson-list a').first().click({ trial: true });
+    await page.locator('.unit-trail a').first().click({ trial: true });
   });
 
   await check('lesson quiz radios are 24px and drawer opens', async () => {

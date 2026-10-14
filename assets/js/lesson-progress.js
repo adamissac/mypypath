@@ -541,7 +541,9 @@
   }
 
   function paintLessonList() {
-    var lists = document.querySelectorAll('.unit-lesson-list');
+    // .unit-trail is the generated unit page (scripts/build-unit-pages.mjs);
+    // .unit-lesson-list is the older plain list some pages and tests still use.
+    var lists = document.querySelectorAll('.unit-lesson-list, .unit-trail');
     if (!lists.length) return;
 
     var map = readMap();

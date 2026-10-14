@@ -1,0 +1,337 @@
+/* PyPath — the unit overview page (units/unit-N.html, data/unit-N.html).
+ *
+ * A header that says what the unit is and how far through it you are, then the
+ * lessons as a trail: one rail, a stop per lesson, the unit test as the summit.
+ * Markup from scripts/build-unit-pages.mjs; states from unit-progress-panel.js
+ * (is-done, is-started, is-up-next) and lesson-progress.js (the test line).
+ *
+ * Colours are the site's --pp-* tokens, which pypath-theme.css switches for the
+ * dark theme and for Python for Data, so one sheet serves all four. No
+ * gradients (tests/course-theme.test.js); breakpoints on the scale
+ * (docs/css-breakpoints.md). */
+
+.unit-hero,
+.unit-lessons {
+  --unit-width: 980px;
+  --rail: 23px;          /* centre of the rail, from the list's left edge */
+  --dot: 40px;
+}
+
+.unit-hero > .container,
+.unit-lessons > .container {
+  max-width: var(--unit-width);
+  margin-inline: auto;
+}
+
+/* ── header ───────────────────────────────────────────────── */
+.unit-hero {
+  padding: clamp(1.25rem, 4vw, 3rem) 0 0.5rem;
+}
+
+.unit-hero .breadcrumb a {
+  color: var(--pp-line-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+.unit-hero .breadcrumb a:hover { text-decoration: underline; }
+
+.unit-hero__eyebrow {
+  margin: 1rem 0 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--pp-muted);
+}
+
+.unit-hero .unit-hero__title {
+  margin: 0 0 0.6rem;
+  font-size: clamp(2rem, 4.6vw, 3.1rem);
+  line-height: 1.08;
+}
+
+.unit-hero__blurb {
+  margin: 0 0 1rem;
+  max-width: 52ch;
+  font-size: 1.1rem;
+  line-height: 1.55;
+  color: var(--pp-ink-soft);
+}
+
+.unit-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.unit-hero__meta li {
+  margin: 0;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--pp-border);
+  border-radius: 999px;
+  background: var(--pp-fog);
+  color: var(--pp-ink-soft);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.unit-hero__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.75rem;
+  margin-top: 1.5rem;
+}
+
+.unit-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* The ring replaces lesson-progress.css's box and bar. */
+.unit-hero .unit-progress.unit-ring {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: 0;
+  padding: 0.5rem 1.1rem 0.5rem 0.5rem;
+  max-width: none;
+  border: 1px solid var(--pp-border);
+  border-radius: 999px;
+  background: var(--pp-paper);
+}
+.unit-hero .unit-progress.unit-ring[hidden] { display: none; }
+
+.unit-hero .unit-ring__dial {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  margin: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+}
+.unit-ring__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.unit-ring__track,
+.unit-ring__value {
+  fill: none;
+  stroke-width: 4;
+}
+.unit-ring__track { stroke: var(--pp-border); }
+.unit-ring__value {
+  stroke: var(--pp-line);
+  stroke-linecap: round;
+}
+.unit-progress.is-complete .unit-ring__value { stroke: var(--success, #16a34a); }
+.unit-hero .unit-ring .unit-progress__pct {
+  position: relative;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--pp-ink);
+}
+.unit-hero .unit-ring .unit-progress__detail {
+  max-width: 24ch;
+  font-size: 0.88rem;
+  line-height: 1.35;
+  color: var(--pp-ink-soft);
+}
+
+/* ── the trail ────────────────────────────────────────────── */
+.unit-lessons {
+  padding: 1.5rem 0 clamp(2.5rem, 6vw, 4.5rem);
+}
+
+.unit-lessons h2 { margin: 0 0 0.25rem; }
+.unit-lessons .unit-lesson-summary { margin: 0 0 0.75rem; }
+
+.unit-trail {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.unit-trail__stop {
+  position: relative;
+  margin: 0;
+  padding: 0 0 0.85rem calc(var(--rail) * 2 + 18px);
+}
+
+/* The rail: each stop draws the segment down to the next one, so a finished
+   lesson colours the path it has walked. */
+.unit-trail__stop::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--rail) - 1.5px);
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--pp-border);
+}
+.unit-trail__stop:first-child::before { top: 28px; }
+.unit-trail__stop--summit::before { bottom: auto; height: 28px; }
+.unit-trail__stop.is-done::before { background: var(--pp-line); }
+
+.unit-trail__num {
+  position: absolute;
+  z-index: 1;
+  left: calc(var(--rail) - var(--dot) / 2);
+  top: 8px;
+  display: grid;
+  place-items: center;
+  width: var(--dot);
+  height: var(--dot);
+  box-sizing: border-box;
+  border: 3px solid var(--pp-border);
+  border-radius: 50%;
+  background: var(--pp-paper);
+  color: var(--pp-muted);
+  font-weight: 800;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+.unit-trail__stop.is-started .unit-trail__num { border-color: var(--pp-line); color: var(--pp-ink); }
+.unit-trail__stop.is-done .unit-trail__num {
+  border-color: var(--pp-line);
+  background: var(--pp-line);
+  color: var(--pp-paper);
+}
+.unit-trail__stop.is-up-next .unit-trail__num {
+  border-color: var(--pp-ink);
+  background: var(--pp-ink);
+  color: var(--pp-paper);
+  box-shadow: 0 0 0 5px var(--pp-fog);
+}
+.unit-trail__num--summit {
+  border-color: var(--pp-ink);
+  background: var(--pp-fog);
+  color: var(--pp-ink);
+}
+
+.unit-trail__card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.35rem 1.25rem;
+  min-height: 56px;
+  padding: 0.95rem 1.15rem;
+  border: 1px solid var(--pp-border);
+  border-radius: 16px;
+  background: var(--panel, var(--pp-paper));
+  color: inherit;
+  text-decoration: none;
+}
+a.unit-trail__card:hover {
+  border-color: var(--pp-line);
+  box-shadow: 0 6px 0 var(--pp-fog);
+}
+a.unit-trail__card:focus-visible {
+  outline: 3px solid var(--pp-line);
+  outline-offset: 3px;
+}
+.unit-trail__stop.is-up-next .unit-trail__card {
+  border-color: var(--pp-ink);
+  box-shadow: 0 6px 0 var(--pp-fog);
+}
+
+.unit-trail__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+.unit-trail .unit-trail__title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--pp-ink);
+}
+.unit-trail__summary {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--pp-ink-soft);
+}
+
+.unit-trail__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+.unit-trail__time {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--pp-ink-soft);
+}
+.unit-trail__status {
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.unit-trail__status:empty { display: none; }
+.is-done .unit-trail__status { background: var(--pp-fog); color: var(--pp-ink); }
+.is-up-next .unit-trail__status { background: var(--pp-ink); color: var(--pp-paper); }
+.is-started:not(.is-up-next) .unit-trail__status { border: 1px solid var(--pp-border); color: var(--pp-ink-soft); }
+
+/* lesson-progress.js adds a tick inside each finished link; the status pill
+   says the same thing in words, so the tick is not shown twice. */
+.unit-trail .lesson-check { display: none; }
+
+/* The summit: the end-of-unit test. */
+.unit-trail__card--test {
+  background: var(--pp-fog);
+}
+.unit-trail__card--test .unit-test-status { margin: 0.35rem 0 0; }
+.unit-trail .unit-trail__test-link { white-space: nowrap; }
+
+/* ── phones ───────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .unit-hero,
+  .unit-lessons { --rail: 16px; --dot: 32px; }
+  .unit-trail__stop { padding-left: calc(var(--rail) * 2 + 10px); }
+  .unit-trail__num { top: 10px; font-size: 0.85rem; }
+  .unit-trail__card {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0.85rem 0.95rem;
+  }
+  .unit-trail__meta {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .unit-trail .unit-trail__test-link { justify-self: start; }
+  .unit-hero .unit-progress.unit-ring { border-radius: 20px; }
+}
+
+/* ── motion ───────────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  a.unit-trail__card { transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease; }
+  a.unit-trail__card:hover { transform: translateY(-2px); }
+  .unit-ring__value { transition: stroke-dasharray 600ms cubic-bezier(.16, 1, .3, 1); }
+  .unit-trail__stop { animation: unit-stop-in 420ms cubic-bezier(.16, 1, .3, 1) both; }
+  .unit-trail__stop:nth-child(2) { animation-delay: 40ms; }
+  .unit-trail__stop:nth-child(3) { animation-delay: 80ms; }
+  .unit-trail__stop:nth-child(4) { animation-delay: 120ms; }
+  .unit-trail__stop:nth-child(5) { animation-delay: 160ms; }
+  .unit-trail__stop:nth-child(6) { animation-delay: 200ms; }
+  .unit-trail__stop:nth-child(n+7) { animation-delay: 240ms; }
+}
+@keyframes unit-stop-in {
+  from { opacity: 0; transform: translateY(8px); }
+}

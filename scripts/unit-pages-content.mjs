@@ -2,7 +2,7 @@
  *
  * Pure: takes HTML strings and data, returns strings. scripts/build-unit-pages.mjs
  * does the file I/O. The region keeps the hooks other scripts rely on:
- * .unit-lesson-list (lesson-progress.js ticks lessons off), [data-unit-progress]
+ * .unit-trail (lesson-progress.js ticks lessons off), [data-unit-progress]
  * (unit-progress-panel.js), [data-unit-test-status] / [data-unit-test-link]
  * (lesson-progress.js fills the test line). */
 import * as cheerio from 'cheerio';
@@ -98,7 +98,7 @@ export function renderUnitRegion(u) {
 <ul class="unit-hero__meta" aria-label="About this unit">${[u.hours, u.level, `${u.lessons.length} lessons`].filter(Boolean).map((m) => `<li>${esc(m)}</li>`).join('')}</ul>
 <div class="unit-hero__row">
 <div class="unit-progress unit-ring" data-unit-progress="${u.n}" data-unit-course="${esc(u.course)}" hidden>
-<div class="unit-progress__meter unit-ring__dial" role="progressbar" aria-label="Unit ${u.n} progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="unit-progress__pct" data-unit-progress-pct>0%</span></div>
+<div class="unit-progress__meter unit-ring__dial" role="progressbar" aria-label="Unit ${u.n} progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><svg class="unit-ring__svg" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><circle class="unit-ring__track" cx="20" cy="20" r="17"/><circle class="unit-ring__value" cx="20" cy="20" r="17" pathLength="100" stroke-dasharray="0 100"/></svg><span class="unit-progress__pct" data-unit-progress-pct>0%</span></div>
 <p class="unit-progress__detail" data-unit-progress-detail></p>
 </div>
 <div class="unit-hero__actions">
@@ -111,7 +111,7 @@ export function renderUnitRegion(u) {
 <section class="unit-lessons" aria-labelledby="unit-lessons-title">
 <div class="container">
 <h2 id="unit-lessons-title">Lessons</h2>
-<ol class="unit-lesson-list unit-trail">
+<ol class="unit-trail">
 ${lessons}
 <li class="unit-trail__stop unit-trail__stop--summit">
 <div class="unit-trail__card unit-trail__card--test">

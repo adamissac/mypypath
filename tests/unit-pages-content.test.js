@@ -99,7 +99,9 @@ describe('renderUnitRegion', () => {
   });
 
   it('lists each lesson once, numbered once, escaped', () => {
-    const stops = doc.querySelectorAll('ol.unit-lesson-list.unit-trail > li.unit-trail__stop[data-lesson-path]');
+    const stops = doc.querySelectorAll('ol.unit-trail > li.unit-trail__stop[data-lesson-path]');
+    expect(doc.querySelector('.unit-lesson-list')).toBeNull();
+    expect(doc.querySelector('.unit-ring__value')).not.toBeNull();
     expect(stops).toHaveLength(2);
     expect(stops[1].querySelector('.unit-trail__title').textContent).toBe('First <Program>');
     expect(doc.body.textContent).not.toMatch(/\b1\. 1\./);
