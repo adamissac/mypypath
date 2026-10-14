@@ -2,6 +2,12 @@ import { describe, it, expect } from 'vitest';
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const dataContent = require('../scripts/data-course-content.cjs');
+const dataCourse = require('../assets/data/courses.json').courses.find((course) => course.slug === 'data');
+const foundationsCourse = require('../assets/data/courses.json').courses.find((course) => course.slug === 'foundations');
 
 /* Link previews, on every page rather than just the homepage.
  *
@@ -161,6 +167,35 @@ describe('a description that itself contains quotes', () => {
     expect(desc.length).toBeGreaterThan(40);
     const gen = fs.readFileSync('scripts/build-meta.py', 'utf8');
     expect(gen).toContain('(?P=q)');
+  });
+});
+
+describe('Python for Data unit previews', () => {
+  it('describes the actual unit, not the matching Foundations unit', () => {
+    for (const unit of dataCourse.units) {
+      const src = fs.readFileSync(`data/unit-${unit.n}.html`, 'utf8');
+      const expected = `Python for Data Unit ${unit.n}: ${unit.title}. ${dataContent[`unit${unit.n}`].blurb}`;
+      const description = src.match(/<meta name="description" content="([^"]+)"/);
+      const og = src.match(/<meta property="og:description" content="([^"]+)"/);
+      const twitter = src.match(/<meta name="twitter:description" content="([^"]+)"/);
+      expect(description?.[1], `Unit ${unit.n} search snippet`).toBe(expected);
+      expect(og?.[1], `Unit ${unit.n} social preview`).toBe(expected);
+      expect(twitter?.[1], `Unit ${unit.n} X preview`).toBe(expected);
+    }
+  });
+});
+
+describe('Python Foundations unit previews', () => {
+  it('uses the actual unit blurb in search and social descriptions', () => {
+    for (const unit of foundationsCourse.units) {
+      const src = fs.readFileSync(`units/unit-${unit.n}.html`, 'utf8');
+      const expected = `Python Foundations Unit ${unit.n}: ${unit.title}. ${unit.blurb}`
+        .replaceAll('&', '&amp;');
+      const social = expected.replaceAll("'", '&#x27;');
+      expect(src).toContain(`<meta name="description" content="${expected}" />`);
+      expect(src).toContain(`<meta property="og:description" content="${social}" />`);
+      expect(src).toContain(`<meta name="twitter:description" content="${social}" />`);
+    }
   });
 });
 
