@@ -116,8 +116,8 @@ ${lessons}
 <li class="unit-trail__stop unit-trail__stop--summit">
 <div class="unit-trail__card unit-trail__card--test">
 <span class="unit-trail__num unit-trail__num--summit" aria-hidden="true">${SUMMIT_ICON}</span>
-<div class="unit-trail__body"><h3 class="unit-trail__title">End of unit test</h3><p class="unit-trail__summary">${esc(u.testText)}</p><p class="unit-test-status" data-unit-test-status="${u.n}" hidden></p></div>
-<a class="btn btn-primary route unit-trail__test-link" data-unit-test-link="${u.n}" href="${esc(u.testHref)}">Take the Unit ${u.n} test</a>
+<div class="unit-trail__body"><h3 class="unit-trail__title">End of unit test</h3><p class="unit-trail__summary">${esc(u.testText)}</p><p class="unit-test-status" data-unit-test-status="${u.n}"${u.course === 'data' ? ' data-unit-test-course="data"' : ''} hidden></p></div>
+<a class="btn btn-primary route unit-trail__test-link" data-unit-test-link="${u.n}"${u.course === 'data' ? ' data-unit-test-course="data"' : ''} href="${esc(u.testHref)}">Take the Unit ${u.n} test</a>
 </div>
 </li>
 </ol>

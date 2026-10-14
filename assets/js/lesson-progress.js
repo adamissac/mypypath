@@ -1015,7 +1015,14 @@
       var n = Number(node.getAttribute('data-unit-test-status'));
       if (!Number.isInteger(n) || n < 1) return;
 
-      var state = testStatusLine(records, n);
+      /* Python for Data keeps its tests as "data-N" (unit-test-page.js), so
+         Foundations unit N's result must never answer for data unit N. The
+         page says which course it is; read that course's record as if it
+         were unit N's. */
+      var course = node.getAttribute('data-unit-test-course');
+      var own = course === 'data' ? {} : records;
+      if (course === 'data' && records['data-' + n]) own[String(n)] = records['data-' + n];
+      var state = testStatusLine(own, n);
       /* Only where the markup asks for it. The same status line appears on ten
          unit pages and on the curriculum, where it is one sentence in a list
          and a bar would be noise. */
@@ -1034,7 +1041,8 @@
       // actions and one in the end of unit card at the foot of the page. Only
       // a plain text link is rewritten: the curriculum list wraps its label in
       // spans, and replacing its text would flatten the whole card.
-      var links = document.querySelectorAll('[data-unit-test-link="' + n + '"]');
+      var links = document.querySelectorAll('[data-unit-test-link="' + n + '"]'
+        + (course ? '[data-unit-test-course="' + course + '"]' : ':not([data-unit-test-course])'));
       if (!state.passed) return;
       Array.prototype.forEach.call(links, function (link) {
         if (link.children.length === 0) link.textContent = 'Retake the Unit ' + n + ' test';

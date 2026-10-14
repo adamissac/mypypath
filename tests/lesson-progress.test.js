@@ -322,6 +322,19 @@ describe('lesson check-off on a unit page', () => {
     expect(li.querySelector('[data-lesson-check]').textContent).toBe('✓');
   });
 
+  it('reads a Python for Data test from its own record, never the Foundations one', async () => {
+    document.body.innerHTML = `<main><ol class="unit-trail"></ol>
+      <p class="unit-test-status" data-unit-test-status="1" data-unit-test-course="data" hidden></p>
+      <a data-unit-test-link="1" data-unit-test-course="data" href="/unit-test.html?unit=1&course=data">Take the Unit 1 test</a></main>`;
+    localStorage.setItem('pypath-unit-tests', JSON.stringify({ 1: { best: 85 } }));
+    await progressArrived();
+    expect(document.querySelector('[data-unit-test-status]').textContent).toBe('Not attempted yet.');
+    expect(document.querySelector('[data-unit-test-link]').textContent).toBe('Take the Unit 1 test');
+    localStorage.setItem('pypath-unit-tests', JSON.stringify({ 1: { best: 85 }, 'data-1': { best: 90 } }));
+    await progressArrived();
+    expect(document.querySelector('[data-unit-test-status]').textContent).toMatch(/^Passed/);
+  });
+
   it('ticks lessons on the generated unit trail too', async () => {
     document.body.innerHTML = `<main><h2>Lessons</h2><ol class="unit-trail">
       <li class="unit-trail__stop" data-lesson-path="${A}"><a class="unit-trail__card route" href="${A}">What is Python</a></li>
