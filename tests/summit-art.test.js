@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import { createHash } from 'node:crypto';
+import { JSDOM } from 'jsdom';
 
 /* The hero mountain is a flat illustration, the twin of the Python for Data
    moon: one SVG with its own gentle animations, nothing to drag, no 3D. */
@@ -24,5 +25,18 @@ describe('the hero mountain', () => {
     const style = svg.match(/<style>([\s\S]*?)<\/style>/)[1];
     const outside = style.replace(/@media \(prefers-reduced-motion: no-preference\) \{[\s\S]*?\n    \}/, '');
     expect(outside).not.toMatch(/animation:/);
+  });
+
+  it('cannot be picked up and dragged, by mouse or by touch', () => {
+    const doc = new JSDOM(index).window.document;
+    for (const sel of ['.home-summit__art', '.home-summit__moon']) {
+      const img = doc.querySelector(sel);
+      expect(img.getAttribute('draggable'), sel).toBe('false');
+    }
+    const css = fs.readFileSync('assets/css/home-path.css', 'utf8');
+    const rule = css.match(/\.home-summit img \{[^}]*\}/);
+    expect(rule, 'a .home-summit img rule').toBeTruthy();
+    expect(rule[0]).toMatch(/-webkit-user-drag:\s*none/);
+    expect(rule[0]).toMatch(/user-select:\s*none/);
   });
 });
