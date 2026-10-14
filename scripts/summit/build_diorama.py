@@ -26,21 +26,27 @@ import sys
 import bmesh
 import bpy
 from mathutils import Vector, kdtree, noise
+from mathutils.bvhtree import BVHTree
 
 SEED = 7
 random.seed(SEED)
 noise.seed_set(SEED)
 
 # ── palette (sRGB hex) ──────────────────────────────────────────────────────
-MEADOW_LOW = '#9fd3cb'
-MEADOW_HIGH = '#6aaebd'
-ROCK = '#5a8db0'
-ROCK_DARK = '#3a6d92'
-SNOW = '#eef7fc'
-SNOW_SHADE = '#dcecf6'
-PATH = '#f4efe2'
-STRATA = ['#5b8fb4', '#4a7ea4', '#3d6d93', '#305d82', '#264d70', '#1e3f5e']
-PINE = ['#1f6b7a', '#26798a', '#1a5f72', '#2d8496']
+# The site's own blues (pypath-theme.css: --pp-ink #0c4566, --pp-ink-soft
+# #165a7a, --pp-line-ink #0369a1, --pp-line #0ea5e9, --pp-fog #e8f4fb), used as
+# flat bands from the meadow up to the snow.
+MEADOW_A = '#c4e6f4'
+MEADOW_B = '#b2dcee'
+FOOTHILL = '#5fb8e3'
+SLOPE = '#2f93c8'
+HIGH = '#1f74a3'
+CLIFF = '#165a7a'
+SNOW = '#f7fcff'
+SNOW_SHADE = '#d9ecf7'
+PATH = '#ffffff'
+STRATA = ['#1f6f9c', '#165a7a', '#11506f', '#0c4566', '#0a3a57']
+PINE = ['#0f5a80', '#1a6f98', '#0c4566']
 TRUNK = '#3d4f63'
 STONE = '#9fb4c4'
 STONE_DARK = '#7f97aa'
@@ -203,7 +209,7 @@ def resample(points, count):
 
 
 # ── mesh helpers ────────────────────────────────────────────────────────────
-def new_object(name, verts, faces, colors=None, uvs=None, smooth=True):
+def new_object(name, verts, faces, colors=None, uvs=None, smooth=True, face_colors=None):
     me = bpy.data.meshes.new(name)
     me.from_pydata([tuple(v) for v in verts], [], faces)
     me.validate()
@@ -214,6 +220,16 @@ def new_object(name, verts, faces, colors=None, uvs=None, smooth=True):
         attr = me.color_attributes.new('Col', 'FLOAT_COLOR', 'POINT')
         for i, c in enumerate(colors):
             attr.data[i].color = (c[0], c[1], c[2], 1.0)
+        me.color_attributes.active_color = attr
+        me.attributes.default_color_name = 'Col'
+    if face_colors is not None:
+        # One flat colour per facet: stored per corner so shared vertices can
+        # differ between the faces that meet at them.
+        attr = me.color_attributes.new('Col', 'FLOAT_COLOR', 'CORNER')
+        for poly in me.polygons:
+            c = face_colors[poly.index]
+            for li in poly.loop_indices:
+                attr.data[li].color = (c[0], c[1], c[2], 1.0)
         me.color_attributes.active_color = attr
         me.attributes.default_color_name = 'Col'
     if uvs is not None:
@@ -289,7 +305,6 @@ def build(out):
     dense3 = [Vector((p.x, p.y, height(p.x, p.y) * CLIMB_WEIGHT)) for p in dense]
     weighted, trail_len = resample(dense3, 240)
     trail2d = [Vector((p.x, p.y, 0)) for p in weighted]
-    trail = [Vector((p.x, p.y, height(p.x, p.y) + 0.014)) for p in trail2d]
     tree2d = kdtree.KDTree(len(trail2d))
     for i, p in enumerate(trail2d):
         tree2d.insert(Vector((p.x, p.y, 0)), i)
@@ -299,91 +314,120 @@ def build(out):
         _, i, d = tree2d.find(Vector((x, y, 0)))
         return d, i
 
-    # Top surface: concentric rings to an irregular coastline.
-    RINGS, SEGS = 72, 220
-    verts, cols, faces = [], [], []
-    snowline_noise = lambda x, y: 0.14 * noise.noise(Vector((x * 1.6, y * 1.6, 4.2)))
-    for r in range(RINGS + 1):
-        for s in range(SEGS):
-            a = s / SEGS * math.tau
-            rad = coast(a) * (r / RINGS) ** 0.9
+    # Top surface: a coarse ring mesh with jittered vertices, every triangle
+    # flat and one colour, so the island reads as cut facets, like the site's
+    # flat, sharp-edged style rather than a soft clay model.
+    RINGS, SEGS = 22, 64
+    jit = random.Random(SEED + 1)
+    verts, faces = [], []
+    rows = []
+    for r in range(1, RINGS + 1):
+        row = []
+        for s_ in range(SEGS):
+            edge = r == RINGS
+            a = (s_ + (0 if edge else jit.uniform(-0.32, 0.32))) / SEGS * math.tau
+            f = (r + (0 if edge else jit.uniform(-0.28, 0.28))) / RINGS
+            rad = coast(a) * max(f, 0.02) ** 0.9
             x, y = math.cos(a) * rad, math.sin(a) * rad
-            z = height(x, y)
-            d, _ = trail_dist(x, y)
-            if d < 0.075:
-                z -= 0.018 * (1 - d / 0.075)
-            n = normal_at(x, y)
-            slope = 1 - n.z
-            snow_at = 1.25 + snowline_noise(x, y) + (0.2 if x > 0.4 else 0.0)
-            if z > snow_at and slope < 0.62:
-                c = mix(srgb(SNOW_SHADE), srgb(SNOW), (z - snow_at) / 0.6)
-            elif slope > 0.28 or z > snow_at - 0.3:
-                c = mix(srgb(ROCK), srgb(ROCK_DARK), smoothstep(0.2, 0.55, slope))
-                if z > snow_at - 0.25 and slope < 0.7:
-                    c = mix(c, srgb(SNOW_SHADE), 0.6)
-            else:
-                c = mix(srgb(MEADOW_LOW), srgb(MEADOW_HIGH), z / 1.1)
-                c = mix(c, srgb(ROCK), smoothstep(0.16, 0.3, slope))
-            if d < 0.045:
-                c = mix(c, srgb(PATH), 1 - d / 0.045)
-            verts.append((x, y, z))
-            cols.append(c)
-    # Collapse the centre ring (radius 0) to one vertex.
+            row.append(len(verts))
+            verts.append((x, y, height(x, y)))
+        rows.append(row)
     centre = len(verts)
     verts.append((0.0, 0.0, height(0, 0)))
-    cols.append(cols[0])
-    for s in range(SEGS):
-        faces.append((centre, SEGS + s, SEGS + (s + 1) % SEGS))
-    for r in range(1, RINGS):
-        for s in range(SEGS):
-            a = r * SEGS + s
-            b = r * SEGS + (s + 1) % SEGS
-            c_ = (r + 1) * SEGS + (s + 1) % SEGS
-            d_ = (r + 1) * SEGS + s
-            faces.append((a, d_, c_, b))
+    for s_ in range(SEGS):
+        faces.append((centre, rows[0][s_], rows[0][(s_ + 1) % SEGS]))
+    for r in range(RINGS - 1):
+        for s_ in range(SEGS):
+            t = (s_ + 1) % SEGS
+            a_, b_, c_, d_ = rows[r][s_], rows[r][t], rows[r + 1][t], rows[r + 1][s_]
+            if (r + s_) % 2:
+                faces.append((a_, d_, c_)); faces.append((a_, c_, b_))
+            else:
+                faces.append((a_, d_, b_)); faces.append((b_, d_, c_))
 
-    island = new_object('island', verts, faces, cols)
+    snowline_noise = lambda x, y: 0.14 * noise.noise(Vector((x * 1.6, y * 1.6, 4.2)))
 
-    # Underside: strata tapering to a point. Its own mesh so the browser can
-    # keep it out of the shadow map's receivers (self-shadowing blotches).
-    rim = RINGS * SEGS
-    uv_, uc, uf = [], [], []
+    def facet_colour(face):
+        p0, p1, p2 = (Vector(verts[k]) for k in face)
+        n = (p1 - p0).cross(p2 - p0)
+        if n.length == 0:
+            n = Vector((0, 0, 1))
+        n.normalize()
+        if n.z < 0:
+            n = -n
+        cx_, cy_, cz_ = (p0 + p1 + p2) / 3
+        slope = 1 - n.z
+        lit = n.x * 0.5 + n.y * -0.35   # facets turned to the sun read lighter
+        snow_at = 1.22 + snowline_noise(cx_, cy_) + (0.12 if cx_ > 0.4 else 0.0)
+        if cz_ > snow_at and slope < 0.72:
+            c = srgb(SNOW if lit > -0.05 else SNOW_SHADE)
+        elif slope > 0.8 and cz_ > 0.28:
+            c = srgb(CLIFF)
+        elif cz_ < 0.27:
+            c = srgb(MEADOW_A if lit > 0 else MEADOW_B)
+        elif cz_ < 0.85:
+            c = srgb(FOOTHILL)
+        elif cz_ < 1.45:
+            c = srgb(SLOPE)
+        else:
+            c = srgb(HIGH)
+        k = 1.0 + 0.07 * lit + jit.uniform(-0.035, 0.035)
+        return [min(1.0, ch * k) for ch in c]
+
+    island = new_object('island', verts, faces, smooth=False, face_colors=[facet_colour(f) for f in faces])
+
+    # Ground height on the facets themselves, not the smooth field, so the
+    # trail, cairns and trees sit on what is drawn.
+    bvh = BVHTree.FromPolygons([Vector(v) for v in verts], faces)
+
+    def ground(x, y):
+        hit = bvh.ray_cast(Vector((x, y, 20.0)), Vector((0, 0, -1)))
+        return hit[0].z if hit[0] is not None else height(x, y)
+
+    trail = [Vector((p.x, p.y, ground(p.x, p.y) + 0.02)) for p in trail2d]
+
+    # Underside: angular strata tapering to a point, its own mesh so the
+    # browser can keep it out of the shadow map's receivers.
+    rim = rows[-1]
+    uv_, uf, ufc = [], [], []
     prev = []
     for s_ in range(SEGS):
         prev.append(len(uv_))
-        uv_.append(verts[rim + s_])
-        uc.append(srgb(STRATA[0]))
-    LAYERS = [(1.0, 0.0), (0.98, -0.12), (0.9, -0.34), (0.76, -0.62), (0.57, -0.9), (0.36, -1.15), (0.16, -1.36)]
+        uv_.append(verts[rim[s_]])
+    LAYERS = [(1.0, 0.0), (0.95, -0.16), (0.84, -0.42), (0.66, -0.74), (0.44, -1.04), (0.2, -1.32)]
     for li, (rf, dz) in enumerate(LAYERS[1:], start=1):
         ring = []
         for s_ in range(SEGS):
             a = s_ / SEGS * math.tau
-            jag = 0.035 * noise.noise(Vector((math.cos(a) * 3, math.sin(a) * 3, li * 1.3)))
+            jag = 0.09 * noise.noise(Vector((math.cos(a) * 3, math.sin(a) * 3, li * 1.3)))
             rad = coast(a) * (rf + jag * 0.5)
-            z = 0.04 + dz + 0.05 * noise.noise(Vector((math.cos(a) * 2.2, math.sin(a) * 2.2, li * 0.7)))
+            z = 0.04 + dz + 0.09 * noise.noise(Vector((math.cos(a) * 2.2, math.sin(a) * 2.2, li * 0.7)))
             ring.append(len(uv_))
             uv_.append((math.cos(a) * rad, math.sin(a) * rad, z))
-            uc.append(srgb(STRATA[min(li, len(STRATA) - 1)]))
         for s_ in range(SEGS):
             t = (s_ + 1) % SEGS
-            uf.append((prev[s_], prev[t], ring[t], ring[s_]))
+            uf.append((prev[s_], prev[t], ring[t]))
+            uf.append((prev[s_], ring[t], ring[s_]))
+            band = STRATA[(li + (s_ // 3)) % len(STRATA)]
+            ufc.append(srgb(band))
+            ufc.append([ch * 0.9 for ch in srgb(band)])
         prev = ring
     tip = len(uv_)
     uv_.append((0.1, -0.05, -1.62))
-    uc.append(srgb(STRATA[-1]))
     for s_ in range(SEGS):
         uf.append((prev[s_], prev[(s_ + 1) % SEGS], tip))
-    new_object('underside', uv_, uf, uc)
+        ufc.append(srgb(STRATA[(s_ // 2) % len(STRATA)]))
+    new_object('underside', uv_, uf, smooth=False, face_colors=ufc)
 
     # Lake surface.
     cx, cy, rx, ry = LAKE
     lv, lf = [(cx, cy, LAKE_LEVEL)], []
-    for i in range(48):
-        a = i / 48 * math.tau
+    for i in range(14):
+        a = i / 14 * math.tau
         w = 1 + 0.06 * math.sin(a * 3) + 0.04 * math.cos(a * 5)
         lv.append((cx + math.cos(a) * rx * 0.98 * w, cy + math.sin(a) * ry * 0.98 * w, LAKE_LEVEL))
-    for i in range(48):
-        lf.append((0, 1 + i, 1 + (i + 1) % 48))
+    for i in range(14):
+        lf.append((0, 1 + i, 1 + (i + 1) % 14))
     new_object('lake', lv, lf, [srgb(WATER)] * len(lv))
 
     # Waterfall: from the lake's seaward edge over the cliff.
@@ -422,10 +466,10 @@ def build(out):
         nxt = trail[min(i + 1, len(trail) - 1)] - trail[max(i - 1, 0)]
         nxt.z = 0
         nxt.normalize()
-        sd = Vector((-nxt.y, nxt.x, 0)) * 0.022
+        sd = Vector((-nxt.y, nxt.x, 0)) * 0.02
         a, b = p + sd, p - sd
-        a.z = height(a.x, a.y) + 0.006
-        b.z = height(b.x, b.y) + 0.006
+        a.z = ground(a.x, a.y) + 0.012
+        b.z = ground(b.x, b.y) + 0.012
         tv.extend([a, b])
         u = i / (len(trail) - 1)
         tuv.extend([(u, 0.0), (u, 1.0)])
@@ -446,17 +490,17 @@ def build(out):
         if n == 9:
             off = Vector((0.07, -0.05, 0))
         x, y = p.x + off.x, p.y + off.y
-        z = height(x, y)
+        z = ground(x, y)
         cairn = Builder()
         h = 0.0
         for k, (r, sq) in enumerate([(0.034, 0.65), (0.027, 0.7), (0.02, 0.75)]):
-            bm = bm_ico(r, 1)
+            bm = bm_ico(r, 0)
             from mathutils import Matrix
             m = Matrix.Translation((x, y, z + h + r * sq * 0.8)) @ Matrix.Diagonal((1.0, 1.0, sq, 1.0))
             cairn.add_bm(bm, m, srgb(STONE if k % 2 == 0 else STONE_DARK))
             h += r * sq * 1.55
             bm.free()
-        cairn.build('stop_%02d' % (n + 1))
+        cairn.build('stop_%02d' % (n + 1), smooth=False)
         lamp = Builder()
         bm = bm_box(0.016, 0.016, 0.022)
         lamp.add_bm(bm, mat_at(x, y, z + h + 0.012), srgb(LANTERN))
@@ -473,7 +517,7 @@ def build(out):
         a = random.random() * math.tau
         r = math.sqrt(random.random()) * coast(a) * 0.93
         x, y = math.cos(a) * r, math.sin(a) * r
-        z = height(x, y)
+        z = ground(x, y)
         n = normal_at(x, y)
         if z > 1.15 or z < 0.07 or (1 - n.z) > 0.28:
             continue
@@ -485,11 +529,11 @@ def build(out):
             continue
         s = 0.75 + random.random() * 0.55
         col = srgb(random.choice(PINE))
-        bm = bm_cone(0.016, 0.016, 0.06, 6)
+        bm = bm_cone(0.016, 0.016, 0.06, 4)
         pines.add_bm(bm, mat_at(x, y, z + 0.03 * s, scale=s), srgb(TRUNK))
         bm.free()
         for k, (r1, hh, zz) in enumerate([(0.085, 0.13, 0.11), (0.066, 0.11, 0.18), (0.045, 0.09, 0.245)]):
-            bm = bm_cone(r1, 0.0, hh, 8)
+            bm = bm_cone(r1, 0.0, hh, 5)
             shade = mix(col, srgb('#ffffff'), 0.06 * k)
             pines.add_bm(bm, mat_at(x, y, z + zz * s, rot=random.random(), scale=s), shade)
             bm.free()
@@ -502,19 +546,19 @@ def build(out):
         a = random.random() * math.tau
         r = math.sqrt(random.random()) * coast(a) * 0.9
         x, y = math.cos(a) * r, math.sin(a) * r
-        if trail_dist(x, y)[0] < 0.08 or lake_mask(x, y)[1] < 1.2 or height(x, y) > 1.4:
+        if trail_dist(x, y)[0] < 0.08 or lake_mask(x, y)[1] < 1.2 or ground(x, y) > 1.4:
             continue
-        bm = bm_ico(0.03 + random.random() * 0.04, 1)
+        bm = bm_ico(0.03 + random.random() * 0.04, 0)
         for v in bm.verts:
             v.co *= 0.85 + 0.3 * noise.noise(v.co * 20)
             v.co.z *= 0.6
-        rocks.add_bm(bm, mat_at(x, y, height(x, y) + 0.01, rot=random.random() * 3), srgb(STONE_DARK))
+        rocks.add_bm(bm, mat_at(x, y, ground(x, y) + 0.01, rot=random.random() * 3), srgb(STONE_DARK))
         bm.free()
-    rocks.build('rocks')
+    rocks.build('rocks', smooth=False)
 
     # Cabin at the trailhead.
     hx, hy = CABIN
-    hz = height(hx, hy)
+    hz = ground(hx, hy)
     cabin = Builder()
     bm = bm_box(0.24, 0.17, 0.12)
     cabin.add_bm(bm, mat_at(hx, hy, hz + 0.06, rot=0.25), srgb(CABIN_WALL))
@@ -539,7 +583,7 @@ def build(out):
     bm = bm_cone(0.008, 0.008, 0.42, 6)
     pole.add_bm(bm, mat_at(sx, sy, sz + 0.21), srgb(POLE))
     bm.free()
-    pole.build('flagpole')
+    pole.build('flagpole', smooth=False)
     gv, gf, guv = [], [], []
     GX, GY = 14, 7
     for j in range(GY + 1):
@@ -567,9 +611,9 @@ def build(out):
         bm = bm_cone(0.006, 0.006, 0.02, 6)
         hiker.add_bm(bm, mat_at(0, ly, 0.01), srgb(PACK))
         bm.free()
-    hiker.build('hiker')
+    hiker.build('hiker', smooth=False)
 
-    bake_ao()
+    # No AO bake: facets are lit live, and baked shading would soften them.
 
     os.makedirs(out, exist_ok=True)
     glb = os.path.join(out, 'summit-raw.glb')

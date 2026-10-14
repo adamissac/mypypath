@@ -192,7 +192,7 @@ export async function mount(host, opts) {
     const s = spin.step(e.done ? dt : 0);
     const l = interaction.step(dt);
     pivot.rotation.set(s.tilt + l.pitch, s.yaw + l.yaw - (1 - rise) * 0.9, 0);
-    contact.material.opacity = rise;
+    contact.material.opacity = rise * 0.08;
     clouds.update(clock, e.clouds, stage.night);
     birds.update(clock, stage.night);
     fireworks.update(dt);

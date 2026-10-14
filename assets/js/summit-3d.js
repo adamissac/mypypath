@@ -13,7 +13,7 @@
 (function () {
   'use strict';
 
-  var SCENE_SRC = '/assets/js/summit-scene.js?v=c84e2401e9';
+  var SCENE_SRC = '/assets/js/summit-scene.js?v=c6a51e157d';
   var STILL_AFTER = 2500; // ms after DOMContentLoaded
   var SESSION_KEY = 'pypath-summit-entrance';
   var TOTAL_UNITS = 10;

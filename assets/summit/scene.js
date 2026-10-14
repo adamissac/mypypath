@@ -5,9 +5,9 @@
  * turns those meshes into the miniature: soft sun, sky light, a contact shadow,
  * and a night rig that the site's dark theme cross-fades to. */
 import {
-  ACESFilmicToneMapping, AdditiveBlending, BufferGeometry, CanvasTexture, Color, DirectionalLight,
+  ACESFilmicToneMapping, AdditiveBlending, BufferGeometry, CanvasTexture, CircleGeometry, Color, DirectionalLight,
   DoubleSide, Float32BufferAttribute, Group, HemisphereLight, Mesh, MeshBasicMaterial,
-  MeshStandardMaterial, PCFSoftShadowMap, PerspectiveCamera, PlaneGeometry, Points, PointsMaterial,
+  MeshStandardMaterial, PCFSoftShadowMap, PerspectiveCamera, Points, PointsMaterial,
   Scene, ShaderMaterial, SphereGeometry, Sprite, SpriteMaterial, SRGBColorSpace, Vector3, WebGLRenderer,
 } from 'three';
 
@@ -76,10 +76,10 @@ export function createStage(meta, { shadows }) {
     cam.left = -3.4; cam.right = 3.4; cam.top = 3.4; cam.bottom = -3.4; cam.near = 1; cam.far = 20;
   }
 
-  // Contact shadow far below the floating island.
-  const shadowTex = softDot(128, 'rgba(20,40,70,0.28)', 'rgba(20,40,70,0)');
-  const contact = new Mesh(new PlaneGeometry(3.8, 1.15), new MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
+  // Contact shadow far below the floating island: a flat 12-sided disc.
+  const contact = new Mesh(new CircleGeometry(1, 12), new MeshBasicMaterial({ color: '#0c4566', transparent: true, opacity: 0.12, depthWrite: false }));
   contact.rotation.x = -Math.PI / 2;
+  contact.scale.set(1.25, 0.4, 1);
   contact.position.y = -2.55;
   scene.add(contact);
 
@@ -122,7 +122,9 @@ export function createStage(meta, { shadows }) {
 export function dressModel(root, { shadows }) {
   const byName = {};
   root.traverse((o) => { if (o.isMesh) byName[o.name] = o; });
-  const clay = new MeshStandardMaterial({ vertexColors: true, roughness: 0.86, metalness: 0 });
+  // Flat shading: every facet one colour, lit as a plane (the site's flat,
+  // sharp-edged style).
+  const clay = new MeshStandardMaterial({ vertexColors: true, roughness: 0.9, metalness: 0, flatShading: true });
   const handles = { lanterns: [], cairns: [], uniforms: { time: { value: 0 }, reveal: { value: 1 }, night: { value: 0 } } };
 
   for (const [name, mesh] of Object.entries(byName)) {
@@ -150,7 +152,7 @@ export function dressModel(root, { shadows }) {
   }
 
   if (byName.lake) {
-    byName.lake.material = new MeshStandardMaterial({ color: '#3aa6d8', roughness: 0.12, metalness: 0.15, emissive: '#0c5f8f', emissiveIntensity: 0.25 });
+    byName.lake.material = new MeshStandardMaterial({ color: '#0ea5e9', roughness: 0.3, metalness: 0.05, emissive: '#0369a1', emissiveIntensity: 0.3, flatShading: true });
     byName.lake.receiveShadow = shadows;
   }
 
@@ -187,7 +189,7 @@ export function dressModel(root, { shadows }) {
           float shown = step(vUv.x, uReveal);
           float head = smoothstep(0.06, 0.0, abs(vUv.x - uReveal)) * step(uReveal, 0.999);
           float side = smoothstep(0.0, 0.3, vUv.y) * smoothstep(1.0, 0.7, vUv.y);
-          vec3 day = vec3(0.96, 0.94, 0.88);
+          vec3 day = vec3(0.97, 0.99, 1.0);
           vec3 glow = vec3(1.0, 0.82, 0.45);
           vec3 col = mix(day, mix(vec3(0.62, 0.72, 0.9), glow, 0.35), uNight) + glow * head * 1.4;
           float a = side * (shown * 0.92 + head);

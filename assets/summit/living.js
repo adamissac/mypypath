@@ -2,45 +2,36 @@
    fireworks from the summit flag. Each is cheap on its own and allocates
    nothing per frame. */
 import {
-  AdditiveBlending, BufferAttribute, BufferGeometry, CanvasTexture, Color, DoubleSide, Group, Mesh,
-  MeshBasicMaterial, Points, ShaderMaterial, Sprite, SpriteMaterial, SRGBColorSpace,
+  AdditiveBlending, BufferAttribute, BufferGeometry, Color, DoubleSide, Group, IcosahedronGeometry, Mesh,
+  MeshBasicMaterial, MeshStandardMaterial, Points, ShaderMaterial,
 } from 'three';
 import { softDot } from './scene.js';
 
-function puffTexture() {
-  const size = 256;
-  const c = document.createElement('canvas');
-  c.width = c.height = size;
-  const g = c.getContext('2d');
-  const blobs = [[0.5, 0.58, 0.3], [0.32, 0.62, 0.22], [0.68, 0.62, 0.22], [0.42, 0.45, 0.2], [0.6, 0.47, 0.18]];
-  for (const [x, y, r] of blobs) {
-    const grad = g.createRadialGradient(x * size, y * size, 0, x * size, y * size, r * size);
-    grad.addColorStop(0, 'rgba(255,255,255,0.95)');
-    grad.addColorStop(0.65, 'rgba(255,255,255,0.75)');
-    grad.addColorStop(1, 'rgba(255,255,255,0)');
-    g.fillStyle = grad;
-    g.fillRect(0, 0, size, size);
+/* A low-poly cloud: a few flat-shaded icosahedra, one material so the whole
+   cloud fades together. Matches the faceted island. */
+function makeCloud(scale, opacity) {
+  const mat = new MeshStandardMaterial({ color: '#ffffff', emissive: '#dceefa', emissiveIntensity: 0.35, roughness: 1, flatShading: true, transparent: true, opacity });
+  const cloud = new Group();
+  for (const [x, y, z, r] of [[0, 0, 0, 0.32], [0.3, -0.04, 0.05, 0.24], [-0.3, -0.06, -0.03, 0.22], [0.08, 0.1, -0.1, 0.2]]) {
+    const m = new Mesh(new IcosahedronGeometry(r, 0), mat);
+    m.position.set(x, y, z);
+    m.rotation.set(x * 3, y * 5, z * 7);
+    cloud.add(m);
   }
-  const tex = new CanvasTexture(c);
-  tex.colorSpace = SRGBColorSpace;
-  return tex;
+  cloud.scale.set(scale, scale * 0.6, scale * 0.8);
+  cloud.userData.mat = mat;
+  cloud.userData.base = opacity;
+  return cloud;
 }
 
 export function createClouds(scene) {
-  const tex = puffTexture();
   const drift = new Group();
   const bank = new Group();
   scene.add(drift);
   scene.add(bank);
-  const make = (scale, opacity) => {
-    const s = new Sprite(new SpriteMaterial({ map: tex, transparent: true, depthWrite: false, opacity, toneMapped: false }));
-    s.scale.set(scale, scale * 0.55, 1);
-    s.userData.base = opacity;
-    return s;
-  };
   // Drifting clouds orbit the island slowly at different heights.
-  const drifting = [[0.4, 2.45, 2.3, 1.35], [2.4, 2.6, 1.55, 1.15], [3.9, 2.4, 2.8, 1.0], [5.3, 2.7, 0.95, 1.2]].map(([a, r, y, s]) => {
-    const cloud = make(s, 0.85);
+  const drifting = [[0.4, 2.45, 2.3, 1.1], [2.4, 2.6, 1.55, 0.95], [3.9, 2.4, 2.8, 0.8], [5.3, 2.7, 0.95, 1.0]].map(([a, r, y, sc]) => {
+    const cloud = makeCloud(sc, 0.95);
     cloud.userData.a = a;
     cloud.userData.r = r;
     cloud.userData.y = y;
@@ -51,21 +42,27 @@ export function createClouds(scene) {
   const banked = [];
   for (let i = 0; i < 11; i++) {
     const a = (i / 11) * Math.PI * 2;
-    const cloud = make(2.1 + (i % 3) * 0.4, 1);
+    const cloud = makeCloud(1.7 + (i % 3) * 0.35, 1);
     cloud.userData.a = a;
     cloud.userData.r = 1.2 + (i % 2) * 0.9;
     cloud.position.set(Math.cos(a) * cloud.userData.r, -0.9 + (i % 3) * 0.25, Math.sin(a) * cloud.userData.r + 1.1);
     bank.add(cloud);
     banked.push(cloud);
   }
+  const day = new Color('#ffffff');
+  const night = new Color('#a9b6d8');
+  const tint = new Color();
 
   return {
-    update(t, part, night) {
-      const tint = 1 - night * 0.55;
+    update(t, part, nightness) {
+      tint.copy(day).lerp(night, nightness);
       for (const c of drifting) {
         const a = c.userData.a + t * 0.012;
         c.position.set(Math.cos(a) * c.userData.r, c.userData.y + Math.sin(t * 0.4 + a) * 0.06, Math.sin(a) * c.userData.r);
-        c.material.color.setRGB(tint, tint, tint + night * 0.15);
+        c.rotation.y = a;
+        c.userData.mat.color.copy(tint);
+        c.userData.mat.emissiveIntensity = 0.35 * (1 - nightness);
+        c.userData.mat.opacity = c.userData.base * (1 - 0.45 * nightness);
       }
       bank.visible = part < 1;
       if (!bank.visible) return;
@@ -74,8 +71,8 @@ export function createClouds(scene) {
         c.position.x = Math.cos(c.userData.a) * c.userData.r * push;
         c.position.z = Math.sin(c.userData.a) * c.userData.r * push + 1.1;
         c.position.y = -0.9 + part * 0.6;
-        c.material.opacity = (1 - part) * c.userData.base;
-        c.material.color.setRGB(tint, tint, tint + night * 0.15);
+        c.userData.mat.opacity = (1 - part) * c.userData.base;
+        c.userData.mat.color.copy(tint);
       }
     },
   };
