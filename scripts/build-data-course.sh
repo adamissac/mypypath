@@ -7,6 +7,7 @@
 set -e
 node scripts/build-data-course.cjs
 node scripts/build-data-unit-tests.cjs
+node scripts/build-unit-pages.mjs
 python3 scripts/bake_layout.py
 python3 scripts/build-meta.py --apply
 python3 scripts/build-noscript.py --apply

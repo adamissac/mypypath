@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { JSDOM } from 'jsdom';
-import { lessonSummary, lessonMinutes, lessonTitle, renderUnitRegion } from '../scripts/unit-pages-content.mjs';
+import { lessonSummary, lessonMinutes, lessonTime, lessonTitle, renderUnitRegion } from '../scripts/unit-pages-content.mjs';
 
 const unitsLesson = (learn, overview = '<p>Python is a language. It runs anywhere.</p>') => `<html><head><title>Unit 1 • Variables &amp; Types • PyPath</title>
   <meta name="description" content="Unit 1 • Variables & Types - Learn Python programming with interactive examples and exercises." /></head>
@@ -31,6 +31,16 @@ describe('lessonSummary', () => {
   it('falls back to the first sentence of the Overview', () => {
     expect(lessonSummary(unitsLesson(''), 'units')).toBe('Python is a language.');
   });
+
+  it('finds the Overview paragraph when the heading sits in its own wrapper', () => {
+    const html = '<main><div class="card"><div><h2 class="gradient-text">Overview</h2></div><p>Learn what Python is. More.</p></div></main>';
+    expect(lessonSummary(html, 'units')).toBe('Learn what Python is.');
+  });
+
+  it('keeps acronyms and proper names as written', () => {
+    const html = unitsLesson('<li><strong>What an API is:</strong> a</li><li><strong>HTTP requests:</strong> b</li><li><strong>JSON responses:</strong> c</li><li><strong>Excel files:</strong> d</li>');
+    expect(lessonSummary(html, 'units')).toBe('What an API is, HTTP requests, JSON responses, Excel files');
+  });
 });
 
 describe('lessonTitle', () => {
@@ -39,6 +49,16 @@ describe('lessonTitle', () => {
   });
   it('uses the course manifest title for Python for Data', () => {
     expect(lessonTitle('<title>Python for Data • Reading a CSV File</title>', 'data', 'Reading a CSV File')).toBe('Reading a CSV File');
+  });
+});
+
+describe('lessonTime', () => {
+  it('uses the lesson\'s own estimate when it has one', () => {
+    const html = '<main><div class="lesson-meta"><span class="pill">Beginner</span><span class="pill">20–25 min</span></div><p>x</p></main>';
+    expect(lessonTime(html, { editors: 0, exercises: 0 })).toBe('20–25 min');
+  });
+  it('estimates when it does not', () => {
+    expect(lessonTime('<main><p>tiny</p></main>', { editors: 0, exercises: 0 })).toBe('About 5 min');
   });
 });
 
@@ -58,8 +78,8 @@ describe('renderUnitRegion', () => {
     blurb: 'Write your first programs.', hours: '1–2 hrs', level: 'Beginner',
     testText: 'Score 70 or more.', testHref: '/unit-test.html?unit=1',
     lessons: [
-      { path: '/units/unit-1/a.html', title: 'What Is Python', summary: 'How Python runs', minutes: 10 },
-      { path: '/units/unit-1/b.html', title: 'First <Program>', summary: 'print()', minutes: 15 },
+      { path: '/units/unit-1/a.html', title: 'What Is Python', summary: 'How Python runs', time: '10–15 min' },
+      { path: '/units/unit-1/b.html', title: 'First <Program>', summary: 'print()', time: 'About 15 min' },
     ],
   };
   const doc = new JSDOM(`<main>${renderUnitRegion(unit)}</main>`).window.document;
@@ -84,7 +104,7 @@ describe('renderUnitRegion', () => {
     expect(stops[1].querySelector('.unit-trail__title').textContent).toBe('First <Program>');
     expect(doc.body.textContent).not.toMatch(/\b1\. 1\./);
     expect(stops[0].querySelector('a').getAttribute('href')).toBe('/units/unit-1/a.html');
-    expect(stops[0].querySelector('.unit-trail__time').textContent).toBe('About 10 min');
+    expect(stops[0].querySelector('.unit-trail__time').textContent).toBe('10–15 min');
   });
 
   it('ends at the unit test, with the hooks lesson-progress.js fills', () => {

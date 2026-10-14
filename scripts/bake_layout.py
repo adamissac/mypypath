@@ -298,27 +298,6 @@ def replace_footer(html: str) -> str:
     )
 
 
-def lesson_order_for_unit(num: int) -> list[Path]:
-    """Pedagogical lesson order from the first lesson sidebar."""
-    first_href = FIRST_LESSON.get(num)
-    if not first_href:
-        return []
-    first_path = ROOT / first_href.lstrip('/')
-    if not first_path.exists():
-        return []
-    html = first_path.read_text(encoding='utf-8', errors='ignore')
-    sidebar = re.search(r'id="lesson-sidebar"[\s\S]*?</aside>', html)
-    if not sidebar:
-        return []
-    hrefs = re.findall(r'href="(/units/unit-\d+/[^"]+\.html)"', sidebar.group(0))
-    ordered = []
-    for href in hrefs:
-        p = ROOT / href.lstrip('/')
-        if p.exists():
-            ordered.append(p)
-    return ordered
-
-
 def fix_unit_redirect(html: str, path: Path) -> str:
     if page_kind(path) != 'unit_redirect':
         return html
@@ -334,52 +313,10 @@ def fix_unit_redirect(html: str, path: Path) -> str:
         count=1,
     )
 
-    # Build a real unit landing page (no placeholder redirect).
-    unit_dir = ROOT / 'units' / f'unit-{num}'
-    lesson_files = lesson_order_for_unit(num)
-    if not lesson_files and unit_dir.exists():
-        lesson_files = sorted([p for p in unit_dir.glob('*.html') if p.is_file()], key=lambda p: p.name)
-
-    lesson_items = []
-    for i, p in enumerate(lesson_files, start=1):
-        # Extract a reasonable title from <title> if present.
-        content = p.read_text(encoding='utf-8', errors='ignore')
-        t = re.search(r'<title>\s*([^<]+?)\s*</title>', content)
-        raw = t.group(1).strip() if t else p.stem.replace('-', ' ').title()
-        # Titles look like: "Unit 1 • What Is Python • PyPath"
-        raw = re.sub(r'^Unit\s+\d+\s*•\s*', '', raw)
-        raw = re.sub(r'\s*•\s*PyPath\s*$', '', raw)
-        title = raw
-        href = '/' + p.relative_to(ROOT).as_posix()
-        lesson_items.append(f'<li><a class="route" href="{href}">{i}. {title}</a></li>')
-
-    lesson_list_html = '\n                '.join(lesson_items) if lesson_items else '<li><span class="muted">Lessons coming soon.</span></li>'
-    first = FIRST_LESSON[num]
-
-    unit_block = f"""    <main>
-      <section class="section">
-        <div class="container narrow">
-          <p class="eyebrow">Unit {num}</p>
-          <h1 class="page-title">Unit {num}: {name}</h1>
-          <p class="muted">Work through the lessons below in order. Each lesson includes short explanations and runnable code.</p>
-          <div class="cta" style="margin-top: 18px;">
-            <a class="btn btn-primary route" href="{first}">Start Unit {num}</a>
-            <a class="btn btn-ghost route" href="/curriculum.html">Back to curriculum</a>
-          </div>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="container narrow">
-          <h2>Lessons</h2>
-          <ol class="unit-lesson-list">
-                {lesson_list_html}
-          </ol>
-        </div>
-      </section>
-    </main>"""
-
-    html = re.sub(r'<main>.*?</main>', unit_block, html, count=1, flags=re.DOTALL)
+    # The page body (unit header and lesson trail) is written by
+    # scripts/build-unit-pages.mjs. This used to rebuild it here from a regex
+    # on a bare <main>, which stopped matching once pages gained
+    # <main id="main-content"> and has been dead code since.
     return html
 
 
@@ -785,6 +722,9 @@ def version_course_assets(html: str) -> str:
                 'assets/js/summit-3d.js',
                 # The data course cockpit (data.html only).
                 'assets/css/cockpit.css',
+                # Unit overview pages (scripts/build-unit-pages.mjs).
+                'assets/css/unit-page.css',
+                'assets/js/unit-progress-panel.js',
                 'assets/js/cockpit.js',
                 'assets/js/classroom-dashboard.js',
                 # Page-specific scripts. Same one-hour JS cache as the
