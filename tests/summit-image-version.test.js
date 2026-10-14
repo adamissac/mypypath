@@ -20,12 +20,17 @@ describe('the summit image is cache-busted from its bytes', () => {
     expect(baker).toContain('(?:\\?v=[^"\\\']+)?');
   });
 
-  it('index, courses, and the nav sheet share the current hash', () => {
+  it('courses and the nav sheet share the current hash', () => {
     const token = `summit.png?v=${HASH}`;
-    expect(fs.readFileSync('index.html', 'utf8')).toContain(`/${token}`);
     expect(fs.readFileSync('courses.html', 'utf8')).toContain(`/${token}`);
     expect(fs.readFileSync('assets/css/dropdowns.css', 'utf8')).toContain(`/${token}`);
     expect(fs.readFileSync('index.html', 'utf8')).not.toContain('v=theme1');
     expect(fs.readFileSync('assets/css/dropdowns.css', 'utf8')).not.toContain('v=theme1');
+  });
+
+  it('the hero still (the diorama) is versioned from its own bytes', () => {
+    const still = createHash('sha256').update(fs.readFileSync('assets/img/summit-diorama.webp')).digest('hex').slice(0, 10);
+    expect(baker).toContain("'assets/img/summit-diorama.webp'");
+    expect(fs.readFileSync('index.html', 'utf8')).toContain(`/assets/img/summit-diorama.webp?v=${still}`);
   });
 });

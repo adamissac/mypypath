@@ -331,18 +331,59 @@ body.page-home .site-header {
   background: transparent;
 }
 
-/* 3D summit (summit-3d.js) replaces the static art when WebGL is
-   available and motion is allowed; the img stays as the fallback */
-.home-summit.is-3d .home-summit__art {
-  display: none;
-}
+/* 3D summit (summit-3d.js) takes over from the still when WebGL is
+   available and motion is allowed. The img keeps its place in the layout so
+   the box never changes size; the canvas sits over it. */
+.home-summit__art { transition: opacity 0.7s ease; }
+html.summit-pending .home-summit__art { opacity: 0; transition: none; }
+.home-summit.is-3d .home-summit__art { opacity: 0; }
 
 .home-summit__canvas {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
-  height: auto;
-  aspect-ratio: 1 / 1;
+  height: 100%;
+  opacity: 0;
 }
+.home-summit__canvas.is-in { opacity: 1; }
+.home-summit__canvas.is-crossfading { transition: opacity 0.7s ease; }
+
+/* While the scene is on its way: a bank of cloud for the island to rise
+   through. Flat SVG, no download. */
+.home-summit::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 34% -4% 22%;
+  background: url("data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300"><filter id="b" x="-20%25" y="-40%25" width="140%25" height="180%25"><feGaussianBlur stdDeviation="14"/></filter><g fill="%23ffffff" fill-opacity="0.92" filter="url%28%23b%29"><circle cx="160" cy="150" r="70"/><circle cx="250" cy="120" r="90"/><circle cx="350" cy="140" r="80"/><circle cx="440" cy="160" r="65"/><circle cx="100" cy="190" r="55"/><circle cx="300" cy="190" r="95"/><circle cx="500" cy="195" r="50"/><circle cx="210" cy="205" r="75"/><circle cx="400" cy="210" r="70"/></g></svg>") center / contain no-repeat;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.9s ease;
+}
+:root[data-theme="dark"] .home-summit::after { filter: brightness(0.62) saturate(0.7); }
+html.summit-pending .home-summit::after { opacity: 1; transition: none; }
+@media (prefers-reduced-motion: no-preference) {
+  html.summit-pending .home-summit::after { animation: summit-bank 5s ease-in-out infinite alternate; }
+}
+@keyframes summit-bank { to { transform: translateX(3%) scale(1.03); } }
+
+/* The stop label the scene positions over the canvas. */
+.home-summit__label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: #0c4566;
+  color: #ffffff;
+  font: 600 0.8rem/1.25 var(--home-body, system-ui, sans-serif);
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 6px 18px rgb(12 69 102 / 0.25);
+}
+:root[data-theme="dark"] .home-summit__label { background: #e0f2fe; color: #0c2d48; }
 
 .home-hero__headline {
   margin: 0 0 0.85rem;

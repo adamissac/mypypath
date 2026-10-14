@@ -40,9 +40,13 @@ function trailSampler(points) {
 
 export async function mount(host, opts) {
   const {
-    modelUrl, meta, units = [], completedUnits = [], theme = 'light', plan = 'full',
+    modelUrl, meta, units = [], completedUnits = [], theme = 'light',
     small = false, shadows = true, onReady = () => {}, onFail = () => {}, label: labelText,
   } = opts;
+
+  // `plan` may be a function: the entrance is decided once the scene is ready,
+  // because how long the model took is what decides it.
+  let plan = typeof opts.plan === 'function' ? 'none' : (opts.plan || 'full');
 
   const canvas = document.createElement('canvas');
   canvas.className = 'home-summit__canvas';
@@ -102,7 +106,7 @@ export async function mount(host, opts) {
     const g = new Sprite(new SpriteMaterial({ map: glowTex, transparent: true, depthWrite: false, blending: AdditiveBlending, toneMapped: false, opacity: 0 }));
     lantern.geometry.computeBoundingBox();
     lantern.geometry.boundingBox.getCenter(g.position);
-    g.scale.setScalar(0.32);
+    g.scale.setScalar(0.46);
     pivot.add(g);
     return g;
   });
@@ -234,12 +238,24 @@ export async function mount(host, opts) {
     schedule();
   }
 
+  // One full frame at t = 0 (markers, hiker, clouds all placed) before the
+  // canvas is shown, so it never flashes a half-built scene.
+  function frameOnce() {
+    frame(performance.now());
+  }
+
   function schedule() {
     const want = onScreen && !paused && !document.hidden;
     running = want;
     host.dataset.running = want ? '1' : '0';
     if (want && !raf) raf = requestAnimationFrame(frame);
     if (!want) last = 0;
+  }
+
+  function pagePoint(object, dy) {
+    const r = canvas.getBoundingClientRect();
+    const p = toScreen(object, dy, camera, canvas);
+    return { x: r.left + p.x, y: r.top + p.y };
   }
 
   function size() {
@@ -269,9 +285,11 @@ export async function mount(host, opts) {
   const onVisibility = () => schedule();
   document.addEventListener('visibilitychange', onVisibility);
 
+  if (typeof opts.plan === 'function') plan = opts.plan();
+  host.dataset.entrance = plan;
   // First frame before revealing, so the canvas never flashes empty.
-  renderer.render(scene, camera);
-  onReady({ canvas, label });
+  frameOnce();
+  onReady({ canvas, label, plan });
   schedule();
 
   return {
@@ -291,6 +309,9 @@ export async function mount(host, opts) {
       renderer.dispose();
     },
     get running() { return running; },
+    // Where a stop / the flag is on screen right now (viewport px), for tests.
+    stopPoint(i) { return pagePoint(markers[i], -0.02); },
+    flagPoint() { return pagePoint(flagHit, 0); },
   };
 }
 

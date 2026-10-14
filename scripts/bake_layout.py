@@ -773,6 +773,7 @@ def version_course_assets(html: str) -> str:
                 'assets/css/admin.css',
                 'assets/img/data-moon.svg',
                 'assets/img/summit.png',
+                'assets/img/summit-diorama.webp',
                 'assets/img/placeholder-avatar.svg',
                 # The homepage tour. The video and its captions are served with
                 # a year-long immutable cache (vercel.json), so a re-cut film
