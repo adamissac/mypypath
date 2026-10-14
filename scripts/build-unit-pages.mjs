@@ -80,13 +80,18 @@ function withRegion(html, region) {
   return `${html.slice(0, start)}\n${region}\n${html.slice(mainClose)}`;
 }
 
-function withAssets(html) {
+function withAssets(html, course) {
   let out = html;
   if (!/\/assets\/css\/unit-page\.css/.test(out)) {
     out = out.replace(/(<link rel="stylesheet" href="\/assets\/css\/lesson-progress\.css[^"]*"\s*\/>)/, '$1\n    <link rel="stylesheet" href="/assets/css/unit-page.css" />');
   }
   if (!/\/assets\/js\/unit-progress-panel\.js/.test(out)) {
     out = out.replace(/(<script defer src="\/assets\/js\/lesson-progress\.js[^"]*"><\/script>)/, '$1\n    <script defer src="/assets/js/unit-progress-panel.js"></script>');
+  }
+  // The cockpit launches into a Python for Data unit page, which plays the
+  // landing (arrive.js). It runs in the head, before first paint.
+  if (course === 'data' && !/\/assets\/js\/arrive\.js/.test(out)) {
+    out = out.replace(/(<script src="\/assets\/js\/theme-init\.js[^"]*"><\/script>)/, '$1\n    <script src="/assets/js/arrive.js"></script>');
   }
   return out;
 }
@@ -105,7 +110,7 @@ for (const courseKey of ['units', 'data']) {
     const file = path.join(ROOT, unit.file);
     if (!existsSync(file)) { stale.push(`${unit.file} (missing)`); continue; }
     const html = readFileSync(file, 'utf8');
-    const next = withAssets(withRegion(html, renderUnitRegion(unit)));
+    const next = withAssets(withRegion(html, renderUnitRegion(unit)), courseKey);
     if (next === html) continue;
     if (check) stale.push(unit.file);
     else if (!print) { writeFileSync(file, next); written += 1; }

@@ -100,6 +100,95 @@
     return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   }
 
+  /* ── The launch cutscene ─────────────────────────────────────────────────
+     Seen from inside the cockpit: a countdown on the glass, a rumble, the
+     stars stretching into streaks, the moon rushing at you, a flash. About
+     3.3 seconds, then the unit page opens (and plays its own short landing,
+     arrive.js). It can be skipped with the Skip button or Escape, and it is
+     never built under reduced motion: wireMotion returns before it can be. */
+  var COUNT_STEP = 600;     // ms per numeral
+  var GO_AT = 1800;         // "Go": the stars streak, the moon rushes in
+  var NAVIGATE_AT = 3300;   // after the flash
+  var ARRIVE_KEY = 'pypath-arrive';
+
+  // A property of the API (not called directly) so a test can observe it.
+  function navigate(href) { window.location.assign(href); }
+
+  function playCutscene(label, href, returnFocusTo) {
+    var spoken = label.replace(/^Launch(?: again)?:\s*/, 'Launching to ');
+    var el = document.createElement('div');
+    el.className = 'cockpit-cutscene is-counting';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-modal', 'true');
+    el.setAttribute('aria-label', spoken);
+    el.innerHTML = '<div class="cockpit-cutscene__stage" aria-hidden="true">'
+      + '<div class="cockpit-cutscene__stars cockpit-cutscene__stars--far"></div>'
+      + '<div class="cockpit-cutscene__stars cockpit-cutscene__stars--mid"></div>'
+      + '<div class="cockpit-cutscene__stars cockpit-cutscene__stars--near"></div>'
+      + '<img class="cockpit-cutscene__moon" src="/assets/img/data-moon.svg" alt="" width="640" height="640" />'
+      + '</div>'
+      + '<div class="cockpit-cutscene__frame" aria-hidden="true"></div>'
+      + '<div class="cockpit-cutscene__hud" aria-hidden="true"><p class="cockpit-cutscene__caption"></p></div>'
+      + '<p class="cockpit-cutscene__count" data-cutscene-count aria-hidden="true">3</p>'
+      + '<p class="visually-hidden" aria-live="polite"></p>'
+      + '<button type="button" class="btn btn-ghost cockpit-cutscene__skip" data-cutscene-skip>Skip</button>'
+      + '<div class="cockpit-cutscene__flash" aria-hidden="true"></div>';
+    el.querySelector('.cockpit-cutscene__caption').textContent = spoken;
+    el.querySelector('[aria-live]').textContent = spoken;
+    var count = el.querySelector('[data-cutscene-count]');
+    var skip = el.querySelector('[data-cutscene-skip]');
+    document.body.appendChild(el);
+    skip.focus();
+
+    var timers = [];
+    var done = false;
+    function at(ms, fn) { timers.push(window.setTimeout(fn, ms)); }
+    function stop() {
+      timers.forEach(window.clearTimeout);
+      timers = [];
+      document.removeEventListener('keydown', onKey, true);
+    }
+    function finish() {
+      if (done) return;
+      done = true;
+      stop();
+      try { window.sessionStorage.setItem(ARRIVE_KEY, '1'); } catch (e) { /* no landing animation */ }
+      window.PyPathCockpit.navigate(href);
+    }
+    function onKey(e) {
+      if (e.key === 'Escape') { e.preventDefault(); finish(); }
+      else if (e.key === 'Tab') { e.preventDefault(); skip.focus(); }
+    }
+    document.addEventListener('keydown', onKey, true);
+    skip.addEventListener('click', finish);
+
+    // Each numeral pops in: the class is dropped and re-added to restart it.
+    function show(text) {
+      count.textContent = text;
+      count.classList.remove('is-tick');
+      void count.offsetWidth;
+      count.classList.add('is-tick');
+    }
+    show('3');
+    at(COUNT_STEP, function () { show('2'); });
+    at(COUNT_STEP * 2, function () { show('1'); });
+    at(GO_AT, function () {
+      count.textContent = 'Go';
+      el.classList.remove('is-counting');
+      el.classList.add('is-go');
+    });
+    at(NAVIGATE_AT, finish);
+
+    return {
+      dispose: function () {
+        done = true;
+        stop();
+        el.remove();
+        if (returnFocusTo && returnFocusTo.focus) returnFocusTo.focus();
+      }
+    };
+  }
+
   function wireMotion(root) {
     if (prefersReduced()) return;
     var space = root.querySelector('.cockpit__window');
@@ -126,19 +215,21 @@
     var launch = root.querySelector('[data-cockpit-launch]');
     if (!launch) return;
     var going = false;
+    var scene = null;
     launch.addEventListener('click', function (e) {
       if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       e.preventDefault();
       if (going) return;
       going = true;
-      var href = launch.getAttribute('href');
       root.classList.add('is-launching');
-      window.setTimeout(function () { window.location.assign(href); }, 1000);
+      var label = launch.querySelector('.cockpit__launch-label') || launch;
+      scene = playCutscene(label.textContent.trim(), launch.getAttribute('href'), launch);
     });
     // Coming back with the back button must not leave the cabin mid-launch.
     window.addEventListener('pageshow', function () {
       going = false;
       root.classList.remove('is-launching');
+      if (scene) { scene.dispose(); scene = null; }
     });
   }
 
@@ -153,5 +244,5 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
   else boot();
 
-  window.PyPathCockpit = { state: state, readProgress: readProgress, render: render };
+  window.PyPathCockpit = { state: state, readProgress: readProgress, render: render, wire: wireMotion, navigate: navigate };
 })();

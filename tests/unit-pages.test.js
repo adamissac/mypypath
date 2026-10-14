@@ -23,6 +23,8 @@ describe('the unit overview pages', () => {
     expect(html.match(/<!-- unit-page:begin/g)).toHaveLength(1);
     expect(html).toMatch(/\/assets\/css\/unit-page\.css/);
     expect(html).toMatch(/\/assets\/js\/unit-progress-panel\.js/);
+    // Only a Python for Data page is a launch destination, so only it loads the landing.
+    expect(/<script src="\/assets\/js\/arrive\.js/.test(html)).toBe(course === 'data');
     expect(doc.body.textContent).not.toMatch(/\b(\d+)\. \1\./);
     const want = manifest[course].lessons.filter((l) => l.unit === n).sort((a, b) => a.order - b.order).map((l) => l.path);
     const got = [...doc.querySelectorAll('ol.unit-trail > li[data-lesson-path]')].map((li) => li.getAttribute('data-lesson-path'));
