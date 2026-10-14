@@ -13,6 +13,7 @@ describe('the sitemap only advertises public pages', () => {
   it('omits personal pages, a redirect stub, and invented modification dates', () => {
     for (const page of ['account', 'certificate', 'progress', 'settings', 'learn']) {
       expect(SITEMAP).not.toContain(`<loc>https://mypypath.com/${page}.html</loc>`);
+      expect(fs.readFileSync(`${page}.html`, 'utf8')).toContain('<meta name="robots" content="noindex, follow" />');
     }
     expect(SITEMAP).not.toContain('<lastmod>');
   });
