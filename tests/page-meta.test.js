@@ -69,6 +69,20 @@ describe('every public page can be shared', () => {
   }
 });
 
+describe('the homepage identifies the site and publisher', () => {
+  it('uses factual, parseable structured data with a real logo', () => {
+    const home = fs.readFileSync('index.html', 'utf8');
+    const match = home.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+    expect(match).toBeTruthy();
+    const graph = JSON.parse(match[1])['@graph'];
+    expect(graph.find((entry) => entry['@type'] === 'WebSite')?.name).toBe('PyPath');
+    const organization = graph.find((entry) => entry['@type'] === 'Organization');
+    expect(organization?.url).toBe('https://mypypath.com/');
+    expect(organization?.logo).toBe('https://mypypath.com/assets/img/apple-touch-icon.png');
+    expect(fs.existsSync('assets/img/apple-touch-icon.png')).toBe(true);
+  });
+});
+
 describe('the canonical URL points at the page it is on', () => {
   it('matches the file path for every page', () => {
     /* The failure this catches is the one a generated block makes easy: a
