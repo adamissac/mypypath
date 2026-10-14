@@ -10,6 +10,13 @@ const ROBOTS = fs.readFileSync('robots.txt', 'utf8');
 const GEN = fs.readFileSync('scripts/generate_sitemap.py', 'utf8');
 
 describe('the sitemap only advertises public pages', () => {
+  it('omits personal pages, a redirect stub, and invented modification dates', () => {
+    for (const page of ['account', 'certificate', 'progress', 'settings', 'learn']) {
+      expect(SITEMAP).not.toContain(`<loc>https://mypypath.com/${page}.html</loc>`);
+    }
+    expect(SITEMAP).not.toContain('<lastmod>');
+  });
+
   it('does not list skill, agent, generator, audit, or leftover HTML', () => {
     expect(SITEMAP).not.toMatch(/mypypath\.com\/\.claude\//);
     expect(SITEMAP).not.toMatch(/mypypath\.com\/\.agents\//);
