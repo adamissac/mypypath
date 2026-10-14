@@ -27,9 +27,8 @@ const JSON_OUT = process.argv.includes('--json');
  * criticalKB IS THE ONE THAT MATTERS, and separating it out is the whole
  * reason this script measures what it measures. It counts our own bytes
  * requested BEFORE the load event -- the ones competing with the page becoming
- * usable. Bytes fetched deliberately afterwards (three.min.js, which is 618KB
- * of decorative 3D behind a requestIdleCallback) are real weight and are not
- * on the critical path, and a budget that could not tell those apart would
+ * usable. Bytes fetched deliberately afterwards (the hero's 3D scene, see
+ * DECOR below) are real weight and are not on the critical path, and a budget that could not tell those apart would
  * have scored moving that download off the critical path as no improvement at
  * all -- which is exactly what happened the first time this ran.
  *
@@ -42,6 +41,17 @@ const JSON_OUT = process.argv.includes('--json');
  * reported and not budgeted. They are real cost to a learner and they are not
  * something a commit to this repo usually moves, so folding them in would hide
  * the half that is ours. */
+/* DECOR is the home hero's 3D diorama: the scene bundle (three.js r186 +
+   assets/summit) and its model. It loads after the page has, on purpose, so
+   that it arrives while the visitor is still looking at the hero, and it is
+   skipped for reduced motion, Save-Data and slow connections. Folding it into
+   ownKB would have pushed /index.html over that line on day one and taught
+   everyone to raise it; it gets its own line instead, so the rest of the page
+   still cannot grow unnoticed and the decoration has a ceiling of its own.
+   See docs/superpowers/specs/2026-10-13-summit-diorama-design.md. */
+const DECOR = [/\/assets\/js\/summit-scene\.js(\?|$)/, /\/assets\/models\/summit\.glb(\?|$)/];
+const isDecor = (url) => DECOR.some((re) => re.test(url));
+
 const BUDGET = {
   requests: 70,
   /* 1000KB is a CEILING, not an endorsement. The heaviest page today is
@@ -53,6 +63,7 @@ const BUDGET = {
   criticalKB: 1000,
   ownKB: 1500,
   cssKB: 420,
+  decorKB: 1300,
 };
 
 const PAGES = [
@@ -133,7 +144,8 @@ async function run() {
       continue;
     }
 
-    const own = seen.filter((s) => !s.third);
+    const own = seen.filter((s) => !s.third && !isDecor(s.url));
+    const decor = seen.filter((s) => !s.third && isDecor(s.url));
     const kb = (list) => Math.round(list.reduce((a, s) => a + s.bytes, 0) / 1024);
     report.push({
       page,
@@ -145,6 +157,7 @@ async function run() {
       cssKB: kb(own.filter((s) => s.kind === 'css')),
       jsKB: kb(own.filter((s) => s.kind === 'js')),
       thirdKB: kb(seen.filter((s) => s.third)),
+      decorKB: kb(decor),
     });
     await ctx.close();
   }
@@ -155,7 +168,7 @@ async function run() {
   if (JSON_OUT) { console.log(JSON.stringify(report, null, 2)); return; }
 
   const fails = [];
-  console.log('page                                  reqs  critKB  defKB  ownKB  cssKB  jsKB | 3p KB');
+  console.log('page                                  reqs  critKB  defKB  ownKB  cssKB  jsKB | 3p KB | decorKB');
   for (const r of report) {
     if (r.error) { console.log(`${r.page}  ERROR ${r.error}`); fails.push(r.page); continue; }
     console.log(
@@ -164,6 +177,7 @@ async function run() {
       + `${String(r.ownKB).padStart(7)}${String(r.cssKB).padStart(7)}`
       + `${String(r.jsKB).padStart(6)}`
       + ` | ${String(r.thirdKB).padStart(6)}`
+      + ` | ${String(r.decorKB).padStart(7)}`
     );
     for (const [key, limit] of Object.entries(BUDGET)) {
       if (r[key] > limit) fails.push(`${r.page}: ${key} ${r[key]} > ${limit}`);
