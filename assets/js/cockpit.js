@@ -60,5 +60,95 @@
     return { passedPaths: passedPaths, testRecords: readJson((LP && LP.UNIT_TESTS_KEY) || TESTS_KEY) };
   }
 
-  window.PyPathCockpit = { state: state, readProgress: readProgress };
+  function unitsFrom(root) {
+    return Array.prototype.map.call(root.querySelectorAll('.cockpit__light'), function (a) {
+      return {
+        n: Number(a.getAttribute('data-unit')),
+        title: a.getAttribute('data-title') || '',
+        href: a.getAttribute('href'),
+        lessons: (a.getAttribute('data-lessons') || '').split('|').filter(Boolean),
+        el: a
+      };
+    });
+  }
+
+  function render(doc) {
+    var root = (doc || document).querySelector('[data-cockpit]');
+    if (!root) return;
+    var units = unitsFrom(root);
+    if (!units.length) return;
+    var LP = window.PyPathLessonProgress;
+    var progress = readProgress();
+    var s = state(units, progress.passedPaths, progress.testRecords, (LP && LP.UNIT_TEST_PASS_MARK) || 70);
+    units.forEach(function (u, i) {
+      u.el.setAttribute('data-state', s.lights[i]);
+      if (s.lights[i] === 'current') u.el.setAttribute('aria-current', 'step');
+      else u.el.removeAttribute('aria-current');
+    });
+    var launch = root.querySelector('[data-cockpit-launch]');
+    if (launch) {
+      launch.setAttribute('href', s.target.href);
+      var label = launch.querySelector('.cockpit__launch-label') || launch;
+      label.textContent = s.label;
+    }
+  }
+
+  function prefersReduced() {
+    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
+  function wireMotion(root) {
+    if (prefersReduced()) return;
+    var space = root.querySelector('.cockpit__window');
+    var queued = false, tx = 0, ty = 0;
+    if (space) {
+      root.addEventListener('pointermove', function (e) {
+        if (e.pointerType !== 'mouse') return;
+        var r = root.getBoundingClientRect();
+        tx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+        ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
+        if (queued) return;
+        queued = true;
+        window.requestAnimationFrame(function () {
+          queued = false;
+          space.style.setProperty('--look-x', tx.toFixed(3));
+          space.style.setProperty('--look-y', ty.toFixed(3));
+        });
+      });
+      root.addEventListener('pointerleave', function () {
+        space.style.setProperty('--look-x', '0');
+        space.style.setProperty('--look-y', '0');
+      });
+    }
+    var launch = root.querySelector('[data-cockpit-launch]');
+    if (!launch) return;
+    var going = false;
+    launch.addEventListener('click', function (e) {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      if (going) return;
+      going = true;
+      var href = launch.getAttribute('href');
+      root.classList.add('is-launching');
+      window.setTimeout(function () { window.location.assign(href); }, 1000);
+    });
+    // Coming back with the back button must not leave the cabin mid-launch.
+    window.addEventListener('pageshow', function () {
+      going = false;
+      root.classList.remove('is-launching');
+    });
+  }
+
+  function boot() {
+    var root = document.querySelector('[data-cockpit]');
+    if (!root) return;
+    render(document);
+    wireMotion(root);
+    document.addEventListener('pypath:progress', function () { render(document); });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
+  else boot();
+
+  window.PyPathCockpit = { state: state, readProgress: readProgress, render: render };
 })();

@@ -1,0 +1,209 @@
+/* PyPath — the cockpit at the top of /data.html. Space is dark in both site
+   themes, so these tokens do not switch with data-theme. */
+.cockpit {
+  --ck-space: #120c1c;
+  --ck-space-2: #21162f;
+  --ck-frame: #2b1e3e;
+  --ck-frame-hi: #4a3566;
+  --ck-ink: #f1ecf8;
+  --ck-muted: #d4c8e1;
+  --ck-violet: #a78bfa;
+  --ck-lamp: #f2bc63;
+  position: relative;
+  padding: 1.25rem 0 2rem;
+}
+.cockpit__window {
+  --look-x: 0;
+  --look-y: 0;
+  position: relative;
+  min-height: clamp(320px, 52vh, 520px);
+  margin-inline: clamp(12px, 3vw, 40px);
+  border-radius: 40px 40px 24px 24px;
+  overflow: hidden;
+  background: var(--ck-space);
+  box-shadow: 0 0 0 10px var(--ck-frame), 0 0 0 12px var(--ck-frame-hi), 0 30px 60px rgb(18 12 28 / .35);
+  isolation: isolate;
+}
+.cockpit__space { position: absolute; inset: -6%; z-index: 0; }
+.cockpit__stars { position: absolute; inset: 0; background-repeat: repeat; }
+.cockpit__stars--far {
+  background-image: url("data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="160"><circle cx="20" cy="30" r="0.7" fill="%23ffffff" fill-opacity="0.55"/><circle cx="140" cy="90" r="0.7" fill="%23ffffff" fill-opacity="0.4"/><circle cx="260" cy="40" r="0.7" fill="%23ffffff" fill-opacity="0.5"/><circle cx="90" cy="140" r="0.7" fill="%23ffffff" fill-opacity="0.35"/><circle cx="210" cy="120" r="0.6" fill="%23ffffff" fill-opacity="0.4"/></svg>");
+  background-size: 300px 160px;
+  transform: translate(calc(var(--look-x) * -6px), calc(var(--look-y) * -4px));
+}
+.cockpit__stars--mid {
+  background-image: url("data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="420" height="220"><circle cx="60" cy="120" r="1" fill="%23ffffff" fill-opacity="0.7"/><circle cx="300" cy="20" r="1" fill="%23ffffff" fill-opacity="0.6"/><circle cx="200" cy="180" r="1" fill="%23ffffff" fill-opacity="0.55"/><circle cx="380" cy="100" r="0.9" fill="%23ffffff" fill-opacity="0.5"/></svg>");
+  background-size: 420px 220px;
+  transform: translate(calc(var(--look-x) * -12px), calc(var(--look-y) * -8px));
+}
+.cockpit__stars--near {
+  background-image: url("data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="560" height="300"><circle cx="120" cy="60" r="1.4" fill="%23ffffff" fill-opacity="0.95"/><circle cx="480" cy="200" r="1.4" fill="%23ffffff" fill-opacity="0.8"/><circle cx="330" cy="270" r="1.2" fill="%23ffffff" fill-opacity="0.7"/></svg>");
+  background-size: 560px 300px;
+  transform: translate(calc(var(--look-x) * -20px), calc(var(--look-y) * -14px));
+}
+.cockpit__planet {
+  position: absolute;
+  left: -20%;
+  right: -20%;
+  bottom: -82%;
+  height: 100%;
+  border-radius: 50%;
+  background: #2e2048;
+  box-shadow: 0 -6px 40px rgb(167 139 250 / .35), inset 0 2px 0 rgb(196 181 253 / .45);
+  transform: translate(calc(var(--look-x) * -10px), calc(var(--look-y) * -6px));
+}
+.cockpit__moon {
+  position: absolute;
+  right: 8%;
+  top: 12%;
+  width: clamp(140px, 24vw, 300px);
+  height: auto;
+  filter: drop-shadow(0 0 30px rgb(167 139 250 / .35));
+  transform: translate(calc(var(--look-x) * -16px), calc(var(--look-y) * -10px));
+}
+/* The window: a centre strut (::before), a pane of glare (::after) and a
+   tinted rim. Flat fills only: the site has no gradients anywhere. */
+.cockpit__frame::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(62% - 5px);
+  width: 10px;
+  background: var(--ck-frame);
+}
+.cockpit__frame::after {
+  content: "";
+  position: absolute;
+  inset: -20% auto -20% -8%;
+  width: 22%;
+  background: rgb(255 255 255 / .05);
+  transform: skewX(-25deg);
+}
+.cockpit__frame {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 2px rgb(167 139 250 / .25), inset 0 0 80px rgb(0 0 0 / .45);
+}
+.cockpit__hud {
+  position: relative;
+  z-index: 2;
+  padding-block: clamp(1.5rem, 7vh, 4.5rem);
+  color: var(--ck-ink);
+}
+/* pypath-theme.css sets .page-unit main h1 { color: var(--pp-ink) !important },
+   which is dark ink in the light theme. The glass is dark in every theme. */
+.page-unit main .cockpit .cockpit__hud h1 {
+  margin: .4rem 0 .75rem;
+  max-width: 12ch;
+  color: var(--ck-ink) !important;
+  -webkit-text-fill-color: var(--ck-ink) !important;
+  background: none !important;
+  text-shadow: 0 2px 24px rgb(18 12 28 / .6);
+}
+.cockpit .cockpit__hud .lead { color: var(--ck-muted); max-width: 44ch; }
+.cockpit .cockpit__hud .breadcrumb a { color: var(--ck-muted); }
+.cockpit__panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 2rem;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: auto;
+  margin: 1.5rem clamp(12px, 3vw, 40px) 0;
+  max-width: none;
+  padding: 1rem 1.25rem;
+  border-radius: 20px;
+  background: var(--ck-frame);
+  border: 1px solid var(--ck-frame-hi);
+  color: var(--ck-ink);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .12), 0 10px 30px rgb(18 12 28 / .25);
+}
+.cockpit__panel-label {
+  margin: 0;
+  font-weight: 700;
+  font-size: .75rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ck-muted);
+}
+.cockpit__lights { display: flex; flex-wrap: wrap; gap: .5rem; margin: 0; padding: 0; list-style: none; }
+.cockpit__lights li { margin: 0; }
+.cockpit .cockpit__light {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #1a1226;
+  border: 2px solid #6b5689;
+  color: var(--ck-muted);
+  font-weight: 700;
+  text-decoration: none;
+}
+.cockpit .cockpit__light:hover { border-color: var(--ck-violet); color: var(--ck-ink); }
+.cockpit .cockpit__light[data-state="done"] {
+  background: var(--ck-lamp);
+  border-color: #ffe2a8;
+  color: #21162f;
+  box-shadow: 0 0 14px rgb(242 188 99 / .7);
+}
+.cockpit .cockpit__light[data-state="current"] {
+  border-color: var(--ck-violet);
+  color: var(--ck-ink);
+  box-shadow: 0 0 0 3px rgb(167 139 250 / .35);
+}
+.cockpit .cockpit__light:focus-visible,
+.cockpit .cockpit__launch:focus-visible { outline: 3px solid #38bdf8; outline-offset: 3px; }
+.cockpit .cockpit__launch {
+  display: inline-flex;
+  align-items: center;
+  gap: .75rem;
+  min-height: 52px;
+  padding: .75rem 1.35rem;
+  border-radius: 999px;
+  background: var(--ck-lamp);
+  color: #21162f;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 6px 0 #b98a3c;
+}
+.cockpit .cockpit__launch:hover { background: #f6c97c; }
+.cockpit .cockpit__launch:active { transform: translateY(3px); box-shadow: 0 3px 0 #b98a3c; }
+.cockpit__launch-icon {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #21162f;
+  box-shadow: 0 0 0 3px rgb(33 22 47 / .25);
+}
+
+@media (max-width: 640px) {
+  .cockpit__window { border-radius: 28px 28px 18px 18px; min-height: 460px; }
+  .cockpit__hud { padding-block: 1.25rem 0; }
+  .cockpit__moon { top: auto; bottom: 7%; right: 6%; width: 34vw; opacity: .95; }
+  .cockpit__frame::before { display: none; }
+  .cockpit__panel { flex-direction: column; align-items: stretch; }
+  .cockpit__lights { justify-content: center; }
+  .cockpit .cockpit__launch { justify-content: center; text-align: center; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cockpit__stars, .cockpit__planet, .cockpit__moon { transition: transform 400ms cubic-bezier(.16, 1, .3, 1); }
+  .cockpit__stars--far { animation: ck-drift 140s linear infinite; }
+  .cockpit__stars--mid { animation: ck-drift 90s linear infinite; }
+  .cockpit .cockpit__light[data-state="current"] { animation: ck-blink 2.4s ease-in-out infinite; }
+  .cockpit.is-launching .cockpit__window { animation: ck-shake 110ms linear 7; }
+  .cockpit.is-launching .cockpit__stars { animation: ck-streak 900ms cubic-bezier(.5, 0, .9, .4) forwards; }
+  .cockpit.is-launching .cockpit__moon,
+  .cockpit.is-launching .cockpit__planet { transition: transform 900ms cubic-bezier(.5, 0, .9, .4); transform: translateY(80%); }
+}
+@keyframes ck-drift { to { background-position: -600px 0; } }
+@keyframes ck-blink { 50% { box-shadow: 0 0 0 6px rgb(167 139 250 / .15), 0 0 16px rgb(167 139 250 / .6); } }
+@keyframes ck-shake { 25% { transform: translate(1px, -1px); } 75% { transform: translate(-1px, 1px); } }
+@keyframes ck-streak { to { transform: scaleY(6) translateY(10%); opacity: .6; } }

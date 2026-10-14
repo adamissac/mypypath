@@ -782,6 +782,9 @@ def version_course_assets(html: str) -> str:
                 'assets/i18n/en.json',
                 'assets/js/home-tour.js',
                 'assets/js/summit-3d.js',
+                # The data course cockpit (data.html only).
+                'assets/css/cockpit.css',
+                'assets/js/cockpit.js',
                 'assets/js/classroom-dashboard.js',
                 # Page-specific scripts. Same one-hour JS cache as the
                 # sheets above: without a version, a returning visitor

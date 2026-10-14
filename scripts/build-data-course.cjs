@@ -516,16 +516,45 @@ for (const unit of COURSE.units) {
 manifest.lessonCount = manifest.lessons.length;
 write('assets/data/curriculum-data.json', `${JSON.stringify(manifest, null, 2)}\n`);
 
-write('data.html', shell('Python for Data \u2022 PyPath',
+/* The cockpit replaces the plain heading block. Each light carries its unit's
+   lesson paths so cockpit.js can light it from the learner's own lesson map
+   without loading the course manifest. */
+function cockpit(course) {
+  const lights = course.units.map((unit) => {
+    const lessons = manifest.lessons.filter((l) => l.unit === unit.n).map((l) => l.path);
+    const title = C[`unit${unit.n}`].title;
+    return `<li><a class="cockpit__light route" href="/data/unit-${unit.n}.html" data-unit="${unit.n}" data-title="${esc(title)}" data-lessons="${lessons.join('|')}" aria-label="Unit ${unit.n}: ${esc(title)}"><span aria-hidden="true">${unit.n}</span></a></li>`;
+  }).join('\n');
+  return `<section class="cockpit" data-cockpit aria-labelledby="cockpit-title">
+<div class="cockpit__window">
+<div class="cockpit__space" aria-hidden="true">
+<div class="cockpit__stars cockpit__stars--far"></div>
+<div class="cockpit__stars cockpit__stars--mid"></div>
+<div class="cockpit__stars cockpit__stars--near"></div>
+<div class="cockpit__planet"></div>
+<img class="cockpit__moon" src="/assets/img/data-moon.svg" width="640" height="640" alt="" decoding="async" />
+</div>
+<div class="cockpit__frame" aria-hidden="true"></div>
+<div class="cockpit__hud container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a class="route" href="/courses.html">Courses</a></nav>
+<h1 id="cockpit-title">Python for Data</h1>
+<p class="lead">${esc(course.summary)}</p>
+</div>
+</div>
+<div class="cockpit__panel">
+<p class="cockpit__panel-label" id="cockpit-lights-label">Units</p>
+<ol class="cockpit__lights" aria-labelledby="cockpit-lights-label">
+${lights}
+</ol>
+<a class="cockpit__launch" data-cockpit-launch href="/data/unit-1.html"><span class="cockpit__launch-icon" aria-hidden="true"></span><span class="cockpit__launch-label">Launch: Unit 1, ${esc(C.unit1.title)}</span></a>
+</div>
+</section>`;
+}
+
+write('data.html', shell('Python for Data • PyPath',
   COURSE.summary,
   `<main id="main-content">
-<section class="section reveal-up">
-<div class="container">
-<nav class="breadcrumb" aria-label="Breadcrumb"><a class="route" href="/courses.html">Courses</a></nav>
-<h1>Python for Data</h1>
-<p class="lead">${esc(COURSE.summary)}</p>
-</div>
-</section>
+${cockpit(COURSE)}
 <section class="course-main">
 <div class="container">
 <div class="grid units-grid stagger">
@@ -533,7 +562,8 @@ ${unitCards(COURSE)}
 </div>
 </div>
 </section>
-</main>`));
+</main>`)
+  .replace('</head>', '<link rel="stylesheet" href="/assets/css/cockpit.css" />\n<script defer src="/assets/js/cockpit.js"></script>\n</head>'));
 pages++;
 
 // The course picker is authored once and preserved through every lesson rebuild.

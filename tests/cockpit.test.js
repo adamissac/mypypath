@@ -69,3 +69,28 @@ describe('reading stored progress', () => {
     delete window.ProgressStore;
   });
 });
+
+describe('cockpit wiring', () => {
+  it('lights units and points Launch at the current unit', () => {
+    const lights = units.map((u) => `<a class="cockpit__light" href="${u.href}" data-unit="${u.n}" data-title="${u.title}" data-lessons="${u.lessons.join('|')}"><span>${u.n}</span></a>`).join('');
+    document.body.innerHTML = `<section data-cockpit><ol>${lights}</ol>
+      <a class="cockpit__launch" data-cockpit-launch href="/data/unit-1.html"><span class="cockpit__launch-label">Launch</span></a></section>`;
+    window.ProgressStore = {
+      getItem: (k) => k === 'pypath-unit-tests' ? JSON.stringify({ 'data-1': { best: 90 } })
+        : JSON.stringify({ '/data/unit-1/a.html': { passed: true }, '/data/unit-1/b.html': { passed: true } }),
+    };
+    window.PyPathLessonProgress = {
+      STORE_KEY: 'lessons', UNIT_TESTS_KEY: 'pypath-unit-tests', UNIT_TEST_PASS_MARK: 70,
+      passedLessons: (m) => Object.keys(m).filter((k) => m[k].passed),
+    };
+    C.render(document);
+    const states = [...document.querySelectorAll('.cockpit__light')].map((a) => a.dataset.state);
+    expect(states.slice(0, 3)).toEqual(['done', 'current', 'idle']);
+    const launch = document.querySelector('[data-cockpit-launch]');
+    expect(launch.getAttribute('href')).toBe('/data/unit-2.html');
+    expect(launch.textContent.trim()).toBe('Launch: Unit 2, Unit title 2');
+    expect(document.querySelector('.cockpit__light[data-unit="2"]').getAttribute('aria-current')).toBe('step');
+    delete window.ProgressStore;
+    delete window.PyPathLessonProgress;
+  });
+});
