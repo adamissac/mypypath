@@ -84,7 +84,7 @@ export function buildCurriculum() {
     // "Unit 1: Foundations" -> "Foundations"; the unit number is already a field.
     const unitTitle = firstGroup(
       overviewHtml,
-      /<h1[^>]*class="page-title"[^>]*>([\s\S]*?)<\/h1>/,
+      /<h1[^>]*class="[^"]*\bpage-title\b[^"]*"[^>]*>([\s\S]*?)<\/h1>/,
       `Unit ${unit}`
     ).replace(new RegExp(`^Unit\\s*${unit}\\s*[:•-]\\s*`), '');
 
