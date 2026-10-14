@@ -299,24 +299,16 @@ def replace_footer(html: str) -> str:
 
 
 def fix_unit_redirect(html: str, path: Path) -> str:
-    if page_kind(path) != 'unit_redirect':
-        return html
-    m = re.search(r'unit-(\d+)', path.name)
-    if not m:
-        return html
-    num = int(m.group(1))
-    name = UNIT_NAMES[num - 1]
-    html = re.sub(
-        r'<meta name="description" content="[^"]*"',
-        f'<meta name="description" content="Unit {num}: {name} — PyPath curriculum"',
-        html,
-        count=1,
-    )
+    """Unit overview pages need nothing from the layout bake.
 
-    # The page body (unit header and lesson trail) is written by
-    # scripts/build-unit-pages.mjs. This used to rebuild it here from a regex
-    # on a bare <main>, which stopped matching once pages gained
-    # <main id="main-content"> and has been dead code since.
+    The description is the page's own (the real per-unit blurb, kept in step
+    with the og/twitter cards by tests/page-meta.test.js); it used to be
+    overwritten here with "Unit N: <Foundations name> -- PyPath curriculum" on
+    every bake, which undid the real text and put Foundations wording on
+    Python for Data pages. The body (header and lesson trail) is written by
+    scripts/build-unit-pages.mjs; this used to rebuild it from a regex on a bare
+    <main>, which stopped matching once pages gained <main id="main-content">.
+    """
     return html
 
 
