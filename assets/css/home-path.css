@@ -331,59 +331,6 @@ body.page-home .site-header {
   background: transparent;
 }
 
-/* 3D summit (summit-3d.js) takes over from the still when WebGL is
-   available and motion is allowed. The img keeps its place in the layout so
-   the box never changes size; the canvas sits over it. */
-.home-summit__art { transition: opacity 0.7s ease; }
-html.summit-pending .home-summit__art { opacity: 0; transition: none; }
-.home-summit.is-3d .home-summit__art { opacity: 0; }
-
-.home-summit__canvas {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-}
-.home-summit__canvas.is-in { opacity: 1; }
-.home-summit__canvas.is-crossfading { transition: opacity 0.7s ease; }
-
-/* While the scene is on its way: a bank of faceted cloud for the island to
-   rise through, in the same low-poly style. Flat SVG, no download. */
-.home-summit::after {
-  content: "";
-  position: absolute;
-  z-index: 2;
-  inset: 34% -4% 22%;
-  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 300'><polygon fill='%23ffffff' points='209,218 173,258 119,254 89,209 105,158 155,138 201,165'/><polygon fill='%23ffffff' points='305,188 258,238 191,233 153,177 173,112 236,87 294,121'/><polygon fill='%23ffffff' points='404,176 352,232 276,226 233,163 256,90 327,62 393,100'/><polygon fill='%23ffffff' points='479,191 436,237 374,232 339,181 357,121 415,98 470,129'/><polygon fill='%23ffffff' points='543,221 510,256 462,253 436,213 450,168 494,150 535,174'/><polygon fill='%23ffffff' points='135,242 110,269 74,266 53,236 64,201 98,188 130,206'/><polygon fill='%23ffffff' points='337,236 296,280 235,276 201,225 219,167 275,145 328,176'/><polygon fill='%23ffffff' points='443,240 404,281 347,277 315,230 332,175 385,154 435,183'/><polygon fill='%23ffffff' points='579,243 558,266 527,263 509,237 519,207 548,196 575,212'/><polygon fill='%23e8f4fb' points='100,222 200,222 178,253 122,253'/><polygon fill='%23e8f4fb' points='168,192 292,192 265,231 195,231'/><polygon fill='%23e8f4fb' points='250,181 390,181 360,225 280,225'/><polygon fill='%23e8f4fb' points='352,195 468,195 442,231 378,231'/><polygon fill='%23e8f4fb' points='446,224 534,224 515,252 465,252'/><polygon fill='%23e8f4fb' points='61,245 129,245 114,266 76,266'/><polygon fill='%23e8f4fb' points='214,240 326,240 302,274 238,274'/><polygon fill='%23e8f4fb' points='327,243 433,243 410,276 350,276'/><polygon fill='%23e8f4fb' points='516,245 574,245 561,263 529,263'/></svg>") center / contain no-repeat;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.9s ease;
-}
-:root[data-theme="dark"] .home-summit::after { filter: brightness(0.62) saturate(0.7); }
-html.summit-pending .home-summit::after { opacity: 1; transition: none; }
-@media (prefers-reduced-motion: no-preference) {
-  html.summit-pending .home-summit::after { animation: summit-bank 5s ease-in-out infinite alternate; }
-}
-@keyframes summit-bank { to { transform: translateX(3%) scale(1.03); } }
-
-/* The stop label the scene positions over the canvas. */
-.home-summit__label {
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 3;
-  padding: 0.35rem 0.75rem;
-  border-radius: 999px;
-  background: #0c4566;
-  color: #ffffff;
-  font: 600 0.8rem/1.25 var(--home-body, system-ui, sans-serif);
-  white-space: nowrap;
-  pointer-events: none;
-  box-shadow: 0 6px 18px rgb(12 69 102 / 0.25);
-}
-:root[data-theme="dark"] .home-summit__label { background: #e0f2fe; color: #0c2d48; }
 
 .home-hero__headline {
   margin: 0 0 0.85rem;
@@ -2151,13 +2098,31 @@ html.reduced-motion .page-home .home-endcta::before {
 }
 
 
+/* The question at the end of Foundations: continue, or stay. */
+.trail-transition {
+  width: min(480px, calc(100% - 2rem));
+  max-height: calc(100dvh - 2rem);
+  box-sizing: border-box;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border: 1px solid var(--pp-border);
+  border-radius: 20px;
+  background: var(--pp-paper);
+  color: var(--pp-ink-soft);
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--pp-ink) 15%, transparent);
+}
+.trail-transition::backdrop { background: rgba(8, 24, 38, 0.5); }
+.trail-transition h2 { margin: 0 0 1rem; font-size: 1.65rem; line-height: 1.2; }
+.trail-transition p { line-height: 1.6; }
+.trail-transition__eyebrow { color: var(--pp-ink); font-weight: 700; font-size: 0.85rem; }
+.trail-transition__actions { display: grid; gap: 0.75rem; margin-top: 1.5rem; }
+.trail-transition button { cursor: pointer; min-height: 44px; }
+
 /* Course artwork in the hero follows the selected course. */
 .trail-landscape__stars { fill: var(--trail-detail); opacity: 0.7; }
 .trail-landscape__space .trail-landscape__landmark { stroke-width: 1.4; }
 .home-summit__moon { display: none; width: 100%; height: auto; aspect-ratio: 1; }
 html[data-course="data"] .home-summit__mountain,
-html[data-course="data"] .home-summit__art,
-html[data-course="data"] .home-summit__canvas { display: none; }
+html[data-course="data"] .home-summit__art { display: none; }
 html[data-course="data"] .home-summit__moon { display: block; }
 
 html[data-course="data"] .home-hero__topo { display: none; }

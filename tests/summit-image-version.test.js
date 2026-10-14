@@ -27,10 +27,4 @@ describe('the summit image is cache-busted from its bytes', () => {
     expect(fs.readFileSync('index.html', 'utf8')).not.toContain('v=theme1');
     expect(fs.readFileSync('assets/css/dropdowns.css', 'utf8')).not.toContain('v=theme1');
   });
-
-  it('the hero still (the diorama) is versioned from its own bytes', () => {
-    const still = createHash('sha256').update(fs.readFileSync('assets/img/summit-diorama.webp')).digest('hex').slice(0, 10);
-    expect(baker).toContain("'assets/img/summit-diorama.webp'");
-    expect(fs.readFileSync('index.html', 'utf8')).toContain(`/assets/img/summit-diorama.webp?v=${still}`);
-  });
 });

@@ -2,18 +2,23 @@ import { describe, it, expect } from 'vitest';
 import { JSDOM } from 'jsdom';
 import { buildTrail } from '../scripts/build-trail.mjs';
 
-describe('the trail flows from Foundations into Python for Data', () => {
+describe('the trail from Foundations into Python for Data', () => {
   const document = new JSDOM(buildTrail()).window.document;
 
   it('keeps all 20 unit cards and their links', () => {
     expect(document.querySelectorAll('[data-stop-card] a[href]')).toHaveLength(20);
   });
 
-  it('never interrupts the scroll with a dialog', () => {
-    expect(document.querySelectorAll('dialog')).toHaveLength(0);
-    expect(document.querySelector('.trail-transition')).toBeNull();
-    expect(document.querySelector('.trail-launch')).toBeNull();
-    expect(document.querySelector('[data-trail-continue], [data-launch-skip]')).toBeNull();
+  it('asks once before Python for Data, as a plain choice with no launch', () => {
+    const dialogs = document.querySelectorAll('dialog');
+    expect(dialogs).toHaveLength(1);
+    const dialog = dialogs[0];
+    expect(dialog.classList.contains('trail-transition')).toBe(true);
+    expect(document.getElementById(dialog.getAttribute('aria-labelledby')).textContent).toBe('Continue to Python for Data?');
+    expect(dialog.querySelector('[data-trail-continue]').getAttribute('type')).toBe('button');
+    expect(dialog.querySelector('[data-trail-stay]').getAttribute('type')).toBe('button');
+    expect(document.querySelector('.trail-launch, [data-launch-skip]')).toBeNull();
+    expect(dialog.textContent).not.toMatch(/space|liftoff|rocket/i);
   });
 
   it('has no altitude layer that could darken the Foundations map', () => {

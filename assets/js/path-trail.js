@@ -116,6 +116,18 @@
   if (!segments.length) return;
   const totalStops = offset;
 
+  /* ── Asking before Python for Data ──────────────────────────────────────
+     At the end of Foundations the trail asks whether to go on. Some people
+     only want Foundations, and should be able to keep scrolling the page
+     without being carried into the next course. A "no" holds the trail at
+     Unit 10 and is not asked again until they scroll back up the trail; a
+     "yes" carries on to Unit 11. A learner already on Python for Data
+     (resumeOnStoredCourse) is never asked. */
+  const transition = section.querySelector('.trail-transition');
+  let dataAccepted = false;
+  let transitionDismissed = false;
+  let returningFromTransition = false;
+
   /* ── Resuming on the course you were last on ──────────────────────────
      A learner who has moved on to Python for Data and comes back to the
      home page should not have to walk the ten Foundations stops again.
@@ -461,6 +473,41 @@
     drawLabel(seg.peek, peekStop, rect, p.reach, false);
   }
 
+  function requestDataTransition() {
+    if (!transition || dataAccepted || transition.open || returningFromTransition) return;
+    transitionDismissed = true;
+    scrollToProgress(progressForStop(segments[0].stops.length - 1));
+    transition.showModal();
+  }
+
+  function stayOnFoundations() {
+    // close() restores the previously focused link synchronously. If that
+    // link belongs to Data, its focusin must not reopen the dialog.
+    returningFromTransition = true;
+    transition.close();
+    scrollToProgress(progressForStop(segments[0].stops.length - 1));
+    jumps[0]?.focus({ preventScroll: true });
+    returningFromTransition = false;
+  }
+
+  function continueToData() {
+    dataAccepted = true;
+    returningFromTransition = true;
+    transition.close();
+    scrollToProgress(progressForStop(segments[1].offset));
+    cards[segments[1].offset]?.querySelector('a')?.focus({ preventScroll: true });
+    returningFromTransition = false;
+  }
+
+  if (transition) {
+    transition.querySelector('[data-trail-stay]').addEventListener('click', stayOnFoundations);
+    transition.querySelector('[data-trail-continue]').addEventListener('click', continueToData);
+    transition.addEventListener('cancel', (event) => {
+      event.preventDefault();
+      stayOnFoundations();
+    });
+  }
+
   /* ── Progress ─────────────────────────────────────────────────────────── */
 
   /* Visors reveal on entry, with no extra scroll handler or hidden content. */
@@ -658,8 +705,15 @@
 
   function render() {
     const p = measureScroll();
-    setProgress(p);
+    // Keep normal page scrolling available after declining, but never reveal
+    // the next course or change its palette without an explicit choice.
+    const blocked = transition && !dataAccepted && p > segments[0].end;
+    setProgress(blocked ? progressForStop(segments[0].stops.length - 1) : p);
     applyCourseTheme();
+    if (!blocked && p < progressForStop(segments[0].stops.length - 2)) transitionDismissed = false;
+    const rect = track.getBoundingClientRect();
+    const onTrail = rect.top < innerHeight / 2 && rect.bottom > innerHeight / 2;
+    if (blocked && onTrail && !transitionDismissed) requestDataTransition();
     section.classList.toggle("is-active", reduced || (p > 0.002 && p < 0.998));
   }
 
@@ -714,6 +768,8 @@
 
     resumeIndex = index;
     resumeOffset = segments[index].start;
+    // They have been there; the trail has nothing left to ask.
+    dataAccepted = true;
     // Keep the scroll cost per stop what it was, now that the track is
     // carrying one course instead of two.
     scaleTrack(1 - resumeOffset);
@@ -749,6 +805,10 @@
       const card = e.target.closest("[data-stop-card]");
       if (!card || card.classList.contains("is-active")) return;
       const index = Number(card.getAttribute("data-stop-index"));
+      if (transition && !dataAccepted && index >= segments[1].offset) {
+        requestDataTransition();
+        return;
+      }
       scrollToProgress(progressForStop(index));
     });
   }
@@ -758,6 +818,10 @@
       const card = cards[index];
       if (!card) return;
       e.preventDefault();
+      if (transition && !dataAccepted && index >= segments[1].offset) {
+        requestDataTransition();
+        return;
+      }
       scrollToProgress(progressForStop(index));
       const target = card.querySelector("a");
       if (target) target.focus({ preventScroll: true });

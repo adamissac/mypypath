@@ -547,7 +547,16 @@ ${svgs.join('')}${segments.length > 1 ? `
               <div class="path-panel__stage">${cards.join('')}
               </div>
             </aside>
-          </div>
+          </div>${segments.length > 1 ? `
+          <dialog class="trail-transition" aria-labelledby="trail-transition-title" aria-describedby="trail-transition-description">
+            <p class="trail-transition__eyebrow">Next course · Units 11–20</p>
+            <h2 id="trail-transition-title">Continue to ${esc(courses[segments[1].course].title)}?</h2>
+            <p id="trail-transition-description">That's the end of the Python Foundations trail. Python for Data puts what you know to work on real data sets with numpy and pandas. You can switch back any time.</p>
+            <div class="trail-transition__actions">
+              <button type="button" class="btn-path btn-path--primary" data-trail-continue>Continue to ${esc(courses[segments[1].course].title)}</button>
+              <button type="button" class="btn-path btn-path--ghost" data-trail-stay autofocus>Stay on Foundations</button>
+            </div>
+          </dialog>` : ''}
         </div>
         ${END}`;
 }
