@@ -107,6 +107,19 @@ try {
   ok('slow model: still first, then a late takeover');
   await slow.close();
 
+  // (j) the bootstrap never runs (blocked, failed to load): the head gate
+  // must not leave the hero blank.
+  const blocked = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  await blocked.addInitScript(english);
+  await blocked.route('**/assets/js/summit-3d.js*', (route) => route.abort());
+  const bp = await blocked.newPage();
+  await bp.goto(base + '/');
+  await bp.waitForTimeout(4600);
+  assert.equal(await bp.evaluate(() => document.documentElement.classList.contains('summit-pending')), false);
+  assert.equal(await artOpacity(bp), 1, 'still visible when the bootstrap never runs');
+  ok('blocked bootstrap: the still appears anyway');
+  await blocked.close();
+
   // (d) reduced motion: the still only.
   const calm = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   await calm.addInitScript(english);

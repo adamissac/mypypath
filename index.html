@@ -8,14 +8,18 @@
       /* Summit entrance gate (assets/js/summit-3d.js) — before first paint.
          Visitors likely to get the 3D island see a cloud bank, not the still,
          until the scene rises through it or 2.5 s pass. WebGL is checked
-         later; failing that only means the still appears a moment sooner. */
+         later; failing that only means the still appears a moment sooner.
+         The 4 s backstop is for summit-3d.js never running at all (blocked,
+         failed to load): without it the hero would stay an empty cloud. */
       (function () {
         try {
+          var root = document.documentElement;
           if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
           var c = navigator.connection;
           if (c && (c.saveData || /^(slow-2g|2g|3g)$/.test(c.effectiveType || ''))) return;
-          if (document.documentElement.getAttribute('data-course') === 'data') return;
-          document.documentElement.classList.add('summit-pending');
+          if (root.getAttribute('data-course') === 'data') return;
+          root.classList.add('summit-pending');
+          window.setTimeout(function () { root.classList.remove('summit-pending'); }, 4000);
         } catch (e) { /* the still shows */ }
       }());
     </script>
