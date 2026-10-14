@@ -290,6 +290,98 @@ export function scenery(seg, geo) {
                 </g>`;
 }
 
+/* ── Geometric scenery ───────────────────────────────────────────────────
+   Flat, faceted shapes in the map's own palette, drawn under the route in two
+   depths that drift apart a little as you scroll (path-trail.js). Foundations
+   gets ridgelines along the foot of the map and stands of pines; Python for
+   Data a low-poly moon, small planets and constellations. Everything placed
+   inside the map keeps 44 units (60 in space) from the route and every stop, so labels,
+   dots and the line stay readable; ridges sit below the bottom row. */
+function clearSpots(seg, geo, count, clearance, rand) {
+  const { width: w, height: h } = geo;
+  const spots = [];
+  for (let tries = 0; tries < 400 && spots.length < count; tries++) {
+    const x = round(50 + rand() * (w - 100));
+    const y = round(26 + rand() * (h - 110));
+    if (nearRoute(geo, x, y, clearance)) continue;
+    if (geo.stops.some((s) => Math.hypot(s.x - x, s.y - y) < clearance)) continue;
+    if (spots.some((s) => Math.hypot(s.x - x, s.y - y) < 70)) continue;
+    spots.push({ x, y });
+  }
+  return spots;
+}
+
+function ridge(w, base, peaks, rand, cls) {
+  // Each peak is two facets: a lit face and a shaded one.
+  let out = '';
+  const step = w / peaks;
+  for (let i = -1; i <= peaks; i++) {
+    const x0 = round(i * step + rand() * step * 0.2);
+    const top = round(x0 + step * (0.45 + rand() * 0.25));
+    const x1 = round(x0 + step * 1.35);
+    const hgt = round(base.amp * (0.55 + rand() * 0.45));
+    out += `<polygon class="${cls}--lit" points="${x0},${base.y} ${top},${base.y - hgt} ${top},${base.y}" />`
+      + `<polygon class="${cls}--shade" points="${top},${base.y - hgt} ${x1},${base.y} ${top},${base.y}" />`;
+  }
+  return out;
+}
+
+function pines(x, y, rand) {
+  let out = `<g class="trail-scenery__pines" data-x="${x}" data-y="${y}" transform="translate(${x} ${y})">`;
+  for (let i = 0; i < 3; i++) {
+    const dx = (i - 1) * 11 + round(rand() * 4);
+    const s = 0.8 + rand() * 0.45;
+    const t = (n) => round(n * s);
+    out += `<polygon class="trail-scenery__pine--lit" points="${dx},${t(-26)} ${dx},${t(2)} ${dx - t(9)},${t(2)}" />`
+      + `<polygon class="trail-scenery__pine--shade" points="${dx},${t(-26)} ${dx + t(9)},${t(2)} ${dx},${t(2)}" />`;
+  }
+  return `${out}</g>`;
+}
+
+function facetedDisc(r, sides, rand) {
+  const pts = Array.from({ length: sides }, (_, i) => {
+    const a = (i / sides) * Math.PI * 2 + 0.3;
+    const rr = r * (0.94 + rand() * 0.06);
+    return [round(Math.cos(a) * rr), round(Math.sin(a) * rr)];
+  });
+  return pts.map((p, i) => {
+    const q = pts[(i + 1) % sides];
+    return `<polygon class="trail-scenery__facet--${i % 2 ? 'shade' : 'lit'}" points="0,0 ${p[0]},${p[1]} ${q[0]},${q[1]}" />`;
+  }).join('');
+}
+
+export function geometricScenery(seg, geo) {
+  const { width: w, height: h } = geo;
+  const rand = seeded(seg.seed + 97);
+  let far = '';
+  let near = '';
+  if (seg.scene === 1) {
+    far += `<g class="trail-scenery__ridge trail-scenery__ridge--far">${ridge(w, { y: h + 12, amp: 58 }, 7, rand, 'trail-scenery__ridge')}</g>`;
+    near += `<g class="trail-scenery__ridge trail-scenery__ridge--near">${ridge(w, { y: h + 18, amp: 40 }, 11, rand, 'trail-scenery__ridge')}</g>`;
+    for (const { x, y } of clearSpots(seg, geo, 4, 44, rand)) near += pines(x, y, rand);
+  } else {
+    // Wider berth than the pines: a label pill can sit up to ~55 units off its stop.
+    const spots = clearSpots(seg, geo, 6, 60, rand);
+    const [moon, p1, p2, ...rest] = spots;
+    if (moon) near += `<g class="trail-scenery__moon" data-x="${moon.x}" data-y="${moon.y}" transform="translate(${moon.x} ${moon.y})">${facetedDisc(30, 11, rand)}<polygon class="trail-scenery__crater" points="-9,-6 -3,-11 3,-7 0,0 -7,1" /></g>`;
+    [p1, p2].filter(Boolean).forEach((p, i) => {
+      near += `<g class="trail-scenery__planet" data-x="${p.x}" data-y="${p.y}" transform="translate(${p.x} ${p.y})">${facetedDisc(9 + i * 3, 6, rand)}<path class="trail-scenery__orbit" d="M-${17 + i * 4} 3 L${17 + i * 4} -3" /></g>`;
+    });
+    rest.forEach(({ x, y }) => {
+      const n = 3 + Math.floor(rand() * 2);
+      const pts = Array.from({ length: n }, (_, i) => [round((i - (n - 1) / 2) * 13), round((rand() - 0.5) * 18)]);
+      far += `<g class="trail-scenery__constellation" data-x="${x}" data-y="${y}" transform="translate(${x} ${y})">`
+        + `<polyline points="${pts.map((p) => p.join(',')).join(' ')}" />`
+        + pts.map(([px, py]) => `<circle cx="${px}" cy="${py}" r="1.8" />`).join('') + '</g>';
+    });
+  }
+  return `
+                <g class="trail-scenery" aria-hidden="true" focusable="false">
+                  <g class="trail-scenery__far">${far}</g>
+                  <g class="trail-scenery__near">${near}</g>
+                </g>`;
+}
+
 function callout(extra, label, x, y) {
   // A first guess at the label's size, for a page without scripting;
   // path-trail.js measures the real text and places it.
@@ -356,8 +448,14 @@ function segmentSvg(seg, geo, units, offset, si) {
   return `
               <svg class="path-map" data-segment="${seg.scene}" data-course="${seg.course}" data-span="${seg.span}" data-seam="${seg.seam}" data-stops="${units.length}" viewBox="0 0 ${geo.width} ${geo.height}" preserveAspectRatio="xMidYMid meet">
 
+${geometricScenery(seg, geo)}
 ${route(seg, geo)}
-
+                <g class="path-tail" aria-hidden="true"><circle r="2.8" /><circle r="2.2" /><circle r="1.6" /><circle r="1.1" /></g>
+                <g class="path-head" transform="translate(${first.x} ${first.y})">
+                  <circle class="path-head__halo" r="15" />
+                  <circle class="path-head__ring" r="9" />
+                  <circle class="path-head__core" r="5" />
+                </g>
 ${stops}
 ${callout('', units[0].label, first.x, first.y)}
 ${callout(' trail-callout--peek', '', first.x, first.y)}

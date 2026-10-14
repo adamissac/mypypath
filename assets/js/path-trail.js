@@ -87,6 +87,10 @@
       seam: Math.max(0, Number(svg.getAttribute("data-seam")) || 0),
       drawPath: svg.querySelector(".path-map__draw"),
       head: svg.querySelector(".path-head"),
+      tail: svg.querySelector(".path-tail"),
+      tailDots: Array.from(svg.querySelectorAll(".path-tail circle")),
+      sceneryFar: svg.querySelector(".trail-scenery__far"),
+      sceneryNear: svg.querySelector(".trail-scenery__near"),
       callout: svg.querySelector(".trail-callout:not(.trail-callout--peek)"),
       peek: svg.querySelector(".trail-callout--peek"),
       stops,
@@ -550,10 +554,28 @@
       if (seg.head) {
         const onShow = isScene && where.seamIndex === -1 && seg.len > 0;
         seg.head.classList.toggle("is-hidden", !onShow);
+        if (seg.tail) seg.tail.classList.toggle("is-hidden", !onShow || reduced);
         if (onShow) {
-          const pt = seg.drawPath.getPointAtLength(frac * seg.len);
+          const at = frac * seg.len;
+          const pt = seg.drawPath.getPointAtLength(at);
           seg.head.setAttribute("transform", `translate(${pt.x} ${pt.y})`);
+          // The tail: a few fading dots on the path just behind the head.
+          if (!reduced) {
+            seg.tailDots.forEach((dot, i) => {
+              const q = seg.drawPath.getPointAtLength(Math.max(0, at - (i + 1) * 9));
+              dot.setAttribute("cx", q.x.toFixed(1));
+              dot.setAttribute("cy", q.y.toFixed(1));
+            });
+          }
         }
+      }
+
+      // Parallax: the two scenery depths drift apart a few units as the
+      // course scrolls by. Still under reduced motion.
+      if (!reduced && seg.sceneryFar) {
+        const drift = (u - 0.5);
+        seg.sceneryFar.setAttribute("transform", `translate(0 ${(drift * -6).toFixed(2)})`);
+        seg.sceneryNear.setAttribute("transform", `translate(0 ${(drift * -14).toFixed(2)})`);
       }
     });
 

@@ -1293,6 +1293,48 @@ html.summit-pending .home-summit::after { opacity: 1; transition: none; }
   50% { transform: scale(1.4); opacity: 0.12; }
 }
 
+/* The glow round the head and the short tail it leaves as it walks
+   (positions from path-trail.js). Flat circles, no gradients. */
+.path-head__halo {
+  fill: var(--trail-head);
+  opacity: 0.16;
+}
+.path-tail {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+.path-journey.is-active .path-tail:not(.is-hidden) { opacity: 1; }
+.path-tail circle { fill: var(--trail-head); }
+.path-tail circle:nth-child(1) { opacity: 0.55; }
+.path-tail circle:nth-child(2) { opacity: 0.4; }
+.path-tail circle:nth-child(3) { opacity: 0.27; }
+.path-tail circle:nth-child(4) { opacity: 0.15; }
+
+/* ── Geometric scenery (build-trail.mjs geometricScenery) ──
+   Faceted shapes in the scene's own tokens, quiet enough that the route,
+   stops and labels stay the subject. */
+.trail-scenery { pointer-events: none; }
+.trail-scenery__ridge--lit,
+.trail-scenery__pine--lit,
+.trail-scenery__facet--lit { fill: color-mix(in srgb, var(--trail-detail) 26%, var(--trail-terrain-edge)); }
+.trail-scenery__ridge--shade,
+.trail-scenery__pine--shade,
+.trail-scenery__facet--shade { fill: color-mix(in srgb, var(--trail-detail) 52%, var(--trail-terrain-edge)); }
+.trail-scenery__ridge--far { opacity: 0.55; }
+.trail-scenery__pines { opacity: 0.85; }
+.trail-scenery__moon { opacity: 0.9; }
+.trail-scenery__moon .trail-scenery__facet--lit { fill: color-mix(in srgb, var(--trail-detail) 70%, var(--trail-terrain-edge)); }
+.trail-scenery__crater { fill: var(--trail-terrain-edge); opacity: 0.8; }
+.trail-scenery__orbit,
+.trail-scenery__constellation polyline {
+  fill: none;
+  stroke: var(--trail-detail);
+  stroke-width: 1;
+  opacity: 0.6;
+}
+.trail-scenery__constellation circle { fill: var(--trail-detail); }
+
 /* ── The seam ──────────────────────────────────────────────
    Between the courses a title card closes over the map, holds while
    the scenery changes underneath it, and opens on the next course
@@ -1629,6 +1671,12 @@ html.summit-pending .home-summit::after { opacity: 1; transition: none; }
   .home-summit,
   .path-head__ring {
     animation: none !important;
+  }
+
+  /* A plain dot that steps from stop to stop: no sparkle, no glow. */
+  .path-tail,
+  .path-head__halo {
+    display: none;
   }
 
   .home-hero__topo path {
