@@ -82,6 +82,9 @@
     var s = state(units, progress.passedPaths, progress.testRecords, (LP && LP.UNIT_TEST_PASS_MARK) || 70);
     units.forEach(function (u, i) {
       u.el.setAttribute('data-state', s.lights[i]);
+      // The colour says finished / up next; say it to a screen reader too.
+      u.el.setAttribute('aria-label', 'Unit ' + u.n + ': ' + u.title
+        + (s.lights[i] === 'done' ? ', finished' : s.lights[i] === 'current' ? ', up next' : ''));
       if (s.lights[i] === 'current') u.el.setAttribute('aria-current', 'step');
       else u.el.removeAttribute('aria-current');
     });

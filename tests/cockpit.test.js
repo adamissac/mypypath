@@ -90,6 +90,10 @@ describe('cockpit wiring', () => {
     expect(launch.getAttribute('href')).toBe('/data/unit-2.html');
     expect(launch.textContent.trim()).toBe('Launch: Unit 2, Unit title 2');
     expect(document.querySelector('.cockpit__light[data-unit="2"]').getAttribute('aria-current')).toBe('step');
+    // A screen reader hears the state the colour shows.
+    expect(document.querySelector('.cockpit__light[data-unit="1"]').getAttribute('aria-label')).toBe('Unit 1: Unit title 1, finished');
+    expect(document.querySelector('.cockpit__light[data-unit="2"]').getAttribute('aria-label')).toBe('Unit 2: Unit title 2, up next');
+    expect(document.querySelector('.cockpit__light[data-unit="3"]').getAttribute('aria-label')).toBe('Unit 3: Unit title 3');
     delete window.ProgressStore;
     delete window.PyPathLessonProgress;
   });
