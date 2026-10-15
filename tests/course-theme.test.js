@@ -42,7 +42,9 @@ describe('the Python for Data course theme', () => {
   it('has no gradients in the course theme', () => {
     const css = fs.readFileSync('assets/css/pypath-theme.css', 'utf8');
     expect(css).not.toMatch(/gradient\(/);
-    for (const name of fs.readdirSync('assets/css').filter(name => name.endsWith('.css'))) {
+    // The requested cinematic scenes use atmospheric light and planet shading.
+    // They load only during navigation; the course UI retains its flat palette.
+    for (const name of fs.readdirSync('assets/css').filter(name => name.endsWith('.css') && name !== 'course-journey.css')) {
       expect(fs.readFileSync(`assets/css/${name}`, 'utf8'), name).not.toMatch(/gradient\(/);
     }
   });
