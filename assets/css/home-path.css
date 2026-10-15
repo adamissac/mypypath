@@ -921,6 +921,9 @@ body.page-home .site-header {
 
 .path-journey__track {
   position: relative;
+  /* Course switches resize this track before measuring the scroll target.
+     Override global transitions so that measurement sees the new height. */
+  transition: none !important;
   /* Written by scripts/build-trail.mjs from each segment's scroll budget. */
   height: var(--trail-length, 520vh);
 }
