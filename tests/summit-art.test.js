@@ -39,4 +39,22 @@ describe('the hero mountain', () => {
     expect(rule[0]).toMatch(/-webkit-user-drag:\s*none/);
     expect(rule[0]).toMatch(/user-select:\s*none/);
   });
+
+  it('is drawn in the site\'s own blues, with the sky blue kept for accents', () => {
+    const svg = fs.readFileSync('assets/img/summit-art.svg', 'utf8');
+    // pypath-theme.css: ink #0c4566, ink-soft #165a7a, line #0ea5e9, fog #e8f4fb,
+    // mist #f3f9fc, border #d0e4ef -- and the steel ramp between ink and fog
+    // that the original mountain used.
+    const ALLOWED = new Set([
+      '#ffffff', '#f3f9fc', '#e8f4fb', '#d0e4ef', '#a8d0e8', '#8fbdd6', '#7fb0cf', '#4078a0', '#2b6a8f', '#165a7a',
+      '#11506f', '#0c4566', '#0a3a57', '#082f49', '#0ea5e9', '#7dd3fc', '#bae6fd', '#e0f2fe', '#f0f9ff', '#f2bc63',
+    ]);
+    const used = [...new Set((svg.match(/#[0-9a-fA-F]{6}\b/g) || []).map((c) => c.toLowerCase()))];
+    expect(used.filter((c) => !ALLOWED.has(c))).toEqual([]);
+    // The accent is an accent: no big shape may use it (trail, stops, lake and
+    // flag are the only users, so it stays a small share of the colours).
+    const accent = (svg.match(/#0ea5e9/gi) || []).length;
+    const all = (svg.match(/#[0-9a-fA-F]{6}\b/g) || []).length;
+    expect(accent / all).toBeLessThan(0.28);
+  });
 });

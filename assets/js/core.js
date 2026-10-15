@@ -744,6 +744,48 @@
   }
 
   function initNavigation() {
+    // Course journeys are handled during bubbling, after individual controls
+    // (including the cockpit launch) have had the chance to own their click.
+    var journey = null;
+    function clearJourney() {
+      if (!journey) return;
+      clearTimeout(journey.timer);
+      journey.el.remove();
+      journey = null;
+    }
+    window.addEventListener('pageshow', clearJourney);
+    document.addEventListener('click', function (e) {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || prefersReducedMotion()) return;
+      var a = e.target.closest('a[href]');
+      if (!isInternalNavLink(a) || a.target && a.target !== '_self' || a.getAttribute('aria-disabled') === 'true') return;
+      var dest = new URL(a.href);
+      if (dest.pathname === location.pathname) return;
+      var match = dest.pathname.match(/^\/(units|data)\/unit-(\d+)(\.html|\/[^/]+\.html)$/);
+      var course = dest.pathname === '/data.html' ? 'data' : dest.pathname === '/curriculum.html' ? 'units' : match && match[1];
+      if (!course) return;
+      e.preventDefault();
+      if (journey) return;
+      var lesson = match && match[3] !== '.html';
+      var title = match ? 'Unit ' + match[2] : course === 'data' ? 'Python for Data' : 'Python Foundations';
+      var dialog = document.createElement('dialog');
+      dialog.className = 'course-journey course-journey--' + course;
+      dialog.setAttribute('aria-label', 'Opening ' + title);
+      dialog.innerHTML = '<div class="course-journey__scene" aria-hidden="true"><div class="course-journey__orbit"></div><div class="course-journey__ridge course-journey__ridge--far"></div><div class="course-journey__ridge"></div><div class="course-journey__trail"></div></div><div class="course-journey__caption"><p></p><h2></h2></div><button type="button" autofocus>Skip animation</button>';
+      dialog.querySelector('p').textContent = course === 'data' ? (lesson ? 'On to the next discovery' : 'Setting a new orbit') : (lesson ? 'Another step on the path' : 'Your next ascent');
+      dialog.querySelector('h2').textContent = title;
+      document.body.appendChild(dialog);
+      var finished = false;
+      function finish() {
+        if (finished) return;
+        finished = true;
+        clearTimeout(journey && journey.timer);
+        window.location.assign(dest.href);
+      }
+      dialog.querySelector('button').addEventListener('click', finish);
+      dialog.addEventListener('cancel', function (event) { event.preventDefault(); finish(); });
+      try { dialog.showModal(); } catch (err) { dialog.remove(); window.location.assign(dest.href); return; }
+      journey = { el: dialog, timer: setTimeout(finish, lesson ? 750 : 1400) };
+    });
     qsa('.lesson-nav a[href], .lesson-overview a[href]').forEach(function (a) {
       prefetchUrl(a.href);
     });

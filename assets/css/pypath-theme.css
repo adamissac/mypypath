@@ -2473,3 +2473,47 @@ html[data-gate="locked"] body.page-unit [data-lesson-navigation] {
 @media (prefers-reduced-motion: reduce) {
   .language-dialog *, .language-dialog *::before, .language-dialog *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+/* Brief, user-triggered journeys between course destinations. */
+.course-journey {
+  position: fixed; inset: 0; width: 100vw; height: 100dvh;
+  max-width: none; max-height: none; margin: 0; padding: 0; border: 0;
+  overflow: hidden; background: #e7f3f9; color: #104763;
+  font-family: var(--font-body, sans-serif);
+}
+.course-journey::backdrop { background: #104763; }
+.course-journey__scene { position: absolute; inset: 0; overflow: hidden; }
+.course-journey__ridge {
+  position: absolute; inset: 25% -15% -20%; background: #296c83;
+  clip-path: polygon(0 75%, 22% 40%, 35% 57%, 56% 0, 72% 48%, 83% 33%, 100% 70%, 100% 100%, 0 100%);
+}
+.course-journey__ridge--far { inset: 10% -5% 0; background: #9dc6d6; }
+.course-journey__trail {
+  position: absolute; width: 6px; height: 65%; left: 56%; top: 33%;
+  background: #f6c97c; transform: rotate(24deg); transform-origin: top;
+  box-shadow: 0 0 22px #f6c97c;
+}
+.course-journey__caption { position: absolute; top: 10%; left: 8%; right: 8%; }
+.course-journey .course-journey__caption p { margin: 0 0 10px; font-size: 16px; color: inherit; }
+.course-journey .course-journey__caption h2 { margin: 0; font-size: clamp(28px, 6vw, 64px); color: inherit; }
+.course-journey > button {
+  position: absolute; bottom: max(24px, env(safe-area-inset-bottom)); right: 8%;
+  min-height: 44px; padding: 10px 20px; border: 1px solid currentColor;
+  border-radius: 8px; background: #fff; color: #104763; font: inherit; cursor: pointer;
+}
+.course-journey > button:focus-visible { outline: 3px solid #e7b55f; outline-offset: 5px; }
+.course-journey--data { background: #101f36; color: #e7f3f9; }
+.course-journey--data .course-journey__ridge { display: none; }
+.course-journey--data .course-journey__orbit {
+  position: absolute; width: min(65vw, 65vh); aspect-ratio: 1; left: 50%; top: 48%;
+  border-radius: 50%; border: 2px solid #96c7df;
+  background: url('/assets/img/data-moon.svg') center / 65% no-repeat;
+  box-shadow: 0 0 0 35px #96c7df16, 0 0 0 90px #96c7df10, 0 0 0 160px #96c7df08;
+  transform: translate(-50%, -35%) rotate(-20deg);
+}
+.course-journey--data .course-journey__trail { left: 50%; top: 60%; height: 40%; transform: rotate(-35deg); }
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.reduced-motion) .course-journey__scene { animation: course-ascent 1450ms cubic-bezier(.25,.65,.3,1) both; }
+  html:not(.reduced-motion) .course-journey__trail { animation: course-trace 700ms ease-out both; }
+}
+@keyframes course-ascent { from { transform: scale(1.18) translateY(10%); opacity: .2; } to { transform: scale(1) translateY(0); opacity: 1; } }
+@keyframes course-trace { from { clip-path: inset(100% 0 0); } to { clip-path: inset(0); } }

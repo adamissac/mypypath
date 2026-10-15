@@ -181,6 +181,42 @@
     scaleTrack(1);
   }
 
+  /* ── Declining Python for Data ───────────────────────────────────────────
+     Someone who says "stay on Foundations" should be able to carry on down the
+     page. Without this the trail stayed pinned on Unit 10 for the whole of the
+     Python for Data stretch -- several screens of scrolling in which nothing
+     moved -- before the page would continue. progressCap shortens the track
+     to Foundations: its scroll covers [resumeOffset, progressCap], and the
+     sticky map lets go of the page at Unit 10. Choosing Python for Data later
+     (the switcher, the question's Continue) puts the full track back first. */
+  let progressCap = 1;
+
+  function shrinkTrack(fraction) {
+    if (!track) return;
+    // The first 100vh of a track is the pinned viewport itself; only the rest
+    // is scroll, so only the rest scales.
+    trackLengthVars.forEach((name, i) => {
+      const base = trackLengthBase[i];
+      const n = parseFloat(base);
+      if (!base || !Number.isFinite(n)) return;
+      const unit = base.replace(/^[-\d.]+/, '') || 'vh';
+      const len = unit === 'vh' ? (n - 100) * fraction + 100 : n * fraction;
+      track.style.setProperty(name, `${Math.round(len * 10) / 10}${unit}`);
+    });
+  }
+
+  function capAtFoundations() {
+    if (progressCap < 1 || resumeIndex || segments.length < 2) return;
+    progressCap = segments[0].end;
+    shrinkTrack(progressCap);
+  }
+
+  function clearCap() {
+    if (progressCap >= 1) return;
+    progressCap = 1;
+    scaleTrack(1);
+  }
+
   /* Divide overall progress 0..1 between segments and seams by their budgets. */
   function layout() {
     const total =
@@ -485,6 +521,8 @@
     // link belongs to Data, its focusin must not reopen the dialog.
     returningFromTransition = true;
     transition.close();
+    // Declined: end the trail at Unit 10, so the page carries on from there.
+    capAtFoundations();
     scrollToProgress(progressForStop(segments[0].stops.length - 1));
     jumps[0]?.focus({ preventScroll: true });
     returningFromTransition = false;
@@ -494,6 +532,7 @@
     dataAccepted = true;
     returningFromTransition = true;
     transition.close();
+    clearCap();
     scrollToProgress(progressForStop(segments[1].offset));
     cards[segments[1].offset]?.querySelector('a')?.focus({ preventScroll: true });
     returningFromTransition = false;
@@ -651,8 +690,9 @@
     const total = track.offsetHeight - window.innerHeight;
     if (total <= 0) return resumeOffset;
     const raw = Math.min(Math.max(-rect.top, 0), total) / total;
-    // Resumed: the track's scroll covers [resumeOffset, 1], not [0, 1].
-    return resumeOffset + (1 - resumeOffset) * raw;
+    // Resumed, or declined: the track's scroll covers [resumeOffset, progressCap],
+    // not [0, 1].
+    return resumeOffset + (progressCap - resumeOffset) * raw;
   }
 
   /* Overall progress at which stop `index` (counted across segments) is reached. */
@@ -673,10 +713,13 @@
     // Asked for somewhere before the resumed segment: put the whole track
     // back first, or there is no scroll position that can express it.
     if (resumeIndex && p < resumeOffset - 1e-6) clearResume();
+    // Asked for somewhere past the declined track: put the full track back.
+    if (progressCap < 1 && p > progressCap + 1e-6) clearCap();
     const total = track.offsetHeight - window.innerHeight;
     const top = track.getBoundingClientRect().top + window.scrollY;
     // Invert measureScroll()'s mapping.
-    const raw = resumeOffset >= 1 ? 0 : clamp01((clamp01(p) - resumeOffset) / (1 - resumeOffset));
+    const span = progressCap - resumeOffset;
+    const raw = span <= 0 ? 0 : clamp01((clamp01(p) - resumeOffset) / span);
     window.scrollTo({ top: Math.round(top + raw * Math.max(0, total)), behavior: "instant" });
     render();
   }

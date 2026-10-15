@@ -25,9 +25,30 @@ try {
 
     // Declining: stays on Foundations and is not asked again on that scroll.
     await page.getByRole('button', { name: 'Stay on Foundations' }).click();
-    await page.evaluate(() => window.PyPathTrail.scrollToProgress(0.8));
+    // Scroll on the way a visitor does (the trail no longer has a position
+    // past Unit 10 to jump to).
+    await page.evaluate(() => window.scrollBy(0, 1.5 * window.innerHeight));
+    await page.waitForTimeout(250);
     assert.equal(await dialog.isVisible(), false, 'declining must not repeatedly prompt');
     assert.equal(await page.locator('.path-stop-card.is-active').getAttribute('data-stop-index'), '9');
+
+    // After declining the trail must let go of the page at Unit 10: no screens
+    // of pinned, unchanging map to scroll through before the page moves on.
+    await page.evaluate(() => window.PyPathTrail.scrollToProgress(window.PyPathTrail.progressForStop(9)));
+    await page.waitForTimeout(150);
+    const slack = await page.evaluate(() => {
+      const t = document.querySelector('.path-journey__track');
+      const end = t.getBoundingClientRect().bottom + window.scrollY - window.innerHeight;
+      return (end - window.scrollY) / window.innerHeight;
+    });
+    assert.ok(slack <= 0.6, `${width}px: ${slack.toFixed(1)} screens of dead scroll left after Unit 10`);
+    await page.evaluate(() => window.scrollBy(0, 2.5 * window.innerHeight));
+    await page.waitForTimeout(200);
+    assert.ok(await page.evaluate(() => document.querySelector('.path-journey__track').getBoundingClientRect().bottom < window.innerHeight * 0.6),
+      `${width}px: scrolling on leaves the trail behind`);
+    assert.equal(await page.locator('.path-stop-card.is-active').getAttribute('data-stop-index'), '9', 'still on Unit 10 once past it');
+    assert.equal(await page.locator('html').getAttribute('data-course'), null, 'still Foundations once past it');
+    await page.evaluate(() => window.PyPathTrail.scrollToProgress(window.PyPathTrail.progressForStop(9)));
 
     // Keyboard focus onto a data card asks too; Escape declines.
     await page.waitForTimeout(300);

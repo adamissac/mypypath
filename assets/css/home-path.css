@@ -293,7 +293,9 @@ body.page-home .site-header {
 .home-brand {
   display: block;
   margin: 0;
-  font-size: clamp(3.6rem, 12vw, 8rem);
+  /* Scales with the window (full 8rem from ~1700px) so the mountain beside
+     it can be wide without running into the last letters. */
+  font-size: clamp(3.6rem, 7.5vw, 8rem);
   font-weight: 800;
   letter-spacing: -0.06em;
   line-height: 0.9;
@@ -2185,10 +2187,10 @@ html[data-course="data"] { --endcta-bg: #21162f; }
 
 
 /* Let the Foundations landscape read at the same visual weight as the moon. */
-html:not([data-course="data"]) .home-summit { max-width:620px; }
+html:not([data-course="data"]) .home-summit { max-width:720px; }
 @media (min-width:1024px) {
   html:not([data-course="data"]) .home-hero__content {
-    grid-template-columns:minmax(0, 1fr) minmax(0, min(48%, 620px));
+    grid-template-columns:minmax(0, 1fr) minmax(0, min(50%, 720px));
   }
 }
 @media (min-width:768px) and (max-width:1023px) {

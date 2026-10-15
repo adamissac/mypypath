@@ -53,6 +53,30 @@ try {
         assert.ok(box.list.t > box.hero.t, `${path} @${width}: stacked, header above the lessons`);
         assert.ok(box.list.w >= box.vw - 2 * Math.max(24, box.vw * 0.06), `${path} @${width}: lessons use the width`);
       }
+      // Hovering a lesson must not move its number: a transform on the card
+      // would make the card the badge's positioning anchor and fling the
+      // number into the title. Check every lesson at the wide size.
+      if (width === 1440) {
+        const cards = page.locator('.unit-trail__stop[data-lesson-path]');
+        const n = await cards.count();
+        for (let i = 0; i < n; i++) {
+          const num = cards.nth(i).locator('.unit-trail__num');
+          const title = cards.nth(i).locator('.unit-trail__title');
+          // In view and un-hovered first, so scrolling cannot look like movement.
+          await cards.nth(i).scrollIntoViewIfNeeded();
+          await page.mouse.move(5, 5);
+          await page.waitForTimeout(200);
+          const before = await num.boundingBox();
+          await cards.nth(i).locator('a.unit-trail__card').hover();
+          await page.waitForTimeout(260);
+          const after = await num.boundingBox();
+          const t = await title.boundingBox();
+          assert.ok(Math.abs(after.x - before.x) <= 1 && Math.abs(after.y - before.y) <= 1,
+            `${path}: lesson ${i + 1} number moved on hover (${before.x},${before.y}) -> (${after.x},${after.y})`);
+          assert.ok(after.x + after.width <= t.x, `${path}: lesson ${i + 1} number overlaps its title on hover`);
+        }
+        await page.mouse.move(5, 5);
+      }
       assert.deepEqual(errors, []);
       await ctx.close();
     }
