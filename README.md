@@ -1,8 +1,14 @@
-# MyPyPath
+# PyPath
 
-Personalized academic and career guidance site with interactive Python lessons, curriculum pages, and a sandbox. Static HTML/CSS/JS — no build step required.
+[PyPath](https://mypypath.com/) is a free Python learning site for students and teachers. Learn Python in your browser through two courses and 20 units, with coding exercises, unit tests, progress tracking, and classroom tools.
 
-**Live site:** https://www.mypypath.com
+- [Python Foundations](https://mypypath.com/curriculum.html): start with variables and control flow, then build toward a capstone project.
+- [Python for Data](https://mypypath.com/data.html): work with real data using Python, numpy, and pandas.
+- [Python sandbox](https://mypypath.com/sandbox.html): write and run Python without installing anything.
+
+**Official website:** [mypypath.com](https://mypypath.com/)
+
+Static HTML/CSS/JS. No build step is required to serve the site.
 
 ## Quick start
 
