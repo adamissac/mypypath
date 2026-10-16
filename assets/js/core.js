@@ -767,8 +767,10 @@
       if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       var a = e.target.closest('a[href]');
       if (!isInternalNavLink(a)) return;
-      // Unit links open directly, with no page fade or navigation progress film.
-      if (/^\/(?:units|data)\/unit-\d+(?:\.html|\/)/.test(new URL(a.href).pathname)) return;
+      // Course and unit links open directly, without a transition overlay.
+      var destinationPath = new URL(a.href).pathname;
+      if (destinationPath === '/curriculum.html' || destinationPath === '/data.html' ||
+          /^\/(?:units|data)\/unit-\d+(?:\.html|\/)/.test(destinationPath)) return;
 
       try { sessionStorage.setItem('pypath-nav', '1'); } catch (err) {}
 
