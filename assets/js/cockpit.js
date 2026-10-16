@@ -1,4 +1,4 @@
-/* PyPath — the cockpit at the top of /data.html.
+/* PyPath — course checkpoints for the Data cockpit and Foundations summit.
  *
  * Ten unit lights and a Launch control. The state is computed from the same
  * local lesson map and test records the unit pages read, so a guest sees
@@ -13,27 +13,30 @@
   var LESSONS_KEY = 'pypath-progress-lessons';
   var TESTS_KEY = 'pypath-unit-tests';
 
-  function testPassed(records, n, passMark) {
+  function testPassed(records, n, passMark, course) {
     if (!records || typeof records !== 'object' || Array.isArray(records)) return false;
-    var entry = records['data-' + n];
+    var entry = records[course === 'foundations' ? String(n) : 'data-' + n];
     if (!entry || typeof entry !== 'object') return false;
     var best = Number(entry.best);
     if (entry.best !== undefined && entry.best !== null && isFinite(best)) return best >= passMark;
     return entry.passed === true;
   }
 
-  function state(units, passedPaths, testRecords, passMark) {
+  function state(units, passedPaths, testRecords, passMark, course) {
     var passed = {};
     (Array.isArray(passedPaths) ? passedPaths : []).forEach(function (p) { passed[p] = true; });
     var done = units.map(function (u) {
       return u.lessons.length > 0
         && u.lessons.every(function (p) { return passed[p] === true; })
-        && testPassed(testRecords, u.n, passMark);
+        && testPassed(testRecords, u.n, passMark, course);
     });
     var current = done.indexOf(false);
     var lights = done.map(function (d, i) { return d ? 'done' : i === current ? 'current' : 'idle'; });
     var target = current === -1 ? units[0] : units[current];
-    var label = (current === -1 ? 'Launch again: Unit ' : 'Launch: Unit ') + target.n + ', ' + target.title;
+    var action = course === 'foundations'
+      ? (current === -1 ? 'Climb again: Unit ' : 'Continue climbing: Unit ')
+      : (current === -1 ? 'Launch again: Unit ' : 'Launch: Unit ');
+    var label = action + target.n + ', ' + target.title;
     return { lights: lights, target: target, label: label };
   }
 
@@ -66,7 +69,9 @@
         n: Number(a.getAttribute('data-unit')),
         title: a.getAttribute('data-title') || '',
         href: a.getAttribute('href'),
-        lessons: (a.getAttribute('data-lessons') || '').split('|').filter(Boolean),
+        lessons: root.getAttribute('data-course') === 'foundations' && window.PyPathCurriculum
+          ? window.PyPathCurriculum.lessonsIn(Number(a.getAttribute('data-unit')))
+          : (a.getAttribute('data-lessons') || '').split('|').filter(Boolean),
         el: a
       };
     });
@@ -79,7 +84,7 @@
     if (!units.length) return;
     var LP = window.PyPathLessonProgress;
     var progress = readProgress();
-    var s = state(units, progress.passedPaths, progress.testRecords, (LP && LP.UNIT_TEST_PASS_MARK) || 70);
+    var s = state(units, progress.passedPaths, progress.testRecords, (LP && LP.UNIT_TEST_PASS_MARK) || 70, root.getAttribute('data-course'));
     units.forEach(function (u, i) {
       u.el.setAttribute('data-state', s.lights[i]);
       // The colour says finished / up next; say it to a screen reader too.
@@ -94,6 +99,8 @@
       var label = launch.querySelector('.cockpit__launch-label') || launch;
       label.textContent = s.label;
     }
+    var summary = root.querySelector('[data-course-summary]');
+    if (summary) summary.textContent = s.lights.filter(function (light) { return light === 'done'; }).length + ' of ' + units.length + ' units complete';
   }
 
   function prefersReduced() {

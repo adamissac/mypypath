@@ -1992,7 +1992,12 @@ html img.logo {
   filter: none !important;
 }
 html[data-course="data"] img.logo {
-  filter: hue-rotate(65deg) saturate(1.6) !important;
+  /* Map the silhouette to --pp-line (#7c3aed), preserving its alpha edges. */
+  filter: brightness(0) saturate(100%) invert(50%) sepia(100%) hue-rotate(220.39deg) brightness(0.54815) saturate(7.25598) !important;
+}
+html[data-course="data"][data-theme="dark"] img.logo {
+  /* The same mark in the dark palette's --pp-line (#a78bfa). */
+  filter: brightness(0) saturate(100%) invert(50%) sepia(100%) hue-rotate(214.22deg) brightness(0.98702) saturate(2.51679) !important;
 }
 
 /* Shared code colors follow the active journey, including the live home editor. */

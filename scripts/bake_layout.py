@@ -714,6 +714,7 @@ def version_course_assets(html: str) -> str:
                 'assets/js/summit-3d.js',
                 # The data course cockpit (data.html only).
                 'assets/css/cockpit.css',
+                'assets/css/summit-deck.css',
                 # Unit overview pages (scripts/build-unit-pages.mjs).
                 'assets/css/unit-page.css',
                 'assets/js/unit-progress-panel.js',

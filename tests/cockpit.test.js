@@ -69,6 +69,29 @@ describe('reading stored progress', () => {
   });
 });
 
+describe('Foundations summit progress', () => {
+  const foundationUnits = units.map((unit) => ({ ...unit,
+    href: unit.href.replace('/data/', '/units/'),
+    lessons: unit.lessons.map((path) => path.replace('/data/', '/units/')),
+  }));
+
+  it('uses Foundations records and advances only after lessons and the test', () => {
+    const paths = foundationUnits[0].lessons;
+    expect(C.state(foundationUnits, paths, { 'data-1': { best: 100 } }, 70, 'foundations').target.n).toBe(1);
+    const s = C.state(foundationUnits, paths, { 1: { best: 80 } }, 70, 'foundations');
+    expect(s.target.href).toBe('/units/unit-2.html');
+    expect(s.label).toBe('Continue climbing: Unit 2, Unit title 2');
+    expect(s.lights.slice(0, 2)).toEqual(['done', 'current']);
+  });
+
+  it('offers a return to the start when all ten units are finished', () => {
+    const records = Object.fromEntries(foundationUnits.map((u) => [u.n, { best: 100 }]));
+    const s = C.state(foundationUnits, foundationUnits.flatMap((u) => u.lessons), records, 70, 'foundations');
+    expect(s.target.href).toBe('/units/unit-1.html');
+    expect(s.label).toBe('Climb again: Unit 1, Unit title 1');
+  });
+});
+
 describe('cockpit wiring', () => {
   it('lights units and points Launch at the current unit', () => {
     const lights = units.map((u) => `<a class="cockpit__light" href="${u.href}" data-unit="${u.n}" data-title="${u.title}" data-lessons="${u.lessons.join('|')}"><span>${u.n}</span></a>`).join('');

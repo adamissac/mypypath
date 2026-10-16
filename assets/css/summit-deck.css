@@ -1,0 +1,106 @@
+/* Foundations' course overview: an open mountain panorama and trail controls. */
+.summit-deck {
+  --ck-frame: #174b5d;
+  --ck-frame-hi: #46798c;
+  --ck-ink: #f4fafb;
+  --ck-muted: #d6e9ee;
+  --ck-violet: #a7d6e5;
+  --ck-lamp: #f3cc88;
+  padding-bottom: 1rem;
+}
+.summit-deck__window {
+  min-height: 460px;
+  background: #deedf1;
+  border-radius: 28px;
+  box-shadow: 0 0 0 1px #a7c5cf, 0 18px 42px rgb(16 58 77 / .12);
+}
+.summit-deck__landscape {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.summit-deck .summit-deck__copy {
+  padding-top: clamp(28px, 4vw, 56px);
+  padding-bottom: 100px;
+  position: relative;
+  color: #103a4d;
+}
+.summit-deck .summit-deck__copy .breadcrumb a { color: #275a70; }
+.summit-deck__eyebrow {
+  margin: 1.75rem 0 .75rem;
+  font-size: .85rem;
+  font-weight: 600;
+  color: #275a70;
+}
+.summit-deck .summit-deck__copy h1 {
+  margin: 0 0 1rem;
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.25rem, 4.6vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -.045em;
+  color: #103a4d;
+  background: none;
+  -webkit-text-fill-color: #103a4d;
+  text-shadow: none;
+}
+.summit-deck .summit-deck__copy .lead {
+  max-width: min(42%, 42ch);
+  margin: 0;
+  color: #275a70;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+.summit-deck__progress {
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  margin: 1.25rem 0 0;
+  color: #103a4d;
+  font-size: .8rem;
+  font-weight: 650;
+}
+.summit-deck__progress > span:first-child {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid #8baeba;
+  border-radius: 50%;
+}
+.summit-deck__panel { margin-top: .9rem; border-radius: 18px; box-shadow: 0 7px 20px rgb(16 58 77 / .1); }
+.summit-deck .cockpit__light { background: #103a4d; border-color: #789eac; }
+.summit-deck .cockpit__light[data-state="current"] { box-shadow: 0 0 0 3px rgb(167 214 229 / .25); animation: none; }
+.summit-deck .cockpit__light[data-state="done"] { box-shadow: none; }
+.summit-deck .cockpit__launch { color: #103a4d; border-radius: 12px; font-size: .85rem; box-shadow: 0 4px 0 #a87e3a; }
+.summit-deck .cockpit__launch:focus-visible,
+.summit-deck .cockpit__light:focus-visible { outline-color: #f3cc88; }
+.summit-deck + .section { padding-top: 2rem; }
+[data-theme="dark"] .summit-deck__window { background: #a4c4d0; box-shadow: 0 0 0 1px #46798c, 0 18px 42px rgb(0 0 0 / .2); }
+@media (prefers-reduced-motion: no-preference) {
+  .summit-deck__range--far { transform: translate(calc(var(--look-x) * -4px), calc(var(--look-y) * -2px)); }
+  .summit-deck__range--near { transform: translate(calc(var(--look-x) * -9px), calc(var(--look-y) * -4px)); }
+  .summit-deck__range { transition: transform 500ms ease-out; }
+  .summit-deck__cloud--far { animation: summit-clouds 22s ease-in-out infinite alternate; }
+  .summit-deck__cloud--near { animation: summit-clouds 30s ease-in-out -12s infinite alternate-reverse; }
+  .summit-deck__flag { transform-box: fill-box; transform-origin: left center; animation: summit-breeze 3s ease-in-out infinite; }
+}
+@keyframes summit-clouds { to { transform: translateX(22px); } }
+@keyframes summit-breeze { 50% { transform: scaleX(.9) skewY(-4deg); } }
+@media (max-width: 1050px) {
+  .summit-deck__panel { justify-content: center; gap: 1rem; }
+  .summit-deck__panel .cockpit__panel-label { flex-basis: 100%; text-align: center; }
+}
+@media (max-width: 640px) {
+  .summit-deck .summit-deck__window { min-height: 580px; border-radius: 22px; }
+  .summit-deck__landscape { inset: auto 0 0 auto; width: 170%; height: 270px; }
+  .summit-deck .summit-deck__copy { padding: 24px 22px 270px; }
+  .summit-deck__eyebrow { margin-top: 1.25rem; font-size: .75rem; }
+  .summit-deck .summit-deck__copy h1 { font-size: clamp(1.5rem, 8vw, 3rem); }
+  .summit-deck .summit-deck__copy .lead { max-width: 100%; font-size: .95rem; }
+  .summit-deck__progress { margin-top: 1rem; }
+  .summit-deck__panel .cockpit__lights { display: grid; grid-template-columns: repeat(5, 44px); justify-content: center; }
+  .summit-deck__panel .cockpit__launch { min-width: 0; padding-inline: .75rem; }
+}
