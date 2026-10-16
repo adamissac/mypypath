@@ -88,11 +88,8 @@ function withAssets(html, course) {
   if (!/\/assets\/js\/unit-progress-panel\.js/.test(out)) {
     out = out.replace(/(<script defer src="\/assets\/js\/lesson-progress\.js[^"]*"><\/script>)/, '$1\n    <script defer src="/assets/js/unit-progress-panel.js"></script>');
   }
-  // The cockpit launches into a Python for Data unit page, which plays the
-  // landing (arrive.js). It runs in the head, before first paint.
-  if (course === 'data' && !/\/assets\/js\/arrive\.js/.test(out)) {
-    out = out.replace(/(<script src="\/assets\/js\/theme-init\.js[^"]*"><\/script>)/, '$1\n    <script src="/assets/js/arrive.js"></script>');
-  }
+  // Remove an older launch landing tag from generated unit pages.
+  out = out.replace(/\s*<script src="\/assets\/js\/arrive\.js[^"]*"><\/script>/, '');
   return out;
 }
 

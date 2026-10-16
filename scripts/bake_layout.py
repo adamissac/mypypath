@@ -717,7 +717,6 @@ def version_course_assets(html: str) -> str:
                 # Unit overview pages (scripts/build-unit-pages.mjs).
                 'assets/css/unit-page.css',
                 'assets/js/unit-progress-panel.js',
-                'assets/js/arrive.js',
                 'assets/js/cockpit.js',
                 'assets/js/classroom-dashboard.js',
                 # Page-specific scripts. Same one-hour JS cache as the

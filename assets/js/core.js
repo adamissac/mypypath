@@ -744,73 +744,6 @@
   }
 
   function initNavigation() {
-    // Course journeys are handled during bubbling, after individual controls
-    // (including the cockpit launch) have had the chance to own their click.
-    var journey = null;
-    function clearJourney() {
-      if (!journey) return;
-      clearTimeout(journey.timer);
-      journey.el.remove();
-      journey = null;
-    }
-    window.addEventListener('pageshow', clearJourney);
-    document.addEventListener('click', function (e) {
-      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || prefersReducedMotion()) return;
-      var a = e.target.closest('a[href]');
-      if (!isInternalNavLink(a) || a.target && a.target !== '_self' || a.getAttribute('aria-disabled') === 'true') return;
-      var dest = new URL(a.href);
-      if (dest.pathname === location.pathname) return;
-      var match = dest.pathname.match(/^\/(units|data)\/unit-(\d+)(\.html|\/[^/]+\.html)$/);
-      var course = dest.pathname === '/data.html' ? 'data' : dest.pathname === '/curriculum.html' ? 'units' : match && match[1];
-      if (!course) return;
-      e.preventDefault();
-      if (journey) return;
-      var lesson = match && match[3] !== '.html';
-      var title = match ? 'Unit ' + match[2] : course === 'data' ? 'Python for Data' : 'Python Foundations';
-      var dialog = document.createElement('dialog');
-      dialog.className = 'course-journey course-journey--' + course;
-      dialog.setAttribute('aria-label', 'Opening ' + title);
-      dialog.innerHTML = '<div class="course-journey__scene" aria-hidden="true">'
-        + '<div class="course-journey__sun"></div><div class="course-journey__stars"></div>'
-        + '<div class="course-journey__orbit"></div><div class="course-journey__ridge course-journey__ridge--far"></div>'
-        + '<div class="course-journey__ridge"></div><div class="course-journey__clouds"></div>'
-        + '<svg class="course-journey__ledge" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMax slice"><path fill="#104763" d="M0 600 170 440 390 380 570 240 730 320 880 415 1200 500V600Z"/><path fill="#4078a0" d="m170 440 220-60 180-140-50 190-130 170H0Z"/><path fill="#8fbdd6" d="m390 380 180-140 160 80-110 25-50-48-90 77-55-8Z"/><path fill="#082f49" d="m570 297 50 48 110-25 150 95 320 85v100H390l130-170Z"/><path d="m545 600 30-90 80-55-83-60-20-42" fill="none" stroke="#f2bc63" stroke-width="5"/><path d="M570 245V125" stroke="#e8f4fb" stroke-width="5"/><path class="course-journey__flag" d="M573 128q40-14 80 4v48q-40-18-80-4Z" fill="#f2bc63"/></svg>'
-        + '<svg class="course-journey__explorer" viewBox="0 0 180 240"><path d="M90 160Q10 230 0 100" fill="none" stroke="#8fbdd6" stroke-width="3"/><rect x="40" y="84" width="90" height="95" rx="20" fill="#4078a0"/><path d="m62 156-15 55m58-55 25 48M55 103l-30 35m90-35 38-32" stroke="#d0e4ef" stroke-width="22" stroke-linecap="round"/><rect x="49" y="82" width="69" height="90" rx="22" fill="#f3f9fc"/><circle cx="84" cy="61" r="39" fill="#e8f4fb"/><rect x="55" y="40" width="59" height="37" rx="17" fill="#104763"/><path d="m65 49 23-3" stroke="#7dd3fc" stroke-width="5" stroke-linecap="round"/><rect x="65" y="110" width="36" height="23" rx="4" fill="#104763"/><circle cx="75" cy="121" r="4" fill="#f2bc63"/></svg></div>'
-        + '<div class="course-journey__caption"><p></p><h2></h2></div><button type="button" autofocus>Skip animation</button>';
-      dialog.querySelector('p').textContent = course === 'data' ? (lesson ? 'On to the next discovery' : 'A whole new world to explore') : (lesson ? 'Another step on the path' : 'The view is just the beginning');
-      dialog.querySelector('h2').textContent = title;
-      document.body.appendChild(dialog);
-      var finished = false;
-      function finish() {
-        if (finished) return;
-        finished = true;
-        clearTimeout(journey && journey.timer);
-        window.location.assign(dest.href);
-      }
-      dialog.querySelector('button').addEventListener('click', finish);
-      dialog.addEventListener('cancel', function (event) { event.preventDefault(); finish(); });
-      dialog.style.setProperty('--journey-duration', lesson ? '1100ms' : '2800ms');
-      journey = { el: dialog, timer: setTimeout(finish, 5000) };
-      function beginScene() {
-        if (finished || !dialog.isConnected) return;
-        clearTimeout(journey.timer);
-        try { dialog.showModal(); } catch (err) { dialog.remove(); finish(); return; }
-        journey.timer = setTimeout(finish, lesson ? 1100 : 2800);
-      }
-      var sceneSheet = document.querySelector('link[data-course-journey]');
-      if (sceneSheet && sceneSheet.sheet) beginScene();
-      else {
-        if (!sceneSheet) {
-          sceneSheet = document.createElement('link');
-          sceneSheet.rel = 'stylesheet';
-          sceneSheet.href = '/assets/css/course-journey.css?v=2';
-          sceneSheet.setAttribute('data-course-journey', '');
-          document.head.appendChild(sceneSheet);
-        }
-        sceneSheet.addEventListener('load', beginScene, { once: true });
-        sceneSheet.addEventListener('error', finish, { once: true });
-      }
-    });
     qsa('.lesson-nav a[href], .lesson-overview a[href]').forEach(function (a) {
       prefetchUrl(a.href);
     });
@@ -834,6 +767,8 @@
       if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       var a = e.target.closest('a[href]');
       if (!isInternalNavLink(a)) return;
+      // Unit links open directly, with no page fade or navigation progress film.
+      if (/^\/(?:units|data)\/unit-\d+(?:\.html|\/)/.test(new URL(a.href).pathname)) return;
 
       try { sessionStorage.setItem('pypath-nav', '1'); } catch (err) {}
 

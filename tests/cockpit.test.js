@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import fs from 'node:fs';
 
 let C;
@@ -61,7 +61,6 @@ describe('cockpit state', () => {
     expect(s.target.n).toBe(1);
   });
 });
-
 describe('reading stored progress', () => {
   it('returns empty progress when storage holds junk', () => {
     window.ProgressStore = { getItem: () => '{not json' };
@@ -96,123 +95,5 @@ describe('cockpit wiring', () => {
     expect(document.querySelector('.cockpit__light[data-unit="3"]').getAttribute('aria-label')).toBe('Unit 3: Unit title 3');
     delete window.ProgressStore;
     delete window.PyPathLessonProgress;
-  });
-});
-
-describe('the launch cutscene', () => {
-  const MARKUP = `<section class="cockpit" data-cockpit><div class="cockpit__window"></div>
-    <a class="cockpit__launch" data-cockpit-launch href="/data/unit-2.html"><span class="cockpit__launch-label">Launch: Unit 2, Cleaning and Shaping</span></a></section>`;
-  let nav;
-  const setup = () => {
-    document.body.innerHTML = MARKUP;
-    nav = vi.fn();
-    C.navigate = nav;
-    sessionStorage.clear();
-    C.wire(document.querySelector('[data-cockpit]'));
-    return document.querySelector('[data-cockpit-launch]');
-  };
-  const overlay = () => document.querySelector('.cockpit-cutscene');
-  const count = () => overlay().querySelector('[data-cutscene-count]').textContent;
-
-  beforeEach(() => { vi.useFakeTimers(); });
-  afterEach(() => {
-    // What the browser does when a page is restored: every cutscene still
-    // running (one per wired cockpit in these tests) is torn down.
-    window.dispatchEvent(new Event('pageshow'));
-    vi.useRealTimers();
-    delete window.matchMedia;
-  });
-
-  it('covers the page with a labelled dialog and focuses Skip', () => {
-    setup().click();
-    expect(overlay().getAttribute('role')).toBe('dialog');
-    expect(overlay().getAttribute('aria-modal')).toBe('true');
-    expect(overlay().getAttribute('aria-label')).toBe('Launching to Unit 2, Cleaning and Shaping');
-    expect(document.activeElement).toBe(overlay().querySelector('[data-cutscene-skip]'));
-    // The countdown numerals are decoration; one polite announcement says it all.
-    expect(overlay().querySelector('[data-cutscene-count]').getAttribute('aria-hidden')).toBe('true');
-    expect(overlay().querySelector('[aria-live="polite"]').textContent).toContain('Launching to Unit 2');
-  });
-
-  it('counts 3, 2, 1, goes, then navigates exactly once at 3.3 s', () => {
-    setup().click();
-    expect(count()).toBe('3');
-    vi.advanceTimersByTime(600);
-    expect(count()).toBe('2');
-    vi.advanceTimersByTime(600);
-    expect(count()).toBe('1');
-    expect(overlay().classList.contains('is-go')).toBe(false);
-    vi.advanceTimersByTime(600);
-    expect(count()).toBe('Go');
-    expect(overlay().classList.contains('is-go')).toBe(true);
-    vi.advanceTimersByTime(1499);
-    expect(nav).not.toHaveBeenCalled();
-    vi.advanceTimersByTime(2);
-    expect(nav).toHaveBeenCalledTimes(1);
-    expect(nav).toHaveBeenCalledWith('/data/unit-2.html');
-    vi.advanceTimersByTime(5000);
-    expect(nav).toHaveBeenCalledTimes(1);
-    expect(sessionStorage.getItem('pypath-arrive')).toBe('1');
-  });
-
-  it('skips straight to the unit from the Skip button', () => {
-    setup().click();
-    vi.advanceTimersByTime(300);
-    overlay().querySelector('[data-cutscene-skip]').click();
-    expect(nav).toHaveBeenCalledTimes(1);
-    vi.advanceTimersByTime(5000);
-    expect(nav).toHaveBeenCalledTimes(1);
-  });
-
-  it('skips on Escape too', () => {
-    setup().click();
-    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
-    expect(nav).toHaveBeenCalledTimes(1);
-  });
-
-  it('keeps Tab inside the cutscene', () => {
-    setup().click();
-    const ev = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
-    document.dispatchEvent(ev);
-    expect(ev.defaultPrevented).toBe(true);
-  });
-
-  it('ignores a second click while it plays', () => {
-    const link = setup();
-    link.click();
-    link.click();
-    expect(document.querySelectorAll('.cockpit-cutscene')).toHaveLength(1);
-    vi.advanceTimersByTime(4000);
-    expect(nav).toHaveBeenCalledTimes(1);
-  });
-
-  it('leaves a modified click to the browser, with no cutscene', () => {
-    const link = setup();
-    let prevented = null;
-    document.addEventListener('click', (e) => { prevented = e.defaultPrevented; e.preventDefault(); }, { once: true });
-    link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, button: 0, metaKey: true }));
-    expect(prevented).toBe(false);
-    expect(overlay()).toBeNull();
-  });
-
-  it('is gone, and works again, after the back button restores the page', () => {
-    const link = setup();
-    link.click();
-    window.dispatchEvent(new Event('pageshow'));
-    expect(overlay()).toBeNull();
-    link.click();
-    expect(overlay()).not.toBeNull();
-    vi.advanceTimersByTime(4000);
-    expect(nav).toHaveBeenCalledTimes(1);
-  });
-
-  it('does nothing under reduced motion: the link just navigates', () => {
-    window.matchMedia = () => ({ matches: true });
-    const link = setup();
-    let prevented = null;
-    document.addEventListener('click', (e) => { prevented = e.defaultPrevented; e.preventDefault(); }, { once: true });
-    link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, button: 0 }));
-    expect(prevented).toBe(false);
-    expect(overlay()).toBeNull();
   });
 });

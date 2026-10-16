@@ -2189,16 +2189,15 @@ html[data-course="data"] { --endcta-bg: #21162f; }
 }
 
 
-/* Let the Foundations landscape read at the same visual weight as the moon. */
-html:not([data-course="data"]) .home-summit { max-width:720px; overflow: clip; }
+/* Give the mountain room without letting it overwhelm the hero copy. */
+html:not([data-course="data"]) .home-summit { max-width:520px; overflow: clip; }
 @media (min-width:1024px) {
-  html:not([data-course="data"]) .home-brand { font-size:clamp(3.6rem, 6.5vw, 8rem); }
   html:not([data-course="data"]) .home-hero__content {
-    grid-template-columns:minmax(0, 1fr) minmax(0, min(54%, 720px));
+    grid-template-columns:minmax(0, 1fr) minmax(0, min(42%, 520px));
   }
 }
 @media (min-width:768px) and (max-width:1023px) {
-  html:not([data-course="data"]) .home-summit { width:min(75%, 480px); max-width:480px; }
+  html:not([data-course="data"]) .home-summit { width:min(60%, 420px); max-width:420px; }
 }
 @media (max-width:767px) {
   html:not([data-course="data"]) .home-summit { width:min(100%, 380px); max-width:380px; margin-inline:auto; }
@@ -2215,6 +2214,27 @@ html:not([data-course="data"]) .home-summit { max-width:720px; overflow: clip; }
 .home-person .home-person__helmet img { position: relative; width: 100px; height: 98px; margin: 0; border-radius: 45% 45% 38% 38%; border: 2px solid #a490c2; transform: scale(.88); }
 .home-person.is-in-view .home-person__helmet::before { opacity: 1; transform: none; }
 .home-person.is-in-view .home-person__helmet img { transform: none; }
+/* Foundations portraits follow the mountain palette; spacesuits belong to Data. */
+html:not([data-course="data"]) .home-person__helmet {
+  width: 132px;
+  height: 132px;
+  margin-bottom: 1.1rem;
+  border-radius: 50%;
+  background: #e8f4fb;
+  border: 2px solid #8fbdd6;
+  box-shadow: 0 0 0 6px #f3f9fc;
+}
+html:not([data-course="data"]) .home-person__helmet::before,
+html:not([data-course="data"]) .home-person__helmet::after { content: none; }
+html:not([data-course="data"]) .home-person .home-person__helmet img {
+  width: 118px;
+  height: 118px;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border: 0;
+  border-radius: 50%;
+  transform: none;
+}
 @media (prefers-reduced-motion: no-preference) {
   .home-person__helmet::before, .home-person__helmet img { transition: transform 600ms cubic-bezier(.16,1,.3,1), opacity 600ms ease; }
 }
