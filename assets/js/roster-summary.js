@@ -100,7 +100,7 @@ export const FLAGGED_CAP = 40;
    path is a legal map key and the mapping stays injective. Firestore map keys
    may not contain '/', and '_' is escaped first so the two cannot collide. */
 export function lessonKey(path) {
-  return String(path || '').replace(/_/g, '_5F').replace(/\//g, '__');
+  return String(path || '').replace(/\//g, '__').replace(/_/g, '_5F');
 }
 
 function payloadOf(e) {
