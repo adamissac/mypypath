@@ -51,12 +51,24 @@ describe('payload construction', () => {
     });
     expect(event.payload).toEqual({
       assignmentId: 'quiz_123', unit: 2, score: 75, correct: 3, total: 4, attempt: 1,
+      marks: [],
     });
     expect(E.makeEvent('quiz.submitted', { assignmentId: 'bad/id', unit: 2 })).toBe(null);
     expect(E.makeEvent('check.answered', {
       lessonPath: LESSON, questionId: 'q1', correct: true, attempt: 1,
     }).payload.correct).toBe(true);
   });
+  it('keeps per-question quiz marks as small numbers and nothing else', () => {
+    const event = E.makeEvent('quiz.submitted', {
+      assignmentId: 'quiz_123', unit: 2, score: 75, correct: 3, total: 4, attempt: 1,
+      marks: [1, 0, 2, 'print("x")', -4, 1000, ...Array.from({ length: 30 }, () => 1)],
+    });
+    expect(event.payload.marks.slice(0, 6)).toEqual([1, 0, 2, 0, 0, 99]);
+    // No more than the largest quiz the rules allow.
+    expect(event.payload.marks).toHaveLength(25);
+    expect(JSON.stringify(event.payload).length).toBeLessThanOrEqual(E.MAX_PAYLOAD_CHARS);
+  });
+
   it('keeps only the fields the type declares', () => {
     const ev = E.makeEvent('lesson.opened', {
       lessonPath: LESSON,

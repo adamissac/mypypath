@@ -12,8 +12,9 @@ import {
   setArchived, purgeArchivedClass, createAssignment, readAssignments,
   deleteAssignment, setLockPolicy, watchRoster, readCertificates,
   setCertificateDecision, setShowSolutions, setMaxTestAttempts,
-  refreshAssignmentUnlocks,
+  refreshAssignmentUnlocks, setTestGate, updateAssignment,
 } from '/assets/js/classroom-store.js';
+import { loadPools, poolNode } from '/assets/js/test-paper-view.js';
 
 const CORE = window.PyPathClassroom;
 const ROLES = window.PyPathRoles;
@@ -462,15 +463,53 @@ function paintAssignments() {
       item.appendChild(who);
     }
 
+    const actions = el('div', 'cr-assign__actions');
+    if (assignment.quiz) {
+      // Said in words beside the button, so the state does not depend on
+      // reading which label the button currently carries.
+      if (assignment.closed === true) {
+        item.appendChild(el('p', 'cr-assign__closed',
+          'Closed: students cannot start or hand in this quiz.'));
+      }
+      const toggle = el('button', 'btn btn-ghost btn-small',
+        assignment.closed === true ? 'Reopen quiz' : 'Close quiz');
+      toggle.type = 'button';
+      toggle.addEventListener('click', () => toggleQuiz(assignment));
+      actions.appendChild(toggle);
+    }
     const remove = el('button', 'btn btn-ghost btn-small', 'Remove');
     remove.type = 'button';
     remove.addEventListener('click', () => removeAssignment(assignment));
-    item.appendChild(remove);
+    actions.appendChild(remove);
+    item.appendChild(actions);
 
     list.appendChild(item);
   }
 
   paintAssignmentPicker();
+}
+
+/* Close or reopen a quiz without removing it. Closing keeps every result
+   already handed in and keeps the assignment on everyone's list; it only stops
+   new attempts, and firestore.rules refuses a submission against a closed quiz,
+   so a tab left open on the paper cannot hand one in afterwards either. */
+async function toggleQuiz(assignment) {
+  const error = $('[data-cr-assign-list-error]');
+  show(error, false);
+  const classId = activeClassId;
+  const closing = assignment.closed !== true;
+  try {
+    await updateAssignment(classId, assignment.id, { closed: closing });
+    if (classId !== activeClassId) return;
+    assignments = await readAssignments(classId);
+    paintAssignments();
+  } catch (err) {
+    if (error && classId === activeClassId) {
+      error.textContent = 'Could not ' + (closing ? 'close' : 'reopen')
+        + ' that quiz. Check your connection and try again.';
+      show(error, true);
+    }
+  }
 }
 
 async function removeAssignment(assignment) {
@@ -586,6 +625,101 @@ function paintRetakes() {
   // select assigned a value with no matching option lands on none -- better
   // than quietly showing the nearest number as though it were the setting.
   box.value = cap === null ? '' : String(cap);
+}
+
+/* When this class's tests open: with their unit, or when the teacher ticks
+   them. Unlike unit access, Unit 1 is a real tick here -- holding the Unit 1
+   test shut is the case that asked for this. */
+function paintTestGate() {
+  const klass = classes.filter((c) => c.id === activeClassId)[0];
+  if (!klass) return;
+  const POLICY = window.PyPathPolicy;
+  const gate = POLICY ? POLICY.normalizeTestGate(klass.testGate) : 'unit';
+  const open = (klass.openTests || []).map(Number);
+
+  const radio = $('input[name="cr-test-gate"][value="' + gate + '"]');
+  if (radio) radio.checked = true;
+
+  const host = $('[data-cr-test-units]');
+  if (!host) return;
+  show(host, gate === 'manual');
+  if (!host.children.length) {
+    const total = (CURRICULUM && CURRICULUM.TOTAL_UNITS) || 10;
+    for (let u = 1; u <= total; u += 1) {
+      const label = el('label', 'cr-check');
+      const box = el('input');
+      box.type = 'checkbox';
+      box.value = String(u);
+      box.setAttribute('data-cr-test-unit', '');
+      label.appendChild(box);
+      label.appendChild(el('span', null, 'Unit ' + u + ' test'));
+      host.appendChild(label);
+    }
+  }
+  $$('[data-cr-test-unit]', host).forEach((box) => {
+    box.checked = open.indexOf(Number(box.value)) !== -1;
+  });
+}
+
+async function saveTestGate() {
+  const error = $('[data-cr-tests-error]');
+  show(error, false);
+  const picked = $('input[name="cr-test-gate"]:checked');
+  const gate = picked ? picked.value : 'unit';
+  const units = $$('[data-cr-test-unit]:checked').map((b) => Number(b.value));
+  const classId = activeClassId;
+  try {
+    const saved = await setTestGate(classId, gate, units);
+    const klass = classes.filter((c) => c.id === classId)[0];
+    if (klass) {
+      klass.testGate = saved.testGate;
+      klass.openTests = saved.openTests;
+    }
+  } catch (err) {
+    if (error) {
+      error.textContent = 'Could not save that. Check your connection and try again.';
+      show(error, true);
+    }
+  }
+  // Repaint either way: after a failure this puts the controls back to what
+  // is actually stored, which is what students are actually getting.
+  if (classId === activeClassId) paintTestGate();
+}
+
+/* Every question a unit's test can draw, with the answers. */
+async function paintPool() {
+  const pick = $('[data-cr-pool-unit]');
+  const host = $('[data-cr-pool]');
+  const error = $('[data-cr-pool-error]');
+  if (!pick || !host) return;
+  show(error, false);
+  host.innerHTML = '';
+  const unit = Number(pick.value);
+  if (!unit) return;
+  host.setAttribute('aria-busy', 'true');
+  try {
+    const pools = await loadPools(unit, 'units');
+    if (Number(pick.value) !== unit) return;
+    host.appendChild(poolNode(pools));
+  } catch (err) {
+    if (error) {
+      error.textContent = 'Could not load the Unit ' + unit + ' questions. Check your connection and try again.';
+      show(error, true);
+    }
+  } finally {
+    host.setAttribute('aria-busy', 'false');
+  }
+}
+
+function fillPoolPicker() {
+  const pick = $('[data-cr-pool-unit]');
+  if (!pick || pick.options.length > 1) return;
+  const total = (CURRICULUM && CURRICULUM.TOTAL_UNITS) || 10;
+  for (let u = 1; u <= total; u += 1) {
+    const option = el('option', null, 'Unit ' + u + ' test');
+    option.value = String(u);
+    pick.appendChild(option);
+  }
 }
 
 function paintAccess() {
@@ -1520,6 +1654,8 @@ function paintAll() {
   paintAccess();
   paintSolutions();
   paintRetakes();
+  paintTestGate();
+  fillPoolPicker();
   paintAttention();
   paintView();
   paintRoster();
@@ -1960,6 +2096,19 @@ function wire() {
   $$('input[name="cr-lock-mode"]').forEach((radio) => {
     radio.addEventListener('change', () => saveAccess());
   });
+
+  $$('input[name="cr-test-gate"]').forEach((radio) => {
+    radio.addEventListener('change', () => saveTestGate());
+  });
+
+  document.addEventListener('change', (e) => {
+    if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-cr-test-unit')) {
+      saveTestGate();
+    }
+  });
+
+  const poolPick = $('[data-cr-pool-unit]');
+  if (poolPick) poolPick.addEventListener('change', () => { paintPool(); });
 
   document.addEventListener('change', (e) => {
     if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-cr-access-unit')) {

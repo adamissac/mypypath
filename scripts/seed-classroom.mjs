@@ -475,7 +475,10 @@ async function main() {
     manualUnlocks: [],
     assignmentUnlocks: [2, 3],
     showSolutions: true,
-    maxTestAttempts: 0,
+    // null is unlimited. 0 is outside the rules' 1-99 range, and because an
+    // update is validated against the whole document, a 0 here made every
+    // settings save on the seeded class fail.
+    maxTestAttempts: null,
   });
   await put(`joinCodes/${JOIN_CODE}`, {
     teacherUid, classId, active: true, createdAt: ago(30),

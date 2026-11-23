@@ -38,7 +38,10 @@
     /* A teacher-assigned quiz, sat and marked. Separate from test.submitted on
        purpose: the end-of-unit test unlocks the next unit and a quiz does not,
        and one type carrying both would make every reader disambiguate them. */
-    'quiz.submitted': ['assignmentId', 'unit', 'score', 'correct', 'total', 'attempt'],
+    /* marks is the points earned on each question, in the quiz's own order,
+       so a teacher can see which questions a student missed and not only the
+       total. Numbers only: never the answer a student gave. */
+    'quiz.submitted': ['assignmentId', 'unit', 'score', 'correct', 'total', 'attempt', 'marks'],
     'unit.completed': ['unit', 'verified']
   };
 
@@ -155,6 +158,12 @@
         case 'total':
         case 'score':
           out[field] = cleanCount(src[field], 9999);
+          break;
+        case 'marks':
+          // At most 25, the size of the largest quiz the rules allow. Each is
+          // a small count of points; anything else is a bug and becomes 0.
+          out.marks = (Array.isArray(src.marks) ? src.marks : []).slice(0, 25)
+            .map(function (m) { return cleanCount(m, 99); });
           break;
         case 'durationSec':
           // A tab left open over a weekend must not read as a two-day test.

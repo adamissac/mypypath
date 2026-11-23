@@ -1129,6 +1129,17 @@
       + 'did the class find Unit 4". Neither shows anything the other hides; '
       + 'the roster is first because at a full class the grid is 400 cells and '
       + 'the question is usually about a person, not a unit.',
+    testGate: 'When this class\'s end-of-unit tests can be taken. "With their '
+      + 'unit" is the default and is what every class had before this setting '
+      + 'existed: a test opens as soon as its unit does. "When I open them" '
+      + 'keeps every test shut, Unit 1 included, until you tick it, so you '
+      + 'can let a class work through the lessons and give the test on the '
+      + 'day you choose. Untick a test to shut it again. This is enforced by '
+      + 'the database, not only by the page: a result for a shut test is '
+      + 'refused and never reaches this dashboard. It only applies to students '
+      + 'in this class, and a teacher can always open a test to look at it. '
+      + 'Below it, the question pool shows every question a test can draw; '
+      + 'open a student from the roster to see the exact paper they got.',
     maxTestAttempts: 'How many times a student in this class may sit the same '
       + 'end-of-unit test. Unlimited is the default and is what every class had '
       + 'before this setting existed. It reaches students in this class and '

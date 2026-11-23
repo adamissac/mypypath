@@ -8,6 +8,7 @@
 import {
   readEvents, readMirror, readAssignments,
 } from '/assets/js/classroom-store.js';
+import { loadPools, paperNode } from '/assets/js/test-paper-view.js';
 
 const CORE = window.PyPathClassroom;
 const KEYS = window.PyPathKeys;
@@ -66,6 +67,9 @@ function describe(event) {
     case 'test.started': return 'Started the Unit ' + p.unit + ' test';
     case 'test.submitted':
       return 'Finished the Unit ' + p.unit + ' test: ' + p.score + ' of ' + p.total;
+    case 'quiz.submitted':
+      return 'Handed in a Unit ' + p.unit + ' quiz: ' + p.score + ' out of 100'
+        + ' (attempt ' + p.attempt + ')';
     case 'unit.completed':
       return 'Completed Unit ' + p.unit + (p.verified ? ' (test passed)' : ' (marked complete)');
     default: return event.type;
@@ -365,6 +369,126 @@ async function paintWork(root, student) {
   }
 }
 
+/* The papers this student actually sat: which questions were drawn, what they
+   answered, and their free response code. Read from their synced test record
+   (unit-test-page.js keeps the last few sittings per unit there), which is the
+   mirror this view already reads.
+
+   A unit with attempts and no papers was sat before papers were recorded, and
+   says so rather than looking like nothing happened. */
+async function paintPapers(root, student) {
+  const wrap = $('[data-sd-papers]', root);
+  if (!wrap) return;
+  wrap.innerHTML = '';
+
+  let records = {};
+  try { records = JSON.parse((student.mirror || {})[(KEYS && KEYS.UNIT_TESTS_KEY) || 'pypath-unit-tests'] || '{}') || {}; }
+  catch (e) { records = {}; }
+
+  const entries = Object.keys(records)
+    .map((key) => {
+      const m = /^(?:(data)-)?(\d+)$/.exec(key);
+      return m ? { key, course: m[1] ? 'data' : 'units', unit: Number(m[2]), record: records[key] } : null;
+    })
+    .filter((e) => e && e.record && e.record.attempts > 0)
+    .sort((a, b) => (a.course === b.course ? a.unit - b.unit : a.course === 'units' ? -1 : 1));
+
+  if (!entries.length) {
+    wrap.appendChild(el('p', 'sd-empty', 'No unit tests taken yet.'));
+    return;
+  }
+
+  for (const entry of entries) {
+    const name = (entry.course === 'data' ? 'Python for Data Unit ' : 'Unit ') + entry.unit + ' test';
+    const r = entry.record;
+    const section = el('section', 'tp-unit');
+    section.appendChild(el('h5', null, name + ': best ' + (r.best || 0) + ' out of 100, '
+      + r.attempts + (r.attempts === 1 ? ' attempt' : ' attempts')));
+
+    const papers = Array.isArray(r.papers) ? r.papers.slice().reverse() : [];
+    if (!papers.length) {
+      section.appendChild(el('p', 'sd-empty',
+        'The questions for these attempts were not recorded: they were taken before '
+        + 'PyPath kept test papers. The next attempt will appear here.'));
+      wrap.appendChild(section);
+      continue;
+    }
+
+    let pools = null;
+    try { pools = await loadPools(entry.unit, entry.course); }
+    catch (e) { pools = null; }
+    if (!pools) {
+      section.appendChild(el('p', 'sd-empty', 'Could not load the questions for this test. Try again in a moment.'));
+      wrap.appendChild(section);
+      continue;
+    }
+
+    papers.forEach((paper, i) => {
+      const when = fmtDate(paper.at) + ' ' + fmtTime(paper.at);
+      section.appendChild(paperNode(pools, paper,
+        (i === 0 ? 'Latest paper' : 'Earlier paper') + ', ' + when + ': '
+        + paper.score + ' out of 100'));
+    });
+    wrap.appendChild(section);
+  }
+}
+
+/* Each quiz this student handed in, question by question. The questions come
+   from the assignment (every student gets the same ones); the marks come from
+   the quiz.submitted event. */
+async function paintQuizzes(root, student, assignments) {
+  const wrap = $('[data-sd-quizzes]', root);
+  if (!wrap) return;
+  wrap.innerHTML = '';
+
+  const quizzes = assignments.filter((a) => a.quiz);
+  if (!quizzes.length) {
+    wrap.appendChild(el('p', 'sd-empty', 'No quizzes have been set for this class.'));
+    return;
+  }
+
+  const BANK = window.PyPathQuizBank;
+  for (const assignment of quizzes) {
+    const tries = (student.events || [])
+      .filter((e) => e.type === 'quiz.submitted' && e.payload && e.payload.assignmentId === assignment.id)
+      .sort((a, b) => CORE.toMillis(b.at) - CORE.toMillis(a.at));
+
+    const section = el('section', 'tp-unit');
+    section.appendChild(el('h5', null, assignment.title + (tries.length
+      ? ': ' + tries.length + (tries.length === 1 ? ' attempt' : ' attempts')
+        + ', best ' + Math.max(...tries.map((t) => Number(t.payload.score) || 0)) + ' out of 100'
+      : ': not attempted')));
+    if (!tries.length) { wrap.appendChild(section); continue; }
+
+    const latest = tries[0].payload;
+    let questions = [];
+    if (BANK) {
+      try { questions = BANK.pick(await BANK.load(assignment.quiz.unit), assignment.quiz.questionIds); }
+      catch (e) { questions = []; }
+    }
+    const marks = Array.isArray(latest.marks) ? latest.marks : [];
+    const details = document.createElement('details');
+    details.className = 'tp-paper';
+    const summary = document.createElement('summary');
+    summary.textContent = 'Latest attempt, ' + fmtDate(CORE.toMillis(tries[0].at)) + ': '
+      + latest.score + ' out of 100 (' + latest.correct + ' of ' + latest.total + ' points)';
+    details.appendChild(summary);
+    const list = el('ol', 'tp-list');
+    questions.forEach((q, i) => {
+      const item = el('li', 'tp-q');
+      item.appendChild(el('p', 'tp-q__prompt', 'Q' + (i + 1) + '. ' + (q.prompt || '')));
+      item.appendChild(el('p', 'tp-q__verdict', marks.length
+        ? 'Scored ' + (marks[i] == null ? 0 : marks[i]) + ' point' + (marks[i] === 1 ? '' : 's') + '.'
+        : 'Per-question marks were not recorded for this attempt.'));
+      if (q.explain) item.appendChild(el('p', 'tp-q__explain', q.explain));
+      list.appendChild(item);
+    });
+    details.appendChild(list);
+    section.appendChild(details);
+    wrap.appendChild(section);
+  }
+}
+
 /* The scrubber. One range input per editor, stepping through its snapshots. */
 function paintHistory(root, student) {
   const wrap = $('[data-sd-history]', root);
@@ -474,6 +598,8 @@ export async function openStudent(classId, uid, displayName) {
   paintUnits(root, student);
   paintTimeline(root, student);
   paintLessons(root, student);
+  await paintPapers(root, student).catch(() => {});
+  await paintQuizzes(root, student, assignments).catch(() => {});
   await paintWork(root, student);
   paintHistory(root, student);
   root.setAttribute('aria-busy', 'false');

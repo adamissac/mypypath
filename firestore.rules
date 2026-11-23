@@ -357,6 +357,12 @@ service cloud.firestore {
       // existing class has and what a learner in no class keeps forever. Typed
       // and bounded here so a teacher's setting is a number and not a string
       // that some future client reads as zero.
+      //
+      // testGate and openTests are whether the end-of-unit tests open with
+      // their unit ('unit', and the default when absent) or only when the
+      // teacher opens each one ('manual'). Both teacher-written, so the events
+      // rule below can enforce the list and a student cannot open a test for
+      // themselves. The enum is checked for the same reason lockMode's is.
       allow update: if isTeacherOf(classId)
         && request.auth.uid in request.resource.data.teacherUids
         && request.resource.data.createdAt == resource.data.createdAt
@@ -376,10 +382,15 @@ service cloud.firestore {
             || (request.resource.data.maxTestAttempts is int
                 && request.resource.data.maxTestAttempts >= 1
                 && request.resource.data.maxTestAttempts <= 99))
+        && (!('testGate' in request.resource.data)
+            || request.resource.data.testGate in ['unit', 'manual'])
+        && (!('openTests' in request.resource.data)
+            || (request.resource.data.openTests is list
+                && request.resource.data.openTests.size() <= 10))
         && request.resource.data.keys().hasOnly(
              ['name', 'joinCode', 'teacherUids', 'createdAt', 'archived',
               'timezone', 'schemaVersion', 'lockMode', 'manualUnlocks', 'showSolutions',
-              'assignmentUnlocks', 'maxTestAttempts']);
+              'assignmentUnlocks', 'maxTestAttempts', 'testGate', 'openTests']);
 
       // Archived, never deleted. Deleting the class document would strand
       // every roster, progress and event document beneath it: subcollections
@@ -443,9 +454,14 @@ service cloud.firestore {
                 || 'quiz' in request.resource.data)
             && quizWellFormed()
             && request.resource.data.dueAt is number
+            // closed is the teacher's switch for a quiz: true and the quiz can
+            // no longer be submitted (enforced in the events rule). Absent
+            // means open, so every assignment made before it existed is open.
+            && (!('closed' in request.resource.data)
+                || request.resource.data.closed is bool)
             && request.resource.data.keys().hasOnly(
                  ['title', 'units', 'lessonPaths', 'quiz', 'dueAt', 'createdAt',
-                  'archived', 'schemaVersion']);
+                  'archived', 'schemaVersion', 'closed']);
         }
 
         // Students read, and have to: their own page shows what is due, and the
@@ -740,6 +756,39 @@ service cloud.firestore {
               || unitIsOpen(request.resource.data.get('unit', 0));
           }
 
+          /* A test the teacher has not opened cannot be handed in.
+           *
+           * Real enforcement, for the same reason the by-hand unit lock is:
+           * testGate and openTests are on the class document, which only a
+           * teacher can write. Absent testGate is 'unit' -- the test opens with
+           * its unit, which is what every class had before this -- so nothing
+           * changes for a class that never touches the setting.
+           *
+           * What it cannot reach, said plainly: the student's own copy of their
+           * mark in their progress record, which their browser writes. The page
+           * refuses to start a shut test, and this refuses the record a teacher
+           * reads; a student who forces their way past both has a number only
+           * they can see. */
+          function testAllowed() {
+            let c = classDoc(classId);
+            return request.resource.data.type != 'test.submitted'
+              || c.get('testGate', 'unit') != 'manual'
+              || request.resource.data.get('unit', 0) in c.get('openTests', []);
+          }
+
+          /* A quiz the teacher has closed cannot be handed in. One extra get,
+           * and only for quiz.submitted. An assignment that no longer exists
+           * is permitted, as it always was: refusing it would only lose the
+           * work of a student who started before the teacher removed it. */
+          function quizAllowed() {
+            let p = request.resource.data.payload;
+            let path = /databases/$(database)/documents/classes/$(classId)/assignments/$(p.get('assignmentId', '-'));
+            return request.resource.data.type != 'quiz.submitted'
+              || !(p.get('assignmentId', '') is string)
+              || !exists(path)
+              || get(path).data.get('closed', false) != true;
+          }
+
           /* NOT ENFORCED HERE, and this is the honest half of the retake cap.
            *
            * A class can set maxTestAttempts, and unit-test-page.js refuses a
@@ -781,7 +830,7 @@ service cloud.firestore {
           // teacher cannot write events into a student's log either: a record
           // a teacher can forge is worth nothing as a record.
           allow create: if isOwner(uid) && isEnrolled(classId, uid) && validEvent()
-            && unitAllowed();
+            && unitAllowed() && testAllowed() && quizAllowed();
 
           // Never, by anyone. An event that can be edited after the fact is
           // not a log, it is a draft.

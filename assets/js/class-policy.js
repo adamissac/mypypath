@@ -121,6 +121,10 @@ export async function loadPolicy(classId, force) {
       // Absent means unlimited, which is what every class has today and what a
       // learner in no class keeps forever.
       maxTestAttempts: POLICY ? POLICY.normalizeAttemptCap(data.maxTestAttempts) : null,
+      // Absent means the test opens with its unit, which is what every class
+      // had before a teacher could hold tests shut.
+      testGate: POLICY ? POLICY.normalizeTestGate(data.testGate) : 'unit',
+      openTests: Array.isArray(data.openTests) ? data.openTests : [],
     };
     writeCache(classId, value);
     announce(value);

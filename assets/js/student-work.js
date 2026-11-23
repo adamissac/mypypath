@@ -134,6 +134,14 @@ function row(assignment, status, now) {
   }
   item.appendChild(parts);
 
+  // Said here as well as on the quiz page, so a student is not sent to a page
+  // only to be told it is shut.
+  if (assignment.quiz && assignment.closed === true) {
+    item.appendChild(el('p', 'sw-item__note',
+      'Your teacher has closed this quiz for now. Anything you already handed '
+      + 'in still counts.'));
+  }
+
   if (status.state === 'expired') {
     item.appendChild(el('p', 'sw-item__note',
       'This was due long enough ago that the activity records it would be '

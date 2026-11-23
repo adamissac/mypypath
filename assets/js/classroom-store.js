@@ -635,6 +635,13 @@ export async function rolloverClass(uid, fromClassId, options) {
   if (source.maxTestAttempts != null) {
     patch.maxTestAttempts = Number(source.maxTestAttempts) || 0;
   }
+  // The way tests open travels; which ones were open does not. A new term
+  // starts with every test shut again, which is what a teacher who holds tests
+  // shut by hand is going to want in September.
+  if (source.testGate === 'manual') {
+    patch.testGate = 'manual';
+    patch.openTests = [];
+  }
   if (Object.keys(patch).length) {
     await updateDoc(doc(db, `classes/${made.classId}`), patch).catch(() => {});
   }
@@ -716,6 +723,9 @@ export async function updateAssignment(classId, assignmentId, changes) {
     patch.dueAt = dueAt;
   }
   if (changes && changes.archived != null) patch.archived = changes.archived === true;
+  // A teacher's switch for a quiz. firestore.rules refuses a quiz.submitted
+  // against a closed assignment, so this is enforced and not only displayed.
+  if (changes && changes.closed != null) patch.closed = changes.closed === true;
   if (changes && (changes.units || changes.lessonPaths)) {
     const targets = cleanTargets(changes.units, changes.lessonPaths);
     if (!targets.units.length && !targets.lessonPaths.length) {
@@ -865,6 +875,24 @@ export async function setMaxTestAttempts(classId, cap) {
   const clean = POLICY ? POLICY.normalizeAttemptCap(cap) : null;
   await updateDoc(doc(db, `classes/${classId}`), { maxTestAttempts: clean });
   return clean;
+}
+
+/* Whether this class's end-of-unit tests open with their unit, or only when
+ * the teacher opens each one.
+ *
+ * 'unit' is the default and the behaviour every class had before this. In
+ * 'manual' the openTests list is the whole truth, Unit 1 included. Enforced in
+ * firestore.rules: a test.submitted for a test not on the list is refused, and
+ * only a teacher can write the list. */
+export async function setTestGate(classId, mode, openTests) {
+  const POLICY = window.PyPathPolicy;
+  const gate = POLICY ? POLICY.normalizeTestGate(mode) : (mode === 'manual' ? 'manual' : 'unit');
+  const units = Array.from(new Set((openTests || [])
+    .map(Number)
+    .filter((n) => Number.isInteger(n) && n >= 1 && n <= MAX_UNIT)))
+    .sort((a, b) => a - b);
+  await updateDoc(doc(db, `classes/${classId}`), { testGate: gate, openTests: units });
+  return { testGate: gate, openTests: units };
 }
 
 export async function readRoster(classId) {

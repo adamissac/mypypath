@@ -188,8 +188,42 @@
     return policy.showSolutions !== false;
   }
 
+  /* Whether a class's end-of-unit test for this unit may be sat yet.
+   *
+   * A separate axis from unit access, on purpose. A teacher can want the
+   * lessons of Unit 1 open for the week and the Unit 1 test shut until Friday,
+   * and folding the two together would make that impossible to say.
+   *
+   * 'unit' is the default and is what every class had before this existed: the
+   * test opens with its unit. 'manual' means the teacher's openTests list is
+   * the whole truth, unit 1 included -- unlike unit access, where unit 1 can
+   * never be shut, because shutting the Unit 1 test is exactly what a teacher
+   * asked to be able to do.
+   *
+   * No policy means open, for the same reason everything else in this file
+   * fails open: a guest, a learner in no class, an offline page and a denied
+   * read must all keep the test they always had.
+   */
+  var TEST_GATES = ['unit', 'manual'];
+
+  function normalizeTestGate(raw) {
+    return raw === 'manual' ? 'manual' : 'unit';
+  }
+
+  function testOpen(unit, policy, teaching) {
+    // A teacher previewing the paper is not sitting it.
+    if (teaching === true) return true;
+    if (!policy || typeof policy !== 'object') return true;
+    if (normalizeTestGate(policy.testGate) !== 'manual') return true;
+    var n = Number(unit);
+    return Number.isInteger(n) && hasUnit(policy.openTests, n);
+  }
+
   window.PyPathPolicy = {
     MODES: MODES,
+    TEST_GATES: TEST_GATES,
+    normalizeTestGate: normalizeTestGate,
+    testOpen: testOpen,
     MAX_ATTEMPT_CAP: MAX_ATTEMPT_CAP,
     normalizeMode: normalizeMode,
     normalizeAttemptCap: normalizeAttemptCap,

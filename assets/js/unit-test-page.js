@@ -94,6 +94,76 @@
     };
   }
 
+  /* THE PAPERS: which questions a sitting actually drew, and what was answered.
+   *
+   * A paper is ten MCQs drawn at random from fifty plus one FRQ from five, so
+   * "Ann scored 63 on the Unit 1 test" told a teacher nothing about WHICH
+   * questions Ann got wrong -- and a teacher asked, reasonably, to see them.
+   *
+   * They live here, in the synced test record, rather than in the event log,
+   * for two reasons. The event payload is capped at 512 characters, which an
+   * FRQ answer does not fit in; and the teacher's drill-down already reads this
+   * key through the class progress mirror, under a rule that already lets the
+   * teacher read it and nobody else. The student writes it, which is the same
+   * trust as every other mark on this site.
+   *
+   * Bounded twice so the record can never outgrow the mirror's 100KB cap: the
+   * last PAPERS_PER_UNIT sittings per unit, code cut at FRQ_CODE_MAX, and then
+   * oldest-first across every unit until the whole blob fits PAPERS_BUDGET. */
+  var PAPERS_PER_UNIT = 3;
+  var FRQ_CODE_MAX = 4000;
+  var PAPERS_BUDGET = 80000;
+  var ID_RE = /^[A-Za-z0-9_-]{1,40}$/;
+
+  function normalizePaper(raw) {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+    var ids = Array.isArray(raw.mcqIds) ? raw.mcqIds.filter(function (id) {
+      return typeof id === 'string' && ID_RE.test(id);
+    }).slice(0, 20) : [];
+    if (!ids.length) return null;
+    var answers = ids.map(function (id, i) {
+      var a = Array.isArray(raw.answers) ? raw.answers[i] : null;
+      if (a === null || a === undefined || a === '') return null;
+      var n = Number(a);
+      return Number.isInteger(n) && n >= 0 && n < 10 ? n : null;
+    });
+    return {
+      at: Math.max(0, Math.round(num(raw.at, 0))),
+      score: clamp(Math.round(num(raw.score, 0)), 0, 100),
+      mcqIds: ids,
+      answers: answers,
+      frqId: typeof raw.frqId === 'string' && ID_RE.test(raw.frqId) ? raw.frqId : '',
+      frqCode: typeof raw.frqCode === 'string' ? raw.frqCode.slice(0, FRQ_CODE_MAX) : '',
+      frqPassed: Math.max(0, Math.round(num(raw.frqPassed, 0))),
+      frqTotal: Math.max(0, Math.round(num(raw.frqTotal, 0)))
+    };
+  }
+
+  function normalizePapers(raw) {
+    if (!Array.isArray(raw)) return [];
+    return raw.map(normalizePaper).filter(Boolean)
+      .sort(function (a, b) { return a.at - b.at; })
+      .slice(-PAPERS_PER_UNIT);
+  }
+
+  // Drops the oldest paper anywhere in the blob until it fits. Marks, attempts
+  // and `last` are never touched: losing an old paper costs a teacher a detail,
+  // losing a mark would cost the student a unit.
+  function trimPapers(records) {
+    var size = function () { return JSON.stringify(records).length; };
+    while (size() > PAPERS_BUDGET) {
+      var oldest = null;
+      Object.keys(records).forEach(function (key) {
+        var list = records[key] && records[key].papers;
+        if (!list || !list.length) return;
+        if (!oldest || list[0].at < oldest.at) oldest = { key: key, at: list[0].at };
+      });
+      if (!oldest) break;
+      records[oldest.key].papers.shift();
+    }
+    return records;
+  }
+
   // Only unit numbers 1..10 survive. Anything else in the blob is a bug or a
   // hand edit, and carrying it forward would let it reach the teacher summary.
   function normalizeRecords(raw) {
@@ -111,7 +181,8 @@
         passed: entry.passed === true || reachedPassMark(best),
         attempts: Math.max(0, Math.round(num(entry.attempts, 0))),
         lastAt: Math.max(0, Math.round(num(entry.lastAt, 0))),
-        last: normalizeLast(entry.last)
+        last: normalizeLast(entry.last),
+        papers: normalizePapers(entry.papers)
       };
     });
     return out;
@@ -125,19 +196,31 @@
     var last = normalizeLast(attempt) || normalizeLast({});
     var best = Math.max(before ? before.best : 0, last.score);
 
+    // The sitting's paper, when the caller has one. Older callers and older
+    // records simply have none, and keep working.
+    var papers = before ? before.papers.slice() : [];
+    var paper = attempt && attempt.paper ? normalizePaper(attempt.paper) : null;
+    if (paper) papers.push(paper);
+
     return {
       best: best,
       passed: (before ? before.passed : false) || reachedPassMark(best),
       attempts: (before ? before.attempts : 0) + 1,
       lastAt: last.at,
-      last: last
+      last: last,
+      papers: normalizePapers(papers)
     };
   }
 
   window.PyPathUnitTestPage = {
     STORE_KEY: STORE_KEY,
     ATTEMPT_PREFIX: ATTEMPT_PREFIX,
+    PAPERS_PER_UNIT: PAPERS_PER_UNIT,
+    FRQ_CODE_MAX: FRQ_CODE_MAX,
+    PAPERS_BUDGET: PAPERS_BUDGET,
     normalizeRecords: normalizeRecords,
+    normalizePaper: normalizePaper,
+    trimPapers: trimPapers,
     mergeAttempt: mergeAttempt,
     recordKey: recordKey,
     parseRecordKey: parseRecordKey,
@@ -160,7 +243,7 @@
   function writeRecords(records) {
     var s = store();
     if (!s) return;
-    s.setItem(STORE_KEY, JSON.stringify(records));
+    s.setItem(STORE_KEY, JSON.stringify(trimPapers(records)));
   }
 
   /* The classroom event log, when there is one. A no-op for a guest and for a
@@ -260,6 +343,17 @@
           + 'have already finished is affected.'
         : 'Unit ' + unit + ' is not unlocked yet. Finish Unit ' + (unit - 1)
           + ' and pass its test first.';
+    }
+
+    // The teacher's own switch for the test, separate from the unit's. After
+    // the unit lock, because a closed unit is the bigger and truer reason, and
+    // before the cap, because attempts left at a shut test is the wrong number
+    // to show. Enforced in firestore.rules too: a test.submitted for a test the
+    // teacher has not opened is refused there.
+    if (POLICY.testOpen && !POLICY.testOpen(unit, classPolicy, teaching())) {
+      return 'Your teacher has not opened the Unit ' + unit + ' test yet. '
+        + 'Keep working through the lessons; the test will be here once your '
+        + 'teacher opens it.';
     }
 
     var left = POLICY.attemptsLeft(classPolicy, attemptsUsed(), teaching());
@@ -749,7 +843,19 @@
         frqId: paper.frq ? paper.frq.id : '',
         frqCasesPassed: passedCases,
         frqCasesTotal: caseResults.length,
-        at: at
+        at: at,
+        // What was on this paper and what was answered, so the teacher can
+        // see the questions this student actually drew.
+        paper: {
+          at: at,
+          score: scored.total,
+          mcqIds: paper.mcq.map(function (q) { return q.id; }),
+          answers: paper.answers.slice(),
+          frqId: paper.frq ? paper.frq.id : '',
+          frqCode: source,
+          frqPassed: passedCases,
+          frqTotal: caseResults.length
+        }
       });
 
       clearAttempt(unit);

@@ -28,9 +28,10 @@
  * the score or the attempt count. A quiz mark is a record of what the site saw,
  * never a proctored result, and no copy on this page says otherwise.
  */
-import { currentUser } from '/assets/js/auth.js';
+import { authReady } from '/assets/js/auth.js';
 import { loadMembership, currentClassId } from '/assets/js/membership.js';
-import { readAssignments, readEvents, readClass } from '/assets/js/classroom-store.js';
+import { readAssignments, readEvents } from '/assets/js/classroom-store.js';
+import { loadPolicy } from '/assets/js/class-policy.js';
 
 const CORE = window.PyPathClassroom;
 const POLICY = window.PyPathPolicy;
@@ -84,13 +85,26 @@ function dueWords(dueAt) {
 
 /* Why this student cannot sit it, or null.
  *
- * Same shape and same order as unit-test-page.js's blockedReason(): the lock
- * before the cap, because telling somebody how many attempts they have left at
- * a quiz they cannot reach is the wrong sentence.
+ * Same shape and same order as unit-test-page.js's blockedReason(): the
+ * teacher's own switch first, then the lock, then the cap, because telling
+ * somebody how many attempts they have left at a quiz they cannot reach is the
+ * wrong sentence.
+ *
+ * `policy` is class-policy.js's normalized answer ({ mode, manualUnlocks,
+ * assignmentUnlocks, ... }), never the raw class document. This used to be
+ * handed the raw document, whose field is `lockMode` and not `mode`, so every
+ * By-hand class was judged as In order against whatever this device happened
+ * to have recorded as finished.
  */
-function blockedReason(quiz, klass, completedUnits, attemptsUsed) {
-  if (POLICY && !POLICY.resolveUnlocked(quiz.unit, klass, completedUnits, false)) {
-    const byHand = klass && POLICY.normalizeMode(klass.mode) === 'manual';
+function blockedReason(assignment, policy, completedUnits, attemptsUsed) {
+  const quiz = assignment.quiz;
+  if (assignment.closed === true) {
+    return 'Your teacher has closed this quiz, so it cannot be taken right now. '
+      + 'Anything you already handed in still counts.';
+  }
+
+  if (POLICY && !POLICY.resolveUnlocked(quiz.unit, policy, completedUnits, false)) {
+    const byHand = policy && POLICY.normalizeMode(policy.mode) === 'manual';
     return byHand
       ? 'Unit ' + quiz.unit + ' is not open for your class yet, so this quiz '
         + 'cannot be taken. Your teacher chooses which units are open.'
@@ -255,6 +269,7 @@ async function submit(event) {
         correct: result.correct,
         total: result.total,
         attempt: state.attemptsUsed + 1,
+        marks: result.perQuestion.map(({ verdict }) => verdict.correct),
       });
     } catch (e) { /* telemetry must never take the page down */ }
   }
@@ -270,7 +285,11 @@ async function boot() {
     return;
   }
 
-  const user = await currentUser();
+  // authReady, not currentUser(): on a fresh load Firebase has not restored
+  // the session yet, and a synchronous read reports a signed-in student as
+  // signed out. That was the "sign in to sit a quiz" message students saw
+  // while plainly logged in.
+  const user = await authReady();
   if (!user) {
     say('Sign in to sit a quiz your teacher set.', 'error');
     return;
@@ -286,10 +305,12 @@ async function boot() {
   }
   state.classId = classId;
 
-  const [assignments, events, klass] = await Promise.all([
+  const [assignments, events, policy] = await Promise.all([
     readAssignments(classId).catch(() => []),
     readEvents(classId, user.uid).catch(() => []),
-    readClass(classId).catch(() => null),
+    // Forced fresh: a teacher who has just opened a unit or reopened this quiz
+    // must not be contradicted by a policy this tab cached an hour ago.
+    loadPolicy(classId, true).catch(() => null),
   ]);
 
   const assignment = assignments.filter((a) => a.id === id)[0];
@@ -310,7 +331,7 @@ async function boot() {
   state.attemptsUsed = best ? best.attempts : 0;
 
   const completed = window.ProgressStore ? window.ProgressStore.getCompletedUnits() : [];
-  const blocked = blockedReason(assignment.quiz, klass, completed, state.attemptsUsed);
+  const blocked = blockedReason(assignment, policy, completed, state.attemptsUsed);
 
   paintIntro(assignment.quiz, blocked, state.attemptsUsed, best);
 }

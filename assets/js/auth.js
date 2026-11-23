@@ -29,6 +29,31 @@ function toast(message) {
 
 export function currentUser() { return user; }
 
+/* The signed-in user once Firebase has decided, as a promise.
+ *
+ * currentUser() is synchronous and answers null until onAuthStateChanged has
+ * fired for the first time -- and on a fresh page load that is always later
+ * than a module's own top level, because the SDK restores the session from
+ * IndexedDB asynchronously. A page that reads currentUser() at boot therefore
+ * sees a signed-in student as signed out. quiz.html did exactly that, and told
+ * students who were plainly logged in to sign in before they could sit a quiz.
+ *
+ * Resolves with null only when Firebase has actually answered "nobody", or
+ * when the SDK could not load at all. */
+let settled = false;
+const settleWaiters = [];
+
+function settle(next) {
+  if (settled) return;
+  settled = true;
+  while (settleWaiters.length) settleWaiters.shift()(next);
+}
+
+export function authReady() {
+  if (settled) return Promise.resolve(user);
+  return new Promise((resolve) => settleWaiters.push(resolve));
+}
+
 export async function signUpWithEmail(email, password) {
   const cred = await createUserWithEmailAndPassword(auth, email, password);
   await sendEmailVerification(cred.user);
@@ -104,6 +129,7 @@ function handleAuth(next) {
     window.location.reload();
     return;
   }
+  settle(next);
   document.dispatchEvent(
     new CustomEvent('pypath:auth', { detail: { user: next } })
   );
