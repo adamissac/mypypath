@@ -1131,6 +1131,13 @@
     if (unit !== null && intro && !intro.hidden) renderIntro();
   });
 
+  // The policy may already have been announced before this script ran: this
+  // file loads after the CodeMirror scripts, and the class settings can come
+  // straight from Firebase's local cache. Catch up rather than wait for an
+  // event that has already fired. See announce() in class-policy.js.
+  var already = window.PyPathPolicy && window.PyPathPolicy.announced;
+  if (already) classPolicy = already.policy || null;
+
   document.addEventListener('DOMContentLoaded', function () {
     if (!document.body || !document.body.classList.contains('page-unit-test')) return;
     if (window.Pyodide && window.Pyodide.scheduleWarmup) window.Pyodide.scheduleWarmup();

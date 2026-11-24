@@ -277,6 +277,25 @@
     return counts;
   }
 
+  /* A student's best end-of-unit test result for one unit, or null if they
+     have not sat it. Best by ratio, so papers with different totals compare
+     fairly, and as a percentage, which is how the test page reports a mark.
+     The one place this is worked out: the dashboard's test results table and
+     anything after it read it from here. */
+  function bestTestScore(events, unit) {
+    var n = Number(unit);
+    var best = null;
+    eventsOfType(events, 'test.submitted').forEach(function (e) {
+      var p = payloadOf(e);
+      if (Number(p.unit) !== n || !(p.total > 0)) return;
+      var percent = Math.round((p.score / p.total) * 100);
+      if (best && percent <= best.percent) return;
+      best = { unit: n, percent: percent, at: toMillis(e.at),
+        passed: percent >= UNIT_TEST_PASS_MARK };
+    });
+    return best;
+  }
+
   function percentComplete(events, lessonsByUnit) {
     var total = 0;
     var done = 0;
@@ -1140,6 +1159,14 @@
       + 'in this class, and a teacher can always open a test to look at it. '
       + 'Below it, the question pool shows every question a test can draw; '
       + 'open a student from the roster to see the exact paper they got.',
+    testResults: 'Each student\'s best mark on each end-of-unit test, out of '
+      + '100, the same mark the test page showed them. 70 or more is a pass. A '
+      + 'mark you corrected is shown as adjusted, with the original kept in its '
+      + 'tooltip. A dash means the student has not taken that test. The class '
+      + 'row counts only the students who sat each test. Like every mark on this '
+      + 'page, it is what the site recorded in the student\'s browser: evidence '
+      + 'for a conversation, not a proctored result. Select a name to see the '
+      + 'exact questions that student got on each sitting.',
     maxTestAttempts: 'How many times a student in this class may sit the same '
       + 'end-of-unit test. Unlimited is the default and is what every class had '
       + 'before this setting existed. It reaches students in this class and '
@@ -1155,9 +1182,9 @@
       + 'decline holds the certificate back rather than ending anything. A '
       + 'learner who is not in anyone\'s class is unaffected and gets theirs '
       + 'the moment they finish.',
-    lockMode: 'In order: a unit opens once the one before it is finished. By '
-      + 'hand: only the units you tick are open. Open: every unit is open to '
-      + 'everyone. Assignments are unaffected by all three, so an open course '
+    lockMode: 'In order: a unit opens once the one before it is finished. I '
+      + 'choose: only the units you tick are open. All open: every unit is open '
+      + 'to everyone. Assignments are unaffected by all three, so an open course '
       + 'still owes whatever you set, and a unit you assign is always reachable '
       + 'even if the mode would otherwise keep it shut. A student who opens a '
       + 'lesson in a shut unit gets a page saying why it is shut and what they '
@@ -1195,6 +1222,8 @@
     IDLE_DAYS: IDLE_DAYS,
     STRUGGLE_RATE: STRUGGLE_RATE,
     EXPLANATIONS: EXPLANATIONS,
+    bestTestScore: bestTestScore,
+    UNIT_TEST_PASS_MARK: UNIT_TEST_PASS_MARK,
     toMillis: toMillis,
     zoneOffsetAt: zoneOffsetAt,
     endOfDayIn: endOfDayIn,

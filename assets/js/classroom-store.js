@@ -1019,6 +1019,21 @@ export async function writeEvents(classId, uid, events) {
   return events.length;
 }
 
+/* One student's quiz submissions and nothing else. A teacher asking "how did
+   the class do on this quiz" should not pay for 500 events per student to find
+   the two that matter: an equality filter on type uses Firestore's automatic
+   single-field index, so this costs one read per submission (and one for a
+   student with none). The rules already let a teacher read this collection. */
+export async function readQuizAttempts(classId, uid) {
+  const snap = counted(await getDocs(
+    query(
+      collection(db, `classes/${classId}/roster/${uid}/events`),
+      where('type', '==', 'quiz.submitted')
+    )
+  ), 'readQuizAttempts');
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+
 export async function readEvents(classId, uid, max) {
   const snap = counted(await getDocs(
     query(

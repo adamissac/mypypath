@@ -12,9 +12,8 @@ import {
   setArchived, purgeArchivedClass, createAssignment, readAssignments,
   deleteAssignment, setLockPolicy, watchRoster, readCertificates,
   setCertificateDecision, setShowSolutions, setMaxTestAttempts,
-  refreshAssignmentUnlocks, setTestGate, updateAssignment,
+  refreshAssignmentUnlocks, setTestGate, updateAssignment, readQuizAttempts,
 } from '/assets/js/classroom-store.js';
-import { loadPools, poolNode } from '/assets/js/test-paper-view.js';
 
 const CORE = window.PyPathClassroom;
 const ROLES = window.PyPathRoles;
@@ -464,6 +463,18 @@ function paintAssignments() {
     }
 
     const actions = el('div', 'cr-assign__actions');
+    const edit = el('button', 'btn btn-ghost btn-small', 'Edit');
+    edit.type = 'button';
+    edit.setAttribute('aria-expanded', 'false');
+    edit.addEventListener('click', () => toggleEditor(item, assignment, edit));
+    actions.appendChild(edit);
+    if (assignment.quiz) {
+      const results = el('button', 'btn btn-ghost btn-small', 'See quiz results');
+      results.type = 'button';
+      results.setAttribute('aria-expanded', 'false');
+      results.addEventListener('click', () => toggleQuizResults(item, assignment, results));
+      actions.appendChild(results);
+    }
     if (assignment.quiz) {
       // Said in words beside the button, so the state does not depend on
       // reading which label the button currently carries.
@@ -489,6 +500,208 @@ function paintAssignments() {
   paintAssignmentPicker();
 }
 
+/* Rename an assignment or move its due date, in place. Deleting and
+   re-setting work to fix a typo would lose nothing on the student side -- the
+   record is derived from their events -- but it would make a teacher re-pick
+   every unit and question, which is exactly the kind of chore that makes a tool
+   feel unsafe to touch. */
+function toggleEditor(item, assignment, button) {
+  const existing = item.querySelector('.cr-assign__edit');
+  if (existing) {
+    existing.remove();
+    button.setAttribute('aria-expanded', 'false');
+    button.focus();
+    return;
+  }
+  button.setAttribute('aria-expanded', 'true');
+  const form = el('form', 'cr-assign__edit');
+  const id = 'cr-edit-' + assignment.id;
+
+  const titleRow = el('p', 'cr-field');
+  const titleLabel = el('label', null, 'Name');
+  titleLabel.htmlFor = id + '-title';
+  const title = el('input');
+  title.id = id + '-title';
+  title.type = 'text';
+  title.maxLength = 100;
+  title.required = true;
+  title.value = assignment.title || '';
+  titleRow.append(titleLabel, title);
+
+  const dueRow = el('p', 'cr-field');
+  const dueLabel = el('label', null, 'Due');
+  dueLabel.htmlFor = id + '-due';
+  const due = el('input');
+  due.id = id + '-due';
+  due.type = 'date';
+  due.required = true;
+  due.value = CORE.dateInZone(CORE.toMillis(assignment.dueAt), classTimezone()) || '';
+  dueRow.append(dueLabel, due);
+
+  const note = el('p', 'cr-assign__note',
+    'Changing the due date re-checks who is on time against the new date. '
+    + 'Nothing a student has done is changed or lost.');
+  const buttons = el('p', 'cr-assign__editbtns');
+  const save = el('button', 'btn btn-primary btn-small', 'Save changes');
+  save.type = 'submit';
+  const cancel = el('button', 'btn btn-ghost btn-small', 'Cancel');
+  cancel.type = 'button';
+  cancel.addEventListener('click', () => toggleEditor(item, assignment, button));
+  buttons.append(save, cancel);
+  const error = el('p', 'cr-error');
+  error.setAttribute('role', 'alert');
+  error.hidden = true;
+
+  form.append(titleRow, dueRow, note, buttons, error);
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    show(error, false);
+    save.disabled = true;
+    const classId = activeClassId;
+    try {
+      await updateAssignment(classId, assignment.id, {
+        title: title.value,
+        dueAt: due.value ? CORE.endOfDayIn(due.value, classTimezone()) : 0,
+      });
+      saved('Saved. "' + title.value.trim() + '" is due ' + due.value + '.');
+      if (classId !== activeClassId) return;
+      assignments = await readAssignments(classId);
+      paintAssignments();
+      paintGrid();
+    } catch (err) {
+      error.textContent = (err && err.message) || 'Could not save that. Check your connection and try again.';
+      show(error, true);
+      save.disabled = false;
+    }
+  });
+  item.appendChild(form);
+  title.focus();
+}
+
+/* How the class did on one quiz: each student's best and latest score, and
+   which questions the class found hardest.
+
+   Read on demand, not on page load: one small query per student (only their
+   quiz.submitted events), which is cheap enough to offer behind a button and
+   not worth paying on every dashboard open. The per-question numbers come from
+   the marks each submission carries; submissions made before marks were
+   recorded count towards the scores but not the breakdown. */
+async function toggleQuizResults(item, assignment, button) {
+  const existing = item.querySelector('.cr-quizres');
+  if (existing) {
+    existing.remove();
+    button.setAttribute('aria-expanded', 'false');
+    return;
+  }
+  button.setAttribute('aria-expanded', 'true');
+  const box = el('div', 'cr-quizres');
+  box.setAttribute('aria-busy', 'true');
+  box.appendChild(el('p', 'cr-empty-note', 'Loading results...'));
+  item.appendChild(box);
+
+  const classId = activeClassId;
+  const roster = students.filter((st) => !st.pending);
+  let attempts;
+  let questions = [];
+  try {
+    attempts = await Promise.all(roster.map((st) =>
+      readQuizAttempts(classId, st.uid).catch(() => null)));
+    const BANK = window.PyPathQuizBank;
+    if (BANK) questions = BANK.pick(await BANK.load(assignment.quiz.unit), assignment.quiz.questionIds);
+  } catch (err) {
+    box.innerHTML = '';
+    box.appendChild(el('p', 'cr-error', 'Could not load the results. Check your connection and try again.'));
+    box.setAttribute('aria-busy', 'false');
+    return;
+  }
+  if (classId !== activeClassId) return;
+  box.innerHTML = '';
+  box.setAttribute('aria-busy', 'false');
+
+  const passMark = Number(assignment.quiz.passMark) || 0;
+  const rows = roster.map((st, i) => {
+    const mine = (attempts[i] || [])
+      .filter((e) => e.payload && e.payload.assignmentId === assignment.id)
+      .sort((a, b) => CORE.toMillis(a.at) - CORE.toMillis(b.at));
+    return {
+      student: st,
+      failed: attempts[i] === null,
+      tries: mine.length,
+      best: mine.length ? Math.max(...mine.map((e) => Number(e.payload.score) || 0)) : null,
+      latest: mine.length ? mine[mine.length - 1] : null,
+    };
+  }).sort((a, b) => String(a.student.displayName).localeCompare(String(b.student.displayName)));
+
+  const done = rows.filter((r) => r.tries > 0);
+  box.appendChild(el('p', 'cr-quizres__sum',
+    done.length + ' of ' + rows.length + ' students have handed it in'
+    + (done.length
+      ? '. ' + done.filter((r) => r.best >= passMark).length + ' reached the mark of '
+        + passMark + ', and the average best score is '
+        + Math.round(done.reduce((n, r) => n + r.best, 0) / done.length) + '.'
+      : '.')));
+
+  const wrap = el('div', 'cr-tablewrap');
+  const table = el('table', 'cr-table');
+  const cap = el('caption', 'visually-hidden', 'Results for ' + assignment.title);
+  table.appendChild(cap);
+  const thead = el('thead');
+  const hr = el('tr');
+  for (const h of ['Student', 'Best score', 'Attempts', 'Last handed in']) {
+    const th = el('th', null, h);
+    th.scope = 'col';
+    hr.appendChild(th);
+  }
+  thead.appendChild(hr);
+  table.appendChild(thead);
+  const tbody = el('tbody');
+  for (const r of rows) {
+    const tr = el('tr');
+    const th = el('th');
+    th.scope = 'row';
+    const name = el('button', 'cr-roster__name', r.student.displayName);
+    name.type = 'button';
+    name.addEventListener('click', () => openStudentByUid(r.student.uid));
+    th.appendChild(name);
+    tr.appendChild(th);
+    tr.appendChild(el('td', r.best == null ? null : (r.best >= passMark ? 'cr-quizres__ok' : 'cr-quizres__low'),
+      r.failed ? 'Could not load' : r.best == null ? 'Not handed in'
+        : r.best + ' / 100 ' + (r.best >= passMark ? '(reached the mark)' : '(below the mark)')));
+    tr.appendChild(el('td', null, String(r.tries)));
+    tr.appendChild(el('td', null, r.latest ? shortDate(CORE.toMillis(r.latest.at)) : '—'));
+    tbody.appendChild(tr);
+  }
+  table.appendChild(tbody);
+  wrap.appendChild(table);
+  box.appendChild(wrap);
+
+  // Question by question, from each student's most recent submission.
+  const Q = window.PyPathQuestions;
+  const marked = done.filter((r) => Array.isArray(r.latest.payload.marks) && r.latest.payload.marks.length);
+  if (questions.length && marked.length && Q) {
+    box.appendChild(el('h4', 'cr-quizres__h', 'Question by question'));
+    box.appendChild(el('p', 'cr-assign__note',
+      'How many students got each question fully right on their latest attempt. '
+      + 'The lowest are worth going over together.'));
+    const stats = questions.map((q, i) => {
+      const max = Q.score(q, null).total || 1;
+      const right = marked.filter((r) => Number(r.latest.payload.marks[i]) >= max).length;
+      return { q, i, right, pct: Math.round((right / marked.length) * 100) };
+    });
+    const lowest = Math.min(...stats.map((x) => x.pct));
+    const list = el('ol', 'cr-quizres__qs');
+    for (const x of stats) {
+      const li = el('li', 'cr-quizres__q' + (x.pct === lowest && x.pct < 100 ? ' is-hardest' : ''));
+      li.appendChild(el('span', 'cr-quizres__prompt', x.q.prompt || x.q.id));
+      li.appendChild(el('span', 'cr-quizres__pct',
+        x.right + ' of ' + marked.length + ' right (' + x.pct + '%)'
+        + (x.pct === lowest && x.pct < 100 ? ' — most missed' : '')));
+      list.appendChild(li);
+    }
+    box.appendChild(list);
+  }
+}
+
 /* Close or reopen a quiz without removing it. Closing keeps every result
    already handed in and keeps the assignment on everyone's list; it only stops
    new attempts, and firestore.rules refuses a submission against a closed quiz,
@@ -500,6 +713,7 @@ async function toggleQuiz(assignment) {
   const closing = assignment.closed !== true;
   try {
     await updateAssignment(classId, assignment.id, { closed: closing });
+    saved(closing ? 'Quiz closed. Students cannot start it.' : 'Quiz reopened.');
     if (classId !== activeClassId) return;
     assignments = await readAssignments(classId);
     paintAssignments();
@@ -627,6 +841,18 @@ function paintRetakes() {
   box.value = cap === null ? '' : String(cap);
 }
 
+/* "Saved", said once and then cleared. No animation, so nothing moves for a
+   teacher who has asked for reduced motion; the live region does the work. */
+let toastTimer = null;
+function saved(message) {
+  const toast = $('[data-cr-toast]');
+  if (!toast) return;
+  toast.textContent = message || 'Saved';
+  show(toast, true);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => show(toast, false), 3500);
+}
+
 /* When this class's tests open: with their unit, or when the teacher ticks
    them. Unlike unit access, Unit 1 is a real tick here -- holding the Unit 1
    test shut is the case that asked for this. */
@@ -642,7 +868,7 @@ function paintTestGate() {
 
   const host = $('[data-cr-test-units]');
   if (!host) return;
-  show(host, gate === 'manual');
+  show($('[data-cr-test-pick]'), gate === 'manual');
   if (!host.children.length) {
     const total = (CURRICULUM && CURRICULUM.TOTAL_UNITS) || 10;
     for (let u = 1; u <= total; u += 1) {
@@ -652,7 +878,7 @@ function paintTestGate() {
       box.value = String(u);
       box.setAttribute('data-cr-test-unit', '');
       label.appendChild(box);
-      label.appendChild(el('span', null, 'Unit ' + u + ' test'));
+      label.appendChild(el('span', null, 'Unit ' + u));
       host.appendChild(label);
     }
   }
@@ -669,12 +895,17 @@ async function saveTestGate() {
   const units = $$('[data-cr-test-unit]:checked').map((b) => Number(b.value));
   const classId = activeClassId;
   try {
-    const saved = await setTestGate(classId, gate, units);
+    const result = await setTestGate(classId, gate, units);
     const klass = classes.filter((c) => c.id === classId)[0];
     if (klass) {
-      klass.testGate = saved.testGate;
-      klass.openTests = saved.openTests;
+      klass.testGate = result.testGate;
+      klass.openTests = result.openTests;
     }
+    saved(result.testGate === 'manual'
+      ? (result.openTests.length
+        ? 'Saved. Open tests: Unit ' + result.openTests.join(', ') + '.'
+        : 'Saved. Every unit test is shut until you open it.')
+      : 'Saved. Each test opens with its unit.');
   } catch (err) {
     if (error) {
       error.textContent = 'Could not save that. Check your connection and try again.';
@@ -683,7 +914,10 @@ async function saveTestGate() {
   }
   // Repaint either way: after a failure this puts the controls back to what
   // is actually stored, which is what students are actually getting.
-  if (classId === activeClassId) paintTestGate();
+  if (classId === activeClassId) {
+    paintTestGate();
+    paintTestResults();
+  }
 }
 
 /* Every question a unit's test can draw, with the answers. */
@@ -698,6 +932,8 @@ async function paintPool() {
   if (!unit) return;
   host.setAttribute('aria-busy', 'true');
   try {
+    // Loaded on first use, like the student record: most visits never open it.
+    const { loadPools, poolNode } = await import('/assets/js/test-paper-view.js');
     const pools = await loadPools(unit, 'units');
     if (Number(pick.value) !== unit) return;
     host.appendChild(poolNode(pools));
@@ -735,7 +971,7 @@ function paintAccess() {
   const host = $('[data-cr-access-units]');
   if (!host) return;
   // The unit list is only meaningful when the teacher's list is the rule.
-  show(host, mode === 'manual');
+  show($('[data-cr-access-pick]'), mode === 'manual');
   if (host.children.length) {
     $$('[data-cr-access-unit]', host).forEach((box) => {
       box.checked = Number(box.value) === 1 || open.map(Number).indexOf(Number(box.value)) !== -1;
@@ -938,20 +1174,130 @@ function latestTest(events, overrides) {
    * this page exists to provide -- and one that hid who corrected it would be
    * worse. The cell shows the adjusted mark, marks it as adjusted, and names
    * the person and the reason in its title. */
-  if (best) {
-    for (const o of overrides || []) {
-      if (!o || o.kind !== 'grade' || Number(o.unit) !== best.unit) continue;
-      const outOf = Number(o.outOf) || 100;
-      best = {
-        ...best,
-        score: Math.round((Number(o.score) / outOf) * 100),
-        original: best.score,
-        adjustedBy: o.byName || 'a teacher',
-        reason: o.reason || '',
-      };
-    }
+  return best ? withGradeOverride(best, overrides) : best;
+}
+
+/* Applies a teacher's grade correction for result.unit to a { unit, score }
+   result, keeping the original beside it. The one place a correction is
+   applied, so the roster column and the test results table cannot disagree. */
+function withGradeOverride(best, overrides) {
+  let out = best;
+  for (const o of overrides || []) {
+    if (!o || o.kind !== 'grade' || Number(o.unit) !== best.unit) continue;
+    const outOf = Number(o.outOf) || 100;
+    out = {
+      ...out,
+      score: Math.round((Number(o.score) / outOf) * 100),
+      original: best.score,
+      adjustedBy: o.byName || 'a teacher',
+      reason: o.reason || '',
+    };
   }
-  return best;
+  return out;
+}
+
+/* ------------------------------------------------------- test results */
+
+/* Every student's best mark on every unit test. Columns are the units anybody
+   has sat, plus any test the teacher has opened by hand, so a class early in
+   the course sees two columns rather than ten mostly empty ones. */
+function paintTestResults() {
+  const head = $('[data-cr-results-head]');
+  const body = $('[data-cr-results-body]');
+  const foot = $('[data-cr-results-foot]');
+  if (!head || !body || !foot) return;
+  const klass = classes.filter((c) => c.id === activeClassId)[0] || {};
+  const POLICY = window.PyPathPolicy;
+  const manual = POLICY && POLICY.normalizeTestGate(klass.testGate) === 'manual';
+  const open = (klass.openTests || []).map(Number);
+  const total = (CURRICULUM && CURRICULUM.TOTAL_UNITS) || 10;
+  const pass = CORE.UNIT_TEST_PASS_MARK || 70;
+
+  const rows = students
+    .filter((st) => !st.pending)
+    .map((st) => {
+      const marks = {};
+      for (let u = 1; u <= total; u += 1) {
+        const best = CORE.bestTestScore(st.events, u);
+        if (best) marks[u] = withGradeOverride({ unit: u, score: best.percent }, st.overrides);
+      }
+      return { student: st, marks };
+    })
+    .sort((a, b) => String(a.student.displayName).localeCompare(String(b.student.displayName)));
+
+  const units = [];
+  for (let u = 1; u <= total; u += 1) {
+    if (rows.some((r) => r.marks[u]) || (manual && open.indexOf(u) !== -1)) units.push(u);
+  }
+
+  head.innerHTML = '';
+  body.innerHTML = '';
+  foot.innerHTML = '';
+  show($('[data-cr-results-empty]'), units.length === 0);
+  show($('[data-cr-results-wrap]'), units.length > 0);
+  if (!units.length) return;
+
+  const hr = el('tr');
+  const corner = el('th', null, 'Student');
+  corner.scope = 'col';
+  hr.appendChild(corner);
+  for (const u of units) {
+    const th = el('th', 'cr-results__unit');
+    th.scope = 'col';
+    th.appendChild(document.createTextNode('Unit ' + u));
+    if (manual) {
+      th.appendChild(el('span', 'cr-results__gate ' + (open.indexOf(u) !== -1 ? 'is-open' : 'is-shut'),
+        open.indexOf(u) !== -1 ? 'open' : 'shut'));
+    }
+    hr.appendChild(th);
+  }
+  head.appendChild(hr);
+
+  for (const row of rows) {
+    const tr = el('tr');
+    const th = el('th', 'cr-results__who');
+    th.scope = 'row';
+    const link = el('button', 'cr-roster__name', row.student.displayName);
+    link.type = 'button';
+    link.addEventListener('click', () => openStudentByUid(row.student.uid));
+    th.appendChild(link);
+    tr.appendChild(th);
+    for (const u of units) {
+      const mark = row.marks[u];
+      const td = el('td', 'cr-results__cell');
+      if (!mark) {
+        td.appendChild(el('span', 'cr-results__none', '—'));
+        td.appendChild(el('span', 'visually-hidden', 'not taken'));
+      } else {
+        const passed = mark.score >= pass;
+        td.classList.add(passed ? 'is-pass' : 'is-below');
+        td.appendChild(el('span', 'cr-results__score', String(mark.score)));
+        td.appendChild(el('span', 'cr-results__word', passed ? 'passed' : 'not yet'));
+        if (mark.original != null) {
+          td.appendChild(el('span', 'cr-results__adj', 'adjusted'));
+          td.title = 'Adjusted by ' + mark.adjustedBy + ' from ' + mark.original
+            + (mark.reason ? ': ' + mark.reason : '');
+        }
+      }
+      tr.appendChild(td);
+    }
+    body.appendChild(tr);
+  }
+
+  // The class, per test: how many passed and the average of those who sat it.
+  const fr = el('tr', 'cr-results__total');
+  const fth = el('th', null, 'Class');
+  fth.scope = 'row';
+  fr.appendChild(fth);
+  for (const u of units) {
+    const sat = rows.map((r) => r.marks[u]).filter(Boolean);
+    const passed = sat.filter((m) => m.score >= pass).length;
+    const avg = sat.length ? Math.round(sat.reduce((n, m) => n + m.score, 0) / sat.length) : null;
+    fr.appendChild(el('td', 'cr-results__sum', sat.length
+      ? passed + ' of ' + sat.length + ' passed, average ' + avg
+      : 'Nobody yet'));
+  }
+  foot.appendChild(fr);
 }
 
 function rosterRows() {
@@ -1656,6 +2002,7 @@ function paintAll() {
   paintRetakes();
   paintTestGate();
   fillPoolPicker();
+  paintTestResults();
   paintAttention();
   paintView();
   paintRoster();
@@ -1837,7 +2184,34 @@ function openStudentByUid(uid) {
   if (student) openStudent(student, null);
 }
 
-function openStudent(student, column) {
+/* The student record is loaded the first time a teacher opens one, not with
+   the page: it and the test-paper viewer it uses are ~30KB a teacher who only
+   glances at the roster never needs, and the page's critical-path budget
+   (scripts/verify-perf-budget.mjs) is 1000KB. Importing it registers its
+   listener, so the event below is heard. Still module-only, so an old browser
+   skips it exactly as it skipped the script tag. */
+let detailLoading = null;
+function loadStudentDetail() {
+  if (!detailLoading) {
+    detailLoading = import('/assets/js/student-detail.js').catch((err) => {
+      detailLoading = null;
+      throw err;
+    });
+  }
+  return detailLoading;
+}
+
+async function openStudent(student, column) {
+  try {
+    await loadStudentDetail();
+  } catch (e) {
+    const error = $('[data-cr-assign-list-error]');
+    if (error) {
+      error.textContent = 'Could not open that student. Check your connection and try again.';
+      show(error, true);
+    }
+    return;
+  }
   document.dispatchEvent(new CustomEvent('pypath:classroom-student', {
     detail: {
       classId: activeClassId,
@@ -1873,13 +2247,18 @@ async function saveAccess() {
   const units = $$('[data-cr-access-unit]:checked').map((b) => Number(b.value));
 
   try {
-    const saved = await setLockPolicy(activeClassId, mode, units);
+    const result = await setLockPolicy(activeClassId, mode, units);
     const klass = classes.filter((c) => c.id === activeClassId)[0];
     if (klass) {
-      klass.lockMode = saved.mode;
-      klass.manualUnlocks = saved.manualUnlocks;
+      klass.lockMode = result.mode;
+      klass.manualUnlocks = result.manualUnlocks;
     }
     paintAccess();
+    saved('Saved. ' + ({
+      sequential: 'Units open in order.',
+      manual: 'Open units: ' + [1].concat(result.manualUnlocks.filter((u) => Number(u) !== 1)).join(', ') + '.',
+      free: 'Every unit is open.',
+    })[result.mode]);
   } catch (err) {
     if (error) {
       error.textContent = 'Could not save that. Check your connection and try again.';
@@ -1888,7 +2267,21 @@ async function saveAccess() {
   }
 }
 
+/* The guide stays folded once a teacher folds it. Per-browser on purpose: it
+   is a convenience, and storage that throws (private mode, blocked site data)
+   just leaves it open, which is the safe default. */
+const GUIDE_KEY = 'pypath-cr-guide-closed';
+function wireGuide() {
+  const guide = $('[data-cr-guide]');
+  if (!guide) return;
+  try { if (localStorage.getItem(GUIDE_KEY) === '1') guide.open = false; } catch (e) {}
+  guide.addEventListener('toggle', () => {
+    try { localStorage.setItem(GUIDE_KEY, guide.open ? '0' : '1'); } catch (e) {}
+  });
+}
+
 function wire() {
+  wireGuide();
   document.addEventListener('click', (e) => {
     const info = e.target.closest && e.target.closest('[data-cr-info]');
     if (info) {
@@ -1949,9 +2342,10 @@ function wire() {
       show(error, false);
       const want = solutions.checked;
       try {
-        const saved = await setShowSolutions(activeClassId, want);
+        const result = await setShowSolutions(activeClassId, want);
         const klass = classes.filter((c) => c.id === activeClassId)[0];
-        if (klass) klass.showSolutions = saved;
+        if (klass) klass.showSolutions = result;
+        saved(result ? 'Saved. Students can reveal answers.' : 'Saved. Answers are hidden from students.');
       } catch (err) {
         // Put the box back where it was: a tick that did not save is a tick
         // that says students can see something they cannot.
@@ -1976,9 +2370,11 @@ function wire() {
         return cap === null ? '' : String(cap);
       })();
       try {
-        const saved = await setMaxTestAttempts(activeClassId, retakes.value || null);
+        const result = await setMaxTestAttempts(activeClassId, retakes.value || null);
         const klass = classes.filter((c) => c.id === activeClassId)[0];
-        if (klass) klass.maxTestAttempts = saved;
+        if (klass) klass.maxTestAttempts = result;
+        saved(result ? 'Saved. ' + result + (result === 1 ? ' attempt' : ' attempts') + ' per test.'
+          : 'Saved. Unlimited attempts.');
       } catch (err) {
         // Put it back. A limit that did not save is a limit a teacher believes
         // is in force and is not.

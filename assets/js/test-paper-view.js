@@ -151,9 +151,9 @@ export function poolNode(pools) {
   const wrap = el('div', 'tp-pool');
   const mcq = el('ol', 'tp-list');
   pools.mcq.forEach((q, i) => mcq.appendChild(mcqNode(q, i + 1)));
-  wrap.appendChild(el('h4', null, pools.mcq.length + ' multiple choice questions'));
+  wrap.appendChild(el('h3', null, pools.mcq.length + ' multiple choice questions'));
   wrap.appendChild(mcq);
-  wrap.appendChild(el('h4', null, pools.frq.length + ' free response questions'));
+  wrap.appendChild(el('h3', null, pools.frq.length + ' coding questions'));
   for (const frq of pools.frq) wrap.appendChild(frqNode(frq));
   return wrap;
 }

@@ -152,11 +152,16 @@ describe('the classroom modules that do touch Firebase are modules', () => {
 
   it('are loaded with type="module", so an old browser skips them silently', () => {
     const html = fs.readFileSync('classroom.html', 'utf8');
-    for (const file of ['classroom-dashboard', 'student-detail']) {
-      expect(html).toMatch(
-        new RegExp(`<script type="module" src="/assets/js/${file}\\.js(?:\\?v=[0-9a-f]+)?">`)
-      );
-    }
+    // The gate is a module script; it imports the dashboard for a confirmed
+    // teacher, and the dashboard imports the student record on first use.
+    expect(html).toMatch(/<script type="module" src="\/assets\/js\/classroom-page\.js/);
+    const gate = fs.readFileSync('assets/js/classroom-page.js', 'utf8');
+    expect(gate).toMatch(/import\('\/assets\/js\/classroom-dashboard\.js'\)/);
+    // The student record is imported on first use by the dashboard module
+    // (to keep it off the page's critical path). A dynamic import from a module
+    // is skipped by an old browser exactly as a module script tag is.
+    const dash = fs.readFileSync('assets/js/classroom-dashboard.js', 'utf8');
+    expect(dash).toMatch(/import\('\/assets\/js\/student-detail\.js'\)/);
   });
 
   it('never reach for Firebase outside the shared config', () => {

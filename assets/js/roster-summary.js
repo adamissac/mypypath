@@ -41,8 +41,9 @@
  */
 import { db, importFirebaseModule } from '/assets/js/firebase-config.js';
 
-const { doc, getDoc, setDoc, serverTimestamp } =
-  (await importFirebaseModule('firebase-firestore.js')) || {};
+const {
+  doc, getDoc, getDocs, setDoc, serverTimestamp, collection, query, orderBy, limit,
+} = (await importFirebaseModule('firebase-firestore.js')) || {};
 /* Dev-only, off unless ?readcount=1. The summary read has to appear in the
    count or the measurement it exists to improve would be flattering rather
    than true -- a dashboard that reports 65 reads while making 30 uncounted
@@ -303,9 +304,41 @@ export function _resetForTests() {
   timer = null;
 }
 
+/* The student's own event log, oldest first, for building a first summary. */
+async function readOwnLog(classId, uid) {
+  const snap = counted(await getDocs(query(
+    collection(db, `classes/${classId}/roster/${uid}/events`),
+    orderBy('at', 'desc'),
+    limit(500)
+  )), 'readOwnLog');
+  return snap.docs.map((d) => d.data()).reverse();
+}
+
+/* A summary written before noteEvents stamped its events: it has content and
+   not one date. Its completions all sit at 0, which reads as on time for work
+   that was late, so it is rebuilt from the log once, the next time this
+   student does anything. A repair keyed to that defect, never to age. */
+function untimed(summary) {
+  if (summary.lastEventAt) return false;
+  const has = (m) => m && Object.keys(m).length > 0;
+  return has(summary.lessons) || has(summary.units) || has(summary.quizzes);
+}
+
+/* Returns { summary, fromLog } or null.
+ *
+ * NO SUMMARY YET IS NOT THE SAME AS NO HISTORY. A student enrolled before
+ * summaries existed, and missed by scripts/backfill-roster-summaries.mjs, has a
+ * full event log and no summary; the dashboard shows them by reading that log.
+ * Starting their first summary from emptySummary() made the dashboard switch to
+ * a summary holding only this page's events -- every earlier lesson, test mark
+ * and quiz vanished from the teacher's view the next time the student did
+ * anything. So the first summary is built from the log itself, once, at the
+ * cost of one log read for that student; every later write is incremental as
+ * before. The log already contains the batch being committed (noteEvents runs
+ * after the write), so the caller must not apply it a second time. */
 async function ensureLoaded(classId, uid) {
   const key = `${classId}/${uid}`;
-  if (loadedFor === key && loaded) return loaded;
+  if (loadedFor === key && loaded) return { summary: loaded, fromLog: false };
   let existing = null;
   try {
     existing = await readSummary(classId, uid);
@@ -316,9 +349,21 @@ async function ensureLoaded(classId, uid) {
        to write until a read succeeds. */
     return null;
   }
-  loaded = existing || emptySummary();
+  if (existing && !untimed(existing)) {
+    loaded = existing;
+    loadedFor = key;
+    return { summary: loaded, fromLog: false };
+  }
+  let log;
+  try {
+    log = await readOwnLog(classId, uid);
+  } catch (e) {
+    // Same rule as above: unreadable history is not empty history.
+    return null;
+  }
+  loaded = applyEvents(emptySummary(), log);
   loadedFor = key;
-  return loaded;
+  return { summary: loaded, fromLog: true };
 }
 
 async function commit(classId, uid) {
@@ -330,7 +375,7 @@ async function commit(classId, uid) {
   const base = await ensureLoaded(classId, uid);
   if (!base) return;
 
-  const next = applyEvents(base, batch);
+  const next = base.fromLog ? base.summary : applyEvents(base.summary, batch);
   loaded = next;
   try {
     await writeSummary(classId, uid, next);
@@ -345,7 +390,18 @@ async function commit(classId, uid) {
 /* Called with the same batch that was just written to the event log. */
 export function noteEvents(classId, uid, events) {
   if (!classId || !uid || !events || !events.length) return;
-  pending = (pending || []).concat(events);
+  /* STAMPED HERE, because nothing else stamps them. The batch is the one
+     events.js built, and its events carry no time: the log gets one from
+     serverTimestamp() as it is written, but this copy never did. Every date in
+     a student-written summary was therefore 0 -- and a completion at 0 is
+     before every due date, so work handed in days late showed as on time.
+
+     This is the student's own clock, the same tier as everything else in the
+     summary (see the forgery note in firestore.rules). The event log keeps its
+     server time and remains the record the drill-down and exports read. */
+  const now = Date.now();
+  const stamped = events.map((e) => (e && e.at ? e : { ...e, at: now }));
+  pending = (pending || []).concat(stamped);
   if (timer) return;
   timer = setTimeout(() => { commit(classId, uid).catch(() => {}); }, WRITE_DEBOUNCE_MS);
 }

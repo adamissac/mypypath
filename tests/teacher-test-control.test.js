@@ -219,3 +219,25 @@ describe('a teacher can close and reopen a quiz', () => {
     expect(read('assets/js/student-work.js')).toMatch(/Your teacher has closed this quiz/);
   });
 });
+
+describe('the test page never misses its class settings', () => {
+  /* The policy can be announced before unit-test-page.js runs: the page loads
+     after the CodeMirror scripts, and the answer can come from Firebase's local
+     cache. Measured in a browser: policy at 509ms, the page's script at ~600ms.
+     It then ran with no class settings at all. */
+  it('class-policy.js leaves the last answer where a late listener can find it', () => {
+    expect(read('assets/js/class-policy.js')).toMatch(/if \(POLICY\) POLICY\.announced = \{ policy: value \};/);
+  });
+
+  it('the test page catches up instead of waiting for an event that already fired', () => {
+    const src = read('assets/js/unit-test-page.js');
+    expect(src).toMatch(/var already = window\.PyPathPolicy && window\.PyPathPolicy\.announced;\s*\n\s*if \(already\) classPolicy = already\.policy \|\| null;/);
+  });
+
+  it('the test page script really does load after event-sink.js', () => {
+    // The ordering that makes the catch-up necessary. If this ever flips, the
+    // catch-up is harmless; if it is removed while this holds, the race is back.
+    const html = read('unit-test.html');
+    expect(html.indexOf('/assets/js/event-sink.js')).toBeLessThan(html.indexOf('/assets/js/unit-test-page.js'));
+  });
+});

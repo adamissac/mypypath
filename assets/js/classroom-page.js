@@ -42,6 +42,15 @@ async function start(user) {
     // from here, and shows itself once its own data has loaded. This only has
     // to stop hiding the page behind "Loading your class".
     show(null);
+    /* The dashboard is loaded here, for a confirmed teacher, rather than by a
+       script tag. It is the largest script on the page (~100KB) and a guest or
+       student who lands on /classroom.html never runs it; even for a teacher it
+       cannot draw anything until sign-in and the class data have arrived, so
+       fetching it with the page only competed with the page becoming usable
+       (scripts/verify-perf-budget.mjs holds that critical path to 1000KB).
+       Its own pypath:auth listener still handles later sign-in changes. */
+    const dashboard = await import('/assets/js/classroom-dashboard.js');
+    await dashboard.boot(user);
   } catch (e) {
     const msg = qs('[data-class-error-message]');
     if (msg) msg.textContent = String((e && e.message) || e);

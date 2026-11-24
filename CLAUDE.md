@@ -94,6 +94,18 @@ Two rules follow from that, and breaking either reintroduces the bug:
   because a timestamp looked stale reintroduces the whole cost on exactly the
   classes with the most data.
 
+Two write-side rules in `roster-summary.js`, both learned from bugs that reached
+teachers (`tests/roster-summary-write.test.js`):
+
+- **Every event is stamped before it enters the summary.** The batch from
+  `events.js` carries no `at`; only the log gets a server time. Unstamped, every
+  summary date was 0, and a completion at 0 is before every due date, so late
+  work showed as on time.
+- **A student's first summary is built from their own event log, never from
+  empty**, and a summary with content but no dates is rebuilt the same way.
+  Starting from empty made a student's whole history vanish from the dashboard
+  the next time they did anything.
+
 The canonical log is *not* a substitute for the real one where individual events
 matter — `groupByDay()`'s timeline is the clear case. The drill-down and both
 exports keep reading events, and should.

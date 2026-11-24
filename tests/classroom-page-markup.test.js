@@ -12,8 +12,13 @@ const dash = fs.readFileSync('assets/js/classroom-dashboard.js', 'utf8');
 
 describe('the page loads what it needs', () => {
   it('loads the analytics before the renderer that calls it', () => {
-    expect(html.indexOf('/assets/js/classroom-core.js'))
-      .toBeLessThan(html.indexOf('/assets/js/classroom-dashboard.js'));
+    // The renderer is imported by the teacher gate once a teacher is
+    // confirmed, which is after sign-in and so after every deferred script,
+    // classroom-core.js included, has run.
+    expect(html).toContain('/assets/js/classroom-core.js');
+    expect(html).not.toMatch(/<script[^>]*classroom-dashboard\.js/);
+    const gate = fs.readFileSync('assets/js/classroom-page.js', 'utf8');
+    expect(gate).toMatch(/await import\('\/assets\/js\/classroom-dashboard\.js'\);\s*\n\s*await dashboard\.boot\(user\);/);
   });
 
   it('keeps the teacher gate loaded', () => {

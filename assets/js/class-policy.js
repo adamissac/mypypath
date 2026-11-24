@@ -47,8 +47,17 @@ function writeCache(classId, value) {
   } catch (e) {}
 }
 
+/* Announced as an event AND left where a late listener can find it.
+
+   An event alone is only heard by scripts already listening. unit-test-page.js
+   is queued behind the CodeMirror downloads, while this answer can come
+   straight from Firebase's local cache -- so on a warm cache the policy landed
+   before the test page had registered its listener, and the test page ran with
+   no class settings at all: no unit lock, no teacher test gate, no retake cap.
+   PyPathPolicy.announced lets a listener that arrives late catch up. */
 function announce(value) {
   policy = value;
+  if (POLICY) POLICY.announced = { policy: value };
   document.dispatchEvent(new CustomEvent('pypath:policy', { detail: { policy: value } }));
 }
 

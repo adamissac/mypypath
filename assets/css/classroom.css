@@ -1879,8 +1879,10 @@
 
 /* Zero is an answer, not a disabled state: it stays clickable and legible,
    just quieter, so "nobody is overdue" reads at a glance. */
-.cr-seg.is-zero { opacity: 0.62; }
-.cr-seg.is-zero.is-on { opacity: 1; }
+/* An empty filter reads as quieter by its dashed edge, not by fading the text:
+   opacity took "Not started 0" below contrast in both themes. */
+.cr-seg.is-zero { border-style: dashed; }
+.cr-seg.is-zero.is-on { border-style: solid; }
 
 .cr-segnote {
   margin: 0 0 0.75rem;
@@ -2017,4 +2019,156 @@
 .tp-tag { font-size: .85rem; color: var(--muted, #475569); font-weight: 400; }
 .tp-frq { margin: .75rem 0 .25rem; padding: .5rem .75rem; border-left: 3px solid var(--border, #cbd5e1); overflow-wrap: anywhere; }
 .tp-cases { margin: .25rem 0; padding-left: 1.2rem; font-size: .88rem; }
-.tp-pool h4 { font-size: .95rem; margin: .8rem 0 .4rem; }
+.tp-pool h3 { font-size: .95rem; margin: .8rem 0 .4rem; }
+
+/* ------------------------------------------------- what students can open */
+
+/* `display: grid` on the tickbox rows used to beat the hidden attribute, so the
+   "By hand" units and the per-test ticks showed in every mode and ticking them
+   did nothing. The wrapper is what is hidden now, and hidden means hidden. */
+.cr-access__pick[hidden],
+.cr-access__units[hidden],
+.cr-toast[hidden] { display: none; }
+
+.cr-zone__lede {
+  margin: -.25rem 0 1rem;
+  max-width: 48rem;
+  font-size: .95rem;
+  line-height: 1.55;
+  color: var(--muted, #475569);
+}
+
+/* All three switches are the same kind of card. */
+.cr-card {
+  margin: 0 0 1rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .9rem;
+  background: var(--panel, #fff);
+  box-shadow: var(--shadow, 0 4px 20px rgba(12, 69, 102, .07));
+}
+.cr-zone .cr-card > h2 { font-size: 1.05rem; margin-top: 0; }
+
+.cr-access__pick { margin-top: .75rem; }
+.cr-access__picklabel { margin: 0 0 .5rem; font-size: .85rem; font-weight: 700; }
+
+/* A label beside its control, the same size as everything else in the card. */
+.cr-card__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem .75rem;
+  margin-top: 1.1rem;
+}
+.cr-retakes__field { font-weight: 700; font-size: .95rem; display: inline-flex; align-items: center; gap: .35rem; }
+
+/* The caveats: present, honest, and one click away rather than in the way. */
+.cr-how { margin-top: .75rem; font-size: .85rem; color: var(--muted, #475569); }
+.cr-how > summary { cursor: pointer; font-weight: 600; color: var(--text, #0f172a); padding: .2rem 0; }
+.cr-how > p { margin: .4rem 0 0; line-height: 1.55; }
+
+/* Saved: pinned where a teacher's eye already is after clicking, without
+   moving anything on the page. No transition, so reduced motion is moot. */
+.cr-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.25rem;
+  transform: translateX(-50%);
+  max-width: calc(100vw - 2rem);
+  margin: 0;
+  padding: .65rem 1rem;
+  border-radius: .7rem;
+  font-weight: 600;
+  font-size: .92rem;
+  color: #fff;
+  background: #14532d;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, .18);
+}
+@media print { .cr-toast { display: none; } }
+
+/* ------------------------------------------------------ test results */
+
+.cr-results {
+  margin: 1.5rem 0 0;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .9rem;
+  background: var(--panel, #fff);
+}
+.cr-results > h2 { font-size: 1.15rem; margin-top: 0; }
+.cr-results__lede { margin: 0 0 .75rem; font-size: .9rem; color: var(--muted, #475569); }
+.cr-results__table th, .cr-results__table td { white-space: nowrap; }
+.cr-results__unit { text-align: center; }
+.cr-results__gate {
+  display: block;
+  margin-top: .15rem;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.cr-results__gate.is-open { color: #166534; }
+.cr-results__gate.is-shut { color: var(--muted, #475569); }
+.cr-results__cell { text-align: center; }
+.cr-results__score { display: block; font-weight: 700; font-size: 1rem; }
+.cr-results__word, .cr-results__adj { display: block; font-size: .75rem; }
+.cr-results__cell.is-pass .cr-results__word { color: #166534; }
+.cr-results__cell.is-below .cr-results__word { color: #9a3412; }
+.cr-results__adj { color: var(--muted, #475569); font-style: italic; }
+.cr-results__none { color: var(--muted, #475569); }
+.cr-results__total th, .cr-results__sum { font-size: .8rem; font-weight: 600; white-space: normal; }
+.cr-results__sum { text-align: center; color: var(--muted, #475569); min-width: 7rem; }
+
+/* ---------------------------------------- assignment edit + quiz results */
+
+.cr-assign__edit,
+.cr-quizres {
+  margin-top: .75rem;
+  padding: .85rem 1rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: .7rem;
+  background: color-mix(in srgb, var(--primary, #0ea5e9) 4%, var(--panel, #fff));
+}
+/* A plain grid: label above control at every width. A flex row with a
+   flex-basis turned that basis into a 14rem-tall text box wherever a narrow
+   layout stacks .cr-field vertically. */
+.cr-assign__edit .cr-field { display: grid; gap: .3rem; margin: 0 0 .7rem; max-width: 26rem; }
+.cr-assign__edit label { font-weight: 600; }
+.cr-assign__edit input { width: 100%; height: auto; }
+.cr-assign__editbtns { display: flex; flex-wrap: wrap; gap: .5rem; margin: .75rem 0 0; }
+.cr-quizres__sum { margin: 0 0 .6rem; font-weight: 600; }
+.cr-quizres__ok { color: #166534; font-weight: 600; }
+.cr-quizres__low { color: #9a3412; font-weight: 600; }
+.cr-quizres__h { margin: 1rem 0 .25rem; font-size: .95rem; }
+.cr-quizres__qs { margin: .6rem 0 0; padding-left: 1.4rem; }
+.cr-quizres__q { margin: 0 0 .45rem; }
+.cr-quizres__prompt { display: block; }
+.cr-quizres__pct { display: block; font-size: .85rem; color: var(--muted, #475569); }
+.cr-quizres__q.is-hardest .cr-quizres__pct { color: #9a3412; font-weight: 700; }
+
+/* ------------------------------------------------------------ the guide */
+
+.cr-guide {
+  margin: 0 0 1.25rem;
+  padding: .85rem 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--primary, #0ea5e9) 35%, var(--border, #cbd5e1));
+  border-radius: .9rem;
+  background: color-mix(in srgb, var(--primary, #0ea5e9) 6%, var(--panel, #fff));
+}
+.cr-guide > summary { cursor: pointer; font-weight: 700; font-size: 1rem; }
+.cr-guide__steps { margin: .75rem 0 0; padding-left: 1.3rem; display: grid; gap: .45rem; line-height: 1.5; }
+.cr-guide__safe { margin: .75rem 0 0; font-size: .9rem; color: var(--muted, #475569); }
+.cr-guide__i {
+  display: inline-grid;
+  place-items: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 50%;
+  font-size: .7rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--primary, #0ea5e9) 15%, var(--panel, #fff));
+}
+@media print { .cr-guide { display: none; } }
+
+/* Jump links land below the sticky site header, not under it. */
+.cr h2[id] { scroll-margin-top: 7rem; }
