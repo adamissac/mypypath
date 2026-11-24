@@ -2528,6 +2528,26 @@ function wire() {
     });
   }
 
+  /* The join code on the board: filled from the class on screen at the moment
+     it opens, so switching class and reopening shows the right code. */
+  const boardOpen = $('[data-cr-board-open]');
+  const board = $('[data-cr-board]');
+  if (boardOpen && board && typeof board.showModal === 'function') {
+    boardOpen.addEventListener('click', () => {
+      const klass = classes.filter((c) => c.id === activeClassId)[0];
+      if (!klass) return;
+      $('[data-cr-board-code]').textContent = klass.joinCode || '------';
+      $('[data-cr-board-class]').textContent = klass.name || 'Your class';
+      board.showModal();
+    });
+    // Back to the button that opened it, for a keyboard user.
+    board.addEventListener('close', () => boardOpen.focus());
+    // A click on the backdrop closes it, as a projected overlay should.
+    board.addEventListener('click', (e) => { if (e.target === board) board.close(); });
+  } else if (boardOpen) {
+    boardOpen.hidden = true;
+  }
+
   const copy = $('[data-cr-copy]');
   if (copy) {
     copy.addEventListener('click', async () => {
@@ -2536,7 +2556,7 @@ function wire() {
       try {
         await navigator.clipboard.writeText(klass.joinCode);
         copy.textContent = 'Copied';
-        setTimeout(() => { copy.textContent = 'Copy code'; }, 2000);
+        setTimeout(() => { copy.textContent = 'Copy'; }, 2000);
       } catch (err) {
         // Clipboard access can be refused; the code is on screen either way.
       }

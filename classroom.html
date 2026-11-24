@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="/assets/css/gate.css?v=cce9b151ad" />
     <link rel="stylesheet" href="/assets/css/lesson-progress.css?v=7144c97895" />
     <link rel="stylesheet" href="/assets/css/admin.css?v=88c06f7b2e" />
-    <link rel="stylesheet" href="/assets/css/classroom.css?v=d092911899" />
+    <link rel="stylesheet" href="/assets/css/classroom.css?v=d314ad404d" />
 
 <script defer src="/assets/js/theme.js"></script>
     <script defer src="/assets/js/icons.js"></script>
@@ -226,6 +226,8 @@
                 <span class="cr-joincode__label">Join code</span>
                 <span class="cr-joincode__value" data-cr-code>------</span>
                 <button type="button" class="btn btn-ghost btn-small" data-cr-copy>Copy</button>
+                <button type="button" class="btn btn-ghost btn-small" data-cr-board-open
+                        aria-haspopup="dialog">Show on board</button>
                 <button type="button" class="cr-info" data-cr-info="joinCode"
                         aria-label="What the join code does">i</button>
               </p>
@@ -239,7 +241,35 @@
           <!-- The class, in one quiet line. These figures are context for the
                list below, not a headline of their own: nobody has ever needed
                the median unit reached in the thirty seconds before a lesson. -->
+          <!-- The join code, big enough to read from the back of the room.
+               The bar keeps it as one line, because it is needed for a minute
+               at the start of term; this is that minute. A native dialog, so
+               Escape, focus trapping and the backdrop are the browser's job. -->
+          <dialog class="cr-board" data-cr-board aria-labelledby="cr-board-class">
+            <div class="cr-board__inner">
+              <p class="cr-board__class" id="cr-board-class" data-cr-board-class>Your class</p>
+              <p class="cr-board__code" data-cr-board-code aria-label="Join code">------</p>
+              <ol class="cr-board__steps">
+                <li>Go to <strong>mypypath.com</strong> and sign in.</li>
+                <li>Open your account menu and choose <strong>Join a class</strong>.</li>
+                <li>Type the code above.</li>
+              </ol>
+              <form method="dialog" class="cr-board__close">
+                <button type="submit" class="btn btn-primary">Close</button>
+              </form>
+            </div>
+          </dialog>
+
           <dl class="cr-stats" data-cr-summary aria-label="This class"></dl>
+
+          <nav class="cr-jump" aria-label="Sections of this page">
+            <a href="#cr-attention-h">Needs attention</a>
+            <a href="#cr-grid-h">Progress</a>
+            <a href="#cr-results-h">Test results</a>
+            <a href="#cr-assign-h">Assignments</a>
+            <a href="#cr-controls-h">What students can open</a>
+            <a href="#cr-admin-h">Class settings</a>
+          </nav>
 
           <!-- A short map of the page for a teacher's first visits. Open until
                they fold it away, then remembered closed on that browser. -->
@@ -484,7 +514,9 @@
                than sitting under a disclosure with archive-and-purge.
                ============================================================ -->
           <section class="cr-zone cr-zone--work" aria-labelledby="cr-work-h">
-            <h2 class="cr-zone__h" id="cr-work-h">Work set</h2>
+            <h2 class="cr-zone__h" id="cr-work-h">Set work</h2>
+            <p class="cr-zone__lede">What you have asked the class to do, by when,
+            and who has done it.</p>
             <!-- Assignments: what was asked for, and by when -->
             <section class="cr-assign" aria-labelledby="cr-assign-h">
             <h2 id="cr-assign-h">
@@ -796,6 +828,8 @@
                ============================================================ -->
           <section class="cr-zone cr-zone--admin" aria-labelledby="cr-admin-h">
             <h2 class="cr-zone__h" id="cr-admin-h">Class settings</h2>
+            <p class="cr-zone__lede">Certificates, co-teachers and exports. Things
+            you need once a term rather than once a lesson.</p>
 
             <details class="cr-fold" data-cr-fold="certs">
               <summary>

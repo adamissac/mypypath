@@ -2172,3 +2172,127 @@
 
 /* Jump links land below the sticky site header, not under it. */
 .cr h2[id] { scroll-margin-top: 7rem; }
+
+/* ======================================================== visual pass
+   One bold thing (the join code on the board) and everything else quieter:
+   sentence-case headings instead of tracked capitals, borders instead of
+   a shadow under every card, and the three class switches read as one panel.
+   Kept in one block at the end so it is easy to see as a whole and wins the
+   cascade on purpose, not by accident. */
+
+/* Section headings are headings, not labels. */
+.cr-zone { margin-top: 3rem; padding-top: 1.75rem; border-top: 1px solid var(--border, #d0e4ef); }
+.cr-zone__h {
+  margin: 0 0 .35rem;
+  font-family: var(--pp-display, inherit);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--pp-ink, #0c4566);
+}
+.cr .cr-attention > h2,
+.cr .cr-gaps > h2,
+.cr .cr-results > h2,
+.cr .cr-assign > h2,
+.cr .cr-access > h2,
+.cr .cr-retakes > h2,
+.cr .cr-solutions > h2 { font-size: 1.15rem; }
+
+/* Table headers and small labels in sentence case. */
+.cr-table thead th,
+.cr-roster__sort,
+.cr-joincode__label {
+  text-transform: none;
+  letter-spacing: 0;
+}
+.cr-table thead th { font-size: .82rem; font-weight: 700; }
+.cr-joincode__label { font-size: .82rem; font-weight: 600; }
+
+/* Borders carry the structure; one shadow under every card said nothing. */
+.cr-attention,
+.cr-gaps,
+.cr-results,
+.cr-assign,
+.cr-access,
+.cr-solutions,
+.cr-card { box-shadow: none; }
+
+/* The three switches as one panel with dividers, not three floating cards:
+   they are one decision, "what can this class reach". */
+.cr-zone--controls > section { margin: 0; border-radius: 0; border-bottom-width: 0; }
+.cr-zone--controls > section:first-of-type { border-radius: .9rem .9rem 0 0; }
+.cr-zone--controls > section:last-of-type { border-radius: 0 0 .9rem .9rem; border-bottom-width: 1px; }
+
+/* Jump links: a page this long needs a way around it. */
+.cr-jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .15rem 1.35rem;
+  margin: -.5rem 0 1.5rem;
+  font-size: .92rem;
+}
+.cr-jump a {
+  padding: .3rem 0;
+  font-weight: 600;
+  color: var(--pp-line-ink, #0369a1);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 30%, transparent);
+  text-underline-offset: 4px;
+}
+.cr-jump a:hover { text-decoration-color: currentColor; }
+
+/* ---------- the join code on the board ----------
+   Fixed colours rather than theme tokens: it is projected, so it should look
+   the same whatever theme the teacher's laptop is in. */
+.cr-board {
+  width: min(calc(100vw - 2rem), 60rem);
+  max-width: none;
+  max-height: calc(100vh - 2rem);
+  padding: 0;
+  border: 0;
+  border-radius: 1.25rem;
+  color: #ffffff;
+  background: #0c4566;
+}
+.cr-board::backdrop { background: rgba(3, 20, 32, .78); }
+.cr-board__inner { padding: clamp(1.5rem, 5vw, 3.5rem); text-align: center; }
+.cr-board__class {
+  margin: 0;
+  font-family: var(--pp-display, inherit);
+  font-size: clamp(1.15rem, 2.6vw, 1.7rem);
+  font-weight: 700;
+  color: #cde8f6;
+}
+/* Monospace on purpose: this is a code to be typed, and every character has
+   to be told apart from across a classroom. */
+.cr-board__code {
+  margin: .4rem 0 1.25rem;
+  padding-left: .12em; /* balances the trailing letter-space */
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: clamp(3.25rem, 15vw, 9.5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: .12em;
+  overflow-wrap: anywhere;
+  color: #ffffff;
+}
+.cr-board__steps {
+  display: inline-block;
+  margin: 0 auto 1.75rem;
+  padding-left: 1.4em;
+  text-align: left;
+  font-size: clamp(1rem, 2.3vw, 1.4rem);
+  line-height: 1.65;
+  color: #e3f2fa;
+}
+.cr-board__steps strong { color: #ffffff; }
+.cr-board__close { margin: 0; }
+.cr-board .btn.btn-primary { color: #0c4566; background: #ffffff; border-color: #ffffff; }
+@media print { .cr-board, .cr-jump { display: none; } }
+/* The site's list colour is dark ink; on the board's ink background the steps
+   vanished. Set on the items themselves, where that rule lands. */
+.cr-board__steps li { color: #e3f2fa; }
+/* Each switch starts at its heading, with no inherited top gap. */
+.cr-zone--controls > section > h2 { margin-top: 0; }
+.cr-zone { margin-top: 2.5rem; padding-top: 1.5rem; }
