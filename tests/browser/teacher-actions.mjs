@@ -33,6 +33,10 @@ async function sdk(page, path, data) {
 }
 async function account(label, role) {
   const context = await browser.newContext({ timezoneId: 'America/New_York', permissions: ['clipboard-read', 'clipboard-write'] });
+  // A first visit opens the language picker over the page, which then
+  // intercepts every click this script makes. A returning English visitor has
+  // already chosen, so start as one.
+  await context.addInitScript(() => localStorage.setItem('pypath.locale', 'en'));
   const page = await context.newPage();
   page.setDefaultTimeout(12000);
   page.on('requestfailed', req => {
