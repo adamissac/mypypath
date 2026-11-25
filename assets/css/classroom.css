@@ -2299,3 +2299,226 @@
 /* The join-code line gained "Show on board"; on the narrowest phones it now
    wraps onto a second row instead of pushing its last button off-screen. */
 .cr-joincode { flex-wrap: wrap; border-radius: .9rem; max-width: 100%; }
+
+/* ========================================================== bold pass
+   A modern, higher-contrast skin over the same layout. One strong surface --
+   the deep-ink class band at the top -- then white cards with generous space,
+   larger headings, tinted table heads and pill controls. Fixed ink colours in
+   the band so it reads the same in either theme, like the board view. */
+
+/* ---------- the class band ---------- */
+.cr-hero {
+  margin: 0 0 1.75rem;
+  padding: clamp(1.1rem, 3vw, 1.9rem) clamp(1rem, 3vw, 2rem) clamp(1rem, 2.5vw, 1.4rem);
+  border-radius: 1.5rem;
+  color: #ffffff;
+  background: #0c4566;
+}
+.cr-hero__name {
+  margin: 0 0 1rem;
+  font-family: var(--pp-display, inherit);
+  font-size: clamp(1.6rem, 4.2vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  overflow-wrap: anywhere;
+}
+.cr-hero__name:empty { display: none; }
+.cr-hero .cr-bar { margin-bottom: 1.25rem; }
+.cr-hero .cr-joincode {
+  gap: .6rem;
+  padding: .4rem .45rem .4rem 1rem;
+  border: 1px solid rgba(255, 255, 255, .22);
+  background: rgba(255, 255, 255, .08);
+}
+.cr-hero .cr-joincode__label { color: #b9dff2; }
+.cr-hero .cr-joincode__value { font-size: 1.35rem; font-weight: 800; color: #ffffff; }
+/* Light pills on the band; the same buttons stay as they were elsewhere. */
+.cr-hero .btn.btn-ghost {
+  color: #0c4566;
+  background: #ffffff;
+  border-color: #ffffff;
+  box-shadow: none;
+}
+.cr-hero .btn.btn-ghost:hover { background: #e0f2fe; border-color: #e0f2fe; }
+.cr-hero .cr-info { color: #0c4566; background: #e0f2fe; border-color: #e0f2fe; }
+.cr-hero select { color: #0c4566; background-color: #ffffff; border-color: #ffffff; font-weight: 700; }
+
+/* Stats on the band as an even grid of large values. The display face suited
+   the short figures and sprawled on the long ones (a lesson title, an error
+   name), so the values use the body face at a heavy weight. */
+.cr-hero .cr-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 1rem 2rem;
+  margin: 0 0 1.25rem;
+  padding: 1rem 0 0;
+  border-top: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 0;
+  background: none;
+}
+.cr-hero .cr-stat {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .2rem;
+  padding: 0;
+  margin: 0;
+}
+.cr-hero .cr-stat dt { color: #b9dff2; font-size: .8rem; font-weight: 600; }
+.cr-hero .cr-stat dd {
+  font-family: var(--pp-body, inherit);
+  font-size: 1.3rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+
+/* Jump links as pills along the bottom of the band. */
+.cr-hero .cr-jump { gap: .5rem; margin: 0; }
+.cr-hero .cr-jump a {
+  padding: .45rem .95rem;
+  border-radius: 999px;
+  font-size: .88rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-decoration: none;
+  background: rgba(255, 255, 255, .1);
+  border: 1px solid rgba(255, 255, 255, .2);
+}
+.cr-hero .cr-jump a:hover { background: rgba(255, 255, 255, .2); }
+.cr-hero a:focus-visible,
+.cr-hero button:focus-visible,
+.cr-hero select:focus-visible { outline: 3px solid #7dd3fc; outline-offset: 2px; }
+
+/* ---------- cards: more room, bigger headings ---------- */
+.cr-attention,
+.cr-gaps,
+.cr-results,
+.cr-assign,
+.cr-access,
+.cr-solutions,
+.cr-card,
+.cr-grid-section,
+.cr-guide { border-radius: 1.25rem; }
+.cr-attention,
+.cr-gaps,
+.cr-results,
+.cr-assign { padding: 1.4rem 1.5rem; }
+/* Scoped under .cr so they outrank the base `.cr h2` rule at the top of this
+   sheet, which otherwise kept zone headings at 1.15rem and gave every card
+   heading a 2rem gap above it. */
+.cr .cr-attention > h2,
+.cr .cr-gaps > h2,
+.cr .cr-results > h2,
+.cr .cr-assign > h2,
+.cr .cr-access > h2,
+.cr .cr-retakes > h2,
+.cr .cr-solutions > h2,
+.cr #cr-grid-h {
+  margin-top: 0;
+  font-family: var(--pp-display, inherit);
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.005em;
+  color: var(--pp-ink, #0c4566);
+}
+.cr .cr-zone__h { margin: 0 0 .35rem; font-size: 1.85rem; font-weight: 800; letter-spacing: -0.01em; }
+.cr-zone--controls > section:first-of-type { border-radius: 1.25rem 1.25rem 0 0; }
+.cr-zone--controls > section:last-of-type { border-radius: 0 0 1.25rem 1.25rem; }
+
+/* ---------- tables: a tinted head, roomier rows ---------- */
+.cr-table th,
+.cr-table td { padding: .7rem .75rem; }
+.cr-table thead th {
+  color: var(--pp-ink, #0c4566);
+  background: var(--pp-fog, #e8f4fb);
+  border-bottom: 0;
+}
+.cr-table thead th:first-child { border-radius: .7rem 0 0 .7rem; }
+.cr-table thead th:last-child { border-radius: 0 .7rem .7rem 0; }
+.cr-table tbody tr:hover > * { background: color-mix(in srgb, var(--pp-fog, #e8f4fb) 55%, transparent); }
+
+/* Marks as tinted pills, so a column of passes and a "not yet" are told apart
+   at a glance; the word under each mark still says it for print and screen
+   readers. Same greens and ambers as the assignment labels. */
+.cr-results__score {
+  display: inline-block;
+  min-width: 2.6rem;
+  padding: .2rem .55rem;
+  border-radius: 999px;
+  text-align: center;
+}
+.cr-results__cell.is-pass .cr-results__score { color: #14532d; background: #dcfce7; }
+.cr-results__cell.is-below .cr-results__score { color: #7c2d12; background: #ffedd5; }
+[data-theme="dark"] .cr-results__cell.is-pass .cr-results__score { color: #bbf7d0; background: #14361f; }
+[data-theme="dark"] .cr-results__cell.is-below .cr-results__score { color: #fed7aa; background: #431d0c; }
+[data-theme="dark"] .cr-results__cell.is-pass .cr-results__word { color: #86efac; }
+[data-theme="dark"] .cr-results__cell.is-below .cr-results__word { color: #fdba74; }
+.cr-results__word { margin-top: .2rem; }
+
+/* ---------- pills: buttons and status labels ---------- */
+.cr .btn.btn-small { border-radius: 999px; font-weight: 700; }
+.cr-assign__count { font-weight: 700; font-size: .85rem; padding: .3rem .7rem; border-radius: 999px; }
+.cr-assign__title { font-size: 1.12rem; }
+
+/* "Set new work" is the main action of its card, so it looks like one. Every
+   state keeps white text: the older hover/open rules turned it light blue,
+   which would vanish on the navy. */
+.cr-assign__new > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  width: auto;
+  padding: .7rem 1.25rem;
+  border: 0;
+  border-radius: 999px;
+  font-weight: 800;
+  color: #ffffff;
+  background: #0c4566;
+  cursor: pointer;
+}
+.cr-assign__new > summary:hover,
+.cr-assign__new > summary:focus-visible,
+.cr-assign__new[open] > summary {
+  color: #ffffff;
+  background: #0a3a57;
+  border-color: transparent;
+  border-radius: 999px;
+}
+.cr-assign__new > summary:focus-visible { outline: 3px solid #7dd3fc; outline-offset: 2px; box-shadow: none; }
+.cr-assign__new[open] > summary { margin-bottom: .75rem; }
+
+@media (max-width: 640px) {
+  .cr-hero .cr-stats { grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); gap: .9rem 1rem; }
+  .cr-hero .cr-stat dd { font-size: 1.15rem; }
+}
+@media print {
+  .cr-hero { color: #000; background: none; padding: 0; }
+  .cr-hero__name, .cr-hero .cr-stat dd, .cr-hero .cr-joincode__value { color: #000; }
+  .cr-hero .cr-stat dt, .cr-hero .cr-joincode__label { color: #333; }
+}
+
+/* ---------- dark theme values for the roster's own colour tokens ----------
+   The roster, filters and quiz results read --cr-* properties that only ever
+   fell back to their light-theme values, so in the site's dark theme they
+   drew grey-on-black and dark-amber-on-black (55 contrast failures on a
+   populated dashboard). Defined here once, for the whole page. */
+[data-theme="dark"] .cr {
+  --cr-muted: #9fb3c4;
+  --cr-warn-ink: #fdba74;
+  --cr-ink: #e8f4fb;
+  --cr-line: rgba(255, 255, 255, .18);
+  --cr-line-strong: rgba(255, 255, 255, .4);
+  --cr-surface: var(--panel, #152028);
+  --cr-chip: #22323d;
+  --cr-chip-on: #2c4150;
+  --cr-hover: rgba(255, 255, 255, .06);
+}
+[data-theme="dark"] .cr-quizres__ok { color: #86efac; }
+[data-theme="dark"] .cr-quizres__low { color: #fdba74; }
+[data-theme="dark"] .cr-quizres__q.is-hardest .cr-quizres__pct { color: #fdba74; }
+/* The selected view toggle is dark-on-light in the dark theme, matching the
+   site's dark buttons, rather than white text on the (now light) ink colour. */
+[data-theme="dark"] .cr-view label:has(input:checked) { color: #0e161d; background: #e8f4fb; border-color: #e8f4fb; }

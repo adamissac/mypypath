@@ -1992,6 +1992,8 @@ function paintAll() {
   const klass = classes.filter((c) => c.id === activeClassId)[0];
   const code = $('[data-cr-code]');
   if (code && klass) code.textContent = klass.joinCode || '------';
+  const heroName = $('[data-cr-hero-name]');
+  if (heroName && klass) heroName.textContent = klass.name || '';
   paintSwitcher();
   paintUnitPicker();
   paintKey();
