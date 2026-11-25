@@ -2522,3 +2522,40 @@
 /* The selected view toggle is dark-on-light in the dark theme, matching the
    site's dark buttons, rather than white text on the (now light) ink colour. */
 [data-theme="dark"] .cr-view label:has(input:checked) { color: #0e161d; background: #e8f4fb; border-color: #e8f4fb; }
+
+/* ---------- links as pills, not bare blue text ----------
+   The dashboard's action links ("Open lesson", "See certificates", the lesson
+   to revisit) were plain underlined blue, which read as leftover browser
+   default next to the pill buttons. They are drawn as quiet pills instead,
+   in the ink colour, so they look like the actions they are. */
+.cr-link,
+.cr-pill-link {
+  display: inline-flex;
+  align-items: center;
+  padding: .3rem .8rem;
+  border: 1.5px solid var(--border, #d0e4ef);
+  border-radius: 999px;
+  font-size: .85rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--pp-ink, #0c4566);
+  text-decoration: none;
+  background: var(--panel, #ffffff);
+}
+.cr-link:hover,
+.cr-pill-link:hover { background: var(--pp-fog, #e8f4fb); border-color: var(--pp-line, #0ea5e9); }
+.cr-link:focus-visible,
+.cr-pill-link:focus-visible { outline: 3px solid var(--pp-line, #0ea5e9); outline-offset: 2px; }
+
+/* The guide names each section in plain emphasis: the pills in the band just
+   above already go to every one of them. */
+.cr-guide__where { font-weight: 700; color: var(--pp-ink, #0c4566); }
+/* A section name in the guide is a soft tinted tag, not more bold text: the
+   step's lead-in is already bold and the two ran together. */
+.cr-guide__where {
+  padding: .05rem .4rem;
+  border-radius: .4rem;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--pp-line, #0ea5e9) 14%, var(--panel, #ffffff));
+}
+.cr-link, .cr-pill-link { white-space: nowrap; }

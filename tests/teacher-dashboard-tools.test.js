@@ -95,7 +95,8 @@ describe('tools a teacher uses every week', () => {
     expect(dash).toMatch(/async function toggleQuizResults/);
   });
 
-  it('has a guide whose links all land somewhere', () => {
+  it('has jump links that all land somewhere', () => {
+    // The guide names sections in plain text; the band's pills are the links.
     const targets = [...html.matchAll(/<a href="#([a-z-]+)">/g)].map((m) => m[1]);
     expect(targets.length).toBeGreaterThanOrEqual(4);
     for (const id of targets) expect(html).toContain(`id="${id}"`);
